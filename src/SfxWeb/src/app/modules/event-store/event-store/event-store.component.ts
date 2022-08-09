@@ -15,6 +15,7 @@ import { Utils } from 'src/app/Utils/Utils';
 import { ListColumnSettingWithCustomComponent } from 'src/app/Models/ListSettings';
 import { VisualizationToolComponent } from '../../concurrent-events-visualization/visualization-tool/visualization-tool.component';
 import { VisualizationLogoComponent } from '../../concurrent-events-visualization/visualization-logo/visualization-logo.component';
+import { Transforms } from 'src/app/Utils/Transforms';
 
 export interface IQuickDates {
     display: string;
@@ -26,10 +27,17 @@ export interface IPropertyMapping {
     targetProperty: string;
 }
 
+export interface ITransform {
+    type : string;
+    value : any;
+}
+
 export interface IRelevantEventsConfig {
     eventType: string;
     propertyMappings: IPropertyMapping[];
-    action? : string; //mainly being used for self referential purposes
+    selfTransform? : ITransform[]; //used to describe self transformations that we want to make to strings
+    sourceTransform? : ITransform[]; //used to describe source transformations that we want to make
+    targetTransform? : ITransform[]; //used to describe target transformations that we want to make
 }
 
 export interface IConcurrentEventsConfig {
@@ -246,6 +254,7 @@ export class EventStoreComponent implements OnInit, OnDestroy {
         let simulEvents : IConcurrentEvents[] = [];
         let addedEvents : IRCAItem[] = [];
         let action = "";
+        let parsed = "";
 
         // iterate through all the input events
         inputEvents.forEach(inputEvent => {
@@ -254,7 +263,8 @@ export class EventStoreComponent implements OnInit, OnDestroy {
                 if (config.eventType == inputEvent.kind) {
                     // iterate through all events to find relevant ones
                     if(Utils.result(inputEvent, config.result)) {
-                        action = "Action: " + Utils.result(inputEvent, config.result);
+                        parsed = Utils.result(inputEvent, config.result);
+                        action = "Action: " + parsed + "<br/>";
                     }
                     inputEvent.reasonForEvent = action;
                     config.relevantEventsType.forEach(relevantEventType => {
@@ -266,11 +276,14 @@ export class EventStoreComponent implements OnInit, OnDestroy {
                                 let targetVal: any;
                                 sourceVal = Utils.result(inputEvent, mapping.sourceProperty);
                                 targetVal = mapping.targetProperty;
-                                if (sourceVal != null && sourceVal != undefined && targetVal != null && targetVal != undefined && sourceVal != targetVal) {
+                                if (((sourceVal == null  || targetVal == null) || (sourceVal == undefined || targetVal == undefined)) || sourceVal != targetVal) {
                                     propMaps = false;
                                 }
                             });
                             if (propMaps) {
+                                if(relevantEventType.selfTransform) {
+                                    parsed = Transforms.getTransformations(relevantEventType.selfTransform, parsed);
+                                }
                                 if (!inputEvent.related) {
                                     inputEvent.related = [];
                                 }
@@ -279,8 +292,8 @@ export class EventStoreComponent implements OnInit, OnDestroy {
                                         name: "self",
                                         related: null
                                     } as IConcurrentEvents);
-                                action = "Action: " + relevantEventType.action;
-                                inputEvent.reasonForEvent = action;
+                                    action = "Action: " + parsed + "<br/>";
+                                    inputEvent.reasonForEvent = action;
                             }
                         }
                         events.forEach(iterEvent => {
@@ -291,14 +304,15 @@ export class EventStoreComponent implements OnInit, OnDestroy {
                                 mappings.forEach(mapping => {
                                     let sourceVal: any;
                                     let targetVal: any;
-                                    if(mapping.sourceProperty == "raw.BatchId") {
-                                        sourceVal = Utils.result(inputEvent, mapping.sourceProperty);
-                                        sourceVal = sourceVal.substring(sourceVal.indexOf("/") + 1);
-                                    } else {
-                                        sourceVal = Utils.result(inputEvent, mapping.sourceProperty);
+                                    sourceVal = Utils.result(inputEvent, mapping.sourceProperty);
+                                    if(relevantEventType.sourceTransform) {
+                                        sourceVal = Transforms.getTransformations(relevantEventType.sourceTransform, sourceVal);
                                     }
                                     targetVal = Utils.result(iterEvent, mapping.targetProperty);
-                                    if (sourceVal != null && sourceVal != undefined && targetVal != null && targetVal != undefined && sourceVal != targetVal) {
+                                    if(relevantEventType.targetTransform) {
+                                        targetVal = Transforms.getTransformations(relevantEventType.targetTransform, targetVal);
+                                    }
+                                    if (((sourceVal == null  || targetVal == null) || (sourceVal == undefined || targetVal == undefined)) || sourceVal != targetVal) {
                                         propMaps = false;
                                     }
                                 });
@@ -323,7 +337,8 @@ export class EventStoreComponent implements OnInit, OnDestroy {
         return simulEvents;
     }
 
-  private getConcurrentEventsData() {
+
+    private getConcurrentEventsData() {
     /*
         Grabs all the concurrent events data based on specific IConcurrentEventsConfig objects.
     */
