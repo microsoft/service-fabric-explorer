@@ -41,7 +41,14 @@ export class InfrastructureJobsComponent extends ServiceBaseControllerDirective 
       new ListColumnSetting('raw.ImpactAction', 'Impact Action'),
       new ListColumnSetting('RepairTask.TaskId', 'Repair Task'),
       new ListColumnSettingWithShorten('raw.RoleInstancesToBeImpacted', 'Target Nodes', 2),
-     ]);
+      new ListColumnSetting('raw.IsThrottled', 'Throttled'),
+    ]);
+
+    this.data.versionCheck("9.1").then(valid => {
+      if (valid && !this.allPendingMRJobsList.columnSettings.some(col => col.displayName === "Throttled")) {
+        this.allPendingMRJobsList.columnSettings.push(new ListColumnSetting('raw.IsThrottled', 'Throttled'))
+      }
+    })
 
     this.completedMRJobsList = this.settings.getNewOrExistingListSettings('completedMRJobs', [], [
       new ListColumnSetting('raw.Id', 'Job Id'),

@@ -1,7 +1,7 @@
 
 
 import { FabricEventBase, ClusterEvent, NodeEvent, ApplicationEvent, FabricEvent, PartitionEvent } from './Events';
-import { DataGroup, DataItem, DataSet } from 'vis-timeline/standalone/esm';
+import { DataGroup, DataItem, DataSet, IdType } from 'vis-timeline/standalone/esm';
 import padStart from 'lodash/padStart';
 import findIndex from 'lodash/findIndex';
 import { HtmlUtils } from 'src/app/Utils/HtmlUtils';
@@ -50,18 +50,26 @@ export interface ITimelineDataGenerator<T extends FabricEventBase>{
 export class EventStoreUtils {
 
     private static internalToolTipFormatterObject = (data: any) => {
-        const rows = Object.keys(data).map(key => EventStoreUtils.internalToolTipFormatter(key, data[key])).join('');
-        return`<table style="word-break: break-all;"><tbody>${rows}</tbody></table>`;
+      const rows = Object.keys(data).map(key => EventStoreUtils.internalToolTipFormatter(key, data[key])).join('');
+      return `<table>
+              <tbody>
+                ${rows}
+              </tbody>
+            </table>`;
     }
 
     private static internalToolTipFormatter = (key: string, data: any) => {
-        let value = data;
-        if (Array.isArray(data) ) {
-            value = data.map(arrValue => EventStoreUtils.internalToolTipFormatter('', arrValue)).join('');
-        }else if (typeof data === 'object') {
-            value = EventStoreUtils.internalToolTipFormatterObject(data);
-        }
-        return`<tr style="padding: 0 5 px; bottom-border: 1px solid gray"><td style="word-break: keep-all;">${key}</td><td style="display:flex; flex-direction: row; "> <div style="margin-right: 4px">:</div style="white-space: pre-wrap; display: inline-block;"> ${value}</td></tr>`;
+      let value = data;
+      if (Array.isArray(data)) {
+        value = data.map(arrValue => EventStoreUtils.internalToolTipFormatter('', arrValue)).join('');
+      } else if (typeof data === 'object') {
+        value = EventStoreUtils.internalToolTipFormatterObject(data);
+      }
+      return `<tr>
+                <td class="margin-bottom"> ${key} </td>
+                <td class="nested-row">
+                  <div class="margin-right"> : </div class="white-space"> ${value} </td>
+              </tr>`;
     }
 
     /*
@@ -70,9 +78,17 @@ export class EventStoreUtils {
     public static tooltipFormat = (data: Record<string, any> , start: string, end: string = '', title: string= ''): string => {
 
         const outline = EventStoreUtils.internalToolTipFormatterObject(data);
-
-        // eslint-disable-next-line max-len
-        return `<div class="tooltip-test">${title.length > 0 ? title + '<br>' : ''}Start: ${start} <br>${ end ? 'End: ' + end + '<br>' : ''}<b style="text-align: center;">Details</b><br>${outline}</div>`;
+        return `<div class="inner-tooltip">
+                  ${title.length > 0 ? title + '<br>' : ''}
+                  Start: ${start}
+                  <br>
+                  ${ end ? 'End: ' + end + '<br>' : ''}
+                  <b>
+                    Details
+                  </b>
+                  <br>
+                  ${outline}
+                </div>`;
     }
 
     public static parseUpgradeAndRollback(rollbackCompleteEvent: FabricEventBase, rollbackStartedEvent: ClusterEvent, items: DataSet<DataItem>,
@@ -235,7 +251,7 @@ export abstract class TimeLineGeneratorBase<T> {
             };
 
             // We should not add the already nested groups to the new event type one.
-            let groupsAlreadyNested: string[] = [];
+            let groupsAlreadyNested: IdType[] = [];
             data.groups.forEach(group => {
                 nestedElementGroup.nestedGroups.push(group.id);
                 if (group.nestedGroups){
@@ -362,7 +378,8 @@ export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
       kind: event.kind,
       title: EventStoreUtils.tooltipFormat(event.eventProperties, event.timeStamp, null, `${event.nodeName} failed to open with ${event.eventProperties['Error']}.`),
       className: 'red-point',
-      subgroup: 'stack'
+      subgroup: 'stack',
+      content: ''
     };
     return item;
   }
@@ -377,7 +394,8 @@ export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
       kind: event.kind,
       title: EventStoreUtils.tooltipFormat(event.eventProperties, event.timeStamp, null, label),
       className: 'orange-point',
-      subgroup: 'stack'
+      subgroup: 'stack',
+      content: ''
     };
     return item;
   };
@@ -604,6 +622,7 @@ export class ApplicationTimelineGenerator extends TimeLineGeneratorBase<Applicat
                 EventStoreUtils.parseUpgradeDomain(event, items, ApplicationTimelineGenerator.upgradeDomainLabel, 'ApplicationTypeVersion');
             }else if (event.kind === 'ApplicationUpgradeCompleted') {
                 EventStoreUtils.parseUpgradeCompleted(event, items, ApplicationTimelineGenerator.applicationUpgradeLabel, 'ApplicationTypeVersion');
+                upgradeApplicationStarted = null;
                 previousApplicationUpgrade = event;
             }else if (event.kind === 'ApplicationProcessExited') {
                 this.parseApplicationProcessExited(event, items, processExitedGroups);
@@ -771,7 +790,7 @@ export class RepairTaskTimelineGenerator extends TimeLineGeneratorBase<RepairTas
                                                             new Date(task.raw.History.CompletedUtcTimestamp).toLocaleString()),
             });
         });
-
+        console.log(items.map(item => item))
         groups.add({
             id: 'job',
             content: 'Job History',

@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-import { apiUrl, addDefaultFixtures, checkTableSize, FIXTURE_REF_NODES, addRoute, FIXTURE_REF_MANIFEST } from './util';
+import { apiUrl, addDefaultFixtures, checkTableSize, FIXTURE_REF_NODES, addRoute, FIXTURE_REF_MANIFEST } from './util.cy';
 
 context('nodes list page', () => {
     beforeEach(() => {
