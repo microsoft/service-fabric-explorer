@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef, Input, AfterViewInit, OnChanges, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, Input, AfterViewInit, OnChanges, ChangeDetectionStrategy, Output, EventEmitter } from '@angular/core';
 import { ITimelineData } from 'src/app/Models/eventstore/timelineGenerators';
 import { Timeline, DataItem, DataGroup, moment, DataSet } from 'vis-timeline/standalone/esm';
 @Component({
@@ -14,6 +14,8 @@ export class EventStoreTimelineComponent implements AfterViewInit, OnChanges {
   @Input() fitOnDataChange = true;
   @Input() displayMoveToStart = true;
   @Input() displayMoveToEnd = true;
+
+  @Output() itemClicked = new EventEmitter<string>();
 
   public isUTC = false;
 
@@ -71,6 +73,9 @@ export class EventStoreTimelineComponent implements AfterViewInit, OnChanges {
       this.timeline.off('rangechange', cb)
     }
     this.timeline.on('rangechange', cb)
+    this.timeline.on('click', data => {
+      this.itemClicked.emit(data.item)
+    })
     this.updateList(this.events);
   }
 
