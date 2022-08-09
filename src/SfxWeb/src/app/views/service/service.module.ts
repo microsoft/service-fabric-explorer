@@ -20,20 +20,19 @@ import { ClusterModule } from '../cluster/cluster.module';
 
 
 @NgModule({
-  declarations: [EssentialsComponent, BaseComponent, DetailsComponent, ManifestComponent, EventsComponent, ScaleServiceComponent, BackupComponent, InfrastructureJobsComponent],
-  imports: [
-    CommonModule,
-    ServiceRoutingModule,
-    SharedModule,
-    DetailListTemplatesModule,
-    EventStoreModule,
-    FormsModule,
-    ReactiveFormsModule,
-    ChartsModule,
-    HealthStateModule,
-    InfrastructureJobModule,
-    ClusterModule
-  ],
-  entryComponents: [ScaleServiceComponent]
+    declarations: [EssentialsComponent, BaseComponent, DetailsComponent, ManifestComponent, EventsComponent, ScaleServiceComponent, BackupComponent, InfrastructureJobsComponent],
+    imports: [
+        CommonModule,
+        ServiceRoutingModule,
+        SharedModule,
+        DetailListTemplatesModule,
+        EventStoreModule,
+        FormsModule,
+        ReactiveFormsModule,
+        ChartsModule,
+        HealthStateModule,
+        InfrastructureJobModule,
+        ClusterModule
+    ]
 })
 export class ServiceModule { }

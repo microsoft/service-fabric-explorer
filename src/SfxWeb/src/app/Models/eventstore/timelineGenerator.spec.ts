@@ -404,7 +404,60 @@ describe('TimelineGenerators', () => {
         expect(events.potentiallyMissingEvents).toBeFalse();
     });
     })
+  describe('Application generator', () => {
+    const generator = new ApplicationTimelineGenerator();
 
-});
+    fit('application upgrade', () => {
+      const startUpgrade = new ApplicationEvent();
+      const EventInstanceId = "89cfb53c-a003-43e6-9899-de7603fbc972";
+      startUpgrade.fillFromJSON({
+        "ApplicationTypeName": "VisualObjectsApplicationType",
+        "CurrentApplicationTypeVersion": "23.0.0",
+        "ApplicationTypeVersion": "25.0.0",
+        "UpgradeType": "Rolling",
+        "RollingUpgradeMode": "UnmonitoredAuto",
+        "FailureAction": "Manual",
+        "ApplicationId": "VisualObjects",
+        "Kind": "ApplicationUpgradeStarted",
+        "EventInstanceId": EventInstanceId,
+        "TimeStamp": "2022-06-02T16:49:58.656Z",
+        "Category": "Upgrade",
+        "HasCorrelatedEvents": false
+      });
+
+      const end = new ApplicationEvent();
+      end.fillFromJSON({
+        "ApplicationTypeName": "VisualObjectsApplicationType",
+        "ApplicationTypeVersion": "25.0.0",
+        "OverallUpgradeElapsedTimeInMs": 117017.3601,
+        "ApplicationId": "VisualObjects",
+        "Kind": "ApplicationUpgradeCompleted",
+        "EventInstanceId": EventInstanceId,
+        "TimeStamp": "2022-06-02T16:51:55.6741761Z",
+        "Category": "Upgrade",
+        "HasCorrelatedEvents": false
+      });
 
 
+      const data = [end, startUpgrade];
+      const events = generator.consume(data, startDate, endDate);
+      events.items.forEach(item => console.log(item))
+      const content = "Upgrade rolling forward to 25.0.0";
+
+      expect(events.items.length).toBe(1);
+      expect(events.items.get(EventInstanceId + content)).toEqual({
+        "id":  EventInstanceId + content,
+        content,
+        "start": "2022-06-02T16:49:58.656Z",
+        "end": "2022-06-02T16:51:55.6741761Z",
+        "group": "Application Upgrades",
+        "type": "range",
+        title: EventStoreUtils.tooltipFormat(end.eventProperties, startUpgrade.timeStamp, end.timeStamp),
+        "className": "green"
+      });
+
+      expect(events.groups.length).toBe(4);
+      expect(events.potentiallyMissingEvents).toBeFalsy();
+    });
+  });
+})

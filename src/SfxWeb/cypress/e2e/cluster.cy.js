@@ -3,7 +3,7 @@
 import {
   apiUrl, addDefaultFixtures, FIXTURE_REF_CLUSTERHEALTH, nodes_route, checkTableSize,
   upgradeProgress_route, FIXTURE_REF_UPGRADEPROGRESS, FIXTURE_REF_MANIFEST, addRoute, checkTableErrorMessage, EMPTY_LIST_TEXT, FAILED_TABLE_TEXT, FAILED_LOAD_TEXT, repairTask_route, manifest_route, CLUSTER_TAB_NAME, REPAIR_TASK_TAB_NAME, FIXTURE_REF_NODES, FIXTURE_NODES, typeIntoInput, checkCheckBox, refresh
-} from './util';
+} from './util.cy';
 
 const LOAD_INFO = "getloadinfo"
 const EVENT_TABS='[data-cy=eventtabs]'
@@ -599,7 +599,7 @@ context('Cluster page', () => {
       });
     })
 
-    it('view in progress repair job', () => {
+    it('view in progress repair job - stuck in approving', () => {
       setup('cluster-page/repair-jobs/in-progress.json')
 
 
@@ -625,6 +625,40 @@ context('Cluster page', () => {
           cy.contains('Preparing : Done');
           cy.contains('Executing : In Progress');
           cy.contains('Restoring : Not Started');
+        })
+      });
+    })
+
+    it.only('view in progress repair job - stuck in health check', () => {
+      setup('cluster-page/repair-jobs/stuck-in-health-check.json')
+
+      cy.get('[data-cy=pendingjobs]').within(() => {
+        cy.get('tbody > tr').eq(1).within(() => {
+          cy.get('button').first().click();
+        });
+
+        cy.get('[data-cy=node-stuck-warning]')
+
+        cy.get('[data-cy=history]').within(() => {
+          cy.contains('Preparing : In Progress');
+          cy.contains('Executing : Not Started');
+          cy.contains('Restoring : Not Started');
+        })
+
+        cy.get('tbody > tr').eq(1).within(() => {
+          cy.get('button').first().click();
+        });
+
+        cy.get('tbody > tr').eq(0).within(() => {
+          cy.get('button').first().click();
+        });
+
+        cy.get('[data-cy=node-stuck-warning]')
+
+        cy.get('[data-cy=history]').within(() => {
+          cy.contains('Preparing : Done');
+          cy.contains('Executing : Done');
+          cy.contains('Restoring : In Progress');
         })
       });
     })

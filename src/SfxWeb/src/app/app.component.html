@@ -75,7 +75,7 @@
     <div [ngStyle]="{'left': smallScreenSize ? '0px' : rightOffset }" class="right-panel main-content" (click)="smallScreenSize ? resize(0): null" (focusin)="smallScreenSize ? resize(0): null">
       <main>
         <div class="view-container" #main>
-          <div class="expander-container">
+          <div class="expander-container" *ngIf="!smallScreenSize">
             <span class=" expander-icon mif-vertical-align-bottom" [ngClass]="{'flip': treeWidth === '8px'}" placement="right"
                   [ngbTooltip]="(treeWidth === '8px' ? 'Expand' : 'Close') + ' tree view'"  tooltipClass="styled-tooltip" (click)="collapseSide()"></span>
           </div>

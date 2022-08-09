@@ -45,7 +45,21 @@ export class EventStoreTimelineComponent implements AfterViewInit, OnChanges {
 
     // create visualization
     this.timeline = new Timeline(this.container.nativeElement, items, groups, {
-        locale: 'en_US'
+        locale: 'en_US',
+        xss: {
+          disabled: false,
+          filterOptions: {
+            whiteList: {
+              "div": ['class', 'inner-tooltip', 'white-space', 'margin-left'],
+              "table": [],
+              "tbody": [],
+              "tr": [],
+              "td": ['class', 'nested-row', 'margin-bottom'],
+              "b": [],
+              "br": []
+            }
+          }
+        }
     });
 
     //dont let the window go below 3 hours on initial load, but allow scrolling in after that.

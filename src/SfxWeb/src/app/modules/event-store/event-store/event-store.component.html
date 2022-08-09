@@ -1,5 +1,5 @@
 <div class="essen-pane detail-pane">
-  <div class="flex-container wrap" style="margin-bottom: 10px;">
+  <div class="flex-container" style="margin-bottom: 10px; flex-wrap: wrap; gap: 10px;">
     <div class="flex-container wrap">
         <app-dual-date-picker [minDate]="startDateMin" [maxDate]="startDateMax" (dateChanged)="setNewDates($event)"
               [currentStartDate]="startDate" [currentEndDate]="endDate"></app-dual-date-picker>

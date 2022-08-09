@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-import { addDefaultFixtures, apiUrl, addRoute, checkActions } from './util';
+import { addDefaultFixtures, apiUrl, addRoute, checkActions } from './util.cy';
 
 const appName = "VisualObjectsApplicationType";
 
