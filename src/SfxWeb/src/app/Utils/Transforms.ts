@@ -9,10 +9,16 @@ export class Transforms {
     };
 
     public static trimFront(parsed: string, value: string): string {
+        if(parsed.indexOf(value) == -1) {
+            return parsed;
+        }
         return parsed.substring(parsed.indexOf(value) + 1);
     }
 
     public static trimBack(parsed: string, value: string): string {
+        if(parsed.indexOf(value) == -1) {
+            return parsed;
+        }
         return parsed.substring(0, parsed.indexOf(value));
     }
 
