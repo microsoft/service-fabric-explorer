@@ -24,8 +24,8 @@ export interface IQuickDates {
 }
 
 export interface IPropertyMapping {
-    sourceProperty: string;
-    targetProperty: string;
+    sourceProperty: any;
+    targetProperty: any;
 }
 
 export interface ITransform {

@@ -19,7 +19,7 @@ const APE = [
       propertyMappings: [
           {
               sourceProperty: "raw.ExitCode",
-              targetProperty: "7147"
+              targetProperty: 7147
           }
       ],
       selfTransform: [
@@ -33,7 +33,7 @@ const APE = [
           },
           {
             type: 'trimBack',
-            value: ' ContainerName'
+            value: "ContainerName"
           }
       ]
   },
@@ -42,7 +42,7 @@ const APE = [
       propertyMappings: [
           {
               sourceProperty: "raw.ExitCode",
-              targetProperty: "3221225786"
+              targetProperty: 3221225786
           }
       ],
       selfTransform: [
@@ -61,7 +61,7 @@ const APE = [
       propertyMappings: [
           {
               sourceProperty: "raw.ExitCode",
-              targetProperty: "7148"
+              targetProperty: 7148
           }
       ],
       selfTransform: [
@@ -80,7 +80,7 @@ const APE = [
       propertyMappings: [
           {
               sourceProperty: "raw.UnexpectedTermination",
-              targetProperty: "true"
+              targetProperty: true
           }
       ],
       selfTransform: [
