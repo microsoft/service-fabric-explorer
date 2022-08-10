@@ -283,7 +283,12 @@ export class EventStoreComponent implements OnInit, OnDestroy, OnChanges {
                                 let targetVal: any;
                                 sourceVal = Utils.result(inputEvent, mapping.sourceProperty);
                                 targetVal = mapping.targetProperty;
-                                if (((sourceVal == null  || targetVal == null) || (sourceVal == undefined || targetVal == undefined)) || sourceVal != targetVal) {
+                                if(targetVal === "true") {
+                                  targetVal = true;
+                                }else if(targetVal === "false") {
+                                  targetVal = false;
+                                }
+                                if (((sourceVal == null  || targetVal == null) || (sourceVal == undefined || targetVal == undefined)) || sourceVal.toString() !== targetVal.toString()) {
                                     propMaps = false;
                                 }
                             });
