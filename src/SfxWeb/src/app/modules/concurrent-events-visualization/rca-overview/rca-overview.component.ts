@@ -21,7 +21,6 @@ export class RcaOverviewComponent implements OnInit {
       type: 'pie',
       backgroundColor: null,
       borderRadius: 0,
-      margin: [0, 0, 0, 0],
       spacingTop: 0,
       spacingBottom: 0,
       spacingLeft: 0,
@@ -31,10 +30,6 @@ export class RcaOverviewComponent implements OnInit {
     },
     title: {
       text: '',
-      // style: {
-      //   color: '#1234',
-      //   fontSize: '15pt'
-      // }
     },
     exporting: {
       enabled: false
@@ -42,10 +37,6 @@ export class RcaOverviewComponent implements OnInit {
     tooltip: {
       enabled: true,
       outside: true
-      // animation: false,
-      // formatter() {
-      //   return `${this.point.name} : ${this.y}`;
-      // }
     },
     credits: { enabled: false },
     loading: {
@@ -55,22 +46,19 @@ export class RcaOverviewComponent implements OnInit {
       pie: {
         borderWidth: 2,
         innerSize: '50%',
-        borderColor: '#262626'
+        borderColor: '#262626',
+        allowPointSelect: true,
+        cursor: 'pointer',
+        dataLabels: {
+            enabled: false
+        },
+        showInLegend: false
       },
-      series: {
-        // dataLabels: {
-        //   enabled: true,
-        //   color: 'white',
-        //   borderColor: 'white',
-        //   inside: true,
-        //   textPath: {
-        //     enabled: false
-        //   }
-        // }
-      }
+      series: {}
     }
   };
 
+  colorKey: Record<string, string> = {};
   reasons: IEssentialListItem[] = [];
 
   constructor() { }
@@ -85,7 +73,8 @@ export class RcaOverviewComponent implements OnInit {
           style: {
             fontSize: '10px',
             fontColor: '#fff'
-        }}
+        }},
+        color: this.colorKey[item.descriptionName]
       }
     })
     this.options.series = [{ data: dataSet, type: 'pie' }]
@@ -93,12 +82,26 @@ export class RcaOverviewComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.reasons = Object.entries(Utils.groupByFunc(this.events, item => item.visEvent.reasonForEvent))
-                          .sort((a,b) => b[1].length - a[1].length).map(reason => {
+    const grouped = Object.entries(Utils.groupByFunc(this.events, item =>{
+      if(item.visEvent?.related?.length > 0 && item.visEvent.related[0].name !== "self") {
+        // if(item.visEvent.related[0].kind === undefined) {
+        //   console.log(item)
+        // }
+        return item.visEvent.related[0].kind;
+      }else if(item.visEvent.reasonForEvent) {
+        return item.visEvent.reasonForEvent ;
+      }else{
+        return 'unknown'
+      }
+    }));
+    this.reasons = grouped.sort((a,b) => b[1].length - a[1].length).map(reason => {
+      this.colorKey[reason[0]] = this.colorKey[reason[0]] || Utils.randomColor();
+
       return {
         displayText: reason[1].length.toString(),
         copyTextValue: reason[0] + ' ' + reason[1].toString(),
-        descriptionName: reason[0]
+        descriptionName: reason[0],
+        displaySelector: true
       }
     })
 
@@ -111,7 +114,8 @@ export class RcaOverviewComponent implements OnInit {
       this.chart.series[0].setData(this.reasons.map(item => {
         return {
           y: +item.displayText,
-          name: item.descriptionName
+          name: item.descriptionName,
+          color: Utils.randomColor()
         }
       }));
     }

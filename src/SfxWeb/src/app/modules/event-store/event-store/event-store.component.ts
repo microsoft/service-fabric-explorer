@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnDestroy } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy, OnChanges } from '@angular/core';
 import { ITimelineData, TimeLineGeneratorBase, parseEventsGenerically, ITimelineItem } from 'src/app/Models/eventstore/timelineGenerators';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { IOnDateChange } from '../double-slider/double-slider.component';
@@ -80,7 +80,7 @@ export interface IEventStoreData<IVisPresentEvent, S> {
     templateUrl: './event-store.component.html',
     styleUrls: ['./event-store.component.scss']
 })
-export class EventStoreComponent implements OnInit, OnDestroy {
+export class EventStoreComponent implements OnInit, OnDestroy, OnChanges {
 
   constructor(public dataService: DataService, private telemService: TelemetryService) { }
 
@@ -131,6 +131,11 @@ export class EventStoreComponent implements OnInit, OnDestroy {
               this.endDate = new Date(dates.endDate);
               this.setNewDateWindow();
           });
+  }
+
+  ngOnChanges() {
+    this.setTimelineData();
+
   }
 
   ngOnDestroy() {
@@ -266,7 +271,7 @@ export class EventStoreComponent implements OnInit, OnDestroy {
                     // iterate through all events to find relevant ones
                     if(Utils.result(inputEvent, config.result)) {
                         parsed = Utils.result(inputEvent, config.result);
-                        action = "Action: " + parsed + "<br/>";
+                        action = parsed;
                     }
                     inputEvent.reasonForEvent = action;
                     config.relevantEventsType.forEach(relevantEventType => {
@@ -294,7 +299,7 @@ export class EventStoreComponent implements OnInit, OnDestroy {
                                         name: "self",
                                         related: null
                                     } as IConcurrentEvents);
-                                    action = "Action: " + parsed + "<br/>";
+                                    action = parsed;
                                     inputEvent.reasonForEvent = action;
                             }
                         }
@@ -376,6 +381,7 @@ export class EventStoreComponent implements OnInit, OnDestroy {
             });
         }
     }
+    console.log(this.visEventList)
 
     for (const data of this.listEventStoreData) {
         let visPresentFlag = data.listSettings.columnSettings.some((setting) => {

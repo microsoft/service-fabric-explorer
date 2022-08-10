@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { RelatedEventsConfigs } from 'src/app/Models/eventstore/RelatedEventsConfigs';
 import { Utils } from 'src/app/Utils/Utils';
 import { IConcurrentEvents, IVisEvent } from '../../event-store/event-store/event-store.component';
 
@@ -15,7 +16,7 @@ export class RcaSummaryComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
-    const explained = this.events.filter(event => event.visPresent);
+    const explained = this.events.filter(event => RelatedEventsConfigs.some(config => config.eventType === event.visEvent.kind));
 
     this.data = Utils.groupByFunc<IVisEvent>(explained, item => item.visEvent.kind);
     console.log(this.data);

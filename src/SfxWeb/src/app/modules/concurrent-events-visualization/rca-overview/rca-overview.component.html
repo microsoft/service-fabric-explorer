@@ -5,6 +5,10 @@
     <div>
         <h5>{{type}} - {{events.length}}</h5>
         <app-essential-item *ngFor="let item of reasons; let l = last" [item]="item" [underline]="false">
+          <div class="flex-center" style="gap: 5px;">
+            {{item.displayText}}
+            <div class="legend" [ngStyle]="{'background-color': colorKey[item.descriptionName]}"></div>
+          </div>
         </app-essential-item>
     </div>
 </div>
