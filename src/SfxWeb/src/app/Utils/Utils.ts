@@ -74,6 +74,9 @@ export class Utils {
         return !isNaN(parseFloat(value)) && isFinite(value);
     }
 
+    public static isDefined(value: any): boolean {
+      return value !== null && value !== undefined;
+    }
 
     /**
      * Extract resolved property from nested object.

@@ -1,8 +1,8 @@
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { Chart, Options, chart, PointOptionsObject, SeriesPieOptions } from 'highcharts';
+import { IVisEvent } from 'src/app/Models/eventstore/rcaEngine';
 import { Utils } from 'src/app/Utils/Utils';
 import { IEssentialListItem } from '../../charts/essential-health-tile/essential-health-tile.component';
-import { IVisEvent } from '../../event-store/event-store/event-store.component';
 
 @Component({
   selector: 'app-rca-overview',

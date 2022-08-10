@@ -15,55 +15,13 @@ import { Utils } from 'src/app/Utils/Utils';
 import { ListColumnSettingWithCustomComponent } from 'src/app/Models/ListSettings';
 import { VisualizationToolComponent } from '../../concurrent-events-visualization/visualization-tool/visualization-tool.component';
 import { VisualizationLogoComponent } from '../../concurrent-events-visualization/visualization-logo/visualization-logo.component';
-import { Transforms } from 'src/app/Utils/Transforms';
-import { FabricEventBase } from 'src/app/Models/eventstore/Events';
+import { getSimultaneousEventsForEvent, IConcurrentEvents, IRCAItem, IVisEvent } from 'src/app/Models/eventstore/rcaEngine';
 
 export interface IQuickDates {
     display: string;
     hours: number;
 }
 
-export interface IPropertyMapping {
-    sourceProperty: any;
-    targetProperty: any;
-}
-
-export interface ITransform {
-    type : string;
-    value : any;
-}
-
-export interface IRelevantEventsConfig {
-    eventType: string;
-    propertyMappings: IPropertyMapping[];
-    selfTransform? : ITransform[]; //used to describe self transformations that we want to make to strings
-    sourceTransform? : ITransform[]; //used to describe source transformations that we want to make
-    targetTransform? : ITransform[]; //used to describe target transformations that we want to make
-}
-
-export interface IConcurrentEventsConfig {
-    eventType: string; // the event type we are investigating
-    relevantEventsType: IRelevantEventsConfig[]; // possible causes we are considering
-    result: string; //resulting property we want to display for events (ex. Repair Jobs action)
-}
-
-export interface IConcurrentEvents extends FabricEventBase {
-    name?: string;
-    related: IConcurrentEvents[] // possibly related events now this could be recursive, i.e a node is down but that node down concurrent event would have its own info on whether it was due to a restart or a cluster upgrade
-    reasonForEvent: string;
-}
-
-export interface IRCAItem extends IConcurrentEvents {
-    // kind: string;
-    // eventInstanceId: string;
-    reasonForEvent: string;
-}
-
-export interface IVisEvent {
-    eventInstanceId: string;
-    visPresent: boolean;
-    visEvent: IConcurrentEvents;
-}
 
 export interface IEventStoreData<IVisPresentEvent, S> {
     eventsList: IVisPresentEvent;
@@ -250,104 +208,104 @@ export class EventStoreComponent implements OnInit, OnDestroy, OnChanges {
     */
     let inputEvents : IRCAItem[] = [];
     inputEvents.push(inputEvent);
-    return this.getSimultaneousEventsForEvent(RelatedEventsConfigs, inputEvents, parsedEvents);
+    return getSimultaneousEventsForEvent(RelatedEventsConfigs, inputEvents, parsedEvents);
   }
 
-  private getSimultaneousEventsForEvent(configs: IConcurrentEventsConfig[], inputEvents: IRCAItem[], events: IRCAItem[]) : IConcurrentEvents[] {
-        /*
-            Grab the events that occur concurrently with an inputted current event.
-        */
+  // private getSimultaneousEventsForEvent(configs: IConcurrentEventsConfig[], inputEvents: IRCAItem[], events: IRCAItem[]) : IConcurrentEvents[] {
+  //       /*
+  //           Grab the events that occur concurrently with an inputted current event.
+  //       */
 
-        let simulEvents : IConcurrentEvents[] = [];
-        let addedEvents : IRCAItem[] = [];
-        let action = "";
-        let parsed = "";
+  //       let simulEvents : IConcurrentEvents[] = [];
+  //       let addedEvents : IRCAItem[] = [];
+  //       let action = "";
+  //       let parsed = "";
 
-        // iterate through all the input events
-        inputEvents.forEach(inputEvent => {
-            // iterate through all configurations
-            configs.forEach(config => {
-                if (config.eventType == inputEvent.kind) {
-                    // iterate through all events to find relevant ones
-                    if(Utils.result(inputEvent, config.result)) {
-                        parsed = Utils.result(inputEvent, config.result);
-                        action = parsed;
-                    }
-                    inputEvent.reasonForEvent = action;
-                    config.relevantEventsType.forEach(relevantEventType => {
-                        if(relevantEventType.eventType == "self") {
-                            let propMaps = true;
-                            let mappings = relevantEventType.propertyMappings;
-                            mappings.forEach(mapping => {
-                                let sourceVal: any;
-                                let targetVal: any;
-                                sourceVal = Utils.result(inputEvent, mapping.sourceProperty);
-                                targetVal = mapping.targetProperty;
-                                if(targetVal === "true") {
-                                  targetVal = true;
-                                }else if(targetVal === "false") {
-                                  targetVal = false;
-                                }
-                                if (((sourceVal == null  || targetVal == null) || (sourceVal == undefined || targetVal == undefined)) || sourceVal.toString() !== targetVal.toString()) {
-                                    propMaps = false;
-                                }
-                            });
-                            if (propMaps) {
-                                if(relevantEventType.selfTransform) {
-                                    parsed = Transforms.getTransformations(relevantEventType.selfTransform, parsed);
-                                }
-                                if (!inputEvent.related) {
-                                    inputEvent.related = [];
-                                }
-                                inputEvent.related.push(
-                                    {
-                                        name: "self",
-                                        related: null
-                                    } as IConcurrentEvents);
-                                    action = parsed;
-                                    inputEvent.reasonForEvent = action;
-                            }
-                        }
-                        events.forEach(iterEvent => {
-                            if (relevantEventType.eventType == iterEvent.kind) {
-                                // see if each property mapping holds true
-                                let propMaps = true;
-                                let mappings = relevantEventType.propertyMappings;
-                                mappings.forEach(mapping => {
-                                    let sourceVal: any;
-                                    let targetVal: any;
-                                    sourceVal = Utils.result(inputEvent, mapping.sourceProperty);
-                                    if(relevantEventType.sourceTransform) {
-                                        sourceVal = Transforms.getTransformations(relevantEventType.sourceTransform, sourceVal);
-                                    }
-                                    targetVal = Utils.result(iterEvent, mapping.targetProperty);
-                                    if(relevantEventType.targetTransform) {
-                                        targetVal = Transforms.getTransformations(relevantEventType.targetTransform, targetVal);
-                                    }
-                                    if (((sourceVal == null  || targetVal == null) || (sourceVal == undefined || targetVal == undefined)) || sourceVal != targetVal) {
-                                        propMaps = false;
-                                    }
-                                });
+  //       // iterate through all the input events
+  //       inputEvents.forEach(inputEvent => {
+  //           // iterate through all configurations
+  //           configs.forEach(config => {
+  //               if (config.eventType == inputEvent.kind) {
+  //                   // iterate through all events to find relevant ones
+  //                   if(Utils.result(inputEvent, config.result)) {
+  //                       parsed = Utils.result(inputEvent, config.result);
+  //                       action = parsed;
+  //                   }
+  //                   inputEvent.reasonForEvent = action;
+  //                   config.relevantEventsType.forEach(relevantEventType => {
+  //                       if(relevantEventType.eventType == "self") {
+  //                           let propMaps = true;
+  //                           let mappings = relevantEventType.propertyMappings;
+  //                           mappings.forEach(mapping => {
+  //                               let sourceVal: any;
+  //                               let targetVal: any;
+  //                               sourceVal = Utils.result(inputEvent, mapping.sourceProperty);
+  //                               targetVal = mapping.targetProperty;
+  //                               if(targetVal === "true") {
+  //                                 targetVal = true;
+  //                               }else if(targetVal === "false") {
+  //                                 targetVal = false;
+  //                               }
+  //                               if (((sourceVal == null  || targetVal == null) || (sourceVal == undefined || targetVal == undefined)) || sourceVal.toString() !== targetVal.toString()) {
+  //                                   propMaps = false;
+  //                               }
+  //                           });
+  //                           if (propMaps) {
+  //                               if(relevantEventType.selfTransform) {
+  //                                   parsed = Transforms.getTransformations(relevantEventType.selfTransform, parsed);
+  //                               }
+  //                               if (!inputEvent.related) {
+  //                                   inputEvent.related = [];
+  //                               }
+  //                               inputEvent.related.push(
+  //                                   {
+  //                                       name: "self",
+  //                                       related: null
+  //                                   } as IConcurrentEvents);
+  //                                   action = parsed;
+  //                                   inputEvent.reasonForEvent = action;
+  //                           }
+  //                       }
+  //                       events.forEach(iterEvent => {
+  //                           if (relevantEventType.eventType == iterEvent.kind) {
+  //                               // see if each property mapping holds true
+  //                               let propMaps = true;
+  //                               let mappings = relevantEventType.propertyMappings;
+  //                               mappings.forEach(mapping => {
+  //                                   let sourceVal: any;
+  //                                   let targetVal: any;
+  //                                   sourceVal = Utils.result(inputEvent, mapping.sourceProperty);
+  //                                   if(relevantEventType.sourceTransform) {
+  //                                       sourceVal = Transforms.getTransformations(relevantEventType.sourceTransform, sourceVal);
+  //                                   }
+  //                                   targetVal = Utils.result(iterEvent, mapping.targetProperty);
+  //                                   if(relevantEventType.targetTransform) {
+  //                                       targetVal = Transforms.getTransformations(relevantEventType.targetTransform, targetVal);
+  //                                   }
+  //                                   if (((sourceVal == null  || targetVal == null) || (sourceVal == undefined || targetVal == undefined)) || sourceVal != targetVal) {
+  //                                       propMaps = false;
+  //                                   }
+  //                               });
 
-                                if (propMaps) {
-                                    if (!inputEvent.related)
-                                    {
-                                        inputEvent.related = [];
-                                    }
-                                    inputEvent.related.push(iterEvent);
-                                    addedEvents.push(iterEvent);
-                                }
-                            }
-                        });
-                    });
-                }
-            });
-            simulEvents.push(inputEvent);
-        });
+  //                               if (propMaps) {
+  //                                   if (!inputEvent.related)
+  //                                   {
+  //                                       inputEvent.related = [];
+  //                                   }
+  //                                   inputEvent.related.push(iterEvent);
+  //                                   addedEvents.push(iterEvent);
+  //                               }
+  //                           }
+  //                       });
+  //                   });
+  //               }
+  //           });
+  //           simulEvents.push(inputEvent);
+  //       });
 
-        if (addedEvents.length > 0) this.getSimultaneousEventsForEvent(configs, addedEvents, events);
-        return simulEvents;
-    }
+  //       if (addedEvents.length > 0) this.getSimultaneousEventsForEvent(configs, addedEvents, events);
+  //       return simulEvents;
+  //   }
 
 
     private getConcurrentEventsData() {

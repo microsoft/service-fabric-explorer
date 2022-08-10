@@ -1,4 +1,4 @@
-import { IConcurrentEventsConfig } from "src/app/modules/event-store/event-store/event-store.component";
+import { IConcurrentEventsConfig } from "./rcaEngine";
 
 const APE = [
   {

@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { IVisEvent } from 'src/app/Models/eventstore/rcaEngine';
 import { RelatedEventsConfigs } from 'src/app/Models/eventstore/RelatedEventsConfigs';
 import { Utils } from 'src/app/Utils/Utils';
-import { IConcurrentEvents, IVisEvent } from '../../event-store/event-store/event-store.component';
 
 @Component({
   selector: 'app-rca-summary',
@@ -12,7 +12,7 @@ export class RcaSummaryComponent implements OnInit {
 
   @Input() events: IVisEvent[] = [];
 
-  data;
+  data: Record<string, IVisEvent[]> = {};
   constructor() { }
 
   ngOnInit(): void {

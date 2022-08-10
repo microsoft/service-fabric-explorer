@@ -1,4 +1,4 @@
-import { ITransform } from "../modules/event-store/event-store/event-store.component";
+import { ITransform } from "../Models/eventstore/rcaEngine";
 
 export class Transforms {
 

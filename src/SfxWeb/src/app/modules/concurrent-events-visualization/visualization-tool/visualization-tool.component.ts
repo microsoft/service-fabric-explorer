@@ -1,5 +1,5 @@
 import { Component, OnInit, OnChanges, AfterViewInit, Input, ViewChild, ElementRef } from '@angular/core';
-import { EventStoreComponent, IConcurrentEvents } from '../../event-store/event-store/event-store.component';
+import { EventStoreComponent } from '../../event-store/event-store/event-store.component';
 import * as Highcharts from 'highcharts';
 import { chart, Chart, Options, SeriesOptionsType, SeriesSankeyNodesOptionsObject } from 'highcharts';
 
@@ -9,6 +9,7 @@ import HighchartsExporting from "highcharts/modules/exporting";
 import { DetailBaseComponent } from 'src/app/ViewModels/detail-table-base.component';
 import { ListColumnSetting } from 'src/app/Models/ListSettings';
 import { NodeEvent } from 'src/app/Models/eventstore/Events';
+import { IConcurrentEvents } from 'src/app/Models/eventstore/rcaEngine';
 
 HighchartsSankey(Highcharts);
 HighchartsOrganization(Highcharts);
