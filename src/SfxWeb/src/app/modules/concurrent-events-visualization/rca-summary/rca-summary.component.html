@@ -1,4 +1,4 @@
-<div class="detail-pane" style="display: flex; gap: 10px;">
+<div class="detail-pane" style="display: flex; gap: 10px; flex-wrap: wrap;">
     <div *ngFor="let item of data | keyvalue">
         <app-rca-overview [type]="item.key" [events]="item.value"></app-rca-overview>
     </div>

@@ -15,6 +15,9 @@ export class RcaOverviewComponent implements OnInit {
 
   @ViewChild('chart') private chartContainer: ElementRef;
   private chart: Chart;
+  private preGeneratedColors = ['#2f7ed8', '#0d233a', '#8bbc21', '#910000', '#1aadce',
+  '#492970', '#f28f43', '#77a1e5', '#a6c96a'];
+
 
   public options: Options = {
     chart: {
@@ -84,9 +87,6 @@ export class RcaOverviewComponent implements OnInit {
   ngOnInit(): void {
     const grouped = Object.entries(Utils.groupByFunc(this.events, item =>{
       if(item.visEvent?.related?.length > 0 && item.visEvent.related[0].name !== "self") {
-        // if(item.visEvent.related[0].kind === undefined) {
-        //   console.log(item)
-        // }
         return item.visEvent.related[0].kind;
       }else if(item.visEvent.reasonForEvent) {
         return item.visEvent.reasonForEvent ;
@@ -95,11 +95,11 @@ export class RcaOverviewComponent implements OnInit {
       }
     }));
     this.reasons = grouped.sort((a,b) => b[1].length - a[1].length).map(reason => {
-      this.colorKey[reason[0]] = this.colorKey[reason[0]] || Utils.randomColor();
-
+      this.colorKey[reason[0]] = this.colorKey[reason[0]] || this.preGeneratedColors.pop();
+      console.log(reason[1])
       return {
         displayText: reason[1].length.toString(),
-        copyTextValue: reason[0] + ' ' + reason[1].toString(),
+        copyTextValue: reason[0] + ' ' + reason[1].length.toString(),
         descriptionName: reason[0],
         displaySelector: true
       }

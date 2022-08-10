@@ -72,14 +72,14 @@ export class VisualizationToolComponent implements OnInit, OnChanges, AfterViewI
   }
 
   ngOnInit() {
-    console.log("Visualization Tool Created!");
+    // console.log("Visualization Tool Created!");
   }
 
   ngAfterViewInit(): void {
     this.visEvents = this.listSetting.eventStoreRef.visEventList.find(
       visEvent => visEvent.eventInstanceId == this.item.raw.eventInstanceId).visEvent;
     this.options.series = [this.traverse()];
-    this.chart = chart(this.container.nativeElement, this.options);    
+    this.chart = chart(this.container.nativeElement, this.options);
   }
 
   traverse(): SeriesOptionsType {
@@ -97,11 +97,11 @@ export class VisualizationToolComponent implements OnInit, OnChanges, AfterViewI
       borderColor: 'white',
     }
     // perform BFS to convert to organization chart
-    let queue = [];    
+    let queue = [];
     if (this.visEvents) {
-      queue = [this.visEvents];        
+      queue = [this.visEvents];
 
-      let levels = 0;      
+      let levels = 0;
       let fontPrefix = `<p style='font-size: ${this.nameSizePx}px; color: white;'>`
       let titlePrefix = `<p style='font-size: ${this.kindSizePx}px; color: white;'>`
       let maxHeight = 0;
@@ -114,8 +114,8 @@ export class VisualizationToolComponent implements OnInit, OnChanges, AfterViewI
               let newNodeComponent : SeriesSankeyNodesOptionsObject = {
                   id: fontPrefix + currEvent.eventInstanceId + "</p>",
                   title: titlePrefix + action + currEvent.kind + "</p>",
-                  layout: "hanging",                                    
-              }                          
+                  layout: "hanging",
+              }
 
               // root node should not be hanging - this messes up the diagram
               if (currSize == 1) {
@@ -123,22 +123,22 @@ export class VisualizationToolComponent implements OnInit, OnChanges, AfterViewI
               }
               config.nodes.push(newNodeComponent);
 
-              if (currEvent.related) {                  
-                  currEvent.related.forEach(relatedEvent => {    
-                    if (relatedEvent.name == "self") {                      
-                      config['data'].push([`${fontPrefix}${currEvent.eventInstanceId}</p>`, `${fontPrefix}${currEvent.eventInstanceId}</p>`]);                    
+              if (currEvent.related) {
+                  currEvent.related.forEach(relatedEvent => {
+                    if (relatedEvent.name == "self") {
+                      config['data'].push([`${fontPrefix}${currEvent.eventInstanceId}</p>`, `${fontPrefix}${currEvent.eventInstanceId}</p>`]);
                     } else {
                       config['data'].push([`${fontPrefix}${currEvent.eventInstanceId}</p>`, `${fontPrefix}${relatedEvent.eventInstanceId}</p>`]);
-                      queue.push(relatedEvent);                      
+                      queue.push(relatedEvent);
                     }
                   });
               }
-          }  
+          }
           levels++;
-      }    
+      }
 
       let colors = ["#8F0600", "#2E8100", "#6C007F", "#1A386D"];
-      for (let i = 0; i < levels; i++) {        
+      for (let i = 0; i < levels; i++) {
           let newLevelComponent = {
               level: i,
               color: colors[i]
@@ -149,7 +149,7 @@ export class VisualizationToolComponent implements OnInit, OnChanges, AfterViewI
     return config;
   }
 
-  ngOnChanges(): void {        
+  ngOnChanges(): void {
     if (this.chart) {
       this.chart.series[0].update(this.traverse());
     }
