@@ -1,11 +1,10 @@
-import { Component, OnInit, Input, OnDestroy } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy, OnChanges } from '@angular/core';
 import { ITimelineData, TimeLineGeneratorBase, parseEventsGenerically } from 'src/app/Models/eventstore/timelineGenerators';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { IOnDateChange } from '../double-slider/double-slider.component';
 import { Subject, Subscription, forkJoin, of } from 'rxjs';
 import { debounceTime, distinctUntilChanged, finalize, subscribeOn } from 'rxjs/operators';
 import { DataService } from 'src/app/services/data.service';
-import { hostViewClassName } from '@angular/compiler';
 import { DataGroup, DataItem, DataSet } from 'vis-timeline/standalone/esm';
 import { DataModelCollectionBase } from 'src/app/Models/DataModels/collections/CollectionBase';
 import { ListSettings } from 'src/app/Models/ListSettings';
@@ -26,6 +25,7 @@ export interface IEventStoreData<T extends DataModelCollectionBase<any>, S> {
     listSettings?: ListSettings;
     getEvents?(): S[];
     setDateWindow?(startDate: Date, endDate: Date): boolean;
+    timelineResolver?(id: string): boolean; //used to determine if the data contains a given event;
 }
 
 @Component({
@@ -33,7 +33,7 @@ export interface IEventStoreData<T extends DataModelCollectionBase<any>, S> {
     templateUrl: './event-store.component.html',
     styleUrls: ['./event-store.component.scss']
 })
-export class EventStoreComponent implements OnInit, OnDestroy {
+export class EventStoreComponent implements OnInit, OnDestroy, OnChanges {
 
   constructor(public dataService: DataService, private telemService: TelemetryService) { }
 
@@ -69,6 +69,8 @@ export class EventStoreComponent implements OnInit, OnDestroy {
   public startDate: Date;
   public endDate: Date;
 
+  public activeTab: string;
+
   ngOnInit() {
       this.pshowAllEvents = this.checkAllOption();
       this.showCorrelatedBtn = !this.pshowAllEvents;
@@ -83,8 +85,26 @@ export class EventStoreComponent implements OnInit, OnDestroy {
           });
   }
 
+  ngOnChanges(): void {
+    this.setTimelineData();
+  }
+
   ngOnDestroy() {
       this.debouncerHandlerSubscription.unsubscribe();
+  }
+
+  public setSearch(search?: string) {
+    if (search) {
+      const item = this.timeLineEventsData.items.get(search);
+      const id = (item.id as string).split('---')[1];
+      this.listEventStoreData.forEach((list, i) => {
+        if (list.timelineResolver(id)) {
+          this.activeTab = list.displayName
+          setTimeout(() =>
+            list.listSettings.search = id, 1)
+        }
+      })
+    }
   }
 
   public checkAllOption(): boolean {

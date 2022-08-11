@@ -97,6 +97,17 @@ export class Utils {
         return value;
     }
 
+    public static result2(item: any, propertyPath: string) {
+      let value = item;
+      if (propertyPath !== null)
+      {
+          propertyPath.split('.').forEach(path => {
+            value = value[path];
+          });
+      }
+      return value;
+  }
+
     /**
      * Check if a giving object represents a Badge object
      */

@@ -1,15 +1,27 @@
-<a class="dashboard-wrapper" [routerLink]="data.viewPath ? data.viewPath : []">
-    <div class="dashboard" [ngClass]="{'has-view-path' : data.viewPath, 'dashboard-large': data.largeTile,  'dashboard-small': !data.largeTile}"  role="group">
-        <div class="dashboard-donut-chart chart-wrapper">
-            <div #chart></div>            
+<ng-template #internal>
+  <div class="dashboard-wrapper">
+    <div class="dashboard"
+      [ngClass]="{'has-view-path' : data.viewPath, 'dashboard-large': data.largeTile,  'dashboard-small': !data.largeTile}"
+      role="group">
+      <div class="dashboard-donut-chart chart-wrapper">
+        <div #chart></div>
+      </div>
+      <div class="dashboard-datapoints">
+        <div class="dashboard-datapoint" *ngFor="let dataPoint of data.dataPoints; let i = index">
+          <div class="dashboard-datapoint-leftbar" [ngClass]="dataPoint.state.badgeClass"></div>
+          <div class="dashboard-datapoint-title">{{dataPoint.title}}</div>
+          <div class="dashboard-datapoint-number">{{dataPoint.count}}</div>
         </div>
-        <div class="dashboard-datapoints">
-            <div class="dashboard-datapoint" *ngFor="let dataPoint of data.dataPoints; let i = index">
-                <div class="dashboard-datapoint-leftbar" [ngClass]="dataPoint.state.badgeClass"></div>
-                <div class="dashboard-datapoint-title">{{dataPoint.title}}</div>
-                <div class="dashboard-datapoint-number">{{dataPoint.count}}</div>
-            </div>
-        </div>
+      </div>
     </div>
-</a>
+  </div>
+</ng-template>
 
+<ng-template #default>
+  <div [attr.aria-label]="data.acessibilityText" tabindex="0" style="height: 100%;">
+    <ng-container *ngTemplateOutlet="internal"></ng-container>
+  </div>
+</ng-template>
+<a *ngIf="data.viewPath; else default" [routerLink]="data.viewPath" [attr.aria-label]="data.acessibilityText">
+  <ng-container *ngTemplateOutlet="internal"></ng-container>
+</a>

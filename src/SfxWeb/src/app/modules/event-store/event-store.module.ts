@@ -7,7 +7,7 @@ import { DetailListTemplatesModule } from '../detail-list-templates/detail-list-
 import { FullDescriptionComponent } from './full-description/full-description.component';
 import { RowDisplayComponent } from './row-display/row-display.component';
 import { FormsModule } from '@angular/forms';
-import { NgbButtonsModule, NgbDropdownModule, NgbModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDropdownModule, NgbModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { OptionPickerComponent } from './option-picker/option-picker.component';
 
@@ -18,7 +18,6 @@ import { OptionPickerComponent } from './option-picker/option-picker.component';
     CommonModule,
     DetailListTemplatesModule,
     FormsModule,
-    NgbButtonsModule,
     NgbDropdownModule,
     SharedModule,
     NgbModule,

@@ -39,6 +39,7 @@ import { SettingsService } from './settings.service';
 import { RepairTask } from '../Models/DataModels/repairTask';
 import { ApplicationTimelineGenerator, ClusterTimelineGenerator, NodeTimelineGenerator, PartitionTimelineGenerator, RepairTaskTimelineGenerator } from '../Models/eventstore/timelineGenerators';
 import groupBy from 'lodash/groupBy';
+import { StandaloneIntegrationService } from './standalone-integration.service';
 
 @Injectable({
   providedIn: 'root'
@@ -66,7 +67,8 @@ export class DataService {
     public warnings: StatusWarningService,
     public storage: StorageService,
     public restClient: RestClientService,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    public standalone: StandaloneIntegrationService,
   ) {
     this.clusterUpgradeProgress = new ClusterUpgradeProgress(this);
     this.clusterManifest = new ClusterManifest(this);
@@ -77,6 +79,11 @@ export class DataService {
     this.systemApp = new SystemApplication(this);
     this.backupPolicies = new BackupPolicyCollection(this);
     this.repairCollection = new RepairTaskCollection(this);
+
+    if(standalone.isStandalone()) {
+      this.clusterNameMetadata = standalone.clusterUrl;
+      this.readOnlyHeader = !!standalone.integrationConfig.isReadOnlyMode;
+    }
    }
 
   public actionsEnabled(): boolean {
@@ -89,6 +96,21 @@ export class DataService {
 
   public isAdvancedModeEnabled(): boolean {
     return this.storage.getValueBoolean(Constants.AdvancedModeKey, false);
+  }
+
+  public async versionCheck(minVersion: string): Promise<boolean> {
+    const splitVersion = minVersion.split(".");
+    const upgradeInfo = await this.getClusterUpgradeProgress().toPromise();
+    const splitClusterVersion = upgradeInfo.raw.CodeVersion.split(".");
+
+    let higherVersion = true;
+    for(let i = 0; i < splitVersion.length; i++) {
+      if(+splitVersion[i] > +splitClusterVersion[i]) {
+        higherVersion = false;
+        break;
+      }
+    }
+    return higherVersion;
   }
 
   public getClusterHealth(
@@ -305,6 +327,8 @@ export class DataService {
         data.listSettings = data.eventsList.settings;
         data.getEvents = () => data.eventsList.collection.map(event => event.raw);
         data.setDateWindow = (startDate: Date, endDate: Date) => data.eventsList.setDateWindow(startDate, endDate);
+        data.timelineResolver = (id: string) => data.eventsList.collection.some(item => item.raw.eventInstanceId === id);
+        return data;
     }
 
     public getRepairTasksData(settings: SettingsService): IEventStoreData<RepairTaskCollection, RepairTask>{
@@ -313,7 +337,10 @@ export class DataService {
             timelineGenerator: new RepairTaskTimelineGenerator(),
             displayName: 'Repair Tasks',
             listSettings: settings.getNewOrExistingCompletedRepairTaskListSettings(),
-            getEvents: () => this.repairCollection.collection
+            getEvents: () => this.repairCollection.collection,
+            timelineResolver:  (id: string) => {
+              return this.repairCollection.collection.some(task => task.raw.TaskId === id);
+            }
         };
     }
 

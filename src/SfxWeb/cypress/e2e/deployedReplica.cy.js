@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-import { addDefaultFixtures, apiUrl, checkTableSize } from './util';
+import { addDefaultFixtures, apiUrl, checkTableSize } from './util.cy';
 
 const nodeName = "_nt_2"
 const appName = "VisualObjectsApplicationType";
