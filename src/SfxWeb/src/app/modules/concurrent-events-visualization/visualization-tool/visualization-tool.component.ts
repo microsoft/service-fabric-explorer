@@ -98,7 +98,7 @@ export class VisualizationToolComponent implements OnInit, OnChanges, AfterViewI
       borderColor: 'white',
     }
     // perform BFS to convert to organization chart
-    let queue = [];
+    let queue: IConcurrentEvents[] = [];
     if (this.visEvents) {
       queue = [this.visEvents];
 
@@ -124,15 +124,19 @@ export class VisualizationToolComponent implements OnInit, OnChanges, AfterViewI
               }
               config.nodes.push(newNodeComponent);
 
-              if (currEvent.related) {
-                  currEvent.related.forEach(relatedEvent => {
-                    if (relatedEvent.name == "self") {
-                      config['data'].push([`${fontPrefix}${currEvent.eventInstanceId}</p>`, `${fontPrefix}${currEvent.eventInstanceId}</p>`]);
-                    } else {
-                      config['data'].push([`${fontPrefix}${currEvent.eventInstanceId}</p>`, `${fontPrefix}${relatedEvent.eventInstanceId}</p>`]);
-                      queue.push(relatedEvent);
-                    }
+              if (currEvent.reason) {
+                if (currEvent.reason.name == "self") {
+                  config['data'].push({
+                    from: `${fontPrefix}${currEvent.eventInstanceId}</p>`,
+                    to: `${fontPrefix}${currEvent.eventInstanceId}</p>`
                   });
+                } else {
+                  config['data'].push({
+                    from: `${fontPrefix}${currEvent.eventInstanceId}</p>`,
+                    to: `${fontPrefix}${currEvent.reason.eventInstanceId}</p>`
+                  });
+                  queue.push(currEvent.reason);
+                }
               }
           }
           levels++;

@@ -1,11 +1,11 @@
-<div style="width: fit-content; display: flex;" class="essen-pane">
+<div style="width: fit-content; display: flex; align-items: center;" class="essen-pane">
     <div>
         <div #chart></div>
     </div>
     <div>
         <h5>{{type}} - {{events.length}} Events</h5>
         <app-essential-item *ngFor="let item of reasons; let l = last" [item]="item" [underline]="false">
-          <div class="flex-center" style="gap: 5px;    justify-content: flex-end;">
+          <div class="flex-center" style="gap: 5px; justify-content: flex-end;">
             {{item.displayText}}
             <div class="legend" [ngStyle]="{'background-color': colorKey[item.descriptionName]}"></div>
           </div>

@@ -326,7 +326,7 @@ export class EventStoreComponent implements OnInit, OnDestroy, OnChanges {
     for (let parsedEvent of parsedEvents) {
         let rootEvent = this.testEvent(parsedEvent, parsedEvents)[0];
         let visPresent = false;
-        if (rootEvent.related) {
+        if (rootEvent.reason) {
             visPresent = true;
         }
         let visEventItem : IVisEvent = {

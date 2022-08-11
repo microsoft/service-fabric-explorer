@@ -86,8 +86,8 @@ export class RcaOverviewComponent implements OnInit {
 
   ngOnInit(): void {
     const grouped = Object.entries(Utils.groupByFunc(this.events, item =>{
-      if(item.visEvent?.related?.length > 0 && item.visEvent.related[0].name !== "self") {
-        return item.visEvent.related[0].kind;
+      if(item.visEvent?.reason && item.visEvent.reason.name !== "self") {
+        return item.visEvent.reason.kind;
       }else if(item.visEvent.reasonForEvent) {
         return item.visEvent.reasonForEvent ;
       }else{

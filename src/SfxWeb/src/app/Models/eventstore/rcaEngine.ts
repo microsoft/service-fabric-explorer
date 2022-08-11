@@ -28,7 +28,7 @@ export interface IConcurrentEventsConfig {
 
 export interface IConcurrentEvents extends FabricEventBase {
   name?: string;
-  related: IConcurrentEvents[] // possibly related events now this could be recursive, i.e a node is down but that node down concurrent event would have its own info on whether it was due to a restart or a cluster upgrade
+  reason: IConcurrentEvents // possibly related events now this could be recursive, i.e a node is down but that node down concurrent event would have its own info on whether it was due to a restart or a cluster upgrade
   reasonForEvent: string;
 }
 
@@ -70,26 +70,19 @@ export const getSimultaneousEventsForEvent = (configs: IConcurrentEventsConfig[]
               let sourceVal = Utils.result(inputEvent, mapping.sourceProperty);
               let targetVal = mapping.targetProperty;
 
-              if(!Utils.isDefined(sourceVal) || !Utils.isDefined(targetVal) || sourceVal !== targetVal) {
+              if (!Utils.isDefined(sourceVal) || !Utils.isDefined(targetVal) || sourceVal !== targetVal) {
                 propMaps = false;
               }
-
-              // if (((sourceVal == null || targetVal == null) || (sourceVal == undefined || targetVal == undefined)) || sourceVal.toString() !== targetVal.toString()) {
-              //   propMaps = false;
-              // }
             });
             if (propMaps) {
               if (relevantEventType.selfTransform) {
                 parsed = Transforms.getTransformations(relevantEventType.selfTransform, parsed);
               }
-              if (!inputEvent.related) {
-                inputEvent.related = [];
-              }
-              inputEvent.related.push(
-                {
-                  name: "self",
-                  related: null
-                } as IConcurrentEvents);
+
+              inputEvent.reason = {
+                name: "self",
+                reason: null
+              } as IConcurrentEvents;
               action = parsed;
               inputEvent.reasonForEvent = action;
             }
@@ -110,20 +103,13 @@ export const getSimultaneousEventsForEvent = (configs: IConcurrentEventsConfig[]
                   targetVal = Transforms.getTransformations(relevantEventType.targetTransform, targetVal);
                 }
 
-                if(!Utils.isDefined(sourceVal) || !Utils.isDefined(targetVal) || sourceVal !== targetVal) {
+                if (!Utils.isDefined(sourceVal) || !Utils.isDefined(targetVal) || sourceVal !== targetVal) {
                   valid = false;
                 }
-
-                // if (((sourceVal == null || targetVal == null) || (sourceVal == undefined || targetVal == undefined)) || sourceVal != targetVal) {
-                //   propMaps = false;
-                // }
               });
 
               if (valid) {
-                if (!inputEvent.related) {
-                  inputEvent.related = [];
-                }
-                inputEvent.related.push(iterEvent);
+                inputEvent.reason = iterEvent;
                 addedEvents.push(iterEvent);
               }
             }
