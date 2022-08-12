@@ -31,6 +31,7 @@ export interface ITimelineData {
     start?: Date;
     end?: Date;
     potentiallyMissingEvents?: boolean;
+    // allowClustering?: boolean;
 }
 
 export interface ITimelineItem extends DataItem {

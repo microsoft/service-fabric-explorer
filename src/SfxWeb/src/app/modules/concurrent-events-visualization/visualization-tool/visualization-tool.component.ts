@@ -126,12 +126,12 @@ export class VisualizationToolComponent implements OnInit, OnChanges, AfterViewI
 
               if (currEvent.reason) {
                 if (currEvent.reason.name == "self") {
-                  config['data'].push({
+                  config.data.push({
                     from: `${fontPrefix}${currEvent.eventInstanceId}</p>`,
                     to: `${fontPrefix}${currEvent.eventInstanceId}</p>`
                   });
                 } else {
-                  config['data'].push({
+                  config.data.push({
                     from: `${fontPrefix}${currEvent.eventInstanceId}</p>`,
                     to: `${fontPrefix}${currEvent.reason.eventInstanceId}</p>`
                   });

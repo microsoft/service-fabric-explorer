@@ -47,16 +47,20 @@ export class EventStoreTimelineComponent implements AfterViewInit, OnChanges {
     this.timeline = new Timeline(this.container.nativeElement, items, groups, {
         locale: 'en_US',
         xss: {
-          disabled: false,
+          disabled: true,
           filterOptions: {
             whiteList: {
-              "div": ['class', 'inner-tooltip', 'white-space', 'margin-left'],
+              "div": ['class', 'inner-tooltip', 'white-space', 'margin-left', 'color'],
               "table": [],
               "tbody": [],
               "tr": [],
               "td": ['class', 'nested-row', 'margin-bottom'],
               "b": [],
               "br": []
+            },
+            css: {
+              'color': true,
+              'background-color': true
             }
           }
         }
@@ -128,22 +132,40 @@ export class EventStoreTimelineComponent implements AfterViewInit, OnChanges {
                 items: events.items
             });
 
-            this.timeline.setOptions({
-                selectable: false,
-                margin: {
-                    item: {
-                        horizontal: -1 // this makes it so items dont stack up when zoomed out too far.,
-                    }
-                },
-                tooltip: {
-                    overflowMethod: 'flip'
-                }, stack: true,
-                stackSubgroups: true,
-                maxHeight: '700px',
-                verticalScroll: true,
-                width: '95%',
-                zoomMin: this.firstEventsSet ? 10800000 : 60000
-            });
+            const options = {
+              // groupOrder: "content", // groupOrder can be a property name or a sorting function,
+              selectable: false,
+              // template: (itemData, element, data) => {
+              //   if (data.isCluster) {
+              //     return `<span class="cluster-header">Cluster</span><div>containg ${data.items.length} items </div>`;
+              //   } else {
+              //     return `<div>${data.content}</div>`;
+              //   }
+              // },
+              margin: {
+                  item: {
+                      horizontal: -1 // this makes it so items dont stack up when zoomed out too far.,
+                  }
+              },
+              tooltip: {
+                overflowMethod: "flip" as any
+              },
+              stack: true,
+              stackSubgroups: true,
+              maxHeight: '700px',
+              verticalScroll: true,
+              width: '95%',
+              zoomMin: this.firstEventsSet ? 10800000 : 60000,
+              // cluster:  {
+              //     titleTemplate:
+              //       "Cluster containing {count} events. Zoom in to see the individual events.",
+              //     showStipes: true,
+              //     clusterCriteria: () => true
+              // }
+          }
+          console.log(options)
+            this.timeline.setOptions(options);
+            console.log(this.timeline)
 
             if (this.fitOnDataChange) {
                 this.timeline.fit();
