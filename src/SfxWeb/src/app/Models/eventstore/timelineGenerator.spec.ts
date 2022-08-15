@@ -7,8 +7,8 @@ describe('TimelineGenerators', () => {
     const startDate = new Date('2020-04-29T01:39:55Z');
     const endDate  = new Date('2020-05-06T01:39:55Z');
 
-    const id = '29dd383d-fdd4-4499-8e69-b7b40de04bd2Node test_node down' + nodeInstanceId;
-    const id2 = "29dd383d-fdd4-4499-8e69-b7b40de04bd3Node test_node down" + nodeInstanceId;
+    const id = '---29dd383d-fdd4-4499-8e69-b7b40de04bd2';
+    const id2 = "---29dd383d-fdd4-4499-8e69-b7b40de04bd3";
     const groupId = 'Node Down';
     describe('Node generator', () => {
         const generator = new NodeTimelineGenerator();
@@ -44,9 +44,11 @@ describe('TimelineGenerators', () => {
         fit('node started down and goes up', () => {
             const data = [upEvent];
             const events = generator.consume(data, startDate, endDate);
+
+            const someId = '0' + id2;
             expect(events.items.length).toBe(1);
-            expect(events.items.get(id2)).toEqual({
-                id: id2,
+            expect(events.items.get(someId)).toEqual({
+                id: someId,
                 content: 'Node test_node down',
                 start: '2020-05-01T01:39:55Z',
                 end: '2020-05-09T17:46:39.2458955Z',
@@ -68,9 +70,11 @@ describe('TimelineGenerators', () => {
             const data = [downEvent];
             const events = generator.consume(data, startDate, endDate);
 
+            const someId = '0' + id;
+
             expect(events.items.length).toBe(1);
-            expect(events.items.get(id)).toEqual({
-                id,
+            expect(events.items.get(someId)).toEqual({
+                id: someId,
                 content: 'Node test_node down',
                 start: downEvent.timeStamp,
                 end: endDate.toISOString(),
@@ -91,10 +95,11 @@ describe('TimelineGenerators', () => {
         fit('node goes down and up', () => {
             const data = [upEvent, downEvent];
             const events = generator.consume(data, startDate, endDate);
+            const someId = '1' + id;
 
             expect(events.items.length).toBe(1);
-            expect(events.items.get(id)).toEqual({
-                id,
+            expect(events.items.get(someId)).toEqual({
+                id: someId,
                 content: 'Node test_node down',
                 start: downEvent.timeStamp,
                 end: upEvent.timeStamp,
@@ -148,11 +153,13 @@ describe('TimelineGenerators', () => {
 
             secondUpEvent.fillFromJSON(raw);
 
+
             const data = [upEvent, downEvent, secondUpEvent];
             const events = generator.consume(data, startDate, endDate);
+
             expect(events.items.length).toBe(2);
-            expect(events.items.get(id)).toEqual({
-                id,
+            expect(events.items.get('2' + id)).toEqual({
+                id: '2' + id,
                 content: 'Node test_node down',
                 start: downEvent.timeStamp,
                 end: upEvent.timeStamp,
@@ -164,8 +171,11 @@ describe('TimelineGenerators', () => {
                 subgroup: 'stack'
             });
 
-            expect(events.items.get(instanceId + 'Node test_node down' + nodeInstanceId)).toEqual({
-                id: instanceId + 'Node test_node down' + nodeInstanceId,
+
+            const someId = "2---test";
+
+            expect(events.items.get(someId)).toEqual({
+                id: someId,
                 content: 'Node test_node down',
                 start: lastNodeUpAt2,
                 end: timeStamp,
@@ -349,7 +359,7 @@ describe('TimelineGenerators', () => {
 
             const events = generator.consume(data, startDate, endDateRange);
             const content = "Node test_node down and removed from the cluster";
-            const itemId = "29dd383d-fdd4-4499-8e69-b7b40de04bd3" + content + nodeInstanceId;
+            const itemId = "1" + id2;
 
             expect(events.items.length).toBe(2);
             expect(events.groups.length).toBe(2);
@@ -441,12 +451,11 @@ describe('TimelineGenerators', () => {
 
       const data = [end, startUpgrade];
       const events = generator.consume(data, startDate, endDate);
-      events.items.forEach(item => console.log(item))
       const content = "Upgrade rolling forward to 25.0.0";
 
       expect(events.items.length).toBe(1);
-      expect(events.items.get(EventInstanceId + content)).toEqual({
-        "id":  EventInstanceId + content,
+      expect(events.items.get('0---' + EventInstanceId)).toEqual({
+        "id":  '0---' + EventInstanceId,
         content,
         "start": "2022-06-02T16:49:58.656Z",
         "end": "2022-06-02T16:51:55.6741761Z",

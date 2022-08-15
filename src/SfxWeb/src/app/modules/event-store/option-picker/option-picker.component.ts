@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, Input, OnChanges } from '@angular/core';
 import { DataService } from 'src/app/services/data.service';
 import { SettingsService } from 'src/app/services/settings.service';
 import { IEventStoreData } from '../event-store/event-store.component';
@@ -20,7 +20,7 @@ export interface IOptionConfig{
   templateUrl: './option-picker.component.html',
   styleUrls: ['./option-picker.component.scss']
 })
-export class OptionPickerComponent implements OnInit {
+export class OptionPickerComponent implements OnChanges {
   @Input() optionsConfig: IOptionConfig;
   @Input() listEventStoreData: IEventStoreData<any, any>[];
   @Output() selectedOption = new EventEmitter<IOptionData>();
@@ -29,17 +29,20 @@ export class OptionPickerComponent implements OnInit {
 
   constructor(public dataService: DataService, public settings: SettingsService) {}
 
-  ngOnInit(): void {
-    console.log(this.listEventStoreData);
+  ngOnChanges(): void {
     if (this.optionsConfig.enableCluster) {
       const cluster = this.dataService.getClusterEventData();
-      this.options.push(cluster);
+      if(!this.options.some(option => option.displayName === cluster.displayName)) {
+        this.options.push(cluster);
+      }
       this.checkedStates[cluster.displayName] = this.listEventStoreData.some(ESD => ESD.displayName === cluster.displayName);
     }
 
     if (this.optionsConfig.enableNodes) {
       const nodes = this.dataService.getNodeEventData();
-      this.options.push(nodes);
+      if(!this.options.some(option => option.displayName === nodes.displayName)) {
+        this.options.push(nodes);
+      }
       this.checkedStates[nodes.displayName] = this.listEventStoreData.some(ESD => ESD.displayName === nodes.displayName);
     }
 
@@ -48,13 +51,14 @@ export class OptionPickerComponent implements OnInit {
         if (this.dataService.clusterManifest.isRepairManagerEnabled) {
           this.dataService.repairCollection.ensureInitialized().subscribe(() => {
             const repairTasks = this.dataService.getRepairTasksData(this.settings);
-            this.options.push(repairTasks);
+            if(!this.options.some(option => option.displayName === repairTasks.displayName)) {
+              this.options.push(repairTasks);
+            }
             this.checkedStates[repairTasks.displayName] = this.listEventStoreData.some(ESD => ESD.displayName === repairTasks.displayName);
           });
         }
       });
     }
-    console.log(this.checkedStates)
   }
 
   emitData(data: IEventStoreData<any, any>, option: any) {
