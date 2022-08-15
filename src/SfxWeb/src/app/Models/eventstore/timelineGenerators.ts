@@ -26,8 +26,8 @@ import { RepairTask } from 'src/app/Models/DataModels/repairTask';
     */
 
 export interface ITimelineData {
-    groups: DataSet<DataGroup>;
-    items: DataSet<ITimelineItem>;
+    groups?: DataSet<DataGroup>;
+    items?: DataSet<ITimelineItem>;
     start?: Date;
     end?: Date;
     potentiallyMissingEvents?: boolean;
@@ -211,28 +211,6 @@ export class EventStoreUtils {
 export abstract class TimeLineGeneratorBase<T> {
     consume(events: T[], startOfRange: Date, endOfRange: Date): ITimelineData {
          throw new Error('NotImplementedError');
-    }
-
-    checkOverlappingTime(inputEvent: DataItem, iterEvent: DataItem) : boolean {
-        let currDate = new Date(inputEvent.start);
-        if (iterEvent.start) {
-            let startDate = new Date(iterEvent.start);
-            if (iterEvent.end) {
-                let endDate = new Date(iterEvent.end);
-                if (startDate <= currDate && currDate <= endDate) {
-                    // add new concurrent event
-                    return true;
-                }
-            }
-            // this time window will be configurable, used for instantaneous current events
-            let timeWindowInMs = 10000 * 1000;
-            let start = new Date(currDate.getTime() - timeWindowInMs).toISOString();
-            let end = new Date(currDate.getTime() + timeWindowInMs).toISOString();
-            if (start <= iterEvent.start && iterEvent.start <= end) {
-                return true;
-            }
-        }
-        return false;
     }
 
     generateTimeLineData(events: T[], startOfRange?: Date, endOfRange?: Date, nestedGroupLabel?: string): ITimelineData {

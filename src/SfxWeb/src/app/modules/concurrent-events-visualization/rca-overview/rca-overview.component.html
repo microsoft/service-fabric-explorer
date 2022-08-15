@@ -1,18 +1,19 @@
-<div style="width: fit-content; display: flex; align-items: center;" class="essen-pane">
+<div style="flex: 1;" class="essen-pane">
+  <div style="display: flex; align-items: center;">
     <div>
-        <div #chart></div>
+      <div #chart></div>
     </div>
     <div>
-        <h5>{{type}} - {{events.length}} Events</h5>
-        <app-essential-item *ngFor="let item of reasons; let l = last" [item]="item" [underline]="false">
-          <div class="flex-center" style="gap: 5px; justify-content: flex-end;">
-            {{item.displayText}}
-            <div class="legend" [ngStyle]="{'background-color': colorKey[item.descriptionName]}"></div>
-          </div>
-        </app-essential-item>
-        <!-- <div *ngIf="timelineData">
-          <app-event-store-timeline [events]="timelineData"></app-event-store-timeline>
-
-        </div> -->
+      <h5>{{type}} - {{events.length}} Events</h5>
+      <app-essential-item *ngFor="let item of reasons; let l = last" [item]="item" [underline]="false">
+        <div class="flex-center" style="gap: 5px; justify-content: flex-end;">
+          {{item.displayText}}
+          <div class="legend" [ngStyle]="{'background-color': colorKey[item.descriptionName]}"></div>
+        </div>
+      </app-essential-item>
     </div>
+  </div>
+  <div *ngIf="timelineData">
+    <app-event-store-timeline [events]="timelineData"></app-event-store-timeline>
+  </div>
 </div>

@@ -2,7 +2,7 @@ import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { Data } from '@angular/router';
 import { Chart, Options, chart, PointOptionsObject, SeriesPieOptions } from 'highcharts';
 import { IVisEvent } from 'src/app/Models/eventstore/rcaEngine';
-import { ITimelineData, ITimelineItem } from 'src/app/Models/eventstore/timelineGenerators';
+import { EventStoreUtils, ITimelineData, ITimelineItem } from 'src/app/Models/eventstore/timelineGenerators';
 import { Utils } from 'src/app/Utils/Utils';
 import { DataGroup, DataItem, DataSet, IdType } from 'vis-timeline/standalone/esm';
 import { IEssentialListItem } from '../../charts/essential-health-tile/essential-health-tile.component';
@@ -100,7 +100,6 @@ export class RcaOverviewComponent implements OnInit {
     }));
     this.reasons = grouped.sort((a,b) => b[1].length - a[1].length).map(reason => {
       this.colorKey[reason[0]] = this.colorKey[reason[0]] || this.preGeneratedColors.pop();
-      console.log(reason[1])
       return {
         displayText: reason[1].length.toString(),
         copyTextValue: reason[0] + ' ' + reason[1].length.toString(),
@@ -109,38 +108,33 @@ export class RcaOverviewComponent implements OnInit {
       }
     })
 
-  //   const items = new DataSet<DataItem>();
-  //   grouped.forEach(group => {
-  //     group[1].forEach(item => {
-  //       const timelineItem = {
-  //         id: item.eventInstanceId,
-  //         content: '<div>test</div>',
-  //         start: item.visEvent.timeStamp,
-  //         // end: item.visEvent.timeStamp,
-  //         // kind: 'test',
-  //         group: 'group',
-  //         // type: 'point',
-  //         // subgroup: 'noStack',
-  //         width: 10,
-  //         // style: `background-color:${this.colorKey[group[0]]}`
-  //       };
-  //       console.log(timelineItem)
-  //       items.add(timelineItem)
-  //     })
-  //   })
-
-  //   const groups = new DataSet<DataGroup>([
-  //     {id: "group", content: "timeline"}
-  // ]);
+    const items = new DataSet<DataItem>();
+    const groups = new DataSet<DataGroup>();
+    grouped.forEach((group, index) => {
+      groups.add(
+        {id: group[0], content: `<div style="background-color:${this.colorKey[group[0]]}; width: 15px; height: 15px; border-radius: 50px"></div>`},
+      )
+      group[1].forEach(item => {
+        const timelineItem = {
+          id: item.eventInstanceId,
+          content: '',
+          start: item.visEvent.timeStamp,
+          group: group[0],
+          type: 'point',
+          color: this.colorKey[group[0]],
+          title: EventStoreUtils.tooltipFormat(item.visEvent.eventProperties, item.eventInstanceId, item.visEvent.timeStamp)
+        };
+        items.add(timelineItem)
+      })
+    })
 
 
-  //   this.timelineData = {
-  //     groups,
-  //     items: items as any,
-  //     allowClustering: true
-  //   }
-  //   console.log(this.reasons)
-  //   console.log(this.timelineData)
+    this.timelineData = {
+      groups,
+      items: items as any,
+      // allowClustering: true
+    }
+
   }
 
   ngOnChanges(): void {

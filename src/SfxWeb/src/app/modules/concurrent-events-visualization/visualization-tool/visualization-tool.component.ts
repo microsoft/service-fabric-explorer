@@ -2,10 +2,8 @@ import { Component, OnInit, OnChanges, AfterViewInit, Input, ViewChild, ElementR
 import { EventStoreComponent } from '../../event-store/event-store/event-store.component';
 import * as Highcharts from 'highcharts';
 import { chart, Chart, Options, SeriesOptionsType, SeriesSankeyNodesOptionsObject } from 'highcharts';
-
 import HighchartsSankey from "highcharts/modules/sankey";
 import HighchartsOrganization from "highcharts/modules/organization";
-import HighchartsExporting from "highcharts/modules/exporting";
 import { DetailBaseComponent } from 'src/app/ViewModels/detail-table-base.component';
 import { ListColumnSetting } from 'src/app/Models/ListSettings';
 import { NodeEvent } from 'src/app/Models/eventstore/Events';
@@ -13,7 +11,6 @@ import { IConcurrentEvents } from 'src/app/Models/eventstore/rcaEngine';
 
 HighchartsSankey(Highcharts);
 HighchartsOrganization(Highcharts);
-HighchartsExporting(Highcharts);
 
 export interface IEventStoreRef extends ListColumnSetting {
   eventStoreRef: EventStoreComponent;

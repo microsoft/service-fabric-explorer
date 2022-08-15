@@ -16,6 +16,16 @@
   color: var(--font-primary-color);
   font-family: monospace;
 }
+
+.vis-item-content {
+  padding: 0px !important;
+  border: 0px solid !important;
+  border-radius: 0px !important;
+  >:first-child {
+    padding: 5px;
+  }
+}
+
 .vis-item.vis-dot {
   border-width: 10px;
   border-radius: 10px;
@@ -142,6 +152,7 @@
 
   .nested-row {
     display: flex;
+    white-space: pre-wrap;
 
     .spacer-wrapper {
       margin-right: 4px;
