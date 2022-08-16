@@ -86,7 +86,7 @@ export class InfrastructureCollection extends DataModelCollectionBase<Infrastruc
         counter.add(node.raw.Type);
       })
 
-      const nodetypesWithoutEnoughNodes = this.collection.map(is => InfrastructureCollection.stripPrefix(is.name)).filter(is => counter.entries().find(count => count.key === is)?.value || 0 < 5);
+      const nodetypesWithoutEnoughNodes = this.collection.map(is => InfrastructureCollection.stripPrefix(is.name)).filter(is => (counter.entries().find(count => count.key === is)?.value || 0) < 5);
 
       if (nodetypesWithoutEnoughNodes.length > 0) {
         this.data.warnings.addOrUpdateNotification({
@@ -98,6 +98,8 @@ export class InfrastructureCollection extends DataModelCollectionBase<Infrastruc
           link: 'https://docs.microsoft.com/en-us/azure/service-fabric/service-fabric-cluster-capacity#durability-characteristics-of-the-cluster',
           linkText: 'Read here for more guidance.'
         });
+      }else{
+        this.data.warnings.removeNotificationById("isNotEnoughNodes");
       }
     }))
   }

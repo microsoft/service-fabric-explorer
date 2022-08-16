@@ -7,28 +7,29 @@
 
 <div *ngIf="collection.isInitialized" class="essen-pane">
   <div ngbNav #nav="ngbNav" class="nav-wrapper" activeIndex="0">
-    <div *ngFor="let infra of collection.collection; let i = index; let l = last;" [ngbNavItem]="i" style="display: flex;">
-        <a ngbNavLink style="font-size: 12pt;" [attr.data-cy]="infra.name">
-          <div>
-            <div style="display: flex; gap: 10px;">
-              <i class="mif-notification warning-icon" tooltipClass="styled-tooltip" *ngIf="infra.isThrottled"
-                ngbTooltip="This infrastructure service has throttled jobs. This means there are jobs that are currently waiting."
-                container="body" data-cy="throttled"></i>
-              <div>
-                {{infra.name | stripPrefix}}
-              </div>
-            </div>
-            <div class="chip-container">
-              <span class="chip">
-                Active : <span> {{infra.executingMRJobs.length}} </span>
-              </span>
-              <span class="chip pending">
-                Pending : <span> {{infra.allPendingMRJobs.length}} </span>
-              </span>
+    <div *ngFor="let infra of collection.collection; let i = index; let l = last;" [ngbNavItem]="i"
+      style="display: flex;">
+      <a ngbNavLink style="font-size: 12pt;" [attr.data-cy]="infra.name">
+        <div>
+          <div style="display: flex; gap: 10px;">
+            <i class="mif-notification warning-icon" tooltipClass="styled-tooltip" *ngIf="infra.isThrottled"
+              ngbTooltip="This infrastructure service has throttled jobs. This means there are jobs that are currently waiting."
+              container="body" data-cy="throttled"></i>
+            <div>
+              {{infra.name | stripPrefix}}
             </div>
           </div>
-        </a>
-        <div *ngIf="!l" style="    border: 2px solid var(--accent-underline);
+          <div class="chip-container">
+            <span class="chip">
+              Active : <span> {{infra.executingMRJobs.length}} </span>
+            </span>
+            <span class="chip pending">
+              Pending : <span> {{infra.allPendingMRJobs.length}} </span>
+            </span>
+          </div>
+        </div>
+      </a>
+      <div *ngIf="!l" style="border: 2px solid var(--accent-underline);
         margin-left: 10px;"></div>
       <ng-template ngbNavContent>
         <app-infrastructure-overview [jobs]="infra.raw.Jobs" [repairCollection]="repairTaskCollection"
