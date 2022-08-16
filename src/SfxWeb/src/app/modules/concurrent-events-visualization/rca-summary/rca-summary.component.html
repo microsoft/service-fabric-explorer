@@ -1,5 +1,20 @@
-<div class="detail-pane">
+<!-- <div class="detail-pane">
     <div *ngFor="let item of data | keyvalue">
         <app-rca-overview [type]="item.key" [events]="item.value"></app-rca-overview>
     </div>
+</div> -->
+
+<div class="essen-pane">
+  <div ngbNav #nav="ngbNav" class="nav-wrapper" activeIndex="0">
+    <div *ngFor="let item of data | keyvalue; let i = index; let l = last;" [ngbNavItem]="i"
+      style="display: flex;">
+      <a ngbNavLink style="font-size: 12pt;" [attr.data-cy]="item.key">
+        {{item.key}}
+      </a>
+      <ng-template ngbNavContent>
+        <app-rca-overview [type]="item.key" [events]="item.value"></app-rca-overview>
+      </ng-template>
+    </div>
+  </div>
+  <div [ngbNavOutlet]="nav" style="margin-top: 10px"></div>
 </div>

@@ -5,6 +5,7 @@ import { VisualizationLogoComponent } from './visualization-logo/visualization-l
 import { RcaSummaryComponent } from './rca-summary/rca-summary.component';
 import { RcaOverviewComponent } from './rca-overview/rca-overview.component';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
   declarations: [
@@ -15,7 +16,8 @@ import { SharedModule } from 'src/app/shared/shared.module';
   ],
   imports: [
     CommonModule,
-    SharedModule
+    SharedModule,
+    NgbNavModule
   ],
   exports:[
     VisualizationToolComponent,
