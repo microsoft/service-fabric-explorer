@@ -79,6 +79,9 @@ export class InfrastructureJobTileComponent implements OnChanges, OnInit {
 
     this.dataService.getRepairJobById(this.job.RepairTask.TaskId).subscribe(job => {
       this.repairTask = [job];
+    }, error => {
+      console.log(error)
+      this.repairTask = [];
     });
   }
 }

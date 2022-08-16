@@ -37,25 +37,5 @@ export class InfrastructureOverviewComponent implements OnInit, OnChanges {
 
   ngOnChanges(): void {
     this.infrastructureJobsSuggestion = [];
-
-    if (this.collection.executingMRJobs.some(job => {
-      const repairTask = this.repairCollection.collection.find(rt => rt.id === job.RepairTask.TaskId);
-      if (repairTask && repairTask.raw.State === RepairTask.ExecutingStatus && repairTask.getPhase('Executing').durationMilliseconds >= Constants.MaxExecutingInfraJobDuration) {
-        return true;
-      } else {
-        return false;
-      }
-    })) {
-      this.infrastructureJobsSuggestion.push(Constants.longExecutingInfraJobsSuggestion);
-    };
-
-    if(this.collection.executingMRJobs.some(job => job.RepairTask.State === 'Preparing'))
-    {
-      this.infrastructureJobsSuggestion.push(Constants.executingInfraJobsSuggestion);
-    }
-    if (this.collection.allPendingMRJobs.length !== 0 && this.collection.executingMRJobs.length > 1)
-    {
-      this.infrastructureJobsSuggestion.push(Constants.pendingInfraJobsSuggestion);
-    }
   }
 }

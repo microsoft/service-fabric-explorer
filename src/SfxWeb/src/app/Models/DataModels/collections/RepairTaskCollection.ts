@@ -1,5 +1,5 @@
 import { forkJoin, Observable, of } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { defaultIfEmpty, map } from 'rxjs/operators';
 import { RepairTaskMessages, StatusWarningLevel } from 'src/app/Common/Constants';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { DataService } from 'src/app/services/data.service';
@@ -62,19 +62,7 @@ export class RepairTaskCollection extends DataModelCollectionBase<RepairTask> {
       this.longRunningApprovalJob = longRunningApprovalRepairTask;
       this.longestExecutingJob = longRunningExecutingRepairTask;
 
-      // if (longRunningApprovalRepairTask && longRunningApprovalRepairTask.getHistoryPhase('Preparing').durationMilliseconds > RepairTaskCollection.minDurationApprovalbanner) {
-      //     this.data.warnings.addOrUpdateNotification({
-      //         message: `Action Required: There is a repair job (${longRunningApprovalRepairTask.id}) waiting for approval for ${longRunningApprovalRepairTask.displayDuration}. This can block updates to this cluster. Please see aka.ms/sflongapprovingjob for more information. `,
-      //         level: StatusWarningLevel.Warning,
-      //         priority: 4,
-      //         id: RepairTaskCollection.bannerApprovalId,
-      //     }, true);
-      // } else {
-      //     this.data.warnings.removeNotificationById(RepairTaskCollection.bannerApprovalId);
-      // }
-
-      this.jobsOfInterest = [];
-      return forkJoin(this.repairTasks.map(task => task.updateInternal())).pipe(map(() => {
+      return forkJoin(this.repairTasks.map(task => task.updateInternal())).pipe(defaultIfEmpty([]), map(() => {
         try {
           this.jobsOfInterest = this.repairTasks.filter(task => task.concerningJobInfo);
 
