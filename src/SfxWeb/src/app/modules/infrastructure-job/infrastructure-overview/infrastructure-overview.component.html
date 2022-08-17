@@ -5,7 +5,7 @@
     </h4>
 
     <div style="margin-bottom: 20px;" collapse-body class="nested-block">
-      <div *ngFor="let job of collection.executingMRJobs" style="margin-bottom: 15px;">
+      <div *ngFor="let job of collection.executingMRJobs; trackBy: trackByFn" style="margin-bottom: 15px;">
         <app-infrastructure-job-tile [job]="job"></app-infrastructure-job-tile>
       </div>
     </div>

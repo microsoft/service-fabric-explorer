@@ -29,4 +29,8 @@ export class InfrastructureOverviewComponent implements OnInit {
       new ListColumnSetting('raw.RoleInstancesToBeImpacted', 'Impacted Nodes'),
     ]);
   }
+
+  trackByFn(index: number, job: InfrastructureJob) {
+    return job.id;
+  }
 }
