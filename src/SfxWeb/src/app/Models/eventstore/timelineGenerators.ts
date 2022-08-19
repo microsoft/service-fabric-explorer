@@ -466,7 +466,6 @@ export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
                   lastRemoved = null;
 
                 } else if (lastDownEvent) {
-                  console.log(event, lastDownEvent)
                   items.add(this.generateDownNodeEvent(event, index, event.timeStamp, lastDownEvent.end));
                   lastUpEvent = null;
                   lastDownEvent = null;
@@ -476,7 +475,6 @@ export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
                 } else {
                   let end = endOfRange.toISOString()
                   if(lastTransitionEvent) {
-                    console.log(lastTransitionEvent)
                     end = lastTransitionEvent.timeStamp;
                   }
                   lastDownEvent = { event, end };

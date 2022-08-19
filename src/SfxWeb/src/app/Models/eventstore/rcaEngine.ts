@@ -79,16 +79,13 @@ export const getSimultaneousEventsForEvent = (configs: IConcurrentEventsConfig[]
 
               if (mapping.sourceTransform) {
                 sourceVal = Transforms.getTransformations(mapping.sourceTransform, sourceVal);
-                console.log(sourceVal)
               }
 
               if(typeof sourceVal === "string" &&  sourceVal.includes("Aborting since deactivation failed. Deactivating as part of request from Activator CodePackage."))
-              console.log([sourceVal, targetVal])
 
               if (!Utils.isDefined(sourceVal) || !Utils.isDefined(targetVal) || sourceVal !== targetVal) {
                 propMaps = false;
               }else{
-                console.log("valid", sourceVal, targetVal)
               }
             });
             if (propMaps) {
@@ -102,7 +99,6 @@ export const getSimultaneousEventsForEvent = (configs: IConcurrentEventsConfig[]
               } as IConcurrentEvents;
 
               action = parsed;
-              console.log(relevantEventType)
               if(relevantEventType.result) {
                 moreSpecificReason = relevantEventType.result;
               }

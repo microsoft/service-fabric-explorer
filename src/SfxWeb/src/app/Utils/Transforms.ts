@@ -24,7 +24,6 @@ export class Transforms {
     }
 
     public static trimWhiteSpace(parsed: string): string {
-      console.log(parsed.trim())
       return parsed.trim();
   }
 
@@ -42,7 +41,6 @@ export class Transforms {
                 throw new Error(`Method '${func}' is not implemented.`);
             }
         });
-        console.log(parsed)
         return parsed;
     }
 
