@@ -114,6 +114,7 @@ app.all('/*', async (req, res) => {
     if(stripEventSToreRequests) {
         delete req.query['starttimeutc'];
         delete req.query['endtimeutc'];
+        delete req.query['eventTypesFilter'];
     }
 
 

@@ -3,7 +3,7 @@
     <div>
       <div #chart></div>
     </div>
-    <div>
+    <div style="align-self: flex-start;">
       <h5>{{type}} - {{events.length}} Events</h5>
       <app-essential-item *ngFor="let item of reasons; let l = last" [item]="item" [underline]="false">
         <div class="flex-center" style="gap: 5px; justify-content: flex-end;">

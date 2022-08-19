@@ -1,7 +1,6 @@
-import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
-import { Data } from '@angular/router';
+import { AfterViewInit, Component, ElementRef, Input, OnChanges, OnInit, ViewChild } from '@angular/core';
 import { Chart, Options, chart, PointOptionsObject, SeriesPieOptions } from 'highcharts';
-import { IVisEvent } from 'src/app/Models/eventstore/rcaEngine';
+import { IConcurrentEvents } from 'src/app/Models/eventstore/rcaEngine';
 import { EventStoreUtils, ITimelineData, ITimelineItem } from 'src/app/Models/eventstore/timelineGenerators';
 import { Utils } from 'src/app/Utils/Utils';
 import { DataGroup, DataItem, DataSet, IdType } from 'vis-timeline/standalone/esm';
@@ -12,9 +11,9 @@ import { IEssentialListItem } from '../../charts/essential-health-tile/essential
   templateUrl: './rca-overview.component.html',
   styleUrls: ['./rca-overview.component.scss']
 })
-export class RcaOverviewComponent implements OnInit {
+export class RcaOverviewComponent implements OnInit, AfterViewInit, OnChanges {
   @Input() type: string;
-  @Input() events: IVisEvent[];
+  @Input() events: IConcurrentEvents[];
 
   @ViewChild('chart') private chartContainer: ElementRef;
   private chart: Chart;
@@ -90,10 +89,16 @@ export class RcaOverviewComponent implements OnInit {
 
   ngOnInit(): void {
     const grouped = Object.entries(Utils.groupByFunc(this.events, item =>{
-      if(item.visEvent?.reason && item.visEvent.reason.name !== "self") {
-        return item.visEvent.reason.kind;
-      }else if(item.visEvent.reasonForEvent) {
-        return item.visEvent.reasonForEvent ;
+      if(item?.reason && item.reason.name !== "self") {
+        const list = this.reasonTreeToList(item);
+        let key = list[0].kind;
+        for(let i = 1; i < list.length; i++) {
+          key += ` => ${list[i].kind}`;
+        }
+
+        return key
+      }else if(item.reasonForEvent) {
+        return item.reasonForEvent ;
       }else{
         return 'unknown'
       }
@@ -104,11 +109,13 @@ export class RcaOverviewComponent implements OnInit {
         displayText: reason[1].length.toString(),
         copyTextValue: reason[0] + ' ' + reason[1].length.toString(),
         descriptionName: reason[0],
-        displaySelector: true
+        displaySelector: true,
+        allowWrap: true
       }
     })
+    console.log(this.reasons)
 
-    const items = new DataSet<DataItem>();
+    const items = new DataSet<ITimelineItem>();
     const groups = new DataSet<DataGroup>();
     grouped.forEach((group, index) => {
       groups.add(
@@ -118,11 +125,18 @@ export class RcaOverviewComponent implements OnInit {
         const timelineItem = {
           id: item.eventInstanceId,
           content: '',
-          start: item.visEvent.timeStamp,
+          start: item.timeStamp,
           group: group[0],
           type: 'point',
           color: this.colorKey[group[0]],
-          title: EventStoreUtils.tooltipFormat(item.visEvent.eventProperties, item.eventInstanceId, item.visEvent.timeStamp)
+          kind: item.kind,
+          title: EventStoreUtils.tooltipFormat(item.eventProperties, item.eventInstanceId, item.timeStamp),
+          className: 'hidden-dot',
+          style:` border-color:${this.colorKey[group[0]]};
+                  border-width: 4px;
+                  border-style: solid;
+                  border-radius: 20px;`
+
         };
         items.add(timelineItem)
       })
@@ -132,9 +146,19 @@ export class RcaOverviewComponent implements OnInit {
     this.timelineData = {
       groups,
       items: items as any,
-      // allowClustering: true
+      allowClustering: true
     }
 
+  }
+
+  reasonTreeToList(event: IConcurrentEvents): IConcurrentEvents[] {
+    let next = event;
+    const list = [];
+    while(next) {
+      list.push(next)
+      next = next.reason;
+    }
+    return list;
   }
 
   ngOnChanges(): void {

@@ -31,7 +31,7 @@ export interface ITimelineData {
     start?: Date;
     end?: Date;
     potentiallyMissingEvents?: boolean;
-    // allowClustering?: boolean;
+    allowClustering?: boolean;
 }
 
 export interface ITimelineItem extends DataItem {
@@ -120,7 +120,7 @@ export class EventStoreUtils {
 
         // roll back
         items.add({
-            id: `${eventIndex}---${rollbackCompleteEvent.eventInstanceId}`,
+            id: `0${eventIndex}---${rollbackCompleteEvent.eventInstanceId}`,
             content: label,
             start: rollbackStarted,
             end: rollbackEnd,
@@ -767,7 +767,6 @@ export class RepairTaskTimelineGenerator extends TimeLineGeneratorBase<RepairTas
                                                             new Date(task.raw.History.CompletedUtcTimestamp).toLocaleString()),
             });
         });
-        console.log(items.map(item => item))
         groups.add({
             id: 'job',
             content: 'Job History',

@@ -340,7 +340,7 @@ export class ListColumnSettingWithEventStoreFullDescription extends ListColumnSe
     template = FullDescriptionComponent;
     public constructor() {
         super('raw.eventInstanceId', '', {
-            colspan: 1,
+            colspan: 3,
             enableFilter: false
         });
     }
@@ -363,7 +363,6 @@ export class ListColumnSettingWithEmbeddedVisTool extends ListColumnSetting impl
                        public displayName: string = '',
                        public eventStoreRef: EventStoreComponent,
                        config?: IListColumnAdditionalSettings) {
-                        
         super(propertyPath, displayName, config);
     }
 }

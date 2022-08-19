@@ -26,7 +26,7 @@ export interface IItemNodeEvent {
   styleUrls: ['./visualization-tool.component.scss']
 })
 
-export class VisualizationToolComponent implements OnInit, OnChanges, AfterViewInit, DetailBaseComponent {
+export class VisualizationToolComponent implements OnChanges, AfterViewInit, DetailBaseComponent {
   private nameSizePx: number = 10;
   private kindSizePx: number = 10;
   private titleSizePx: number = 20;
@@ -47,6 +47,7 @@ export class VisualizationToolComponent implements OnInit, OnChanges, AfterViewI
         spacingBottom: 0,
         spacingLeft: 0,
         spacingRight: 0,
+        animation: false
       },
       title: {
         text: '',
@@ -57,25 +58,22 @@ export class VisualizationToolComponent implements OnInit, OnChanges, AfterViewI
       },
       series: [],
       tooltip: {
-        outside: true
+        outside: true,
+        className: 'inner-tooltip'
       },
-      exporting: {
-        allowHTML: true,
-        sourceWidth: 600,
-        sourceHeight: 800,
+      plotOptions: {
+        series: {
+          animation: false
+        }
       }
   }
 
   constructor() {
   }
 
-  ngOnInit() {
-    // console.log("Visualization Tool Created!");
-  }
-
   ngAfterViewInit(): void {
-    this.visEvents = this.listSetting.eventStoreRef.visEventList.find(
-      visEvent => visEvent.eventInstanceId == this.item.raw.eventInstanceId).visEvent;
+    this.visEvents = this.listSetting.eventStoreRef.simulEvents.find(
+      visEvent => visEvent.eventInstanceId == this.item.raw.eventInstanceId);
     this.options.series = [this.traverse()];
     this.chart = chart(this.container.nativeElement, this.options);
   }
@@ -83,16 +81,15 @@ export class VisualizationToolComponent implements OnInit, OnChanges, AfterViewI
   traverse(): SeriesOptionsType {
     let config : SeriesOptionsType = {
       type: 'organization',
-      name: 'Highsoft',
+      name: '',
       keys: ['from', 'to'],
       data: [],
       levels: [],
       nodes: [],
       colorByPoint: false,
       dataLabels: {
-        color: 'white'
       },
-      borderColor: 'white',
+      borderColor: 'transparent',
     }
     // perform BFS to convert to organization chart
     let queue: IConcurrentEvents[] = [];
@@ -139,11 +136,11 @@ export class VisualizationToolComponent implements OnInit, OnChanges, AfterViewI
           levels++;
       }
 
-      let colors = ["#8F0600", "#2E8100", "#6C007F", "#1A386D"];
+      // let colors = ["#8F0600", "#2E8100", "#6C007F", "#1A386D"];
       for (let i = 0; i < levels; i++) {
           let newLevelComponent = {
               level: i,
-              color: colors[i]
+              color: "#191919"
           }
           config.levels.push(newLevelComponent);
       }

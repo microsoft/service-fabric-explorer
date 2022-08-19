@@ -15,7 +15,7 @@ import { Utils } from 'src/app/Utils/Utils';
 import { ListColumnSettingWithCustomComponent } from 'src/app/Models/ListSettings';
 import { VisualizationToolComponent } from '../../concurrent-events-visualization/visualization-tool/visualization-tool.component';
 import { VisualizationLogoComponent } from '../../concurrent-events-visualization/visualization-logo/visualization-logo.component';
-import { getSimultaneousEventsForEvent, IConcurrentEvents, IRCAItem, IVisEvent } from 'src/app/Models/eventstore/rcaEngine';
+import { getSimultaneousEventsForEvent, IConcurrentEvents, IRCAItem } from 'src/app/Models/eventstore/rcaEngine';
 
 export interface IQuickDates {
     display: string;
@@ -66,7 +66,6 @@ export class EventStoreComponent implements OnInit, OnDestroy, OnChanges {
   public startDateMax: Date;
   public failedRefresh = false;
   public timeLineEventsData: ITimelineData;
-  public visEventList: IVisEvent[] = [];
 
   public transformText = 'Category,Kind';
 
@@ -76,7 +75,7 @@ export class EventStoreComponent implements OnInit, OnDestroy, OnChanges {
   public startDate: Date;
   public endDate: Date;
 
-  public simulEvents: IConcurrentEvents[];
+  public simulEvents: IConcurrentEvents[] = [];
   public activeTab: string;
 
   ngOnInit() {
@@ -216,15 +215,6 @@ export class EventStoreComponent implements OnInit, OnDestroy, OnChanges {
       return combinedTimelineData;
   }
 
-  private testEvent(inputEvent: IRCAItem, parsedEvents : IRCAItem[]) : IConcurrentEvents[] {
-    /*
-        Section here is to test a random IConcurrentEventsConfig with three inputted random events and see
-        which events happen concurrently with these random events.
-    */
-    let inputEvents : IRCAItem[] = [];
-    inputEvents.push(inputEvent);
-    return getSimultaneousEventsForEvent(RelatedEventsConfigs, inputEvents, parsedEvents);
-  }
 
     private getConcurrentEventsData() {
     /*
@@ -233,46 +223,36 @@ export class EventStoreComponent implements OnInit, OnDestroy, OnChanges {
     let parsedEvents : IRCAItem[] = [];
     for (const data of this.listEventStoreData) {
         if (data.eventsList.lastRefreshWasSuccessful) {
-            data.getEvents().forEach(event => parsedEvents.push(event));
+          parsedEvents = parsedEvents.concat(data.getEvents());
         }
     }
 
     // refresh vis-event-list
-    this.visEventList = [];
-
+    this.simulEvents = getSimultaneousEventsForEvent(RelatedEventsConfigs, parsedEvents, parsedEvents);
     // grab highcharts data for all events
     for (let parsedEvent of parsedEvents) {
-        let rootEvent = this.testEvent(parsedEvent, parsedEvents)[0];
+        let rootEvent = this.simulEvents.find(event => event.eventInstanceId === parsedEvent.eventInstanceId);
         let visPresent = false;
         if (rootEvent.reason) {
             visPresent = true;
         }
-        let visEventItem : IVisEvent = {
-            visEvent: rootEvent,
-            visPresent: visPresent,
-            eventInstanceId: Utils.result(parsedEvent, "eventInstanceId")
-        }
-        this.visEventList.push(visEventItem);
 
         for (const data of this.listEventStoreData) {
             data.eventsList.collection.forEach(event => {
                 if (Utils.result(event, "raw.eventInstanceId") == Utils.result(parsedEvent, "eventInstanceId")) {
                     event.visPresent = visPresent;
-                }
+                  }
             });
         }
     }
-    console.log(this.visEventList)
 
     for (const data of this.listEventStoreData) {
-        let visPresentFlag = data.listSettings.columnSettings.some((setting) => {
-            return setting.propertyPath == "visPresent"
-        });
+        let visPresentFlag = data.listSettings.columnSettings.some(setting => setting.propertyPath == "visPresent");
         if (!visPresentFlag) {
             let newLogoSetting = new ListColumnSettingWithCustomComponent(
                 VisualizationLogoComponent,
                 'visPresent',
-                'Visualization Present',
+                'Visualization',
                 {
                     enableFilter: true,
                     colspan: 1
@@ -286,12 +266,11 @@ export class EventStoreComponent implements OnInit, OnDestroy, OnChanges {
                 this,
                 {
                     enableFilter: false,
-                    colspan: -1
+                    colspan: 3
                 }
             ));
         }
     }
-    console.log(this.visEventList)
   }
 
   public setTimelineData(): void {

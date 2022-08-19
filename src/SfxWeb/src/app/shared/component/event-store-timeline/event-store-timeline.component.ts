@@ -138,9 +138,7 @@ export class EventStoreTimelineComponent implements AfterViewInit, OnChanges {
         selectable: false,
         template: (itemData, element, data) => {
           if (data.isCluster) {
-            //TODO find a better structure for this
-            // return`<span style="border-radius: 5px; background-color:${data.items[0].color}">${data.items.length} events</span>`
-            // return `<span style="${data.items[0].style}"></span><div>${data.items[0].kind} ${data.items.length} </div>`;
+            return `<div style="background-color:${itemData.items[0].color}">${data.items.length} ${data.items[0].kind} events </div>`
           } else {
             return `<div>${data.content}</div>`;
           }
@@ -153,14 +151,19 @@ export class EventStoreTimelineComponent implements AfterViewInit, OnChanges {
         tooltip: {
           overflowMethod: "flip" as any,
           template: (itemData) => {
-            //TODO find a better layout
             if(itemData.isCluster) {
-              return`<span style="background-color:${itemData.items[0].color}">
-              ${itemData.items[0].group}
-              ${itemData.items.length} events
-              </span>`
+              return `<div class="inner-tooltip">
+                  <div>
+                  ${itemData.items[0].group} ${itemData.items.length}  events
+                  </div>
+                  <div>
+                    start : ${itemData.items[0].start}
+                    <br>
+                    end : ${itemData.items[itemData.items.length - 1].start}
+                  </div>
+              </div>`
             }else {
-              return itemData.content
+              return `${itemData.title}`
             }
           }
         },
@@ -168,16 +171,19 @@ export class EventStoreTimelineComponent implements AfterViewInit, OnChanges {
         stackSubgroups: true,
         maxHeight: '700px',
         verticalScroll: true,
-        cluster:  {
-            titleTemplate:
-              "Cluster containing {count} events. Zoom in to see the individual events.",
-            showStipes: true,
-            clusterCriteria(firstItem: any, secondItem: any) {
-              return firstItem.kind === secondItem.kind
-            }
-        }
+        cluster: events.allowClustering ? {
+          titleTemplate:
+            "Cluster containing {count} events. Zoom in to see the individual events.",
+          showStipes: true,
+          clusterCriteria(firstItem: any, secondItem: any) {
+            return firstItem.kind === secondItem.kind
+          }
+        } : false as any,
       }
       this.timeline.setOptions(options);
+      setTimeout(() => {
+        this.timeline.redraw();
+      }, 1);
 
 
       if (this.fitOnDataChange) {

@@ -3,6 +3,7 @@ import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { DataModelBase } from './Base';
 import { DataService } from 'src/app/services/data.service';
 import { Observable, of } from 'rxjs';
+import { IRCAItem } from '../eventstore/rcaEngine';
 
 export enum RepairJobType {
     TenantUpdate = 'TenantUpdate',
@@ -44,7 +45,7 @@ export enum StatusCSS {
 }
 
 
-export class RepairTask extends DataModelBase<IRawRepairTask> {
+export class RepairTask extends DataModelBase<IRawRepairTask> implements IRCAItem {
     public static readonly ExecutingStatus = 'Executing';
     public static readonly PreparingStatus = 'Preparing';
     public static NonStartedTimeStamp = '0001-01-01T00:00:00.000Z';
@@ -63,7 +64,7 @@ export class RepairTask extends DataModelBase<IRawRepairTask> {
     public history: IRepairTaskHistoryPhase[] = [];
     private timeStampsCollapses: Record<string, boolean> = {};
 
-    public createdAt = '';
+    public timeStamp = '';
 
     public couldParseExecutorData = false;
     public inProgress = true;
@@ -76,11 +77,12 @@ export class RepairTask extends DataModelBase<IRawRepairTask> {
     public executorData: any;
 
     public eventInstanceId: string;
-
+    public eventProperties = {};
     constructor(public dataService: DataService, public raw: IRawRepairTask, private dateRef?: Date) {
         super(dataService, raw);
         this.updateInternal();
         this.eventInstanceId = this.raw.TaskId;
+        this.eventProperties = this.raw;
     }
 
     /*
@@ -225,10 +227,10 @@ export class RepairTask extends DataModelBase<IRawRepairTask> {
         if (this.raw.Impact) {
             this.impactedNodes = this.raw.Impact.NodeImpactList.map(node => node.NodeName);
         }
-        this.createdAt = new Date(this.raw.History.CreatedUtcTimestamp).toLocaleString();
+        this.timeStamp = new Date(this.raw.History.CreatedUtcTimestamp).toISOString();
         this.inProgress = this.raw.State !== 'Completed';
 
-        const start = new Date(this.createdAt).getTime();
+        const start = new Date(this.timeStamp).getTime();
         if (this.inProgress) {
             const now = this.getRefDate().getTime();
             this.duration = now - start;

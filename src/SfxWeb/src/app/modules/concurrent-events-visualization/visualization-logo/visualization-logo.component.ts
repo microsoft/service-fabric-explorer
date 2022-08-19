@@ -18,4 +18,5 @@ export class VisualizationLogoComponent implements DetailBaseComponent {
   listSetting: ListColumnSetting;
 
   public assetBase = environment.assetBase;
+
 }

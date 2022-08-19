@@ -16,6 +16,19 @@
   <app-dashboard-tile [data]="replicasDashboard" *ngIf="replicasDashboard"></app-dashboard-tile>
 </div>
 
+<app-collapse-container *ngIf="eventStoreHandler" class="essen-pane detail-pane">
+  <h5 collapse-header >Recent Application and Container Exit event reasons</h5>
+  <div collapse-body>
+    <div style="margin-left: 30px"><a routerLink="./events">For Additional Information visit the Events Tab</a></div>
+    <div *ngIf="eventStoreHandler.eventsList.isRefreshing">
+      Loading information about any recent Application Process Exit or Container Exit Events
+    </div>
+    <div *ngIf="eventStoreHandler.eventsList.isInitialized && highValueEvents" style="min-height: 200px">
+      <app-rca-summary [events]="highValueEvents"></app-rca-summary>
+    </div>
+  </div>
+</app-collapse-container>
+
 <div data-cy="upgradeDetails" *ngIf="upgradeProgress && upgradeProgress.isInitialized" class="detail-pane essen-pane">
     <app-collapse-container [sectionName]="app.isUpgrading ? 'Upgrade In Progress' : 'Latest Upgrade State'">
         <div collapse-header>

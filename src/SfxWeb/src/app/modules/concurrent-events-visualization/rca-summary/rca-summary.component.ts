@@ -1,5 +1,5 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { IVisEvent } from 'src/app/Models/eventstore/rcaEngine';
+import { Component, Input, OnChanges, OnInit } from '@angular/core';
+import { IConcurrentEvents } from 'src/app/Models/eventstore/rcaEngine';
 import { RelatedEventsConfigs } from 'src/app/Models/eventstore/RelatedEventsConfigs';
 import { Utils } from 'src/app/Utils/Utils';
 
@@ -8,17 +8,15 @@ import { Utils } from 'src/app/Utils/Utils';
   templateUrl: './rca-summary.component.html',
   styleUrls: ['./rca-summary.component.scss']
 })
-export class RcaSummaryComponent implements OnInit {
+export class RcaSummaryComponent implements OnChanges {
 
-  @Input() events: IVisEvent[] = [];
+  @Input() events: IConcurrentEvents[] = [];
 
-  data: Record<string, IVisEvent[]> = {};
+  data: Record<string, IConcurrentEvents[]> = {};
   constructor() { }
 
-  ngOnInit(): void {
-    const explained = this.events.filter(event => RelatedEventsConfigs.some(config => config.eventType === event.visEvent.kind));
-
-    this.data = Utils.groupByFunc<IVisEvent>(explained, item => item.visEvent.kind);
-    console.log(this.data);
+  ngOnChanges(): void {
+    const explained = this.events.filter(event => RelatedEventsConfigs.some(config => config.eventType === event.kind));
+    this.data = Utils.groupByFunc<IConcurrentEvents>(explained, item => item.kind);
   }
 }

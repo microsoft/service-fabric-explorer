@@ -6,6 +6,7 @@ export class Transforms {
         trimFront: Transforms.trimFront,
         trimBack: Transforms.trimBack,
         prefix: Transforms.prefix,
+        trimWhiteSpace: Transforms.trimWhiteSpace,
     };
 
     public static trimFront(parsed: string, value: string): string {
@@ -22,6 +23,11 @@ export class Transforms {
         return parsed.substring(0, parsed.indexOf(value));
     }
 
+    public static trimWhiteSpace(parsed: string): string {
+      console.log(parsed.trim())
+      return parsed.trim();
+  }
+
     public static prefix(parsed: string, value: string): string {
         return value + parsed;
     }
@@ -36,7 +42,7 @@ export class Transforms {
                 throw new Error(`Method '${func}' is not implemented.`);
             }
         });
-
+        console.log(parsed)
         return parsed;
     }
 

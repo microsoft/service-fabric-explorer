@@ -1,0 +1,15 @@
+.allow-wrap {
+  .tile-item {
+    height: initial;
+    padding-bottom: 2px;
+    min-height: 35px;
+  }
+
+  .text-wrapper .left-text {
+    white-space: initial;
+  }
+
+  .text-wrapper .middle-text {
+    overflow: initial;
+  }
+}
