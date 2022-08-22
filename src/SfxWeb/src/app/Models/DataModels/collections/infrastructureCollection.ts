@@ -94,7 +94,7 @@ export class InfrastructureCollection extends DataModelCollectionBase<Infrastruc
       if (nodetypesWithoutEnoughNodes.length > 0) {
         this.data.warnings.addOrUpdateNotification({
           message: `Nodetype${nodetypesWithoutEnoughNodes.length > 1 ? 's' : ''} ${nodetypesWithoutEnoughNodes.join()} ${nodetypesWithoutEnoughNodes.length > 1 ? 'are' : 'is'} deployed with less than 5 VMs. Atleast 5 VMs in the VMSS are required to be present for the platforms updates to work reliably.
-                    Please fix this misconfiguration as updates to such VMSS will be blocked soon and deployments will start failing. `,
+                    Please fix this misconfiguration as updates to such VMSS will be blocked soon and deployments will start failing. For more details see https://aka.ms/sfdurability `,
           level: StatusWarningLevel.Warning,
           priority: 4,
           id: "isNotEnoughNodes",

@@ -145,7 +145,7 @@ describe('RepairTask', () => {
             RestoringHealthCheckEndUtcTimestamp: '0001-01-01T00:00:00.000Z'
         };
         const task = new RepairTask(dataService, testData);
-        expect(task.concerningJobInfo.type).toBe("long-executing");
+        expect(task.concerningJobInfo.type).toBe("longExecuting");
       })
 
       fit("seed node", () => {
