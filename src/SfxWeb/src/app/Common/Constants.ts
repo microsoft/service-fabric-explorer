@@ -225,9 +225,9 @@ export class TelemetryEventNames {
 
 
 export class RepairTaskMessages {
-  public static longExecutingMessage = "This update can prevent other updates from going through. Please reach out to the VMSS resource provider to figure out why the platform updates are not completing.";
+  public static longExecutingMessage = "This update can prevent other updates from going through. Please reach out to the Azure Compute teams (“Compute Manager/Blackbird”) to figure out why the platform updates are not completing.";
   public static longExecutingId = "longExecuting";
-  public static seedNodeChecks = "Disabling a seed node can get stuck indefinitely. This is blocked by design to prevent any risk to the cluster availability. There are multiple options available to come out of this state.";
+  public static seedNodeChecks = "Disabling a seed node can get stuck indefinitely. This is blocked by design to prevent any risk to the cluster availability. There are multiple options available to come out of this state. read more here https://aka.ms/sfseednodequoromtsg";
   public static seedNodeChecksId = "seedNode";
   public static safetyChecks = `This usually happens due to the following reasons:
                                 Service health related issues. This is expected when the preparing/restoring health checks have been enabled in this cluster and there is any entity which is not healthy.
