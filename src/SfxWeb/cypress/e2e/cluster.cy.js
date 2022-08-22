@@ -674,11 +674,12 @@ context('Cluster page', () => {
     })
   })
 
-  describe("systemService - infraservice", () => {
+  describe.only("systemService - infraservice", () => {
     beforeEach(() => {
       addDefaultFixtures();
 
       addRoute("infra-service-data", "system-service/infrastructure-data.json", apiUrl(`/$/InvokeInfrastructureQuery?api-version=6.0&Command=GetJobs&ServiceId=System/InfrastructureService/Type134*`))
+      addRoute("infra-service-data", "empty-list.json", apiUrl(`/$/InvokeInfrastructureQuery?api-version=6.0&Command=GetJobs&ServiceId=System/InfrastructureService/Type135*`))
       addRoute(FIXTURE_REF_SYSTEMAPPS, 'cluster-page/infra/systemServicesWithInfra.json', systemApps_route)
 
       cy.visit(`/#/infrastructure`)
