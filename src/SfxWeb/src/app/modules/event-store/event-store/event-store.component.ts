@@ -217,31 +217,27 @@ export class EventStoreComponent implements OnInit, OnDestroy, OnChanges {
 
 
   private getConcurrentEventsData() {
-    let parsedEvents: IRCAItem[] = [];
+    let allEvents: IRCAItem[] = [];
+    let sourceEvents = [];
     for (const data of this.listEventStoreData) {
       if (data.eventsList.lastRefreshWasSuccessful) {
-        parsedEvents = parsedEvents.concat(data.getEvents());
+        sourceEvents = sourceEvents.concat(data.getEvents());
+        allEvents = allEvents.concat(data.eventsList.collection);
       }
     }
 
-
     // refresh vis-event-list
-    this.simulEvents = getSimultaneousEventsForEvent(RelatedEventsConfigs, parsedEvents, parsedEvents);
+    this.simulEvents = getSimultaneousEventsForEvent(RelatedEventsConfigs, sourceEvents, sourceEvents);
     // grab highcharts data for all events
-    for (let parsedEvent of parsedEvents) {
+    for (let parsedEvent of allEvents) {
         let rootEvent = this.simulEvents.find(event => event.eventInstanceId === parsedEvent.eventInstanceId);
         let visPresent = false;
         if (rootEvent.reason) {
             visPresent = true;
         }
 
-        for (const data of this.listEventStoreData) {
-            data.eventsList.collection.forEach(event => {
-                if (Utils.result(event, "raw.eventInstanceId") == Utils.result(parsedEvent, "eventInstanceId")) {
-                    event.visPresent = visPresent;
-                  }
-            });
-        }
+        (parsedEvent as any).visPresent = visPresent;
+
     }
 
     for (const data of this.listEventStoreData) {
