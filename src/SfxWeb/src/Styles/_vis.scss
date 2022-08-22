@@ -12,7 +12,6 @@
 }
 .vis-item,
 .vis-item.vis-line {
-  // border-width: 0px !important;
   color: var(--font-primary-color);
   font-family: monospace !important;
 }
@@ -27,7 +26,6 @@
     }
   }
 }
-
 
 .vis-item.vis-dot {
   border-width: 10px;
@@ -209,8 +207,3 @@
 .vis-dot.hidden-dot {
   border-width: 0px !important;
 }
-
-// .vis-item.red {
-//   background-color: var(--badge-error);
-//   border-color: darkred;
-// }

@@ -340,7 +340,7 @@ export class ListColumnSettingWithEventStoreFullDescription extends ListColumnSe
     template = FullDescriptionComponent;
     public constructor() {
         super('raw.eventInstanceId', '', {
-            colspan: 3,
+            colspan: 2,
             enableFilter: false
         });
     }

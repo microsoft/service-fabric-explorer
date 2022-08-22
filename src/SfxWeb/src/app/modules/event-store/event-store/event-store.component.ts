@@ -217,9 +217,6 @@ export class EventStoreComponent implements OnInit, OnDestroy, OnChanges {
 
 
   private getConcurrentEventsData() {
-    /*
-        Grabs all the concurrent events data based on specific IConcurrentEventsConfig objects.
-    */
     let parsedEvents: IRCAItem[] = [];
     for (const data of this.listEventStoreData) {
       if (data.eventsList.lastRefreshWasSuccessful) {
@@ -227,23 +224,24 @@ export class EventStoreComponent implements OnInit, OnDestroy, OnChanges {
       }
     }
 
+
     // refresh vis-event-list
     this.simulEvents = getSimultaneousEventsForEvent(RelatedEventsConfigs, parsedEvents, parsedEvents);
     // grab highcharts data for all events
     for (let parsedEvent of parsedEvents) {
-      let rootEvent = this.simulEvents.find(event => event.eventInstanceId === parsedEvent.eventInstanceId);
-      let visPresent = false;
-      if (rootEvent.reason) {
-        visPresent = true;
-      }
+        let rootEvent = this.simulEvents.find(event => event.eventInstanceId === parsedEvent.eventInstanceId);
+        let visPresent = false;
+        if (rootEvent.reason) {
+            visPresent = true;
+        }
 
-      this.listEventStoreData.forEach(data => {
-        data.eventsList.collection.forEach(event => {
-          if (event.eventInstanceId === parsedEvent.eventInstanceId) {
-            event.visPresent = visPresent;
-          }
-        });
-      })
+        for (const data of this.listEventStoreData) {
+            data.eventsList.collection.forEach(event => {
+                if (Utils.result(event, "raw.eventInstanceId") == Utils.result(parsedEvent, "eventInstanceId")) {
+                    event.visPresent = visPresent;
+                  }
+            });
+        }
     }
 
     for (const data of this.listEventStoreData) {

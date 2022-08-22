@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ListColumnSetting } from 'src/app/Models/ListSettings';
 import { DetailBaseComponent } from 'src/app/ViewModels/detail-table-base.component';
 import { environment } from 'src/environments/environment';
@@ -12,11 +12,13 @@ export interface INodeEventItem {
   templateUrl: './visualization-logo.component.html',
   styleUrls: ['./visualization-logo.component.scss']
 })
-export class VisualizationLogoComponent implements DetailBaseComponent {
+export class VisualizationLogoComponent implements DetailBaseComponent, OnInit {
 
   item: INodeEventItem;
   listSetting: ListColumnSetting;
 
   public assetBase = environment.assetBase;
 
+  ngOnInit(): void {
+  }
 }

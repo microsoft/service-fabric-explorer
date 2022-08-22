@@ -6,8 +6,7 @@ import HighchartsSankey from "highcharts/modules/sankey";
 import HighchartsOrganization from "highcharts/modules/organization";
 import { DetailBaseComponent } from 'src/app/ViewModels/detail-table-base.component';
 import { ListColumnSetting } from 'src/app/Models/ListSettings';
-import { NodeEvent } from 'src/app/Models/eventstore/Events';
-import { IConcurrentEvents } from 'src/app/Models/eventstore/rcaEngine';
+import { IConcurrentEvents, IRCAItem } from 'src/app/Models/eventstore/rcaEngine';
 
 HighchartsSankey(Highcharts);
 HighchartsOrganization(Highcharts);
@@ -16,9 +15,7 @@ export interface IEventStoreRef extends ListColumnSetting {
   eventStoreRef: EventStoreComponent;
 }
 
-export interface IItemNodeEvent {
-  raw: NodeEvent;
-}
+
 
 @Component({
   selector: 'app-visualization-tool',
@@ -33,7 +30,7 @@ export class VisualizationToolComponent implements OnChanges, AfterViewInit, Det
   private chart: Chart;
 
   visEvents : IConcurrentEvents;
-  item : IItemNodeEvent;
+  item : IRCAItem;
   listSetting : IEventStoreRef;
 
   @ViewChild('container') private container: ElementRef;
@@ -47,7 +44,7 @@ export class VisualizationToolComponent implements OnChanges, AfterViewInit, Det
         spacingBottom: 0,
         spacingLeft: 0,
         spacingRight: 0,
-        animation: false
+        animation: false,
       },
       title: {
         text: '',
@@ -65,6 +62,9 @@ export class VisualizationToolComponent implements OnChanges, AfterViewInit, Det
         series: {
           animation: false
         }
+      },
+      credits: {
+        enabled: false
       }
   }
 
@@ -73,12 +73,14 @@ export class VisualizationToolComponent implements OnChanges, AfterViewInit, Det
 
   ngAfterViewInit(): void {
     this.visEvents = this.listSetting.eventStoreRef.simulEvents.find(
-      visEvent => visEvent.eventInstanceId == this.item.raw.eventInstanceId);
+      visEvent => visEvent.eventInstanceId == this.item.eventInstanceId);
     this.options.series = [this.traverse()];
+    const data = this.traverse();
+    this.options.chart.height = data.levels.length * 100;
     this.chart = chart(this.container.nativeElement, this.options);
   }
 
-  traverse(): SeriesOptionsType {
+  traverse() {
     let config : SeriesOptionsType = {
       type: 'organization',
       name: '',
@@ -87,9 +89,8 @@ export class VisualizationToolComponent implements OnChanges, AfterViewInit, Det
       levels: [],
       nodes: [],
       colorByPoint: false,
-      dataLabels: {
-      },
       borderColor: 'transparent',
+      hangingIndent: 0,
     }
     // perform BFS to convert to organization chart
     let queue: IConcurrentEvents[] = [];
@@ -110,7 +111,11 @@ export class VisualizationToolComponent implements OnChanges, AfterViewInit, Det
                   id: fontPrefix + currEvent.eventInstanceId + "</p>",
                   title: titlePrefix + action + currEvent.kind + "</p>",
                   layout: "hanging",
-              }
+                  height: 100,
+                  dataLabels: {
+                    className: 'inner-tooltip'
+                  }
+              } as any;
 
               // root node should not be hanging - this messes up the diagram
               if (currSize == 1) {
@@ -136,11 +141,11 @@ export class VisualizationToolComponent implements OnChanges, AfterViewInit, Det
           levels++;
       }
 
-      // let colors = ["#8F0600", "#2E8100", "#6C007F", "#1A386D"];
       for (let i = 0; i < levels; i++) {
           let newLevelComponent = {
               level: i,
-              color: "#191919"
+              color: null,
+              height: 100
           }
           config.levels.push(newLevelComponent);
       }
@@ -150,7 +155,9 @@ export class VisualizationToolComponent implements OnChanges, AfterViewInit, Det
 
   ngOnChanges(): void {
     if (this.chart) {
-      this.chart.series[0].update(this.traverse());
+      const data = this.traverse();
+      this.chart.series[0].update(data);
+      this.chart.setSize(undefined, data.levels.length * 100);
     }
   }
 }

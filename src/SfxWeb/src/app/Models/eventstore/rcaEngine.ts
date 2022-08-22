@@ -28,7 +28,7 @@ export interface IConcurrentEventsConfig {
   result: string; //resulting property we want to display for events (ex. Repair Jobs action)
 }
 
-export interface IConcurrentEvents extends IRCAItem{
+export interface IConcurrentEvents extends IRCAItem {
   reason: IConcurrentEvents // possibly related events now this could be recursive, i.e a node is down but that node down concurrent event would have its own info on whether it was due to a restart or a cluster upgrade
   reasonForEvent: string;
   inputEvent: IRCAItem;
@@ -49,7 +49,7 @@ export const getSimultaneousEventsForEvent = (configs: IConcurrentEventsConfig[]
 
   // iterate through all the input events
   inputEvents.forEach(inputEvent => {
-    if(simulEvents.some(event => event.eventInstanceId === inputEvent.eventInstanceId)) {
+    if (simulEvents.some(event => event.eventInstanceId === inputEvent.eventInstanceId)) {
       return;
     }
 
@@ -81,11 +81,9 @@ export const getSimultaneousEventsForEvent = (configs: IConcurrentEventsConfig[]
                 sourceVal = Transforms.getTransformations(mapping.sourceTransform, sourceVal);
               }
 
-              if(typeof sourceVal === "string" &&  sourceVal.includes("Aborting since deactivation failed. Deactivating as part of request from Activator CodePackage."))
-
               if (!Utils.isDefined(sourceVal) || !Utils.isDefined(targetVal) || sourceVal !== targetVal) {
                 propMaps = false;
-              }else{
+              } else {
               }
             });
             if (propMaps) {
@@ -99,12 +97,11 @@ export const getSimultaneousEventsForEvent = (configs: IConcurrentEventsConfig[]
               } as IConcurrentEvents;
 
               action = parsed;
-              if(relevantEventType.result) {
+              if (relevantEventType.result) {
                 moreSpecificReason = relevantEventType.result;
               }
 
               reasonForEvent = action;
-
             }
           }
           events.forEach(iterEvent => {
