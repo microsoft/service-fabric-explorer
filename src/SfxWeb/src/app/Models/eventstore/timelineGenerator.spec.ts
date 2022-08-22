@@ -460,6 +460,7 @@ describe('TimelineGenerators', () => {
         "start": "2022-06-02T16:49:58.656Z",
         "end": "2022-06-02T16:51:55.6741761Z",
         "group": "Application Upgrades",
+        "kind": "ApplicationUpgradeCompleted",
         "type": "range",
         title: EventStoreUtils.tooltipFormat(end.eventProperties, startUpgrade.timeStamp, end.timeStamp),
         "className": "green"
