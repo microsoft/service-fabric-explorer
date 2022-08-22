@@ -12,13 +12,11 @@ export interface INodeEventItem {
   templateUrl: './visualization-logo.component.html',
   styleUrls: ['./visualization-logo.component.scss']
 })
-export class VisualizationLogoComponent implements DetailBaseComponent, OnInit {
+export class VisualizationLogoComponent implements DetailBaseComponent {
 
   item: INodeEventItem;
   listSetting: ListColumnSetting;
 
   public assetBase = environment.assetBase;
 
-  ngOnInit(): void {
-  }
 }
