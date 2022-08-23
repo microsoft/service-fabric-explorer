@@ -47,9 +47,13 @@ export const getSimultaneousEventsForEvent = (configs: IConcurrentEventsConfig[]
   */
   let simulEvents: IConcurrentEvents[] = [];
 
+  const findEvent = (event: IRCAItem) => {
+    return simulEvents.find(e => e.eventInstanceId === event.eventInstanceId);
+  }
+
   // iterate through all the input events
   inputEvents.forEach(inputEvent => {
-    if (simulEvents.some(event => event.eventInstanceId === inputEvent.eventInstanceId)) {
+    if (findEvent(inputEvent)) {
       return;
     }
 
@@ -126,8 +130,18 @@ export const getSimultaneousEventsForEvent = (configs: IConcurrentEventsConfig[]
               });
 
               if (valid) {
-                reason = getSimultaneousEventsForEvent(configs, [iterEvent], events)[0];
-                simulEvents.push(reason);
+                console.log(inputEvent, iterEvent)
+                const existingEvent = findEvent(iterEvent); //simulEvents.find(e => e.eventInstanceId === iterEvent.eventInstanceId);
+                console.log(existingEvent)
+                if(existingEvent) {
+                  reason = existingEvent;
+                }else{
+                  //generate events needed to build chain
+                  const reasons = getSimultaneousEventsForEvent(configs, [iterEvent], events);
+                  simulEvents = simulEvents.concat(reasons);
+                  reason = reasons.find(e => e.eventInstanceId === iterEvent.eventInstanceId);
+                  console.log(reason)
+                }
               }
             }
           });
@@ -147,5 +161,6 @@ export const getSimultaneousEventsForEvent = (configs: IConcurrentEventsConfig[]
     });
   });
 
+  console.log("events", simulEvents)
   return simulEvents;
 }

@@ -55,8 +55,8 @@ export class VisualizationToolComponent implements OnChanges, AfterViewInit, Det
       },
       series: [],
       tooltip: {
-        outside: true,
-        className: 'inner-tooltip'
+        enabled: false
+
       },
       plotOptions: {
         series: {
@@ -76,7 +76,7 @@ export class VisualizationToolComponent implements OnChanges, AfterViewInit, Det
       visEvent => visEvent.eventInstanceId == this.item.eventInstanceId);
     this.options.series = [this.traverse()];
     const data = this.traverse();
-    this.options.chart.height = data.levels.length * 100;
+    this.options.chart.height = data.levels.length * 110;
     this.chart = chart(this.container.nativeElement, this.options);
   }
 
@@ -111,8 +111,10 @@ export class VisualizationToolComponent implements OnChanges, AfterViewInit, Det
                   id: fontPrefix + currEvent.eventInstanceId + "</p>",
                   title: titlePrefix + action + currEvent.kind + "</p>",
                   layout: "hanging",
-                  height: 100,
+                  height: 80,
+                  opacity: 1,
                   dataLabels: {
+                    enabled: true,
                     className: 'inner-tooltip'
                   }
               } as any;
@@ -145,7 +147,6 @@ export class VisualizationToolComponent implements OnChanges, AfterViewInit, Det
           let newLevelComponent = {
               level: i,
               color: null,
-              height: 100
           }
           config.levels.push(newLevelComponent);
       }
