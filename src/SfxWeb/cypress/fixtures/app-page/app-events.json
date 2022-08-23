@@ -1,0 +1,24 @@
+[
+  {
+    "ServiceName": "",
+    "ServicePackageName": "VisualObjects.ActorServicePkg",
+    "ServicePackageActivationId": "",
+    "IsExclusive": false,
+    "CodePackageName": "Code",
+    "EntryPointType": "Exe",
+    "ExeName": "VisualObjects.ActorService.exe",
+    "ProcessId": 34668,
+    "HostId": "b4c30156-f8e4-42b9-9efc-b0d42f798447",
+    "ExitCode": 3221225786,
+    "UnexpectedTermination": false,
+    "StartTime": "2022-08-15T12:41:42.7301991Z",
+    "ActivityId": "bd83e0db-da8b-40af-b62c-2e74d4c88f03:0",
+    "ExitReason": "The process/container terminated with exit code:3221225786. Deactivating as part of upgrade since code package changed. For information about common termination errors, please visit https://aka.ms/service-fabric-termination-errors",
+    "ApplicationId": "VisualObjects",
+    "Kind": "ApplicationProcessExited",
+    "EventInstanceId": "a3f38723-1f3e-4057-986d-7337245e0e93",
+    "TimeStamp": "2022-08-23T20:39:59.6684971Z",
+    "Category": "StateTransition",
+    "HasCorrelatedEvents": false
+  }
+]
