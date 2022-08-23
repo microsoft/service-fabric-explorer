@@ -1,4 +1,4 @@
-import { Component, ViewChild, ElementRef, Input, AfterViewInit, OnChanges, ChangeDetectionStrategy, Output, EventEmitter } from '@angular/core';
+import { Component, ViewChild, ElementRef, Input, AfterViewInit, OnChanges, ChangeDetectionStrategy, Output, EventEmitter, OnDestroy } from '@angular/core';
 import { ITimelineData } from 'src/app/Models/eventstore/timelineGenerators';
 import { Timeline, DataItem, DataGroup, moment, DataSet } from 'vis-timeline/standalone/esm';
 
@@ -8,7 +8,7 @@ import { Timeline, DataItem, DataGroup, moment, DataSet } from 'vis-timeline/sta
   styleUrls: ['./event-store-timeline.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class EventStoreTimelineComponent implements AfterViewInit, OnChanges {
+export class EventStoreTimelineComponent implements AfterViewInit, OnChanges, OnDestroy {
 
   @Input() events: ITimelineData;
 
@@ -219,5 +219,11 @@ export class EventStoreTimelineComponent implements AfterViewInit, OnChanges {
 
   flipShowControls() {
     this.showControls = !this.showControls;
+  }
+
+  ngOnDestroy(): void {
+    if(this.timeline){
+      this.timeline.destroy();
+    }
   }
 }

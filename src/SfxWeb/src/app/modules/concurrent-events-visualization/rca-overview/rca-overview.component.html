@@ -6,7 +6,7 @@
     <div style="align-self: flex-start;">
       <h5>{{type}} - {{events.length}} Events</h5>
       <b><i class="mif-info link"></i> Analysis performed is a best effort attempt and might not be the exact cause. "Unknown" means that the reason is not currently a scenario that Service Fabric Explorer is testing for.</b>
-      <div style="width: fit-content;">
+      <div style="min-width: 75%; width: fit-content">
         <app-essential-item *ngFor="let item of reasons; let l = last" [item]="item" [underline]="false">
           <div class="flex-center" style="gap: 5px; justify-content: flex-end;">
             <div style="margin-right: auto;">
