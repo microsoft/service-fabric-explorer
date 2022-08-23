@@ -7,8 +7,8 @@ import { NodeStatusConstants, Constants } from '../Common/Constants';
 import { ClusterLoadInformation } from '../Models/DataModels/Cluster';
 import { MetricsViewModel } from '../ViewModels/MetricsViewModel';
 import { StorageService } from './storage.service';
-import { RepairTaskViewComponent } from '../views/cluster/repair-task-view/repair-task-view.component';
 import { QuestionToolTipComponent } from '../modules/detail-list-templates/question-tool-tip/question-tool-tip.component';
+import { RepairTaskViewComponent } from '../modules/repair-tasks/repair-task-view/repair-task-view.component';
 import { ListColumnSettingForApplicationType } from '../views/application-type/action-row/action-row.component';
 import { HtmlUtils } from '../Utils/HtmlUtils';
 
@@ -243,6 +243,17 @@ export class SettingsService {
       false,
       (item) => item.raw.StatusDetails,
       false);
+  }
+
+  public getNewOrExistingInfrastructureSettings() {
+    return this.getNewOrExistingListSettings('allMRJobs', ['raw.CurrentUD'], [
+      new ListColumnSetting('raw.Id', 'Job Id'),
+      new ListColumnSettingWithFilter('raw.CurrentUD', 'Current UD'),
+      new ListColumnSetting('raw.AcknowledgementStatus', 'Acknowledgement Status'),
+      new ListColumnSetting('raw.ImpactAction', 'Impact Action'),
+      new ListColumnSetting('RepairTask.TaskId', 'Repair Task'),
+      new ListColumnSettingWithShorten('raw.RoleInstancesToBeImpacted', 'Target Nodes', 2),
+    ]);
   }
 
   // Update all existing list settings to use new limit

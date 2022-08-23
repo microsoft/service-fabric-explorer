@@ -746,7 +746,6 @@ export class RepairTaskTimelineGenerator extends TimeLineGeneratorBase<RepairTas
                                                             new Date(task.raw.History.CompletedUtcTimestamp).toLocaleString()),
             });
         });
-        console.log(items.map(item => item))
         groups.add({
             id: 'job',
             content: 'Job History',

@@ -15,11 +15,16 @@ $border-radius: 5px;
             border-top-left-radius: $border-radius;
             border-top-right-radius: $border-radius;
         }
-    
+
         &:last-child {
             border-bottom-left-radius: $border-radius;
             border-bottom-right-radius: $border-radius;
         }
-        
+
     }
+}
+
+.nested-header {
+  margin-bottom: -20px;
+  margin-top: 10px;
 }

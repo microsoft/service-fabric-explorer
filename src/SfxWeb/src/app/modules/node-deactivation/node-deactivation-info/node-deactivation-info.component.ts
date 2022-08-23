@@ -4,6 +4,7 @@ import { ListColumnSetting, ListSettings } from 'src/app/Models/ListSettings';
 import { IRawNodeDeactivationInfo } from 'src/app/Models/RawDataTypes';
 import { SettingsService } from 'src/app/services/settings.service';
 import { IProgressStatus } from 'src/app/shared/component/phase-diagram/phase-diagram.component';
+import { DeactivationUtils } from 'src/app/Utils/deactivationUtils';
 
 @Component({
   selector: 'app-node-deactivation-info',
@@ -37,7 +38,7 @@ export class NodeDeactivationInfoComponent implements OnInit, OnChanges {
 
   ngOnChanges(): void {
 
-   this.showSeedNodeTSG =  this.deactivationInfo.PendingSafetyChecks.some(safetyCheckDescription => safetyCheckDescription.SafetyCheck.Kind === 'EnsureSeedNodeQuorum');
+   this.showSeedNodeTSG =  DeactivationUtils.hasSeedNodeSafetyCheck(this.deactivationInfo);
 
    const phaseMap = {
       SafetyCheckInProgress: 1,

@@ -34,7 +34,7 @@ export class DetailsComponent extends BaseControllerDirective {
   setup(){
     this.clusterUpgradeProgress = this.data.clusterUpgradeProgress;
     this.clusterLoadInformation = this.data.clusterLoadInformation;
-    this.clusterHealth = this.data.getClusterHealth(HealthStateFilterFlags.Default, HealthStateFilterFlags.None, HealthStateFilterFlags.None);
+    this.clusterHealth = this.data.clusterHealth;
     this.nodes = this.data.nodes;
 
     this.nodeStatusListSettings = this.settings.getNewOrExistingNodeStatusListSetting();

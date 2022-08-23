@@ -1,6 +1,6 @@
-<div class="essen-pane" [attr.data-cy]="job.id">
+<div [attr.data-cy]="job.id">
   <div style="display: flex; justify-content: space-between;">
-    <div class="underline title" data-cy="job-id">
+    <div class="title" data-cy="job-id">
       Job : {{job.id}} <app-clip-board [text]="job.id"></app-clip-board>
     </div>
 
@@ -9,7 +9,7 @@
     </div>
   </div>
 
-  <div>
+  <div style="margin-left: 10px">
     <div ngbNav #nav="ngbNav" class="nav-wrapper">
       <div [ngbNavItem]="1">
         <a ngbNavLink style="font-size: 12pt;">
@@ -45,11 +45,22 @@
 
             <div style="flex: 1; min-width: 600px;">
               <div collapse-header class="underline title">
-                Pending Repair Task
+                Current Repair Task
               </div>
               <!--  There would only be 1 repair Task. -->
               <app-detail-list [list]="repairTask" [listSettings]="repairJobs" [showTopOptions]="false" collapse-body>
               </app-detail-list>
+            </div>
+            <div style="width: 100%">
+              <app-collapse-container sectionName="all repair tasks" [(collapsed)]="allCollapsed">
+                <div collapse-header class="title underline">
+                  All Repair Tasks ({{completed.length}})
+                </div>
+                <div collapse-body>
+                  <app-detail-list [list]="completed" [listSettings]="repairJobs" [showTopOptions]="false" collapse-body>
+                  </app-detail-list>
+                </div>
+              </app-collapse-container>
             </div>
           </div>
         </ng-template>

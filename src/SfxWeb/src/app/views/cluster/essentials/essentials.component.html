@@ -3,8 +3,8 @@
   class="long" [listItems]="essentialItems">
   </app-essential-health-tile>
 
-    <app-dashboard-tile [data]="nodesDashboard" *ngIf="nodesDashboard" data-cy="nodesChart" class="tall"></app-dashboard-tile>
-    <app-dashboard-tile [data]="appsDashboard" *ngIf="appsDashboard" data-cy="appsChart" class="tall"></app-dashboard-tile>
+    <app-dashboard-tile [data]="nodesDashboard" *ngIf="nodesDashboard" data-cy="nodesChart" ></app-dashboard-tile>
+    <app-dashboard-tile [data]="appsDashboard" *ngIf="appsDashboard" data-cy="appsChart" ></app-dashboard-tile>
     <app-dashboard-tile [data]="servicesDashboard" *ngIf="servicesDashboard" ></app-dashboard-tile>
     <app-dashboard-tile [data]="partitionsDashboard" *ngIf="partitionsDashboard" >
     </app-dashboard-tile>
@@ -21,6 +21,23 @@
         [barClass]="nodes.disabledAndDisablingCount > 0 ? 'badge-upgrade-active' : 'badge-upgrade-inactive'" link="nodes"
         [count]="nodes.disabledAndDisablingCount" *ngIf="nodes.isInitialized" title="Disabled/Disabling Nodes" style="display: block">
     </app-dashboard-text-tile>
+</div>
+
+<div *ngIf="repairtaskCollection.isInitialized && repairtaskCollection?.jobsOfInterest?.length > 0 || infraCollection.isInitialized && infraCollection?.throttledJobs?.length > 0" class="essen-pane detail-pane" style="border: 2px solid var(--badge-warning);">
+  <app-collapse-container sectionName="Potentially Stuck Repair Jobs" collapsed="false" data-cy="jobs">
+    <div collapse-header>
+            <h4>Potentially Stuck Repair Jobs and Throttled Infrastructure Jobs</h4>
+    </div>
+    <div collapse-body>
+      <h4 class="nested-header">Repair Jobs</h4>
+      <app-detail-list [list]="repairtaskCollection.jobsOfInterest" [listSettings]="repairTaskListSettings" [showTopOptions]="false"></app-detail-list>
+
+      <h4 class="nested-header">Throttled Infrastructure Jobs</h4>
+      <app-detail-list [list]="infraCollection.throttledJobs" [listSettings]="infraSettings" [showTopOptions]="false"></app-detail-list>
+
+    </div>
+
+  </app-collapse-container>
 </div>
 
 <div *ngIf="clusterUpgradeProgress.isInitialized && clusterUpgradeProgress.isUpgrading" class="detail-pane">
