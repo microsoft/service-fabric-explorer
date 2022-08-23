@@ -50,6 +50,35 @@ const APE: IRelevantEventsConfig[] = [
       // },
       {
         sourceProperty: "raw.ExitReason",
+        targetProperty: "Deactivating as part of upgrade since code package changed.",
+        sourceTransform: [{
+          type: "trimFront",
+          value: ". "
+        },
+        {
+          type: "trimBack",
+          value: "For information"
+        },
+        {
+          type: 'trimBack',
+          value: " ContainerName"
+        },
+        {
+          type: 'trimWhiteSpace'
+        }]
+      }
+    ],
+    result: 'Expected Termination - Deactivating as part of upgrade since code package changed'
+  },
+  {
+    eventType: "self",
+    propertyMappings: [
+      // {
+      //   sourceProperty: "raw.ExitCode",
+      //   targetProperty: 7147
+      // },
+      {
+        sourceProperty: "raw.ExitReason",
         targetProperty: "Deactivating since no replica hosted.",
         sourceTransform: [{
           type: "trimFront",
