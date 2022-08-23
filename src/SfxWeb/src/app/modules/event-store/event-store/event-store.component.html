@@ -85,7 +85,7 @@
               ngbTooltip="This data is currently loading."  tooltipClass="styled-tooltip"></div>
         <app-health-badge *ngIf="!data.eventsList.lastRefreshWasSuccessful" text="Error" [showText]="false"
           badgeClass="badge-error"></app-health-badge>
-        {{data.displayName}}
+        {{data.displayName}} ({{data.eventsList.collection.length}})
       </a>
       <ng-template ngbNavContent>
         <app-detail-list [list]="data.eventsList.collection" [listSettings]="data.listSettings"

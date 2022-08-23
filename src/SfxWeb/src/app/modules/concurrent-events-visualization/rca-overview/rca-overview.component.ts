@@ -21,8 +21,7 @@ export class RcaOverviewComponent implements AfterViewInit, OnChanges {
 
   @ViewChild('chart') private chartContainer: ElementRef;
   private chart: Chart;
-  private preGeneratedColors = ['#2f7ed8', '#0d233a', '#8bbc21', '#910000', '#1aadce',
-    '#492970', '#f28f43', '#77a1e5', '#a6c96a'];
+  private preGeneratedColors = ['#2f7ed8', '#0d233a', '#8bbc21', '#910000', '#1aadce', '#492970', '#f28f43', '#77a1e5', '#a6c96a'];
 
 
   public options: Options = {
@@ -113,7 +112,7 @@ export class RcaOverviewComponent implements AfterViewInit, OnChanges {
       }
     }));
     this.reasons = grouped.sort((a, b) => b[1].length - a[1].length).map(reason => {
-      this.colorKey[reason[0]] = this.colorKey[reason[0]] || this.preGeneratedColors.pop();
+      this.colorKey[reason[0]] = this.colorKey[reason[0]] || this.preGeneratedColors.pop() || Utils.randomColor();
       return {
         displayText: reason[1].length.toString(),
         copyTextValue: reason[0] + ' ' + reason[1].length.toString(),
