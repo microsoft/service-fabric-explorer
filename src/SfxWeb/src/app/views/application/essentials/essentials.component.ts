@@ -66,12 +66,14 @@ export class EssentialsComponent extends ApplicationBaseControllerDirective {
       if(manifest.isEventStoreEnabled) {
         this.eventStoreHandler = this.data.getApplicationEventData(this.appId);
         this.eventStoreHandler.eventsList.setEventFilter(['ApplicationProcessExited', 'ApplicationContainerInstanceExited']);
-        this.eventStoreHandler.eventsList.refresh().subscribe(() => {
-          this.highValueEvents = getSimultaneousEventsForEvent(RelatedEventsConfigs, this.eventStoreHandler.getEvents(), this.eventStoreHandler.getEvents());
+        this.eventStoreHandler.eventsList.refresh().subscribe((success) => {
+          if(success) {
+            this.highValueEvents = getSimultaneousEventsForEvent(RelatedEventsConfigs, this.eventStoreHandler.getEvents(), this.eventStoreHandler.getEvents());
+          }else{
+            this.failedToLoadEvents = true;
+          }
         })
       }
-    }, error => {
-      this.failedToLoadEvents = true;
     })
   }
 
