@@ -6,13 +6,15 @@ import { RcaSummaryComponent } from './rca-summary/rca-summary.component';
 import { RcaOverviewComponent } from './rca-overview/rca-overview.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
+import { RelationViewerComponent } from './relation-viewer/relation-viewer.component';
 
 @NgModule({
   declarations: [
     VisualizationToolComponent,
     VisualizationLogoComponent,
     RcaSummaryComponent,
-    RcaOverviewComponent
+    RcaOverviewComponent,
+    RelationViewerComponent
   ],
   imports: [
     CommonModule,

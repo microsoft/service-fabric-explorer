@@ -244,7 +244,6 @@ export class RepairTask extends DataModelBase<IRawRepairTask> implements IRCAIte
 
             this.couldParseExecutorData = true;
         } catch (e) {
-            console.log(e);
             this.couldParseExecutorData = false;
         }
 

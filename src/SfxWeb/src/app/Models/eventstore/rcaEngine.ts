@@ -41,19 +41,19 @@ export interface IRCAItem extends IEventPropertiesCollection {
   timeStamp: string;
 }
 
-export const getSimultaneousEventsForEvent = (configs: IConcurrentEventsConfig[], inputEvents: IRCAItem[], events: IRCAItem[]): IConcurrentEvents[] => {
+export const getSimultaneousEventsForEvent = (configs: IConcurrentEventsConfig[], inputEvents: IRCAItem[], events: IRCAItem[], existingEvents?: IConcurrentEvents[]): IConcurrentEvents[] => {
   /*
       Grab the events that occur concurrently with an inputted current event.
   */
-  let simulEvents: IConcurrentEvents[] = [];
+  let simulEvents: IConcurrentEvents[] = existingEvents || [];
 
-  const findEvent = (event: IRCAItem) => {
-    return simulEvents.find(e => e.eventInstanceId === event.eventInstanceId);
+  const findEvent = (events: IConcurrentEvents[], event: IRCAItem) => {
+    return events.find(e => e.eventInstanceId === event.eventInstanceId);
   }
 
   // iterate through all the input events
   inputEvents.forEach(inputEvent => {
-    if (findEvent(inputEvent)) {
+    if (findEvent(simulEvents, inputEvent)) {
       return;
     }
 
@@ -130,17 +130,21 @@ export const getSimultaneousEventsForEvent = (configs: IConcurrentEventsConfig[]
               });
 
               if (valid) {
-                console.log(inputEvent, iterEvent)
-                const existingEvent = findEvent(iterEvent); //simulEvents.find(e => e.eventInstanceId === iterEvent.eventInstanceId);
-                console.log(existingEvent)
+                if(iterEvent.eventInstanceId === "SFRP-64e40002-efb2-46c9-8efe-ab58a4af4607-DeleteNodeType") {
+                  console.log("TEST", iterEvent, simulEvents, findEvent(simulEvents, iterEvent))
+                }
+                const existingEvent = findEvent(simulEvents, iterEvent);
                 if(existingEvent) {
                   reason = existingEvent;
                 }else{
                   //generate events needed to build chain
-                  const reasons = getSimultaneousEventsForEvent(configs, [iterEvent], events);
-                  simulEvents = simulEvents.concat(reasons);
+                  const reasons = getSimultaneousEventsForEvent(configs, [iterEvent], events, simulEvents);
+                  reasons.forEach(event => {
+                    if(!findEvent(simulEvents, event)) {
+                      simulEvents.push(event)
+                    }
+                  })
                   reason = reasons.find(e => e.eventInstanceId === iterEvent.eventInstanceId);
-                  console.log(reason)
                 }
               }
             }
@@ -161,6 +165,5 @@ export const getSimultaneousEventsForEvent = (configs: IConcurrentEventsConfig[]
     });
   });
 
-  console.log("events", simulEvents)
   return simulEvents;
 }
