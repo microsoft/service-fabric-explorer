@@ -2,8 +2,12 @@ import { IRawRepairTask } from '../RawDataTypes';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { DataModelBase } from './Base';
 import { DataService } from 'src/app/services/data.service';
-import { Observable, of } from 'rxjs';
 import { IRCAItem } from '../eventstore/rcaEngine';
+import { forkJoin, Observable, of } from 'rxjs';
+import { catchError, defaultIfEmpty, map } from 'rxjs/operators';
+import { Node } from './Node';
+import { DeactivationUtils } from 'src/app/Utils/deactivationUtils';
+import { RepairTaskMessages } from 'src/app/Common/Constants';
 
 export enum RepairJobType {
     TenantUpdate = 'TenantUpdate',
@@ -44,6 +48,12 @@ export enum StatusCSS {
     NotStarted = 'repair-gray'
 }
 
+export interface IConcerningJobInfo {
+  type: string;
+  description: string;
+  helpLink?: string;
+}
+
 
 export class RepairTask extends DataModelBase<IRawRepairTask> implements IRCAItem {
     public static readonly ExecutingStatus = 'Executing';
@@ -75,14 +85,15 @@ export class RepairTask extends DataModelBase<IRawRepairTask> implements IRCAIte
     public historyPhases: IRepairTaskPhase[];
 
     public executorData: any;
-
     public eventInstanceId: string;
     public eventProperties = {};
+    public concerningJobInfo: IConcerningJobInfo = null;
+
     constructor(public dataService: DataService, public raw: IRawRepairTask, private dateRef?: Date) {
         super(dataService, raw);
-        this.updateInternal();
         this.eventInstanceId = this.raw.TaskId;
         this.eventProperties = this.raw;
+        this.updateInternal().subscribe();
     }
 
     /*
@@ -223,6 +234,60 @@ export class RepairTask extends DataModelBase<IRawRepairTask> implements IRCAIte
         };
     }
 
+  private checkAndSetConcerningJob(): Observable<IConcerningJobInfo> {
+    return new Observable(observer => {
+      const emit = (data: IConcerningJobInfo) => {
+        observer.next(data);
+        observer.complete();
+      }
+      if (this.raw.State === "Executing" && this.getPhase("Executing").durationMilliseconds > (2 * 60 * 60 * 1000)) {
+        emit({
+          type: RepairTaskMessages.longExecutingId,
+          description: `This Repair task has been executing for ${this.displayDuration}, which doesn't seem normal. ${RepairTaskMessages.longExecutingMessage}`
+        })
+      } else if (this.raw.State === "Preparing" && this.getPhase("Preparing Health Check Start").durationMilliseconds > (1000 * 60 * 15) ||
+        this.raw.State === "Restoring" && this.getPhase("Restoring Health Check Start").durationMilliseconds > (1000 * 60 * 15)) {
+        forkJoin(this.impactedNodes.map(id => {
+          return this.dataService.getNode(id, true).pipe(catchError(err => { console.log(err); return of(null) }));
+        })).pipe(
+          defaultIfEmpty([]),
+        ).subscribe((data: Node[]) => {
+          data = data.filter(node => node);
+          const nodesWithSeedNodeWarnings = data.filter(node => DeactivationUtils.hasSeedNodeSafetyCheck(node.raw.NodeDeactivationInfo));
+          const nodesWithSafetyChecks = data.filter(node => node.raw.NodeDeactivationInfo.PendingSafetyChecks.length > 0);
+
+          //seed node related
+          if (nodesWithSeedNodeWarnings.length > 0) {
+            emit({
+              type: RepairTaskMessages.seedNodeChecksId,
+              description: `This repair task is stuck in the ${this.raw.State} state. ${RepairTaskMessages.seedNodeChecks}`
+            })
+            // pending safety check which is NOT seednode related
+          } else if (nodesWithSafetyChecks.length > 0) {
+            emit({
+              type: RepairTaskMessages.safetyChecksId,
+              description: `This Repair task is stuck in the ${this.raw.State} state for ${this.displayDuration}. ${RepairTaskMessages.safetyChecks}`
+            })
+          } else {
+            // cluster health is not OK
+            this.data.getDefaultClusterHealth().subscribe(clusterHealth => {
+              if (clusterHealth.raw.AggregatedHealthState !== "Ok") {
+                emit({
+                  type: RepairTaskMessages.clusterHealthCheckId,
+                  description: `This Repair task is stuck in the ${this.raw.State} state. ${RepairTaskMessages.clusterHealthCheck}`
+                })
+              } else {
+                emit(null);
+              }
+            })
+          }
+        });
+      } else {
+        emit(null);
+      }
+    })
+  }
+
     updateInternal(): Observable<any> {
         if (this.raw.Impact) {
             this.impactedNodes = this.raw.Impact.NodeImpactList.map(node => node.NodeName);
@@ -261,7 +326,9 @@ export class RepairTask extends DataModelBase<IRawRepairTask> implements IRCAIte
                                     this.generateHistoryPhase('Restoring', this.history.slice(7)));
         }
 
-        return of(null);
+        return this.checkAndSetConcerningJob().pipe(map((data => {
+          this.concerningJobInfo = data;
+        })))
     }
 
     public getPhase(phase: string): IRepairTaskHistoryPhase {

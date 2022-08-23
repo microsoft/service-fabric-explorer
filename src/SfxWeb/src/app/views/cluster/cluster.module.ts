@@ -20,20 +20,21 @@ import { UpgradeProgressModule } from 'src/app/modules/upgrade-progress/upgrade-
 import { ChartsModule } from 'src/app/modules/charts/charts.module';
 import { StatusWarningsComponent } from './status-warnings/status-warnings.component';
 import { BackupsComponent } from './backups/backups.component';
-import { NgbDropdownModule, NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDropdownModule, NgbNavModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { BackupRestoreModule } from 'src/app/modules/backup-restore/backup-restore.module';
 import { RepairTasksComponent } from './repair-tasks/repair-tasks.component';
-import { RepairTaskViewComponent } from './repair-task-view/repair-task-view.component';
 import { NodeDeactivationModule } from 'src/app/modules/node-deactivation/node-deactivation.module';
-import { RepairJobChartComponent } from './repair-job-chart/repair-job-chart.component';
 import { HealthStateModule } from 'src/app/modules/health-state/health-state.module';
 import { ClustermapModule } from 'src/app/modules/clustermap/clustermap.module';
 import { MetricTileComponent } from './metric-tile/metric-tile.component';
+import { InfrastructureViewComponent } from './infrastructure-view/infrastructure-view.component';
+import { InfrastructureJobModule } from 'src/app/modules/infrastructure-job/infrastructure-job.module';
+import { RepairTasksModule } from 'src/app/modules/repair-tasks/repair-tasks.module';
 
 @NgModule({
   declarations: [EssentialsComponent, DetailsComponent, BaseComponent, MetricsComponent, ClustermapComponent,
                  ImagestoreComponent, ManifestComponent, EventsComponent, ActionCreateBackupPolicyComponent,
-                 StatusWarningsComponent, BackupsComponent, RepairTasksComponent, RepairTaskViewComponent, RepairJobChartComponent, MetricTileComponent],
+                 StatusWarningsComponent, BackupsComponent, RepairTasksComponent, MetricTileComponent, InfrastructureViewComponent],
   imports: [
     CommonModule,
     ClusterRoutingModule,
@@ -50,7 +51,11 @@ import { MetricTileComponent } from './metric-tile/metric-tile.component';
     UpgradeProgressModule,
     NodeDeactivationModule,
     HealthStateModule,
-    ClustermapModule
+    ClustermapModule,
+    NgbNavModule,
+    InfrastructureJobModule,
+    RepairTasksModule,
+    NgbTooltipModule
   ]
 })
 export class ClusterModule { }

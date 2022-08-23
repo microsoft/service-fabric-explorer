@@ -1,0 +1,41 @@
+<div style="margin: 15px 0px;">
+  <a href="https://docs.microsoft.com/azure/service-fabric/infrastructure-service-faq#faqs" target="_blank"
+    class="essen-pane info-box">
+    <span class="mif-info link"></span> Click here to learn more about Infrastructure jobs.
+  </a>
+</div>
+
+<div *ngIf="collection.isInitialized" class="essen-pane">
+  <div ngbNav #nav="ngbNav" class="nav-wrapper" activeIndex="0">
+    <div *ngFor="let infra of collection.collection; let i = index; let l = last;" [ngbNavItem]="i"
+      style="display: flex;">
+      <a ngbNavLink style="font-size: 12pt;" [attr.data-cy]="infra.name">
+        <div>
+          <div style="display: flex; gap: 10px;">
+            <i class="mif-notification warning-icon" tooltipClass="styled-tooltip" *ngIf="infra.isThrottled"
+              ngbTooltip="This infrastructure service has throttled jobs. This means there are jobs that are currently waiting."
+              container="body" data-cy="throttled"></i>
+            <div>
+              {{infra.name | stripPrefix}}
+            </div>
+          </div>
+          <div class="chip-container">
+            <span class="chip">
+              <span>Active :</span> <span style="font-size: 22px"> {{infra.executingMRJobs.length}} </span>
+            </span>
+            <span class="chip pending">
+              <span>Pending :</span> <span style="font-size: 22px"> {{infra.allPendingMRJobs.length}} </span>
+            </span>
+          </div>
+        </div>
+      </a>
+      <div *ngIf="!l" style="border: 2px solid var(--accent-underline);
+        margin-left: 10px;"></div>
+      <ng-template ngbNavContent>
+        <app-infrastructure-overview [jobs]="infra.raw.Jobs" [repairCollection]="repairTaskCollection"
+          [collection]="infra"></app-infrastructure-overview>
+      </ng-template>
+    </div>
+  </div>
+  <div [ngbNavOutlet]="nav" style="margin-top: 10px"></div>
+</div>

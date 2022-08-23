@@ -698,3 +698,8 @@ table.detail-list {
 .visually-hidden {
   display: none;
 }
+
+.warning-icon {
+  align-self: center;
+  color: var(--badge-warning);
+}

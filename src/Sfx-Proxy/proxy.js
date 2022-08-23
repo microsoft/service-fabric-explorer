@@ -133,7 +133,8 @@ app.all('/*', async (req, res) => {
     console.log(`${req.url} ${req.method}`);
 
     if(!resp) {
-      res.status(200).end();
+        console.log("failed to forward the request")
+        res.status(200).end();
       return;
     }
 

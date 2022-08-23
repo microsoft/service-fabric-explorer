@@ -60,9 +60,9 @@
                     </app-collapse-container>
                 </div>
                 <div>
-                    <div *ngIf="stuckJobText" style="margin-bottom: 15px;" data-cy="node-stuck-warning">
-                      <app-warning [description]="stuckJobText" ></app-warning>
-                    </div>
+                  <div *ngIf="item.concerningJobInfo" style="margin-bottom: 15px;" data-cy="node-stuck-warning">
+                    <app-warning [description]="item.concerningJobInfo.description" ></app-warning>
+                  </div>
                     <div *ngIf="item.couldParseExecutorData" data-cy="jobinfo">
                         <h5>
                             Job Info

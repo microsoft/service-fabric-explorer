@@ -2,7 +2,11 @@
 
 import {
   apiUrl, addDefaultFixtures, FIXTURE_REF_CLUSTERHEALTH, nodes_route, checkTableSize,
-  upgradeProgress_route, FIXTURE_REF_UPGRADEPROGRESS, FIXTURE_REF_MANIFEST, addRoute, checkTableErrorMessage, EMPTY_LIST_TEXT, FAILED_TABLE_TEXT, FAILED_LOAD_TEXT, repairTask_route, manifest_route, CLUSTER_TAB_NAME, REPAIR_TASK_TAB_NAME, FIXTURE_REF_NODES, FIXTURE_NODES, typeIntoInput, checkCheckBox, refresh
+  upgradeProgress_route, FIXTURE_REF_UPGRADEPROGRESS, FIXTURE_REF_MANIFEST, addRoute,
+  checkTableErrorMessage, EMPTY_LIST_TEXT, FAILED_TABLE_TEXT, FAILED_LOAD_TEXT,
+  repairTask_route, manifest_route, CLUSTER_TAB_NAME, REPAIR_TASK_TAB_NAME,
+  FIXTURE_REF_NODES, FIXTURE_NODES, typeIntoInput, checkCheckBox, refresh,
+  FIXTURE_REF_SYSTEMAPPS, systemApps_route
 } from './util.cy';
 
 const LOAD_INFO = "getloadinfo"
@@ -38,6 +42,7 @@ context('Cluster page', () => {
       })
 
       cy.get('[role="alert"]').should('not.exist')
+      cy.get('[role="jobs"]').should('not.exist')
     })
 
     it('certificate expiring banner', () => {
@@ -53,15 +58,20 @@ context('Cluster page', () => {
     })
 
     it('long running job in approval', () => {
-      cy.intercept(repairTask_route, { fixture: 'cluster-page/repair-jobs/long-running-approval.json' })
+      cy.intercept(repairTask_route, { fixture: 'cluster-page/repair-jobs/long-running-approval.json' }).as("repairTasks")
 
       cy.visit('')
 
-      cy.contains('Action Required: There is a repair job (longrunningapprovaljobid) waiting for approval for')
+      cy.contains('The repair job jobOfInterest is potentially stuck');
 
       cy.get('[title="Repair Jobs In Progress"]').within(() => {
-        cy.contains('1');
-      })
+        cy.contains('2');
+      });
+
+      cy.get('[data-cy="jobs"]').click().within(() => {
+        cy.contains('jobOfInterest')
+      });
+
     })
 
   })
@@ -629,7 +639,7 @@ context('Cluster page', () => {
       });
     })
 
-    it.only('view in progress repair job - stuck in health check', () => {
+    it('view in progress repair job - stuck in health check', () => {
       setup('cluster-page/repair-jobs/stuck-in-health-check.json')
 
       cy.get('[data-cy=pendingjobs]').within(() => {
@@ -663,4 +673,43 @@ context('Cluster page', () => {
       });
     })
   })
+
+  describe.only("systemService - infraservice", () => {
+    beforeEach(() => {
+      addDefaultFixtures();
+
+      addRoute("infra-service-data", "system-service/infrastructure-data.json", apiUrl(`/$/InvokeInfrastructureQuery?api-version=6.0&Command=GetJobs&ServiceId=System/InfrastructureService/Type134*`))
+      addRoute("infra-service-data", "empty-list.json", apiUrl(`/$/InvokeInfrastructureQuery?api-version=6.0&Command=GetJobs&ServiceId=System/InfrastructureService/Type135*`))
+      addRoute(FIXTURE_REF_SYSTEMAPPS, 'cluster-page/infra/systemServicesWithInfra.json', systemApps_route)
+
+      cy.visit(`/#/infrastructure`)
+    })
+
+    it('executing job', () => {
+      cy.get('[data-cy=navtabs]').within(() => {
+        cy.contains('infrastructure jobs').click();
+      })
+
+      cy.get('[data-cy=444703f2-0733-4537-9cf0-4a543ca12e91]').within(() => {
+        cy.get('[data-cy=overview]').within(() => {
+          cy.contains(' _primaray_0:ConfigurationUpdate ')
+          cy.contains('Acknowledged')
+        })
+      })
+
+      cy.get('[data-cy=completed]').click();
+
+      cy.contains('FFFFFFF')
+
+      cy.get('[data-cy=throttled]')
+
+      //make sure both infra show up
+      cy.get('[data-cy="fabric:/System/InfrastructureService/Type135"]')
+      cy.get('[data-cy="fabric:/System/InfrastructureService/Type134"]').within(() => {
+        cy.contains('Active : 1')
+      })
+
+    })
+  })
+
 })

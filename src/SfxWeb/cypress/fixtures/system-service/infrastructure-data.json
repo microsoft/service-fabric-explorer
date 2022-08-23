@@ -10,6 +10,7 @@
       "ActionStatus": "Executed",
       "CurrentUD": 0,
       "ContextId": "",
+      "IsThrottled": true,
       "RoleInstancesToBeImpacted": [
           "_primaray_0",
           "_primaray_1",

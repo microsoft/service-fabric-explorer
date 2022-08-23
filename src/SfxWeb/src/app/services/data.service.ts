@@ -40,6 +40,7 @@ import { RepairTask } from '../Models/DataModels/repairTask';
 import { ApplicationTimelineGenerator, ClusterTimelineGenerator, NodeTimelineGenerator, PartitionTimelineGenerator, RepairTaskTimelineGenerator } from '../Models/eventstore/timelineGenerators';
 import groupBy from 'lodash/groupBy';
 import { StandaloneIntegrationService } from './standalone-integration.service';
+import { InfrastructureCollection } from '../Models/DataModels/collections/infrastructureCollection';
 
 @Injectable({
   providedIn: 'root'
@@ -48,6 +49,7 @@ export class DataService {
 
   public systemApp: SystemApplication;
   public clusterManifest: ClusterManifest;
+  public clusterHealth: ClusterHealth;
   public clusterUpgradeProgress: ClusterUpgradeProgress;
   public clusterLoadInformation: ClusterLoadInformation;
   public appTypeGroups: ApplicationTypeGroupCollection;
@@ -56,6 +58,7 @@ export class DataService {
   public imageStore: ImageStore;
   public backupPolicies: BackupPolicyCollection;
   public repairCollection: RepairTaskCollection;
+  public infrastructureCollection: InfrastructureCollection;
 
   public readOnlyHeader: boolean =  null;
   public clusterNameMetadata: string = null;
@@ -79,7 +82,8 @@ export class DataService {
     this.systemApp = new SystemApplication(this);
     this.backupPolicies = new BackupPolicyCollection(this);
     this.repairCollection = new RepairTaskCollection(this);
-
+    this.infrastructureCollection = new InfrastructureCollection(this);
+    this.clusterHealth = this.getClusterHealth(HealthStateFilterFlags.Default, HealthStateFilterFlags.None, HealthStateFilterFlags.None);
     if(standalone.isStandalone()) {
       this.clusterNameMetadata = standalone.clusterUrl;
       this.readOnlyHeader = !!standalone.integrationConfig.isReadOnlyMode;
@@ -119,6 +123,10 @@ export class DataService {
     applicationsHealthStateFilter: HealthStateFilterFlags = HealthStateFilterFlags.Default
   ): ClusterHealth {
     return new ClusterHealth(this, eventsHealthStateFilter, nodesHealthStateFilter, applicationsHealthStateFilter);
+  }
+
+  public getDefaultClusterHealth(forceRefresh: boolean = false, messageHandler?: IResponseMessageHandler) {
+    return this.clusterHealth.ensureInitialized(forceRefresh, messageHandler).pipe(map(() => this.clusterHealth));
   }
 
   public getClusterManifest(forceRefresh: boolean = false, messageHandler?: IResponseMessageHandler): Observable<ClusterManifest> {
