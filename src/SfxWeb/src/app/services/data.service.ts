@@ -40,6 +40,7 @@ import { RepairTask } from '../Models/DataModels/repairTask';
 import { ApplicationTimelineGenerator, ClusterTimelineGenerator, NodeTimelineGenerator, PartitionTimelineGenerator, RepairTaskTimelineGenerator } from '../Models/eventstore/timelineGenerators';
 import groupBy from 'lodash/groupBy';
 import { StandaloneIntegrationService } from './standalone-integration.service';
+import { InfrastructureCollection } from '../Models/DataModels/collections/infrastructureCollection';
 
 @Injectable({
   providedIn: 'root'
@@ -48,6 +49,7 @@ export class DataService {
 
   public systemApp: SystemApplication;
   public clusterManifest: ClusterManifest;
+  public clusterHealth: ClusterHealth;
   public clusterUpgradeProgress: ClusterUpgradeProgress;
   public clusterLoadInformation: ClusterLoadInformation;
   public appTypeGroups: ApplicationTypeGroupCollection;
@@ -56,6 +58,7 @@ export class DataService {
   public imageStore: ImageStore;
   public backupPolicies: BackupPolicyCollection;
   public repairCollection: RepairTaskCollection;
+  public infrastructureCollection: InfrastructureCollection;
 
   public readOnlyHeader: boolean =  null;
   public clusterNameMetadata: string = null;
@@ -79,7 +82,8 @@ export class DataService {
     this.systemApp = new SystemApplication(this);
     this.backupPolicies = new BackupPolicyCollection(this);
     this.repairCollection = new RepairTaskCollection(this);
-
+    this.infrastructureCollection = new InfrastructureCollection(this);
+    this.clusterHealth = this.getClusterHealth(HealthStateFilterFlags.Default, HealthStateFilterFlags.None, HealthStateFilterFlags.None);
     if(standalone.isStandalone()) {
       this.clusterNameMetadata = standalone.clusterUrl;
       this.readOnlyHeader = !!standalone.integrationConfig.isReadOnlyMode;
@@ -98,12 +102,31 @@ export class DataService {
     return this.storage.getValueBoolean(Constants.AdvancedModeKey, false);
   }
 
+  public async versionCheck(minVersion: string): Promise<boolean> {
+    const splitVersion = minVersion.split(".");
+    const upgradeInfo = await this.getClusterUpgradeProgress().toPromise();
+    const splitClusterVersion = upgradeInfo.raw.CodeVersion.split(".");
+
+    let higherVersion = true;
+    for(let i = 0; i < splitVersion.length; i++) {
+      if(+splitVersion[i] > +splitClusterVersion[i]) {
+        higherVersion = false;
+        break;
+      }
+    }
+    return higherVersion;
+  }
+
   public getClusterHealth(
     eventsHealthStateFilter: HealthStateFilterFlags = HealthStateFilterFlags.Default,
     nodesHealthStateFilter: HealthStateFilterFlags = HealthStateFilterFlags.Default,
     applicationsHealthStateFilter: HealthStateFilterFlags = HealthStateFilterFlags.Default
   ): ClusterHealth {
     return new ClusterHealth(this, eventsHealthStateFilter, nodesHealthStateFilter, applicationsHealthStateFilter);
+  }
+
+  public getDefaultClusterHealth(forceRefresh: boolean = false, messageHandler?: IResponseMessageHandler) {
+    return this.clusterHealth.ensureInitialized(forceRefresh, messageHandler).pipe(map(() => this.clusterHealth));
   }
 
   public getClusterManifest(forceRefresh: boolean = false, messageHandler?: IResponseMessageHandler): Observable<ClusterManifest> {
@@ -312,6 +335,8 @@ export class DataService {
         data.listSettings = data.eventsList.settings;
         data.getEvents = () => data.eventsList.collection.map(event => event.raw);
         data.setDateWindow = (startDate: Date, endDate: Date) => data.eventsList.setDateWindow(startDate, endDate);
+        data.timelineResolver = (id: string) => data.eventsList.collection.some(item => item.raw.eventInstanceId === id);
+        return data;
     }
 
     public getRepairTasksData(settings: SettingsService): IEventStoreData<RepairTaskCollection, RepairTask>{
@@ -320,7 +345,10 @@ export class DataService {
             timelineGenerator: new RepairTaskTimelineGenerator(),
             displayName: 'Repair Tasks',
             listSettings: settings.getNewOrExistingCompletedRepairTaskListSettings(),
-            getEvents: () => this.repairCollection.collection
+            getEvents: () => this.repairCollection.collection,
+            timelineResolver:  (id: string) => {
+              return this.repairCollection.collection.some(task => task.raw.TaskId === id);
+            }
         };
     }
 

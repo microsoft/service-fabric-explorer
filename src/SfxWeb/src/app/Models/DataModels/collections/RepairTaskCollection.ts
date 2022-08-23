@@ -1,6 +1,6 @@
-import { Observable, of } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { StatusWarningLevel } from 'src/app/Common/Constants';
+import { forkJoin, Observable, of } from 'rxjs';
+import { defaultIfEmpty, map } from 'rxjs/operators';
+import { RepairTaskMessages, StatusWarningLevel } from 'src/app/Common/Constants';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { DataService } from 'src/app/services/data.service';
 import { RepairTask, StatusCSS } from '../repairTask';
@@ -12,6 +12,7 @@ export class RepairTaskCollection extends DataModelCollectionBase<RepairTask> {
 
     repairTasks: RepairTask[] = [];
     completedRepairTasks: RepairTask[] = [];
+    jobsOfInterest: RepairTask[] = [];
 
     public longRunningApprovalJob: RepairTask;
     public longestExecutingJob: RepairTask;
@@ -58,21 +59,46 @@ export class RepairTaskCollection extends DataModelCollectionBase<RepairTask> {
             }
         });
 
-        this.longRunningApprovalJob = longRunningApprovalRepairTask;
-        this.longestExecutingJob = longRunningExecutingRepairTask;
+      this.longRunningApprovalJob = longRunningApprovalRepairTask;
+      this.longestExecutingJob = longRunningExecutingRepairTask;
 
-        if (longRunningApprovalRepairTask && longRunningApprovalRepairTask.getHistoryPhase('Preparing').durationMilliseconds > RepairTaskCollection.minDurationApprovalbanner) {
-            this.data.warnings.addOrUpdateNotification({
-                message: `Action Required: There is a repair job (${longRunningApprovalRepairTask.id}) waiting for approval for ${longRunningApprovalRepairTask.displayDuration}. This can block updates to this cluster. Please see aka.ms/sflongapprovingjob for more information. `,
+      return forkJoin(this.repairTasks.map(task => task.updateInternal())).pipe(defaultIfEmpty([]), map(() => {
+        try {
+          this.jobsOfInterest = this.repairTasks.filter(task => task.concerningJobInfo);
+
+          const stuckJobTypeMap: Record<string, RepairTask[]> = {};
+          this.jobsOfInterest.forEach(job => {
+            const jobList = (stuckJobTypeMap[job.concerningJobInfo.type] || []);
+            jobList.push(job);
+            stuckJobTypeMap[job.concerningJobInfo.type] = jobList;
+          })
+
+          const messageTypes = [RepairTaskMessages.longExecutingId,
+          RepairTaskMessages.seedNodeChecksId,
+          RepairTaskMessages.safetyChecksId,
+          RepairTaskMessages.clusterHealthCheckId];
+          //loop over each type of stuck job to set or clear if there is a message
+          messageTypes.forEach(messageType => {
+            if (messageType in stuckJobTypeMap) {
+              console.log(RepairTaskMessages.messageMap)
+              const jobs = stuckJobTypeMap[messageType].map(job => job.raw.TaskId);
+              const repairJobPrefix = `The repair job${jobs.length > 1 ? 's' : ''} ${jobs.join()} ${jobs.length > 1 ? 'are' : 'is'}
+                                            potentially stuck. ${RepairTaskMessages.messageMap(messageType)}`;
+              this.data.warnings.addOrUpdateNotification({
+                message: repairJobPrefix,
                 level: StatusWarningLevel.Warning,
                 priority: 4,
-                id: RepairTaskCollection.bannerApprovalId,
-            }, true);
-        } else {
-            this.data.warnings.removeNotificationById(RepairTaskCollection.bannerApprovalId);
+                id: messageType,
+              }, true);
+            } else {
+              this.data.warnings.removeNotificationById(messageType);
+            }
+          })
+        } catch (e) {
+          console.log(e)
         }
 
-        return of(null);
+      }));
     }
 
     public getRepairJobsForANode(nodeName: string) {

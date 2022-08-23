@@ -1,11 +1,7 @@
-import { IRawInfrastructureJob, IRawInfraRepairTask, IRawRoleInstanceImpact, InfraRepairTask } from '../RawDataTypes';
-import { TimeUtils } from 'src/app/Utils/TimeUtils';
+import { IRawInfrastructureJob, InfraRepairTask } from '../RawDataTypes';
 import { DataModelBase } from './Base';
-import { Observable, of } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { StatusWarningLevel } from 'src/app/Common/Constants';
-import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { DataService } from 'src/app/services/data.service';
+import { of } from 'rxjs';
 
 export class InfrastructureJob extends DataModelBase<IRawInfrastructureJob> {
 
