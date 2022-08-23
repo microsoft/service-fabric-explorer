@@ -14,6 +14,7 @@ import { TimeUtils } from 'src/app/Utils/TimeUtils';
 export class UpgradeInfoComponent implements OnChanges, OnInit {
 
   @Input() upgradeProgress: ClusterUpgradeProgress | ApplicationUpgradeProgress;
+  @Input() upgradeInformation: any; //used to force change detection
 
   upgradeProgressUnhealthyEvaluationsListSettings: ListSettings;
 

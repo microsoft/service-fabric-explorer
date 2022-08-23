@@ -23,7 +23,7 @@
             <h4 *ngIf="!upgradeProgress.isUpgrading">Latest Upgrade State</h4>
         </div>
         <div collapse-body>
-          <app-upgrade-info [upgradeProgress]="upgradeProgress"></app-upgrade-info>
+          <app-upgrade-info [upgradeProgress]="upgradeProgress" [upgradeInformation]="upgradeProgress.raw"></app-upgrade-info>
         </div>
     </app-collapse-container>
 </div>

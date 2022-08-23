@@ -5,7 +5,7 @@
                 <h4 *ngIf="!clusterUpgradeProgress.isUpgrading">Latest Cluster Upgrade</h4>
         </div>
         <div collapse-body>
-            <app-upgrade-info [upgradeProgress]="clusterUpgradeProgress"></app-upgrade-info>
+            <app-upgrade-info [upgradeProgress]="clusterUpgradeProgress" [upgradeInformation]="clusterUpgradeProgress.raw"></app-upgrade-info>
         </div>
     </app-collapse-container>
 </div>
