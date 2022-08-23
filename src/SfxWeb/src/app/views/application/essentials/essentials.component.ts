@@ -35,6 +35,7 @@ export class EssentialsComponent extends ApplicationBaseControllerDirective {
 
   eventStoreHandler: IEventStoreData<ApplicationEventList, ApplicationEvent>;
   highValueEvents: IConcurrentEvents[] = null;
+  failedToLoadEvents = false;
 
   constructor(protected data: DataService, injector: Injector, private settings: SettingsService) {
     super(data, injector);
@@ -63,12 +64,14 @@ export class EssentialsComponent extends ApplicationBaseControllerDirective {
 
     this.data.getClusterManifest().subscribe(manifest => {
       if(manifest.isEventStoreEnabled) {
-        this.eventStoreHandler = this.data.getApplicationEventData();
+        this.eventStoreHandler = this.data.getApplicationEventData(this.appId);
         this.eventStoreHandler.eventsList.setEventFilter(['ApplicationProcessExited', 'ApplicationContainerInstanceExited']);
         this.eventStoreHandler.eventsList.refresh().subscribe(() => {
           this.highValueEvents = getSimultaneousEventsForEvent(RelatedEventsConfigs, this.eventStoreHandler.getEvents(), this.eventStoreHandler.getEvents());
         })
       }
+    }, error => {
+      this.failedToLoadEvents = true;
     })
   }
 

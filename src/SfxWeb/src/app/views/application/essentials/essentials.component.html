@@ -26,6 +26,9 @@
     <div *ngIf="eventStoreHandler.eventsList.isInitialized && highValueEvents" style="min-height: 200px">
       <app-rca-summary [events]="highValueEvents"></app-rca-summary>
     </div>
+    <div *ngIf="failedToLoadEvents">
+      Failed to load events.
+    </div>
   </div>
 </app-collapse-container>
 
