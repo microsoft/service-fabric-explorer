@@ -1,6 +1,6 @@
 import { validate } from "../mainWindow/validate";
 import {  IAuthOption, IHttpHandler } from "../httpHandler";
-import { Subject } from "../observable";
+import { Subject } from 'rxjs';
 
 export class AuthenticationManager {
     public authOptions: IAuthOption[] = [];
@@ -8,7 +8,7 @@ export class AuthenticationManager {
 
     registerAuthOption(option: IAuthOption) {
         this.authOptions.push(option);
-        this.authOptionsChanges.emit(this.authOptions);
+        this.authOptionsChanges.next(this.authOptions);
     }
 
     getHttpHandler(authType: string): IHttpHandler {

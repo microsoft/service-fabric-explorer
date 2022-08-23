@@ -1,4 +1,4 @@
-import { Subject } from './observable';
+import { Subject } from 'rxjs';
 
 export enum NotificationTypes {
     Info = "Info",
@@ -25,7 +25,7 @@ export class NotificationManager {
             message,
             timestamp: new Date()
         };
-        this.observable.emit(event)
+        this.observable.next(event)
         this.notifications.push(event);
     }
 }

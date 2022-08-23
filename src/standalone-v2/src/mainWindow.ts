@@ -3,7 +3,7 @@ import { join } from 'path';
 import { ConfigLoader } from "./configLoader";
 import { ILogger } from "./logger";
 import { NotificationTypes } from "./notificationManager";
-import { Subject } from "./observable";
+import { Subject } from 'rxjs';
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
 
@@ -117,6 +117,6 @@ export class MainWindow {
 
     registerSingletonView(view:IWindowConfig) {
         this.registeredSingletonPages.push(view);
-        this.registeredSingletonPagesChanges.emit(this.registeredSingletonPages);
+        this.registeredSingletonPagesChanges.next(this.registeredSingletonPages);
     }
 }

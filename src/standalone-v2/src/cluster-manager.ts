@@ -4,7 +4,7 @@ import { IHttpHandler } from "./httpHandler";
 import { Logger } from "./logger";
 import { MainWindow } from "./mainWindow";
 import { NotificationTypes } from "./notificationManager";
-import { Subject } from "./observable";
+import { Subject } from 'rxjs';
 import { SettingsService } from "./settings";
 
 export interface IClusterAuth {
@@ -76,9 +76,9 @@ export class ClusterManager {
     constructor(private settings: SettingsService, private mainWindow: MainWindow, private authManager: AuthenticationManager, private logger: Logger) {
         const existingList = this.settings.getClusters();
         //TODO check integrity here
-        // if(existingList) {
-        //     this.clusters = existingList;
-        // }
+        if(existingList) {
+            this.clusters = existingList;
+        }
     }
 
     async connectCluster(cluster: IloadedCluster) {
@@ -227,7 +227,7 @@ export class ClusterManager {
     }
 
     emitState() {
-        this.observable.emit({
+        this.observable.next({
             clusters: this.clusters,
             focusedCluster: this.focusedCluster
         })

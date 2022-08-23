@@ -2,13 +2,13 @@ import { PublicClientApplication, LogLevel, CryptoProvider, AuthorizationCodeReq
 import axios, { AxiosRequestConfig } from 'axios';
 import { BrowserWindow } from 'electron';
 import { Agent } from 'https';
-import { Subject } from '../observable';
 import { ClusterManager, ICluster } from '../cluster-manager';
 import { aadClusterAuthType } from '../constants';
 import { BaseHttpHandler, IAuthOption, IHTTPRequestTransformer } from '../httpHandler';
 import { cachePlugin } from './CachePlugin';
 import { CustomFileProtocolListener } from './customFileProtocol';
 import { ValidateProperty } from '../mainWindow/validate';
+import { Subject } from 'rxjs';
 
 export default class AuthProvider2 {
     activeTokenRquest: Promise<string>;
@@ -249,11 +249,13 @@ export class AADFactory implements IAuthOption {
         public observable = new Subject<ILoggedInAccounts[]>();
         private existingAuthProviders: Record<string, AuthProvider2> = {};
 
-        constructor(private clusterManager: ClusterManager) {}
+        constructor(private clusterManager: ClusterManager) {
+
+        }
 
         async emitAccountsAndTenants() {
             const data = await this.getAadAccountsAndTenants();
-            this.observable.emit(data);
+            this.observable.next(data);
         }
 
         async getAadAccountsAndTenants(): Promise<ILoggedInAccounts[]> {
