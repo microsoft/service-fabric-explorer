@@ -28,12 +28,6 @@ jobs:
     - name: build
       working-directory: src/standalone-v2
       run: npm run make
-    - name: upload build
-      uses: actions/upload-artifact@v2-preview
-      if: always()
-      with:
-        name: build
-        path:  /home/runner/work/service-fabric-explorer/service-fabric-explorer/src/standalone-v2
   build_on_mac:
     runs-on: macos-latest
     steps:
@@ -51,12 +45,6 @@ jobs:
     - name: build
       working-directory: src/standalone-v2
       run: npm run make
-    - name: upload build
-      uses: actions/upload-artifact@v2-preview
-      if: always()
-      with:
-        name: build
-        path:  /home/runner/work/service-fabric-explorer/service-fabric-explorer/src/standalone-v2
   build_on_win:
     runs-on: windows-latest
     steps:
@@ -74,10 +62,4 @@ jobs:
     - name: build
       working-directory: src/standalone-v2
       run: npm run make
-    - name: upload build
-      uses: actions/upload-artifact@v2-preview
-      if: always()
-      with:
-        name: build
-        path:  /home/runner/work/service-fabric-explorer/service-fabric-explorer/src/standalone-v2
 
