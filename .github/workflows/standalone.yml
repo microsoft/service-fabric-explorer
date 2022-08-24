@@ -26,6 +26,7 @@ jobs:
       run: |
         cd ..
         cd standalone-v2
+        cwd
     - name: install dependencies
       run: npm install
     - name: build
@@ -77,6 +78,7 @@ jobs:
       run: |
         cd ..
         cd standalone-v2
+        cwd
     - name: install dependencies
       run: npm install
     - name: build
