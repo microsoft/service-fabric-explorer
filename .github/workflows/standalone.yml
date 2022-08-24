@@ -1,5 +1,5 @@
 
-name: Build
+name: standalone build
 on: 
   push:
   pull_request:
