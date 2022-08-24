@@ -22,14 +22,11 @@ jobs:
       run: npm ci
     - name: build sfx
       run: npm run build:electron
-    - name: cd
-      run: |
-        cd ..
-        cd standalone-v2
-        cd
     - name: install dependencies
+      working-directory: src/standalone-v2
       run: npm install
     - name: build
+      working-directory: src/standalone-v2
       run: npm run make
     - name: upload build
       uses: actions/upload-artifact@v2-preview
@@ -48,14 +45,11 @@ jobs:
     #   run: npm ci
     # - name: build sfx
     #   run: npm run build:electron
-    - name: cd
-      run: |
-        cd ..
-        cd standalone-v2
-        cwd
     - name: install dependencies
+      working-directory: src/standalone-v2
       run: npm install
     - name: build
+      working-directory: src/standalone-v2
       run: npm run make
     - name: upload build
       uses: actions/upload-artifact@v2-preview
@@ -74,14 +68,11 @@ jobs:
     #   run: npm ci
     # - name: build sfx
     #   run: npm run build:electron
-    - name: cd
-      run: |
-        cd ..
-        cd standalone-v2
-        cd
     - name: install dependencies
+      working-directory: src/standalone-v2
       run: npm install
     - name: build
+      working-directory: src/standalone-v2
       run: npm run make
     - name: upload build
       uses: actions/upload-artifact@v2-preview
