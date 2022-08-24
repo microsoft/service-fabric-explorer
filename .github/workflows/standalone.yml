@@ -1,0 +1,89 @@
+
+name: Build
+on: 
+  push:
+  pull_request:
+  schedule:
+    - cron: 0 0 * * * # daily
+
+defaults:
+  run:
+    working-directory: src/SfxWeb
+
+jobs:
+  build_on_linux:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@master
+      with:
+        node-version: 16
+    - name: install sfx dependencies
+      run: npm ci
+    - name: build sfx
+      run: npm run build:electron
+    - name: cd
+      run: |
+        cd ..
+        cd standalone-v2
+    - name: install dependencies
+      run: npm install
+    - name: build
+      run: npm run make
+    - name: upload build
+      uses: actions/upload-artifact@v2-preview
+      if: always()
+      with:
+        name: build
+        path:  /home/runner/work/service-fabric-explorer/service-fabric-explorer/src/standalone-v2
+  build_on_mac:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@master
+      with:
+        node-version: 16
+    - name: install sfx dependencies
+      run: npm ci
+    - name: build sfx
+      run: npm run build:electron
+    - name: cd
+      run: |
+        cd ..
+        cd standalone-v2
+    - name: install dependencies
+      run: npm install
+    - name: build
+      run: npm run make
+    - name: upload build
+      uses: actions/upload-artifact@v2-preview
+      if: always()
+      with:
+        name: build
+        path:  /home/runner/work/service-fabric-explorer/service-fabric-explorer/src/standalone-v2
+  build_on_win:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@master
+      with:
+        node-version: 16
+    - name: install sfx dependencies
+      run: npm ci
+    - name: build sfx
+      run: npm run build:electron
+    - name: cd
+      run: |
+        cd ..
+        cd standalone-v2
+    - name: install dependencies
+      run: npm install
+    - name: build
+      run: npm run make
+    - name: upload build
+      uses: actions/upload-artifact@v2-preview
+      if: always()
+      with:
+        name: build
+        path:  /home/runner/work/service-fabric-explorer/service-fabric-explorer/src/standalone-v2
+

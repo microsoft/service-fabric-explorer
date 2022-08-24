@@ -4,6 +4,7 @@
   "version": "1.0.0",
   "description": "My Electron application description",
   "main": ".webpack/main",
+  "author": "Microsoft Service Fabric",
   "scripts": {
     "start": "electron-forge start -- devtools",
     "package": "electron-forge package",
