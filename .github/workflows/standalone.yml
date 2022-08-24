@@ -26,7 +26,7 @@ jobs:
       run: |
         cd ..
         cd standalone-v2
-        cwd
+        cd
     - name: install dependencies
       run: npm install
     - name: build
@@ -44,10 +44,10 @@ jobs:
     - uses: actions/setup-node@master
       with:
         node-version: 16
-    - name: install sfx dependencies
-      run: npm ci
-    - name: build sfx
-      run: npm run build:electron
+    # - name: install sfx dependencies
+    #   run: npm ci
+    # - name: build sfx
+    #   run: npm run build:electron
     - name: cd
       run: |
         cd ..
@@ -70,15 +70,15 @@ jobs:
     - uses: actions/setup-node@master
       with:
         node-version: 16
-    - name: install sfx dependencies
-      run: npm ci
-    - name: build sfx
-      run: npm run build:electron
+    # - name: install sfx dependencies
+    #   run: npm ci
+    # - name: build sfx
+    #   run: npm run build:electron
     - name: cd
       run: |
         cd ..
         cd standalone-v2
-        cwd
+        cd
     - name: install dependencies
       run: npm install
     - name: build
