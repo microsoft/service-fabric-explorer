@@ -41,10 +41,10 @@ jobs:
     - uses: actions/setup-node@master
       with:
         node-version: 16
-    # - name: install sfx dependencies
-    #   run: npm ci
-    # - name: build sfx
-    #   run: npm run build:electron
+    - name: install sfx dependencies
+      run: npm ci
+    - name: build sfx
+      run: npm run build:electron
     - name: install dependencies
       working-directory: src/standalone-v2
       run: npm install
@@ -64,10 +64,10 @@ jobs:
     - uses: actions/setup-node@master
       with:
         node-version: 16
-    # - name: install sfx dependencies
-    #   run: npm ci
-    # - name: build sfx
-    #   run: npm run build:electron
+    - name: install sfx dependencies
+      run: npm ci
+    - name: build sfx
+      run: npm run build:electron
     - name: install dependencies
       working-directory: src/standalone-v2
       run: npm install
