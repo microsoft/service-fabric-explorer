@@ -24,8 +24,8 @@ jobs:
       run: npm run build:electron
     - name: cd
       run: |
-        cd ..
-        cd standalone-v2
+	cd ..
+	cd standalone-v2
     - name: install dependencies
       run: npm install
     - name: build
@@ -49,8 +49,9 @@ jobs:
       run: npm run build:electron
     - name: cd
       run: |
-        cd ..
-        cd standalone-v2
+	cd ..
+	cd standalone-v2
+        cwd
     - name: install dependencies
       run: npm install
     - name: build
@@ -74,8 +75,8 @@ jobs:
       run: npm run build:electron
     - name: cd
       run: |
-        cd ..
-        cd standalone-v2
+	cd ..
+	cd standalone-v2
     - name: install dependencies
       run: npm install
     - name: build
