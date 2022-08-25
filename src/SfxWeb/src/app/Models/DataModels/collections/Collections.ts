@@ -346,12 +346,11 @@ export abstract class EventListBase<T extends FabricEventBase> extends DataModel
     public readonly detailsSettings: ListSettings;
     public readonly pageSize: number = 15;
     public readonly defaultDateWindowInDays: number = 7;
-    public readonly latestRefreshPeriodInSecs: number = 60 * 60;
-
     protected readonly optionalColsStartIndex: number = 2;
 
     private iStartDate: Date;
     private iEndDate: Date;
+    protected eventsTypesFilter: string[] = [];
 
     public get startDate() {
         return new Date(this.iStartDate.valueOf());
@@ -379,6 +378,14 @@ export abstract class EventListBase<T extends FabricEventBase> extends DataModel
         this.detailsSettings = this.createListSettings();
 
         this.setNewDateWindowInternal(startDate, endDate);
+    }
+
+    public setEventFilter(filters: string[]) {
+      this.eventsTypesFilter = filters;
+    }
+
+    public clearEventFilter() {
+      this.eventsTypesFilter = [];
     }
 
     public setDateWindow(startDate?: Date, endDate?: Date): boolean {
@@ -425,7 +432,7 @@ export abstract class EventListBase<T extends FabricEventBase> extends DataModel
             new ListColumnSetting('raw.timeStampString', 'Timestamp', {sortPropertyPaths: ['raw.timestamp']}),
             new ListColumnSetting('raw.timeStamp', 'Timestamp(UTC)')],
             [
-                new ListColumnSettingWithEventStoreFullDescription()
+                new ListColumnSettingWithEventStoreFullDescription(),
             ],
             true,
             (item) => (Object.keys(item.raw.eventProperties).length > 0),
@@ -518,7 +525,7 @@ export class ApplicationEventList extends EventListBase<ApplicationEvent> {
     }
 
     protected retrieveEvents(messageHandler?: IResponseMessageHandler): Observable<FabricEventInstanceModel<ApplicationEvent>[]> {
-        return this.data.restClient.getApplicationEvents(this.queryStartDate, this.queryEndDate, this.applicationId, messageHandler)
+        return this.data.restClient.getApplicationEvents(this.queryStartDate, this.queryEndDate, this.eventsTypesFilter, this.applicationId, messageHandler)
             .pipe(map(result => {
                 return result.map(event => new FabricEventInstanceModel<ApplicationEvent>(this.data, event));
             }));

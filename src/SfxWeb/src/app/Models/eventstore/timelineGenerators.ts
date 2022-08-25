@@ -26,11 +26,16 @@ import { RepairTask } from 'src/app/Models/DataModels/repairTask';
     */
 
 export interface ITimelineData {
-    groups: DataSet<DataGroup>;
-    items: DataSet<DataItem>;
+    groups?: DataSet<DataGroup>;
+    items?: DataSet<ITimelineItem>;
     start?: Date;
     end?: Date;
     potentiallyMissingEvents?: boolean;
+    allowClustering?: boolean;
+}
+
+export interface ITimelineItem extends DataItem {
+    kind: string
 }
 
 export interface ITimelineDataGenerator<T extends FabricEventBase>{
@@ -85,7 +90,7 @@ export class EventStoreUtils {
                 </div>`;
     }
 
-    public static parseUpgradeAndRollback(rollbackCompleteEvent: FabricEventBase, eventIndex: number, rollbackStartedEvent: ClusterEvent, items: DataSet<DataItem>,
+    public static parseUpgradeAndRollback(rollbackCompleteEvent: FabricEventBase, eventIndex: number, rollbackStartedEvent: ClusterEvent, items: DataSet<ITimelineItem>,
                                           startOfRange: Date, group: string, targetVersionProperty: string) {
         const rollbackEnd = rollbackCompleteEvent.timeStamp;
 
@@ -104,6 +109,7 @@ export class EventStoreUtils {
                 content: 'Upgrade rolling forward failed',
                 start: upgradeStart,
                 end: rollbackStarted,
+                kind: rollbackCompleteEvent.kind,
                 group,
                 type: 'range',
                 className: 'red'
@@ -114,10 +120,11 @@ export class EventStoreUtils {
 
         // roll back
         items.add({
-            id: `${eventIndex}---${rollbackCompleteEvent.eventInstanceId}`,
+            id: `0${eventIndex}---${rollbackCompleteEvent.eventInstanceId}`,
             content: label,
             start: rollbackStarted,
             end: rollbackEnd,
+            kind: rollbackCompleteEvent.kind,
             group,
             type: 'range',
             title: EventStoreUtils.tooltipFormat(rollbackCompleteEvent.eventProperties, rollbackStarted, rollbackEnd),
@@ -126,18 +133,20 @@ export class EventStoreUtils {
 
     }
 
-    public static parseUpgradeDomain(event: FabricEventBase, eventIndex: number, items: DataSet<DataItem>, group: string, targetVersionProperty: string): void {
+    public static parseUpgradeDomain(event: FabricEventBase, eventIndex: number, items: DataSet<ITimelineItem>, group: string, targetVersionProperty: string): void {
         const end = event.timeStamp;
         const endDate = new Date(end);
         const duration = event.eventProperties.UpgradeDomainElapsedTimeInMs;
 
         const start = new Date(endDate.getTime() - duration).toISOString();
         const label = event.eventProperties.UpgradeDomains;
+
         items.add({
             id: `${eventIndex}---${event.eventInstanceId}`,
             content: label,
             start,
             end,
+            kind: event.kind,
             group,
             type: 'range',
             title: EventStoreUtils.tooltipFormat(event.eventProperties, start, end),
@@ -146,7 +155,7 @@ export class EventStoreUtils {
     }
 
     // Mainly used for if there is a current upgrade in progress.
-    public static parseUpgradeStarted(event: FabricEventBase, eventIndex: number, items: DataSet<DataItem>, endOfRange: Date, group: string, targetVersionProperty: string): void {
+    public static parseUpgradeStarted(event: FabricEventBase, eventIndex: number, items: DataSet<ITimelineItem>, endOfRange: Date, group: string, targetVersionProperty: string): void {
 
         const end = endOfRange.toISOString();
         const start = event.timeStamp;
@@ -157,6 +166,7 @@ export class EventStoreUtils {
             content,
             start,
             end,
+            kind: event.kind,
             group,
             type: 'range',
             title: EventStoreUtils.tooltipFormat(event.eventProperties, start, end),
@@ -164,7 +174,7 @@ export class EventStoreUtils {
         });
     }
 
-    public static parseUpgradeCompleted(event: FabricEventBase, eventIndex: number, items: DataSet<DataItem>, group: string, targetVersionProperty: string): void {
+    public static parseUpgradeCompleted(event: FabricEventBase, eventIndex: number, items: DataSet<ITimelineItem>, group: string, targetVersionProperty: string): void {
         const rollBack = event.kind === 'ClusterUpgradeRollbackCompleted';
 
         const end = event.timeStamp;
@@ -179,6 +189,7 @@ export class EventStoreUtils {
             content,
             start,
             end,
+            kind: event.kind,
             group,
             type: 'range',
             title: EventStoreUtils.tooltipFormat(event.eventProperties, start, end),
@@ -241,7 +252,7 @@ export class ClusterTimelineGenerator extends TimeLineGeneratorBase<ClusterEvent
     static readonly seedNodeStatus = 'Seed Node Warnings';
 
     consume(events: ClusterEvent[], startOfRange: Date, endOfRange: Date): ITimelineData {
-        const items: DataSet<DataItem> = new DataSet<DataItem>();
+      const items = new DataSet<ITimelineItem>();
 
         // state necessary for some events
         let previousClusterHealthReport: ClusterEvent;
@@ -299,7 +310,7 @@ export class ClusterTimelineGenerator extends TimeLineGeneratorBase<ClusterEvent
         };
     }
 
-    parseSeedNodeStatus(event: ClusterEvent, eventIndex: number, items: DataSet<DataItem>, previousClusterHealthReport: ClusterEvent, endOfRange: Date): void {
+    parseSeedNodeStatus(event: ClusterEvent, eventIndex: number, items: DataSet<ITimelineItem>, previousClusterHealthReport: ClusterEvent, endOfRange: Date): void {
         if (event.eventProperties.HealthState === 'Warning') {
             // for end date if we dont have a previously seen health report(list iterates newest to oldest) then we know its still the ongoing state
             const end = previousClusterHealthReport ? previousClusterHealthReport.timeStamp : endOfRange.toISOString();
@@ -310,6 +321,7 @@ export class ClusterTimelineGenerator extends TimeLineGeneratorBase<ClusterEvent
                 content,
                 start: event.timeStamp,
                 end,
+                kind: event.kind,
                 group: ClusterTimelineGenerator.seedNodeStatus,
                 type: 'range',
                 title: EventStoreUtils.tooltipFormat(event.eventProperties, event.timeStamp, end),
@@ -340,6 +352,7 @@ export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
       start: event.timeStamp,
       group: NodeTimelineGenerator.NodesFailedToOpenLabel,
       type: 'point',
+      kind: event.kind,
       title: EventStoreUtils.tooltipFormat(event.eventProperties, event.timeStamp, null, `${event.nodeName} failed to open with ${event.eventProperties['Error']}.`),
       className: 'red-point',
       subgroup: 'stack',
@@ -355,6 +368,7 @@ export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
       start: event.timeStamp,
       group: added ? NodeTimelineGenerator.NodesAddedToClusterLabel : NodeTimelineGenerator.NodesRemovedFromClusterLabel,
       type: 'point',
+      kind: event.kind,
       title: EventStoreUtils.tooltipFormat(event.eventProperties, event.timeStamp, null, label),
       className: 'orange-point',
       subgroup: 'stack',
@@ -370,6 +384,7 @@ export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
       content: label,
       start,
       end,
+      kind: event.kind,
       group: NodeTimelineGenerator.NodesDownLabel,
       type: 'range',
       title: EventStoreUtils.tooltipFormat(event.eventProperties, start, end, label),
@@ -388,6 +403,7 @@ export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
       content: label,
       start,
       end,
+      kind: event.kind,
       group: NodeTimelineGenerator.NodesDownLabel,
       type: 'range',
       title: EventStoreUtils.tooltipFormat(event.eventProperties, start, end, label),
@@ -412,7 +428,7 @@ export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
           nodeEventMap[event.nodeName].push(event);
         });
 
-        const items: DataSet<DataItem> = new DataSet<DataItem>();
+        const items = new DataSet<ITimelineItem>();
 
 
         Object.keys(nodeEventMap).forEach(nodeName => {
@@ -450,7 +466,6 @@ export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
                   lastRemoved = null;
 
                 } else if (lastDownEvent) {
-                  console.log(event, lastDownEvent)
                   items.add(this.generateDownNodeEvent(event, index, event.timeStamp, lastDownEvent.end));
                   lastUpEvent = null;
                   lastDownEvent = null;
@@ -460,7 +475,6 @@ export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
                 } else {
                   let end = endOfRange.toISOString()
                   if(lastTransitionEvent) {
-                    console.log(lastTransitionEvent)
                     end = lastTransitionEvent.timeStamp;
                   }
                   lastDownEvent = { event, end };
@@ -564,11 +578,12 @@ export class ApplicationTimelineGenerator extends TimeLineGeneratorBase<Applicat
     static readonly applicationContainerExitedLabel = 'Container Process Exited';
 
     consume(events: ApplicationEvent[], startOfRange: Date, endOfRange: Date): ITimelineData {
-        const items = new DataSet<DataItem>();
+      const items = new DataSet<ITimelineItem>();
 
         // state necessary for some events
         let previousApplicationUpgrade: ApplicationEvent;
         let upgradeApplicationStarted: ApplicationEvent;
+
         const applicationRollBacks: Record<string, {complete: ApplicationEvent, start?: ApplicationEvent}> = {};
         const processExitedGroups: Record<string, DataGroup> = {};
         const containerExitedGroups: Record<string, DataGroup> = {};
@@ -649,7 +664,7 @@ export class ApplicationTimelineGenerator extends TimeLineGeneratorBase<Applicat
     }
 
 
-    parseApplicationProcessExited(event: FabricEventBase, eventIndex: number, items: DataSet<DataItem>, processExitedGroups: Record<string, DataGroup>) {
+    parseApplicationProcessExited(event: FabricEventBase, eventIndex: number, items: DataSet<ITimelineItem>, processExitedGroups: Record<string, DataGroup>) {
         const groupLabel = `${event.eventProperties.ServicePackageName}`;
         processExitedGroups[groupLabel] = {id: groupLabel, content: groupLabel};
 
@@ -660,6 +675,7 @@ export class ApplicationTimelineGenerator extends TimeLineGeneratorBase<Applicat
             id: `${eventIndex}---${event.eventInstanceId}`,
             content: '',
             start,
+            kind: event.kind,
             group: groupLabel,
             type: 'point',
             className: event.eventProperties.UnexpectedTermination ? 'red-point' : 'green-point',
@@ -667,7 +683,7 @@ export class ApplicationTimelineGenerator extends TimeLineGeneratorBase<Applicat
         });
     }
 
-    parseContainerExited(event: FabricEventBase, eventIndex: number, items: DataSet<DataItem>, processExitedGroups: Record<string, DataGroup>) {
+    parseContainerExited(event: FabricEventBase, eventIndex: number, items: DataSet<ITimelineItem>, processExitedGroups: Record<string, DataGroup>) {
       const groupLabel = `${event.eventProperties.ServicePackageName}`;
       processExitedGroups[groupLabel] = {id: groupLabel, content: groupLabel};
 
@@ -678,6 +694,7 @@ export class ApplicationTimelineGenerator extends TimeLineGeneratorBase<Applicat
           id: `${eventIndex}---${event.eventInstanceId}`,
           content: '',
           start,
+          kind: event.kind,
           group: groupLabel,
           type: 'point',
           className: event.eventProperties.UnexpectedTermination ? 'red-point' : 'green-point',
@@ -691,7 +708,7 @@ export class PartitionTimelineGenerator extends TimeLineGeneratorBase<PartitionE
     static readonly swapPrimaryDurations = 'Swap Primary phases';
 
     consume(events: PartitionEvent[], startOfRange: Date, endOfRange: Date): ITimelineData {
-        const items = new DataSet<DataItem>();
+      const items = new DataSet<ITimelineItem>();
 
         events.forEach( (event, index) => {
             if (event.category === 'StateTransition' && event.eventProperties.ReconfigType === 'SwapPrimary') {
@@ -702,6 +719,7 @@ export class PartitionTimelineGenerator extends TimeLineGeneratorBase<PartitionE
                 const label = event.eventProperties.NodeName;
 
                 items.add({
+                    kind: 'primaryswap',
                     id: `${index}---${event.eventInstanceId}`,
                     content: label,
                     start,
@@ -729,8 +747,8 @@ export class PartitionTimelineGenerator extends TimeLineGeneratorBase<PartitionE
 export class RepairTaskTimelineGenerator extends TimeLineGeneratorBase<RepairTask>{
 
     consume(tasks: RepairTask[], startOfRange: Date, endOfRange: Date): ITimelineData{
-        const items = new DataSet<DataItem>();
-        const groups = new DataSet<DataGroup>();
+      const items = new DataSet<ITimelineItem>();
+      const groups = new DataSet<DataGroup>();
 
         tasks.forEach((task, index) => {
             items.add({
@@ -739,6 +757,7 @@ export class RepairTaskTimelineGenerator extends TimeLineGeneratorBase<RepairTas
                 start: task.startTime ,
                 end: task.inProgress ? new Date() : new Date(task.raw.History.CompletedUtcTimestamp),
                 type: 'range',
+                kind: "RepairJob",
                 group: 'job',
                 subgroup: 'stack',
                 className: task.inProgress ? 'blue' : task.raw.ResultStatus === 'Succeeded' ? 'green' : 'red',
@@ -814,8 +833,8 @@ function parseAndAddGroupIdByString(event: FabricEvent, groupIds: any, query: st
 }
 
 export function parseEventsGenerically(events: FabricEvent[], textSearch: string = ''): ITimelineData {
-    const items = new DataSet<DataItem>();
-    const groupIds: any[] = [];
+  const items = new DataSet<ITimelineItem>();
+  const groupIds: any[] = [];
 
     events.forEach( (event, index) => {
        const groupId = parseAndAddGroupIdByString(event, groupIds,  textSearch);
@@ -841,10 +860,11 @@ export function parseEventsGenerically(events: FabricEvent[], textSearch: string
             }
         }
 
-       const item: DataItem = {
+       const item: ITimelineItem = {
             content: '',
             id: `${index}---${event.eventInstanceId}`,
             start: event.timeStamp,
+            kind: event.kind,
             group: groupId,
             type: 'point',
             title: EventStoreUtils.tooltipFormat(event.raw, event.timeStamp),

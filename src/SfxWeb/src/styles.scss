@@ -686,6 +686,11 @@ table.detail-list {
   box-shadow: var(--primary-box-shadow);
 }
 
+.highcharts-container {
+    p {
+        margin: 0;
+    }
+}
 .hidden {
   visibility: hidden;
 }

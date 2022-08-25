@@ -1,7 +1,7 @@
 <div class="detail-list-container flex-child" style="margin-top: 15px;">
     <ng-content></ng-content>
     <div *ngIf="showTopOptions">
-      <app-input class="input-wrapper" [placeholder]="searchText" [model]="listSettings.search" (changed)="listSettings.search = $event; updateList()"></app-input>
+      <app-input class="input-wrapper" [placeholder]="searchText" [model]="listSettings.search" (changed)="listSettings.search = $event; updateList(); page = 1; "></app-input>
       <button class="simple-button"  (click)="resetAll()">Reset All</button>
 
       <button class="simple-button" style="float: right;" (click)="export()"> <span class="mif-download2"></span> Export</button>
