@@ -130,9 +130,6 @@ export const getSimultaneousEventsForEvent = (configs: IConcurrentEventsConfig[]
               });
 
               if (valid) {
-                if(iterEvent.eventInstanceId === "SFRP-64e40002-efb2-46c9-8efe-ab58a4af4607-DeleteNodeType") {
-                  console.log("TEST", iterEvent, simulEvents, findEvent(simulEvents, iterEvent))
-                }
                 const existingEvent = findEvent(simulEvents, iterEvent);
                 if(existingEvent) {
                   reason = existingEvent;
