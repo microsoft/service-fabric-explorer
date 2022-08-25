@@ -30,7 +30,7 @@
           <div collapse-header class="underline text-center title-container">
             Load Metrics
           </div>
-          <div collapse-body>
+          <div collapse-body style="width: 300px">
             <app-warning iconSize="mif-2x" description="Count, Primary Count, and Replica Count will not include services that use custom metrics"></app-warning>
             <div class="metrics-column">
               <app-metric-tile [metric]="metric" *ngFor="let metric of metricsViewModel.metricsWithoutCapacities"
