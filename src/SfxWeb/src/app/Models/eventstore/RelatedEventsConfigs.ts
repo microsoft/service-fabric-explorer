@@ -1,7 +1,7 @@
 import { IConcurrentEventsConfig, IRelevantEventsConfig } from "./rcaEngine";
 
 const APEmap = {
-  "Deactivating application as application contents have changed.": "Stopping code package as application manifest contents have changes",
+  "Deactivating application as application contents have changed.": "Stopping code package as application manifest contents have changes due to an app upgrade.",
   "Deactivating since updating application version failed as part of upgrade.": "Stopping code package as upgrade failed.",
   "Deactivating as Restart-DeployedCodePackage API invoked.": "Restarting code package as Restart-DeployedCodePackage API was invoked.",
   "Deactivating becasue Fabric Node is closing.": "Stopping code package as SF node is shutting down.",
@@ -9,7 +9,7 @@ const APEmap = {
   "Deactivating since service package minor version change failed.": "Stopping code package as upgrade failed.",
   "Deactivating since either RG changed, or upgrade is force restart, or major version changed.": "Stopping code package as RG changed or force restart was specified during application upgrade.",
   "Deactivating as part of request from Activator CodePackage.": "Stopping code package on demand from activator code package.",
-  "Deactivating as part of upgrade since code package changed.": "Stopping code package as the code package contents have changed.",
+  "Deactivating as part of upgrade since code package changed.": "Stopping code package as the code package contents have changed due to an app upgrade.",
 }
 
 const forceKillPrefix = "Aborting since deactivation failed. ";
