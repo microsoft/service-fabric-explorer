@@ -686,10 +686,20 @@ table.detail-list {
   box-shadow: var(--primary-box-shadow);
 }
 
+.highcharts-container {
+    p {
+        margin: 0;
+    }
+}
 .hidden {
   visibility: hidden;
 }
 
 .visually-hidden {
   display: none;
+}
+
+.warning-icon {
+  align-self: center;
+  color: var(--badge-warning);
 }

@@ -14,11 +14,12 @@ import { EventStoreModule } from 'src/app/modules/event-store/event-store.module
 import { UpgradeProgressModule } from 'src/app/modules/upgrade-progress/upgrade-progress.module';
 import { CreateServiceComponent } from './create-service/create-service.component';
 import { FormsModule } from '@angular/forms';
-import { NgbTypeaheadModule, NgbDropdownModule, NgbButtonsModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbTypeaheadModule, NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { ActionRowComponent } from './action-row/action-row.component';
 import { BackupComponent } from './backup/backup.component';
 import { ChartsModule } from 'src/app/modules/charts/charts.module';
 import { HealthStateModule } from 'src/app/modules/health-state/health-state.module';
+import { ConcurrentEventsVisualizationModule } from 'src/app/modules/concurrent-events-visualization/concurrent-events-visualization.module';
 
 @NgModule({
   declarations: [BaseComponent, EssentialsComponent, DetailsComponent, DeploymentsComponent, ManifestComponent, EventsComponent, CreateServiceComponent, ActionRowComponent, BackupComponent],
@@ -31,7 +32,7 @@ import { HealthStateModule } from 'src/app/modules/health-state/health-state.mod
     FormsModule,
     NgbTypeaheadModule,
     NgbDropdownModule,
-    NgbButtonsModule,
+    ConcurrentEventsVisualizationModule,
     UpgradeProgressModule,
     ChartsModule,
     HealthStateModule

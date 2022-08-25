@@ -11,6 +11,11 @@ import { ListColumnSettingForApplicationServiceRow } from '../action-row/action-
 import { IDashboardViewModel, DashboardViewModel } from 'src/app/ViewModels/DashboardViewModels';
 import { HealthUtils, HealthStatisticsEntityKind } from 'src/app/Utils/healthUtils';
 import { IEssentialListItem } from 'src/app/modules/charts/essential-health-tile/essential-health-tile.component';
+import { ApplicationEvent } from 'src/app/Models/eventstore/Events';
+import { ApplicationEventList } from 'src/app/Models/DataModels/collections/Collections';
+import { IEventStoreData } from 'src/app/modules/event-store/event-store/event-store.component';
+import { getSimultaneousEventsForEvent, IConcurrentEvents } from 'src/app/Models/eventstore/rcaEngine';
+import { RelatedEventsConfigs } from 'src/app/Models/eventstore/RelatedEventsConfigs';
 @Component({
   selector: 'app-essentials',
   templateUrl: './essentials.component.html',
@@ -27,6 +32,10 @@ export class EssentialsComponent extends ApplicationBaseControllerDirective {
   partitionsDashboard: IDashboardViewModel;
   replicasDashboard: IDashboardViewModel;
   essentialItems: IEssentialListItem[] = [];
+
+  eventStoreHandler: IEventStoreData<ApplicationEventList, ApplicationEvent>;
+  highValueEvents: IConcurrentEvents[] = null;
+  failedToLoadEvents = false;
 
   constructor(protected data: DataService, injector: Injector, private settings: SettingsService) {
     super(data, injector);
@@ -52,6 +61,20 @@ export class EssentialsComponent extends ApplicationBaseControllerDirective {
     this.upgradeProgressUnhealthyEvaluationsListSettings = this.settings.getNewOrExistingUnhealthyEvaluationsListSettings('upgradeProgressUnhealthyEvaluations');
 
     this.essentialItems = [];
+
+    this.data.getClusterManifest().subscribe(manifest => {
+      if(manifest.isEventStoreEnabled) {
+        this.eventStoreHandler = this.data.getApplicationEventData(this.appId);
+        this.eventStoreHandler.eventsList.setEventFilter(['ApplicationProcessExited', 'ApplicationContainerInstanceExited']);
+        this.eventStoreHandler.eventsList.refresh().subscribe((success) => {
+          if(success) {
+            this.highValueEvents = getSimultaneousEventsForEvent(RelatedEventsConfigs, this.eventStoreHandler.getEvents(), this.eventStoreHandler.getEvents());
+          }else{
+            this.failedToLoadEvents = true;
+          }
+        })
+      }
+    })
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{

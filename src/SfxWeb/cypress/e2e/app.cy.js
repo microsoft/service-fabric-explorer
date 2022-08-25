@@ -12,6 +12,7 @@ context('app', () => {
         addRoute("apphealth", "app-page/app-health.json", apiUrl(`/Applications/${appName}/$/GetHealth?*`))
         addRoute("app", "app-page/app-type.json", apiUrl(`/Applications/${appName}/?a*`))
         addRoute("appParams", "app-page/app-type-excluded-params.json", apiUrl(`/Applications/${appName}/?ExcludeApplicationParameters=true*`))
+        addRoute("events", "app-page/app-events.json", apiUrl(`/EventsStore/Applications/${appName}/$/Events?*`))
 
         addRoute("manifest", "app-page/manifest.json", apiUrl(`/Applications/${appName}/$/GetApplicationManifest?*`))
         addRoute("serviceTypes", "app-page/service-types.json", apiUrl(`/ApplicationTypes/${appName}/$/GetServiceTypes?ApplicationTypeVersion=16.0.0*`))
@@ -44,6 +45,8 @@ context('app', () => {
                 cy.contains("fabric:/VisualObjectsApplicationType/VisualObjects.WebService");
                 cy.contains("fabric:/VisualObjectsApplicationType/VisualObjects.ActorService");
             })
+
+            cy.contains("ApplicationProcessExited - 1 Events")
         })
 
         it('upgrade in progress', () => {
@@ -153,7 +156,6 @@ context('app', () => {
 
     describe("events", () => {
         it('view events', () => {
-            addRoute("events", "empty-list.json", apiUrl(`/EventsStore/Applications/${appName}/$/Events?*`))
             cy.visit(`/#/apptype/${appName}/app/${appName}`)
 
             cy.wait([waitRequest, FIXTURE_REF_MANIFEST]);
