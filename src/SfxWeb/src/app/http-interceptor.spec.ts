@@ -51,42 +51,6 @@ describe('Http interceptors', () => {
         }
     };
 
-    const aadConfig: Partial<AadConfigService> = {
-      getCluster: () => "cluster-id",
-      getAuthority: () => "authority",
-      aadEnabled: false,
-      metaData: new AadMetadata({
-          type: 'aad',
-          metadata: {
-              login: 'login',
-              authority: 'auth',
-              client: 'client-id',
-              cluster: 'cluster-id',
-              redirect: 'redirect',
-              tenant: 'tenant-id'
-          }
-      })
-  };
-
-
-    const msalService: Partial<MsalService> = {
-      acquireTokenSilent: (resource) => {
-          return of({
-              authority: `https://login.microsoftonline.com/${aadConfig.metaData.raw.metadata.cluster}`,
-              uniqueId: "75a43bed-7b26-4adb-8f7e-018097389324",
-              tenantId: aadConfig.metaData.raw.metadata.cluster,
-              scopes: [],
-              account: {} as any,
-              idToken: 'aad-token',
-              accessToken: 'aad-token',
-              idTokenClaims: {} as any,
-              fromCache: true,
-              tokenType: "Bearer",
-              expiresOn: new Date(),
-              correlationId: 'some-guid'
-          })
-      }
-  };
     beforeEach(() => {
         TestBed.configureTestingModule({
             imports: [HttpClientTestingModule],
