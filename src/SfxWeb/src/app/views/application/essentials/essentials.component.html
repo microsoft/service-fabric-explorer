@@ -19,7 +19,20 @@
 <app-collapse-container *ngIf="eventStoreHandler" class="essen-pane detail-pane">
   <h5 collapse-header>Recent Application and Container Exit Event Reasons</h5>
   <div collapse-body>
-    <div style="margin-left: 30px"><a routerLink="./events">For Additional Information visit the Events Tab</a></div>
+    <div style="margin-left: 30px">
+      <a routerLink="./events">
+        <i class="mif-link"></i>
+        For additional events visit the Events tab
+      </a>
+    </div>
+    <div style="margin-left: 30px">
+      <a href="https://docs.microsoft.com/azure/service-fabric/service-fabric-diagnostics-code-package-errors"
+        target="_blank">
+        <i class="mif-info"></i>
+        learn more about exit events
+      </a>
+    </div>
+
     <div *ngIf="eventStoreHandler.eventsList.isRefreshing">
       Loading information about any recent Application Process Exit or Container Exit Events
     </div>
@@ -32,7 +45,7 @@
       </div>
     </div>
     <div *ngIf="failedToLoadEvents" class="text-center">
-      Failed to load events.
+      Failed to load events
     </div>
   </div>
 </app-collapse-container>
