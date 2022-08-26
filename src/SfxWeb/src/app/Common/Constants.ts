@@ -74,10 +74,6 @@ export class Constants {
     public static SvgTransitionDuration = 250;
     public static SvgTransitionDurationSlow = 600;
 
-    public static executingInfraJobsSuggestion = 'If the repair task corresponding to Infrastructure updates is stuck in Preparing for long, check the Repair Task page.';
-    public static pendingInfraJobsSuggestion = 'Pending updates when 2 or more updates are in Active state are not executed because of throttling policy in Infrastructure Service.';
-    public static longExecutingInfraJobsSuggestion = 'Infrastructure Jobs are in Executing state for more than 1 hour after approval from Service Fabric. Engage Compute platform teams if its taking too much time.';
-    public static readonly  MaxExecutingInfraJobDuration= 1000 * 60 * 60;
     public static readonly EventsTab: ITab = {
       name: 'events',
       route: './events'
@@ -226,3 +222,29 @@ export class TelemetryEventNames {
   public static listSize = 'set list size';
   public static advancedMode = 'enable advanced mode';
 }
+
+
+export class RepairTaskMessages {
+  public static longExecutingMessage = "This update can prevent other updates from going through. Please reach out to the Azure Compute teams (“Compute Manager/Blackbird”) to figure out why the platform updates are not completing.";
+  public static longExecutingId = "longExecuting";
+  public static seedNodeChecks = "Disabling a seed node can get stuck indefinitely. This is blocked by design to prevent any risk to the cluster availability. There are multiple options available to come out of this state. read more here https://aka.ms/sfseednodequoromtsg";
+  public static seedNodeChecksId = "seedNode";
+  public static safetyChecks = `This usually happens due to the following reasons:
+                                Service health related issues. This is expected when the preparing/restoring health checks have been enabled in this cluster and there is any entity which is not healthy.
+                                Please ensure all entities in the cluster like nodes and services are healthy for this check to pass and allow the updates to proceed.`
+  public static safetyChecksId = "safetychecks";
+  public static clusterHealthCheck = `This is due to cluster health related issues. This is expected when the restoring or preparing health checks have been enabled in this cluster and there is any
+                                      entity which is not healthy. Please ensure all entities in the cluster like nodes and services are healthy
+                                      for this check to pass and allow the updates to proceed.`;
+  public static clusterHealthCheckId = "clusterhealthcheck";
+
+  public static messageMap(id: string) {
+    const map = {};
+    map[RepairTaskMessages.longExecutingId] = "Repair jobs in the executing state for too long can cause issues. " +RepairTaskMessages.longExecutingMessage;
+    map[RepairTaskMessages.seedNodeChecksId] = RepairTaskMessages.seedNodeChecks;
+    map[RepairTaskMessages.safetyChecksId] = RepairTaskMessages.safetyChecks;
+    map[RepairTaskMessages.clusterHealthCheckId] = RepairTaskMessages.clusterHealthCheck;
+    return map[id];
+  }
+}
+

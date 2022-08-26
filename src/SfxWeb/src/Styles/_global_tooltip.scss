@@ -1,7 +1,7 @@
 .styled-tooltip {
 
   opacity: 1 !important;
-  z-index: 2;
+  z-index: 100;
 
   .tooltip-inner {
     border-radius: var(--primary-border-radius);

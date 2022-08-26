@@ -34,6 +34,7 @@ import { NodeFilterComponent } from './component/node-filter/node-filter.compone
 import {ClipboardModule} from '@angular/cdk/clipboard';
 
 import { WarningComponent } from './component/warning/warning.component';
+import { EventStoreTimelineComponent } from './component/event-store-timeline/event-store-timeline.component';
 @NgModule({
   declarations: [NavbarComponent, ClipBoardComponent, HealthBadgeComponent, CandyBarCompactComponent, DetailViewPartComponent,
                  CollapseContainerComponent, RefreshRateComponent, DragDirective, ActionDialogComponent, ManifestComponent,
@@ -45,7 +46,7 @@ import { WarningComponent } from './component/warning/warning.component';
                  DisplayDurationComponent,
                  PhaseDiagramComponent,
                  NodeFilterComponent,
-                 WarningComponent],
+                 WarningComponent, EventStoreTimelineComponent],
   imports: [
     CommonModule,
     RouterModule,
@@ -61,6 +62,7 @@ import { WarningComponent } from './component/warning/warning.component';
             ActionCollectionDropDownComponent, InputComponent, ToastContainerComponent, CheckBoxComponent,
             ClusterUpgradeBannerComponent, DualDatePickerComponent, AdvancedOptionComponent, ReplicaAddressComponent,
             FormatDatePipe, LocalTimeComponent, DisplayTimeComponent, ToggleComponent, StatusResolverComponent,
-            StateInfoComponent, EssentialItemComponent, DisplayDurationComponent, PhaseDiagramComponent, NodeFilterComponent, WarningComponent]
+            StateInfoComponent, EssentialItemComponent, DisplayDurationComponent, PhaseDiagramComponent, NodeFilterComponent,
+            WarningComponent, EventStoreTimelineComponent]
 })
 export class SharedModule { }

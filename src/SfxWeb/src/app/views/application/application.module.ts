@@ -19,6 +19,7 @@ import { ActionRowComponent } from './action-row/action-row.component';
 import { BackupComponent } from './backup/backup.component';
 import { ChartsModule } from 'src/app/modules/charts/charts.module';
 import { HealthStateModule } from 'src/app/modules/health-state/health-state.module';
+import { ConcurrentEventsVisualizationModule } from 'src/app/modules/concurrent-events-visualization/concurrent-events-visualization.module';
 
 @NgModule({
   declarations: [BaseComponent, EssentialsComponent, DetailsComponent, DeploymentsComponent, ManifestComponent, EventsComponent, CreateServiceComponent, ActionRowComponent, BackupComponent],
@@ -31,6 +32,7 @@ import { HealthStateModule } from 'src/app/modules/health-state/health-state.mod
     FormsModule,
     NgbTypeaheadModule,
     NgbDropdownModule,
+    ConcurrentEventsVisualizationModule,
     UpgradeProgressModule,
     ChartsModule,
     HealthStateModule

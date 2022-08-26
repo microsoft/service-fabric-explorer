@@ -4,6 +4,7 @@ import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 import { IResponseMessageHandler, EventsStoreResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Observable } from 'rxjs';
 import { IEventStoreData } from 'src/app/modules/event-store/event-store/event-store.component';
+import { IOptionConfig } from 'src/app/modules/event-store/option-picker/option-picker.component';
 
 @Component({
   selector: 'app-events',
@@ -13,6 +14,7 @@ import { IEventStoreData } from 'src/app/modules/event-store/event-store/event-s
 export class EventsComponent extends BaseControllerDirective {
 
   listEventStoreData: IEventStoreData<any, any> [];
+  optionsConfig: IOptionConfig;
 
   constructor(private data: DataService, injector: Injector) {
     super(injector);
@@ -22,9 +24,11 @@ export class EventsComponent extends BaseControllerDirective {
     this.listEventStoreData = [
       this.data.getApplicationEventData()
     ];
-   }
 
-   refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
-    return this.listEventStoreData[0].eventsList.refresh(new EventsStoreResponseMessageHandler(messageHandler));
-  }
+    this.optionsConfig = {
+      enableCluster: true,
+      enableNodes: true,
+      enableRepairTasks: true
+    };
+   }
 }

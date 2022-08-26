@@ -1,4 +1,5 @@
-@use 'Styles/vars.scss';
+/* Importing Bootstrap SCSS file. */
+@import '~bootstrap/scss/bootstrap';@use 'Styles/vars.scss';
 @use 'Styles/vis';
 @use 'Styles/tiles';
 @use 'Styles/noui_tooltip';
@@ -686,6 +687,11 @@ table.detail-list {
   box-shadow: var(--primary-box-shadow);
 }
 
+.highcharts-container {
+    p {
+        margin: 0;
+    }
+}
 .hidden {
   visibility: hidden;
 }
@@ -694,5 +700,8 @@ table.detail-list {
   display: none;
 }
 
-/* Importing Bootstrap SCSS file. */
-@import '~bootstrap/scss/bootstrap';
+.warning-icon {
+  align-self: center;
+  color: var(--badge-warning);
+}
+

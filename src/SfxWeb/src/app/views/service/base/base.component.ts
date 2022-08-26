@@ -64,21 +64,13 @@ export class BaseComponent extends ServiceBaseControllerDirective {
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
     return this.data.clusterManifest.ensureInitialized().pipe(map(() => {
-      this.tabs = this.tabs.filter(tab => tab.name !== 'backup' && tab.name !== 'infrastructure jobs');
-
+      this.tabs = this.tabs.filter(tab => tab.name !== 'backup');
       if (this.data.clusterManifest.isBackupRestoreEnabled && this.service.isStatefulService
           && this.appTypeName !== Constants.SystemAppTypeName) {
           this.tabs.push({
             name: 'backup',
             route: './backup'
           });
-      }
-      if (this.service.description?.raw?.ServiceTypeName === Constants.InfrastructureServiceType)
-      {
-        this.tabs.push({
-          name: 'infrastructure jobs',
-          route: './infrastructurejobs'
-        });
       }
     }));
   }

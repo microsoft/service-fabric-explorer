@@ -1,0 +1,5 @@
+<div class="flex-center" style="gap: 5px;">
+  <div *ngFor="let step of split; let l = last; let f = first;" class="flex-center" style="gap: 5px;">
+  <span *ngIf="!f || (!f && l)" class="mif-arrow-right"></span>  {{step}}
+  </div>
+</div>

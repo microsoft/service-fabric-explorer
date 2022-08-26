@@ -4,13 +4,13 @@
   border: 1px solid var(--badge-warning);
   padding: 5px;
   padding-left: 0px;
+  border-radius: 10px;
+  box-shadow: var(--heavy-box-shadow);
 
   .warning-icon {
     padding: 10px;
     border-right: 2px solid var(--accent-underline);
     margin-right: 10px;
-    align-self: center;
-    color: var(--badge-warning);
   }
 
   .warning-link {
