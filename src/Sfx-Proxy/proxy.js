@@ -57,7 +57,12 @@ const writeRequest = async (req, resp) => {
 }
 
 const loadRequest = async (req) => {
-    return JSON.parse(await fs.readFile(reformatUrl(req)));
+    const url = reformatUrl(req);
+    try {
+        return JSON.parse(await fs.readFile(url));
+    } catch(e) {
+       throw new Error(`failed to load ${url}`)
+    }
 }
 
 const checkFile = async (req) => {
@@ -109,6 +114,7 @@ app.all('/*', async (req, res) => {
     if(stripEventSToreRequests) {
         delete req.query['starttimeutc'];
         delete req.query['endtimeutc'];
+        delete req.query['eventTypesFilter'];
     }
 
 

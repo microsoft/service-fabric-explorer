@@ -2,6 +2,7 @@ import { IRawRepairTask } from '../RawDataTypes';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { DataModelBase } from './Base';
 import { DataService } from 'src/app/services/data.service';
+import { IRCAItem } from '../eventstore/rcaEngine';
 import { forkJoin, Observable, of } from 'rxjs';
 import { catchError, defaultIfEmpty, map } from 'rxjs/operators';
 import { Node } from './Node';
@@ -54,7 +55,7 @@ export interface IConcerningJobInfo {
 }
 
 
-export class RepairTask extends DataModelBase<IRawRepairTask> {
+export class RepairTask extends DataModelBase<IRawRepairTask> implements IRCAItem {
     public static readonly ExecutingStatus = 'Executing';
     public static readonly PreparingStatus = 'Preparing';
     public static NonStartedTimeStamp = '0001-01-01T00:00:00.000Z';
@@ -67,11 +68,13 @@ export class RepairTask extends DataModelBase<IRawRepairTask> {
     public isSecondRowCollapsed = true;
     public activeTab = 1;
 
+    public kind = "RepairTask";
+
     public impactedNodes: string[] = [];
     public history: IRepairTaskHistoryPhase[] = [];
     private timeStampsCollapses: Record<string, boolean> = {};
 
-    public createdAt = '';
+    public timeStamp = '';
 
     public couldParseExecutorData = false;
     public inProgress = true;
@@ -82,11 +85,14 @@ export class RepairTask extends DataModelBase<IRawRepairTask> {
     public historyPhases: IRepairTaskPhase[];
 
     public executorData: any;
-
+    public eventInstanceId: string;
+    public eventProperties = {};
     public concerningJobInfo: IConcerningJobInfo = null;
 
     constructor(public dataService: DataService, public raw: IRawRepairTask, private dateRef?: Date) {
         super(dataService, raw);
+        this.eventInstanceId = this.raw.TaskId;
+        this.eventProperties = this.raw;
         this.updateInternal().subscribe();
     }
 
@@ -286,10 +292,10 @@ export class RepairTask extends DataModelBase<IRawRepairTask> {
         if (this.raw.Impact) {
             this.impactedNodes = this.raw.Impact.NodeImpactList.map(node => node.NodeName);
         }
-        this.createdAt = new Date(this.raw.History.CreatedUtcTimestamp).toLocaleString();
+        this.timeStamp = new Date(this.raw.History.CreatedUtcTimestamp).toISOString();
         this.inProgress = this.raw.State !== 'Completed';
 
-        const start = new Date(this.createdAt).getTime();
+        const start = new Date(this.timeStamp).getTime();
         if (this.inProgress) {
             const now = this.getRefDate().getTime();
             this.duration = now - start;
