@@ -95,10 +95,12 @@ export const getSimultaneousEventsForEvent = (configs: IConcurrentEventsConfig[]
                 parsed = Transforms.getTransformations(relevantEventType.selfTransform, parsed);
               }
 
-              reason = {
-                name: "self",
-                reason: null
-              } as IConcurrentEvents;
+              if(!reason) {
+                reason = {
+                  name: "self",
+                  reason: null
+                } as IConcurrentEvents;
+              }
 
               action = parsed;
               if (relevantEventType.result) {
