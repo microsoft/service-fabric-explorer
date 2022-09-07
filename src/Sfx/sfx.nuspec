@@ -15,4 +15,4 @@
   <files>
     <file src="wwwroot\**" target="Content" />
   </files>
-</package> 
+</package>
