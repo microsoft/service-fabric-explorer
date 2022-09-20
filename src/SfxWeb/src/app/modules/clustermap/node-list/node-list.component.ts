@@ -1,5 +1,6 @@
 import { Component, Input, TemplateRef } from '@angular/core';
 import { Node } from 'src/app/Models/DataModels/Node';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-node-list',
@@ -11,6 +12,8 @@ export class NodeListComponent {
 
   @Input() underlineLast = true;
   @Input() nodes: Node[];
+
+  public assetBase = environment.assetBase;
 
   constructor() { }
 
