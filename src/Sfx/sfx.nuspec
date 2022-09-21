@@ -17,6 +17,6 @@
   </metadata>
   <files>
     <file src="wwwroot\**" target="Content" />
-    <file src="wwwroot\**" target="contentFiles\any\any\sfx\**" />
+    <file src="wwwroot\**" target="contentFiles\any\any\sfx" />
   </files>
 </package>
