@@ -11,8 +11,12 @@
     <releaseNotes>Create package</releaseNotes>
     <copyright>Copyright © 2018 Microsoft Corporation</copyright>
     <tags></tags>
+    <contentFiles>
+        <files include="any\any\sfx\**" buildAction="None" copyToOutput="true" />
+    </contentFiles>
   </metadata>
   <files>
-    <file src="wwwroot\**" target="Content" />
+    <file src="dist\**" target="Content" />
+    <file src="dist\**" target="contentFiles\any\any\sfx" />
   </files>
 </package>
