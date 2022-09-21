@@ -12,11 +12,11 @@
     <copyright>Copyright © 2018 Microsoft Corporation</copyright>
     <tags></tags>
     <contentFiles>
-        <files include="any/any/sfx" buildAction="None" copyToOutput="true" />
+        <files include="any\any\sfx\**" buildAction="None" copyToOutput="true" />
     </contentFiles>
   </metadata>
   <files>
     <file src="wwwroot\**" target="Content" />
-    <file src="wwwroot\**" target="contentFiles\any\any\sfx" />
+    <file src="wwwroot\**" target="contentFiles\any\any\sfx\**" />
   </files>
 </package>
