@@ -13,7 +13,6 @@ export class PowershellScriptDropdownComponent {
 
   @Input() treeView = false;
   @Input() powershellScripts: PowershellScript[];
-  @Input() displayText: string;
   @Output() changedState = new EventEmitter();
   constructor(public dataService: DataService, private liveAnnouncer: LiveAnnouncer) { }
 

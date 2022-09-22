@@ -19,7 +19,7 @@
       <app-action-collection-drop-down [actionCollection]="actions" data-cy="actions"></app-action-collection-drop-down>
     </div>
     <div *ngIf="scripts && scripts.length > 0" class="actions">
-      <app-powershell-script-dropdown [powershellScripts]="scripts" displayText="Powershell Scripts"></app-powershell-script-dropdown>
+      <app-powershell-script-dropdown [powershellScripts]="scripts"></app-powershell-script-dropdown>
     </div>
     <ng-content></ng-content>
   </div>

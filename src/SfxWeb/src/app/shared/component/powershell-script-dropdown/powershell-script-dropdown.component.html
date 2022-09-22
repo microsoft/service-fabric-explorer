@@ -1,11 +1,14 @@
 <div ngbDropdown [placement]="treeView ? 'left' : 'bottom-right' " #myDrop="ngbDropdown" (openChange)="closeChange($event)">
     <button class="simple-button" ngbDropdownToggle [ngClass]="{'tree-view': treeView}" (click)="$event.stopPropagation()" tabindex="0" [attr.aria-haspopup]="false"
-        aria-label="scripts" placement="left" ngbTooltip="Possible commands to perform"  tooltipClass="styled-tooltip">{{treeView ? '' : (displayText)}}</button>
+        aria-label="scripts" placement="left" ngbTooltip="Possible commands to perform"  tooltipClass="styled-tooltip">Powershell Scripts</button>
     <div ngbDropdownMenu>
         <div *ngFor="let script of powershellScripts; let last = last;" >
             <div ngbDropdownItem>
                 <div>{{script.Name}}</div>
-                <div>{{script.Script}}</div>
+                <div>
+                    {{script.Script}}
+                    <app-clip-board [text]="script.Script"></app-clip-board>
+                </div>
             </div>
         </div>
     </div>
