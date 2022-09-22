@@ -77,6 +77,7 @@ export interface IDecorators {
 export class DataModelBase<T> implements IDataModel<T> {
     public isInitialized: boolean;
     public actions: ActionCollection;
+    public scripts: string[];
     public raw: T;
     public parent: any;
 
@@ -119,6 +120,7 @@ export class DataModelBase<T> implements IDataModel<T> {
 
         if (this.data) {
             this.actions = new ActionCollection(this.data.telemetry);
+            this.scripts = [];
         }
 
         this.isInitialized = !!raw;
@@ -190,6 +192,11 @@ export class DataModelBase<T> implements IDataModel<T> {
 
     protected refreshFromHealthChunkInternal(healthChunk: IHealthStateChunk): Observable<any> {
         return of(true);
+    }
+
+    // Derived class should override this function to set up custom powershell scripts
+    protected setupScripts(): void {
+        return;
     }
 }
 
