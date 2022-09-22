@@ -1136,4 +1136,9 @@ export interface IRawApplicationNameInfo{
 export interface IRawServiceNameInfo{
         Id: string;
         Name: string;
-    }
+}
+    
+export interface PowershellScript{
+    Name: string;
+    Script: string;
+}

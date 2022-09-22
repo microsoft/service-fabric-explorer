@@ -5,6 +5,7 @@ import { Observable, of, Subject } from 'rxjs';
 import { IHealthStateChunk, IClusterHealthChunkQueryDescription, IHealthStateFilter } from '../HealthChunkRawDataTypes';
 import { mergeMap, map } from 'rxjs/operators';
 import { ActionCollection } from '../ActionCollection';
+import { PowershellScript } from '../RawDataTypes';
 
 // -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -77,7 +78,7 @@ export interface IDecorators {
 export class DataModelBase<T> implements IDataModel<T> {
     public isInitialized: boolean;
     public actions: ActionCollection;
-    public scripts: string[];
+    public scripts: PowershellScript[];
     public raw: T;
     public parent: any;
 
@@ -195,7 +196,7 @@ export class DataModelBase<T> implements IDataModel<T> {
     }
 
     // Derived class should override this function to set up custom powershell scripts
-    protected setupScripts(): void {
+    protected setUpScripts(): void {
         return;
     }
 }

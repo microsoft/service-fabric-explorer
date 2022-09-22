@@ -48,10 +48,17 @@ export class Node extends DataModelBase<IRawNode> {
             this.setAdvancedActions();
         }
 
+        this.setUpScripts();
+
     }
 
-    protected setupScripts(): void {
-        this.scripts.push(`Restart-ServiceFabricNode -NodeName ${this.name} -NodeInstanceId ${this.raw.InstanceId}`);
+    protected setUpScripts(): void {
+        this.scripts.push(
+            {
+                Name: 'Restart',
+                Script: `Restart-ServiceFabricNode -NodeName ${this.name} -NodeInstanceId ${this.raw.InstanceId}`
+            }
+        );
     }
 
     public get nodeStatus(): string {
