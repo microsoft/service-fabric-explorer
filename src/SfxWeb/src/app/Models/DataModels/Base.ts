@@ -5,8 +5,7 @@ import { Observable, of, Subject } from 'rxjs';
 import { IHealthStateChunk, IClusterHealthChunkQueryDescription, IHealthStateFilter } from '../HealthChunkRawDataTypes';
 import { mergeMap, map } from 'rxjs/operators';
 import { ActionCollection } from '../ActionCollection';
-import { PowershellScript } from '../RawDataTypes';
-
+import { PowershellCommand } from '../PowershellCommand';
 // -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
@@ -78,7 +77,7 @@ export interface IDecorators {
 export class DataModelBase<T> implements IDataModel<T> {
     public isInitialized: boolean;
     public actions: ActionCollection;
-    public scripts: PowershellScript[];
+    public commands: PowershellCommand[];
     public raw: T;
     public parent: any;
 
@@ -121,7 +120,7 @@ export class DataModelBase<T> implements IDataModel<T> {
 
         if (this.data) {
             this.actions = new ActionCollection(this.data.telemetry);
-            this.scripts = [];
+            this.commands = [];
         }
 
         this.isInitialized = !!raw;

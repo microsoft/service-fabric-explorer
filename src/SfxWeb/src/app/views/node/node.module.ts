@@ -14,9 +14,11 @@ import { NodeDeactivationModule } from 'src/app/modules/node-deactivation/node-d
 import { ChartsModule } from 'src/app/modules/charts/charts.module';
 import { HealthStateModule } from 'src/app/modules/health-state/health-state.module';
 import { RepairTasksModule } from 'src/app/modules/repair-tasks/repair-tasks.module';
+import { CommandsComponent } from './commands/commands.component';
+import { PowershellCommandsModule } from 'src/app/modules/powershell-commands/powershell-commands.module';
 
 @NgModule({
-  declarations: [BaseComponent, EssentialsComponent, DetailsComponent, EventsComponent],
+  declarations: [BaseComponent, EssentialsComponent, DetailsComponent, EventsComponent, CommandsComponent],
   imports: [
     CommonModule,
     NodeRoutingModule,
@@ -27,7 +29,8 @@ import { RepairTasksModule } from 'src/app/modules/repair-tasks/repair-tasks.mod
     NodeDeactivationModule,
     ChartsModule,
     HealthStateModule,
-    RepairTasksModule
+    RepairTasksModule,
+    PowershellCommandsModule
   ]
 })
 export class NodeModule { }

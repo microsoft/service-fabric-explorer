@@ -35,7 +35,6 @@ import {ClipboardModule} from '@angular/cdk/clipboard';
 
 import { WarningComponent } from './component/warning/warning.component';
 import { EventStoreTimelineComponent } from './component/event-store-timeline/event-store-timeline.component';
-import { PowershellScriptDropdownComponent } from './component/powershell-script-dropdown/powershell-script-dropdown.component';
 @NgModule({
   declarations: [NavbarComponent, ClipBoardComponent, HealthBadgeComponent, CandyBarCompactComponent, DetailViewPartComponent,
                  CollapseContainerComponent, RefreshRateComponent, DragDirective, ActionDialogComponent, ManifestComponent,
@@ -47,7 +46,7 @@ import { PowershellScriptDropdownComponent } from './component/powershell-script
                  DisplayDurationComponent,
                  PhaseDiagramComponent,
                  NodeFilterComponent,
-                 WarningComponent, EventStoreTimelineComponent, PowershellScriptDropdownComponent],
+                 WarningComponent, EventStoreTimelineComponent],
   imports: [
     CommonModule,
     RouterModule,

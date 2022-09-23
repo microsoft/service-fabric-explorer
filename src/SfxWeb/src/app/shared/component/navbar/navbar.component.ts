@@ -1,7 +1,6 @@
 import { Component, OnInit, Input, ChangeDetectionStrategy } from '@angular/core';
 import { ActionCollection } from 'src/app/Models/ActionCollection';
 import { Router } from '@angular/router';
-import { PowershellScript } from 'src/app/Models/RawDataTypes';
 
 @Component({
   selector: 'app-navbar',
@@ -16,7 +15,6 @@ export class NavbarComponent {
   @Input() tabs: ITab[] = [];
   @Input() actions: ActionCollection;
   @Input() showCopy = true;
-  @Input() scripts: PowershellScript[];
   constructor(private router: Router) { }
 
   navigateBySpaceBar(route: string) {

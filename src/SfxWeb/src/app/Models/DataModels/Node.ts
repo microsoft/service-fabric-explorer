@@ -53,10 +53,10 @@ export class Node extends DataModelBase<IRawNode> {
     }
 
     protected setUpScripts(): void {
-        this.scripts.push(
+        this.commands.push(
             {
-                Name: 'Restart',
-                Script: `Restart-ServiceFabricNode -NodeName ${this.name} -NodeInstanceId ${this.raw.InstanceId}`
+                name: 'Restart',
+                script: `Restart-ServiceFabricNode -NodeName ${this.name} -NodeInstanceId ${this.raw.InstanceId}`
             }
         );
     }
