@@ -1,7 +1,3 @@
-<div *ngFor="let command of commands" class="essen-pane">
-    <div style="height: 20px;">
-      <h5>{{command.name}}</h5>
-      <p>{{command.script}}</p>
-      <app-clip-board [text]="command.script"></app-clip-board>
-    </div>
+<div *ngFor="let command of commands">
+    <app-command [command]="command"></app-command>
 </div>

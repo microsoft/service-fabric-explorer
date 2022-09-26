@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { PowershellCommand } from 'src/app/Models/PowershellCommand';
 
 @Component({
@@ -6,12 +6,9 @@ import { PowershellCommand } from 'src/app/Models/PowershellCommand';
   templateUrl: './powershell-commands.component.html',
   styleUrls: ['./powershell-commands.component.scss']
 })
-export class PowershellCommandsComponent implements OnInit {
+export class PowershellCommandsComponent {
 
   constructor() { }
-
-  ngOnInit(): void {
-  }
 
   @Input() commands: PowershellCommand[];
 

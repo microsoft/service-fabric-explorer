@@ -12,6 +12,7 @@ import { DeployedApplicationCollection } from './collections/DeployedApplication
 import { ActionWithConfirmationDialog, Action } from '../Action';
 import { NodeStatusConstants } from 'src/app/Common/Constants';
 import { RoutesService } from 'src/app/services/routes.service';
+import { CommandInputTypes, PowershellCommand } from '../PowershellCommand';
 
 // -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -54,11 +55,26 @@ export class Node extends DataModelBase<IRawNode> {
 
     protected setUpScripts(): void {
         this.commands.push(
-            {
-                name: 'Restart',
-                script: `Restart-ServiceFabricNode -NodeName ${this.name} -NodeInstanceId ${this.raw.InstanceId}`
-            }
+            new PowershellCommand('Restart', `Restart-ServiceFabricNode -NodeName ${this.name} -NodeInstanceId ${this.raw.InstanceId}`)
         );
+
+        let input1 = {
+            name: "Input 1",
+            value: "",
+            type: CommandInputTypes.open,
+            options: []
+        }
+
+        let input2 = {
+            name: "Input 2",
+            value: "",
+            type: CommandInputTypes.fixed,
+            options: ["option-1", "option-2"]
+        }
+
+        let testCommand = new PowershellCommand('Test Command', `Test-Command -NodeName ${this.name} -NodeInstanceId ${this.raw.InstanceId} -Input1 {} -Input2 {}`, [input1, input2]);
+
+        this.commands.push(testCommand);
     }
 
     public get nodeStatus(): string {

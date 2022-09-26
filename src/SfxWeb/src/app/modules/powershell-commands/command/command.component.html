@@ -1,0 +1,24 @@
+<div class="essen-pane">
+    <h5>{{command.name}}</h5>
+    <div *ngFor="let commandInput of command.inputs">
+        <label [for]="commandInput.name">{{commandInput.name}}</label>
+        <div *ngIf="commandInput.type === inputTypes.open; else selectBlock">
+            <input [id]="commandInput.name" [(ngModel)]="commandInput.value"/>
+        </div>
+        <ng-template #selectBlock>
+            <select [id]="commandInput.name" [(ngModel)]="commandInput.value">
+                <option *ngFor="let option of commandInput.options">
+                    {{option}}
+                </option>
+            </select>
+
+        </ng-template>
+    </div>
+
+    <div class="card"c>
+        <div class="card-body">
+            <app-clip-board style="float: right;" [text]="command.getScript()"></app-clip-board>
+            <p class="card-text">{{command.getScript()}}</p>
+        </div>
+    </div>
+</div>
