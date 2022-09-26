@@ -31,7 +31,7 @@ export class Utils {
     /**
      * implements lodash groupBy in es6. returns a dictionary of lists
      */
-    public static groupByFunc<T>(list: T[], keyFunction: (T) => string): Record<string, T[]> {
+    public static groupByFunc<T>(list: T[], keyFunction: (item: T) => string): Record<string, T[]> {
         return list.reduce( (previous, current) => { const key = keyFunction(current);
                                                      if (key in previous){
                                                         previous[key].push(current);
@@ -74,6 +74,9 @@ export class Utils {
         return !isNaN(parseFloat(value)) && isFinite(value);
     }
 
+    public static isDefined(value: any): boolean {
+      return value !== null && value !== undefined;
+    }
 
     /**
      * Extract resolved property from nested object.
@@ -96,6 +99,17 @@ export class Utils {
         }
         return value;
     }
+
+    public static result2(item: any, propertyPath: string) {
+      let value = item;
+      if (propertyPath !== null)
+      {
+          propertyPath.split('.').forEach(path => {
+            value = value[path];
+          });
+      }
+      return value;
+  }
 
     /**
      * Check if a giving object represents a Badge object

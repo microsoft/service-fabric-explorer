@@ -1,0 +1,101 @@
+<div style="float: right">
+    Copy raw repair Job <app-clip-board [text]="copyText"></app-clip-board>
+</div>
+<div class="nodes-container">
+    <div *ngFor="let node of nodes" class="highlight-hover node-wrapper">
+        <div class="inner-node-wrapper">
+            <div [ngClass]="node.healthState.badgeClass" style="width: 5px;"></div>
+            <div style="padding: 4px; ">
+                <div class="row-container">
+                    <app-health-badge [badgeClass]="node.healthState.badgeClass" [text]="node.healthState.text">
+                    </app-health-badge>
+                    <a [routerLink]="node.viewPath">{{node.name}}</a>
+                </div>
+                <div class="row-container">
+                    <div>
+                        UD : {{node.raw.UpgradeDomain}}
+                    </div>
+                    <div>
+                        FD : {{node.raw.FaultDomain}}
+                    </div>
+                </div>
+                <div>
+                    Deactivation Status : {{node.raw.NodeDeactivationInfo.NodeDeactivationStatus}}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div ngbNav #nav="ngbNav" [(activeId)]="item.activeTab" class="nav-wrapper">
+    <div [ngbNavItem]="1">
+        <a ngbNavLink style="font-size: 12pt;">
+            Condensed
+        </a>
+        <ng-template ngbNavContent>
+            <div style="display: flex;flex-direction: row; gap: 15px">
+                <div *ngIf="item.raw.History" style="min-width: 400px;" data-cy="history">
+                    <h5 style="border-bottom: 1px solid gray; padding-bottom: 5px">
+                        History
+                    </h5>
+                    <div style="font-size: larger;">
+                        Phase <div style="float: right">Duration</div>
+                    </div>
+                    <app-collapse-container *ngFor="let phase of item.historyPhases" [collapsed]="phase.startCollapsed" hideTooltip="true" (collapsedChange)="item.changePhaseCollapse(phase.name,$event)">
+                        <div collapse-header [ngClass]='phase.statusCss'>
+                            {{phase.name}} : {{phase.status}} <span *ngIf="phase.durationMilliseconds > 0" style="float: right;">{{phase.duration}}</span>
+                        </div>
+                        <div collapse-body class="collapse-inner-bar">
+
+                          <ng-template #customWrapperTemplate let-data="data">
+                            <div *ngIf="data.timestamp" >
+                              <div  style="margin-left: 10px" >
+                                <app-display-time [time]="data.timestamp"></app-display-time>
+                              </div>
+                            </div>
+                          </ng-template>
+                          <app-phase-diagram [currentIndex]="phase.currentPhase" [items]="phase.phases" [vertical]="true"
+                          [middleItem]="customWrapperTemplate"></app-phase-diagram>
+                        </div>
+                    </app-collapse-container>
+                </div>
+                <div>
+                  <div *ngIf="item.concerningJobInfo" style="margin-bottom: 15px;" data-cy="node-stuck-warning">
+                    <app-warning [description]="item.concerningJobInfo.description" ></app-warning>
+                  </div>
+                    <div *ngIf="item.couldParseExecutorData" data-cy="jobinfo">
+                        <h5>
+                            Job Info
+                        </h5>
+                        <table class="table detail-table" style="margin-bottom: 14px; width: 100%; color: var(--font-primary-color);">
+                            <tbody>
+                                <tr>
+                                    <th>Executor</th>
+                                    <td>{{item.raw.Executor}}</td>
+                                </tr>
+                                <tr>
+                                    <th>Description</th>
+                                    <td>{{item.raw.Description}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <app-detail-view-part [data]="item.executorData"></app-detail-view-part>
+                    </div>
+                </div>
+            </div>
+
+        </ng-template>
+    </div>
+    <div [ngbNavItem]="2">
+        <a ngbNavLink style="font-size: 12pt;">
+            Full Description
+        </a>
+        <ng-template ngbNavContent>
+            <div style="width: 80%">
+                <app-detail-view-part [data]="item.raw"></app-detail-view-part>
+            </div>
+        </ng-template>
+    </div>
+</div>
+<div [ngbNavOutlet]="nav"></div>

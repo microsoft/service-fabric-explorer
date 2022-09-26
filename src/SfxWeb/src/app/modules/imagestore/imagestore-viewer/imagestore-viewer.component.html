@@ -36,8 +36,10 @@
                     </button>
                 </span>
                 <br>
-                <div *ngIf="imagestoreRoot.isLoadingFolderContent">
-                  Loading folder: {{imagestoreRoot.currentDirectoryBeingLoaded || 'root'}}
+                <div style="min-height: 20px">
+                  <div *ngIf="imagestoreRoot.isLoadingFolderContent">
+                    Loading folder: {{imagestoreRoot.currentDirectoryBeingLoaded || 'root'}}
+                  </div>
                 </div>
             </div>
             <!-- search-text="'Search confined to current directory'" TODO add this input -->

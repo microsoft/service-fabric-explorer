@@ -48,7 +48,7 @@ $border-radius: 5px;
 }
 
 .slider-wrapper {
-    min-width: 400px;
+    min-width: 300px;
     flex: 1;
     padding-left: 15px;
     margin-right: 15px;
@@ -58,10 +58,18 @@ $border-radius: 5px;
     }
 }
 
+@media (max-width: 400px) {
+  .slider-wrapper {
+    min-width: 200px;
+  }
+}
+
 .flex-container {
     display: flex;
     flex-direction: row;
     align-items: center;
+    gap: 5px;
+    width: 100%;
 }
 
 .wrap {
@@ -77,4 +85,3 @@ $border-radius: 5px;
     vertical-align: middle;
     margin-right: 3px;
 }
-

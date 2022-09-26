@@ -19,7 +19,7 @@
         <div class="self hide-nested hover-row flex-center" [ngClass]="{ 'raised-z-index': i === higherZIndex}">
             <span  [ngStyle]="{ 'paddingLeft': child.paddingLeftPx }"></span>
             <div class="expander" *ngIf="!child.hasExpander"></div>
-            <button tabindex="0" class="expander icon mif-chevron-thin-down" aria-hidden="false" role="button"
+            <button tabindex="0" class="expander icon mif-chevron-thin-right" aria-hidden="false" role="button"
                     (click)="child.toggle(); $event.stopPropagation()" *ngIf="child.hasExpander"
                     [ngClass]="{ 'rotated': child.isExpanded }"
                     style="display: inline-block;" [title]="child.isCollapsed ? 'Expand Children' : 'Collapse Children'">

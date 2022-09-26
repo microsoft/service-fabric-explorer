@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { MessageService, MessageSeverity } from './message.service';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { HealthStateFilterFlags, IClusterHealthChunkQueryDescription } from '../Models/HealthChunkRawDataTypes';
 import { IResponseMessageHandler, ResponseMessageHandlers } from '../Common/ResponseMessageHandlers';
 import { Observable, of, throwError } from 'rxjs';
@@ -19,7 +19,6 @@ import { Service } from '../Models/DataModels/Service';
 import { Partition } from '../Models/DataModels/Partition';
 import { ClusterEvent, NodeEvent, ApplicationEvent, ServiceEvent, PartitionEvent, ReplicaEvent,
          FabricEvent, EventsResponseAdapter, FabricEventBase } from '../Models/eventstore/Events';
-import { StandaloneIntegration } from '../Common/StandaloneIntegration';
 import { AadMetadata } from '../Models/DataModels/Aad';
 import { environment } from 'src/environments/environment';
 import { IRequest, NetworkDebugger } from '../Models/DataModels/networkDebugger';
@@ -707,7 +706,7 @@ export class RestClientService {
   }
 
   public getClusterEvents(startTime: Date, endTime: Date, messageHandler?: IResponseMessageHandler): Observable<ClusterEvent[]> {
-      return this.getEvents(ClusterEvent, 'EventsStore/Cluster/Events', startTime, endTime, messageHandler, RestClientService.apiVersion80);
+      return this.getEvents(ClusterEvent, 'EventsStore/Cluster/Events', startTime, endTime, [], messageHandler, RestClientService.apiVersion80);
   }
 
   public getNodeEvents(startTime: Date, endTime: Date, nodeName?: string, messageHandler?: IResponseMessageHandler): Observable<NodeEvent[]> {
@@ -715,15 +714,15 @@ export class RestClientService {
           + 'Nodes/'
           + (nodeName ? (encodeURIComponent(nodeName) + '/$/') : '')
           + 'Events';
-      return this.getEvents(NodeEvent, url, startTime, endTime, messageHandler);
+      return this.getEvents(NodeEvent, url, startTime, endTime, [], messageHandler);
   }
 
-  public getApplicationEvents(startTime: Date, endTime: Date, applicationId?: string, messageHandler?: IResponseMessageHandler): Observable<ApplicationEvent[]> {
+  public getApplicationEvents(startTime: Date, endTime: Date, eventsFilter: string[], applicationId?: string, messageHandler?: IResponseMessageHandler): Observable<ApplicationEvent[]> {
       const url = 'EventsStore/'
           + 'Applications/'
           + (applicationId ? (encodeURIComponent(applicationId) + '/$/') : '')
           + 'Events';
-      return this.getEvents(ApplicationEvent, url, startTime, endTime, messageHandler);
+      return this.getEvents(ApplicationEvent, url, startTime, endTime, eventsFilter, messageHandler);
   }
 
   public getServiceEvents(startTime: Date, endTime: Date, serviceId?: string, messageHandler?: IResponseMessageHandler): Observable<ServiceEvent[]> {
@@ -731,7 +730,7 @@ export class RestClientService {
           + 'Services/'
           + (serviceId ? (encodeURIComponent(serviceId) + '/$/') : '')
           + 'Events';
-      return this.getEvents(ServiceEvent, url, startTime, endTime, messageHandler);
+      return this.getEvents(ServiceEvent, url, startTime, endTime, [], messageHandler);
   }
 
   public getPartitionEvents(startTime: Date, endTime: Date, partitionId?: string, messageHandler?: IResponseMessageHandler): Observable<PartitionEvent[]> {
@@ -739,7 +738,7 @@ export class RestClientService {
           + 'Partitions/'
           + (partitionId ? (encodeURIComponent(partitionId) + '/$/') : '')
           + 'Events';
-      return this.getEvents(PartitionEvent, url, startTime, endTime, messageHandler);
+      return this.getEvents(PartitionEvent, url, startTime, endTime, [], messageHandler);
   }
 
   public getReplicaEvents(startTime: Date, endTime: Date, partitionId: string, replicaId?: string, messageHandler?: IResponseMessageHandler): Observable<ReplicaEvent[]> {
@@ -748,7 +747,7 @@ export class RestClientService {
           + encodeURIComponent(partitionId) + '/$/' + 'Replicas/'
           + (replicaId ? (encodeURIComponent(replicaId) + '/$/') : '')
           + 'Events';
-      return this.getEvents(ReplicaEvent, url, startTime, endTime, messageHandler);
+      return this.getEvents(ReplicaEvent, url, startTime, endTime, [], messageHandler);
   }
 
   public getCorrelatedEvents(eventInstanceId: string, messageHandler?: IResponseMessageHandler): Observable<FabricEvent[]> {
@@ -756,7 +755,7 @@ export class RestClientService {
           + 'CorrelatedEvents/'
           + encodeURIComponent(eventInstanceId) + '/$/'
           + 'Events';
-      return this.getEvents(FabricEvent, url, null, null, messageHandler);
+      return this.getEvents(FabricEvent, url, null, null, [], messageHandler);
   }
 
   public getRepairTasks(messageHandler?: IResponseMessageHandler): Observable<IRawRepairTask[]> {
@@ -783,19 +782,23 @@ export class RestClientService {
       return this.get(this.getApiUrl(url, RestClientService.apiVersion64), 'Get cluster version', messageHandler);
   }
 
-  private getEvents<T extends FabricEventBase>(eventType: new () => T, url: string, startTime?: Date, endTime?: Date, messageHandler?: IResponseMessageHandler, apiVersion?: string): Observable<T[]> {
-      let apiUrl = url;
-      if (startTime && endTime) {
-          apiUrl = apiUrl
-              + '?starttimeutc=' + startTime.toISOString().substr(0, 19) + 'Z'
-              + '&endtimeutc=' + endTime.toISOString().substr(0, 19) + 'Z';
+  private getEvents<T extends FabricEventBase>(eventType: new () => T, url: string, startTime: Date, endTime: Date, eventTypesFilter: string[], messageHandler?: IResponseMessageHandler, apiVersion?: string): Observable<T[]> {
+      const paramObject = {
+        'starttimeutc': startTime.toISOString().substring(0, 19) + 'Z',
+        'endtimeutc': endTime.toISOString().substr(0, 19) + 'Z',
+        'eventTypesFilter': eventTypesFilter.join()
       }
+
+      const params = new HttpParams({
+        fromObject: paramObject
+      })
 
       if (!apiVersion) {
         apiVersion =  RestClientService.apiVersion72;
       }
 
-      const fullUrl = this.getApiUrl(apiUrl, apiVersion, null, true);
+
+      const fullUrl = this.getApiUrl(url + '?' + params.toString(), apiVersion, null, true);
       return this.get<IRawList<{}>>(fullUrl, null, messageHandler).pipe(map(response => {
           return new EventsResponseAdapter(eventType).getEvents(response);
         }));
@@ -811,8 +814,7 @@ export class RestClientService {
           skipCacheToken = true;
       }
       // token to allow for invalidation of browser api call cache
-      return StandaloneIntegration.clusterUrl +
-          `/${path}${path.indexOf('?') === -1 ? '?' : '&'}api-version=${apiVersion ? apiVersion : RestClientService.defaultApiVersion}${skipCacheToken === true ? '' : `&_cacheToken=${this.cacheAllowanceToken}`}${continuationToken ? `&ContinuationToken=${continuationToken}` : ''}`;
+      return `/${path}${path.indexOf('?') === -1 ? '?' : '&'}api-version=${apiVersion ? apiVersion : RestClientService.defaultApiVersion}${skipCacheToken === true ? '' : `&_cacheToken=${this.cacheAllowanceToken}`}${continuationToken ? `&ContinuationToken=${continuationToken}` : ''}`;
   }
 
   // eslint-disable-next-line max-len
@@ -839,6 +841,10 @@ export class RestClientService {
 
   }
 
+  private getBaseUrl() {
+    return environment.baseUrl || "";
+  }
+
     // eslint-disable-next-line max-len
   private getFullCollection2<T>(url: string, apiDesc: string, apiVersion?: string, messageHandler?: IResponseMessageHandler, continuationToken?: string, startDate?: Date, endDate?: Date, maxResults?: number, latest?: boolean): Observable<T[]> {
       const appUrl = this.getApiUrl2(url, apiVersion, continuationToken, false, startDate, endDate, maxResults, latest);
@@ -854,7 +860,7 @@ export class RestClientService {
   }
 
   private get<T>(url: string, apiDesc: string, messageHandler?: IResponseMessageHandler): Observable<T> {
-      const result = this.httpClient.get<T>(environment.baseUrl + url);
+      const result = this.httpClient.get<T>(this.getBaseUrl() + url);
       if (!messageHandler) {
           messageHandler = ResponseMessageHandlers.getResponseMessageHandler;
       }
@@ -862,7 +868,7 @@ export class RestClientService {
   }
 
   private post<T>(url: string, apiDesc: string, data?: any, messageHandler?: IResponseMessageHandler): Observable<T> {
-      const result = this.httpClient.post<T>(environment.baseUrl  + url, data);
+      const result = this.httpClient.post<T>(this.getBaseUrl()  + url, data);
       if (!messageHandler) {
           messageHandler = ResponseMessageHandlers.postResponseMessageHandler;
       }
@@ -870,7 +876,7 @@ export class RestClientService {
   }
 
   private put<T>(url: string, apiDesc: string, data?: any, messageHandler?: IResponseMessageHandler): Observable<T> {
-      const result = this.httpClient.put<T>(environment.baseUrl  + url, data);
+      const result = this.httpClient.put<T>(this.getBaseUrl()  + url, data);
       if (!messageHandler) {
           messageHandler = ResponseMessageHandlers.putResponseMessageHandler;
       }
@@ -878,7 +884,7 @@ export class RestClientService {
   }
 
   private delete<T>(url: string, apiDesc: string, messageHandler?: IResponseMessageHandler): Observable<T> {
-      const result = this.httpClient.delete<T>(environment.baseUrl  + url);
+      const result = this.httpClient.delete<T>(this.getBaseUrl()  + url);
       if (!messageHandler) {
           messageHandler = ResponseMessageHandlers.deleteResponseMessageHandler;
       }

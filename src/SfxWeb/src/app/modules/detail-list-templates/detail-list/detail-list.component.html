@@ -1,7 +1,7 @@
 <div class="detail-list-container flex-child" style="margin-top: 15px;">
     <ng-content></ng-content>
     <div *ngIf="showTopOptions">
-      <app-input class="input-wrapper" [placeholder]="searchText" [model]="listSettings.search" (changed)="listSettings.search = $event; updateList()"></app-input>
+      <app-input class="input-wrapper" [placeholder]="searchText" [model]="listSettings.search" (changed)="listSettings.search = $event; updateList(); page = 1; "></app-input>
       <button class="simple-button"  (click)="resetAll()">Reset All</button>
 
       <button class="simple-button" style="float: right;" (click)="export()"> <span class="mif-download2"></span> Export</button>
@@ -101,7 +101,7 @@
         </div>
 
         <div style="margin-top: 10px;" *ngIf="sortedFilteredList.length > listSettings.limit">
-            <ngb-pagination [collectionSize]="sortedFilteredList.length" [(page)]="page" [maxSize]="5" [rotate]="true" [boundaryLinks]="true"
+            <ngb-pagination [collectionSize]="sortedFilteredList.length" [(page)]="page" [maxSize]="3" [rotate]="true" [boundaryLinks]="true"
                             (pageChange)="pageChange($event)" style="display: inline-block;" [pageSize]="listSettings.limit"></ngb-pagination>
             <div style="float: right; margin-top: 10px;">
                 <span *ngIf="sortedFilteredList.length > listSettings.limit">

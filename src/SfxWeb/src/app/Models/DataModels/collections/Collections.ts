@@ -86,7 +86,13 @@ export class ApplicationCollection extends DataModelCollectionBase<Application> 
     }
 }
 
+export interface IAppTypeUsage {
+  activeAppTypes: ApplicationType[];
+  inactiveTypes: ApplicationType[];
+}
+
 export class ApplicationTypeGroupCollection extends DataModelCollectionBase<ApplicationTypeGroup> {
+    public appTypeCount = 0;
     public constructor(data: DataService) {
         super(data);
     }
@@ -97,11 +103,33 @@ export class ApplicationTypeGroupCollection extends DataModelCollectionBase<Appl
 
     protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): Observable<any> {
         return this.data.restClient.getApplicationTypes(null, messageHandler).pipe(map(response => {
+            this.appTypeCount = response.length;
             const appTypes = response.map(item => new ApplicationType(this.data, item));
             const groups = groupBy(appTypes, item => item.raw.Name);
             return Object.keys(groups).map(g => new ApplicationTypeGroup(this.data, groups[g]));
         }));
     }
+
+    public getAppTypeUsage(): Observable<IAppTypeUsage> {
+      return this.data.getApps(true).pipe(map(() => {
+          // check on refresh which appTypes are being used by at least one application
+          const activeAppTypes = [];
+          const inactiveTypes = [];
+          this.collection.forEach(appTypeGroup => appTypeGroup.appTypes.forEach(appType => {
+            if (appType.isInUse) {
+              activeAppTypes.push(appType);
+            }else{
+              inactiveTypes.push(appType);
+            }
+          }))
+
+          return {
+            activeAppTypes,
+            inactiveTypes
+          }
+      }))
+    }
+
 }
 
 export class ApplicationBackupConfigurationInfoCollection extends DataModelCollectionBase<ApplicationBackupConfigurationInfo> {
@@ -318,12 +346,11 @@ export abstract class EventListBase<T extends FabricEventBase> extends DataModel
     public readonly detailsSettings: ListSettings;
     public readonly pageSize: number = 15;
     public readonly defaultDateWindowInDays: number = 7;
-    public readonly latestRefreshPeriodInSecs: number = 60 * 60;
-
     protected readonly optionalColsStartIndex: number = 2;
 
     private iStartDate: Date;
     private iEndDate: Date;
+    protected eventsTypesFilter: string[] = [];
 
     public get startDate() {
         return new Date(this.iStartDate.valueOf());
@@ -351,6 +378,14 @@ export abstract class EventListBase<T extends FabricEventBase> extends DataModel
         this.detailsSettings = this.createListSettings();
 
         this.setNewDateWindowInternal(startDate, endDate);
+    }
+
+    public setEventFilter(filters: string[]) {
+      this.eventsTypesFilter = filters;
+    }
+
+    public clearEventFilter() {
+      this.eventsTypesFilter = [];
     }
 
     public setDateWindow(startDate?: Date, endDate?: Date): boolean {
@@ -397,12 +432,13 @@ export abstract class EventListBase<T extends FabricEventBase> extends DataModel
             new ListColumnSetting('raw.timeStampString', 'Timestamp', {sortPropertyPaths: ['raw.timestamp']}),
             new ListColumnSetting('raw.timeStamp', 'Timestamp(UTC)')],
             [
-                new ListColumnSettingWithEventStoreFullDescription()
+                new ListColumnSettingWithEventStoreFullDescription(),
             ],
             true,
             (item) => (Object.keys(item.raw.eventProperties).length > 0),
             true);
 
+            listSettings.additionalSearchableProperties = ['raw.eventInstanceId'];
         return listSettings;
     }
 
@@ -489,7 +525,7 @@ export class ApplicationEventList extends EventListBase<ApplicationEvent> {
     }
 
     protected retrieveEvents(messageHandler?: IResponseMessageHandler): Observable<FabricEventInstanceModel<ApplicationEvent>[]> {
-        return this.data.restClient.getApplicationEvents(this.queryStartDate, this.queryEndDate, this.applicationId, messageHandler)
+        return this.data.restClient.getApplicationEvents(this.queryStartDate, this.queryEndDate, this.eventsTypesFilter, this.applicationId, messageHandler)
             .pipe(map(result => {
                 return result.map(event => new FabricEventInstanceModel<ApplicationEvent>(this.data, event));
             }));

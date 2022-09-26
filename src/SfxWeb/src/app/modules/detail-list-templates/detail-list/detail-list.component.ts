@@ -80,7 +80,6 @@ export class DetailListComponent implements OnInit, OnDestroy {
         displayPath: this.displayPath
       });
 
-      this.liveAnnouncer.announce(`There are ${this.sortedFilteredList.length} items in the search result`);
    });
   }
 
@@ -150,7 +149,7 @@ export class DetailListComponent implements OnInit, OnDestroy {
             const keywords = this.listSettings.search.trim().toLowerCase().split(/\s+/);
 
             keywords.forEach(keyword => {
-                pluckedList = pluckedList.filter(item => filterByProperty(item, keyword) ); // this.$filter("filter")(pluckedList, keyword);
+                pluckedList = pluckedList.filter(item => filterByProperty(item, keyword) );
             });
         }
 
