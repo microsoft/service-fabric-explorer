@@ -33,5 +33,6 @@ export interface PowershellCommandInput{
 
 export enum CommandInputTypes {
     open,
-    fixed
+    fixed,
+    bool
 }

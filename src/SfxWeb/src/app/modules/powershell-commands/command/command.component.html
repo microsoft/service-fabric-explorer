@@ -2,17 +2,19 @@
     <h5>{{command.name}}</h5>
     <div *ngFor="let commandInput of command.inputs">
         <label [for]="commandInput.name">{{commandInput.name}}</label>
-        <div *ngIf="commandInput.type === inputTypes.open; else selectBlock">
-            <input [id]="commandInput.name" [(ngModel)]="commandInput.value"/>
-        </div>
-        <ng-template #selectBlock>
-            <select [id]="commandInput.name" [(ngModel)]="commandInput.value">
+        <div [ngSwitch]="commandInput.type">
+            
+            <input *ngSwitchCase="inputTypes.open" [id]="commandInput.name" [(ngModel)]="commandInput.value"/>
+            
+            <select *ngSwitchCase="inputTypes.fixed" [id]="commandInput.name" [(ngModel)]="commandInput.value">
                 <option *ngFor="let option of commandInput.options">
                     {{option}}
                 </option>
             </select>
 
-        </ng-template>
+            <input *ngSwitchCase="inputTypes.bool" [id]="commandInput.name" type="checkbox" [value]="commandInput.name" (change)="onCheckboxChange($event, commandInput)"/>
+        </div>     
+
     </div>
 
     <div class="card"c>

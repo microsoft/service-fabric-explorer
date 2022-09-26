@@ -55,7 +55,7 @@ export class Node extends DataModelBase<IRawNode> {
 
     protected setUpScripts(): void {
         this.commands.push(
-            new PowershellCommand('Restart', `Restart-ServiceFabricNode -NodeName ${this.name} -NodeInstanceId ${this.raw.InstanceId}`)
+            new PowershellCommand('Restart', `Restart-ServiceFabricNode -NodeName "${this.name}" -NodeInstanceId ${this.raw.InstanceId}`)
         );
 
         let input1 = {
@@ -72,7 +72,14 @@ export class Node extends DataModelBase<IRawNode> {
             options: ["option-1", "option-2"]
         }
 
-        let testCommand = new PowershellCommand('Test Command', `Test-Command -NodeName ${this.name} -NodeInstanceId ${this.raw.InstanceId} -Input1 {} -Input2 {}`, [input1, input2]);
+        let input3 = {
+            name: "-Input3",
+            value: "",
+            type: CommandInputTypes.bool,
+            options: []
+        }
+
+        let testCommand = new PowershellCommand('Test Command', `Test-Command -NodeName ${this.name} -NodeInstanceId ${this.raw.InstanceId} -Input1 {} -Input2 {} {}`, [input1, input2, input3]);
 
         this.commands.push(testCommand);
     }
