@@ -18,21 +18,33 @@ export class PowershellCommand{
     }
 
     getScript(): string {
-        return this.script.map(_ => typeof _ === 'string' ? _ : _.value).join(' ');
+        return this.script.map(input => {
+            if (typeof input === 'string') { //not a input
+                return input;
+            }
+            else {
+                if (input.type === CommandInputTypes.bool) return input.value;
+                return input.value ? "-" + input.name + " " + input.value : "";
+            }
+        }).join(' ');
     }
     
 }
 
-export interface PowershellCommandInput{
+export class PowershellCommandInput{
 
-    name: string;
     value: string;
-    options: string[];
-    type: CommandInputTypes
+    
+    constructor(
+        public name: string,
+        public type: CommandInputTypes,
+        public options: string[] = []
+    ) { }
 }
 
 export enum CommandInputTypes {
-    open,
-    fixed,
-    bool
+    string,
+    number,
+    enum,
+    bool,
 }

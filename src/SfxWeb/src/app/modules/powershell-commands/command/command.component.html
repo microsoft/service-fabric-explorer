@@ -4,9 +4,11 @@
         <label [for]="commandInput.name">{{commandInput.name}}</label>
         <div [ngSwitch]="commandInput.type">
             
-            <input *ngSwitchCase="inputTypes.open" [id]="commandInput.name" [(ngModel)]="commandInput.value"/>
+            <input *ngSwitchCase="inputTypes.string" [id]="commandInput.name" type="text" [(ngModel)]="commandInput.value"/>
             
-            <select *ngSwitchCase="inputTypes.fixed" [id]="commandInput.name" [(ngModel)]="commandInput.value">
+            <input *ngSwitchCase="inputTypes.number" [id]="commandInput.name" type="number" [(ngModel)]="commandInput.value"/>
+
+            <select *ngSwitchCase="inputTypes.enum" [id]="commandInput.name" [(ngModel)]="commandInput.value">
                 <option *ngFor="let option of commandInput.options">
                     {{option}}
                 </option>

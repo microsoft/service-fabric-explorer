@@ -16,7 +16,7 @@ export class CommandComponent  {
   onCheckboxChange(event: any, input: PowershellCommandInput) {
     console.log(event);
     if (event.target.checked) {
-      input.value = event.target.value;
+      input.value = '-' + event.target.value;
     }
     else {
       input.value = "";

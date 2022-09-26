@@ -12,7 +12,7 @@ import { DeployedApplicationCollection } from './collections/DeployedApplication
 import { ActionWithConfirmationDialog, Action } from '../Action';
 import { NodeStatusConstants } from 'src/app/Common/Constants';
 import { RoutesService } from 'src/app/services/routes.service';
-import { CommandInputTypes, PowershellCommand } from '../PowershellCommand';
+import { CommandInputTypes, PowershellCommand, PowershellCommandInput } from '../PowershellCommand';
 
 // -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -58,30 +58,48 @@ export class Node extends DataModelBase<IRawNode> {
             new PowershellCommand('Restart', `Restart-ServiceFabricNode -NodeName "${this.name}" -NodeInstanceId ${this.raw.InstanceId}`)
         );
 
-        let input1 = {
+        /* let input1 = {
             name: "Input 1",
             value: "",
-            type: CommandInputTypes.open,
+            type: CommandInputTypes.string,
             options: []
         }
 
         let input2 = {
             name: "Input 2",
             value: "",
-            type: CommandInputTypes.fixed,
+            type: CommandInputTypes.enum,
             options: ["option-1", "option-2"]
         }
 
         let input3 = {
-            name: "-Input3",
+            name: "Input3",
             value: "",
             type: CommandInputTypes.bool,
             options: []
         }
 
-        let testCommand = new PowershellCommand('Test Command', `Test-Command -NodeName ${this.name} -NodeInstanceId ${this.raw.InstanceId} -Input1 {} -Input2 {} {}`, [input1, input2, input3]);
+        let testCommand = new PowershellCommand('Test Command', `Test-Command -NodeName ${this.name} -NodeInstanceId ${this.raw.InstanceId} {} {} {}`, [input1, input2, input3]);
 
         this.commands.push(testCommand);
+ */
+        const healthState = new PowershellCommandInput("HealthState", CommandInputTypes.enum, ["OK", "Warning", "Error", "Unknown"]);
+        const sourceId = new PowershellCommandInput("SourceId", CommandInputTypes.string);
+        const healthProperty = new PowershellCommandInput("HealthProperty", CommandInputTypes.string);
+        const description = new PowershellCommandInput("Description", CommandInputTypes.string);
+        const ttl = new PowershellCommandInput("TimeToLiveSec", CommandInputTypes.number);
+        const removeWhenExpired = new PowershellCommandInput("RemoveWhenExpired", CommandInputTypes.bool)
+        const sequenceNum = new PowershellCommandInput("SequenceNumber", CommandInputTypes.number);
+        const immediate = new PowershellCommandInput("Immediate", CommandInputTypes.bool);
+        const timeoutSec = new PowershellCommandInput("TimeoutSec", CommandInputTypes.number);
+        
+        const healthReport = new PowershellCommand(
+            'Send Health Report',
+            `Send-ServiceFabricNodeHealthReport -NodeName "${this.name}" {} {} {} {} {} {} {} {} {}`,
+            [healthState, sourceId, healthProperty, description, ttl, removeWhenExpired, sequenceNum, immediate, timeoutSec]
+        );
+
+        this.commands.push(healthReport);
     }
 
     public get nodeStatus(): string {
