@@ -15,7 +15,5 @@ export class CommandsComponent extends NodeBaseControllerDirective {
   setup() {
   }
 
-  //TODO: move script generation here
-  //PROBLEM: this.node not initialized here, but initialized on child component, find out why
 
 }

@@ -4,7 +4,7 @@ export class PowershellCommand{
 
     private script: (string | PowershellCommandInput)[]
 
-    constructor(public name: string, private rawScript: string, public inputs: PowershellCommandInput[] = []) {
+    constructor(public name: string, rawScript: string, public inputs: PowershellCommandInput[] = []) {
 
         this.script = rawScript.split(" ");
 

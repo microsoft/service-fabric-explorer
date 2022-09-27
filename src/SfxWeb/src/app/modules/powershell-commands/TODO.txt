@@ -1,0 +1,7 @@
+change css
+add danger level 
+add link (top right)
+add required
+change textfield padding, color, text color
+add quatation to text
+add commands: restarts, health reports
