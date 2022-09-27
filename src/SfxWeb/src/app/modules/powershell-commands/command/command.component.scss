@@ -1,7 +1,10 @@
-$background-col: rgb(97, 97, 97);
 
 .card {
-    background-color: $background-col;
+    background-color: var(--accent-background-color);
+    
+    .card-body {
+        padding: 10px;
+    }
 }
 
 .input-wrapper{
@@ -15,4 +18,19 @@ $background-col: rgb(97, 97, 97);
 
     }
 
+}
+
+.input-flat {
+    padding: 3px 6px;
+    font-size: 10pt;
+    border-style: solid;
+    border-width: 1px;
+    border-color: #727272;
+    background-color: transparent;
+    color: var(--font-accent-color);
+    border-radius: var(--primary-border-radius);
+
+    &:focus, &:hover {
+      box-shadow: var(--heavy-box-shadow);
+    }
 }

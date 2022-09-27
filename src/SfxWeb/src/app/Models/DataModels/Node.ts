@@ -58,34 +58,9 @@ export class Node extends DataModelBase<IRawNode> {
             new PowershellCommand('Restart', `Restart-ServiceFabricNode -NodeName "${this.name}" -NodeInstanceId ${this.raw.InstanceId}`)
         );
 
-        /* let input1 = {
-            name: "Input 1",
-            value: "",
-            type: CommandInputTypes.string,
-            options: []
-        }
-
-        let input2 = {
-            name: "Input 2",
-            value: "",
-            type: CommandInputTypes.enum,
-            options: ["option-1", "option-2"]
-        }
-
-        let input3 = {
-            name: "Input3",
-            value: "",
-            type: CommandInputTypes.bool,
-            options: []
-        }
-
-        let testCommand = new PowershellCommand('Test Command', `Test-Command -NodeName ${this.name} -NodeInstanceId ${this.raw.InstanceId} {} {} {}`, [input1, input2, input3]);
-
-        this.commands.push(testCommand);
- */
-        const healthState = new PowershellCommandInput("HealthState", CommandInputTypes.enum, ["OK", "Warning", "Error", "Unknown"]);
-        const sourceId = new PowershellCommandInput("SourceId", CommandInputTypes.string);
-        const healthProperty = new PowershellCommandInput("HealthProperty", CommandInputTypes.string);
+        const healthState = new PowershellCommandInput("HealthState", CommandInputTypes.enum, { options: ["OK", "Warning", "Error", "Unknown"], required: true});
+        const sourceId = new PowershellCommandInput("SourceId", CommandInputTypes.string, {required: true});
+        const healthProperty = new PowershellCommandInput("HealthProperty", CommandInputTypes.string, {required: true});
         const description = new PowershellCommandInput("Description", CommandInputTypes.string);
         const ttl = new PowershellCommandInput("TimeToLiveSec", CommandInputTypes.number);
         const removeWhenExpired = new PowershellCommandInput("RemoveWhenExpired", CommandInputTypes.bool)

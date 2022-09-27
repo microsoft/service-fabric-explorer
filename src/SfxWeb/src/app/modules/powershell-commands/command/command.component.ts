@@ -13,14 +13,8 @@ export class CommandComponent  {
   @Input() command: PowershellCommand;
   inputTypes = CommandInputTypes;
 
-  onCheckboxChange(event: any, input: PowershellCommandInput) {
-    console.log(event);
-    if (event.target.checked) {
-      input.value = '-' + event.target.value;
-    }
-    else {
-      input.value = "";
-    }
+  setDropdownValue(event: any, input: PowershellCommandInput) {
+    input.value = event.target.value;
   }
 
 }

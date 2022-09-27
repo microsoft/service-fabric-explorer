@@ -23,8 +23,13 @@ export class PowershellCommand{
                 return input;
             }
             else {
-                if (input.type === CommandInputTypes.bool) return input.value;
-                return input.value ? "-" + input.name + " " + input.value : "";
+                if (!input.value) return "";
+                const parameter = "-" + input.name + " ";
+                
+                if (input.type === CommandInputTypes.bool) return parameter;
+                if (input.type === CommandInputTypes.string) return parameter + `"${input.value}"`;
+                
+                return parameter + input.value;
             }
         }).join(' ');
     }
@@ -33,13 +38,25 @@ export class PowershellCommand{
 
 export class PowershellCommandInput{
 
-    value: string;
+    value: string | boolean = "";
+    options: string[] = [];
+    required: boolean = false;
     
     constructor(
         public name: string,
         public type: CommandInputTypes,
-        public options: string[] = []
-    ) { }
+        optionalParams?: OptionalInputParams
+    ) { 
+        if (optionalParams?.options) this.options = optionalParams.options;
+        if (optionalParams?.required) this.required = optionalParams.required;
+
+        if (this.type === CommandInputTypes.bool) this.value = false;
+    }
+}
+
+interface OptionalInputParams {
+    options?: string[],
+    required?: boolean
 }
 
 export enum CommandInputTypes {

@@ -2,20 +2,31 @@
     <h5>{{command.name}}</h5>
     <div class="input-wrapper">
         <div *ngFor="let commandInput of command.inputs" class="user-input">
-            <label [for]="commandInput.name">{{commandInput.name}}</label>
+            <label *ngIf="commandInput.type !== inputTypes.bool" [for]="commandInput.name">{{commandInput.name}}</label>
             <div [ngSwitch]="commandInput.type">
                 
-                <input *ngSwitchCase="inputTypes.string" [id]="commandInput.name" type="text" [(ngModel)]="commandInput.value"/>
+                <input *ngSwitchCase="inputTypes.string" [id]="commandInput.name" type="text" [(ngModel)]="commandInput.value" [required]="commandInput.required" class="input-flat" />
                 
-                <input *ngSwitchCase="inputTypes.number" [id]="commandInput.name" type="number" [(ngModel)]="commandInput.value"/>
+                <input *ngSwitchCase="inputTypes.number" [id]="commandInput.name" type="number" [(ngModel)]="commandInput.value" [required]="commandInput.required" class="input-flat"/>
     
-                <select *ngSwitchCase="inputTypes.enum" [id]="commandInput.name" [(ngModel)]="commandInput.value">
-                    <option *ngFor="let option of commandInput.options">
-                        {{option}}
-                    </option>
-                </select>
-    
-                <input *ngSwitchCase="inputTypes.bool" [id]="commandInput.name" type="checkbox" [value]="commandInput.name" (change)="onCheckboxChange($event, commandInput)"/>
+                <div *ngSwitchCase="inputTypes.enum" ngbDropdown >
+                    <button class="simple-button" ngbDropdownToggle>{{commandInput.value ? commandInput.value : '-Select-'}}</button>
+                    <div ngbDropdownMenu>
+                        <div *ngFor="let option of commandInput.options" >
+                            <button [value]="option" ngbDropdownItem (click)="setDropdownValue($event, commandInput)">
+                                {{option}}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div *ngSwitchCase="inputTypes.bool">
+                    <label>
+                        {{commandInput.name}}
+                        <app-toggle [(state)]="commandInput.value"></app-toggle>
+                    </label>
+                </div>
+            
             </div>     
         </div>
     </div>
