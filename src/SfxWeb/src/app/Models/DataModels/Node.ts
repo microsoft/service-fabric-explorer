@@ -12,7 +12,7 @@ import { DeployedApplicationCollection } from './collections/DeployedApplication
 import { ActionWithConfirmationDialog, Action } from '../Action';
 import { NodeStatusConstants } from 'src/app/Common/Constants';
 import { RoutesService } from 'src/app/services/routes.service';
-import { CommandInputTypes, PowershellCommand, PowershellCommandInput } from '../PowershellCommand';
+import { CommandInputTypes, CommandSafetyLevel, PowershellCommand, PowershellCommandInput } from '../PowershellCommand';
 
 // -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -55,7 +55,10 @@ export class Node extends DataModelBase<IRawNode> {
 
     protected setUpScripts(): void {
         this.commands.push(
-            new PowershellCommand('Restart', `Restart-ServiceFabricNode -NodeName "${this.name}" -NodeInstanceId ${this.raw.InstanceId}`)
+            new PowershellCommand('Restart',
+                'https://docs.microsoft.com/powershell/module/servicefabric/restart-servicefabricnode',
+                CommandSafetyLevel.safe,
+                `Restart-ServiceFabricNode -NodeName "${this.name}" -NodeInstanceId ${this.raw.InstanceId}`)
         );
 
         const healthState = new PowershellCommandInput("HealthState", CommandInputTypes.enum, { options: ["OK", "Warning", "Error", "Unknown"], required: true});
@@ -70,6 +73,8 @@ export class Node extends DataModelBase<IRawNode> {
         
         const healthReport = new PowershellCommand(
             'Send Health Report',
+            'https://docs.microsoft.com/powershell/module/servicefabric/send-servicefabricnodehealthreport',
+            CommandSafetyLevel.dangerous,
             `Send-ServiceFabricNodeHealthReport -NodeName "${this.name}" {} {} {} {} {} {} {} {} {}`,
             [healthState, sourceId, healthProperty, description, ttl, removeWhenExpired, sequenceNum, immediate, timeoutSec]
         );

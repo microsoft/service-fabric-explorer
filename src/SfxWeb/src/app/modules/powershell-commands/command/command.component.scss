@@ -1,3 +1,24 @@
+.command-safety{
+    font-size: var(--font-size-medium);
+    margin-bottom: 5px;
+    // display: flex;
+
+    ngb-alert {
+        // float: left;
+        padding: 3px;
+        margin: 0px;
+    }
+}
+
+.command-name {
+    display: flex;
+    h5 {
+        width: 100%;;
+    }
+    a {
+        float: right;
+    }
+}
 
 .card {
     background-color: var(--accent-background-color);

@@ -1,5 +1,23 @@
+<div class="command-safety" [ngSwitch]="command.safetyLevel">
+    <ngb-alert *ngSwitchCase="safetyLevelEnum.safe" type="success" [dismissible]="false">
+        <app-health-badge text="This command is safe" [badgeClass]="BadgeConstants.BadgeOK"></app-health-badge>
+    </ngb-alert>
+    <ngb-alert *ngSwitchCase="safetyLevelEnum.unsafe" type="warning" [dismissible]="false">
+        <app-health-badge text="This command is unsafe" [badgeClass]="BadgeConstants.BadgeWarning"></app-health-badge>
+    </ngb-alert>
+    <ngb-alert *ngSwitchCase="safetyLevelEnum.dangerous" type="danger" [dismissible]="false">
+        <app-health-badge text="This command is dangerous" [badgeClass]="BadgeConstants.BadgeError"></app-health-badge>
+    </ngb-alert>
+</div>
+
 <div class="detail-pane essen-pane">
-    <h5>{{command.name}}</h5>
+
+    <div class="command-name">
+        <h5>{{command.name}}</h5>
+        <a target="_blank" [href]="command.referenceUrl" *ngIf="command.referenceUrl" [attr.aria-label]="'learn about' + command.name">
+            <span class="mif-info link"></span>
+        </a>
+    </div>
     <div class="input-wrapper">
         <div *ngFor="let commandInput of command.inputs" class="user-input">
             <label *ngIf="commandInput.type !== inputTypes.bool" [for]="commandInput.name">{{commandInput.name}}</label>

@@ -1,10 +1,12 @@
-import { Input } from "@angular/core";
-
 export class PowershellCommand{
 
     private script: (string | PowershellCommandInput)[]
 
-    constructor(public name: string, rawScript: string, public inputs: PowershellCommandInput[] = []) {
+    constructor(public name: string,
+        public referenceUrl: string,
+        public safetyLevel: CommandSafetyLevel,
+        rawScript: string,
+        public inputs: PowershellCommandInput[] = []) {
 
         this.script = rawScript.split(" ");
 
@@ -64,4 +66,10 @@ export enum CommandInputTypes {
     number,
     enum,
     bool,
+}
+
+export enum CommandSafetyLevel {
+    safe,
+    unsafe,
+    dangerous
 }
