@@ -26,6 +26,7 @@ export interface IConcurrentEventsConfig {
   eventType: string; // the event type we are investigating
   relevantEventsType: IRelevantEventsConfig[]; // possible causes we are considering
   result: string; //resulting property we want to display for events (ex. Repair Jobs action)
+  resultTransform?: ITransform[]; //used to describe result transformations that we want to make
 }
 
 export interface IConcurrentEvents extends IRCAItem {
@@ -69,6 +70,9 @@ export const getSimultaneousEventsForEvent = (configs: IConcurrentEventsConfig[]
         // iterate through all events to find relevant ones
         if (Utils.result(inputEvent, config.result)) {
           parsed = Utils.result(inputEvent, config.result);
+          if (config.resultTransform) {
+            parsed = Transforms.getTransformations(config.resultTransform, parsed);
+          }
           action = parsed;
         }
 

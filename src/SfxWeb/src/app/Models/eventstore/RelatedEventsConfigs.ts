@@ -234,4 +234,31 @@ export let RelatedEventsConfigs: IConcurrentEventsConfig[] = [
     ],
     "result": "raw.Action"
   },
+  {
+    "eventType": "PartitionReconfigurationStarted",
+    "relevantEventsType": [
+      {
+        eventType: "PartitionReconfigured",
+        propertyMappings: [
+          {
+            sourceProperty: "eventProperties.ActivityId",
+            targetProperty: "eventProperties.ActivityId"
+          }
+        ],
+      }
+    ],
+    "result": "eventProperties.NewPrimaryNodeName",
+    "resultTransform": [
+      {
+        type: "prefix",
+        value: "New Primary Node Name is "
+      }
+    ]
+  },
+  {
+    "eventType": "PartitionReconfigured",
+    "relevantEventsType": [
+    ],
+    "result": "eventProperties.ReconfigType"
+  }
 ];
