@@ -1,3 +1,9 @@
 add required 
-change textfield text color 
 add commands: restarts, health reports
+change to form to: performance, required, number
+
+questions:
+shorten link
+alert
+no more templating
+param pipe
