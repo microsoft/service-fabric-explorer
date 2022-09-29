@@ -1,44 +1,30 @@
 export class PowershellCommand{
 
-    private script: (string | PowershellCommandInput)[]
 
     constructor(public name: string,
         public referenceUrl: string,
         public safetyLevel: CommandSafetyLevel,
-        rawScript: string,
-        public inputs: PowershellCommandInput[] = []) {
-
-        this.script = rawScript.split(" ");
-
-        let inputIndex = 0;
-        let scriptInsertIndex = this.script.findIndex(x => x === "{}");
-        while (scriptInsertIndex !== -1) {
-            this.script[scriptInsertIndex] = this.inputs[inputIndex];
-            inputIndex++;
-            scriptInsertIndex = this.script.findIndex(x => x === "{}");
-        }
+        public prefix: string,
+        public parameters: PowershellCommandParameter[] = []) {
     }
 
     getScript(): string {
-        return this.script.map(input => {
-            if (typeof input === 'string') { //not a input
-                return input;
-            }
-            else {
-                if (!input.value) return "";
-                const parameter = "-" + input.name + " ";
-                
-                if (input.type === CommandInputTypes.bool) return parameter;
-                if (input.type === CommandInputTypes.string) return parameter + `"${input.value}"`;
-                
-                return parameter + input.value;
-            }
+        
+        return this.prefix + " " + this.parameters.map(input => {
+            
+            if (!input.value) return "";
+            const parameter = "-" + input.name + " ";
+            
+            if (input.type === CommandParamTypes.bool) return parameter;
+            if (input.type === CommandParamTypes.string) return parameter + `"${input.value}"`;
+            
+            return parameter + input.value;
         }).join(' ');
     }
     
 }
 
-export class PowershellCommandInput{
+export class PowershellCommandParameter{
 
     value: string | boolean = "";
     options: string[] = [];
@@ -46,22 +32,22 @@ export class PowershellCommandInput{
     
     constructor(
         public name: string,
-        public type: CommandInputTypes,
-        optionalParams?: OptionalInputParams
+        public type: CommandParamTypes,
+        optionalParams?: OptionalCommandParamParams
     ) { 
         if (optionalParams?.options) this.options = optionalParams.options;
         if (optionalParams?.required) this.required = optionalParams.required;
 
-        if (this.type === CommandInputTypes.bool) this.value = false;
+        if (this.type === CommandParamTypes.bool) this.value = false;
     }
 }
 
-interface OptionalInputParams {
+interface OptionalCommandParamParams {
     options?: string[],
     required?: boolean
 }
 
-export enum CommandInputTypes {
+export enum CommandParamTypes {
     string,
     number,
     enum,

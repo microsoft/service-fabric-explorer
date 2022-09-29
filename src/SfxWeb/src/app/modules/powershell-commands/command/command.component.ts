@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { PowershellCommand, CommandInputTypes, PowershellCommandInput, CommandSafetyLevel } from 'src/app/Models/PowershellCommand';
+import { PowershellCommand, CommandParamTypes, PowershellCommandParameter, CommandSafetyLevel } from 'src/app/Models/PowershellCommand';
 import { BadgeConstants } from 'src/app/Common/Constants';
 
 @Component({
@@ -13,12 +13,12 @@ export class CommandComponent  {
 
   @Input() command: PowershellCommand;
 
-  inputTypes = CommandInputTypes;
+  paramTypes = CommandParamTypes;
   safetyLevelEnum = CommandSafetyLevel;
   BadgeConstants = BadgeConstants;
 
-  setDropdownValue(event: any, input: PowershellCommandInput) {
-    input.value = event.target.value;
+  setDropdownValue(event: any, param: PowershellCommandParameter) {
+    param.value = event.target.value;
   }
 
 }

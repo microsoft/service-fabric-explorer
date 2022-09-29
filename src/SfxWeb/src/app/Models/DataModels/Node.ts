@@ -12,7 +12,7 @@ import { DeployedApplicationCollection } from './collections/DeployedApplication
 import { ActionWithConfirmationDialog, Action } from '../Action';
 import { NodeStatusConstants } from 'src/app/Common/Constants';
 import { RoutesService } from 'src/app/services/routes.service';
-import { CommandInputTypes, CommandSafetyLevel, PowershellCommand, PowershellCommandInput } from '../PowershellCommand';
+import { CommandParamTypes, CommandSafetyLevel, PowershellCommand, PowershellCommandParameter } from '../PowershellCommand';
 
 // -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -32,6 +32,7 @@ export class Node extends DataModelBase<IRawNode> {
     public deployedApps: DeployedApplicationCollection;
     public loadInformation: NodeLoadInformation;
     public health: NodeHealth;
+    public commands: PowershellCommand[] = [];
 
     // When the auto-refresh is off, we won't be able to rely on this.status alone to determine which actions to enable because that data will be stale.
     // So we track what we expect the node status to be. This data is set after a successful action and cleared when we refresh the controller.
@@ -49,11 +50,11 @@ export class Node extends DataModelBase<IRawNode> {
             this.setAdvancedActions();
         }
 
-        this.setUpScripts();
+        this.setUpCommands();
 
     }
 
-    protected setUpScripts(): void {
+    protected setUpCommands(): void {
         this.commands.push(
             new PowershellCommand('Restart',
                 'https://docs.microsoft.com/powershell/module/servicefabric/restart-servicefabricnode',
@@ -61,21 +62,21 @@ export class Node extends DataModelBase<IRawNode> {
                 `Restart-ServiceFabricNode -NodeName "${this.name}" -NodeInstanceId ${this.raw.InstanceId}`)
         );
 
-        const healthState = new PowershellCommandInput("HealthState", CommandInputTypes.enum, { options: ["OK", "Warning", "Error", "Unknown"], required: true});
-        const sourceId = new PowershellCommandInput("SourceId", CommandInputTypes.string, {required: true});
-        const healthProperty = new PowershellCommandInput("HealthProperty", CommandInputTypes.string, {required: true});
-        const description = new PowershellCommandInput("Description", CommandInputTypes.string);
-        const ttl = new PowershellCommandInput("TimeToLiveSec", CommandInputTypes.number);
-        const removeWhenExpired = new PowershellCommandInput("RemoveWhenExpired", CommandInputTypes.bool)
-        const sequenceNum = new PowershellCommandInput("SequenceNumber", CommandInputTypes.number);
-        const immediate = new PowershellCommandInput("Immediate", CommandInputTypes.bool);
-        const timeoutSec = new PowershellCommandInput("TimeoutSec", CommandInputTypes.number);
+        const healthState = new PowershellCommandParameter("HealthState", CommandParamTypes.enum, { options: ["OK", "Warning", "Error", "Unknown"], required: true});
+        const sourceId = new PowershellCommandParameter("SourceId", CommandParamTypes.string, {required: true});
+        const healthProperty = new PowershellCommandParameter("HealthProperty", CommandParamTypes.string, {required: true});
+        const description = new PowershellCommandParameter("Description", CommandParamTypes.string);
+        const ttl = new PowershellCommandParameter("TimeToLiveSec", CommandParamTypes.number);
+        const removeWhenExpired = new PowershellCommandParameter("RemoveWhenExpired", CommandParamTypes.bool)
+        const sequenceNum = new PowershellCommandParameter("SequenceNumber", CommandParamTypes.number);
+        const immediate = new PowershellCommandParameter("Immediate", CommandParamTypes.bool);
+        const timeoutSec = new PowershellCommandParameter("TimeoutSec", CommandParamTypes.number);
         
         const healthReport = new PowershellCommand(
             'Send Health Report',
             'https://docs.microsoft.com/powershell/module/servicefabric/send-servicefabricnodehealthreport',
             CommandSafetyLevel.dangerous,
-            `Send-ServiceFabricNodeHealthReport -NodeName "${this.name}" {} {} {} {} {} {} {} {} {}`,
+            `Send-ServiceFabricNodeHealthReport -NodeName "${this.name}"`,
             [healthState, sourceId, healthProperty, description, ttl, removeWhenExpired, sequenceNum, immediate, timeoutSec]
         );
 

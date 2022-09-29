@@ -5,7 +5,6 @@ import { Observable, of, Subject } from 'rxjs';
 import { IHealthStateChunk, IClusterHealthChunkQueryDescription, IHealthStateFilter } from '../HealthChunkRawDataTypes';
 import { mergeMap, map } from 'rxjs/operators';
 import { ActionCollection } from '../ActionCollection';
-import { PowershellCommand } from '../PowershellCommand';
 // -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
@@ -77,7 +76,6 @@ export interface IDecorators {
 export class DataModelBase<T> implements IDataModel<T> {
     public isInitialized: boolean;
     public actions: ActionCollection;
-    public commands: PowershellCommand[];
     public raw: T;
     public parent: any;
 
@@ -120,7 +118,6 @@ export class DataModelBase<T> implements IDataModel<T> {
 
         if (this.data) {
             this.actions = new ActionCollection(this.data.telemetry);
-            this.commands = [];
         }
 
         this.isInitialized = !!raw;
@@ -192,11 +189,6 @@ export class DataModelBase<T> implements IDataModel<T> {
 
     protected refreshFromHealthChunkInternal(healthChunk: IHealthStateChunk): Observable<any> {
         return of(true);
-    }
-
-    // Derived class should override this function to set up custom powershell scripts
-    protected setUpScripts(): void {
-        return;
     }
 }
 

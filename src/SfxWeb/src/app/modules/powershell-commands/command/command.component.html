@@ -19,29 +19,29 @@
         </a>
     </div>
     <div class="input-wrapper">
-        <div *ngFor="let commandInput of command.inputs" class="user-input">
-            <label *ngIf="commandInput.type !== inputTypes.bool" [for]="commandInput.name">{{commandInput.name}}</label>
-            <div [ngSwitch]="commandInput.type">
+        <div *ngFor="let commandParam of command.parameters" class="user-input">
+            <label *ngIf="commandParam.type !== paramTypes.bool" [for]="commandParam.name">{{commandParam.name}}</label>
+            <div [ngSwitch]="commandParam.type">
                 
-                <input *ngSwitchCase="inputTypes.string" [id]="commandInput.name" type="text" [(ngModel)]="commandInput.value" [required]="commandInput.required" class="input-flat" />
+                <input *ngSwitchCase="paramTypes.string" [id]="commandParam.name" type="text" [(ngModel)]="commandParam.value" [required]="commandParam.required" class="input-flat" />
                 
-                <input *ngSwitchCase="inputTypes.number" [id]="commandInput.name" type="number" [(ngModel)]="commandInput.value" [required]="commandInput.required" class="input-flat"/>
+                <input *ngSwitchCase="paramTypes.number" [id]="commandParam.name" type="number" [(ngModel)]="commandParam.value" [required]="commandParam.required" class="input-flat"/>
     
-                <div *ngSwitchCase="inputTypes.enum" ngbDropdown >
-                    <button class="simple-button" ngbDropdownToggle>{{commandInput.value ? commandInput.value : '-Select-'}}</button>
+                <div *ngSwitchCase="paramTypes.enum" ngbDropdown >
+                    <button class="simple-button" ngbDropdownToggle>{{commandParam.value ? commandParam.value : '-Select-'}}</button>
                     <div ngbDropdownMenu>
-                        <div *ngFor="let option of commandInput.options" >
-                            <button [value]="option" ngbDropdownItem (click)="setDropdownValue($event, commandInput)">
+                        <div *ngFor="let option of commandParam.options" >
+                            <button [value]="option" ngbDropdownItem (click)="setDropdownValue($event, commandParam)">
                                 {{option}}
                             </button>
                         </div>
                     </div>
                 </div>
                 
-                <div *ngSwitchCase="inputTypes.bool">
+                <div *ngSwitchCase="paramTypes.bool">
                     <label>
-                        {{commandInput.name}}
-                        <app-toggle [(state)]="commandInput.value"></app-toggle>
+                        {{commandParam.name}}
+                        <app-toggle [(state)]="commandParam.value"></app-toggle>
                     </label>
                 </div>
             
