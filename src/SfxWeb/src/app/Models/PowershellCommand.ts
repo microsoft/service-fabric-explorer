@@ -7,19 +7,31 @@ export class PowershellCommand{
         public prefix: string,
         public parameters: PowershellCommandParameter[] = []) {
     }
-
+    convertParamsToStringArr(): {name: string, value:string}[] {
+        return this.parameters.filter(param => param.value).map(param => {
+            let name = '-' + param.name;
+            let value: string;
+          
+            if (param.type === CommandParamTypes.bool) {
+                value = name;
+                name = '';
+            }  
+            else if (param.type === CommandParamTypes.string) value = '"' + param.value + '"';
+            else value = param.value.toString();
+     
+            return { name, value };
+        })
+    }
+    
     getScript(): string {
         
-        return this.prefix + " " + this.parameters.map(input => {
-            
-            if (!input.value) return "";
-            const parameter = "-" + input.name + " ";
-            
-            if (input.type === CommandParamTypes.bool) return parameter;
-            if (input.type === CommandParamTypes.string) return parameter + `"${input.value}"`;
-            
-            return parameter + input.value;
+        const displayedParams = this.convertParamsToStringArr();
+
+        return this.prefix + ' ' + displayedParams.map(param => {
+            if (!param.name) return param.value;
+            return param.name + ' ' + param.value;
         }).join(' ');
+        
     }
     
 }

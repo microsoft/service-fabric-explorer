@@ -52,7 +52,12 @@
     <div class="card"c>
         <div class="card-body">
             <app-clip-board style="float: right;" [text]="command.getScript()"></app-clip-board>
-            <p class="card-text">{{command.getScript()}}</p>
+            <p class="card-text">
+                {{command.prefix}}
+                <!-- <span *ngFor="let param of command.convertParamsToStringArr()"> {{param.name}} <span class="param-value"> {{param.value}} </span></span> -->
+                <span *ngFor="let param of (command | formatParams)"> {{param.name}} <span class="param-value"> {{param.value}} </span></span>
+                <!-- {{command.getScript()}} -->
+            </p>
         </div>
     </div>
 </div>

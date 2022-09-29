@@ -5,12 +5,14 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { PowershellCommandsComponent } from './powershell-commands/powershell-commands.component';
 import { CommandComponent } from './command/command.component';
+import { FormatParamsPipe } from './format-params.pipe';
 
 
 @NgModule({
   declarations: [
     PowershellCommandsComponent,
-    CommandComponent
+    CommandComponent,
+    FormatParamsPipe
   ],
   imports: [
     CommonModule,
