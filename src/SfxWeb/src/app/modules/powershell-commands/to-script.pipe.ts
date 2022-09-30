@@ -2,13 +2,13 @@ import { Pipe, PipeTransform } from '@angular/core';
 import { PowershellCommand } from 'src/app/Models/PowershellCommand';
 
 @Pipe({
-  name: 'formatParams',
+  name: 'toScript'
 })
-export class FormatParamsPipe implements PipeTransform {
+export class ToScriptPipe implements PipeTransform {
 
-  transform(value: string): { name: string, value: string }[] {
+  transform(value: string): string {
     const command: PowershellCommand = JSON.parse(value); //fed from a json pipe to detect changes inside the parameters array
-    return PowershellCommand.ConvertParamsToStringArr(command.parameters);
+    return PowershellCommand.GetCommandScript(command);
   }
 
 }

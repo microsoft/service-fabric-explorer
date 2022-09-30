@@ -63,7 +63,7 @@
         <div class="card-body">
             
             <span *ngIf="inputForm.valid; else disabledCopy">
-                <app-clip-board style="float: right;" [text]="command.getScript()"></app-clip-board>
+                <app-clip-board style="float: right;" [text]="command | json | toScript"></app-clip-board>
             </span>
             <ng-template #disabledCopy>
                 <div class="mif-copy disabled-copy" ngbTooltip="missing required properties!" tooltipClass="styled-tooltip"></div>

@@ -9,7 +9,7 @@ export class PowershellCommand{
     }
 
     //used to easily display value and name of the parameter seperately
-    static convertParamsToStringArr(parameters: PowershellCommandParameter[]): {name: string, value:string}[] {
+    static ConvertParamsToStringArr(parameters: PowershellCommandParameter[]): {name: string, value:string}[] {
         return parameters.filter(param => param.value || param.value === 0).map(param => {
             let name = '-' + param.name;
             let value: string;
@@ -25,11 +25,11 @@ export class PowershellCommand{
         })
     }
     
-    getScript(): string {
+    static GetCommandScript(command: PowershellCommand): string {
         
-        const displayedParams = PowershellCommand.convertParamsToStringArr(this.parameters);
+        const displayedParams = PowershellCommand.ConvertParamsToStringArr(command.parameters);
 
-        return this.prefix + ' ' + displayedParams.map(param => {
+        return command.prefix + ' ' + displayedParams.map(param => {
             if (!param.name) return param.value;
             return param.name + ' ' + param.value;
         }).join(' ');
