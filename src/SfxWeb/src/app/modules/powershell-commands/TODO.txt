@@ -1,9 +1,9 @@
-add required 
 add commands: restarts, health reports
-change to form to: performance, required, number
+change to form to: number
 
 questions:
 shorten link
 alert
 no more templating
 param pipe
+supply text to clip board

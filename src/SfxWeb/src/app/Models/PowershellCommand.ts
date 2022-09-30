@@ -10,7 +10,7 @@ export class PowershellCommand{
 
     //used to easily display value and name of the parameter seperately
     static convertParamsToStringArr(parameters: PowershellCommandParameter[]): {name: string, value:string}[] {
-        return parameters.filter(param => param.value).map(param => {
+        return parameters.filter(param => param.value || param.value === 0).map(param => {
             let name = '-' + param.name;
             let value: string;
           
@@ -40,7 +40,7 @@ export class PowershellCommand{
 
 export class PowershellCommandParameter{
 
-    value: string | boolean = "";
+    value?: string | boolean | number;
     options: string[] = [];
     required: boolean = false;
     
@@ -52,7 +52,6 @@ export class PowershellCommandParameter{
         if (optionalParams?.options) this.options = optionalParams.options;
         if (optionalParams?.required) this.required = optionalParams.required;
 
-        if (this.type === CommandParamTypes.bool) this.value = false;
     }
 }
 
