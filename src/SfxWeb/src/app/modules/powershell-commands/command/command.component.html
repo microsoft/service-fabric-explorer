@@ -18,26 +18,36 @@
             <span class="mif-info link"></span>
         </a>
     </div>
-    <div class="input-wrapper">
+    <form #inputForm="ngForm" class="input-group">
         <div *ngFor="let commandParam of command.parameters" class="user-input">
             <label *ngIf="commandParam.type !== paramTypes.bool" [for]="commandParam.name">{{commandParam.name}}</label>
             <div [ngSwitch]="commandParam.type">
                 
-                <input *ngSwitchCase="paramTypes.string" [id]="commandParam.name" type="text" [(ngModel)]="commandParam.value" [required]="commandParam.required" class="input-flat" />
+                <input *ngSwitchCase="paramTypes.string" [id]="commandParam.name" [name]="commandParam.name"
+                type="text" [(ngModel)]="commandParam.value" [required]="commandParam.required" class="input-flat" />
                 
-                <input *ngSwitchCase="paramTypes.number" [id]="commandParam.name" type="number" [(ngModel)]="commandParam.value" [required]="commandParam.required" class="input-flat"/>
+                <input *ngSwitchCase="paramTypes.number" [id]="commandParam.name" [name]="commandParam.name"
+                type="number" [(ngModel)]="commandParam.value" [required]="commandParam.required" class="input-flat"/>
     
-                <div *ngSwitchCase="paramTypes.enum" ngbDropdown >
+                <div *ngSwitchCase="paramTypes.enum" ngbDropdown 
+                [class]="(dropDownInput.invalid ? 'invalid ' : 'valid ') + (commandParam.required ? 'required' : '')" >
+                    
+                    <input [id]="commandParam.name" [name]="commandParam.name" #dropDownInput="ngModel"
+                    type="hidden" [(ngModel)]="commandParam.value" [required]="commandParam.required" />
+                    
                     <button class="simple-button" ngbDropdownToggle>{{commandParam.value ? commandParam.value : '-Select-'}}</button>
+                    
                     <div ngbDropdownMenu>
                         <div *ngFor="let option of commandParam.options" >
-                            <button [value]="option" ngbDropdownItem (click)="setDropdownValue($event, commandParam)">
+                            <button [value]="option"  
+                            ngbDropdownItem (click)="setDropdownValue($event, commandParam)">
                                 {{option}}
                             </button>
                         </div>
                     </div>
                 </div>
                 
+                <!-- no need to account for required fields, as required bools are in the prefix -->
                 <div *ngSwitchCase="paramTypes.bool">
                     <label>
                         {{commandParam.name}}
@@ -47,16 +57,20 @@
             
             </div>     
         </div>
-    </div>
+    </form>
 
     <div class="card"c>
         <div class="card-body">
-            <app-clip-board style="float: right;" [text]="command.getScript()"></app-clip-board>
+            
+            <span *ngIf="inputForm.valid; else disabledCopy">
+                <app-clip-board style="float: right;" [text]="command.getScript()"></app-clip-board>
+            </span>
+            <ng-template #disabledCopy>
+                <div class="mif-copy disabled-copy" ngbTooltip="missing required properties!" tooltipClass="styled-tooltip"></div>
+            </ng-template>
             <p class="card-text">
                 {{command.prefix}}
-                <!-- <span *ngFor="let param of command.convertParamsToStringArr()"> {{param.name}} <span class="param-value"> {{param.value}} </span></span> -->
-                <span *ngFor="let param of (command | formatParams)"> {{param.name}} <span class="param-value"> {{param.value}} </span></span>
-                <!-- {{command.getScript()}} -->
+                <span *ngFor="let param of (command | json | formatParams)"> {{param.name}} <span class="param-value"> {{param.value}} </span></span>
             </p>
         </div>
     </div>

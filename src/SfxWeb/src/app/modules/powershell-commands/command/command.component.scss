@@ -28,7 +28,7 @@
     }
 }
 
-.input-wrapper{
+.input-group{
     display: flex;
     flex-wrap: wrap;
 
@@ -36,6 +36,20 @@
         display: block;
         margin: 5px;
         flex: 1 1 20%;
+
+        .drop-down-input::before {
+            content: '🔗';
+        }
+
+        .invalid {
+            border-left: 5px solid var(--badge-error);
+            border-radius: var(--primary-border-radius);
+        }
+
+        .valid.required {
+            border-left: 5px solid var(--badge-ok);
+            border-radius: var(--primary-border-radius);
+        }
 
     }
 
@@ -56,6 +70,14 @@
     }
 }
 
+.disabled-copy {
+    background-color: transparent;
+    color: var(--disabled);
+    border: 0px solid white;
+    padding: 0px;
+    margin: 0px 5px;
+    float: right;
+}
 .param-value {
     color: var(--accent-lightblue);
 }

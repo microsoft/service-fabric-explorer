@@ -7,8 +7,10 @@ export class PowershellCommand{
         public prefix: string,
         public parameters: PowershellCommandParameter[] = []) {
     }
-    convertParamsToStringArr(): {name: string, value:string}[] {
-        return this.parameters.filter(param => param.value).map(param => {
+
+    //used to easily display value and name of the parameter seperately
+    static convertParamsToStringArr(parameters: PowershellCommandParameter[]): {name: string, value:string}[] {
+        return parameters.filter(param => param.value).map(param => {
             let name = '-' + param.name;
             let value: string;
           
@@ -25,7 +27,7 @@ export class PowershellCommand{
     
     getScript(): string {
         
-        const displayedParams = this.convertParamsToStringArr();
+        const displayedParams = PowershellCommand.convertParamsToStringArr(this.parameters);
 
         return this.prefix + ' ' + displayedParams.map(param => {
             if (!param.name) return param.value;
