@@ -1,3 +1,5 @@
+$label-spacing: 5px;
+
 .command-safety{
     font-size: var(--font-size-medium);
     margin-bottom: 5px;
@@ -31,14 +33,27 @@
 .input-group{
     display: flex;
     flex-wrap: wrap;
+    gap: 5px 15px;
+    align-items: center;
+    max-width: 850px;
+    margin-bottom: 15px;
 
     .user-input {
         display: block;
-        margin: 5px;
-        flex: 1 1 20%;
+        flex: 1 1 1;
 
         .drop-down-input::before {
             content: '🔗';
+        }
+
+        label {
+            margin: $label-spacing;
+        }
+
+        .toggle-label {
+            display: flex;
+            flex-direction:column; 
+            gap: $label-spacing;
         }
 
         .invalid {

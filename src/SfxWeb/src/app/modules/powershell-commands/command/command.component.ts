@@ -1,11 +1,12 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
 import { PowershellCommand, CommandParamTypes, PowershellCommandParameter, CommandSafetyLevel } from 'src/app/Models/PowershellCommand';
 import { BadgeConstants } from 'src/app/Common/Constants';
 
 @Component({
   selector: 'app-command',
   templateUrl: './command.component.html',
-  styleUrls: ['./command.component.scss']
+  styleUrls: ['./command.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CommandComponent  {
 
