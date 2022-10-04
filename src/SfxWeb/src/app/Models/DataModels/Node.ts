@@ -32,7 +32,6 @@ export class Node extends DataModelBase<IRawNode> {
     public deployedApps: DeployedApplicationCollection;
     public loadInformation: NodeLoadInformation;
     public health: NodeHealth;
-    public commands: PowershellCommand[] = [];
 
     // When the auto-refresh is off, we won't be able to rely on this.status alone to determine which actions to enable because that data will be stale.
     // So we track what we expect the node status to be. This data is set after a successful action and cleared when we refresh the controller.
@@ -49,38 +48,6 @@ export class Node extends DataModelBase<IRawNode> {
             this.setUpActions();
             this.setAdvancedActions();
         }
-
-        this.setUpCommands();
-
-    }
-
-    protected setUpCommands(): void {
-        this.commands.push(
-            new PowershellCommand('Restart',
-                'https://docs.microsoft.com/powershell/module/servicefabric/restart-servicefabricnode',
-                CommandSafetyLevel.safe,
-                `Restart-ServiceFabricNode -NodeName "${this.name}" -NodeInstanceId ${this.raw.InstanceId}`)
-        );
-
-        const healthState = new PowershellCommandParameter("HealthState", CommandParamTypes.enum, { options: ["OK", "Warning", "Error", "Unknown"], required: true});
-        const sourceId = new PowershellCommandParameter("SourceId", CommandParamTypes.string, {required: true});
-        const healthProperty = new PowershellCommandParameter("HealthProperty", CommandParamTypes.string, {required: true});
-        const description = new PowershellCommandParameter("Description", CommandParamTypes.string);
-        const ttl = new PowershellCommandParameter("TimeToLiveSec", CommandParamTypes.number);
-        const removeWhenExpired = new PowershellCommandParameter("RemoveWhenExpired", CommandParamTypes.bool)
-        const sequenceNum = new PowershellCommandParameter("SequenceNumber", CommandParamTypes.number);
-        const immediate = new PowershellCommandParameter("Immediate", CommandParamTypes.bool);
-        const timeoutSec = new PowershellCommandParameter("TimeoutSec", CommandParamTypes.number);
-        
-        const healthReport = new PowershellCommand(
-            'Send Health Report',
-            'https://docs.microsoft.com/powershell/module/servicefabric/send-servicefabricnodehealthreport',
-            CommandSafetyLevel.dangerous,
-            `Send-ServiceFabricNodeHealthReport -NodeName "${this.name}"`,
-            [healthState, sourceId, healthProperty, description, ttl, removeWhenExpired, sequenceNum, immediate, timeoutSec]
-        );
-
-        this.commands.push(healthReport);
     }
 
     public get nodeStatus(): string {
