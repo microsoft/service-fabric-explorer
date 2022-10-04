@@ -68,7 +68,7 @@ export enum CommandParamTypes {
 }
 
 export enum CommandSafetyLevel {
-    safe,
-    unsafe,
-    dangerous
+    safe = 'safe',
+    unsafe = 'unsafe',
+    dangerous = 'danger'
 }

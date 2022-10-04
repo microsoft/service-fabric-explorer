@@ -1,18 +1,14 @@
-<div class="command-safety" [ngSwitch]="command.safetyLevel">
-    <ngb-alert *ngSwitchCase="safetyLevelEnum.safe" type="success" [dismissible]="false">
-        <app-health-badge text="This command is safe" [badgeClass]="BadgeConstants.BadgeOK"></app-health-badge>
-    </ngb-alert>
-    <ngb-alert *ngSwitchCase="safetyLevelEnum.unsafe" type="warning" [dismissible]="false">
-        <app-health-badge text="This command is unsafe" [badgeClass]="BadgeConstants.BadgeWarning"></app-health-badge>
-    </ngb-alert>
-    <ngb-alert *ngSwitchCase="safetyLevelEnum.dangerous" type="danger" [dismissible]="false">
-        <app-health-badge text="This command is dangerous" [badgeClass]="BadgeConstants.BadgeError"></app-health-badge>
-    </ngb-alert>
-</div>
-
-<div class="detail-pane essen-pane">
+<div class="detail-pane essen-pane" [class]="command.safetyLevel">
 
     <div class="command-name">
+        <span [ngSwitch]="command.safetyLevel">
+            <app-health-badge *ngSwitchCase="safetyLevelEnum.safe" 
+            text="Safe Command" [showText]="false" [badgeClass]="BadgeConstants.BadgeOK"></app-health-badge>
+            <app-health-badge *ngSwitchCase="safetyLevelEnum.unsafe" 
+            text="Unsafe Command" [showText]="false" [badgeClass]="BadgeConstants.BadgeWarning"></app-health-badge>
+            <app-health-badge *ngSwitchCase="safetyLevelEnum.dangerous"
+            text="Dangerous Command" [showText]="false" [badgeClass]="BadgeConstants.BadgeError"></app-health-badge>
+        </span>
         <h5>{{command.name}}</h5>
         <a target="_blank" [href]="command.referenceUrl" *ngIf="command.referenceUrl" [attr.aria-label]="'learn about' + command.name">
             <span class="mif-info link"></span>

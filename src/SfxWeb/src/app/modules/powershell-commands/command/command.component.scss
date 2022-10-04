@@ -1,24 +1,27 @@
 $label-spacing: 5px;
 
-.command-safety{
-    font-size: var(--font-size-medium);
-    margin-bottom: 5px;
-    // display: flex;
+.detail-pane {
+    border-left: 3px solid;
+    
+    &.safe {
+        border-color: var(--badge-ok);
+    }
 
-    ngb-alert {
-        // float: left;
-        padding: 3px;
-        margin: 0px;
+    &.unsafe {
+        border-color: var(--badge-warning);
+    }
+
+    &.danger {
+        border-color: var(--badge-error);
     }
 }
 
 .command-name {
     display: flex;
+    align-items: baseline;
+    gap: 5px;
     h5 {
-        width: 100%;;
-    }
-    a {
-        float: right;
+        margin-right: auto;
     }
 }
 
@@ -41,10 +44,6 @@ $label-spacing: 5px;
     .user-input {
         display: block;
         flex: 1 1 1;
-
-        .drop-down-input::before {
-            content: '🔗';
-        }
 
         label {
             margin: $label-spacing;
