@@ -13,7 +13,7 @@ export class CommandsComponent extends BaseControllerDirective {
     super(injector);
   }
 
-  commands: PowershellCommand[];
+  commands: PowershellCommand[] = [];
   
   setup() {
     this.setUpCommands();
@@ -22,8 +22,6 @@ export class CommandsComponent extends BaseControllerDirective {
   
   protected setUpCommands(): void {
        
-    this.commands = [];
-    
     const healthState = new PowershellCommandParameter("HealthState", CommandParamTypes.enum, { options: ["OK", "Warning", "Error", "Unknown"], required: true});
     const sourceId = new PowershellCommandParameter("SourceId", CommandParamTypes.string, {required: true});
     const healthProperty = new PowershellCommandParameter("HealthProperty", CommandParamTypes.string, {required: true});

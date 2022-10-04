@@ -15,18 +15,19 @@ export class CommandsComponent extends NodeBaseControllerDirective {
     super(data, injector);
   }
 
-  commands: PowershellCommand[];
+  commands: PowershellCommand[] = [];
   
   
   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
-    this.setUpCommands();
+    if (!this.commands.length) {
+      this.setUpCommands();
+    }
     return of(null);
   }
 
 
   protected setUpCommands(): void {
 
-    this.commands = [];
     this.commands.push(
         new PowershellCommand('Restart',
             'https://docs.microsoft.com/powershell/module/servicefabric/restart-servicefabricnode',
