@@ -31,7 +31,7 @@ export class CommandsComponent extends NodeBaseControllerDirective {
             `Restart-ServiceFabricNode -NodeName "${this.nodeName}" -NodeInstanceId ${this.node.raw.InstanceId}`)
     );
 
-    const healthState = new PowershellCommandParameter("HealthState", CommandParamTypes.enum, { options: ["OK", "Warning", "Error", "Unknown"], required: true, allowCustomValAndOptions: true});
+    const healthState = new PowershellCommandParameter("HealthState", CommandParamTypes.enum, { options: ["OK", "Warning", "Error", "Unknown"], required: true });
     const sourceId = new PowershellCommandParameter("SourceId", CommandParamTypes.string, {required: true});
     const healthProperty = new PowershellCommandParameter("HealthProperty", CommandParamTypes.string, {required: true});
     const description = new PowershellCommandParameter("Description", CommandParamTypes.string);
