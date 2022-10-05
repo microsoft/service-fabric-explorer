@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
-import { PowershellCommand, CommandParamTypes, PowershellCommandParameter, CommandSafetyLevel } from 'src/app/Models/PowershellCommand';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { PowershellCommand, CommandSafetyLevel } from 'src/app/Models/PowershellCommand';
 import { BadgeConstants } from 'src/app/Common/Constants';
 
 @Component({
@@ -14,12 +14,8 @@ export class CommandComponent  {
 
   @Input() command: PowershellCommand;
 
-  paramTypes = CommandParamTypes;
   safetyLevelEnum = CommandSafetyLevel;
   BadgeConstants = BadgeConstants;
 
-  setDropdownValue(event: any, param: PowershellCommandParameter) {
-    param.value = event.target.value;
-  }
 
 }

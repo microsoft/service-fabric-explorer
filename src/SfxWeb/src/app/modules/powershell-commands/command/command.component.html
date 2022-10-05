@@ -15,49 +15,13 @@
         </a>
     </div>
     <form #inputForm="ngForm" class="input-group">
-        <div *ngFor="let commandParam of command.parameters" class="user-input">
-            <label *ngIf="commandParam.type !== paramTypes.bool" [for]="commandParam.name">{{commandParam.name}}</label>
-            <div [ngSwitch]="commandParam.type">
-                
-                <input *ngSwitchCase="paramTypes.string" [id]="commandParam.name" [name]="commandParam.name"
-                type="text" [(ngModel)]="commandParam.value" [required]="commandParam.required" class="input-flat" />
-                
-                <input *ngSwitchCase="paramTypes.number" [id]="commandParam.name" [name]="commandParam.name"
-                type="number" [(ngModel)]="commandParam.value" [required]="commandParam.required" class="input-flat"/>
-    
-                <div *ngSwitchCase="paramTypes.enum" ngbDropdown 
-                [class]="(dropDownInput.invalid ? 'invalid ' : 'valid ') + (commandParam.required ? 'required' : '')" >
-                    
-                    <input [id]="commandParam.name" [name]="commandParam.name" #dropDownInput="ngModel"
-                    type="hidden" [(ngModel)]="commandParam.value" [required]="commandParam.required" />
-                    
-                    <button class="simple-button" ngbDropdownToggle>{{commandParam.value ? commandParam.value : '-Select-'}}</button>
-                    
-                    <div ngbDropdownMenu>
-                        <div *ngFor="let option of commandParam.options" >
-                            <button [value]="option"  
-                            ngbDropdownItem (click)="setDropdownValue($event, commandParam)">
-                                {{option}}
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- no need to account for required fields, as required bools are in the prefix -->
-                <div *ngSwitchCase="paramTypes.bool">
-                    <label class="toggle-label">
-                        <span>{{commandParam.name}}</span>
-                        <app-toggle [(state)]="commandParam.value"></app-toggle>
-                    </label>
-                </div>
-            
-            </div>     
+        <div *ngFor="let commandParam of command.parameters">
+           <app-command-input [commandParam]="commandParam"></app-command-input>
         </div>
     </form>
 
     <div class="card"c>
         <div class="card-body">
-            
             <span *ngIf="inputForm.valid; else disabledCopy">
                 <app-clip-board style="float: right;" [text]="command.getScript()"></app-clip-board>
             </span>

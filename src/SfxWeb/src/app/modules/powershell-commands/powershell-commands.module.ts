@@ -5,11 +5,13 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { PowershellCommandsComponent } from './powershell-commands/powershell-commands.component';
 import { CommandComponent } from './command/command.component';
+import { CommandInputComponent } from './command-input/command-input.component';
 
 @NgModule({
   declarations: [
     PowershellCommandsComponent,
-    CommandComponent
+    CommandComponent,
+    CommandInputComponent
   ],
   imports: [
     CommonModule,

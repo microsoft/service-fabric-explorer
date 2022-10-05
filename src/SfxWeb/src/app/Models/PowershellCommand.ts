@@ -43,6 +43,7 @@ export class PowershellCommandParameter{
     value?: string | boolean | number;
     options: string[] = [];
     required: boolean = false;
+    allowCustomValAndOptions: boolean = false; //have some predefined options, but user can also enter their own value
     
     constructor(
         public name: string,
@@ -51,13 +52,15 @@ export class PowershellCommandParameter{
     ) { 
         if (optionalParams?.options) this.options = optionalParams.options;
         if (optionalParams?.required) this.required = optionalParams.required;
+        if (optionalParams?.allowCustomValAndOptions) this.allowCustomValAndOptions = optionalParams.allowCustomValAndOptions;
 
     }
 }
 
 interface OptionalCommandParamParams {
     options?: string[],
-    required?: boolean
+    required?: boolean,
+    allowCustomValAndOptions?: boolean
 }
 
 export enum CommandParamTypes {

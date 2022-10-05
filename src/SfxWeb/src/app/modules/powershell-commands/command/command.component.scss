@@ -1,4 +1,3 @@
-$label-spacing: 5px;
 
 .detail-pane {
     border-left: 5px solid;
@@ -41,47 +40,6 @@ $label-spacing: 5px;
     max-width: 850px;
     margin-bottom: 15px;
 
-    .user-input {
-        display: block;
-        flex: 1 1 1;
-
-        label {
-            margin: $label-spacing;
-        }
-
-        .toggle-label {
-            display: flex;
-            flex-direction:column; 
-            gap: $label-spacing;
-        }
-
-        .invalid {
-            border-left: 5px solid var(--badge-error);
-            border-radius: var(--primary-border-radius);
-        }
-
-        .valid.required {
-            border-left: 5px solid var(--badge-ok);
-            border-radius: var(--primary-border-radius);
-        }
-
-    }
-
-}
-
-.input-flat {
-    padding: 3px 6px;
-    font-size: 10pt;
-    border-style: solid;
-    border-width: 1px;
-    border-color: #727272;
-    background-color: transparent;
-    color: var(--font-accent-color);
-    border-radius: var(--primary-border-radius);
-
-    &:focus, &:hover {
-      box-shadow: var(--heavy-box-shadow);
-    }
 }
 
 .disabled-copy {
