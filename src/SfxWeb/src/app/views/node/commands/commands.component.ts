@@ -18,13 +18,9 @@ export class CommandsComponent extends NodeBaseControllerDirective {
   commands: PowershellCommand[] = [];
   
   
-  refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
-    if (!this.commands.length) {
+  afterDataSet() {
       this.setUpCommands();
-    }
-    return of(null);
   }
-
 
   protected setUpCommands(): void {
 

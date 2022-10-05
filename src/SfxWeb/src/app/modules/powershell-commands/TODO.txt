@@ -1,3 +1,3 @@
-shorten link
-alert to border
 convert to tile: same height
+add connect to cluster as default command
+add tests
