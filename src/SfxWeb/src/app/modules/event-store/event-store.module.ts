@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { EventStoreComponent } from './event-store/event-store.component';
-import { DoubleSliderComponent } from './double-slider/double-slider.component';
 import { DetailListTemplatesModule } from '../detail-list-templates/detail-list-templates.module';
 import { FullDescriptionComponent } from './full-description/full-description.component';
 import { RowDisplayComponent } from './row-display/row-display.component';
@@ -10,9 +9,10 @@ import { NgbDropdownModule, NgbModule, NgbTooltipModule } from '@ng-bootstrap/ng
 import { SharedModule } from 'src/app/shared/shared.module';
 import { OptionPickerComponent } from './option-picker/option-picker.component';
 import { ConcurrentEventsVisualizationModule } from '../concurrent-events-visualization/concurrent-events-visualization.module';
+import { TimePickerModule } from '../time-picker/time-picker.module';
 
 @NgModule({
-  declarations: [EventStoreComponent, DoubleSliderComponent, FullDescriptionComponent, RowDisplayComponent, OptionPickerComponent],
+  declarations: [EventStoreComponent, FullDescriptionComponent, RowDisplayComponent, OptionPickerComponent],
   imports: [
     CommonModule,
     DetailListTemplatesModule,
@@ -21,7 +21,8 @@ import { ConcurrentEventsVisualizationModule } from '../concurrent-events-visual
     SharedModule,
     NgbModule,
     NgbTooltipModule,
-    ConcurrentEventsVisualizationModule
+    ConcurrentEventsVisualizationModule,
+    TimePickerModule
   ],
   exports: [EventStoreComponent, FullDescriptionComponent, RowDisplayComponent, OptionPickerComponent],
 })

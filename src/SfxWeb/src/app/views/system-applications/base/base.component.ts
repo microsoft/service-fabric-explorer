@@ -14,7 +14,11 @@ export class BaseComponent extends ServiceApplicationsBaseControllerDirective {
   tabs: ITab[] = [{
     name: 'essentials',
     route: './'
-    }
+    },
+    {
+      name: 'naming viewer',
+      route: './naming'
+      }
   ];
   constructor(protected data: DataService, injector: Injector, private tree: TreeService) {
     super(data, injector);

@@ -1,0 +1,8 @@
+<div class="layout-container">
+  <div *ngFor="let dataSet of data.series">
+    {{dataSet.name}}
+
+    <div #container (mousemove)="interactionEvent($event)" class="chart-container"></div>
+  </div>
+
+</div>
