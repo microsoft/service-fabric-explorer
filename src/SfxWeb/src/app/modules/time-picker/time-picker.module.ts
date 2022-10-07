@@ -5,8 +5,6 @@ import { DoubleSliderComponent } from './double-slider/double-slider.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 
-
-
 @NgModule({
   declarations: [
     TimePickerComponent,
@@ -18,7 +16,8 @@ import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
     NgbDropdownModule
   ],
   exports: [
-    TimePickerComponent
+    TimePickerComponent,
+    DoubleSliderComponent
   ]
 })
 export class TimePickerModule { }

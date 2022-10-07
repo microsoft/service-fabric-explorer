@@ -1,15 +1,20 @@
 import { Component, Input, OnChanges, ViewChildren, QueryList, AfterViewInit, Type } from '@angular/core';
+import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { IOnDateChange } from '../../time-picker/double-slider/double-slider.component';
+import { Subject, Subscription, forkJoin } from 'rxjs';
 import { DataService } from 'src/app/services/data.service';
 import { ListSettings } from 'src/app/Models/ListSettings';
 import { IOptionConfig, IOptionData } from '../option-picker/option-picker.component';
-import { TimelineComponent } from '../timeline/timeline.component';
-import { forkJoin } from 'rxjs';
-import { VisualizationDirective } from '../visualization.directive';
-import { EventColumnUpdate, VisualizationComponent } from '../visualizationComponents';
-import { RcaVisualizationComponent } from '../rca-visualization/rca-visualization.component';
-import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { IDataModel } from 'src/app/Models/DataModels/Base';
+import { EventColumnUpdate, VisualizationComponent } from '../visualizationComponents';
+import { VisualizationDirective } from '../visualization.directive';
+import { TimelineComponent } from '../timeline/timeline.component';
+import { RcaVisualizationComponent } from '../rca-visualization/rca-visualization.component';
+
+export interface IQuickDates {
+  display: string;
+  hours: number;
+}
 
 export type EventType =
   "Cluster" |
@@ -50,7 +55,7 @@ export class EventStoreComponent implements OnChanges, AfterViewInit {
       { name: "Timeline", component: TimelineComponent },
       { name: "RCA Summary", component: RcaVisualizationComponent }
     ];
-  
+
   public failedRefresh = false;
   public activeTab: string;
 
@@ -60,7 +65,7 @@ export class EventStoreComponent implements OnChanges, AfterViewInit {
 
   private visualizations: VisualizationComponent[] = [];
   private visualizationsReady = false;
-  
+
   ngAfterViewInit() {
     this.dataService.clusterManifest.ensureInitialized().subscribe(() => {
       this.dateMin = TimeUtils.AddDays(new Date(), -this.dataService.clusterManifest.eventStoreTimeRange);
@@ -74,7 +79,7 @@ export class EventStoreComponent implements OnChanges, AfterViewInit {
   private setVisualizations(): void {
 
     if (this.vizDirs.length < this.visualizations.length) { //if some visualizations have been removed, clear the array
-      this.visualizations.splice(this.vizDirs.length);  
+      this.visualizations.splice(this.vizDirs.length);
     }
 
     this.vizDirs.forEach((dir, i) => {
@@ -85,17 +90,17 @@ export class EventStoreComponent implements OnChanges, AfterViewInit {
 
         const componentRef = dir.viewContainerRef.createComponent<VisualizationComponent>(this.vizRefs[i].component);
         const instance = componentRef.instance;
-        
+
         if (instance.selectEvent) {
           instance.selectEvent.subscribe((id) => this.setSearch(id));
         }
-  
+
         if (instance.updateColumn) {
           instance.updateColumn.subscribe((update) => this.updateColumn(update));
         }
-  
+
         this.visualizations.splice(i, 1, instance);
-        
+
       }
     })
   }
@@ -107,7 +112,7 @@ export class EventStoreComponent implements OnChanges, AfterViewInit {
     this.visualizationsReady = true;
     this.setNewDateWindow(true);
   }
-  
+
   //handle outputs from visualizations
 
   public setSearch(id: string) {
@@ -122,9 +127,9 @@ export class EventStoreComponent implements OnChanges, AfterViewInit {
 
   private updateColumn(update: EventColumnUpdate) {
 
-    const listSettings = this.listEventStoreData.find(list => list.displayName === update.listName).listSettings; 
+    const listSettings = this.listEventStoreData.find(list => list.displayName === update.listName).listSettings;
     let columnSettings = listSettings.columnSettings;
-    
+
     if (update.isSecondRow) {
       columnSettings = listSettings.secondRowColumnSettings;
     }
@@ -135,11 +140,11 @@ export class EventStoreComponent implements OnChanges, AfterViewInit {
       update.index = update.index != undefined ? update.index : columnSettings.length;
     }
     else {
-      update.index = index;  
+      update.index = index;
     }
 
     columnSettings.splice(update.index, index == -1 ? 0 : 1, update.columnSetting);
-      
+
   }
 
   /* work w/ processData to check if update needed */
@@ -166,7 +171,7 @@ export class EventStoreComponent implements OnChanges, AfterViewInit {
     if (this.visualizationsReady) {
       this.setVisualizations();
       const timelineEventSubs = this.listEventStoreData.map(data => data.eventsList.refresh());
-  
+
       forkJoin(timelineEventSubs).subscribe((refreshList) => {
         this.failedRefresh = refreshList.some(e => !e);
         this.visualizations.forEach(visualization => {

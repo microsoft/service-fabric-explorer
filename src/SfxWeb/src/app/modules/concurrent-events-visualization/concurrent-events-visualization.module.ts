@@ -7,6 +7,7 @@ import { RcaOverviewComponent } from './rca-overview/rca-overview.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { RelationViewerComponent } from './relation-viewer/relation-viewer.component';
+import { TimeseriesComponent } from './timeseries/timeseries.component';
 
 @NgModule({
   declarations: [
@@ -14,7 +15,8 @@ import { RelationViewerComponent } from './relation-viewer/relation-viewer.compo
     VisualizationLogoComponent,
     RcaSummaryComponent,
     RcaOverviewComponent,
-    RelationViewerComponent
+    RelationViewerComponent,
+    TimeseriesComponent
   ],
   imports: [
     CommonModule,
@@ -23,7 +25,8 @@ import { RelationViewerComponent } from './relation-viewer/relation-viewer.compo
   ],
   exports:[
     VisualizationToolComponent,
-    RcaSummaryComponent
+    RcaSummaryComponent,
+    TimeseriesComponent
   ]
 })
 export class ConcurrentEventsVisualizationModule { }
