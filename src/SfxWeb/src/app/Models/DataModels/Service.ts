@@ -422,8 +422,8 @@ export class CreateServiceDescription {
                 PartitionScheme: '1',
                 Count: 1,
                 Names: [],
-                LowKey: '',
-                HighKey: ''
+                LowKey: '-9223372036854775808',
+                HighKey: '9223372036854775807'
             },
             Flags: 0,
             ReplicaRestartWaitDurationSeconds: null,
