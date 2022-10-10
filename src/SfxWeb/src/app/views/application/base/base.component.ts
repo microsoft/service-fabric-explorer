@@ -28,6 +28,10 @@ export class BaseComponent extends ApplicationBaseControllerDirective {
   {
     name: 'manifest',
     route: './manifest'
+  },
+  {
+    name: 'commands',
+    route: './commands'
   }
   ];
 
