@@ -1,3 +1,5 @@
 <div class="essen-pane">
+  <app-full-time-picker [startDate]="startDate" [endDate]="endDate" (datesChanged)="setNewDates($event)"
+  [startDateMin]="startDateMin" [startDateMax]="startDateMax" ></app-full-time-picker>
   <app-timeseries [data]="dataset"></app-timeseries>
 </div>

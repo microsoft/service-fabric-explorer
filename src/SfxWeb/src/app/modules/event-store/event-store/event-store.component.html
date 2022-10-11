@@ -1,6 +1,8 @@
 <div class="essen-pane detail-pane">
   <div class="flex-container" style="margin-bottom: 10px; flex-wrap: wrap; gap: 10px;">
-    <div class="flex-container wrap">
+    <app-full-time-picker [startDate]="startDate" [endDate]="endDate" (datesChanged)="setNewDates($event)"
+                          [startDateMin]="startDateMin" [startDateMax]="startDateMax" ></app-full-time-picker>
+    <!-- <div class="flex-container wrap">
         <app-dual-date-picker [minDate]="startDateMin" [maxDate]="startDateMax" (dateChanged)="setNewDates($event)"
               [currentStartDate]="startDate" [currentEndDate]="endDate"></app-dual-date-picker>
       <div ngbDropdown style="margin-right: 10px;">
@@ -15,7 +17,7 @@
         <app-double-slider [startDate]="startDate" [endDate]="endDate" (dateChanged)="setNewDates($event)">
         </app-double-slider>
       </div>
-    </div>
+    </div> -->
     <div>
       <p *ngIf="timeLineEventsData?.potentiallyMissingEvents" style="display: inline-block; margin-left: 10px;">
         <app-health-badge badgeClass="badge-warning"></app-health-badge>

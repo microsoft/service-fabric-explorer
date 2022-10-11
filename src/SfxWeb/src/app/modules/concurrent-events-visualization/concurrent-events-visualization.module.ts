@@ -8,6 +8,7 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { RelationViewerComponent } from './relation-viewer/relation-viewer.component';
 import { TimeseriesComponent } from './timeseries/timeseries.component';
+import { DetailListTemplatesModule } from '../detail-list-templates/detail-list-templates.module';
 
 @NgModule({
   declarations: [
@@ -21,7 +22,8 @@ import { TimeseriesComponent } from './timeseries/timeseries.component';
   imports: [
     CommonModule,
     SharedModule,
-    NgbNavModule
+    NgbNavModule,
+    DetailListTemplatesModule
   ],
   exports:[
     VisualizationToolComponent,

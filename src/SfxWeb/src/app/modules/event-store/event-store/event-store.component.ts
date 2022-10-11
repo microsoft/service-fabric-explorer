@@ -16,12 +16,6 @@ import { VisualizationToolComponent } from '../../concurrent-events-visualizatio
 import { VisualizationLogoComponent } from '../../concurrent-events-visualization/visualization-logo/visualization-logo.component';
 import { getSimultaneousEventsForEvent, IConcurrentEvents, IRCAItem } from 'src/app/Models/eventstore/rcaEngine';
 
-export interface IQuickDates {
-  display: string;
-  hours: number;
-}
-
-
 export interface IEventStoreData<IVisPresentEvent, S> {
   eventsList: IVisPresentEvent;
   timelineGenerator?: TimeLineGeneratorBase<S>;
@@ -48,17 +42,6 @@ export class EventStoreComponent implements OnInit, OnDestroy, OnChanges {
     this.timeLineEventsData = this.getTimelineData();
   }
 
-  private debounceHandler: Subject<IOnDateChange> = new Subject<IOnDateChange>();
-  private debouncerHandlerSubscription: Subscription;
-
-  public quickDates = [
-    { display: 'Last 1 Hour', hours: 1 },
-    { display: 'Last 3 Hours', hours: 3 },
-    { display: 'Last 6 Hours', hours: 6 },
-    { display: 'Last 1 Day', hours: 24 },
-    { display: 'Last 7 Days', hours: 168 }
-  ];
-
   @Input() listEventStoreData: IEventStoreData<any, any>[];
   @Input() optionsConfig: IOptionConfig;
   public startDateMin: Date;
@@ -82,13 +65,7 @@ export class EventStoreComponent implements OnInit, OnDestroy, OnChanges {
     this.showCorrelatedBtn = !this.pshowAllEvents;
     this.resetSelectionProperties();
     this.setTimelineData();
-    this.debouncerHandlerSubscription = this.debounceHandler
-      .pipe(debounceTime(400), distinctUntilChanged())
-      .subscribe(dates => {
-        this.startDate = new Date(dates.startDate);
-        this.endDate = new Date(dates.endDate);
-        this.setNewDateWindow();
-      });
+
   }
 
   ngOnChanges(): void {
@@ -96,7 +73,6 @@ export class EventStoreComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   ngOnDestroy() {
-    this.debouncerHandlerSubscription.unsubscribe();
   }
 
   public setSearch(search?: string) {
@@ -122,13 +98,6 @@ export class EventStoreComponent implements OnInit, OnDestroy, OnChanges {
     this.startDate = TimeUtils.AddDays(todaysDate, -7);
     this.endDate = this.startDateMax = todaysDate;
     this.startDateMin = TimeUtils.AddDays(todaysDate, -30);
-  }
-
-  public setDate(date: IQuickDates) {
-    this.setNewDates({
-      endDate: new Date(this.endDate),
-      startDate: TimeUtils.AddHours(this.endDate, -1 * date.hours)
-    });
   }
 
   private setNewDateWindow(forceRefresh: boolean = false): void {
@@ -286,6 +255,8 @@ export class EventStoreComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   setNewDates(dates: IOnDateChange) {
-    this.debounceHandler.next(dates);
+    this.startDate = dates.startDate;
+    this.endDate = dates.endDate;
+    this.setNewDateWindow();
   }
 }
