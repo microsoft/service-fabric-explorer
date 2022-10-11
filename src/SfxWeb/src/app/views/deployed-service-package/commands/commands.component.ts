@@ -35,7 +35,7 @@ export class CommandsComponent extends DeployedServicePackageBaseControllerDirec
         'Send Health Report',
         'https://docs.microsoft.com/powershell/module/servicefabric/send-servicefabricdeployedservicepackagehealthreport',
         CommandSafetyLevel.safe,
-        `Send-ServiceFabricDeployedServicePackageHealthReport -ApplicationName WIP -ServiceManifestName ${this.servicePackage.name} -NodeName "${this.nodeName}"`,
+        `Send-ServiceFabricDeployedServicePackageHealthReport -ApplicationName ${this.servicePackage.parent.name} -ServiceManifestName ${this.servicePackage.name} -NodeName "${this.nodeName}"`,
         [healthState, sourceId, healthProperty, description, ttl, removeWhenExpired, sequenceNum, immediate, timeoutSec]
     );
 
