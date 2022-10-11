@@ -10,12 +10,12 @@ import { ListColumnSettingWithEmbeddedVisTool, ListSettings } from 'src/app/Mode
 import { IOptionConfig, IOptionData } from '../option-picker/option-picker.component';
 import { TelemetryService } from 'src/app/services/telemetry.service';
 import { TelemetryEventNames } from 'src/app/Common/Constants';
-import { RelatedEventsConfigs } from '../../../Models/eventstore/RelatedEventsConfigs';
+import { differConfigs, RelatedEventsConfigs } from '../../../Models/eventstore/RelatedEventsConfigs';
 import { Utils } from 'src/app/Utils/Utils';
 import { ListColumnSettingWithCustomComponent } from 'src/app/Models/ListSettings';
 import { VisualizationToolComponent } from '../../concurrent-events-visualization/visualization-tool/visualization-tool.component';
 import { VisualizationLogoComponent } from '../../concurrent-events-visualization/visualization-logo/visualization-logo.component';
-import { getSimultaneousEventsForEvent, IConcurrentEvents, IRCAItem } from 'src/app/Models/eventstore/rcaEngine';
+import { getPeriodicEvent, getSimultaneousEventsForEvent, IConcurrentEvents, IRCAItem } from 'src/app/Models/eventstore/rcaEngine';
 
 export interface IQuickDates {
   display: string;
@@ -228,6 +228,7 @@ export class EventStoreComponent implements OnInit, OnDestroy, OnChanges {
 
     // refresh vis-event-list
     this.simulEvents = getSimultaneousEventsForEvent(RelatedEventsConfigs, sourceEvents, sourceEvents);
+    console.log(getPeriodicEvent(differConfigs, sourceEvents));
     // grab highcharts data for all events
     for (let parsedEvent of allEvents) {
         let rootEvent = this.simulEvents.find(event => event.eventInstanceId === parsedEvent.eventInstanceId);
