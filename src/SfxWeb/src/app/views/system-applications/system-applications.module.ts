@@ -10,6 +10,7 @@ import { HealthStateModule } from 'src/app/modules/health-state/health-state.mod
 import { ChartsModule } from 'src/app/modules/charts/charts.module';
 import { NamingViewerComponent } from './naming-viewer/naming-viewer.component';
 import { ConcurrentEventsVisualizationModule } from 'src/app/modules/concurrent-events-visualization/concurrent-events-visualization.module';
+import { TimePickerModule } from 'src/app/modules/time-picker/time-picker.module';
 
 
 @NgModule({
@@ -21,7 +22,8 @@ import { ConcurrentEventsVisualizationModule } from 'src/app/modules/concurrent-
     DetailListTemplatesModule,
     HealthStateModule,
     ChartsModule,
-    ConcurrentEventsVisualizationModule
+    ConcurrentEventsVisualizationModule,
+    TimePickerModule
   ]
 })
 export class SystemApplicationsModule { }

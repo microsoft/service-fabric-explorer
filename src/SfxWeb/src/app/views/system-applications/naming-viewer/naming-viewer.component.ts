@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { IParallelChartData } from 'src/app/modules/concurrent-events-visualization/timeseries/timeseries.component';
 import { DataService } from 'src/app/services/data.service';
 import { Observable, forkJoin } from 'rxjs';
+import { TimeUtils } from 'src/app/Utils/TimeUtils';
+import { IOnDateChange } from 'src/app/modules/time-picker/double-slider/double-slider.component';
 
 @Component({
   selector: 'app-naming-viewer',
@@ -9,6 +11,10 @@ import { Observable, forkJoin } from 'rxjs';
   styleUrls: ['./naming-viewer.component.scss']
 })
 export class NamingViewerComponent implements OnInit {
+  public startDate: Date;
+  public endDate: Date;
+  public startDateMin: Date;
+  public startDateMax: Date;
 
   dataset: IParallelChartData = {
     dataSet: [
@@ -35,6 +41,11 @@ export class NamingViewerComponent implements OnInit {
         name: 'Request Volume',
         xProperty: 'x',
         yProperty: 'y'
+      },
+      {
+        name: 'Request Volume',
+        xProperty: 'x',
+        yProperty: 'y'
       }
     ]
   }
@@ -42,11 +53,15 @@ export class NamingViewerComponent implements OnInit {
   constructor(private dataService: DataService) { }
 
   ngOnInit(): void {
+    const todaysDate = new Date();
+    this.startDate = TimeUtils.AddDays(todaysDate, -7);
+    this.endDate = this.startDateMax = todaysDate;
+    this.startDateMin = TimeUtils.AddDays(todaysDate, -30);
+
     this.dataService.getService("System", "System/NamingService").subscribe(app => {
       const ess = [];
       app.partitions.ensureInitialized().subscribe(_ => {
         forkJoin(app.partitions.collection.map(partition => {
-          console.log(partition.id);
           const es = this.dataService.getPartitionEventData(partition.id);
           ess.push(es);
           return es.eventsList.refresh();
@@ -55,5 +70,11 @@ export class NamingViewerComponent implements OnInit {
         })
       })
     })
+  }
+
+  setNewDates(dates: IOnDateChange) {
+    this.startDate = dates.startDate;
+    this.endDate = dates.endDate;
+    // this.setNewDateWindow();
   }
 }
