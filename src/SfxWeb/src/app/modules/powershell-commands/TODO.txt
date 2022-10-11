@@ -1,3 +1,8 @@
-convert to tile: same height
-add connect to cluster as default command
-add tests
+add tests:
+    how thorough?
+        test each command?
+        test all inputs?
+        test styling?
+    waiting until commands loaded how?
+    test input how?
+    test copy how?
