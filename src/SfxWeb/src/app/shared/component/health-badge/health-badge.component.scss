@@ -1,0 +1,15 @@
+.badge-container {
+  display: flex;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  align-items: center;
+  gap: 3px;
+}
+
+.badge-icon {
+    display: inline-block;
+    position: relative;
+    bottom: 1px;
+    width: 16px;
+    height: 16px;
+}

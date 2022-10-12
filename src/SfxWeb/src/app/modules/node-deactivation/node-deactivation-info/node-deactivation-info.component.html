@@ -1,4 +1,9 @@
 <div style="margin: 10px; display: flex; flex-wrap: wrap">
+  <div *ngIf="showSeedNodeTSG" data-cy="seedNodeQuorom" style="margin-bottom: 10px;">
+    <app-warning [description]="seedNodeQuorumMessage" link="https://aka.ms/sfseednodequoromtsg"
+      linkText="Node deactivation - Seed node quorom TSG"></app-warning>
+  </div>
+
   <div style="width: 200px;">
     <h5 class="underline title">
       Deactivation Status
@@ -9,12 +14,12 @@
   <div *ngIf="deactivationInfo.NodeDeactivationTask.length > 0" style="flex-grow: 1;
     margin-left: 15px; min-width: 400px;">
     <h5 class="underline title" >Deactivation Tasks</h5>
-    <app-detail-list [list]="deactivationInfo.NodeDeactivationTask" [listSettings]="settings"></app-detail-list>
+    <app-detail-list [list]="deactivationInfo.NodeDeactivationTask" [listSettings]="settings" [showTopOptions]="false"></app-detail-list>
   </div>
 </div>
 
 
-<div style="margin-top: 30px;" *ngIf="deactivationInfo.PendingSafetyChecks.length > 0">
+<div *ngIf="deactivationInfo.PendingSafetyChecks.length > 0">
   <h5 style="font-size: 16px;">Safety Checks</h5>
   <app-safety-checks [safetyChecks]="deactivationInfo.PendingSafetyChecks"></app-safety-checks>
 </div>

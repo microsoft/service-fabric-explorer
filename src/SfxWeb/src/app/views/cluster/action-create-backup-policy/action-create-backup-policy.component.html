@@ -34,7 +34,7 @@
                 </dl>
                 <dl class="dl-horizontal" *ngIf="form.value.Schedule.ScheduleKind === 'FrequencyBased'">
                     <dt>Interval
-                        <span class="mif-info" title="Desired time interval between two consecutive backups is defined using ISO8601 format. Example : PT5M means at an interval of 5 Minutes"></span>
+                        <span tabindex="0" class="mif-info" title="Desired time interval between two consecutive backups is defined using ISO8601 format. Example : PT5M means at an interval of 5 Minutes"></span>
                     </dt>
                     <dd>
                         <input type="text" class="input-flat" formControlName="Interval" name="Interval" />
@@ -66,7 +66,7 @@
                         </dd>
                     </div>
                     <dt>RunTimes
-                        <span class="mif-info" title="Set RunTimes to list of desired time during the day in ISO8601 format, date specified along with time will be ignored. For example, 0001-01-01T18:00:00 represents 6:00 PM everyday or the days specified in RunDays, ignoring date part 0001-01-01."></span>
+                        <span tabindex="0" class="mif-info" title="Set RunTimes to list of desired time during the day in ISO8601 format, date specified along with time will be ignored. For example, 0001-01-01T18:00:00 represents 6:00 PM everyday or the days specified in RunDays, ignoring date part 0001-01-01."></span>
                     </dt>
                     <dd formArrayName="RunTimes">
                         <div *ngFor="let r of RunTimes.controls; let i = index; ">
@@ -94,7 +94,7 @@
                     <input type="number" class="input-flat" formControlName="MinimumNumberOfBackups">
                 </dd>
                 <dt>RetentionDuration
-                    <span class="mif-info" title="RetentionDuration can be specified to set the time span for which backups are required to be retained in the storage. Example : P10D means configuration to retain backups for 10 days, P3M means retain backups for 3 months"></span>
+                    <span tabindex="0" class="mif-info" title="RetentionDuration can be specified to set the time span for which backups are required to be retained in the storage. Example : P10D means configuration to retain backups for 10 days, P3M means retain backups for 3 months"></span>
                 </dt>
                 <dd>
                     <input type="text" class="input-flat" formControlName="RetentionDuration">
@@ -104,7 +104,7 @@
     </div>
     <div class="modal-footer">
         <!-- TODO handle all of the validation somewhere -->
-        <button class="solid-button blue" [disabled]="!form.valid"
+        <button class="solid-button blue" [disabled]="!form.valid" data-cy="submit"
             (click)="saveBackupPolicy()">{{isUpdateOperation ? 'Update backup policy' : 'Create backup policy'}}</button>
         <button class="flat-button" (click)="dialogRef.close()">Cancel</button>
     </div>

@@ -1,0 +1,37 @@
+<div class="detail-pane">
+  <app-collapse-container sectionName="Active Infrastructure Jobs">
+    <h4 collapse-header>
+      Active Infrastructure Jobs ({{collection.executingMRJobs.length}})
+    </h4>
+
+    <div style="margin-bottom: 20px;" collapse-body class="nested-block">
+      <div *ngFor="let job of collection.executingMRJobs; trackBy: trackByFn" style="margin-bottom: 15px;">
+        <app-infrastructure-job-tile [job]="job"></app-infrastructure-job-tile>
+      </div>
+    </div>
+  </app-collapse-container>
+</div>
+
+<div class="detail-pane">
+  <app-collapse-container sectionName="Pending Infrastructure Jobs">
+    <h4 collapse-header>
+      Pending Infrastructure Jobs ({{collection.allPendingMRJobs.length}})
+    </h4>
+    <div class="nested-block" collapse-body>
+      <app-detail-list [list]="collection.allPendingMRJobs" [listSettings]="allPendingMRJobsList">
+      </app-detail-list>
+    </div>
+  </app-collapse-container>
+</div>
+
+<div class="detail-pane">
+  <app-collapse-container collapsed=true sectionName="Completed Infrastructure Jobs">
+    <h4 collapse-header data-cy="completed">
+      Recently Completed Infrastructure Jobs
+    </h4>
+    <div class="nested-block" collapse-body>
+      <app-detail-list [list]="collection.completedMRJobs" [listSettings]="completedMRJobsList">
+      </app-detail-list>
+    </div>
+  </app-collapse-container>
+</div>

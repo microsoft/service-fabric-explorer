@@ -34,7 +34,7 @@ Service Fabric Explorer consists of two main components, an AngularJS based appl
 To develop Service Fabric Explorer, the following components are required.
 
 * Git: https://git-scm.com/
-* Node.js (Latest is preferred): https://nodejs.org/
+* Node.js (use LTS version): https://nodejs.org/
 
 The recommended IDE for Service Fabric Explorer development is VSCode because VSCode is a cross-platform editor, which supports Windows, Linux and macOS. But you can use whatever editor to develop. 
 
@@ -47,30 +47,25 @@ Here's a list of common IDE used.
 1. Clone the master branch.
 `git clone --recurse-submodules https://github.com/Microsoft/service-fabric-explorer.git <path to the local folder>`
 2. Install project dependencies: *This can be done inside VSCode or use a console window.*
+   1. [SFX] install the following [CLI](https://angular.io/cli) for the angular project 
+   ```Shell
+   npm install -g @angular/cli
+   ```
    1. [SFX] Navigate to `src/SfxWeb` and run the following scripts.
    ```Shell
    npm install   
    ```
-   2. [SFX Standalone] Navigate to `src/Sfx-Standalone` and run the following scripts.
-   ```Shell
-   npm install
-   ```
-   3. [SFX Proxy] Navigate to `src/Sfx-Proxy` and run the following scripts.
+
+   1. [SFX Proxy] Navigate to `src/Sfx-Proxy` and run the following scripts.
    ```Shell
    npm install   
    ```
 
 3. Build projects
    * VSCode
-      1. Open `src/SfxWeb`, `src/Sfx-Standalone` and `src/Sfx-Proxy` in VSCode with multiple-root workspce.
-      2. Run following tasks orderly.
-         * `clean-build` for Sfx-Standalone
+      1. Open `src/SfxWeb` and `src/Sfx-Proxy` in VSCode with multiple-root workspce.
    * Console
-      1. Install Gulp globally on the machine.
-      ```Shell
-      npm install gulp-cli -g
-      ```
-      2. [SFX] Navigate to `src/SfxWeb` and run the following scripts.
+      1. [SFX] Navigate to `src/SfxWeb` and run the following scripts.
       For a develop/quick build
       ```Shell
       npm run build
@@ -78,10 +73,6 @@ Here's a list of common IDE used.
       For a production build
       ```
       npm run build:prod
-      ```
-      4. [SFX Standalone] Navigate to `src/Sfx-Standalone` and run the following scripts.
-      ```Shell
-      gulp clean-build
       ```
 
 ### Develop Locally and Run Local Proxy
@@ -117,17 +108,30 @@ If proxying requests to a secure cluster adding a file called localsettings.json
 ## Testing
 
 ### Run unit tests
-Navigate to  `sfx/SfxWeb` folder and run 
+Navigate to  `src/SfxWeb` folder and run 
 ```
 npm test
 ```
 
 ### Run E2E tests
-Navigate to sfx/SfxWeb folder and run
+Navigate to src/SfxWeb folder and run
 ```
 npm run cypress:local
 ```
 This assumes that the angular local dev server is running
+
+### Generate test coverage report
+(see the following for reference https://lukas-klement.medium.com/implementing-code-coverage-with-angular-and-cypress-6ed08ed7e617)
+
+Run a full E2E suite above and this will generate a code coverage report.
+Navigate to src/SfxWeb folder and run
+```
+npm run test:coverage
+```
+Then you can also view a full report at
+```
+sfxWeb/coverage/lcov-report/index.html
+```
 
 ### CI overview
 The CI will run the following

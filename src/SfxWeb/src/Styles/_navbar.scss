@@ -1,0 +1,22 @@
+.nav-wrapper {
+  display: flex;
+  gap: 10px;
+
+  .nav-link {
+    padding: 0px;
+    transition: .25s border-bottom-color;
+    border-bottom-color: transparent;
+    min-width: 40px;
+    text-align: center;
+
+    &.current,
+    &.active {
+      border-bottom: 4px solid var(--accent-darkblue) !important;
+      color: var(--font-primary-color);
+    }
+
+    &:hover {
+      border-bottom: 4px solid var(--accent-darkblue) !important;
+    }
+  }
+}

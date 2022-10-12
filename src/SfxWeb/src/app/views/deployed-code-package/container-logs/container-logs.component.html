@@ -1,11 +1,12 @@
-<div class="detail-pane essen-pane" *ngIf="deployedCodePackage">
-    <div class="tail-bar">
-        <label>Tail: 
-            <app-input [model]="deployedCodePackage.containerLogsTail"></app-input>
-        </label>
-        <button class="simple-button" (click)="refresh()">Get Logs</button>
+<div *ngIf="deployedCodePackage">
+    <div class="tail-bar detail-pane essen-pane" data-cy="container-logs">
+        <label>Tail:</label>
+        <app-input [(model)]="deployedCodePackage.containerLogsTail"></app-input>
+
+        <button class="simple-button" (click)="getLogs()" data-cy="get-logs">Get Logs</button>
     </div>
-    <div *ngIf="containerLogs">
-        <pre role="presentation" tabindex="0"><code aria-label="container logs">{{containerLogs}}</code></pre>
-    </div>
+
+    <div *ngIf="containerLogs" class="detail-pane essen-pane">
+      <pre role="presentation" tabindex="0"><code aria-label="container logs">{{containerLogs}}</code></pre>
+  </div>
  </div>

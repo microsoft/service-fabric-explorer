@@ -23,17 +23,20 @@ export class BaseComponent extends ServiceBaseControllerDirective {
     {
       name: 'details',
       route: './details'
-    },
-    {
-      name: 'events',
-      route: './events'
     }
   ];
-  constructor(protected data: DataService, injector: Injector, private tree: TreeService) {
-    super(data, injector);
+  constructor(protected dataService: DataService, injector: Injector, private tree: TreeService) {
+    super(dataService, injector);
   }
 
   setup() {
+    this.dataService.clusterManifest.ensureInitialized().subscribe(() => {
+      if (this.data.clusterManifest.isEventStoreEnabled &&
+        this.tabs.indexOf(Constants.EventsTab) === -1) {
+          this.tabs = this.tabs.concat(Constants.EventsTab);
+        }
+    });
+
     if (this.appTypeName === Constants.SystemAppTypeName) {
       this.tree.selectTreeNode([
           IdGenerator.cluster(),
@@ -62,7 +65,6 @@ export class BaseComponent extends ServiceBaseControllerDirective {
   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
     return this.data.clusterManifest.ensureInitialized().pipe(map(() => {
       this.tabs = this.tabs.filter(tab => tab.name !== 'backup');
-
       if (this.data.clusterManifest.isBackupRestoreEnabled && this.service.isStatefulService
           && this.appTypeName !== Constants.SystemAppTypeName) {
           this.tabs.push({

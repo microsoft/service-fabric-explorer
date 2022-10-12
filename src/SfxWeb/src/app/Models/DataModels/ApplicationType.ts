@@ -8,7 +8,7 @@ import { Observable, forkJoin} from 'rxjs';
 import { Application } from './Application';
 import { ITextAndBadge, ValueResolver } from 'src/app/Utils/ValueResolver';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
-import { map } from 'rxjs/operators';
+import { map, mergeMap } from 'rxjs/operators';
 import { Utils } from 'src/app/Utils/Utils';
 import { ActionWithConfirmationDialog, IsolatedAction } from '../Action';
 import { CreateApplicationComponent } from 'src/app/views/application-type/create-application/create-application.component';
@@ -82,6 +82,7 @@ export class ApplicationType extends DataModelBase<IRawApplicationType> {
 export class ApplicationTypeGroup extends DataModelBase<IRawApplicationType> {
     public apps: Application[] = [];
     public appTypes: ApplicationType[] = [];
+    public activeAppTypes: ApplicationType[] = [];
     public appsHealthState: ITextAndBadge = ValueResolver.healthStatuses[4];
 
     public constructor(data: DataService, appTypes: ApplicationType[]) {
@@ -101,14 +102,23 @@ export class ApplicationTypeGroup extends DataModelBase<IRawApplicationType> {
     // update all applications for all application type group to keep the
     // applications in sync.
     public refreshAppTypeApps(apps: ApplicationCollection): void {
-        this.apps = apps.collection.filter(app => app.raw.TypeName === this.name);
+      this.apps = apps.collection.filter(app => app.raw.TypeName === this.name);
 
-        if (this.apps.length > 0) {
-            this.appsHealthState = this.valueResolver.resolveHealthStatus(Utils.max(this.apps.map(app => HealthStateConstants.Values[app.healthState.text])).toString());
-        } else {
-            // When there are no apps in this apptype, treat it as healthy
-            this.appsHealthState = ValueResolver.healthStatuses[1];
+      if (this.apps.length > 0) {
+        this.appsHealthState = this.valueResolver.resolveHealthStatus(Utils.max(this.apps.map(app => HealthStateConstants.Values[app.healthState.text])).toString());
+      } else {
+        // When there are no apps in this apptype, treat it as healthy
+        this.appsHealthState = ValueResolver.healthStatuses[1];
+      }
+
+      this.activeAppTypes = [];
+      this.appTypes.forEach(appType => {
+        const used = this.apps.some(app => app.raw.TypeVersion === appType.raw.Version);
+        appType.isInUse = used;
+        if(used) {
+          this.activeAppTypes.push(appType)
         }
+      });
     }
 
     protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<IRawApplicationType> {
@@ -135,7 +145,7 @@ export class ApplicationTypeGroup extends DataModelBase<IRawApplicationType> {
     }
 
     private unprovision(): Observable<any> {
-        return this.data.getAppTypeGroup(this.name, true).pipe(map(appTypeGroup => {
+        return this.data.getAppTypeGroup(this.name, true).pipe(mergeMap(appTypeGroup => {
             const unprovisonPromises = [];
             appTypeGroup.appTypes.forEach(applicationType => {
                 unprovisonPromises.push(applicationType.unprovision());

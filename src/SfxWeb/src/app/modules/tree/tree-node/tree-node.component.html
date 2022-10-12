@@ -1,4 +1,4 @@
-<ul *ngIf="node.isExpanded"  [attr.role]="node.depth === 0 ? 'group' : 'tree'" [attr.aria-expanded]="node.isExpanded">
+<ul *ngIf="node.isExpanded"  role="tree" [attr.aria-expanded]="node.isExpanded">
     <li class="more-children"
         *ngIf="node.loadingChildren"
         [ngStyle]="{ 'paddingLeft': node.paddingLeftPx }">
@@ -14,14 +14,14 @@
             <div (click)="node.pageFirst()" style="padding-left: 10px;" class="expander icon mif-vertical-align-top link" [title]="'First ' + node.listSettings.limit + ' items'" aria-hidden="true"></div>
         </div>
     </li>
-    <li *ngFor="let child of node.displayedChildren; trackBy: trackById" class="node" [ngClass]="{ 'selected': child.selected }" appScrollIntoView [selected]="child.selected" >
-        <button class="self hide-nested" (click)="child.select()" style="width: 100%; display: flex; align-items: center;" tabindex="0"  (keyup)="node.tree.onKeyDown($event)" role="treeitem" [attr.aria-level]="child.depth" 
-             [attr.aria-label]="child.displayName()">
+    <li *ngFor="let child of node.displayedChildren; trackBy: trackById; let i = index" class="node" [ngClass]="{ 'selected': child.selected}" appScrollIntoView [selected]="child.selected" role="treeitem"
+    (click)="child.select(); $event.stopPropagation()" tabindex="0"  (keyup)="node.tree.onKeyDown($event)"  [attr.aria-level]="child.depth">
+        <div class="self hide-nested hover-row flex-center" [ngClass]="{ 'raised-z-index': i === higherZIndex}">
             <span  [ngStyle]="{ 'paddingLeft': child.paddingLeftPx }"></span>
             <div class="expander" *ngIf="!child.hasExpander"></div>
-            <button tabindex="0" class="expander icon " aria-hidden="false" role="button"
+            <button tabindex="0" class="expander icon mif-chevron-thin-right" aria-hidden="false" role="button"
                     (click)="child.toggle(); $event.stopPropagation()" *ngIf="child.hasExpander"
-                    [ngClass]="{ 'mif-chevron-thin-right': child.isCollapsed, 'mif-chevron-thin-down': child.isExpanded }"
+                    [ngClass]="{ 'rotated': child.isExpanded }"
                     style="display: inline-block;" [title]="child.isCollapsed ? 'Expand Children' : 'Collapse Children'">
             </button>
             <button tabindex="0" class="icon" aria-hidden="false" *ngIf="child.node.canExpandAll && child.hasExpander"
@@ -36,10 +36,11 @@
             <div class="tree-label" [innerHTML]="child.displayHtml"  [title]="child.displayName()" ></div>
 
             <div *ngIf="child.actions" class="hidden right-action">
-                <app-action-collection-drop-down *ngIf="child.actions.length > 0" [actionCollection]="child.actions" [treeView]="true"></app-action-collection-drop-down>
+                <app-action-collection-drop-down *ngIf="child.actions.length > 0" [actionCollection]="child.actions"
+                                                  [treeView]="true" (changedState)="changeZIndez(i, $event)"></app-action-collection-drop-down>
             </div>
-        </button>
-        
+          </div>
+
         <app-tree-node [node]="child" *ngIf="child.isVisibleByBadge"></app-tree-node>
     </li>
     <li class="pager-control"

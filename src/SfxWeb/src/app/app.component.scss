@@ -1,15 +1,16 @@
-@import "src/vars.scss";
+$left-panel-width: 400px !default;
+$right-panel-min-width: 200px !default;
 
 .navbar-brand {
-    color: $navbar-color;
-    font-size: $font-size-large;
+    color: var(--font-primary-color);
+    font-size:var(--font-size-large);
     position: relative;
     font-weight: lighter;
     padding: 12px;
     vertical-align: -webkit-baseline-middle;
     margin-right: 0px;
     &.navbar-brand-azure {
-        background-color: $navbar-brand-background-color;
+        background-color: var(--accent-darkblue);
     }
 
     .navbar-brand-icon {
@@ -18,9 +19,37 @@
     }
 }
 
+.right-panel {
+  padding-left: 20px;
+  padding-right: 15px;
+  overflow: hidden;
+  min-width: $right-panel-min-width;
+  background-color: var(--accent-background-color);
+}
+
+.left-panel {
+  overflow: hidden;
+  background-color: var(--primary-background-color);
+}
+
+.view-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.main-view {
+  padding-right: 5px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0px; /* for non-chrome browsers */
+}
+
 .header-bar {
     height: 50px;
-    background-color: black;
+    background-color: var(--primary-background-color);
+    box-shadow: var(--heavy-box-shadow);
     color: white;
     position: fixed;
     right: 0;
@@ -107,7 +136,7 @@
 
 .sidenav-button {
     position: absolute;
-    left: 10px;
+    left: 0px;
     top: 50px;
     z-index: 12;
     padding: 0px;
@@ -120,9 +149,47 @@
     li {
         border-bottom: 1px solid white;
         padding: 5px;
-    
+
         &:last-child{
             border: 0;
         }
     }
+}
+
+.utc-time {
+  position: absolute;
+  right: 5px;
+  bottom: 0px;
+}
+
+@media only screen and (max-width: 600px) {
+  .utc-time {
+    display: none;
+  }
+}
+
+
+.expander-container {
+  position: sticky;
+  top: 0px;
+  height: 20px;
+  z-index: 11;
+  background-color: var(--accent-background-color);
+}
+
+.expander-icon {
+  transform: rotate(
+    90deg);
+        font-size: 27px;
+        position: absolute;
+        left: -21px;
+        cursor: pointer;
+        top: -7px;
+  &:hover {
+    color: var(--accent-darkblue);
+  }
+
+  &.flip {
+    transform: rotate(270deg);
+  }
 }

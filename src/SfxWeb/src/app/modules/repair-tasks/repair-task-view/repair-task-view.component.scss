@@ -1,0 +1,51 @@
+$green: #30a530;
+
+.table {
+    width: inherit;
+}
+
+table.detail-list {
+    width: inherit;
+    margin-bottom: 1px;
+    border-bottom: 1px solid #4c4c4c;
+    color: white;
+}
+
+.repair-blue {
+    color: #48b1ff !important;
+}
+
+.repair-green {
+    color: $green !important;
+}
+
+.row-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.node-wrapper {
+    margin-right: 8px;
+    border: 1px solid gray;
+
+    .inner-node-wrapper {
+        display: flex;
+        flex-direction: row;
+    }
+}
+
+.nodes-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.badge-ok {
+    background-color: $green;
+}
+
+.collapse-inner-bar {
+  margin-left: 11px;
+  border-left: var(--accent-underline) 2px solid;
+}

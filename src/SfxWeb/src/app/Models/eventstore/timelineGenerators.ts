@@ -1,7 +1,7 @@
 
 
 import { FabricEventBase, ClusterEvent, NodeEvent, ApplicationEvent, FabricEvent, PartitionEvent } from './Events';
-import { DataGroup, DataItem, DataSet } from 'vis-timeline/standalone/esm';
+import { DataGroup, DataItem, DataSet, IdType } from 'vis-timeline/standalone/esm';
 import padStart from 'lodash/padStart';
 import findIndex from 'lodash/findIndex';
 import { HtmlUtils } from 'src/app/Utils/HtmlUtils';
@@ -26,11 +26,16 @@ import { RepairTask } from 'src/app/Models/DataModels/repairTask';
     */
 
 export interface ITimelineData {
-    groups: DataSet<DataGroup>;
-    items: DataSet<DataItem>;
+    groups?: DataSet<DataGroup>;
+    items?: DataSet<ITimelineItem>;
     start?: Date;
     end?: Date;
     potentiallyMissingEvents?: boolean;
+    allowClustering?: boolean;
+}
+
+export interface ITimelineItem extends DataItem {
+    kind: string
 }
 
 export interface ITimelineDataGenerator<T extends FabricEventBase>{
@@ -44,18 +49,26 @@ export interface ITimelineDataGenerator<T extends FabricEventBase>{
 export class EventStoreUtils {
 
     private static internalToolTipFormatterObject = (data: any) => {
-        const rows = Object.keys(data).map(key => EventStoreUtils.internalToolTipFormatter(key, data[key])).join('');
-        return`<table style="word-break: break-all;"><tbody>${rows}</tbody></table>`;
+      const rows = Object.keys(data).map(key => EventStoreUtils.internalToolTipFormatter(key, data[key])).join('');
+      return `<table>
+              <tbody>
+                ${rows}
+              </tbody>
+            </table>`;
     }
 
     private static internalToolTipFormatter = (key: string, data: any) => {
-        let value = data;
-        if (Array.isArray(data) ) {
-            value = data.map(arrValue => EventStoreUtils.internalToolTipFormatter('', arrValue)).join('');
-        }else if (typeof data === 'object') {
-            value = EventStoreUtils.internalToolTipFormatterObject(data);
-        }
-        return`<tr style="padding: 0 5 px; bottom-border: 1px solid gray"><td style="word-break: keep-all;">${key}</td><td style="display:flex; flex-direction: row; "> <div style="margin-right: 4px">:</div style="white-space: pre-wrap; display: inline-block;"> ${value}</td></tr>`;
+      let value = data;
+      if (Array.isArray(data)) {
+        value = data.map(arrValue => EventStoreUtils.internalToolTipFormatter('', arrValue)).join('');
+      } else if (typeof data === 'object') {
+        value = EventStoreUtils.internalToolTipFormatterObject(data);
+      }
+      return `<tr>
+                <td class="margin-bottom"> ${key} </td>
+                <td class="nested-row">
+                  <div class="margin-right"> : </div class="white-space"> ${value} </td>
+              </tr>`;
     }
 
     /*
@@ -64,12 +77,20 @@ export class EventStoreUtils {
     public static tooltipFormat = (data: Record<string, any> , start: string, end: string = '', title: string= ''): string => {
 
         const outline = EventStoreUtils.internalToolTipFormatterObject(data);
-
-        // tslint:disable-next-line:max-line-length
-        return `<div class="tooltip-test">${title.length > 0 ? title + '<br>' : ''}Start: ${start} <br>${ end ? 'End: ' + end + '<br>' : ''}<b style="text-align: center;">Details</b><br>${outline}</div>`;
+        return `<div class="inner-tooltip">
+                  ${title.length > 0 ? title + '<br>' : ''}
+                  Start: ${start}
+                  <br>
+                  ${ end ? 'End: ' + end + '<br>' : ''}
+                  <b>
+                    Details
+                  </b>
+                  <br>
+                  ${outline}
+                </div>`;
     }
 
-    public static parseUpgradeAndRollback(rollbackCompleteEvent: FabricEventBase, rollbackStartedEvent: ClusterEvent, items: DataSet<DataItem>,
+    public static parseUpgradeAndRollback(rollbackCompleteEvent: FabricEventBase, eventIndex: number, rollbackStartedEvent: ClusterEvent, items: DataSet<ITimelineItem>,
                                           startOfRange: Date, group: string, targetVersionProperty: string) {
         const rollbackEnd = rollbackCompleteEvent.timeStamp;
 
@@ -84,10 +105,11 @@ export class EventStoreUtils {
             const upgradeStart = new Date(rollbackStartedDate.getTime() - upgradeDuration).toISOString();
             // roll forward
             items.add({
-                id: rollbackCompleteEvent.eventInstanceId + 'upgrade',
+                id: `${eventIndex}---${rollbackStartedEvent.eventInstanceId}`,
                 content: 'Upgrade rolling forward failed',
                 start: upgradeStart,
                 end: rollbackStarted,
+                kind: rollbackCompleteEvent.kind,
                 group,
                 type: 'range',
                 className: 'red'
@@ -98,10 +120,11 @@ export class EventStoreUtils {
 
         // roll back
         items.add({
-            id: rollbackCompleteEvent.eventInstanceId + label,
+            id: `0${eventIndex}---${rollbackCompleteEvent.eventInstanceId}`,
             content: label,
             start: rollbackStarted,
             end: rollbackEnd,
+            kind: rollbackCompleteEvent.kind,
             group,
             type: 'range',
             title: EventStoreUtils.tooltipFormat(rollbackCompleteEvent.eventProperties, rollbackStarted, rollbackEnd),
@@ -110,18 +133,20 @@ export class EventStoreUtils {
 
     }
 
-    public static parseUpgradeDomain(event: FabricEventBase, items: DataSet<DataItem>, group: string, targetVersionProperty: string): void {
+    public static parseUpgradeDomain(event: FabricEventBase, eventIndex: number, items: DataSet<ITimelineItem>, group: string, targetVersionProperty: string): void {
         const end = event.timeStamp;
         const endDate = new Date(end);
         const duration = event.eventProperties.UpgradeDomainElapsedTimeInMs;
 
         const start = new Date(endDate.getTime() - duration).toISOString();
         const label = event.eventProperties.UpgradeDomains;
+
         items.add({
-            id: event.eventInstanceId + label + event.eventProperties[targetVersionProperty],
+            id: `${eventIndex}---${event.eventInstanceId}`,
             content: label,
             start,
             end,
+            kind: event.kind,
             group,
             type: 'range',
             title: EventStoreUtils.tooltipFormat(event.eventProperties, start, end),
@@ -130,17 +155,18 @@ export class EventStoreUtils {
     }
 
     // Mainly used for if there is a current upgrade in progress.
-    public static parseUpgradeStarted(event: FabricEventBase, items: DataSet<DataItem>, endOfRange: Date, group: string, targetVersionProperty: string): void {
+    public static parseUpgradeStarted(event: FabricEventBase, eventIndex: number, items: DataSet<ITimelineItem>, endOfRange: Date, group: string, targetVersionProperty: string): void {
 
         const end = endOfRange.toISOString();
         const start = event.timeStamp;
         const content = `Upgrading to ${event.eventProperties[targetVersionProperty]}`;
 
         items.add({
-            id: event.eventInstanceId + content,
+            id: `${eventIndex}---${event.eventInstanceId}`,
             content,
             start,
             end,
+            kind: event.kind,
             group,
             type: 'range',
             title: EventStoreUtils.tooltipFormat(event.eventProperties, start, end),
@@ -148,7 +174,7 @@ export class EventStoreUtils {
         });
     }
 
-    public static parseUpgradeCompleted(event: FabricEventBase, items: DataSet<DataItem>, group: string, targetVersionProperty: string): void {
+    public static parseUpgradeCompleted(event: FabricEventBase, eventIndex: number, items: DataSet<ITimelineItem>, group: string, targetVersionProperty: string): void {
         const rollBack = event.kind === 'ClusterUpgradeRollbackCompleted';
 
         const end = event.timeStamp;
@@ -159,10 +185,11 @@ export class EventStoreUtils {
         const content = `${rollBack ? 'Upgrade Rolling back' : 'Upgrade rolling forward'} to ${event.eventProperties[targetVersionProperty]}`;
 
         items.add({
-            id: event.eventInstanceId + content,
+            id: `${eventIndex}---${event.eventInstanceId}`,
             content,
             start,
             end,
+            kind: event.kind,
             group,
             type: 'range',
             title: EventStoreUtils.tooltipFormat(event.eventProperties, start, end),
@@ -201,7 +228,7 @@ export abstract class TimeLineGeneratorBase<T> {
             };
 
             // We should not add the already nested groups to the new event type one.
-            let groupsAlreadyNested: string[] = [];
+            let groupsAlreadyNested: IdType[] = [];
             data.groups.forEach(group => {
                 nestedElementGroup.nestedGroups.push(group.id);
                 if (group.nestedGroups){
@@ -225,7 +252,7 @@ export class ClusterTimelineGenerator extends TimeLineGeneratorBase<ClusterEvent
     static readonly seedNodeStatus = 'Seed Node Warnings';
 
     consume(events: ClusterEvent[], startOfRange: Date, endOfRange: Date): ITimelineData {
-        const items = new DataSet<DataItem>();
+      const items = new DataSet<ITimelineItem>();
 
         // state necessary for some events
         let previousClusterHealthReport: ClusterEvent;
@@ -233,18 +260,18 @@ export class ClusterTimelineGenerator extends TimeLineGeneratorBase<ClusterEvent
         let upgradeClusterStarted: ClusterEvent;
         const clusterRollBacks: Record<string, {complete: ClusterEvent, start?: ClusterEvent}> = {};
 
-        events.forEach( event => {
+        events.forEach((event, index) => {
             // we want the oldest cluster upgrade started before finding any previousClusterUpgrade
             // this means we should have an ongoing cluster upgrade
             if ( (event.kind === 'ClusterUpgradeStarted' || event.kind === 'ClusterUpgradeRollbackStarted') && !previousClusterUpgrade ) {
                 upgradeClusterStarted = event;
             }else if (event.kind === 'ClusterUpgradeDomainCompleted') {
-                EventStoreUtils.parseUpgradeDomain(event, items, ClusterTimelineGenerator.upgradeDomainLabel, 'TargetClusterVersion');
+                EventStoreUtils.parseUpgradeDomain(event, index, items, ClusterTimelineGenerator.upgradeDomainLabel, 'TargetClusterVersion');
             }else if (event.kind === 'ClusterUpgradeCompleted') {
-                EventStoreUtils.parseUpgradeCompleted(event, items, ClusterTimelineGenerator.clusterUpgradeLabel, 'TargetClusterVersion');
+                EventStoreUtils.parseUpgradeCompleted(event, index, items, ClusterTimelineGenerator.clusterUpgradeLabel, 'TargetClusterVersion');
                 previousClusterUpgrade = event;
             }else if (event.kind === 'ClusterNewHealthReport') {
-                this.parseSeedNodeStatus(event, items, previousClusterHealthReport, endOfRange);
+                this.parseSeedNodeStatus(event, index, items, previousClusterHealthReport, endOfRange);
                 previousClusterHealthReport = event;
             }
 
@@ -262,13 +289,13 @@ export class ClusterTimelineGenerator extends TimeLineGeneratorBase<ClusterEvent
         Object.keys(clusterRollBacks).forEach(eventInstanceId => {
             const data = clusterRollBacks[eventInstanceId];
             // this.parseClusterUpgradeAndRollback(data.complete, data.start, items, startOfRange);
-            EventStoreUtils.parseUpgradeAndRollback(data.complete, data.start, items, startOfRange,
+            EventStoreUtils.parseUpgradeAndRollback(data.complete, events.indexOf(data.complete), data.start, items, startOfRange,
                                                             ClusterTimelineGenerator.clusterUpgradeLabel, 'TargetClusterVersion');
         });
 
         // Display a pending upgrade
         if (upgradeClusterStarted) {
-            EventStoreUtils.parseUpgradeStarted(upgradeClusterStarted, items, endOfRange, ClusterTimelineGenerator.clusterUpgradeLabel, 'TargetClusterVersion');
+            EventStoreUtils.parseUpgradeStarted(upgradeClusterStarted, events.indexOf(upgradeClusterStarted), items, endOfRange, ClusterTimelineGenerator.clusterUpgradeLabel, 'TargetClusterVersion');
         }
 
         const groups = new DataSet<DataGroup>([
@@ -283,17 +310,18 @@ export class ClusterTimelineGenerator extends TimeLineGeneratorBase<ClusterEvent
         };
     }
 
-    parseSeedNodeStatus(event: ClusterEvent, items: DataSet<DataItem>, previousClusterHealthReport: ClusterEvent, endOfRange: Date): void {
+    parseSeedNodeStatus(event: ClusterEvent, eventIndex: number, items: DataSet<ITimelineItem>, previousClusterHealthReport: ClusterEvent, endOfRange: Date): void {
         if (event.eventProperties.HealthState === 'Warning') {
             // for end date if we dont have a previously seen health report(list iterates newest to oldest) then we know its still the ongoing state
             const end = previousClusterHealthReport ? previousClusterHealthReport.timeStamp : endOfRange.toISOString();
             const content = `${event.eventProperties.HealthState}`;
 
             items.add({
-                id: event.eventInstanceId + content,
+                id: `${eventIndex}---${event.eventInstanceId}`,
                 content,
                 start: event.timeStamp,
                 end,
+                kind: event.kind,
                 group: ClusterTimelineGenerator.seedNodeStatus,
                 type: 'range',
                 title: EventStoreUtils.tooltipFormat(event.eventProperties, event.timeStamp, end),
@@ -302,106 +330,243 @@ export class ClusterTimelineGenerator extends TimeLineGeneratorBase<ClusterEvent
         }
     }
 }
+
+const NodeUp = 'NodeUp';
+const NodeDown = 'NodeDown';
+const NodeDeactivateCompleted = 'NodeDeactivateCompleted';
+const NodeRemovedFromCluster = 'NodeRemovedFromCluster';
+const NodeAddedToCluster = 'NodeAddedToCluster';
+const NodeOpenFailed = "NodeOpenFailed";
 export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
-    static readonly NodesDownLabel = 'Node Down';
-    static readonly NodesRemoved = 'Node Removed';
-    static readonly NodesAdded = 'Node Added';
-    static readonly transitions = ['NodeDeactivateStarted'];
+  static readonly NodesDownLabel = 'Node Down';
+  static readonly NodesRemoved = 'Node Removed';
+  static readonly NodesAdded = 'Node Added';
+  static readonly NodesFailedToOpenLabel = 'Nodes Failed to Open';
+  static readonly NodesAddedToClusterLabel = 'Nodes Added to cluster';
+  static readonly NodesRemovedFromClusterLabel = 'Nodes removed from cluster';
+  static readonly transitions = [NodeUp, NodeDown, NodeDeactivateCompleted, NodeRemovedFromCluster, NodeAddedToCluster, NodeOpenFailed];
+
+  generateNodeOpenFailedEvent(event: NodeEvent, eventIndex: number) {
+    const item = {
+      id: `${eventIndex}---${event.eventInstanceId}`,
+      start: event.timeStamp,
+      group: NodeTimelineGenerator.NodesFailedToOpenLabel,
+      type: 'point',
+      kind: event.kind,
+      title: EventStoreUtils.tooltipFormat(event.eventProperties, event.timeStamp, null, `${event.nodeName} failed to open with ${event.eventProperties['Error']}.`),
+      className: 'red-point',
+      subgroup: 'stack',
+      content: ''
+    };
+    return item;
+  }
+
+  generateAddOrRemovedNodeEvent(event: NodeEvent, eventIndex: number, added: boolean = true) {
+    const label = `Node ${event.nodeName} ${added ? 'added to' : 'removed from'} cluster`;
+    const item = {
+      id: `${eventIndex}---${event.eventInstanceId}`,
+      start: event.timeStamp,
+      group: added ? NodeTimelineGenerator.NodesAddedToClusterLabel : NodeTimelineGenerator.NodesRemovedFromClusterLabel,
+      type: 'point',
+      kind: event.kind,
+      title: EventStoreUtils.tooltipFormat(event.eventProperties, event.timeStamp, null, label),
+      className: 'orange-point',
+      subgroup: 'stack',
+      content: ''
+    };
+    return item;
+  };
+
+  generateDownNodeEvent(event: NodeEvent, eventIndex: number, start: string, end: string, additionalContext?: string) {
+    const label = `Node ${event.nodeName} down${additionalContext ? (" " + additionalContext) : ''}`;
+    const item = {
+      id: `${eventIndex}---${event.eventInstanceId}`,
+      content: label,
+      start,
+      end,
+      kind: event.kind,
+      group: NodeTimelineGenerator.NodesDownLabel,
+      type: 'range',
+      title: EventStoreUtils.tooltipFormat(event.eventProperties, start, end, label),
+      className: additionalContext ? 'darkorange' : 'red',
+      subgroup: 'stack'
+    };
+    return item;
+  };
+
+  generateNodeDisablingEvent(event: NodeEvent, eventIndex: number) {
+    const label = `Node ${event.nodeName} Disabling with intent ${event.eventProperties.EffectiveDeactivateIntent}`;
+    const start = event.eventProperties.StartTime;
+    const end = event.timeStamp;
+    const item = {
+      id: `${eventIndex}---${event.eventInstanceId}`,
+      content: label,
+      start,
+      end,
+      kind: event.kind,
+      group: NodeTimelineGenerator.NodesDownLabel,
+      type: 'range',
+      title: EventStoreUtils.tooltipFormat(event.eventProperties, start, end, label),
+      className: 'yellow',
+      subgroup: 'stack'
+    };
+    return item;
+  };
 
     consume(events: NodeEvent[], startOfRange: Date, endOfRange: Date): ITimelineData {
-        const items = new DataSet<DataItem>();
+        events = events.sort((a,b) => Date.parse(b.timeStamp) - Date.parse(a.timeStamp))
 
-        // keep track of node up events incase we have nodes where they started in a down state before the selected time
-        // so that we know we need to chart a down node from the start of the timeline.
-        const nodeUpEvents: Record<string, NodeEvent> = {};
-        const previousTransitions: Record<string, NodeEvent> = {};
-        const nodeDownDataItems: Record<string, DataItem> = {};
+        const nodeEventMap: Record<string, NodeEvent[]> = {};
+        let failedToOpen = false; //only add the failed to open events group if we see any
+        let addedToCluster = false;
+        let removedFromCluster = false;
+        //split node events by nodename, much simpler since we dont do any cross node checks
+        events.forEach(event => {
+          if(!(event.nodeName in nodeEventMap)) {
+            nodeEventMap[event.nodeName] = [];
+          }
+          nodeEventMap[event.nodeName].push(event);
+        });
 
-        let potentiallyMissingEvents = false;
+        const items = new DataSet<ITimelineItem>();
 
-        events.forEach( event => {
-            if (event.category === 'StateTransition') {
-                // check for current state
-                if (event.kind === 'NodeDown') {
-                    // we need to track for events that should not show up between node down and up events to know if data is missing
-                    const previousTransition = previousTransitions[event.nodeName];
-                    if (previousTransition && previousTransition.kind !== 'NodeUp') {
-                        potentiallyMissingEvents = true;
-                    }
 
-                    // remove node up events if we find a node down event.
-                    if (event.nodeName in nodeUpEvents) {
-                        delete nodeUpEvents[event.nodeName];
-                    }
-                    const end = previousTransition ? previousTransition.timeStamp : endOfRange.toISOString();
-                    const start = event.timeStamp;
-                    const label = `Node ${event.nodeName} down`;
-                    const item = {
-                        id: event.eventInstanceId + label,
-                        content: label,
-                        start,
-                        end,
-                        group: NodeTimelineGenerator.NodesDownLabel,
-                        type: 'range',
-                        title: EventStoreUtils.tooltipFormat(event.eventProperties, start, end, label),
-                        className: 'red',
-                        subgroup: 'stack'
-                    };
+        Object.keys(nodeEventMap).forEach(nodeName => {
+          const nodeEvents = nodeEventMap[nodeName];
 
-                    if (event.eventProperties.NodeInstance in nodeDownDataItems) {
-                        items.add(nodeDownDataItems[event.eventProperties.NodeInstance]);
-                    }
+          //hold onto the last "state" node i.e up or down to put bounds on unexpected down events
+          let lastTransitionEvent: NodeEvent = null;
 
-                    nodeDownDataItems[event.eventProperties.NodeInstance] = item;
-                }else if (event.kind === 'NodeDeactivateCompleted' && event.eventProperties.EffectiveDeactivateIntent === 'RemoveNode') {
-                    const nodeDownEvent = nodeDownDataItems[event.eventProperties.NodeInstance];
+          let lastUpEvent: NodeEvent;
+          let lastDownEvent: {event: NodeEvent, end: string} = null;
+          let lastRemoved: NodeEvent;
+          //repeat item filter
+          const seenIds = new Set();
 
-                    if (nodeDownEvent) {
-                      delete nodeDownDataItems[event.eventProperties.NodeInstance];
-                      potentiallyMissingEvents = true;
-                    }
+          //we only care about transitionevents and specific ones, reverse order to make node events easier to parse and filter out repeat deactivate events
+          nodeEvents.filter(event => event.category === 'StateTransition' && NodeTimelineGenerator.transitions.includes(event.kind)).reverse().filter(event => {
+            //remove duplicates until the runtime does not produce them.
+            if(event.kind === NodeDeactivateCompleted) {
+              const uniqueId = event.eventProperties.BatchIdsWithDeactivateIntent;
+              if(seenIds.has(event.eventProperties.BatchIdsWithDeactivateIntent) ) {
+                return false;
+              }else{
+                seenIds.add(uniqueId);
+                return true;
+              }
+            }else{
+              return true;
+            }
+          }).reverse().forEach((event, index) => {
+            if (event.kind === NodeDown) {
+                if(lastRemoved) {
+                  items.add(this.generateDownNodeEvent(event, index, event.timeStamp, lastRemoved.timeStamp, 'and removed from the cluster'));
+                  lastUpEvent = null;
+                  lastDownEvent = null;
+                  lastRemoved = null;
+
+                } else if (lastDownEvent) {
+                  items.add(this.generateDownNodeEvent(event, index, event.timeStamp, lastDownEvent.end));
+                  lastUpEvent = null;
+                  lastDownEvent = null;
+                }else if (lastUpEvent) {
+                  lastDownEvent = { event, end: lastUpEvent.timeStamp };
+                  lastUpEvent = null;
+                } else {
+                  let end = endOfRange.toISOString()
+                  if(lastTransitionEvent) {
+                    end = lastTransitionEvent.timeStamp;
+                  }
+                  lastDownEvent = { event, end };
                 }
-
-                if (event.kind === 'NodeUp' && event.eventProperties.LastNodeDownAt !== '1601-01-01T00:00:00Z') {
-                    previousTransitions[event.nodeName] = event;
-                    nodeUpEvents[event.nodeName] = event;
-                }
+                lastTransitionEvent = event;
             }
 
-            if (NodeTimelineGenerator.transitions.includes(event.kind) ) {
-                previousTransitions[event.nodeName] = event;
-            }
-        });
+            if(event.kind === 'NodeUp') {
+              if(lastDownEvent) {
+                items.add(this.generateDownNodeEvent(lastDownEvent.event, index, lastDownEvent.event.timeStamp, lastDownEvent.end));
+                lastDownEvent = null;
+              }
 
-        Object.keys(nodeDownDataItems).forEach(key => {
-            const item = nodeDownDataItems[key];
-            items.add(item);
-        });
-        // add any left over node up events to the chart.
-        Object.keys(nodeUpEvents).forEach(key => {
-            const event = nodeUpEvents[key];
-            const label = `Node ${event.nodeName} down`;
-            items.add({
-                id: event.eventInstanceId + label,
-                content: label,
-                start: event.eventProperties.LastNodeDownAt,
-                end: event.timeStamp,
-                group: NodeTimelineGenerator.NodesDownLabel,
-                type: 'range',
-                title: EventStoreUtils.tooltipFormat(event.eventProperties, event.eventProperties.LastNodeDownAt, event.timeStamp, label),
-                className: 'red',
-                subgroup: 'stack'
-            });
-        });
+              lastUpEvent = event;
+              lastTransitionEvent = event;
+            }
+
+            if(event.kind === NodeRemovedFromCluster) {
+              removedFromCluster = true;
+              lastRemoved = event;
+              items.add(this.generateAddOrRemovedNodeEvent(event, index, false));
+            }
+
+            if(event.kind === NodeAddedToCluster) {
+              addedToCluster = true;
+              items.add(this.generateAddOrRemovedNodeEvent(event, index, true));
+              if(lastDownEvent) {
+                lastDownEvent = null;
+              }
+              lastUpEvent = null;
+            }
+
+            if(event.kind === NodeDeactivateCompleted) {
+              //dont show node down if its expected
+              if(event.eventProperties.EffectiveDeactivateIntent === 'RemoveNode') {
+                //TODO add a removed and down event?
+                items.add(this.generateNodeDisablingEvent(event, index));
+
+                lastDownEvent = null;
+              }else {
+                if(lastDownEvent) {
+                  items.add(this.generateDownNodeEvent(lastDownEvent.event, events.indexOf(lastDownEvent.event), lastDownEvent.event.timeStamp, lastDownEvent.end, `with intent disabled ${event.eventProperties.EffectiveDeactivateIntent}`));
+                  items.add(this.generateNodeDisablingEvent(event, index));
+                  lastDownEvent = null;
+                  lastUpEvent = null;
+                }else{
+                  items.add(this.generateDownNodeEvent(event, index, event.eventProperties['StartTime'] as string, event.timeStamp as string, `with intent disabled ${event.eventProperties.EffectiveDeactivateIntent}`));
+                }
+              }
+            }
+
+            if(event.kind === NodeOpenFailed) {
+              items.add(this.generateNodeOpenFailedEvent(event, index));
+              failedToOpen = true;
+            }
+          })
+
+          if(lastDownEvent) {
+            items.add(this.generateDownNodeEvent(lastDownEvent.event, events.indexOf(lastDownEvent.event), lastDownEvent.event.timeStamp, lastDownEvent.end));
+          }
+
+          if(lastUpEvent) {
+            items.add(this.generateDownNodeEvent(lastUpEvent, events.indexOf(lastUpEvent), lastUpEvent.eventProperties.LastNodeDownAt, lastUpEvent.timeStamp));
+          }
+        })
 
         const groups = new DataSet<DataGroup>([
-            {id: NodeTimelineGenerator.NodesDownLabel, content: NodeTimelineGenerator.NodesDownLabel, subgroupStack: {stack: true}},
+          {id: NodeTimelineGenerator.NodesDownLabel, content: NodeTimelineGenerator.NodesDownLabel, subgroupStack: {stack: true}},
         ]);
+
+        if(addedToCluster) {
+          groups.add({
+            id: NodeTimelineGenerator.NodesAddedToClusterLabel, content: NodeTimelineGenerator.NodesAddedToClusterLabel
+          })
+        }
+
+        if(removedFromCluster) {
+          groups.add({
+            id: NodeTimelineGenerator.NodesRemovedFromClusterLabel, content: NodeTimelineGenerator.NodesRemovedFromClusterLabel
+          })
+        }
+
+        if(failedToOpen) {
+          groups.add({
+            id: NodeTimelineGenerator.NodesFailedToOpenLabel, content: NodeTimelineGenerator.NodesFailedToOpenLabel
+          })
+        }
 
         return {
             groups,
             items,
-            potentiallyMissingEvents
+            potentiallyMissingEvents: false
         };
     }
 }
@@ -410,28 +575,34 @@ export class ApplicationTimelineGenerator extends TimeLineGeneratorBase<Applicat
     static readonly upgradeDomainLabel = 'Application Upgrade Domains';
     static readonly applicationUpgradeLabel = 'Application Upgrades';
     static readonly applicationPrcoessExitedLabel = 'Application Process Exited';
+    static readonly applicationContainerExitedLabel = 'Container Process Exited';
 
     consume(events: ApplicationEvent[], startOfRange: Date, endOfRange: Date): ITimelineData {
-        const items = new DataSet<DataItem>();
+      const items = new DataSet<ITimelineItem>();
 
         // state necessary for some events
         let previousApplicationUpgrade: ApplicationEvent;
         let upgradeApplicationStarted: ApplicationEvent;
+
         const applicationRollBacks: Record<string, {complete: ApplicationEvent, start?: ApplicationEvent}> = {};
         const processExitedGroups: Record<string, DataGroup> = {};
+        const containerExitedGroups: Record<string, DataGroup> = {};
 
-        events.forEach( event => {
+        events.forEach((event, index) => {
             // we want the oldest upgrade started before finding any previousApplicationUpgrade
             // this means we should have an ongoing application upgrade
             if ( (event.kind === 'ApplicationUpgradeStarted' || event.kind === 'ApplicationUpgradeRollbackStarted') && !previousApplicationUpgrade ) {
                 upgradeApplicationStarted = event;
             }else if (event.kind === 'ApplicationUpgradeDomainCompleted') {
-                EventStoreUtils.parseUpgradeDomain(event, items, ApplicationTimelineGenerator.upgradeDomainLabel, 'ApplicationTypeVersion');
+                EventStoreUtils.parseUpgradeDomain(event, index, items, ApplicationTimelineGenerator.upgradeDomainLabel, 'ApplicationTypeVersion');
             }else if (event.kind === 'ApplicationUpgradeCompleted') {
-                EventStoreUtils.parseUpgradeCompleted(event, items, ApplicationTimelineGenerator.applicationUpgradeLabel, 'ApplicationTypeVersion');
+                EventStoreUtils.parseUpgradeCompleted(event, index, items, ApplicationTimelineGenerator.applicationUpgradeLabel, 'ApplicationTypeVersion');
+                upgradeApplicationStarted = null;
                 previousApplicationUpgrade = event;
             }else if (event.kind === 'ApplicationProcessExited') {
-                this.parseApplicationProcessExited(event, items, processExitedGroups);
+                this.parseApplicationProcessExited(event, index, items, processExitedGroups);
+            }else if(event.kind === "ApplicationContainerInstanceExited") {
+              this.parseApplicationProcessExited(event, index, items, containerExitedGroups);
             }
 
             // handle roll backs alone
@@ -447,12 +618,12 @@ export class ApplicationTimelineGenerator extends TimeLineGeneratorBase<Applicat
         // we gather them up and add them at the end so we can get corresponding events
         Object.keys(applicationRollBacks).forEach(eventInstanceId => {
             const data = applicationRollBacks[eventInstanceId];
-            EventStoreUtils.parseUpgradeAndRollback(data.complete, data.start, items, startOfRange, ApplicationTimelineGenerator.applicationUpgradeLabel, 'ApplicationTypeVersion');
+            EventStoreUtils.parseUpgradeAndRollback(data.complete, events.indexOf(data.complete), data.start, items, startOfRange, ApplicationTimelineGenerator.applicationUpgradeLabel, 'ApplicationTypeVersion');
         });
 
         // Display a pending upgrade
         if (upgradeApplicationStarted) {
-            EventStoreUtils.parseUpgradeStarted(upgradeApplicationStarted, items, endOfRange, ApplicationTimelineGenerator.applicationUpgradeLabel, 'ApplicationTypeVersion');
+            EventStoreUtils.parseUpgradeStarted(upgradeApplicationStarted, events.indexOf(upgradeApplicationStarted), items, endOfRange, ApplicationTimelineGenerator.applicationUpgradeLabel, 'ApplicationTypeVersion');
         }
 
         const groups = new DataSet<DataGroup>([
@@ -472,15 +643,28 @@ export class ApplicationTimelineGenerator extends TimeLineGeneratorBase<Applicat
 
         groups.add(nestedApplicationProcessExited);
 
+        const nestedContainerProcessExited: DataGroup = {
+            id: ApplicationTimelineGenerator.applicationContainerExitedLabel,
+            nestedGroups: [],
+            content: ApplicationTimelineGenerator.applicationContainerExitedLabel,
+        };
+
+          Object.keys(containerExitedGroups).forEach(groupName => {
+            nestedContainerProcessExited.nestedGroups.push(groupName);
+            groups.add(containerExitedGroups[groupName]);
+        });
+
+        groups.add(nestedContainerProcessExited);
+
         return {
             groups,
-            items
+            items,
+            potentiallyMissingEvents: false
         };
     }
 
 
-    parseApplicationProcessExited(event: FabricEventBase, items: DataSet<DataItem>, processExitedGroups: Record<string, DataGroup>) {
-
+    parseApplicationProcessExited(event: FabricEventBase, eventIndex: number, items: DataSet<ITimelineItem>, processExitedGroups: Record<string, DataGroup>) {
         const groupLabel = `${event.eventProperties.ServicePackageName}`;
         processExitedGroups[groupLabel] = {id: groupLabel, content: groupLabel};
 
@@ -488,15 +672,35 @@ export class ApplicationTimelineGenerator extends TimeLineGeneratorBase<Applicat
         const label = event.eventProperties.ExeName;
 
         items.add({
-            id: event.eventInstanceId + label,
+            id: `${eventIndex}---${event.eventInstanceId}`,
             content: '',
             start,
+            kind: event.kind,
             group: groupLabel,
             type: 'point',
             className: event.eventProperties.UnexpectedTermination ? 'red-point' : 'green-point',
             title: EventStoreUtils.tooltipFormat(event.eventProperties, start, null, 'Primary swap to ' + label),
         });
     }
+
+    parseContainerExited(event: FabricEventBase, eventIndex: number, items: DataSet<ITimelineItem>, processExitedGroups: Record<string, DataGroup>) {
+      const groupLabel = `${event.eventProperties.ServicePackageName}`;
+      processExitedGroups[groupLabel] = {id: groupLabel, content: groupLabel};
+
+      const start = event.timeStamp;
+      const label = event.eventProperties.ExeName;
+
+      items.add({
+          id: `${eventIndex}---${event.eventInstanceId}`,
+          content: '',
+          start,
+          kind: event.kind,
+          group: groupLabel,
+          type: 'point',
+          className: event.eventProperties.UnexpectedTermination ? 'red-point' : 'green-point',
+          title: EventStoreUtils.tooltipFormat(event.eventProperties, event.timeStamp),
+      });
+  }
 }
 
 /*
@@ -515,7 +719,7 @@ export class PartitionTimelineGenerator extends TimeLineGeneratorBase<PartitionE
   static readonly unhealthy = 'unhealthy';
 
   consume(events: PartitionEvent[], startOfRange: Date, endOfRange: Date): ITimelineData {
-    const items = new DataSet<DataItem>();
+    const items = new DataSet<ITimelineItem>();
 
     // replication info
     // let lastPartitionReconfigEvent = null;
@@ -541,7 +745,8 @@ export class PartitionTimelineGenerator extends TimeLineGeneratorBase<PartitionE
           group: PartitionTimelineGenerator.swapPrimaryLabel,
           type: 'range',
           title: EventStoreUtils.tooltipFormat(event.eventProperties, start, end, 'Primary swap to ' + label),
-          className: 'green'
+          className: 'green',
+          kind: 'primaryswap'
         });
       }
 
@@ -568,6 +773,7 @@ export class PartitionTimelineGenerator extends TimeLineGeneratorBase<PartitionE
           }
 
           items.add({
+            kind: 'primaryswap',
             id: event.eventInstanceId + node,
             content: `secondary`,
             start: event.timeStamp,
@@ -598,7 +804,8 @@ export class PartitionTimelineGenerator extends TimeLineGeneratorBase<PartitionE
               group: event.eventProperties.NewPrimaryNodeName,
               type: 'range',
               title: EventStoreUtils.tooltipFormat(event.eventProperties, event.timeStamp, endOfRange.toString(), 'Primary '),
-              className: 'green'
+              className: 'green',
+              kind: 'ZZZZZZZ'
             });
           }else {
             items.add({
@@ -609,7 +816,9 @@ export class PartitionTimelineGenerator extends TimeLineGeneratorBase<PartitionE
               group: event.eventProperties.NewPrimaryNodeName,
               type: 'range',
               title: EventStoreUtils.tooltipFormat(event.eventProperties, event.timeStamp, endOfRange.toString(), 'Primary '),
-              className: 'green'
+              className: 'green',
+              kind: 'ZZZZZZZ'
+
             });
           }
           primary = event;
@@ -629,7 +838,8 @@ export class PartitionTimelineGenerator extends TimeLineGeneratorBase<PartitionE
         group: key,
         type: 'range',
         title: EventStoreUtils.tooltipFormat(event.eventProperties, start.toString(), event.timeStamp, 'Secondary'),
-        className: 'purple'
+        className: 'purple',
+        kind: 'ZZZZZZZ'
       });
     });
 
@@ -642,11 +852,12 @@ export class PartitionTimelineGenerator extends TimeLineGeneratorBase<PartitionE
         group: primary.eventProperties.OldPrimaryNodeName,
         type: 'range',
         title: EventStoreUtils.tooltipFormat(primary.eventProperties, startOfRange.toString(), primary.timeStamp.toString(), 'Primary '),
-        className: 'green'
+        className: 'green',
+        kind: 'ZZZZZZZ'
       });
     }
 
-    const groupsIds = [
+    const groupsIds: DataGroup[] = [
       { id: PartitionTimelineGenerator.swapPrimaryLabel, content: PartitionTimelineGenerator.swapPrimaryLabel },
       { id: PartitionTimelineGenerator.activation, content: PartitionTimelineGenerator.activation },
       {id: PartitionTimelineGenerator.unhealthy, content: PartitionTimelineGenerator.unhealthy}
@@ -783,16 +994,17 @@ o	InBuild end with success info
 export class RepairTaskTimelineGenerator extends TimeLineGeneratorBase<RepairTask>{
 
     consume(tasks: RepairTask[], startOfRange: Date, endOfRange: Date): ITimelineData{
-        const items = new DataSet<DataItem>();
-        const groups = new DataSet<DataGroup>();
+      const items = new DataSet<ITimelineItem>();
+      const groups = new DataSet<DataGroup>();
 
-        tasks.forEach(task => {
+        tasks.forEach((task, index) => {
             items.add({
-                id: task.raw.TaskId,
+                id: `${index}---${task.raw.TaskId}`,
                 content: task.raw.TaskId,
                 start: task.startTime ,
                 end: task.inProgress ? new Date() : new Date(task.raw.History.CompletedUtcTimestamp),
                 type: 'range',
+                kind: "RepairJob",
                 group: 'job',
                 subgroup: 'stack',
                 className: task.inProgress ? 'blue' : task.raw.ResultStatus === 'Succeeded' ? 'green' : 'red',
@@ -800,7 +1012,6 @@ export class RepairTaskTimelineGenerator extends TimeLineGeneratorBase<RepairTas
                                                             new Date(task.raw.History.CompletedUtcTimestamp).toLocaleString()),
             });
         });
-
         groups.add({
             id: 'job',
             content: 'Job History',
@@ -869,8 +1080,8 @@ function parseAndAddGroupIdByString(event: FabricEvent, groupIds: any, query: st
 }
 
 export function parseEventsGenerically(events: FabricEvent[], textSearch: string = ''): ITimelineData {
-    const items = new DataSet<DataItem>();
-    const groupIds: any[] = [];
+  const items = new DataSet<ITimelineItem>();
+  const groupIds: any[] = [];
 
     events.forEach( (event, index) => {
        const groupId = parseAndAddGroupIdByString(event, groupIds,  textSearch);
@@ -896,10 +1107,11 @@ export function parseEventsGenerically(events: FabricEvent[], textSearch: string
             }
         }
 
-       const item: DataItem = {
+       const item: ITimelineItem = {
             content: '',
-            id: index,
+            id: `${index}---${event.eventInstanceId}`,
             start: event.timeStamp,
+            kind: event.kind,
             group: groupId,
             type: 'point',
             title: EventStoreUtils.tooltipFormat(event.raw, event.timeStamp),

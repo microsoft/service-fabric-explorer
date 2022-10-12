@@ -16,6 +16,40 @@
   <app-dashboard-tile [data]="replicasDashboard" *ngIf="replicasDashboard"></app-dashboard-tile>
 </div>
 
+<app-collapse-container *ngIf="eventStoreHandler" class="essen-pane detail-pane">
+  <h5 collapse-header>Recent Application and Container Exit Event Reasons</h5>
+  <div collapse-body>
+    <div style="margin-left: 30px">
+      <a routerLink="./events">
+        <i class="mif-link"></i>
+        For additional events visit the Events tab
+      </a>
+    </div>
+    <div style="margin-left: 30px">
+      <a href="https://docs.microsoft.com/azure/service-fabric/service-fabric-diagnostics-code-package-errors"
+        target="_blank">
+        <i class="mif-info"></i>
+        learn more about exit events
+      </a>
+    </div>
+
+    <div *ngIf="eventStoreHandler.eventsList.isRefreshing">
+      Loading information about any recent Application Process Exit or Container Exit Events
+    </div>
+    <div *ngIf="eventStoreHandler.eventsList.isInitialized && highValueEvents">
+      <div style="min-height: 200px" *ngIf="highValueEvents.length > 0">
+        <app-rca-summary [events]="highValueEvents"></app-rca-summary>
+      </div>
+      <div class="text-center" *ngIf="highValueEvents.length === 0">
+        No Recent events
+      </div>
+    </div>
+    <div *ngIf="failedToLoadEvents" class="text-center">
+      Failed to load events
+    </div>
+  </div>
+</app-collapse-container>
+
 <div data-cy="upgradeDetails" *ngIf="upgradeProgress && upgradeProgress.isInitialized" class="detail-pane essen-pane">
     <app-collapse-container [sectionName]="app.isUpgrading ? 'Upgrade In Progress' : 'Latest Upgrade State'">
         <div collapse-header>
@@ -24,29 +58,6 @@
         </div>
         <div collapse-body>
           <app-upgrade-info [upgradeProgress]="upgradeProgress"></app-upgrade-info>
-            <div class="detail-pane essen-pane" *ngIf="upgradeProgress.raw.FailureReason !== 'None'">
-                <h4>Upgrade Failure</h4>
-                <div class="table-responsive">
-                    <table class="table detail-table">
-                        <tbody>
-                            <tr>
-                                <th>Failure Reason</th>
-                                <td><img class="badge-icon" src="images/badge-error.svg"><span> {{upgradeProgress.raw.FailureReason}}</span></td>
-                            </tr>
-                            <tr>
-                                <th>Failure Timestamp UTC</th>
-                                <td>{{upgradeProgress.failureTimestampUtc}}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <h5>Upgrade Domain Progress At Failure</h5>
-                <app-detail-view-part [data]="upgradeProgress.raw.UpgradeDomainProgressAtFailure"></app-detail-view-part>
-            </div>
-            <div class="detail-pane essen-pane" *ngIf="upgradeProgress.unhealthyEvaluations.length > 0">
-                <h4>Unhealthy Evaluations (Upgrade)</h4>
-                <app-detail-list [list]="upgradeProgress.unhealthyEvaluations" [listSettings]="upgradeProgressUnhealthyEvaluationsListSettings"></app-detail-list>
-            </div>
         </div>
     </app-collapse-container>
 </div>
@@ -83,7 +94,7 @@
 </div>
 
 <div class="detail-pane essen-pane" *ngIf="app && app.serviceTypes">
-    <app-collapse-container section="Service Types">
+    <app-collapse-container sectionName="Service Types">
         <div collapse-header>
             <h4>Service Types</h4>
         </div>

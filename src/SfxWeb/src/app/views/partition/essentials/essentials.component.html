@@ -1,6 +1,6 @@
 <div *ngIf="partition" >
   <div class="tile-container">
-    <app-essential-health-tile [healthState]="partition?.healthState" *ngIf="partition && partition.isInitialized" 
+    <app-essential-health-tile [healthState]="partition?.healthState" *ngIf="partition && partition.isInitialized"
     class="long" [listItems]="essentialItems">
     <ng-template appEssentialTemplate id="status">
       <app-status-resolver [status]="partition.raw.PartitionStatus"></app-status-resolver>
@@ -16,10 +16,23 @@
   <div class="detail-pane essen-pane" data-cy="health">
     <app-collapse-container sectionName="Unhealthy Evaluations">
       <div collapse-header>
-        <h4>health Evaluations</h4>
+        <h4>Health Evaluations</h4>
       </div>
       <div collapse-body>
         <app-health-viewer  [healthyEvaluations]="partition.health.healthEvents" [unhealthyEvaluations]="partition.health.unhealthyEvaluations" ></app-health-viewer>
+      </div>
+    </app-collapse-container>
+  </div>
+
+  <div *ngIf="partition.isStatefulService">
+    <app-collapse-container sectionName="Replicator Status" data-cy="replicator">
+      <div collapse-header>
+        <h4>Replicator Status</h4>
+      </div>
+      <div collapse-body>
+        <div>
+          <app-replica-status-container [replicas]="partition.replicas.collection"></app-replica-status-container>
+        </div>
       </div>
     </app-collapse-container>
   </div>
@@ -32,19 +45,6 @@
       <div collapse-body>
         <app-detail-list [list]="partition.replicas.collection" [listSettings]="listSettings"
           *ngIf="partition.replicas.isInitialized"></app-detail-list>
-      </div>
-    </app-collapse-container>
-  </div>
-
-  <div class="detail-pane" *ngIf="partition.isStatefulService">
-    <app-collapse-container [(collapsed)]="hideReplicator" sectionName="Replicator Status">
-      <div collapse-header>
-        <h4>Replicator Status</h4>
-      </div>
-      <div collapse-body>
-        <div *ngIf="!hideReplicator">
-          <app-replica-status-container [replicas]="partition.replicas.collection"></app-replica-status-container>
-        </div>
       </div>
     </app-collapse-container>
   </div>

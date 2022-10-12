@@ -1,9 +1,10 @@
 import { DataModelBase, IDecorators } from './Base';
-import { IRawHealthEvaluation, IRawLoadMetricInformation, IRawUpgradeDescription, IRawMonitoringPolicy, IRawUpgradeDomain, IRawClusterUpgradeDescription } from '../RawDataTypes';
+import { IRawHealthEvaluation, IRawLoadMetricInformation, IRawUpgradeDescription, IRawMonitoringPolicy, IRawUpgradeDomain, IRawClusterUpgradeDescription, IUpgradeUnitInfo } from '../RawDataTypes';
 import { DataService } from 'src/app/services/data.service';
 import { UpgradeDomainStateRegexes, UpgradeDomainStateNames, BadgeConstants } from 'src/app/Common/Constants';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { checkForJson } from 'src/app/Utils/healthUtils';
+import { Utils } from 'src/app/Utils/Utils';
 
 // -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -55,6 +56,9 @@ export class HealthEvaluation extends DataModelBase<IRawHealthEvaluation> {
 }
 
 export class LoadMetricInformation extends DataModelBase<IRawLoadMetricInformation> {
+
+  public color = Utils.randomColor();
+
     public decorators: IDecorators = {
         showList: [
             'Name',
@@ -155,9 +159,13 @@ export class MonitoringPolicy extends DataModelBase<IRawMonitoringPolicy> {
     }
 }
 
-export class UpgradeDomain extends DataModelBase<IRawUpgradeDomain> {
-    public constructor(data: DataService, raw: IRawUpgradeDomain) {
+export class UpgradeDomain extends DataModelBase<IRawUpgradeDomain | IUpgradeUnitInfo > {
+    public prefix = 'UD : ';
+    public constructor(data: DataService, raw: IRawUpgradeDomain | IUpgradeUnitInfo, nodeByNode: boolean = false) {
         super(data, raw);
+        if (nodeByNode) {
+          this.prefix = '';
+        }
     }
 
     public get stateName(): string {
@@ -165,6 +173,8 @@ export class UpgradeDomain extends DataModelBase<IRawUpgradeDomain> {
             return UpgradeDomainStateNames.Completed;
         } else if (UpgradeDomainStateRegexes.InProgress.test(this.raw.State)) {
             return UpgradeDomainStateNames.InProgress;
+        } else if (UpgradeDomainStateRegexes.Failed.test(this.raw.State)) {
+          return UpgradeDomainStateNames.Failed;
         }
 
         return UpgradeDomainStateNames.Pending;
@@ -175,6 +185,8 @@ export class UpgradeDomain extends DataModelBase<IRawUpgradeDomain> {
             return BadgeConstants.BadgeOK;
         } else if (UpgradeDomainStateRegexes.InProgress.test(this.raw.State)) {
             return BadgeConstants.BadgeWarning;
+        }else if (UpgradeDomainStateRegexes.Failed.test(this.raw.State)) {
+          return BadgeConstants.BadgeError;
         }
         return BadgeConstants.BadgeUnknown;
     }

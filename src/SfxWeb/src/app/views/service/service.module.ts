@@ -17,18 +17,17 @@ import { HealthStateModule } from 'src/app/modules/health-state/health-state.mod
 
 
 @NgModule({
-  declarations: [EssentialsComponent, BaseComponent, DetailsComponent, ManifestComponent, EventsComponent, ScaleServiceComponent, BackupComponent],
-  imports: [
-    CommonModule,
-    ServiceRoutingModule,
-    SharedModule,
-    DetailListTemplatesModule,
-    EventStoreModule,
-    FormsModule,
-    ReactiveFormsModule,
-    ChartsModule,
-    HealthStateModule
-  ],
-  entryComponents: [ScaleServiceComponent]
+    declarations: [EssentialsComponent, BaseComponent, DetailsComponent, ManifestComponent, EventsComponent, ScaleServiceComponent, BackupComponent],
+    imports: [
+        CommonModule,
+        ServiceRoutingModule,
+        SharedModule,
+        DetailListTemplatesModule,
+        EventStoreModule,
+        FormsModule,
+        ReactiveFormsModule,
+        ChartsModule,
+        HealthStateModule,
+    ]
 })
 export class ServiceModule { }

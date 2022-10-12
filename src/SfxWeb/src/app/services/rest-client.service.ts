@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { MessageService, MessageSeverity } from './message.service';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { HealthStateFilterFlags, IClusterHealthChunkQueryDescription } from '../Models/HealthChunkRawDataTypes';
 import { IResponseMessageHandler, ResponseMessageHandlers } from '../Common/ResponseMessageHandlers';
 import { Observable, of, throwError } from 'rxjs';
@@ -12,14 +12,13 @@ import { IRawCollection, IRawClusterManifest, IRawClusterHealth, IRawClusterUpgr
          IRawApplication, IRawService, IRawCreateServiceDescription, IRawCreateServiceFromTemplateDescription, IRawUpdateServiceDescription, IRawServiceDescription,
          IRawServiceHealth, IRawApplicationUpgradeProgress, IRawCreateComposeDeploymentDescription, IRawPartition, IRawPartitionHealth, IRawPartitionLoadInformation,
          IRawReplicaOnPartition, IRawReplicaHealth, IRawImageStoreContent, IRawStoreFolderSize, IRawClusterVersion, IRawList, IRawAadMetadata, IRawStorage, IRawRepairTask,
-         IRawServiceNameInfo, IRawApplicationNameInfo, IRawBackupEntity } from '../Models/RawDataTypes';
+         IRawServiceNameInfo, IRawApplicationNameInfo, IRawBackupEntity, IRawInfrastructureJob, IRawInfraRepairTask, IRawRoleInstanceImpact } from '../Models/RawDataTypes';
 import { mergeMap, map, catchError, finalize, skip } from 'rxjs/operators';
 import { Application } from '../Models/DataModels/Application';
 import { Service } from '../Models/DataModels/Service';
 import { Partition } from '../Models/DataModels/Partition';
 import { ClusterEvent, NodeEvent, ApplicationEvent, ServiceEvent, PartitionEvent, ReplicaEvent,
          FabricEvent, EventsResponseAdapter, FabricEventBase } from '../Models/eventstore/Events';
-import { StandaloneIntegration } from '../Common/StandaloneIntegration';
 import { AadMetadata } from '../Models/DataModels/Aad';
 import { environment } from 'src/environments/environment';
 import { IRequest, NetworkDebugger } from '../Models/DataModels/networkDebugger';
@@ -39,6 +38,7 @@ export class RestClientService {
   private static apiVersion65 = '6.5';
   private static apiVersion72 = '7.2';
   private static apiVersion80 = '8.0';
+  private static apiVersion82 = '8.2';
 
   private cacheAllowanceToken: number = Date.now().valueOf();
 
@@ -66,7 +66,7 @@ export class RestClientService {
   }
 
   public getClusterUpgradeProgress(messageHandler?: IResponseMessageHandler): Observable<IRawClusterUpgradeProgress> {
-      return this.get(this.getApiUrl('$/GetUpgradeProgress'), 'Get cluster upgrade progress', messageHandler);
+      return this.get(this.getApiUrl('$/GetUpgradeProgress', RestClientService.apiVersion82), 'Get cluster upgrade progress', messageHandler);
   }
 
   public getClusterLoadInformation(messageHandler?: IResponseMessageHandler): Observable<IRawClusterLoadInformation> {
@@ -258,7 +258,7 @@ export class RestClientService {
   }
 
 
-// tslint:disable-next-line:max-line-length
+// eslint-disable-next-line max-len
   public getDeployedCodePackage(nodeName: string, applicationId: string, servicePackageName: string, codePackageName: string, messageHandler?: IResponseMessageHandler): Observable<IRawDeployedCodePackage[]> {
       const url = 'Nodes/' + encodeURIComponent(nodeName)
           + '/$/GetApplications/' + encodeURIComponent(applicationId)
@@ -271,7 +271,7 @@ export class RestClientService {
       return this.get(formedUrl, 'Get deployed code package', messageHandler);
   }
 
-// tslint:disable-next-line:max-line-length
+// eslint-disable-next-line max-len
   public getDeployedContainerLogs(nodeName: string, applicationId: string, servicePackageName: string, codePackageName: string, servicePackageActivationId: string, tail: string, messageHandler?: IResponseMessageHandler): Observable<IRawContainerLogs> {
       const url = 'Nodes/' + encodeURIComponent(nodeName)
           + '/$/GetApplications/' + encodeURIComponent(applicationId)
@@ -287,7 +287,7 @@ export class RestClientService {
       return this.get(formedUrl, 'Get deployed container logs', messageHandler);
   }
 
-    // tslint:disable-next-line:max-line-length
+    // eslint-disable-next-line max-len
   public restartCodePackage(nodeName: string, applicationId: string, serviceManifestName: string, codePackageName: string, codePackageInstanceId: string, servicePackageActivationId?: string, messageHandler?: IResponseMessageHandler): Observable<{}> {
       const url = 'Nodes/' + encodeURIComponent(nodeName)
           + '/$/GetApplications/' + encodeURIComponent(applicationId)
@@ -370,8 +370,13 @@ export class RestClientService {
       return this.post(this.getApiUrl(url), 'Node state removal', null, messageHandler);
   }
 
-  public getApplications(messageHandler?: IResponseMessageHandler): Observable<IRawApplication[]> {
-      return this.getFullCollection<IRawApplication>('Applications/', 'Get applications', null, messageHandler);
+  public getApplications(excludeParams: boolean = false, messageHandler?: IResponseMessageHandler): Observable<IRawApplication[]> {
+    let url = 'Applications/';
+    if (excludeParams) {
+      url =  url + `?ExcludeApplicationParameters=true`;
+    }
+
+    return this.getFullCollection<IRawApplication>(url, 'Get applications', null, messageHandler);
   }
 
   public getServices(applicationId: string, messageHandler?: IResponseMessageHandler): Observable<IRawService[]> {
@@ -537,8 +542,13 @@ export class RestClientService {
       return this.post(this.getApiUrl(url), 'Application type unprovision', { ApplicationTypeVersion: applicationTypeVersion }, messageHandler);
   }
 
-  public getApplication(applicationId: string, messageHandler?: IResponseMessageHandler): Observable<IRawApplication> {
-      const url = 'Applications/' + encodeURIComponent(applicationId) + '/';
+  public getApplication(applicationId: string, excludeParams: boolean = false,  messageHandler?: IResponseMessageHandler): Observable<IRawApplication> {
+      let url = 'Applications/' + encodeURIComponent(applicationId) + '/';
+
+      if (excludeParams) {
+        url =  url + `?ExcludeApplicationParameters=true`;
+      }
+
       return this.get(this.getApiUrl(url), 'Get application', messageHandler);
   }
 
@@ -696,7 +706,7 @@ export class RestClientService {
   }
 
   public getClusterEvents(startTime: Date, endTime: Date, messageHandler?: IResponseMessageHandler): Observable<ClusterEvent[]> {
-      return this.getEvents(ClusterEvent, 'EventsStore/Cluster/Events', startTime, endTime, messageHandler, RestClientService.apiVersion80);
+      return this.getEvents(ClusterEvent, 'EventsStore/Cluster/Events', startTime, endTime, [], messageHandler, RestClientService.apiVersion80);
   }
 
   public getNodeEvents(startTime: Date, endTime: Date, nodeName?: string, messageHandler?: IResponseMessageHandler): Observable<NodeEvent[]> {
@@ -704,15 +714,15 @@ export class RestClientService {
           + 'Nodes/'
           + (nodeName ? (encodeURIComponent(nodeName) + '/$/') : '')
           + 'Events';
-      return this.getEvents(NodeEvent, url, startTime, endTime, messageHandler);
+      return this.getEvents(NodeEvent, url, startTime, endTime, [], messageHandler);
   }
 
-  public getApplicationEvents(startTime: Date, endTime: Date, applicationId?: string, messageHandler?: IResponseMessageHandler): Observable<ApplicationEvent[]> {
+  public getApplicationEvents(startTime: Date, endTime: Date, eventsFilter: string[], applicationId?: string, messageHandler?: IResponseMessageHandler): Observable<ApplicationEvent[]> {
       const url = 'EventsStore/'
           + 'Applications/'
           + (applicationId ? (encodeURIComponent(applicationId) + '/$/') : '')
           + 'Events';
-      return this.getEvents(ApplicationEvent, url, startTime, endTime, messageHandler);
+      return this.getEvents(ApplicationEvent, url, startTime, endTime, eventsFilter, messageHandler);
   }
 
   public getServiceEvents(startTime: Date, endTime: Date, serviceId?: string, messageHandler?: IResponseMessageHandler): Observable<ServiceEvent[]> {
@@ -720,7 +730,7 @@ export class RestClientService {
           + 'Services/'
           + (serviceId ? (encodeURIComponent(serviceId) + '/$/') : '')
           + 'Events';
-      return this.getEvents(ServiceEvent, url, startTime, endTime, messageHandler);
+      return this.getEvents(ServiceEvent, url, startTime, endTime, [], messageHandler);
   }
 
   public getPartitionEvents(startTime: Date, endTime: Date, partitionId?: string, messageHandler?: IResponseMessageHandler): Observable<PartitionEvent[]> {
@@ -728,7 +738,7 @@ export class RestClientService {
           + 'Partitions/'
           + (partitionId ? (encodeURIComponent(partitionId) + '/$/') : '')
           + 'Events';
-      return this.getEvents(PartitionEvent, url, startTime, endTime, messageHandler);
+      return this.getEvents(PartitionEvent, url, startTime, endTime, [], messageHandler);
   }
 
   public getReplicaEvents(startTime: Date, endTime: Date, partitionId: string, replicaId?: string, messageHandler?: IResponseMessageHandler): Observable<ReplicaEvent[]> {
@@ -737,7 +747,7 @@ export class RestClientService {
           + encodeURIComponent(partitionId) + '/$/' + 'Replicas/'
           + (replicaId ? (encodeURIComponent(replicaId) + '/$/') : '')
           + 'Events';
-      return this.getEvents(ReplicaEvent, url, startTime, endTime, messageHandler);
+      return this.getEvents(ReplicaEvent, url, startTime, endTime, [], messageHandler);
   }
 
   public getCorrelatedEvents(eventInstanceId: string, messageHandler?: IResponseMessageHandler): Observable<FabricEvent[]> {
@@ -745,13 +755,19 @@ export class RestClientService {
           + 'CorrelatedEvents/'
           + encodeURIComponent(eventInstanceId) + '/$/'
           + 'Events';
-      return this.getEvents(FabricEvent, url, null, null, messageHandler);
+      return this.getEvents(FabricEvent, url, null, null, [], messageHandler);
   }
 
   public getRepairTasks(messageHandler?: IResponseMessageHandler): Observable<IRawRepairTask[]> {
         const url = `$/GetRepairTaskList`;
 
         return this.get(this.getApiUrl(url, RestClientService.apiVersion60), 'Get repair tasks', messageHandler);
+    }
+
+    public getInfrastructureJobs(serviceId: string, messageHandler?: IResponseMessageHandler): Observable<IRawInfrastructureJob[]> {
+        const url = `$/InvokeInfrastructureQuery?api-version=6.0&Command=GetJobs&ServiceId=` + serviceId;
+
+        return this.get(this.getApiUrl(url), 'Get Infrastructure  Jobs', messageHandler);
     }
 
   public restartReplica(nodeName: string, partitionId: string, replicaId: string, messageHandler?: IResponseMessageHandler): Observable<{}> {
@@ -766,19 +782,23 @@ export class RestClientService {
       return this.get(this.getApiUrl(url, RestClientService.apiVersion64), 'Get cluster version', messageHandler);
   }
 
-  private getEvents<T extends FabricEventBase>(eventType: new () => T, url: string, startTime?: Date, endTime?: Date, messageHandler?: IResponseMessageHandler, apiVersion?: string): Observable<T[]> {
-      let apiUrl = url;
-      if (startTime && endTime) {
-          apiUrl = apiUrl
-              + '?starttimeutc=' + startTime.toISOString().substr(0, 19) + 'Z'
-              + '&endtimeutc=' + endTime.toISOString().substr(0, 19) + 'Z';
+  private getEvents<T extends FabricEventBase>(eventType: new () => T, url: string, startTime: Date, endTime: Date, eventTypesFilter: string[], messageHandler?: IResponseMessageHandler, apiVersion?: string): Observable<T[]> {
+      const paramObject = {
+        'starttimeutc': startTime.toISOString().substring(0, 19) + 'Z',
+        'endtimeutc': endTime.toISOString().substr(0, 19) + 'Z',
+        'eventTypesFilter': eventTypesFilter.join()
       }
+
+      const params = new HttpParams({
+        fromObject: paramObject
+      })
 
       if (!apiVersion) {
         apiVersion =  RestClientService.apiVersion72;
       }
 
-      const fullUrl = this.getApiUrl(apiUrl, apiVersion, null, true);
+
+      const fullUrl = this.getApiUrl(url + '?' + params.toString(), apiVersion, null, true);
       return this.get<IRawList<{}>>(fullUrl, null, messageHandler).pipe(map(response => {
           return new EventsResponseAdapter(eventType).getEvents(response);
         }));
@@ -794,15 +814,14 @@ export class RestClientService {
           skipCacheToken = true;
       }
       // token to allow for invalidation of browser api call cache
-      return StandaloneIntegration.clusterUrl +
-          `/${path}${path.indexOf('?') === -1 ? '?' : '&'}api-version=${apiVersion ? apiVersion : RestClientService.defaultApiVersion}${skipCacheToken === true ? '' : `&_cacheToken=${this.cacheAllowanceToken}`}${continuationToken ? `&ContinuationToken=${continuationToken}` : ''}`;
+      return `/${path}${path.indexOf('?') === -1 ? '?' : '&'}api-version=${apiVersion ? apiVersion : RestClientService.defaultApiVersion}${skipCacheToken === true ? '' : `&_cacheToken=${this.cacheAllowanceToken}`}${continuationToken ? `&ContinuationToken=${continuationToken}` : ''}`;
   }
 
-  // tslint:disable-next-line:max-line-length
+  // eslint-disable-next-line max-len
   private getApiUrl2(path: string, apiVersion = RestClientService.defaultApiVersion, continuationToken?: string, skipCacheToken?: boolean, startDate?: Date, endDate?: Date, maxResults?: number, latest?: boolean): string {
       // token to allow for invalidation of browser api call cache
       const appUrl =  this.getApiUrl(path, apiVersion, continuationToken, false);
-          // tslint:disable-next-line:max-line-length
+          // eslint-disable-next-line max-len
       return appUrl + `${maxResults === undefined || maxResults === null ? '' : `&MaxResults=${maxResults}`}${(startDate === undefined || startDate === null || endDate === undefined || endDate === null) ? '' : `&StartDateTimeFilter=${startDate.toISOString().substr(0, 19)}Z&EndDateTimeFilter=${endDate.toISOString().substr(0, 19)}Z`}${latest === true ? `&Latest=True` : ''}`;
   }
 
@@ -822,7 +841,11 @@ export class RestClientService {
 
   }
 
-    // tslint:disable-next-line:max-line-length
+  private getBaseUrl() {
+    return environment.baseUrl || "";
+  }
+
+    // eslint-disable-next-line max-len
   private getFullCollection2<T>(url: string, apiDesc: string, apiVersion?: string, messageHandler?: IResponseMessageHandler, continuationToken?: string, startDate?: Date, endDate?: Date, maxResults?: number, latest?: boolean): Observable<T[]> {
       const appUrl = this.getApiUrl2(url, apiVersion, continuationToken, false, startDate, endDate, maxResults, latest);
       return this.get<IRawCollection<T>>(appUrl, apiDesc, messageHandler).pipe(mergeMap(response => {
@@ -837,7 +860,7 @@ export class RestClientService {
   }
 
   private get<T>(url: string, apiDesc: string, messageHandler?: IResponseMessageHandler): Observable<T> {
-      const result = this.httpClient.get<T>(environment.baseUrl + url);
+      const result = this.httpClient.get<T>(this.getBaseUrl() + url);
       if (!messageHandler) {
           messageHandler = ResponseMessageHandlers.getResponseMessageHandler;
       }
@@ -845,7 +868,7 @@ export class RestClientService {
   }
 
   private post<T>(url: string, apiDesc: string, data?: any, messageHandler?: IResponseMessageHandler): Observable<T> {
-      const result = this.httpClient.post<T>(environment.baseUrl  + url, data);
+      const result = this.httpClient.post<T>(this.getBaseUrl()  + url, data);
       if (!messageHandler) {
           messageHandler = ResponseMessageHandlers.postResponseMessageHandler;
       }
@@ -853,7 +876,7 @@ export class RestClientService {
   }
 
   private put<T>(url: string, apiDesc: string, data?: any, messageHandler?: IResponseMessageHandler): Observable<T> {
-      const result = this.httpClient.put<T>(environment.baseUrl  + url, data);
+      const result = this.httpClient.put<T>(this.getBaseUrl()  + url, data);
       if (!messageHandler) {
           messageHandler = ResponseMessageHandlers.putResponseMessageHandler;
       }
@@ -861,7 +884,7 @@ export class RestClientService {
   }
 
   private delete<T>(url: string, apiDesc: string, messageHandler?: IResponseMessageHandler): Observable<T> {
-      const result = this.httpClient.delete<T>(environment.baseUrl  + url);
+      const result = this.httpClient.delete<T>(this.getBaseUrl()  + url);
       if (!messageHandler) {
           messageHandler = ResponseMessageHandlers.deleteResponseMessageHandler;
       }

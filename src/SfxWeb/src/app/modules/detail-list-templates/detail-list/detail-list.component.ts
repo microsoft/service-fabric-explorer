@@ -35,6 +35,7 @@ export class DetailListComponent implements OnInit, OnDestroy {
   @Input() searchText = 'Search list';
   @Input() isLoading = false;
   @Input() successfulLoad = true;
+  @Input() showTopOptions = true;
   @Output() sorted = new EventEmitter<any[]>();
   @Output() sortOrdering = new EventEmitter<ISortOrdering>();
 
@@ -78,6 +79,7 @@ export class DetailListComponent implements OnInit, OnDestroy {
         direction: this.listSettings.sortReverse,
         displayPath: this.displayPath
       });
+
    });
   }
 
@@ -147,7 +149,7 @@ export class DetailListComponent implements OnInit, OnDestroy {
             const keywords = this.listSettings.search.trim().toLowerCase().split(/\s+/);
 
             keywords.forEach(keyword => {
-                pluckedList = pluckedList.filter(item => filterByProperty(item, keyword) ); // this.$filter("filter")(pluckedList, keyword);
+                pluckedList = pluckedList.filter(item => filterByProperty(item, keyword) );
             });
         }
 

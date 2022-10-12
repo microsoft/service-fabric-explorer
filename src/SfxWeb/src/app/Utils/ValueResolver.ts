@@ -55,4 +55,8 @@ export class ValueResolver {
 
         return options.find(opt => opt.text.toLowerCase() === value.toLowerCase() || opt.badgeId.toLowerCase() === value.toLowerCase());
     }
+
+    public static isHealthBadgeForDetailView(obj: any) {
+      return (typeof obj === "object" && "Badge Class" in obj && "Text" in obj);
+    }
 }

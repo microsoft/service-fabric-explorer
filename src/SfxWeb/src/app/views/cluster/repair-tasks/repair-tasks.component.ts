@@ -11,6 +11,8 @@ import { RepairTaskCollection } from 'src/app/Models/DataModels/collections/Repa
 import { map } from 'rxjs/operators';
 import { Counter, ICounterMostCommonEntry } from 'src/app/Utils/Utils';
 import { ISortOrdering } from 'src/app/modules/detail-list-templates/detail-list/detail-list.component';
+import { TelemetryService } from 'src/app/services/telemetry.service';
+import { TelemetryEventNames } from 'src/app/Common/Constants';
 
 interface ITileListItem {
   primaryText: string;
@@ -44,7 +46,7 @@ export class RepairTasksComponent extends BaseControllerDirective {
   // will be initially set by detail list component.
   ordering: ISortOrdering;
 
-  constructor(private data: DataService, injector: Injector, private settings: SettingsService) {
+  constructor(private data: DataService, injector: Injector, private settings: SettingsService, private telemService: TelemetryService) {
     super(injector);
   }
 
@@ -95,5 +97,13 @@ export class RepairTasksComponent extends BaseControllerDirective {
         });
       }
     }));
+  }
+
+  changeChart() {
+    this.telemService.trackActionEvent(
+      TelemetryEventNames.RepairChart,
+      null,
+      TelemetryEventNames.RepairChart
+    );
   }
 }

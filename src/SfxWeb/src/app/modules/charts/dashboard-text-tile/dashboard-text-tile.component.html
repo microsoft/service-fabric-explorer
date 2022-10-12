@@ -5,7 +5,11 @@
             <div class="dashboard-tile">
                 <div class="dashboard-tile-inner">
                     <div class="dashboard-tile-leftbar" [ngClass]="barClass"></div>
-                    <div class="dashboard-tile-title">{{title}}</div>
+                    <div class="dashboard-tile-title">{{title}}
+                      <a target="_blank" style="float: right;" [href]="helpTextLink" *ngIf="helpTextLink" [attr.aria-label]="'learn about' + title">
+                        <span class="mif-info link"></span>
+                      </a>
+                    </div>
                     <div class="dashboard-tile-number" [style.margin]="middleMargin">{{count}}</div>
                     <ng-content></ng-content>
 

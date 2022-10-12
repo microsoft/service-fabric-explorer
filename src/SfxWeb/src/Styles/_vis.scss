@@ -1,0 +1,214 @@
+//needs to be placed in a globel css file due to how css in components work and vis timeline uses
+// global css names
+.vis-timeline {
+  font-size: var(--font-size-default);
+  background-color: var(--primary-background-color);
+}
+
+.vis-item {
+  background-color: var(--light-background-color);
+  font-size: var(--font-size-small);
+  color: var(--font-primary-color);
+}
+.vis-item,
+.vis-item.vis-line {
+  color: var(--font-primary-color);
+  font-family: monospace !important;
+}
+
+.vis-cluster, .vis-point {
+  .vis-item-content {
+    padding: 0px !important;
+    border: 0px solid !important;
+    border-radius: 0px !important;
+    >:first-child {
+      padding: 5px !important;
+    }
+  }
+}
+
+.vis-item.vis-dot {
+  border-width: 10px;
+  border-radius: 10px;
+}
+.vis-item.vis-range {
+  box-sizing: border-box;
+  border-radius: 5px;
+  border-color: transparent !important;
+}
+.vis-item.vis-selected {
+  border-color: green;
+  background-color: lightgreen !important;
+}
+.vis-time-axis .vis-text {
+  color: var(--font-primary-color) !important;
+  padding-top: 10px;
+  padding-left: 10px;
+}
+.vis-time-axis .vis-text.vis-major {
+  font-weight: bold;
+}
+.vis-time-axis .vis-grid.vis-minor {
+  border-width: 2px;
+  border-color: var(--font-primary-color);
+}
+.vis-time-axis .vis-grid.vis-major {
+  border-width: 2px;
+  border-color: var(--font-primary-color);
+}
+
+.vis-labelset .vis-label {
+  font-size: 11pt;
+  border: 0px solid #191919;
+  border-bottom: 1px solid var(--font-primary-color);
+  color: var(--font-primary-color) !important;
+}
+
+.vis-panel.vis-left {
+  background-color: var(--accent-darkblue);
+  border: 1px solid var(--font-primary-color);
+  border-radius: 5px;
+  box-shadow: var(--primary-box-shadow);
+}
+.vis-ltr .vis-label.vis-nested-group .vis-inner {
+  padding-left: 0px !important;
+  white-space: pre;
+}
+
+.vis-group-level-unknown-but-gte1 {
+  background-color: var(--accent-darkblue) !important;
+  border: 1px solid white;
+}
+
+.vis-item.white {
+  background-color: #ffffff;
+  color: black;
+}
+
+.vis-item.red {
+  background-color: var(--badge-error);
+  border-color: darkred;
+}
+
+.vis-item.green {
+  background-color: var(--badge-ok);
+  color: black;
+}
+
+.vis-item.orange {
+  background-color: var(--badge-warning) !important;
+  color: black;
+}
+
+.vis-item.darkorange {
+  background-color: orangered !important;
+  color: black;
+}
+
+.vis-item.yellow {
+    background-color: yellow !important;
+    color: black;
+}
+
+.vis-item.blue {
+  background-color: var(--accent-darkblue);
+}
+
+.vis-item.red-point {
+  border-color: var(--badge-error);
+  border-width: 5px;
+}
+
+.vis-item.orange-point {
+  border-color: var(--badge-warning);
+  border-width: 5px;
+}
+
+.vis-item.white-point {
+  border-color: var(--font-primary-color);
+  border-width: 5px;
+}
+
+.vis-item.green-point {
+  border-color: var(--badge-ok);
+  border-width: 5px;
+}
+
+
+.inner-tooltip{
+  font-size: var(--font-size-small) !important;;
+  color: var(--font-primary-color) !important;
+  padding: 5px !important;;
+  border: 1px solid var(--accent-darkblue) !important;;
+  background-color: var(--primary-background-color) !important;;
+  border-radius: var(--primary-border-radius) !important;;
+  line-height: 1;
+
+  table {
+    word-break: break-all;
+  }
+
+  .margin-bottom {
+    padding-bottom: 5px;
+  }
+
+  .nested-row {
+    display: flex;
+    white-space: pre-wrap;
+
+    .spacer-wrapper {
+      margin-right: 4px;
+    }
+
+    .white-space {
+      white-space: pre-wrap;
+    }
+  }
+
+}
+
+.vis-tooltip {
+  border: 0px solid !important;
+  white-space: nowrap;
+  background-color: var(--primary-background-color) !important;
+  border-radius: var(--primary-border-radius) !important;
+  box-shadow: var(--heavy-box-shadow) !important;
+  max-width: 75%;
+}
+
+.vis-timeline {
+  overflow:visible !important;
+  border: 1px solid var(--font-primary-color);
+  border-radius: 5px;
+  margin: auto;
+}
+
+.timeline-button {
+  background-color: #262626;
+  border: 1px solid var(--accent-darkblue);
+  margin-bottom: 10px;
+  margin-top: 10px;
+}
+
+.vis-label{
+  background-color: var(--accent-darkblue);
+  color: #dad7d7 !important;
+}
+
+.vis-panel.vis-center {
+  border: 1px var(--accent-underline);
+  border-radius: 5px;
+}
+
+.vis-panel.vis-bottom {
+  border: 1px var(--accent-underline);
+  border-right: 0px;
+}
+
+.vis-dot.hidden-dot {
+  border-width: 0px !important;
+}
+
+.vis-panel {
+  box-sizing: content-box !important;
+}

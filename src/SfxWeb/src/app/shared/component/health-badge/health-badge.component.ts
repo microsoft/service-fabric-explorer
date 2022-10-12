@@ -10,7 +10,7 @@ import { environment } from 'src/environments/environment';
 export class HealthBadgeComponent{
   public assetBase = environment.assetBase;
 
-  @Input() badgeClass;
+  @Input() badgeClass: string;
   @Input() text: string;
   @Input() showText = true;
   @Input() size = '15px';

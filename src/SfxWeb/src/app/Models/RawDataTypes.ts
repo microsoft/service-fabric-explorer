@@ -166,16 +166,21 @@ export interface IRawClusterUpgradeDescription {
         SortOrder: string;
     }
 
+export interface IRawApplicationHealthPolicy {
+  ConsiderWarningAsError: boolean;
+  MaxPercentUnhealthyDeployedApplications: number;
+}
 export interface IRawUpgradeDescription {
-        Name: string;
-        TargetApplicationTypeVersion: string;
-        Parameters: IRawParameter[];
-        UpgradeKind: string;
-        RollingUpgradeMode: string;
-        UpgradeReplicaSetCheckTimeoutInSeconds: string;
-        ForceRestart: boolean;
-        MonitoringPolicy: IRawMonitoringPolicy;
-    }
+  Name: string;
+  TargetApplicationTypeVersion: string;
+  Parameters: IRawParameter[];
+  UpgradeKind: string;
+  RollingUpgradeMode: string;
+  UpgradeReplicaSetCheckTimeoutInSeconds: string;
+  ForceRestart: boolean;
+  MonitoringPolicy: IRawMonitoringPolicy;
+  ApplicationHealthPolicy: IRawApplicationHealthPolicy
+}
 
 export interface IRawUnhealthyEvaluation {
         HealthEvaluation: IRawHealthEvaluation;
@@ -262,6 +267,9 @@ export interface IRawApplicationUpgradeProgress {
         FailureReason: string;
         UpgradeDomainProgressAtFailure: IRawUpgradeDomainProgress;
         UpgradeStatusDetails: string;
+        UpgradeUnits: IUpgradeUnitInfo[];
+        CurrentUpgradeUnitsProgress: ICurrentUpgradeUnitsProgressInfo;
+        IsNodeByNode: boolean;
     }
 
 export interface IRawClusterHealth extends IRawHealth {
@@ -274,6 +282,15 @@ export interface IRawClusterManifest {
         Manifest: string;
     }
 
+export interface ICurrentUpgradeUnitsProgressInfo{
+  NodeUpgradeProgressList: IRawNodeUpgradeProgress[];
+}
+
+export interface IUpgradeUnitInfo {
+  Name: string;
+  State: string;
+
+}
 export interface IRawClusterUpgradeProgress {
         CodeVersion: string;
         ConfigVersion: string;
@@ -290,6 +307,9 @@ export interface IRawClusterUpgradeProgress {
         FailureTimestampUtc: string;
         FailureReason: string;
         UpgradeDomainProgressAtFailure: IRawUpgradeDomainProgress;
+        UpgradeUnits: IUpgradeUnitInfo[];
+        CurrentUpgradeUnitsProgress: ICurrentUpgradeUnitsProgressInfo;
+        IsNodeByNode: boolean;
     }
 
 export interface IRawClusterLoadInformation {
@@ -816,6 +836,7 @@ export interface IRawNodeUpgradeProgress {
         NodeName: string;
         UpgradePhase: string;
         PendingSafetyChecks: IRawSafetyCheckDescription[];
+        UpgradeDuration: string;
     }
 
 export interface IRawSafetyCheckDescription {
@@ -1054,6 +1075,42 @@ export interface IRawRepairTask {
         ResultDetails?: string;
     }
 
+export interface IRawInfrastructureJob {
+    Id: string;
+    IsActive: string;
+    ImpactAction: string;
+    JobStatus: string;
+    ImpactStep: string;
+    AcknowledgementStatus: string;
+    ActionStatus: string;
+    CurrentUD: string;
+    DeadlineforResponse: string;
+    CurrentlyImpactedRoleInstances: IRawRoleInstanceImpact[];
+    RepairTasks: InfraRepairTask[];
+    RoleInstancesToBeImpacted: string[];
+    IsThrottled: boolean;
+}
+export interface IRawInfraRepairTask {
+    TaskId: string;
+    State: string;
+}
+
+export class InfraRepairTask {
+
+    public constructor(taskId: string , state: string) {
+        this.State = state;
+        this.TaskId = taskId;
+    }
+    TaskId: string;
+    State: string;
+}
+
+export interface IRawRoleInstanceImpact {
+    Name: string;
+    UD: string;
+    ImpactTypes: string[];
+}
+
 
 export interface INodesStatusDetails {
         nodeType: string;
@@ -1061,45 +1118,6 @@ export interface INodesStatusDetails {
         warningCount: number;
         errorCount: number;
         okCount: number;
-    }
-
-export class NodeStatusDetails implements INodesStatusDetails {
-        public static readonly allNodeText = 'All Nodes';
-        public static readonly allSeedNodesText = 'Seed Nodes';
-
-        public nodeType: string;
-        public statusTypeCounts: Record<string, number>;
-        public warningCount = 0;
-        public errorCount = 0;
-        public totalCount = 0;
-        public okCount = 0;
-        public constructor(nodeType: string) {
-            this.nodeType = nodeType;
-
-            // easiest way to initialize all possible values with Enum strings
-            this.statusTypeCounts = {};
-            this.statusTypeCounts[NodeStatusConstants.Up] = 0;
-            this.statusTypeCounts[NodeStatusConstants.Down] = 0;
-            this.statusTypeCounts[NodeStatusConstants.Enabling] = 0;
-            this.statusTypeCounts[NodeStatusConstants.Disabling] = 0;
-            this.statusTypeCounts[NodeStatusConstants.Disabled] = 0;
-            this.statusTypeCounts[NodeStatusConstants.Unknown] = 0;
-            this.statusTypeCounts[NodeStatusConstants.Invalid] = 0;
-        }
-
-        public add(node: Node): void {
-            this.statusTypeCounts[node.raw.NodeStatus]++;
-            this.totalCount++;
-            if (node.healthState.text === HealthStateConstants.Warning) {
-                this.warningCount++;
-            }
-            if (node.healthState.text === HealthStateConstants.Error) {
-                this.errorCount++;
-            }
-            if (node.healthState.text === HealthStateConstants.OK) {
-                this.okCount++;
-            }
-        }
     }
 
 export enum NodeStatus {

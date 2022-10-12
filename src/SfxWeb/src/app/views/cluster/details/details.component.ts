@@ -5,11 +5,10 @@ import { tap, map } from 'rxjs/operators';
 import { forkJoin, Observable } from 'rxjs';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { HealthStateFilterFlags } from 'src/app/Models/HealthChunkRawDataTypes';
-import { INodesStatusDetails } from 'src/app/Models/RawDataTypes';
 import { ListSettings } from 'src/app/Models/ListSettings';
 import { SettingsService } from 'src/app/services/settings.service';
 import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
-import { NodeCollection } from 'src/app/Models/DataModels/collections/NodeCollection';
+import { INodesStatusDetails, NodeCollection } from 'src/app/Models/DataModels/collections/NodeCollection';
 
 
 @Component({
@@ -35,7 +34,7 @@ export class DetailsComponent extends BaseControllerDirective {
   setup(){
     this.clusterUpgradeProgress = this.data.clusterUpgradeProgress;
     this.clusterLoadInformation = this.data.clusterLoadInformation;
-    this.clusterHealth = this.data.getClusterHealth(HealthStateFilterFlags.Default, HealthStateFilterFlags.None, HealthStateFilterFlags.None);
+    this.clusterHealth = this.data.clusterHealth;
     this.nodes = this.data.nodes;
 
     this.nodeStatusListSettings = this.settings.getNewOrExistingNodeStatusListSetting();

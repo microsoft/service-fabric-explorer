@@ -1,0 +1,98 @@
+[
+  {
+    "Scope": {
+      "Kind": "Cluster"
+    },
+    "TaskId": "longrunningapprovaljobid",
+    "Version": "1812",
+    "Description": "",
+    "State": "Preparing",
+    "Flags": 1,
+    "Action": "SFExt-ScheduleEvents-PlatformUpdate",
+    "Target": {
+      "Kind": "Node",
+      "NodeNames": [
+        "node_1"
+      ]
+    },
+    "Executor": "SFExt-ScheduleEvents",
+    "ExecutorData": "",
+    "Impact": {
+      "Kind": "Node",
+      "NodeImpactList": [
+        {
+          "NodeName": "node_1",
+          "ImpactLevel": "Restart"
+        }
+      ]
+    },
+    "ResultStatus": "Pending",
+    "ResultCode": 0,
+    "ResultDetails": "",
+    "History": {
+      "CreatedUtcTimestamp": "2022-03-28T22:28:05.954Z",
+      "ClaimedUtcTimestamp": "2022-03-28T22:28:05.954Z",
+      "PreparingUtcTimestamp": "2022-03-28T22:28:05.954Z",
+      "ApprovedUtcTimestamp": "0001-01-01T00:00:00.000Z",
+      "ExecutingUtcTimestamp": "0001-01-01T00:00:00.000Z",
+      "RestoringUtcTimestamp": "0001-01-01T00:00:00.000Z",
+      "CompletedUtcTimestamp": "0001-01-01T00:00:00.000Z",
+      "PreparingHealthCheckStartUtcTimestamp": "2022-03-28T22:28:06.032Z",
+      "PreparingHealthCheckEndUtcTimestamp": "2022-03-28T22:28:06.079Z",
+      "RestoringHealthCheckStartUtcTimestamp": "0001-01-01T00:00:00.000Z",
+      "RestoringHealthCheckEndUtcTimestamp": "0001-01-01T00:00:00.000Z"
+    },
+    "PreparingHealthCheckState": "Skipped",
+    "RestoringHealthCheckState": "NotStarted",
+    "PerformPreparingHealthCheck": false,
+    "PerformRestoringHealthCheck": false
+  },
+  {
+    "Scope": {
+      "Kind": "Cluster"
+    },
+    "TaskId": "jobOfInterest",
+    "Version": "1812",
+    "Description": "",
+    "State": "Preparing",
+    "Flags": 1,
+    "Action": "SFExt-ScheduleEvents-PlatformUpdate",
+    "Target": {
+      "Kind": "Node",
+      "NodeNames": [
+        "node_1"
+      ]
+    },
+    "Executor": "SFExt-ScheduleEvents",
+    "ExecutorData": "",
+    "Impact": {
+      "Kind": "Node",
+      "NodeImpactList": [
+        {
+          "NodeName": "node_1",
+          "ImpactLevel": "Restart"
+        }
+      ]
+    },
+    "ResultStatus": "Pending",
+    "ResultCode": 0,
+    "ResultDetails": "",
+    "History": {
+      "CreatedUtcTimestamp": "2022-03-28T22:28:05.954Z",
+      "ClaimedUtcTimestamp": "2022-03-28T22:28:05.954Z",
+      "PreparingUtcTimestamp": "2022-03-28T22:28:05.954Z",
+      "ApprovedUtcTimestamp": "0001-01-01T00:00:00.000Z",
+      "ExecutingUtcTimestamp": "0001-01-01T00:00:00.000Z",
+      "RestoringUtcTimestamp": "0001-01-01T00:00:00.000Z",
+      "CompletedUtcTimestamp": "0001-01-01T00:00:00.000Z",
+      "PreparingHealthCheckStartUtcTimestamp": "2022-03-28T22:28:06.032Z",
+      "PreparingHealthCheckEndUtcTimestamp": "0001-01-01T00:00:00.000Z",
+      "RestoringHealthCheckStartUtcTimestamp": "0001-01-01T00:00:00.000Z",
+      "RestoringHealthCheckEndUtcTimestamp": "0001-01-01T00:00:00.000Z"
+    },
+    "PreparingHealthCheckState": "Skipped",
+    "RestoringHealthCheckState": "NotStarted",
+    "PerformPreparingHealthCheck": false,
+    "PerformRestoringHealthCheck": false
+  }
+]

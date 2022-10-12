@@ -31,7 +31,7 @@ export class Utils {
     /**
      * implements lodash groupBy in es6. returns a dictionary of lists
      */
-    public static groupByFunc<T>(list: T[], keyFunction: (T) => string): Record<string, T[]> {
+    public static groupByFunc<T>(list: T[], keyFunction: (item: T) => string): Record<string, T[]> {
         return list.reduce( (previous, current) => { const key = keyFunction(current);
                                                      if (key in previous){
                                                         previous[key].push(current);
@@ -74,6 +74,9 @@ export class Utils {
         return !isNaN(parseFloat(value)) && isFinite(value);
     }
 
+    public static isDefined(value: any): boolean {
+      return value !== null && value !== undefined;
+    }
 
     /**
      * Extract resolved property from nested object.
@@ -96,6 +99,17 @@ export class Utils {
         }
         return value;
     }
+
+    public static result2(item: any, propertyPath: string) {
+      let value = item;
+      if (propertyPath !== null)
+      {
+          propertyPath.split('.').forEach(path => {
+            value = value[path];
+          });
+      }
+      return value;
+  }
 
     /**
      * Check if a giving object represents a Badge object
@@ -182,6 +196,18 @@ export class Utils {
         onAddition(data);
     }
 
+
+    private static randomInt(min: number, max: number) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    public static randomColor() {
+        const h = this.randomInt(0, 360);
+        const s = this.randomInt(42, 98);
+        const l = this.randomInt(40, 90);
+        return `hsl(${h},${s}%,${l}%)`;
+    }
+
 }
 
 export interface ICounterMostCommonEntry {
@@ -191,9 +217,6 @@ export interface ICounterMostCommonEntry {
 
 export class Counter {
     private counts = {};
-    constructor() {
-
-    }
 
     public add(key: string | number, incrementalValue: number = 1): void {
         if (this.counts[key] === undefined) {
@@ -218,6 +241,15 @@ export class Counter {
 
     private sortFunction(a: ICounterMostCommonEntry, b: ICounterMostCommonEntry): -1 | 0 | 1 {
         return a.value > b.value ? -1 : 1;
+    }
+
+    public entries(): ICounterMostCommonEntry[] {
+      return Object.keys(this.counts).map(key => {
+          return {
+              key,
+              value: this.counts[key]
+          };
+      });
     }
 }
 

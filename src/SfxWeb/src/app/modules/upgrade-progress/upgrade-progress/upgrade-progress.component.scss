@@ -1,10 +1,7 @@
-@import "src/vars.scss";
-
 .upgrade-progress {
-    width: 98%;
     background-color: transparent;
     padding: 1px;
-    font-size: $font-size-small;
+    font-size: var(--font-size-small);
     margin: 1px;
     border-spacing: 0;
 
@@ -25,22 +22,23 @@
             width: 80px;
             height: 35px;
             color: white !important;
-
-            &.badge-unknown {
-                background-color: $badge-unknown-color;
-            }
-
-            &.badge-ok {
-                background-color: #088105;
-            }
-
-            &.badge-warning {
-                background-color: $azure-blue;
-            }
-
-            &.badge-error {
-                background-color: $badge-warning-color;
-            }
         }
     }
+}
+
+
+.badge-unknown {
+  background-color: var(--badge-unknown);
+}
+
+.badge-ok {
+  background-color: var(--badge-ok);
+}
+
+.badge-warning {
+  background-color: var(--accent-darkblue);
+}
+
+.badge-error {
+  background-color: var(--badge-error);
 }

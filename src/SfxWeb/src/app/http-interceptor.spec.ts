@@ -7,10 +7,12 @@ import { environment } from 'src/environments/environment';
 import { AdalService } from './services/adal.service';
 import { of } from 'rxjs';
 import { AadMetadata } from './Models/DataModels/Aad';
+import { StandaloneIntegrationService } from './services/standalone-integration.service';
 
 describe('Http interceptors', () => {
     let httpClient: HttpClient;
     let httpMock: HttpTestingController;
+    let standaloneService: StandaloneIntegrationService;
     const dataService: Partial<DataService> = { readOnlyHeader: null, clusterNameMetadata: 'old-name' };
     const adalService: Partial<AdalService> = {
         aadEnabled: false,
@@ -27,16 +29,18 @@ describe('Http interceptors', () => {
             }
         })
     };
+
     beforeEach(() => {
         TestBed.configureTestingModule({
             imports: [HttpClientTestingModule],
-            providers: [httpInterceptorProviders,
+            providers: [httpInterceptorProviders, StandaloneIntegrationService,
                 { provide: DataService, useValue: dataService },
                 { provide: AdalService, useValue: adalService }]
         });
 
         httpMock = TestBed.inject(HttpTestingController);
         httpClient = TestBed.inject(HttpClient);
+        standaloneService = TestBed.inject(StandaloneIntegrationService);
     });
 
 
@@ -54,6 +58,21 @@ describe('Http interceptors', () => {
         expect(dataService.readOnlyHeader).toBeTruthy();
         expect(dataService.clusterNameMetadata).toBe('test-cluster');
     });
+
+    fit('SFRP headers lowercase', async () => {
+      httpClient.get('/test').subscribe();
+
+      const request = httpMock.expectOne('/test');
+
+      const headers = {
+          'sfx-readonly': '1',
+          'sfx-clustername': 'test-cluster'
+      };
+      request.flush(null, { headers });
+
+      expect(dataService.readOnlyHeader).toBeTruthy();
+      expect(dataService.clusterNameMetadata).toBe('test-cluster');
+  });
 
     fit('readonly off', async () => {
         httpClient.get('/test').subscribe();
@@ -92,6 +111,39 @@ describe('Http interceptors', () => {
         expect(requests[0].request.headers.get('Authorization')).toBe('Bearer aad-token');
     });
 
+    fit('standalone interceptor does not fire', () => {
+      standaloneService.setConfiguration("?");
 
+      spyOn(standaloneService, 'getIntegrationCaller');
 
+      httpClient.get('/test').subscribe();
+
+      expect(standaloneService.getIntegrationCaller).not.toHaveBeenCalled();
+
+  });
+
+  fit('standalone interceptor does fire', (done: DoneFn) => {
+    standaloneService.setConfiguration("integrationConfig={%20%20%22preloadFunction%22:%20%22CefSharp.BindObjectAsync%22,%20%20%22windowPath%22:%20%22CefSharp.PostMessage%22,%20%20%22passObjectAsString%22:%20true,%20%20%22handleAsCallBack%22:%20true}&=Onebox/Local%20cluster%20-%20http://localhost:19080#/");
+
+    spyOn(standaloneService, 'getIntegrationCaller').and.returnValue(
+      (integrationData) => {
+        integrationData.Callback(JSON.stringify({
+          "statusMessage": "OK",
+          "statusCode": "200",
+          "data": {
+            "someData": "data"
+          }
+        }))
+      });
+
+    let res = null
+    httpClient.get('/test').subscribe(r => {
+      expect(standaloneService.getIntegrationCaller).toHaveBeenCalled();
+      expect(r).toEqual({
+        "someData": "data"
+      })
+      done();
+    });
+
+  });
 });

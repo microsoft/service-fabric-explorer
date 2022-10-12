@@ -19,3 +19,19 @@ tr {
     color: white;
     font-size: 14px;
 }
+
+label {
+  margin-bottom: 0px;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  >:last-child {
+    margin-left: auto;
+  }
+}
+
+input {
+  float: right;
+}

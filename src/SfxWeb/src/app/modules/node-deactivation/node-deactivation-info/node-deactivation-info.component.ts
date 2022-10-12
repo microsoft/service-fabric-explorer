@@ -4,6 +4,7 @@ import { ListColumnSetting, ListSettings } from 'src/app/Models/ListSettings';
 import { IRawNodeDeactivationInfo } from 'src/app/Models/RawDataTypes';
 import { SettingsService } from 'src/app/services/settings.service';
 import { IProgressStatus } from 'src/app/shared/component/phase-diagram/phase-diagram.component';
+import { DeactivationUtils } from 'src/app/Utils/deactivationUtils';
 
 @Component({
   selector: 'app-node-deactivation-info',
@@ -12,11 +13,15 @@ import { IProgressStatus } from 'src/app/shared/component/phase-diagram/phase-di
 })
 export class NodeDeactivationInfoComponent implements OnInit, OnChanges {
 
+  public readonly seedNodeQuorumMessage = "This node deactivation is waiting on a Seed Node Quorom safety check. If this deactivation is going for an irregular amount of time, consider referring to the following TSG to potentially continue progress for this deactivation."
+
   @Input() node: Node;
   @Input() deactivationInfo: IRawNodeDeactivationInfo;
 
   public progress: IProgressStatus[] = [];
   public index = -1;
+
+  showSeedNodeTSG = false;
 
   settings: ListSettings;
 
@@ -32,15 +37,18 @@ export class NodeDeactivationInfoComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(): void {
-    const phaseMap = {
+
+   this.showSeedNodeTSG =  DeactivationUtils.hasSeedNodeSafetyCheck(this.deactivationInfo);
+
+   const phaseMap = {
       SafetyCheckInProgress: 1,
       SafetyCheckComplete: 2,
       Completed: 3
     };
 
-    this.index = phaseMap[this.deactivationInfo.NodeDeactivationStatus] + 1;
+   this.index = phaseMap[this.deactivationInfo.NodeDeactivationStatus] + 1;
 
-    this.progress = [
+   this.progress = [
       {
         name: 'Safety Check InProgress',
       },

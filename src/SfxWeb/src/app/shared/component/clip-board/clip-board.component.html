@@ -1,3 +1,4 @@
-<label [for]="text" style="display: none;">{{text}}</label>
+<label [for]="ariaLabel" style="display: none;">Copy {{text}}</label>
 
-<button (click)="copy()" class="mif-copy link copy-text" ngbTooltip="copy to clipboard" tabindex="0" aria-label="Copy to clipboard" role="button" [id]="text" container="body"></button>
+<button #ref (click)="copy()" class="mif-copy link copy-text" ngbTooltip="copy to clipboard" tooltipClass="styled-tooltip" [attr.aria-label]="'copy ' + text + ' to clip board'"
+        tabindex="0"  ngbTooltip="copy to clipboard" [attr.aria-labelledby]="ariaLabel" container="body"></button>

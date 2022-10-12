@@ -1,14 +1,16 @@
 import { Injectable } from '@angular/core';
 import { ListColumnSetting, ListSettings, ListColumnSettingForBadge, ListColumnSettingForLink,
          ListColumnSettingWithCopyText, ListColumnSettingWithUtcTime, ListColumnSettingWithCustomComponent,
-         ListColumnSettingWithShorten } from '../Models/ListSettings';
+         ListColumnSettingWithShorten,
+         ListColumnSettingWithFilter} from '../Models/ListSettings';
 import { NodeStatusConstants, Constants } from '../Common/Constants';
 import { ClusterLoadInformation } from '../Models/DataModels/Cluster';
-import { NodeLoadInformation } from '../Models/DataModels/Node';
 import { MetricsViewModel } from '../ViewModels/MetricsViewModel';
 import { StorageService } from './storage.service';
-import { RepairTaskViewComponent } from '../views/cluster/repair-task-view/repair-task-view.component';
 import { QuestionToolTipComponent } from '../modules/detail-list-templates/question-tool-tip/question-tool-tip.component';
+import { RepairTaskViewComponent } from '../modules/repair-tasks/repair-task-view/repair-task-view.component';
+import { ListColumnSettingForApplicationType } from '../views/application-type/action-row/action-row.component';
+import { HtmlUtils } from '../Utils/HtmlUtils';
 
 @Injectable({
   providedIn: 'root'
@@ -41,9 +43,9 @@ export class SettingsService {
       this.iPaginationLimit = storage.getValueNumber(Constants.PaginationLimitStorageKey, Constants.DefaultPaginationLimit);
   }
 
-  public getNewOrExistingMetricsViewModel(clusterLoadInformation: ClusterLoadInformation, nodesLoadInformation: NodeLoadInformation[]): MetricsViewModel {
+  public getNewOrExistingMetricsViewModel(clusterLoadInformation: ClusterLoadInformation): MetricsViewModel {
       if (!this.iMetricsViewModel) {
-          this.iMetricsViewModel = new MetricsViewModel(clusterLoadInformation, nodesLoadInformation);
+          this.iMetricsViewModel = new MetricsViewModel(clusterLoadInformation);
       }
       return this.iMetricsViewModel;
   }
@@ -60,7 +62,7 @@ export class SettingsService {
       // Use URL + listName as unique key to track list settings on detail pages
       const key: string = listName; // TODO fix this this.$location.path() + "/" + listName;
       if (!this.listSettings[key]) {
-          this.listSettings[key] = new ListSettings(this.paginationLimit, defaultSortProperties, columnSettings, secondRowColumnSettings, secondRowCollapsible, showSecondRow, searchable);
+          this.listSettings[key] = new ListSettings(this.paginationLimit, defaultSortProperties, listName, columnSettings, secondRowColumnSettings, secondRowCollapsible, showSecondRow, searchable);
       }
       return this.listSettings[key];
   }
@@ -71,12 +73,12 @@ export class SettingsService {
       columnSettings: ListColumnSetting[] = []) {
 
       if (!this.listSettings[listKey]) {
-          this.listSettings[listKey] = new ListSettings(this.paginationLimit, defaultSortProperties, columnSettings);
+          this.listSettings[listKey] = new ListSettings(this.paginationLimit, defaultSortProperties, 'Tree Node', columnSettings);
       }
       return this.listSettings[listKey];
   }
 
-  public getNewOrExistingUnhealthyEvaluationsListSettings(listKey: string = 'unhealthyEvaluations') {
+  public getNewOrExistingUnhealthyEvaluationsListSettings(listKey: string = 'unhealthy Evaluations') {
       return this.getNewOrExistingListSettings(listKey, null,
           [
               new ListColumnSettingForLink('kind', 'Kind', (item) =>  item.viewPath),
@@ -86,7 +88,7 @@ export class SettingsService {
           ]);
   }
 
-  public getNewOrExistingHealthEventsListSettings(listKey: string = 'healthEvents') {
+  public getNewOrExistingHealthEventsListSettings(listKey: string = 'health Events') {
       return this.getNewOrExistingListSettings(listKey, ['raw.SequenceNumber'],
           [
               new ListColumnSettingForBadge('healthState', 'Health State'),
@@ -108,7 +110,7 @@ export class SettingsService {
           );
   }
 
-  public getNewOrExistingNodeStatusListSetting(listKey: string = 'nodeStatus') {
+  public getNewOrExistingNodeStatusListSetting(listKey: string = 'node Status') {
       return this.getNewOrExistingListSettings(listKey, null,
           [
               new ListColumnSetting('nodeType', 'Node Type'),
@@ -124,7 +126,7 @@ export class SettingsService {
       );
   }
 
-  public getNewOrExistingBackupPolicyListSettings(listKey: string = 'backupPolicies') {
+  public getNewOrExistingBackupPolicyListSettings(listKey: string = 'backup Policies') {
       return this.getNewOrExistingListSettings(listKey, null, [
         new ListColumnSetting('raw.Name', 'Name', {
             enableFilter: false,
@@ -140,7 +142,7 @@ export class SettingsService {
   }
 
   public getNewOrExistingNetworkRequestListSettings(includeApiDesc: boolean = false) {
-    const listKey = 'requestsData';
+    const listKey = 'requests Data';
     const settings = [
         new ListColumnSetting('statusCode', 'Status Code'),
         new ListColumnSetting('errorMessage', 'Error Message'),
@@ -209,6 +211,49 @@ export class SettingsService {
     true,
     (item) => true,
     true);
+  }
+
+  public getNewOrExistingAppTypeListSettings(includeIsUsedColumn: boolean = false, includeActions: boolean = true) {
+    let listKey = 'appTypeAppTypes';
+    const settings = [
+      new ListColumnSettingWithFilter('name', 'Name'),
+      new ListColumnSetting('raw.Version', 'Version'),
+      new ListColumnSettingWithFilter('raw.Status', 'Status'),
+    ];
+
+    if(includeActions) {
+      settings.push(new ListColumnSettingForApplicationType())
+    }
+
+    const nestedList = [
+      new ListColumnSetting('placeholder', 'placeholder', { enableFilter: false }), // Empty column
+      new ListColumnSetting('raw.StatusDetails', 'Status Details', {
+        enableFilter: false,
+        getDisplayHtml: (item) => HtmlUtils.getSpanWithCustomClass('preserve-whitespace-wrap', item.raw.StatusDetails),
+        colspan: 100
+      })
+    ];
+
+    if (includeIsUsedColumn) {
+      settings.splice(3, 0, new ListColumnSetting('isInUse', 'In Use'));
+      listKey += 'andUsedCol';
+    }
+
+    return this.getNewOrExistingListSettings(listKey, ['raw.Version'], settings, nestedList,
+      false,
+      (item) => item.raw.StatusDetails,
+      false);
+  }
+
+  public getNewOrExistingInfrastructureSettings() {
+    return this.getNewOrExistingListSettings('allMRJobs', ['raw.CurrentUD'], [
+      new ListColumnSetting('raw.Id', 'Job Id'),
+      new ListColumnSettingWithFilter('raw.CurrentUD', 'Current UD'),
+      new ListColumnSetting('raw.AcknowledgementStatus', 'Acknowledgement Status'),
+      new ListColumnSetting('raw.ImpactAction', 'Impact Action'),
+      new ListColumnSetting('RepairTask.TaskId', 'Repair Task'),
+      new ListColumnSettingWithShorten('raw.RoleInstancesToBeImpacted', 'Target Nodes', 2),
+    ]);
   }
 
   // Update all existing list settings to use new limit

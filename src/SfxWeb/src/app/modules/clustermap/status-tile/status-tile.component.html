@@ -1,0 +1,22 @@
+<div *ngIf="groupByNodeType">
+  <div class="underline" *ngFor="let item of nodeTypes | keyvalue; let l = last; trackBy: trackByFn"
+    style="width: 100%;">
+    <app-collapse-container [collapsed]="true" data-cy="nodetype-group">
+      <div collapse-header>
+        <div style="display: flex; justify-content: space-between;">
+          <div>{{item.value.nodeType}}</div>
+          <div>({{item.value.nodes.length}})</div>
+        </div>
+      </div>
+      <div collapse-body class="aboveline">
+        <div style="margin-left: 10px;">
+          <app-node-list [nodes]="item.value.nodes" [underlineLast]="false" [listTemplate]="listTemplate"></app-node-list>
+        </div>
+      </div>
+    </app-collapse-container>
+  </div>
+</div>
+
+<div *ngIf="!groupByNodeType">
+  <app-node-list [nodes]="nodes" [listTemplate]="listTemplate"></app-node-list>
+</div>

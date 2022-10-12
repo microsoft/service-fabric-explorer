@@ -1,8 +1,8 @@
-import { Component, OnInit, Input, OnChanges } from '@angular/core';
+import { Component, Input, OnChanges } from '@angular/core';
 import { HtmlUtils } from 'src/app/Utils/HtmlUtils';
 import { Constants } from 'src/app/Common/Constants';
 import { Utils } from 'src/app/Utils/Utils';
-import { ITextAndBadge } from 'src/app/Utils/ValueResolver';
+import { ITextAndBadge, ValueResolver } from 'src/app/Utils/ValueResolver';
 import size from 'lodash/size';
 import forOwn from 'lodash/forOwn';
 import startCase from 'lodash/startCase';
@@ -24,7 +24,7 @@ export class ResolvedObject {
   templateUrl: './detail-view-part.component.html',
   styleUrls: ['./detail-view-part.component.scss']
 })
-export class DetailViewPartComponent implements OnInit, OnChanges {
+export class DetailViewPartComponent implements OnChanges {
 
   @Input() noFixedLayout = false;
 
@@ -35,9 +35,6 @@ export class DetailViewPartComponent implements OnInit, OnChanges {
   // with parent added it will assume data is from data.raw and this allows to run change detection.
   @Input() parent: any;
   constructor() { }
-
-  ngOnInit() {
-  }
 
   ngOnChanges() {
       if (this.parent){
@@ -52,7 +49,9 @@ export class DetailViewPartComponent implements OnInit, OnChanges {
     }
 
   public getResolvedPropertyType(value: any): string {
-    if (this.isResolvedObject(value)) {
+    if(ValueResolver.isHealthBadgeForDetailView(value) ){
+      return 'HealthState';
+    }else if (this.isResolvedObject(value)) {
         return 'Object';
     } else if (this.isArray(value)) {
         return 'Array';
@@ -60,8 +59,8 @@ export class DetailViewPartComponent implements OnInit, OnChanges {
         return 'Html';
     } else if (this.isISODate(value)) {
         return 'Date';
-    }else {
-        return 'Value';
+    }else{
+      return 'Value'
     }
   }
 
@@ -158,18 +157,8 @@ export class DetailViewPartComponent implements OnInit, OnChanges {
                   resolvedValue = resolvedValue.map(v => this.getResolvedDataObject(v, true));
               }
           } else if (isObject(resolvedValue)) {
-              // Deal with badge class as a special case
-              if (Utils.isBadge(resolvedValue)) {
-                  resolvedValue = resolvedValue as ITextAndBadge;
-                  if (resolvedValue.text && resolvedValue.badgeClass) {
-                      resolvedValue = HtmlUtils.getBadgeHtml(resolvedValue);
-                  } else {
-                      resolvedValue = resolvedValue.text;
-                  }
-              } else {
                   // Resolve sub-object
                   resolvedValue = this.getResolvedDataObject(resolvedValue);
-              }
           }
 
           if (isEmpty(resolvedName)) {

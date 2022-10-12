@@ -1,15 +1,21 @@
-import { Component, OnInit, Input, ChangeDetectionStrategy, AfterViewInit, ViewChild, ElementRef, OnChanges } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy, AfterViewInit, ViewChild, ElementRef, OnChanges } from '@angular/core';
 import { UpgradeDomain } from 'src/app/Models/DataModels/Shared';
-import { IEssentialListItem } from '../../charts/essential-health-tile/essential-health-tile.component';
-import { Chart, Options, chart, PointOptionsObject, SeriesPieOptions } from 'highcharts';
+import { Chart, Options, chart, PointOptionsObject } from 'highcharts';
+import { Counter } from 'src/app/Utils/Utils';
+import { BadgeConstants, UpgradeDomainStateNames } from 'src/app/Common/Constants';
 
+interface ITileCount {
+  css: string;
+  uds: UpgradeDomain[];
+  name: string;
+}
 @Component({
   selector: 'app-upgrade-progress',
   templateUrl: './upgrade-progress.component.html',
   styleUrls: ['./upgrade-progress.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class UpgradeProgressComponent implements OnInit, AfterViewInit, OnChanges {
+export class UpgradeProgressComponent implements AfterViewInit, OnChanges {
 
   @Input() upgradeDomains: UpgradeDomain[];
   @Input() showChart = false;
@@ -18,10 +24,8 @@ export class UpgradeProgressComponent implements OnInit, AfterViewInit, OnChange
 
   chart: Chart;
 
-  essentialItems: IEssentialListItem[] = [];
-
-  ngOnInit() {
-  }
+  tiles: ITileCount[] = [];
+  displayUd: UpgradeDomain[] = [];
 
   ngAfterViewInit() {
     if (this.showChart) {
@@ -35,13 +39,14 @@ export class UpgradeProgressComponent implements OnInit, AfterViewInit, OnChange
             borderRadius: 0
         },
         title: {
-          text: 'test',
+          text: '',
           verticalAlign: 'middle',
           style: {
             color: '#1234',
             fontSize: '15pt'
           }
         },
+        credits: { enabled: false },
         plotOptions: {
             pie: {
                 borderWidth: 2,
@@ -78,23 +83,50 @@ export class UpgradeProgressComponent implements OnInit, AfterViewInit, OnChange
     const colors = {
       'badge-unknown': 'gray',
       'badge-ok': '#088105',
-      'badge-warning': '#0075c9'
+      'badge-warning': '#0075c9',
+      'badge-error': '#E81123'
     };
 
-    const data = this.upgradeDomains.map(p => {
-      return {
-        type: 'pie',
-        name: 'UD : ' + p.name,
-        y: 1,
-        color: colors[p.badgeClass],
-        dataLabels: {
-          style: {
+    let data = [];
+
+    if (this.upgradeDomains.length > 30) {
+      const counter = new Counter();
+      // easier to add to the counter as statename/class and then pull them back given these will always map to the same
+      this.upgradeDomains.forEach(p => counter.add(p.stateName + '---' + p.badgeClass));
+      data = counter.entries().map(entry => {
+        const split = entry.key.toString().split('---');
+        const stateName = split[0];
+        const badgeClass = split[1];
+
+        return {
+          type: 'pie',
+          name: stateName + ' : ' + entry.value,
+          y: entry.value,
+          color: colors[badgeClass],
+          dataLabels: {
+            style: {
               fontSize: '13px',
               fontColor: '#fff'
+            }
           }
-      },
-      };
-    });
+        };
+      });
+    }else{
+      data = this.upgradeDomains.map(p => {
+        return {
+          type: 'pie',
+          name: p.prefix + p.name,
+          y: 1,
+          color: colors[p.badgeClass],
+          dataLabels: {
+            style: {
+                fontSize: '13px',
+                fontColor: '#fff'
+            }
+        },
+        };
+      });
+    }
 
     // if there is no data we want gray rings.
     // so we need to push a gray entry
@@ -119,6 +151,38 @@ export class UpgradeProgressComponent implements OnInit, AfterViewInit, OnChange
   ngOnChanges() {
     if (this.chart){
       this.chart.series[0].setData(this.getDataSet());
+    }else{
+      const ref: Record<string, ITileCount> = {};
+      ref[UpgradeDomainStateNames.Pending] = {
+        name: UpgradeDomainStateNames.Pending,
+        css: BadgeConstants.BadgeUnknown,
+        uds: []
+      };
+      ref[UpgradeDomainStateNames.InProgress] = {
+        name: UpgradeDomainStateNames.InProgress,
+        css: BadgeConstants.BadgeWarning,
+        uds: []
+      };
+      ref[UpgradeDomainStateNames.Completed] = {
+        name: UpgradeDomainStateNames.Completed,
+        css: BadgeConstants.BadgeOK,
+        uds: []
+      };
+      ref[UpgradeDomainStateNames.Failed] = {
+        name: UpgradeDomainStateNames.Failed,
+        css: BadgeConstants.BadgeError,
+        uds: []
+      };
+      this.tiles = [
+        ref[UpgradeDomainStateNames.Completed],
+        ref[UpgradeDomainStateNames.InProgress],
+        ref[UpgradeDomainStateNames.Pending],
+        ref[UpgradeDomainStateNames.Failed],
+      ];
+
+      this.upgradeDomains.forEach(unit => {
+        ref[unit.stateName].uds.push(unit);
+      });
     }
   }
 

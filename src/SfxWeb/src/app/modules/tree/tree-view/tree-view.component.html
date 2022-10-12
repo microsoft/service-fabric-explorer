@@ -1,29 +1,31 @@
 <div class="tree-wrapper">
     <div class="tree-header">
-        <div *ngIf="showBeta" style="padding: 10px;background-color: #fcf8e3; border-left: #FFC646 solid 8px; margin: 8px; min-width: 330px;">
-            <div style="vertical-align: middle; padding: 4px; color: black; padding-bottom: 8px;" (click)="leaveBeta();">
-                To leave beta <span style="cursor: pointer;">(Click here)</span>
-            </div>
-            <div style="border-top: 2px solid #b7b1b1; padding: 4px;">
-                <a href="https://aka.ms/sfxrepo" target="_blank" style="color: black;">You can report any issues you run into (Click here)</a>
-            </div>
+        <div class="tree-guide">
+          <button class="toggle-button" (click)="goToTroubleshootingGuides()"><span class=" mif-info"></span> <span style="color:  var(--font-primary-color);"> Service Fabric Troubleshooting Guides</span></button>
         </div>
         <div class="filter-items-container">
-            <app-check-box [(state)]="treeService.tree.showOkItems" class="filter-item">
-                <app-health-badge [badgeClass]="'badge-ok'" [text]="'OK'"></app-health-badge>
-            </app-check-box>
-            <app-check-box [(state)]="treeService.tree.showWarningItems" class="filter-item">
-                <app-health-badge [badgeClass]="'badge-warning'" [text]="'Warning'"></app-health-badge>
-            </app-check-box>
-            <app-check-box [(state)]="treeService.tree.showErrorItems" class="filter-item">
-                <app-health-badge [badgeClass]="'badge-error'" [text]="'Error'"></app-health-badge>
-            </app-check-box>
-            <div class="filter-item" style="display: inline-block;">
-                <app-toggle [(state)]="treeService.tree.orderbyHealthState"></app-toggle>
-                Sort by Health
-            </div>
+          <label class="toggle-wrapper ">
+            <app-health-badge [badgeClass]="'badge-ok'" [text]="'OK'"></app-health-badge>
+
+            <app-toggle [(state)]="treeService.tree.showOkItems" color="green"></app-toggle>
+          </label>
+
+          <label class="toggle-wrapper ">
+            <app-health-badge [badgeClass]="'badge-warning'" [text]="'Warning'"></app-health-badge>
+            <app-toggle [(state)]="treeService.tree.showWarningItems" color="#f19d03"></app-toggle>
+          </label>
+
+          <label class="toggle-wrapper ">
+            <app-health-badge [badgeClass]="'badge-error'" [text]="'Error'"></app-health-badge>
+            <app-toggle [(state)]="treeService.tree.showErrorItems" color="red"></app-toggle>
+          </label>
+
+          <label class="toggle-wrapper ">
+            Sort by Health
+            <app-toggle [(state)]="treeService.tree.orderbyHealthState" (stateChange)="sendHealthStateTelem()"></app-toggle>
+          </label>
         </div>
-        <div style="padding: 5px 10px 0px 0px; margin-left: -15px;">
+        <div class="input-wrapper">
             <app-input (changed)="setSearchText($event)"></app-input>
         </div>
     </div>
@@ -33,9 +35,9 @@
                 <span class=" mif-chevron-right mif-3x"></span>
             </button>
         </span>
-        <div class="tree-body" #tree style="height: 100%" >
-            <div *ngIf="treeService.tree && !treeService.tree.isLoading && !treeService.tree.isEmpty"  class="tree-view" style="position: relative; height: 100%">
-                <div class="tree" style="list-style: none" *ngIf="treeService.tree.childGroupViewModel">
+        <div class="tree-body" #tree >
+            <div *ngIf="treeService.tree && !treeService.tree.isLoading && !treeService.tree.isEmpty"  class="tree-view">
+                <div class="tree" *ngIf="treeService.tree.childGroupViewModel" role="group">
                     <app-tree-node [node]="treeService.tree.childGroupViewModel" ></app-tree-node>
                 </div>
             </div>

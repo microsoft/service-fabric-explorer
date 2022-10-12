@@ -32,6 +32,7 @@ speed-measure-plugin*.json
 .history/*
 
 # misc
+/.angular/cache
 /.sass-cache
 /connect.lock
 /coverage
@@ -47,3 +48,12 @@ Thumbs.db
 
 /cypress/screenshots*
 /cypress/videos*
+
+
+#coverage reports
+coverage.json
+/reports
+/coverage-results
+/coverage-karma
+/coverage
+/cypress-coverage

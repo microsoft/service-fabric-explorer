@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { DetailBaseComponent } from 'src/app/ViewModels/detail-table-base.component';
 import { ListColumnSetting } from 'src/app/Models/ListSettings';
 import { ApplicationType } from 'src/app/Models/DataModels/ApplicationType';
@@ -8,16 +8,12 @@ import { ApplicationType } from 'src/app/Models/DataModels/ApplicationType';
   templateUrl: './action-row.component.html',
   styleUrls: ['./action-row.component.scss']
 })
-export class ActionRowComponent implements OnInit, DetailBaseComponent {
+export class ActionRowComponent implements DetailBaseComponent {
 
   item: ApplicationType;
   listSetting: ListColumnSettingForApplicationType;
 
   constructor() { }
-
-  ngOnInit() {
-
-  }
 
 }
 

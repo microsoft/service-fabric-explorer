@@ -1,0 +1,10 @@
+.mif-checkmark {
+  color: var(--badge-ok);
+  border: 1px solid var(--badge-ok);
+  border-radius: 50px;
+  width: 25px;
+  height: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

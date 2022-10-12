@@ -1,0 +1,140 @@
+@import "vars.scss";
+
+$modal-dt-width: 160px;
+$modal-short-dt-width: 100px;
+$dialog-input-bg-color: #242424;
+
+.action-modal {
+    background-color: #373737;
+    font-weight: var(--font-weight-normal);
+
+    .input-flat {
+        background-color: $dialog-input-bg-color;
+        border: 0px solid;
+        color: white;
+    }
+
+    [type="checkbox"] + label:before {
+        background-color: $dialog-input-bg-color;
+    }
+
+    .modal-header {
+        color: white !important;
+        background-color: var(--accent-darkblue) !important;
+        padding: 18px 15px 18px 15px;
+        border: none !important;
+
+        .modal-title {
+          font-weight: var(--font-weight-normal);
+          font-size: 18pt;
+        }
+    }
+
+    .modal-body {
+        color: var(--font-primary-color);
+        max-height: 550px;
+        overflow-y: auto;
+        padding: 12px 15px 0px 15px;
+        border: none !important;
+
+        .dl-horizontal {
+            margin-bottom: 0px;
+            font-weight: var(--font-weight-normal);
+
+            &.short {
+                dt {
+                    width: $modal-short-dt-width;
+                }
+            }
+
+            dt {
+                width: $modal-dt-width;
+                margin: 5px 0px;
+                text-align: left;
+            }
+
+            dd {
+                padding: 5px 0px;
+
+                dl {
+                    margin-top: 5px;
+                }
+
+                .btn {
+                    margin-top: -1px;
+                    padding: 2px 12px 3px;
+                    font-weight: var(--font-weight-normal);
+
+                    &[uib-btn-radio] {
+                        color: darken(white, 25%);
+
+                        &.active, &:hover {
+                            color: white;
+                        }
+                    }
+                }
+
+                .btn.active {
+                    padding-bottom: 1px;
+                    border-bottom-width: 3px;
+                }
+
+                .table-responsive {
+                    margin-top: -4px;
+                }
+
+                .table {
+                    margin-bottom: 0;
+                    color: white;
+                    thead > tr > th {
+                      font-weight: var(--font-weight-semibold);
+                      border-bottom: 1px solid var(--accent-underline);
+                    }
+                }
+            }
+        }
+    }
+
+    .modal-footer {
+        padding: 20px 15px 15px 15px;
+        border: none !important;
+
+        #reset-dialog-link {
+            float: left;
+            margin-top: 5px;
+        }
+    }
+}
+
+
+.mat-dialog-container-wrapper .mat-dialog-container {
+    padding: 0px;
+}
+
+
+dl {
+    dt {
+        width: 160px;
+        display: inline-block;
+        vertical-align: top;
+        font-weight: var(--font-weight-normal);
+      }
+
+    dd {
+        width: calc(100% - 160px);
+        display: inline-block;
+        margin-left: 0px;
+        input {
+            width: 100%;
+        }
+
+        input[type=checkbox] {
+            width: auto;
+            float: left;
+        }
+
+        input[type=radio] {
+            width: auto;
+        }
+    }
+}

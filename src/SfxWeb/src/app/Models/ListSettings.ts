@@ -9,6 +9,8 @@ import { Type } from '@angular/core';
 import { UtcTimestampComponent } from '../modules/detail-list-templates/utc-timestamp/utc-timestamp.component';
 import { ITextAndBadge } from '../Utils/ValueResolver';
 import { ShortenComponent } from '../modules/detail-list-templates/shorten/shorten.component';
+import { HealthbadgeComponent } from '../modules/detail-list-templates/healthbadge/healthbadge.component';
+import { EventStoreComponent } from '../modules/event-store/event-store/event-store.component';
 
 // -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -18,6 +20,7 @@ import { ShortenComponent } from '../modules/detail-list-templates/shorten/short
 export class ListSettings {
     public search = '';
     public sortPropertyPaths: string[] = [];
+    public additionalSearchableProperties: string[] = [];
     public sortReverse = false;
 
     private iCurrentPage = 1;
@@ -82,6 +85,7 @@ export class ListSettings {
     public constructor(
         public limit: number,
         public defaultSortPropertyPaths: string[],
+        public tableName: string,
         public columnSettings: ListColumnSetting[],
         public secondRowColumnSettings: ListColumnSetting[] = [],
         public secondRowCollapsible: boolean = false,
@@ -112,6 +116,13 @@ export class ListSettings {
         if (this.columnSettings.length > 0) {
             const newObj = {};
             Utils.unique(this.columnSettings.concat(this.secondRowColumnSettings)).forEach(column => newObj[column.propertyPath] = column.getTextValue(item));
+
+            if(this.additionalSearchableProperties) {
+              this.additionalSearchableProperties.forEach(path => {
+                newObj[path] = Utils.result(item, path);
+              })
+            }
+
             return newObj;
         }
         return item;
@@ -253,6 +264,8 @@ export class ListColumnSetting {
 }
 
 export class ListColumnSettingForBadge extends ListColumnSetting {
+    template = HealthbadgeComponent;
+
     public constructor(
         propertyPath: string,
         displayName: string) {
@@ -260,18 +273,17 @@ export class ListColumnSettingForBadge extends ListColumnSetting {
         super(propertyPath, displayName, {
             enableFilter: true,
             sortPropertyPaths: [propertyPath + '.text'],
-            getDisplayHtml: (item, property) => HtmlUtils.getBadgeHtml(property),
             alternateExportFormat: (item: ITextAndBadge) => item.text
         });
     }
 
     public getTextValue(item: any): string {
-        const property = this.getProperty(item);
-        if (property) {
-            return property.text;
-        }
-        return '';
-    }
+      const property = this.getProperty(item);
+      if (property) {
+          return property.text;
+      }
+      return '';
+  }
 }
 
 export class ListColumnSettingWithFilter extends ListColumnSetting {
@@ -328,7 +340,7 @@ export class ListColumnSettingWithEventStoreFullDescription extends ListColumnSe
     template = FullDescriptionComponent;
     public constructor() {
         super('raw.eventInstanceId', '', {
-            colspan: -1,
+            colspan: 2,
             enableFilter: false
         });
     }
@@ -341,6 +353,16 @@ export class ListColumnSettingWithCustomComponent extends ListColumnSetting impl
                        public displayName: string = '',
                        config?: IListColumnAdditionalSettings) {
 
+        super(propertyPath, displayName, config);
+    }
+}
+
+export class ListColumnSettingWithEmbeddedVisTool extends ListColumnSetting implements ITemplate {
+    public constructor(public template: Type<DetailBaseComponent>,
+                       public propertyPath: string = '',
+                       public displayName: string = '',
+                       public eventStoreRef: EventStoreComponent,
+                       config?: IListColumnAdditionalSettings) {
         super(propertyPath, displayName, config);
     }
 }
