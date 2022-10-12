@@ -40,5 +40,15 @@ export class CommandsComponent extends ApplicationBaseControllerDirective{
     );
 
     this.commands.push(healthReport);
+
+
+    const getUpgrade = new PowershellCommand(
+      'Get Application Upgrade',
+      'https://docs.microsoft.com/powershell/module/servicefabric/get-servicefabricapplicationupgrade',
+      CommandSafetyLevel.safe,
+      `Get-ServiceFabricApplicationUpgrade -ApplicationName ${this.app?.name}`,
+      [timeoutSec]
+    );
+    this.commands.push(getUpgrade);
   }
 }
