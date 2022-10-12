@@ -6,6 +6,7 @@ import padStart from 'lodash/padStart';
 import findIndex from 'lodash/findIndex';
 import { HtmlUtils } from 'src/app/Utils/HtmlUtils';
 import { RepairTask } from 'src/app/Models/DataModels/repairTask';
+import { add } from 'cypress/types/lodash';
 
 /*
     NOTES:
@@ -766,6 +767,7 @@ export class PartitionTimelineGenerator extends TimeLineGeneratorBase<PartitionE
         const removed = Array.from(oldSet).filter(item => !newSet.has(item));
 
         added.forEach(node => {
+          console.log(node)
           let end = endOfRange;
           const previousEvent = nodeChangepartitionEvents[node];
           if (previousEvent) {
@@ -785,6 +787,8 @@ export class PartitionTimelineGenerator extends TimeLineGeneratorBase<PartitionE
           });
 
           delete nodeChangepartitionEvents[node];
+          nodes[node] = {id: node, content: node};
+
         });
 
         removed.forEach(node => {
@@ -843,7 +847,7 @@ export class PartitionTimelineGenerator extends TimeLineGeneratorBase<PartitionE
       });
     });
 
-    if (primary) {
+    if (primary && primary.eventProperties.OldPrimaryNodeName !== "") {
       items.add({
         id: primary.eventInstanceId + 'start',
         content: `primary`,
@@ -870,7 +874,7 @@ export class PartitionTimelineGenerator extends TimeLineGeneratorBase<PartitionE
     };
 
     Object.keys(nodes).forEach(groupName => {
-      console.log(nodes[groupName]);
+      console.log(groupName,nodes[groupName]);
       nestedReplication.nestedGroups.push(groupName);
       groupsIds.push(nodes[groupName]);
   });
