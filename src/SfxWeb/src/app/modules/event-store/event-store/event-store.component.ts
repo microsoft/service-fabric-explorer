@@ -16,6 +16,7 @@ import { ListColumnSettingWithCustomComponent } from 'src/app/Models/ListSetting
 import { VisualizationToolComponent } from '../../concurrent-events-visualization/visualization-tool/visualization-tool.component';
 import { VisualizationLogoComponent } from '../../concurrent-events-visualization/visualization-logo/visualization-logo.component';
 import { getPeriodicEvent, getSimultaneousEventsForEvent, IConcurrentEvents, IRCAItem } from 'src/app/Models/eventstore/rcaEngine';
+import { generateTimelineData } from '../../concurrent-events-visualization/diff-viewer/diff-viewer.component';
 
 export interface IQuickDates {
   display: string;
@@ -189,6 +190,7 @@ export class EventStoreComponent implements OnInit, OnDestroy, OnChanges {
           } else if (data.timelineGenerator) {
             // If we have more than one element in the timeline the events get grouped by the displayName of the element.
             data.timelineData = data.timelineGenerator.generateTimeLineData(data.getEvents(), this.startDate, this.endDate, addNestedGroups ? data.displayName : null);
+            rawEventlist = rawEventlist.concat(data.getEvents());
 
             this.mergeTimelineData(combinedTimelineData, data.timelineData);
           }
@@ -211,6 +213,13 @@ export class EventStoreComponent implements OnInit, OnDestroy, OnChanges {
         groups: d.groups
       };
     }
+
+    console.log(rawEventlist)
+    const temp = getPeriodicEvent(differConfigs, rawEventlist);
+
+    temp.forEach(temp => {
+      this.mergeTimelineData(combinedTimelineData, generateTimelineData(temp.events, temp.config, this.startDate, this.endDate));
+    })
 
     return combinedTimelineData;
   }

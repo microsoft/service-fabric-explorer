@@ -39,7 +39,7 @@ const generateConfig = (text: string, intendedDescription: string, expectedPrefi
           }]
         },
         target: {
-          property: text
+          staticValue: text
         },
       }
     ],
@@ -294,9 +294,39 @@ export const differConfigs: IDiffAnalysis[] = [
     eventType: 'PartitionReconfigurationStarted',
     properties: [
       {
-        delimiter: ',',
-        property: 'NewPrimaryNodeName',
-        name: 'primary'
+        delimiter: ' ',
+        property: 'raw.NewPrimaryNodeName',
+        name: 'primary',
+        displayTransforms: [
+          {
+            type: "prefix",
+            value: "primary"
+          },
+        ],
+        transforms: [
+          {
+            type: "trimWhiteSpace"
+          },
+        ]
+      },
+      {
+        delimiter: ' ',
+        property: 'raw.NewSecondaryNodeNames',
+        name: 'secondary',
+        displayTransforms: [
+          {
+            type: "prefix",
+            value: "secondary"
+          },
+        ],
+        transforms: [
+          {
+            type: "trimWhiteSpace"
+          },
+          {
+            type: "nullIfEmptyString"
+          },
+        ]
       }
     ],
     propertyMappings: []

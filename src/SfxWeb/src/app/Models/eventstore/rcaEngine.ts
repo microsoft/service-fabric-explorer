@@ -52,7 +52,7 @@ export interface IRCAItem extends IEventPropertiesCollection {
 export const getAndTransform = (event: IRCAItem, config: IPropertyMapper) => {
   let sourceVal = Utils.isDefined(config.staticValue) ? config.staticValue : Utils.result(event, config.property);
   if (config.transforms) {
-    sourceVal = Transforms.getTransformations(config.transforms, sourceVal);
+    sourceVal = Transforms.getTransformations(config.transforms || [], sourceVal);
   }
 
   return sourceVal;
