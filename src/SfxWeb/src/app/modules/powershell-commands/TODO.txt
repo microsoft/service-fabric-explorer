@@ -1,3 +1,6 @@
+percentage as byte
+diff between switch and bool
+increase width due to large param count
 add tests:
     how thorough?
         test each command?

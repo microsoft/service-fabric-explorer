@@ -26,9 +26,9 @@ export class CommandsComponent extends ApplicationBaseControllerDirective{
     const healthProperty = new PowershellCommandParameter("HealthProperty", CommandParamTypes.string, {required: true});
     const description = new PowershellCommandParameter("Description", CommandParamTypes.string);
     const ttl = new PowershellCommandParameter("TimeToLiveSec", CommandParamTypes.number);
-    const removeWhenExpired = new PowershellCommandParameter("RemoveWhenExpired", CommandParamTypes.bool)
+    const removeWhenExpired = new PowershellCommandParameter("RemoveWhenExpired", CommandParamTypes.switch)
     const sequenceNum = new PowershellCommandParameter("SequenceNumber", CommandParamTypes.number);
-    const immediate = new PowershellCommandParameter("Immediate", CommandParamTypes.bool);
+    const immediate = new PowershellCommandParameter("Immediate", CommandParamTypes.switch);
     const timeoutSec = new PowershellCommandParameter("TimeoutSec", CommandParamTypes.number);
     
     const healthReport = new PowershellCommand(
@@ -50,5 +50,27 @@ export class CommandsComponent extends ApplicationBaseControllerDirective{
       [timeoutSec]
     );
     this.commands.push(getUpgrade);
+
+    const healthStateFilter = ["Default", "None", "Ok", "Warning", "Error", "All"];
+
+    const considerWarnAsErr = new PowershellCommandParameter("ConsiderWarningAsError", CommandParamTypes.bool);
+    const deployedAppFilter = new PowershellCommandParameter("DeployedApplicationFilter", CommandParamTypes.enum, { options: healthStateFilter });
+    const eventsFilter = new PowershellCommandParameter("EventsFilter", CommandParamTypes.enum, { options: healthStateFilter });
+    const excludeHealthStat = new PowershellCommandParameter("ExcludeHealthStatistics", CommandParamTypes.switch);
+    const maxPercUnhealthApp = new PowershellCommandParameter("MaxPercentUnhealthyDeployedApplications", CommandParamTypes.number);
+    const maxPercUnhealthPart = new PowershellCommandParameter("MaxPercentUnhealthyPartitionsPerService", CommandParamTypes.number);
+    const maxPercUnhealthRep = new PowershellCommandParameter("MaxPercentUnhealthyReplicasPerPartition", CommandParamTypes.number);
+    const maxPercUnhealthServ = new PowershellCommandParameter("MaxPercentUnhealthyServices", CommandParamTypes.number);
+    const servicesFilter = new PowershellCommandParameter("ServicesFilter", CommandParamTypes.enum, { options: healthStateFilter });
+
+    const getHealth = new PowershellCommand(
+      'Get Application Health',
+      'https://docs.microsoft.com/powershell/module/servicefabric/get-servicefabricapplicationhealth',
+      CommandSafetyLevel.safe,
+      `Get-ServiceFabricApplicationHealth -ApplicationName ${this.app?.name}`,
+      [considerWarnAsErr, deployedAppFilter, eventsFilter, excludeHealthStat, maxPercUnhealthApp, maxPercUnhealthPart, maxPercUnhealthRep, maxPercUnhealthServ, servicesFilter, timeoutSec]
+    );
+
+    this.commands.push(getHealth);
   }
 }

@@ -1,4 +1,4 @@
-<label *ngIf="commandParam.type !== paramTypes.bool" [for]="commandParam.name">{{commandParam.name}}</label>
+<label *ngIf="commandParam.type !== paramTypes.switch && commandParam.type !== paramTypes.bool" [for]="commandParam.name">{{commandParam.name}}</label>
 <div *ngIf="!commandParam.allowCustomValAndOptions; else dropDown">
     <div [ngSwitch]="commandParam.type">
         
@@ -11,8 +11,8 @@
         <div *ngSwitchCase="paramTypes.enum">
             <ng-container *ngTemplateOutlet="dropDown"></ng-container>
         </div>
-        <!-- no need to account for required fields, as required bools are in the prefix -->
-        <div *ngSwitchCase="paramTypes.bool">
+        <!-- no need to account for required fields, as required switches are in the prefix -->
+        <div *ngIf="commandParam.type === paramTypes.switch || commandParam.type === paramTypes.bool">
             <label class="toggle-label">
                 <span>{{commandParam.name}}</span>
                 <app-toggle [(state)]="commandParam.value"></app-toggle>
@@ -32,6 +32,9 @@
         <button class="simple-button" ngbDropdownToggle>{{commandParam.value ? commandParam.value : '-Select-'}}</button>
         
         <div ngbDropdownMenu>
+            <div>
+                <button value="" ngbDropdownItem (click)="setDropdownValue($event, commandParam)">-Select</button>
+            </div>
             <div *ngFor="let option of commandParam.options" >
                 <button [value]="option"  
                 ngbDropdownItem (click)="setDropdownValue($event, commandParam)">

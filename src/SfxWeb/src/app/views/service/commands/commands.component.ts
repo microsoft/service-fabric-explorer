@@ -26,9 +26,9 @@ export class CommandsComponent extends ServiceBaseControllerDirective{
     const healthProperty = new PowershellCommandParameter("HealthProperty", CommandParamTypes.string, {required: true});
     const description = new PowershellCommandParameter("Description", CommandParamTypes.string);
     const ttl = new PowershellCommandParameter("TimeToLiveSec", CommandParamTypes.number);
-    const removeWhenExpired = new PowershellCommandParameter("RemoveWhenExpired", CommandParamTypes.bool)
+    const removeWhenExpired = new PowershellCommandParameter("RemoveWhenExpired", CommandParamTypes.switch)
     const sequenceNum = new PowershellCommandParameter("SequenceNumber", CommandParamTypes.number);
-    const immediate = new PowershellCommandParameter("Immediate", CommandParamTypes.bool);
+    const immediate = new PowershellCommandParameter("Immediate", CommandParamTypes.switch);
     const timeoutSec = new PowershellCommandParameter("TimeoutSec", CommandParamTypes.number);
     
     const healthReport = new PowershellCommand(

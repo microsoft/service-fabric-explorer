@@ -14,10 +14,11 @@ export class PowershellCommand{
             let name = '-' + param.name;
             let value: string;
           
-            if (param.type === CommandParamTypes.bool) {
+            if (param.type === CommandParamTypes.switch) {
                 value = name;
                 name = '';
-            }  
+            } 
+            else if (param.type === CommandParamTypes.bool) value = '$True'; //potential edge case with required bool param using default value of $True
             else if (param.type === CommandParamTypes.string) value = '"' + param.value + '"';
             else value = param.value.toString();
      
@@ -67,7 +68,8 @@ export enum CommandParamTypes {
     string,
     number,
     enum,
-    bool,
+    switch,
+    bool
 }
 
 export enum CommandSafetyLevel {
