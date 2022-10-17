@@ -25,7 +25,7 @@ export class CommandsComponent extends NodeBaseControllerDirective {
     this.commands.push(
         new PowershellCommand('Restart',
             'https://docs.microsoft.com/powershell/module/servicefabric/restart-servicefabricnode',
-            CommandSafetyLevel.unsafe,
+            CommandSafetyLevel.safe,
             `Restart-ServiceFabricNode -NodeName "${this.nodeName}" -NodeInstanceId ${this.node.raw.InstanceId}`)
     );
 
@@ -42,12 +42,26 @@ export class CommandsComponent extends NodeBaseControllerDirective {
     const healthReport = new PowershellCommand(
         'Send Health Report',
         'https://docs.microsoft.com/powershell/module/servicefabric/send-servicefabricnodehealthreport',
-        CommandSafetyLevel.dangerous,
+        CommandSafetyLevel.safe,
         `Send-ServiceFabricNodeHealthReport -NodeName "${this.nodeName}"`,
         [healthState, sourceId, healthProperty, description, ttl, removeWhenExpired, sequenceNum, immediate, timeoutSec]
     );
 
     this.commands.push(healthReport);
+
+    const considerWarnAsErr = new PowershellCommandParameter("ConsiderWarningAsError", CommandParamTypes.bool);
+    const maxPercUnhealthyNodes = new PowershellCommandParameter("MaxPercentUnhealthyNodes", CommandParamTypes.number);
+    const eventsFilter = new PowershellCommandParameter("EventsFilter", CommandParamTypes.enum, { options: ["Default", "None", "Ok", "Warning", "Error", "All"], allowCustomValAndOptions: true });
+
+    const getHealth = new PowershellCommand(
+      'Get Node Health',
+      'https://docs.microsoft.com/powershell/module/servicefabric/get-servicefabricnodehealth',
+      CommandSafetyLevel.safe,
+      `Get-ServiceFabricDeployedServicePackageHealth -NodeName "${this.nodeName}"`,
+      [considerWarnAsErr, maxPercUnhealthyNodes, eventsFilter, timeoutSec]
+    );
+
+    this.commands.push(getHealth);
 
     const deployedApps = this.node.deployedApps.collection;
 

@@ -40,11 +40,9 @@ export class CommandsComponent extends DeployedServicePackageBaseControllerDirec
     );
 
     this.commands.push(healthReport);
-
-    const healthStateFilter = ["Default", "None", "Ok", "Warning", "Error", "All"];
     
     const considerWarnAsErr = new PowershellCommandParameter("ConsiderWarningAsError", CommandParamTypes.bool);
-    const eventsFilter = new PowershellCommandParameter("EventsFilter", CommandParamTypes.enum, { options: healthStateFilter, allowCustomValAndOptions: true });
+    const eventsFilter = new PowershellCommandParameter("EventsFilter", CommandParamTypes.enum, { options: ["Default", "None", "Ok", "Warning", "Error", "All"], allowCustomValAndOptions: true });
     const servicePacActivId = new PowershellCommandParameter("ServicePackageActivationId", CommandParamTypes.string);
 
     const getHealth = new PowershellCommand(

@@ -66,7 +66,7 @@ export class CommandsComponent extends BaseControllerDirective {
     const nodeTypeHealthPolMap = new PowershellCommandParameter("NodeTypeHealthPolicyMap", CommandParamTypes.object);
 
     const getHealth = new PowershellCommand(
-      'Get Application Health',
+      'Get Cluster Health',
       'https://docs.microsoft.com/powershell/module/servicefabric/get-servicefabricclusterhealth',
       CommandSafetyLevel.safe,
       `Get-ServiceFabricClusterHealth`,

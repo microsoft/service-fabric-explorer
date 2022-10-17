@@ -40,5 +40,23 @@ export class CommandsComponent extends PartitionBaseControllerDirective{
     );
 
     this.commands.push(healthReport);
+
+    const healthStateFilter = ["Default", "None", "Ok", "Warning", "Error", "All"];
+    
+    const considerWarnAsErr = new PowershellCommandParameter("ConsiderWarningAsError", CommandParamTypes.bool);
+    const maxPercUnhealthRep = new PowershellCommandParameter("MaxPercentUnhealthyReplicasPerPartition", CommandParamTypes.number);
+    const eventsFilter = new PowershellCommandParameter("EventsFilter", CommandParamTypes.enum, { options: healthStateFilter, allowCustomValAndOptions: true });
+    const replicasFilter = new PowershellCommandParameter("ReplicasFilter", CommandParamTypes.enum, { options: healthStateFilter, allowCustomValAndOptions: true });
+    const excludeHealthStat = new PowershellCommandParameter("ExcludeHealthStatistics", CommandParamTypes.switch);
+
+    const getHealth = new PowershellCommand(
+      'Get Partition Health',
+      'https://docs.microsoft.com/powershell/module/servicefabric/get-servicefabricpartitionhealth',
+      CommandSafetyLevel.safe,
+      `Get-ServiceFabricPartitionHealth -PartitionId ${this.partitionId}`,
+      [considerWarnAsErr, maxPercUnhealthRep, eventsFilter, replicasFilter, excludeHealthStat, timeoutSec]
+    );
+
+    this.commands.push(getHealth);
   }
 }
