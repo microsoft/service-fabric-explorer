@@ -54,14 +54,14 @@ export class CommandsComponent extends ApplicationBaseControllerDirective{
     const healthStateFilter = ["Default", "None", "Ok", "Warning", "Error", "All"];
 
     const considerWarnAsErr = new PowershellCommandParameter("ConsiderWarningAsError", CommandParamTypes.bool);
-    const deployedAppFilter = new PowershellCommandParameter("DeployedApplicationFilter", CommandParamTypes.enum, { options: healthStateFilter });
-    const eventsFilter = new PowershellCommandParameter("EventsFilter", CommandParamTypes.enum, { options: healthStateFilter });
+    const deployedAppFilter = new PowershellCommandParameter("DeployedApplicationFilter", CommandParamTypes.enum, { options: healthStateFilter, allowCustomValAndOptions: true });
+    const eventsFilter = new PowershellCommandParameter("EventsFilter", CommandParamTypes.enum, { options: healthStateFilter, allowCustomValAndOptions: true });
     const excludeHealthStat = new PowershellCommandParameter("ExcludeHealthStatistics", CommandParamTypes.switch);
     const maxPercUnhealthApp = new PowershellCommandParameter("MaxPercentUnhealthyDeployedApplications", CommandParamTypes.number);
     const maxPercUnhealthPart = new PowershellCommandParameter("MaxPercentUnhealthyPartitionsPerService", CommandParamTypes.number);
     const maxPercUnhealthRep = new PowershellCommandParameter("MaxPercentUnhealthyReplicasPerPartition", CommandParamTypes.number);
     const maxPercUnhealthServ = new PowershellCommandParameter("MaxPercentUnhealthyServices", CommandParamTypes.number);
-    const servicesFilter = new PowershellCommandParameter("ServicesFilter", CommandParamTypes.enum, { options: healthStateFilter });
+    const servicesFilter = new PowershellCommandParameter("ServicesFilter", CommandParamTypes.enum, { options: healthStateFilter, allowCustomValAndOptions: true });
 
     const getHealth = new PowershellCommand(
       'Get Application Health',

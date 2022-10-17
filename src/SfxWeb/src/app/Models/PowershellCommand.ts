@@ -20,6 +20,7 @@ export class PowershellCommand{
             } 
             else if (param.type === CommandParamTypes.bool) value = '$True'; //potential edge case with required bool param using default value of $True
             else if (param.type === CommandParamTypes.string) value = '"' + param.value + '"';
+            else if (param.type === CommandParamTypes.object) value = '$' + param.value;
             else value = param.value.toString();
      
             return { name, value };
@@ -69,7 +70,8 @@ export enum CommandParamTypes {
     number,
     enum,
     switch,
-    bool
+    bool,
+    object
 }
 
 export enum CommandSafetyLevel {
