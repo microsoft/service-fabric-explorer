@@ -1,4 +1,6 @@
 import { Component, Injector } from '@angular/core';
+import { Observable } from 'rxjs';
+import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { CommandParamTypes, CommandSafetyLevel, PowershellCommand, PowershellCommandParameter } from 'src/app/Models/PowershellCommand';
 import { DataService } from 'src/app/services/data.service';
 import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
@@ -15,11 +17,15 @@ export class CommandsComponent extends BaseControllerDirective {
 
   commands: PowershellCommand[] = [];
   
-  setup() {
+  refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
+    return this.data.repairCollection.refresh(messageHandler);
+  }
+  
+  afterDataSet() {
     this.setUpCommands();
   }
 
-  
+
   protected setUpCommands(): void {
        
     const healthState = new PowershellCommandParameter("HealthState", CommandParamTypes.enum, { options: ["OK", "Warning", "Error", "Unknown"], required: true });
@@ -39,7 +45,6 @@ export class CommandsComponent extends BaseControllerDirective {
       'Send-ServiceFabricClusterHealthReport',
       [healthState, sourceId, healthProperty, description, ttl, removeWhenExpired, sequenceNum, immediate, timeoutSec]
     );
-      
     this.commands.push(healthReport);
     
     const getUpgrade = new PowershellCommand(
@@ -53,29 +58,36 @@ export class CommandsComponent extends BaseControllerDirective {
 
     const healthStateFilter = ["Default", "None", "Ok", "Warning", "Error", "All"];
     
-    const appHealthPolMap = new PowershellCommandParameter("ApplicationHealthPolicyMap", CommandParamTypes.object);
     const appsFilter = new PowershellCommandParameter("ApplicationsFilter", CommandParamTypes.enum, { options: healthStateFilter, allowCustomValAndOptions: true });
-    const appTypeHealthPolMap = new PowershellCommandParameter("ApplicationTypeHealthPolicyMap", CommandParamTypes.object);
     const considerWarnAsErr = new PowershellCommandParameter("ConsiderWarningAsError", CommandParamTypes.bool);
     const eventsFilter = new PowershellCommandParameter("EventsFilter", CommandParamTypes.enum, { options: healthStateFilter, allowCustomValAndOptions: true });
     const excludeHealthStat = new PowershellCommandParameter("ExcludeHealthStatistics", CommandParamTypes.switch);
     const includeSysAppHealthStat = new PowershellCommandParameter("IncludeSystemApplicationHealthStatistics", CommandParamTypes.switch);
-    const maxPercUnhealthApp = new PowershellCommandParameter("MaxPercentUnhealthyApplications", CommandParamTypes.number);
     const maxPercUnhealthNodes = new PowershellCommandParameter("MaxPercentUnhealthyNodes", CommandParamTypes.number);
     const nodesFilter = new PowershellCommandParameter("NodesFilter", CommandParamTypes.enum, { options: healthStateFilter, allowCustomValAndOptions: true });
-    const nodeTypeHealthPolMap = new PowershellCommandParameter("NodeTypeHealthPolicyMap", CommandParamTypes.object);
 
     const getHealth = new PowershellCommand(
       'Get Cluster Health',
       'https://docs.microsoft.com/powershell/module/servicefabric/get-servicefabricclusterhealth',
       CommandSafetyLevel.safe,
       `Get-ServiceFabricClusterHealth`,
-      [appHealthPolMap, appsFilter, appTypeHealthPolMap, considerWarnAsErr, eventsFilter, excludeHealthStat, includeSysAppHealthStat, maxPercUnhealthApp, maxPercUnhealthNodes, nodesFilter, nodeTypeHealthPolMap, timeoutSec]
+      [appsFilter, considerWarnAsErr, eventsFilter, excludeHealthStat, includeSysAppHealthStat, maxPercUnhealthNodes, nodesFilter, timeoutSec]
     );
-
     this.commands.push(getHealth);
+
+    const state = new PowershellCommandParameter("State", CommandParamTypes.enum,
+      { options: ['Default', 'Created', 'Claimed', 'Preparing', 'Approved', 'Executing', 'ReadyToExecute', 'Restoring', 'Active', 'Completed', 'All'] }
+    );
+    const taskId = new PowershellCommandParameter('TaskId', CommandParamTypes.enum, { options: this.data.repairCollection.collection.map(task => task.id)});
+    
+    const getRepairTasks = new PowershellCommand(
+      "Get Repair Task",
+      "https://docs.microsoft.com/powershell/module/servicefabric/get-servicefabricrepairtask",
+      CommandSafetyLevel.safe,
+      `Get-ServiceFabricRepairTask`,
+      [taskId, state, timeoutSec]
+    );
+    this.commands.push(getRepairTasks);
   }
-
-
 
 }

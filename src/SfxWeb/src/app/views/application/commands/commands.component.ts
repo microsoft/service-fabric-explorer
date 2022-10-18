@@ -72,5 +72,14 @@ export class CommandsComponent extends ApplicationBaseControllerDirective{
     );
 
     this.commands.push(getHealth);
+
+    const getApp = new PowershellCommand(
+      'Get Application',
+      'https://docs.microsoft.com/powershell/module/servicefabric/get-servicefabricapplication',
+      CommandSafetyLevel.safe,
+      `Get-ServiceFabricApplication -ApplicationName ${this.app?.name}`,
+      [new PowershellCommandParameter('ExcludeApplicationParameters', CommandParamTypes.switch), timeoutSec]
+    )
+    this.commands.push(getApp);
   }
 }

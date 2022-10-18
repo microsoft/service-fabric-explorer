@@ -1,10 +1,7 @@
-percentage as byte
-diff between switch and bool
-increase width due to large param count
-object as param value
-get app location?
-getdeployedapp: refresh deployed app
-getdeployedreplica: adhoc vs app name
+percentage as byte: unresolved
+object as param value: not have these for now
+get app location: does it in both times
+getdeployedreplica: adhoc vs app name: unresolved - use appname
 add tests:
     how thorough?
         test each command?
@@ -13,3 +10,7 @@ add tests:
     waiting until commands loaded how?
     test input how?
     test copy how?
+
+
+restart replica
+restart prime replica under partition

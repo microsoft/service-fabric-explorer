@@ -40,5 +40,19 @@ export class CommandsComponent extends DeployedAppBaseControllerDirective{
     );
 
     this.commands.push(healthReport);
+
+    const includeHealthState = new PowershellCommandParameter("IncludeHealthState", CommandParamTypes.switch);
+
+    const getDeployedApp = new PowershellCommand(
+      "Get Deployed Application",
+      'https://docs.microsoft.com/powershell/module/servicefabric/get-servicefabricdeployedapplication',
+      CommandSafetyLevel.safe,
+      `Get-ServiceFabricDeployedApplication -NodeName "${this.nodeName}" -ApplicationName ${this.deployedApp.name}`,
+      [includeHealthState]
+    );
+
+    this.commands.push(getDeployedApp);
+
+    
   }
 }

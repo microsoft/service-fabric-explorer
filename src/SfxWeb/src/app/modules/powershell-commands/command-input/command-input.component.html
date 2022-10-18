@@ -1,7 +1,7 @@
 <label *ngIf="commandParam.type !== paramTypes.switch && commandParam.type !== paramTypes.bool" [for]="commandParam.name">{{commandParam.name}}</label>
 <div *ngIf="!commandParam.allowCustomValAndOptions; else dropDown">
         
-    <input *ngIf="commandParam.type === paramTypes.string || commandParam.type === paramTypes.object" [id]="commandParam.name" [name]="commandParam.name"
+    <input *ngIf="commandParam.type === paramTypes.string" [id]="commandParam.name" [name]="commandParam.name"
     type="text" [(ngModel)]="commandParam.value" [required]="commandParam.required" class="input-flat" />
     
     <input *ngIf="commandParam.type === paramTypes.number" [id]="commandParam.name" [name]="commandParam.name"

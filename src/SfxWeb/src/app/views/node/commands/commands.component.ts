@@ -1,4 +1,6 @@
 import { Component, Injector } from '@angular/core';
+import { Observable } from 'rxjs';
+import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { CommandParamTypes, CommandSafetyLevel, PowershellCommand, PowershellCommandParameter } from 'src/app/Models/PowershellCommand';
 import { DataService } from 'src/app/services/data.service';
 import { NodeBaseControllerDirective } from '../NodeBase';
@@ -15,9 +17,13 @@ export class CommandsComponent extends NodeBaseControllerDirective {
 
   commands: PowershellCommand[] = [];
   
+  refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
+    return this.node.deployedApps.refresh(messageHandler);
+  }
   
   afterDataSet() {
-      this.setUpCommands();
+    this.setUpCommands();
+    
   }
 
   protected setUpCommands(): void {
@@ -66,8 +72,6 @@ export class CommandsComponent extends NodeBaseControllerDirective {
     const deployedApps = this.node.deployedApps.collection;
 
     const appName = new PowershellCommandParameter("ApplicationName", CommandParamTypes.enum, { options: deployedApps.map(app => app.name) });
-    const usePaging = new PowershellCommandParameter("UsePaging", CommandParamTypes.switch);
-    const contToken = new PowershellCommandParameter("ContinuationToken", CommandParamTypes.string);
     const getSinglePage = new PowershellCommandParameter("GetSinglePage", CommandParamTypes.switch);
     const includeHealthState = new PowershellCommandParameter("IncludeHealthState", CommandParamTypes.switch);
     const maxResults = new PowershellCommandParameter("MaxResults", CommandParamTypes.number);
@@ -77,9 +81,8 @@ export class CommandsComponent extends NodeBaseControllerDirective {
       'https://docs.microsoft.com/powershell/module/servicefabric/get-servicefabricdeployedapplication',
       CommandSafetyLevel.safe,
       `Get-ServiceFabricDeployedApplication -NodeName "${this.nodeName}"`,
-      [appName, usePaging, contToken, getSinglePage, includeHealthState, maxResults]
+      [appName, getSinglePage, includeHealthState, maxResults]
     );
-
 
     this.commands.push(getDeployedApp);
   }
