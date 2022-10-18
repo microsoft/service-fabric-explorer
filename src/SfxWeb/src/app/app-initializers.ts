@@ -4,10 +4,10 @@ import { StandaloneIntegrationService } from './services/standalone-integration.
 export function initApp(aadService: AdalService, standaloneIntegrationService: StandaloneIntegrationService) {
   return async () => {
     try {
-      if(window.location.search.includes("?")) {
+      if (window.location.search.includes("?")) {
         standaloneIntegrationService.setConfiguration(window.location.search.split('?')[1]);
       }
-      if(standaloneIntegrationService.isStandalone()) {
+      if (standaloneIntegrationService.isStandalone()) {
         return;
       }
 
@@ -16,7 +16,6 @@ export function initApp(aadService: AdalService, standaloneIntegrationService: S
       await aadService.load().toPromise();
 
       if (aadService.aadEnabled) {
-        aadService.handleWindowCallback();
         if (!aadService.isAuthenticated) {
           aadService.login();
         }

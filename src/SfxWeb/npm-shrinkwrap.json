@@ -30,6 +30,7 @@
         "luxon": "^1.22.0",
         "metro4": "^4.3.5",
         "moment": "^2.29.2",
+        "msal": "^1.4.17",
         "nouislider": "^15.4.0",
         "rxjs": "~6.5.4",
         "tslib": "^2.0.0",
@@ -11357,6 +11358,22 @@
     "node_modules/ms": {
       "version": "2.1.2",
       "license": "MIT"
+    },
+    "node_modules/msal": {
+      "version": "1.4.17",
+      "resolved": "https://registry.npmjs.org/msal/-/msal-1.4.17.tgz",
+      "integrity": "sha512-RjHwP2cCIWQ9iUIk1SziUMb9+jj5mC4OqG2w16E5yig8jySi/TwiFvKlwcjNrPsndph0HtgCtbENnk5julf3yQ==",
+      "dependencies": {
+        "tslib": "^1.9.3"
+      },
+      "engines": {
+        "node": ">=0.8.0"
+      }
+    },
+    "node_modules/msal/node_modules/tslib": {
+      "version": "1.14.1",
+      "resolved": "https://registry.npmjs.org/tslib/-/tslib-1.14.1.tgz",
+      "integrity": "sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg=="
     },
     "node_modules/multicast-dns": {
       "version": "6.2.3",
@@ -23977,6 +23994,21 @@
     },
     "ms": {
       "version": "2.1.2"
+    },
+    "msal": {
+      "version": "1.4.17",
+      "resolved": "https://registry.npmjs.org/msal/-/msal-1.4.17.tgz",
+      "integrity": "sha512-RjHwP2cCIWQ9iUIk1SziUMb9+jj5mC4OqG2w16E5yig8jySi/TwiFvKlwcjNrPsndph0HtgCtbENnk5julf3yQ==",
+      "requires": {
+        "tslib": "^1.9.3"
+      },
+      "dependencies": {
+        "tslib": {
+          "version": "1.14.1",
+          "resolved": "https://registry.npmjs.org/tslib/-/tslib-1.14.1.tgz",
+          "integrity": "sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg=="
+        }
+      }
     },
     "multicast-dns": {
       "version": "6.2.3",
