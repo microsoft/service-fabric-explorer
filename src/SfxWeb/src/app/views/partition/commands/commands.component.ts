@@ -58,5 +58,14 @@ export class CommandsComponent extends PartitionBaseControllerDirective{
     );
 
     this.commands.push(getHealth);
+
+    const getPartition = new PowershellCommand(
+      "Get Partition",
+      'https://docs.microsoft.com/powershell/module/servicefabric/get-servicefabricpartition',
+      CommandSafetyLevel.safe,
+      `Get-ServiceFabricPartition -PartitionId ${this.partitionId}`,
+      [timeoutSec]
+    )
+    this.commands.push(getPartition);
   }
 }

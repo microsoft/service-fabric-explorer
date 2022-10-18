@@ -40,5 +40,33 @@ export class CommandsComponent extends ServiceBaseControllerDirective{
     );
 
     this.commands.push(healthReport);
+
+    const healthStateFilter = ["Default", "None", "Ok", "Warning", "Error", "All"];
+    
+    const considerWarnAsErr = new PowershellCommandParameter("ConsiderWarningAsError", CommandParamTypes.bool);
+    const maxPercUnhealthPart = new PowershellCommandParameter("MaxPercentUnhealthyPartitionsperService", CommandParamTypes.number);
+    const maxPercUnhealthRep = new PowershellCommandParameter("MaxPercentUnhealthyReplicasPerPartition", CommandParamTypes.number);
+    const eventsFilter = new PowershellCommandParameter("EventsFilter", CommandParamTypes.enum, { options: healthStateFilter, allowCustomValAndOptions: true });
+    const partitionsFilter = new PowershellCommandParameter("PartitionsFilter", CommandParamTypes.enum, { options: healthStateFilter, allowCustomValAndOptions: true });
+    const excludeHealthStat = new PowershellCommandParameter("ExcludeHealthStatistics", CommandParamTypes.switch);
+
+    const getHealth = new PowershellCommand(
+      'Get Service Health',
+      'https://docs.microsoft.com/powershell/module/servicefabric/get-servicefabricservicehealth',
+      CommandSafetyLevel.safe,
+      `Get-ServiceFabricServiceHealth -ServiceName ${this.service?.name}`,
+      [considerWarnAsErr, maxPercUnhealthPart, maxPercUnhealthRep, eventsFilter, partitionsFilter, excludeHealthStat, timeoutSec]
+    );
+
+    this.commands.push(getHealth);
+    
+    const getPartitions = new PowershellCommand(
+      "Get Partitions",
+      'https://docs.microsoft.com/powershell/module/servicefabric/get-servicefabricpartition',
+      CommandSafetyLevel.safe,
+      `Get-ServiceFabricPartition -ServiceName ${this.service?.name}`,
+      [timeoutSec]
+    )
+    this.commands.push(getPartitions);
   }
 }
