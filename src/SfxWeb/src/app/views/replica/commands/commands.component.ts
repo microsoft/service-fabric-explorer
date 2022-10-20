@@ -1,4 +1,6 @@
 import { Component, Injector } from '@angular/core';
+import { Observable } from 'rxjs';
+import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { CommandParamTypes, CommandSafetyLevel, PowershellCommand, PowershellCommandParameter } from 'src/app/Models/PowershellCommand';
 import { DataService } from 'src/app/services/data.service';
 import { ReplicaBaseControllerDirective } from '../ReplicaBase';
@@ -16,7 +18,11 @@ export class CommandsComponent extends ReplicaBaseControllerDirective{
     super(data, injector);
   }
 
-  setup(): void {
+  refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
+    return this.data.getNodes();
+  }
+
+  afterDataSet(): void {
     this.setUpCommands();
   }
 
@@ -34,11 +40,30 @@ export class CommandsComponent extends ReplicaBaseControllerDirective{
     const healthReport = new PowershellCommand(
         'Send Health Report',
         'https://docs.microsoft.com/powershell/module/servicefabric/send-servicefabricreplicahealthreport',
-        CommandSafetyLevel.safe,
+        CommandSafetyLevel.unsafe,
         `Send-ServiceFabricReplicaHealthReport -PartitionId ${this.partitionId} -ReplicaId ${this.replicaId}`,
         [healthState, sourceId, healthProperty, description, ttl, removeWhenExpired, sequenceNum, immediate, timeoutSec]
     );
 
     this.commands.push(healthReport);
+
+    if (!this.replica.isStatefulService) {
+      const currInstance = new PowershellCommandParameter("CurrentInstanceNodeName ", CommandParamTypes.string,
+        { required: true, options: this.data.nodes.collection.map(node => node.name), allowCustomValAndOptions: true });
+      const newInstance = new PowershellCommandParameter("NewInstanceNodeName", CommandParamTypes.string,
+        { required: true, options: this.data.nodes.collection.map(node => node.name), allowCustomValAndOptions: true });
+      const ignoreConstraints = new PowershellCommandParameter('IgnoreConstraints', CommandParamTypes.switch);
+      
+      
+      const moveInstance = new PowershellCommand(
+        "Move Instance",
+        'https://docs.microsoft.com/powershell/module/servicefabric/move-servicefabricinstance',
+        CommandSafetyLevel.safe,
+        `Move-ServiceFabricInstance -ServiceName ${this.replica.parent.parent.name} -PartitionId ${this.partitionId}`,
+        [currInstance, newInstance, ignoreConstraints, timeoutSec]
+      )
+      this.commands.push(moveInstance);
+  
+    }
   }
 }

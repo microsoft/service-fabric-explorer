@@ -1,4 +1,6 @@
 import { Component, Injector } from '@angular/core';
+import { Observable } from 'rxjs';
+import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { CommandParamTypes, CommandSafetyLevel, PowershellCommand, PowershellCommandParameter } from 'src/app/Models/PowershellCommand';
 import { DataService } from 'src/app/services/data.service';
 import { PartitionBaseControllerDirective } from '../PartitionBase';
@@ -16,9 +18,13 @@ export class CommandsComponent extends PartitionBaseControllerDirective{
     super(data, injector);
   }
 
-  setup(): void {
-    this.setUpCommands();
+  refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
+    return this.data.getNodes();
   }
+
+  afterDataSet(): void {
+    this.setUpCommands();
+  } 
 
   private setUpCommands() {
     const healthState = new PowershellCommandParameter("HealthState", CommandParamTypes.enum, { options: ["OK", "Warning", "Error", "Unknown"], required: true});
@@ -34,7 +40,7 @@ export class CommandsComponent extends PartitionBaseControllerDirective{
     const healthReport = new PowershellCommand(
         'Send Health Report',
         'https://docs.microsoft.com/powershell/module/servicefabric/send-servicefabricpartitionhealthreport',
-        CommandSafetyLevel.safe,
+        CommandSafetyLevel.unsafe,
         `Send-ServiceFabricPartitionHealthReport -PartitionId ${this.partitionId}`,
         [healthState, sourceId, healthProperty, description, ttl, removeWhenExpired, sequenceNum, immediate, timeoutSec]
     );
@@ -67,5 +73,56 @@ export class CommandsComponent extends PartitionBaseControllerDirective{
       [timeoutSec]
     )
     this.commands.push(getPartition);
+
+    if (this.partition.isStatefulService) {
+      
+      const ignoreConstraints = new PowershellCommandParameter('IgnoreConstraints', CommandParamTypes.switch);
+      
+      const nodeName = new PowershellCommandParameter('NodeName', CommandParamTypes.string,
+        { required: true, options: this.data.nodes.collection.map(node => node.name), allowCustomValAndOptions: true});
+  
+      const movePrimeReplicaSpecific = new PowershellCommand(
+        "Move Primary Replica To Specifc Node",
+        'https://docs.microsoft.com/powershell/module/servicefabric/move-servicefabricprimaryreplica',
+        CommandSafetyLevel.safe,
+        `Move-ServiceFabricPrimaryReplica -ServiceName ${this.partition.parent.name} -PartitionId ${this.partitionId}`,
+        [nodeName, ignoreConstraints, timeoutSec]
+      )
+      this.commands.push(movePrimeReplicaSpecific);
+  
+      const movePrimeReplicaRandom = new PowershellCommand(
+        "Move Primary Replica To Random Node",
+        'https://docs.microsoft.com/powershell/module/servicefabric/move-servicefabricprimaryreplica',
+        CommandSafetyLevel.safe,
+        `Move-ServiceFabricPrimaryReplica -ServiceName ${this.partition.parent.name} -PartitionId ${this.partitionId}`,
+        [ignoreConstraints, timeoutSec]
+      )
+      this.commands.push(movePrimeReplicaRandom);
+  
+      const currSecondReplica = new PowershellCommandParameter("CurrentSecondaryNodeName", CommandParamTypes.string,
+        { required: true, options: this.data.nodes.collection.map(node => node.name), allowCustomValAndOptions: true });
+      
+      const newSecondReplica = new PowershellCommandParameter("NewSecondaryNodeName", CommandParamTypes.string,
+        { required: true, options: this.data.nodes.collection.map(node => node.name), allowCustomValAndOptions: true });
+      
+      
+      const moveSecondReplicaSpecific = new PowershellCommand(
+        "Move Secondary Replica To Specifc Node",
+        'https://docs.microsoft.com/powershell/module/servicefabric/move-servicefabricsecondaryreplica',
+        CommandSafetyLevel.safe,
+        `Move-ServiceFabricSecondaryReplica -ServiceName ${this.partition.parent.name} -PartitionId ${this.partitionId}`,
+        [currSecondReplica, newSecondReplica, ignoreConstraints, timeoutSec]
+      )
+      this.commands.push(moveSecondReplicaSpecific);
+  
+      const moveSecondReplicaRandom = new PowershellCommand(
+        "Move Secondary Replica To Random Node",
+        'https://docs.microsoft.com/powershell/module/servicefabric/move-servicefabricsecondaryreplica',
+        CommandSafetyLevel.safe,
+        `Move-ServiceFabricSecondaryReplica -ServiceName ${this.partition.parent.name} -PartitionId ${this.partitionId}`,
+        [ignoreConstraints, timeoutSec]
+      )
+      this.commands.push(moveSecondReplicaRandom);
+    }
   }
 }

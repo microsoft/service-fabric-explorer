@@ -34,7 +34,7 @@ export class CommandsComponent extends DeployedAppBaseControllerDirective{
     const healthReport = new PowershellCommand(
         'Send Health Report',
         'https://docs.microsoft.com/powershell/module/servicefabric/send-servicefabricdeployedapplicationhealthreport',
-        CommandSafetyLevel.safe,
+        CommandSafetyLevel.unsafe,
         `Send-ServiceFabricDeployedApplicationHealthReport -ApplicationName ${this.deployedApp.name} -NodeName "${this.nodeName}"`,
         [healthState, sourceId, healthProperty, description, ttl, removeWhenExpired, sequenceNum, immediate, timeoutSec]
     );
@@ -53,6 +53,14 @@ export class CommandsComponent extends DeployedAppBaseControllerDirective{
 
     this.commands.push(getDeployedApp);
 
+    const getReplica = new PowershellCommand(
+      "Get Deployed Replicas",
+      'https://docs.microsoft.com/powershell/module/servicefabric/get-servicefabricdeployedreplica',
+      CommandSafetyLevel.safe,
+      `Get-ServiceFabricDeployedReplica -NodeName "${this.nodeName}" -ApplicationName ${this.deployedApp.name}`,
+      [timeoutSec]
+    );
     
+    this.commands.push(getReplica);
   }
 }

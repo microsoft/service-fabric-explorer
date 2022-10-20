@@ -8,10 +8,10 @@ import { ServiceBaseControllerDirective } from '../ServiceBase';
   templateUrl: './commands.component.html',
   styleUrls: ['./commands.component.scss']
 })
-export class CommandsComponent extends ServiceBaseControllerDirective{
+export class CommandsComponent extends ServiceBaseControllerDirective {
   
   commands: PowershellCommand[] = [];
-
+  
   constructor(protected data: DataService, injector: Injector) {
     super(data, injector);
   }
@@ -34,7 +34,7 @@ export class CommandsComponent extends ServiceBaseControllerDirective{
     const healthReport = new PowershellCommand(
         'Send Health Report',
         'https://docs.microsoft.com/powershell/module/servicefabric/send-servicefabricservicehealthreport',
-        CommandSafetyLevel.safe,
+        CommandSafetyLevel.unsafe,
         `Send-ServiceFabricServiceHealthReport -ServiceName ${this.service?.name}`,
         [healthState, sourceId, healthProperty, description, ttl, removeWhenExpired, sequenceNum, immediate, timeoutSec]
     );

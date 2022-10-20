@@ -1,7 +1,7 @@
 percentage as byte: unresolved
 object as param value: not have these for now
-get app location: does it in both times
-getdeployedreplica: adhoc vs app name: unresolved - use appname
+send health report safty level - check w/ Sridhar
+ask Sridhar: how much is enough connection options; objects as parameters
 add tests:
     how thorough?
         test each command?
@@ -14,3 +14,5 @@ add tests:
 
 restart replica
 restart prime replica under partition
+
+collapsable commands: only display name

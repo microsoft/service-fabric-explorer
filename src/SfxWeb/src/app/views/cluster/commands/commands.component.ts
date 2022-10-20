@@ -41,7 +41,7 @@ export class CommandsComponent extends BaseControllerDirective {
     const healthReport = new PowershellCommand(
       'Send Health Report',
       'https://docs.microsoft.com/powershell/module/servicefabric/send-servicefabricclusterhealthreport',
-      CommandSafetyLevel.safe,
+      CommandSafetyLevel.unsafe,
       'Send-ServiceFabricClusterHealthReport',
       [healthState, sourceId, healthProperty, description, ttl, removeWhenExpired, sequenceNum, immediate, timeoutSec]
     );
