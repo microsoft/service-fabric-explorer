@@ -1,5 +1,5 @@
 import { Component, Injector } from '@angular/core';
-import { Observable } from 'rxjs';
+import { forkJoin, Observable } from 'rxjs';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { CommandParamTypes, CommandSafetyLevel, PowershellCommand, PowershellCommandParameter } from 'src/app/Models/PowershellCommand';
 import { DataService } from 'src/app/services/data.service';
@@ -19,7 +19,10 @@ export class CommandsComponent extends PartitionBaseControllerDirective{
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
-    return this.data.getNodes();
+    return forkJoin([
+      this.data.getNodes(),
+      this.partition.replicas.refresh(messageHandler)
+    ]);
   }
 
   afterDataSet(): void {
@@ -73,6 +76,20 @@ export class CommandsComponent extends PartitionBaseControllerDirective{
       [timeoutSec]
     )
     this.commands.push(getPartition);
+
+    const replicaId = new PowershellCommandParameter("ReplicaOrInstanceId", CommandParamTypes.enum, { options: this.partition.replicas.collection.map(r => r.id) });
+    const statusFilter = new PowershellCommandParameter("ReplicaStatusFilter", CommandParamTypes.enum,
+      { options: ['Default', 'InBuild', 'Standby', 'Ready', 'Down', 'Dropped', 'Completed', 'All'] });
+    
+    const getReplicas = new PowershellCommand(
+      'Get Replicas',
+      'https://docs.microsoft.com/powershell/module/servicefabric/get-servicefabricreplica',
+      CommandSafetyLevel.safe,
+      `Get-ServiceFabricReplica -PartitionId ${this.partitionId}`,
+      [replicaId, statusFilter, timeoutSec]
+    );
+
+    this.commands.push(getReplicas);
 
     if (this.partition.isStatefulService) {
       

@@ -69,6 +69,15 @@ export class CommandsComponent extends NodeBaseControllerDirective {
 
     this.commands.push(getHealth);
 
+    const getNode = new PowershellCommand(
+      'Get Node',
+      'https://docs.microsoft.com/powershell/module/servicefabric/get-servicefabricnode',
+      CommandSafetyLevel.safe,
+      `Get-ServiceFabricNode -NodeName "${this.nodeName}"`,
+      [timeoutSec]
+    );
+    this.commands.push(getNode);
+
     const deployedApps = this.node.deployedApps.collection;
 
     const appName = new PowershellCommandParameter("ApplicationName", CommandParamTypes.enum, { options: deployedApps.map(app => app.name) });

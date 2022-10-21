@@ -25,8 +25,8 @@ getreplica & replicahealth * deployedreplica - no instance
 
 Get-ServiceFabricService -
 Get-ServiceFabricDeployedServicePackage -
-Get-ServiceFabricNode
-Get-ServiceFabricReplica
+Get-ServiceFabricNode -
+Get-ServiceFabricReplica -
 Get-ServiceFabricReplicaHealth -
 Get-ServiceFabricDeployedApplicationHealth -
 
