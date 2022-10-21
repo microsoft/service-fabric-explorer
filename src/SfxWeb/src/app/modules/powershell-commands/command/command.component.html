@@ -1,6 +1,6 @@
 <div class="detail-pane essen-pane" [class]="command.safetyLevel">
-
-    <div class="command-name">
+<app-collapse-container [sectionName]="command.name">
+    <div collapse-header class="command-name">
         <span [ngSwitch]="command.safetyLevel">
             <app-health-badge *ngSwitchCase="safetyLevelEnum.safe" 
             text="Safe Command" [showText]="false" [badgeClass]="BadgeConstants.BadgeOK"></app-health-badge>
@@ -14,24 +14,29 @@
             <span class="mif-info link"></span>
         </a>
     </div>
-    <form #inputForm="ngForm" class="input-group">
-        <div *ngFor="let commandParam of command.parameters">
-           <app-command-input [commandParam]="commandParam"></app-command-input>
-        </div>
-    </form>
 
-    <div class="card"c>
-        <div class="card-body">
-            <span *ngIf="inputForm.valid; else disabledCopy">
-                <app-clip-board style="float: right;" [text]="command.getScript()"></app-clip-board>
-            </span>
-            <ng-template #disabledCopy>
-                <div class="mif-copy disabled-copy" ngbTooltip="missing required parameters!" tooltipClass="styled-tooltip"></div>
-            </ng-template>
-            <p class="card-text">
-                {{command.prefix}}
-                <span *ngFor="let param of command.paramsToStringArr()"> {{param.name}} <span class="param-value"> {{param.value}} </span></span>
-            </p>
+    <div collapse-body>
+        <form #inputForm="ngForm" class="input-group">
+            <div *ngFor="let commandParam of command.parameters">
+               <app-command-input [commandParam]="commandParam"></app-command-input>
+            </div>
+        </form>
+    
+        <div class="card"c>
+            <div class="card-body">
+                <span *ngIf="inputForm.valid; else disabledCopy">
+                    <app-clip-board style="float: right;" [text]="command.getScript()"></app-clip-board>
+                </span>
+                <ng-template #disabledCopy>
+                    <div class="mif-copy disabled-copy" ngbTooltip="missing required parameters!" tooltipClass="styled-tooltip"></div>
+                </ng-template>
+                <p class="card-text">
+                    {{command.prefix}}
+                    <span *ngFor="let param of command.paramsToStringArr()"> {{param.name}} <span class="param-value"> {{param.value}} </span></span>
+                </p>
+            </div>
         </div>
     </div>
+
+</app-collapse-container>
 </div>

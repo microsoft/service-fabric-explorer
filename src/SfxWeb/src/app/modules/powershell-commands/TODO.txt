@@ -12,7 +12,13 @@ add tests:
     test copy how?
 
 
-restart replica
+restart replica - no random?
 restart prime replica under partition
 
-collapsable commands: only display name
+collapsable commands: only display name - check w/ Jeffery
+
+check all missing gets - no continuation toekn and paging, yes getsinglepage, maxresults
+service -adhoc?
+node - do we have parent
+
+getreplica & replicahealth * deployedreplica - no instance

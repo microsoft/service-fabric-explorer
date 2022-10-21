@@ -76,6 +76,16 @@ export class CommandsComponent extends PartitionBaseControllerDirective{
 
     if (this.partition.isStatefulService) {
       
+      const completionMode = new PowershellCommandParameter("CommandCompletionMode", CommandParamTypes.enum, { options: ['Invalid', 'DoNotVerify', 'Verify'] });
+      const restartPrimeReplica = new PowershellCommand(
+        "Restart Primary Replica",
+        'https://docs.microsoft.com/powershell/module/servicefabric/restart-servicefabricreplica',
+        CommandSafetyLevel.safe,
+        `Restart-ServiceFabricReplica -ServiceName ${this.partition.parent.name} -PartitionId ${this.partitionId} -ReplicaKindPrimary`,
+        [completionMode, timeoutSec]
+      )
+      this.commands.push(restartPrimeReplica);
+
       const ignoreConstraints = new PowershellCommandParameter('IgnoreConstraints', CommandParamTypes.switch);
       
       const nodeName = new PowershellCommandParameter('NodeName', CommandParamTypes.string,

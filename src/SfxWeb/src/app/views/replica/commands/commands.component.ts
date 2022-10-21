@@ -62,8 +62,19 @@ export class CommandsComponent extends ReplicaBaseControllerDirective{
         `Move-ServiceFabricInstance -ServiceName ${this.replica.parent.parent.name} -PartitionId ${this.partitionId}`,
         [currInstance, newInstance, ignoreConstraints, timeoutSec]
       )
-      this.commands.push(moveInstance);
-  
+      this.commands.push(moveInstance);  
+    }
+    else {
+
+      const completionMode = new PowershellCommandParameter("CommandCompletionMode", CommandParamTypes.enum, { options: ['Invalid', 'DoNotVerify', 'Verify'] });
+      const restartReplica = new PowershellCommand(
+        "Restart Replica",
+        'https://docs.microsoft.com/powershell/module/servicefabric/restart-servicefabricreplica',
+        CommandSafetyLevel.safe,
+        `Restart-ServiceFabricReplica -ServiceName ${this.replica.parent.parent.name} -PartitionId ${this.partitionId} -ReplicaOrInstanceId ${this.replicaId}`,
+        [completionMode, timeoutSec]
+      )
+      this.commands.push(restartReplica);
     }
   }
 }
