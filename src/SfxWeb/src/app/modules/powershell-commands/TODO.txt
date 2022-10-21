@@ -27,8 +27,8 @@ Get-ServiceFabricService -
 Get-ServiceFabricDeployedServicePackage -
 Get-ServiceFabricNode
 Get-ServiceFabricReplica
-Get-ServiceFabricReplicaHealth
-Get-ServiceFabricDeployedApplicationHealth
+Get-ServiceFabricReplicaHealth -
+Get-ServiceFabricDeployedApplicationHealth -
 
 parent get selects nessecary? performance?
 get appTypes method (applications & service)

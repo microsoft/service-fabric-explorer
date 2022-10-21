@@ -47,6 +47,18 @@ export class CommandsComponent extends ReplicaBaseControllerDirective{
 
     this.commands.push(healthReport);
 
+    const considerWarningAsErr = new PowershellCommandParameter("ConsiderWarningAsError", CommandParamTypes.bool);
+    const eventsFilter = new PowershellCommandParameter("EventsFilter", CommandParamTypes.enum, { options: ["Default", "None", "Ok", "Warning", "Error", "All"], allowCustomValAndOptions: true });
+
+    const getHealth = new PowershellCommand(
+      'Get Replica Health',
+      'https://docs.microsoft.com/powershell/module/servicefabric/get-servicefabricreplicahealth',
+      CommandSafetyLevel.safe,
+      `Get-ServiceFabricReplicaHealth -PartitionId ${this.partitionId} -ReplicaOrInstanceId ${this.replicaId}`,
+      [considerWarningAsErr, eventsFilter, timeoutSec]
+    );
+    this.commands.push(getHealth);
+    
     if (!this.replica.isStatefulService) {
       const currInstance = new PowershellCommandParameter("CurrentInstanceNodeName ", CommandParamTypes.string,
         { required: true, options: this.data.nodes.collection.map(node => node.name), allowCustomValAndOptions: true });

@@ -47,6 +47,21 @@ export class CommandsComponent extends DeployedAppBaseControllerDirective{
 
     this.commands.push(healthReport);
 
+    const healthFilter = ["Default", "None", "Ok", "Warning", "Error", "All"];
+    const considerWarningAsErr = new PowershellCommandParameter("ConsiderWarningAsError", CommandParamTypes.bool);
+    const eventsFilter = new PowershellCommandParameter("EventsFilter", CommandParamTypes.enum, { options: healthFilter, allowCustomValAndOptions: true });
+    const serviceFilter = new PowershellCommandParameter("DeployedServicePackagesFilter", CommandParamTypes.enum, { options: healthFilter, allowCustomValAndOptions: true });
+    const excludehealthStat = new PowershellCommandParameter("ExcludeHealthStatistics", CommandParamTypes.switch);
+
+    const getHealth = new PowershellCommand(
+      'Get Deployed Application Health',
+      'https://docs.microsoft.com/powershell/module/servicefabric/get-servicefabricdeployedapplicationhealth',
+      CommandSafetyLevel.safe,
+      `Get-ServiceFabricReplicaHealth -NodeName "${this.nodeName}" -ApplicationName ${this.deployedApp.name}`,
+      [considerWarningAsErr, eventsFilter, serviceFilter, excludehealthStat, timeoutSec]
+    );
+    this.commands.push(getHealth);
+
     const includeHealthState = new PowershellCommandParameter("IncludeHealthState", CommandParamTypes.switch);
 
     const getDeployedApp = new PowershellCommand(
