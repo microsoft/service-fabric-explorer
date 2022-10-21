@@ -1,6 +1,9 @@
 import { Component, Injector } from '@angular/core';
+import { forkJoin, Observable } from 'rxjs';
+import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { CommandParamTypes, CommandSafetyLevel, PowershellCommand, PowershellCommandParameter } from 'src/app/Models/PowershellCommand';
 import { DataService } from 'src/app/services/data.service';
+import { ServiceApplicationsBaseControllerDirective } from '../../system-applications/SystemApplicationBase';
 import { ApplicationBaseControllerDirective } from '../applicationBase';
 
 @Component({
@@ -14,6 +17,13 @@ export class CommandsComponent extends ApplicationBaseControllerDirective{
 
   constructor(protected data: DataService, injector: Injector) {
     super(data, injector);
+  }
+
+  refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
+    return forkJoin([
+      this.app.serviceTypes.refresh(messageHandler),
+      this.app.services.refresh(messageHandler)
+    ]);
   }
 
   afterDataSet(): void {
@@ -81,5 +91,20 @@ export class CommandsComponent extends ApplicationBaseControllerDirective{
       [new PowershellCommandParameter('ExcludeApplicationParameters', CommandParamTypes.switch), timeoutSec]
     )
     this.commands.push(getApp);
+
+    const serviceName = new PowershellCommandParameter('ServiceName', CommandParamTypes.enum, { options: this.app.services.collection.map(service => service.name) });
+    const serviceType = new PowershellCommandParameter('ServiceTypeName', CommandParamTypes.string, { options: this.app.serviceTypes.collection.map(_ => _.name), allowCustomValAndOptions: true });
+    const getSinglePage = new PowershellCommandParameter('GetSinglePage', CommandParamTypes.switch);
+    const maxResults = new PowershellCommandParameter('MaxResults', CommandParamTypes.number);
+
+    const getServices = new PowershellCommand(
+      'Get Services',
+      'https://docs.microsoft.com/powershell/module/servicefabric/get-servicefabricservice',
+      CommandSafetyLevel.safe,
+      `Get-ServiceFabricService -ApplicationName ${this.app?.name}`,
+      [serviceName, serviceType, getSinglePage, maxResults, timeoutSec]
+    )
+
+    this.commands.push(getServices);
   }
 }

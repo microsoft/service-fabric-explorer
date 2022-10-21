@@ -59,7 +59,17 @@ export class CommandsComponent extends ServiceBaseControllerDirective {
     );
 
     this.commands.push(getHealth);
-    
+
+    const getService = new PowershellCommand(
+      'Get Service',
+      'https://docs.microsoft.com/powershell/module/servicefabric/get-servicefabricservice',
+      CommandSafetyLevel.safe,
+      `Get-ServiceFabricService -ApplicationName ${this.service?.parent.name} -ServiceName ${this.service.name}`,
+      [timeoutSec]
+    )
+
+    this.commands.push(getService);
+
     const getPartitions = new PowershellCommand(
       "Get Partitions",
       'https://docs.microsoft.com/powershell/module/servicefabric/get-servicefabricpartition',

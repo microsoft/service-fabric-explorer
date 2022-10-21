@@ -1,4 +1,6 @@
 import { Component, Injector } from '@angular/core';
+import { Observable } from 'rxjs';
+import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { CommandParamTypes, CommandSafetyLevel, PowershellCommand, PowershellCommandParameter } from 'src/app/Models/PowershellCommand';
 import { DataService } from 'src/app/services/data.service';
 import { DeployedAppBaseControllerDirective } from '../DeployedApplicationBase';
@@ -14,6 +16,10 @@ export class CommandsComponent extends DeployedAppBaseControllerDirective{
 
   constructor(protected data: DataService, injector: Injector) {
     super(data, injector);
+  }
+
+  refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
+    return this.deployedApp.deployedServicePackages.refresh(messageHandler);
   }
 
   afterDataSet(): void {
@@ -52,6 +58,19 @@ export class CommandsComponent extends DeployedAppBaseControllerDirective{
     );
 
     this.commands.push(getDeployedApp);
+
+    const serviceName = new PowershellCommandParameter('ServiceManifestName', CommandParamTypes.string, { options: this.deployedApp.deployedServicePackages.collection.map(s => s.name) , allowCustomValAndOptions: true});
+    const getSinglePage = new PowershellCommandParameter('GetSinglePage', CommandParamTypes.switch);
+    const maxResults = new PowershellCommandParameter('MaxResults', CommandParamTypes.number);
+
+    const getServices = new PowershellCommand(
+      'Get Deployed Service Packages',
+      'https://docs.microsoft.com/powershell/module/servicefabric/get-servicefabricdeployedservicepackage',
+      CommandSafetyLevel.safe,
+      `Get-ServiceFabricDeployedServicePackage -NodeName "${this.nodeName}" -ApplicationName ${this.deployedApp.name}`,
+      [serviceName, includeHealthState, getSinglePage, maxResults, timeoutSec]
+    )
+    this.commands.push(getServices);
 
     const getReplica = new PowershellCommand(
       "Get Deployed Replicas",

@@ -55,6 +55,16 @@ export class CommandsComponent extends DeployedServicePackageBaseControllerDirec
 
     this.commands.push(getHealth);
 
+    const includeHealthState = new PowershellCommandParameter("IncludeHealthState", CommandParamTypes.switch);
+    const getService = new PowershellCommand(
+      'Get Deployed Service Package',
+      'https://docs.microsoft.com/powershell/module/servicefabric/get-servicefabricdeployedservicepackage',
+      CommandSafetyLevel.safe,
+      `Get-ServiceFabricDeployedServicePackage -NodeName "${this.nodeName}" -ApplicationName ${this.servicePackage.parent.name} -ServiceManifestName "${this.servicePackage.name}"`,
+      [includeHealthState, timeoutSec]
+    )
+    this.commands.push(getService);
+
     const getReplica = new PowershellCommand(
       "Get Deployed Replicas",
       'https://docs.microsoft.com/powershell/module/servicefabric/get-servicefabricdeployedreplica',

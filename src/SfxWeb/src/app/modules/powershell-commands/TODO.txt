@@ -22,3 +22,13 @@ service -adhoc?
 node - do we have parent
 
 getreplica & replicahealth * deployedreplica - no instance
+
+Get-ServiceFabricService -
+Get-ServiceFabricDeployedServicePackage -
+Get-ServiceFabricNode
+Get-ServiceFabricReplica
+Get-ServiceFabricReplicaHealth
+Get-ServiceFabricDeployedApplicationHealth
+
+parent get selects nessecary? performance?
+get appTypes method (applications & service)

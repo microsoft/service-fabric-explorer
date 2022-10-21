@@ -36,7 +36,10 @@ export class CommandsComponent extends BaseControllerDirective {
     const appDefKindFilter = new PowershellCommandParameter('ApplicationDefinitionKindFilter', CommandParamTypes.enum,
       { options: ['Default', 'ServiceFabricApplicationDescription', 'Compose', 'MeshApplicationDescription', 'All'], allowCustomValAndOptions: true });
     const appName = new PowershellCommandParameter('ApplicationName', CommandParamTypes.enum, { options: this.apps.map(app => app.name) });
-    const appTypeName = new PowershellCommandParameter('ApplicationName', CommandParamTypes.enum, { options: this.apps.map(app => app.raw.TypeName) });
+
+    const appTypes = new Set(this.apps.map(app => app.raw.TypeName))
+    const appTypeName = new PowershellCommandParameter('ApplicationTypeName', CommandParamTypes.enum, { options: [...appTypes] });
+    
     const excludeAppParam = new PowershellCommandParameter('ExcludeApplicationParameters', CommandParamTypes.switch);
     const getSinglePage = new PowershellCommandParameter('GetSinglePage', CommandParamTypes.switch);
     const maxResults = new PowershellCommandParameter('MaxResults', CommandParamTypes.number);
