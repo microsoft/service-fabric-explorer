@@ -17,7 +17,7 @@ export class AuthInterceptor implements HttpInterceptor {
   intercept(req: HttpRequest<any>, next: HttpHandler):
     Observable<HttpEvent<any>> {
     if (this.adalService.aadEnabled){
-        return this.adalService.acquireTokenResilient(this.adalService.config.raw.metadata.cluster)
+        return this.adalService.acquireTokenResilient()
         .pipe(mergeMap((token) => {
             if (token) {
             req = req.clone({

@@ -5,14 +5,13 @@ import { retry, map } from 'rxjs/operators';
 import { AadMetadata } from '../Models/DataModels/Aad';
 import AuthenticationContext, { Options } from 'adal-angular';
 import { StringUtils } from '../Utils/StringUtils';
-import { UserAgentApplication, Configuration, AuthenticationParameters } from "msal";
-import _ from 'cypress/types/lodash';
+import { UserAgentApplication, Configuration, AuthenticationParameters, Logger, LogLevel } from "msal";
 
 @Injectable({
   providedIn: 'root'
 })
 export class AdalService {
-  private context: UserAgentApplication;
+  public context: UserAgentApplication;
   public config: AadMetadata;
   public aadEnabled = false;
 
@@ -29,8 +28,17 @@ export class AdalService {
           const config: Configuration = {
             auth: {
               clientId:  data.raw.metadata.cluster,
-              authority: data.raw.metadata.tenant,
+              authority: data.raw.metadata.authority,
+              // navigateToLoginRequestUrl: false,
+
             },
+            cache: {
+              cacheLocation: 'localStorage'
+            },
+            system: {
+              logger: new Logger((level , message) => console.log(message))
+            }
+
             // tenant: data.raw.metadata.tenant,
             // clientId: data.raw.metadata.cluster,
             // cacheLocation: 'localStorage'
@@ -41,8 +49,13 @@ export class AdalService {
           // }
 
           // this.context = new AuthenticationContext(config);
+          console.log(config)
+
           this.context = new UserAgentApplication(config);
+          // console.log(this.context.getAccount())
           this.context.handleRedirectCallback((err, tokenResponse) => {
+            console.log(err)
+            console.log("callback", tokenResponse);
             // let accountObj = null;
             // if (tokenResponse !== null) {
             //   accountObj = tokenResponse.account;
@@ -61,9 +74,8 @@ export class AdalService {
             // }
 
             // const username = accountObj.username;
-
           })
-
+          console.log(this.context)
         this.aadEnabled = true;
 
           return this.context;
@@ -87,31 +99,34 @@ export class AdalService {
   }
 
   public get isAuthenticated(): boolean {
-    const currentAccounts = this.context.getAllAccounts();
-    return !currentAccounts || currentAccounts.length === 0;
+    return !!this.context.getAccount();
   }
 
   public isCallback(hash: string) {
       return this.context.isCallback(hash);
   }
 
-  public async acquireToken(resource: string) {
+  public async acquireToken() {
     const authParams: AuthenticationParameters = {
-      authority: resource
+      authority: this.config.raw.metadata.authority,
+      scopes: [`${this.config.raw.metadata.cluster}/.default`],
     }
     try {
       return await this.context.acquireTokenSilent(authParams);
     }catch(e) {
+      console.log(e)
       return await this.context.acquireTokenPopup(authParams);
     }
   }
 
-  public acquireTokenResilient(resource: string): Observable<any> {
+  public acquireTokenResilient(): Observable<any> {
     return new Observable<any>((subscriber: Subscriber<any>) => {
-        this.acquireToken(resource).then(auth => {
-          subscriber.next(auth.idToken);
+        this.acquireToken().then(auth => {
+          console.log(auth)
+          subscriber.next(auth.idToken.rawIdToken);
           subscriber.complete();
         }, err => {
+          console.log(err)
           subscriber.error(err);
           subscriber.complete();
         })
