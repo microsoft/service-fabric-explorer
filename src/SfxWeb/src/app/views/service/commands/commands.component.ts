@@ -55,7 +55,7 @@ export class CommandsComponent extends ServiceBaseControllerDirective {
       'https://docs.microsoft.com/powershell/module/servicefabric/get-servicefabricservicehealth',
       CommandSafetyLevel.safe,
       `Get-ServiceFabricServiceHealth -ServiceName ${this.service?.name}`,
-      [considerWarnAsErr, maxPercUnhealthPart, maxPercUnhealthRep, eventsFilter, partitionsFilter, excludeHealthStat, timeoutSec]
+      [eventsFilter, partitionsFilter, maxPercUnhealthPart, maxPercUnhealthRep, excludeHealthStat, considerWarnAsErr, timeoutSec]
     );
 
     this.commands.push(getHealth);

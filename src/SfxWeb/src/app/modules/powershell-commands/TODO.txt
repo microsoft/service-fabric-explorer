@@ -1,7 +1,5 @@
-percentage as byte: unresolved
 object as param value: not have these for now
-send health report safty level - check w/ Sridhar
-ask Sridhar: how much is enough connection options; objects as parameters
+
 add tests:
     how thorough?
         test each command?
@@ -12,23 +10,13 @@ add tests:
     test copy how?
 
 
-restart replica - no random?
-restart prime replica under partition
+remove reusing objects
 
-collapsable commands: only display name - check w/ Jeffery
+stop propagation for refrence link
 
-check all missing gets - no continuation toekn and paging, yes getsinglepage, maxresults
-service -adhoc?
-node - do we have parent
+test commands: pay attention to filters
 
-getreplica & replicahealth * deployedreplica - no instance
-
-Get-ServiceFabricService -
-Get-ServiceFabricDeployedServicePackage -
-Get-ServiceFabricNode -
-Get-ServiceFabricReplica -
-Get-ServiceFabricReplicaHealth -
-Get-ServiceFabricDeployedApplicationHealth -
-
-parent get selects nessecary? performance?
-get appTypes method (applications & service)
+commands without known values we can supply (connect to cluster)
+accessbility - required's color 
+two tabs: read and write tabs /commonly used vs rarely used
+safety rating: other ways to do it (group them into seperate groups ; comment out dangerous commands)

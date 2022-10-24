@@ -1,22 +1,17 @@
 import { Component, Injector } from '@angular/core';
-import { Observable } from 'rxjs';
-import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
-import { CommandParamTypes, CommandSafetyLevel, PowershellCommand, PowershellCommandParameter } from 'src/app/Models/PowershellCommand';
+import { PowershellCommand, PowershellCommandParameter, CommandParamTypes, CommandSafetyLevel } from 'src/app/Models/PowershellCommand';
 import { DataService } from 'src/app/services/data.service';
-import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
-import { map } from 'rxjs/operators';
-import { Application } from 'src/app/Models/DataModels/Application';
-
+import { ApplicationTypeBaseControllerDirective } from '../ApplicationTypeBase';
 
 @Component({
   selector: 'app-commands',
   templateUrl: './commands.component.html',
   styleUrls: ['./commands.component.scss']
 })
-export class CommandsComponent extends BaseControllerDirective {
+export class CommandsComponent extends ApplicationTypeBaseControllerDirective {
 
-  constructor(private data: DataService, injector: Injector) {
-    super(injector);
+  constructor(protected data: DataService, injector: Injector) {
+    super(data, injector);
    }
 
   commands: PowershellCommand[] = [];
@@ -38,9 +33,10 @@ export class CommandsComponent extends BaseControllerDirective {
       'Get Applications',
       'https://docs.microsoft.com/powershell/module/servicefabric/get-servicefabricapplication',
       CommandSafetyLevel.safe,
-      `Get-ServiceFabricApplication`,
+      `Get-ServiceFabricApplication -ApplicationTypeName "${this.appTypeName}"`,
       [excludeAppParam, appDefKindFilter, maxResults, getSinglePage, timeOutSec]
     )
     this.commands.push(getApps);
   }
+
 }

@@ -31,7 +31,7 @@
         
         <div ngbDropdownMenu>
             <div>
-                <button value="" ngbDropdownItem (click)="setDropdownValue($event, commandParam)">-Select</button>
+                <button value="" ngbDropdownItem (click)="setDropdownValue($event, commandParam)">-Select-</button>
             </div>
             <div *ngFor="let option of commandParam.options" >
                 <button [value]="option"  

@@ -17,10 +17,6 @@ export class CommandsComponent extends NodeBaseControllerDirective {
 
   commands: PowershellCommand[] = [];
   
-  refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
-    return this.node.deployedApps.refresh(messageHandler);
-  }
-  
   afterDataSet() {
     this.setUpCommands();
     
@@ -63,8 +59,8 @@ export class CommandsComponent extends NodeBaseControllerDirective {
       'Get Node Health',
       'https://docs.microsoft.com/powershell/module/servicefabric/get-servicefabricnodehealth',
       CommandSafetyLevel.safe,
-      `Get-ServiceFabricDeployedServicePackageHealth -NodeName "${this.nodeName}"`,
-      [considerWarnAsErr, maxPercUnhealthyNodes, eventsFilter, timeoutSec]
+      `Get-ServiceFabricNodeHealth -NodeName "${this.nodeName}"`,
+      [ eventsFilter, maxPercUnhealthyNodes, considerWarnAsErr, timeoutSec]
     );
 
     this.commands.push(getHealth);
@@ -78,9 +74,6 @@ export class CommandsComponent extends NodeBaseControllerDirective {
     );
     this.commands.push(getNode);
 
-    const deployedApps = this.node.deployedApps.collection;
-
-    const appName = new PowershellCommandParameter("ApplicationName", CommandParamTypes.enum, { options: deployedApps.map(app => app.name) });
     const getSinglePage = new PowershellCommandParameter("GetSinglePage", CommandParamTypes.switch);
     const includeHealthState = new PowershellCommandParameter("IncludeHealthState", CommandParamTypes.switch);
     const maxResults = new PowershellCommandParameter("MaxResults", CommandParamTypes.number);
@@ -90,7 +83,7 @@ export class CommandsComponent extends NodeBaseControllerDirective {
       'https://docs.microsoft.com/powershell/module/servicefabric/get-servicefabricdeployedapplication',
       CommandSafetyLevel.safe,
       `Get-ServiceFabricDeployedApplication -NodeName "${this.nodeName}"`,
-      [appName, getSinglePage, includeHealthState, maxResults]
+      [getSinglePage, includeHealthState, maxResults]
     );
 
     this.commands.push(getDeployedApp);

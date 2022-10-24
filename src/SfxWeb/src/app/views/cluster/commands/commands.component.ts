@@ -71,12 +71,12 @@ export class CommandsComponent extends BaseControllerDirective {
       'https://docs.microsoft.com/powershell/module/servicefabric/get-servicefabricclusterhealth',
       CommandSafetyLevel.safe,
       `Get-ServiceFabricClusterHealth`,
-      [appsFilter, considerWarnAsErr, eventsFilter, excludeHealthStat, includeSysAppHealthStat, maxPercUnhealthNodes, nodesFilter, timeoutSec]
+      [appsFilter, eventsFilter, nodesFilter, maxPercUnhealthNodes, includeSysAppHealthStat, excludeHealthStat, considerWarnAsErr, timeoutSec]
     );
     this.commands.push(getHealth);
 
     const state = new PowershellCommandParameter("State", CommandParamTypes.enum,
-      { options: ['Default', 'Created', 'Claimed', 'Preparing', 'Approved', 'Executing', 'ReadyToExecute', 'Restoring', 'Active', 'Completed', 'All'] }
+      { options: ['Default', 'Created', 'Claimed', 'Preparing', 'Approved', 'Executing', 'ReadyToExecute', 'Restoring', 'Active', 'Completed', 'All'], allowCustomValAndOptions: true }
     );
     const taskId = new PowershellCommandParameter('TaskId', CommandParamTypes.enum, { options: this.data.repairCollection.collection.map(task => task.id)});
     

@@ -57,8 +57,8 @@ export class CommandsComponent extends DeployedAppBaseControllerDirective{
       'Get Deployed Application Health',
       'https://docs.microsoft.com/powershell/module/servicefabric/get-servicefabricdeployedapplicationhealth',
       CommandSafetyLevel.safe,
-      `Get-ServiceFabricReplicaHealth -NodeName "${this.nodeName}" -ApplicationName ${this.deployedApp.name}`,
-      [considerWarningAsErr, eventsFilter, serviceFilter, excludehealthStat, timeoutSec]
+      `Get-ServiceFabricDeployedApplicationHealth -NodeName "${this.nodeName}" -ApplicationName ${this.deployedApp.name}`,
+      [eventsFilter, serviceFilter, excludehealthStat, considerWarningAsErr, timeoutSec]
     );
     this.commands.push(getHealth);
 
@@ -69,12 +69,11 @@ export class CommandsComponent extends DeployedAppBaseControllerDirective{
       'https://docs.microsoft.com/powershell/module/servicefabric/get-servicefabricdeployedapplication',
       CommandSafetyLevel.safe,
       `Get-ServiceFabricDeployedApplication -NodeName "${this.nodeName}" -ApplicationName ${this.deployedApp.name}`,
-      [includeHealthState]
+      [includeHealthState,timeoutSec]
     );
 
     this.commands.push(getDeployedApp);
 
-    const serviceName = new PowershellCommandParameter('ServiceManifestName', CommandParamTypes.string, { options: this.deployedApp.deployedServicePackages.collection.map(s => s.name) , allowCustomValAndOptions: true});
     const getSinglePage = new PowershellCommandParameter('GetSinglePage', CommandParamTypes.switch);
     const maxResults = new PowershellCommandParameter('MaxResults', CommandParamTypes.number);
 
@@ -83,7 +82,7 @@ export class CommandsComponent extends DeployedAppBaseControllerDirective{
       'https://docs.microsoft.com/powershell/module/servicefabric/get-servicefabricdeployedservicepackage',
       CommandSafetyLevel.safe,
       `Get-ServiceFabricDeployedServicePackage -NodeName "${this.nodeName}" -ApplicationName ${this.deployedApp.name}`,
-      [serviceName, includeHealthState, getSinglePage, maxResults, timeoutSec]
+      [includeHealthState, getSinglePage, maxResults, timeoutSec]
     )
     this.commands.push(getServices);
 

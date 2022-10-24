@@ -17,16 +17,11 @@ export class CommandsComponent extends BaseControllerDirective {
     super(injector);
   }
   
-  refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
-    return this.data.getNodes();
-  }
-
   afterDataSet(): void {
     this.setUpCommands();
   }
 
   setUpCommands() {
-    const nodeName = new PowershellCommandParameter("NodeName", CommandParamTypes.string, { options: this.data.nodes.collection.map(n => n.name), allowCustomValAndOptions: true });
     const statusFilter = new PowershellCommandParameter("StatusFilter", CommandParamTypes.enum,
       { options: ['Default', 'Up', 'Down', 'Enabling', 'Disabling', 'Disabled', 'Unknown', 'Removed', 'All'] });
     const getSinglePage = new PowershellCommandParameter('GetSinglePage', CommandParamTypes.switch);
@@ -38,7 +33,7 @@ export class CommandsComponent extends BaseControllerDirective {
       'https://docs.microsoft.com/powershell/module/servicefabric/get-servicefabricnode',
       CommandSafetyLevel.safe,
       'Get-ServiceFabricNode',
-      [nodeName, statusFilter, getSinglePage, maxResults, timeoutSec]
+      [statusFilter, getSinglePage, maxResults, timeoutSec]
     );
     this.commands.push(getNodes);
   }

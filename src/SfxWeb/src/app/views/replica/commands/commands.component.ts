@@ -55,7 +55,7 @@ export class CommandsComponent extends ReplicaBaseControllerDirective{
       'https://docs.microsoft.com/powershell/module/servicefabric/get-servicefabricreplicahealth',
       CommandSafetyLevel.safe,
       `Get-ServiceFabricReplicaHealth -PartitionId ${this.partitionId} -ReplicaOrInstanceId ${this.replicaId}`,
-      [considerWarningAsErr, eventsFilter, timeoutSec]
+      [eventsFilter, considerWarningAsErr, timeoutSec]
     );
     this.commands.push(getHealth);
 

@@ -19,10 +19,7 @@ export class CommandsComponent extends PartitionBaseControllerDirective{
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
-    return forkJoin([
-      this.data.getNodes(),
-      this.partition.replicas.refresh(messageHandler)
-    ]);
+    return this.data.getNodes();
   }
 
   afterDataSet(): void {
@@ -63,7 +60,7 @@ export class CommandsComponent extends PartitionBaseControllerDirective{
       'https://docs.microsoft.com/powershell/module/servicefabric/get-servicefabricpartitionhealth',
       CommandSafetyLevel.safe,
       `Get-ServiceFabricPartitionHealth -PartitionId ${this.partitionId}`,
-      [considerWarnAsErr, maxPercUnhealthRep, eventsFilter, replicasFilter, excludeHealthStat, timeoutSec]
+      [eventsFilter, replicasFilter, maxPercUnhealthRep, excludeHealthStat, considerWarnAsErr, timeoutSec]
     );
 
     this.commands.push(getHealth);
@@ -77,7 +74,6 @@ export class CommandsComponent extends PartitionBaseControllerDirective{
     )
     this.commands.push(getPartition);
 
-    const replicaId = new PowershellCommandParameter("ReplicaOrInstanceId", CommandParamTypes.enum, { options: this.partition.replicas.collection.map(r => r.id) });
     const statusFilter = new PowershellCommandParameter("ReplicaStatusFilter", CommandParamTypes.enum,
       { options: ['Default', 'InBuild', 'Standby', 'Ready', 'Down', 'Dropped', 'Completed', 'All'] });
     
@@ -86,7 +82,7 @@ export class CommandsComponent extends PartitionBaseControllerDirective{
       'https://docs.microsoft.com/powershell/module/servicefabric/get-servicefabricreplica',
       CommandSafetyLevel.safe,
       `Get-ServiceFabricReplica -PartitionId ${this.partitionId}`,
-      [replicaId, statusFilter, timeoutSec]
+      [statusFilter, timeoutSec]
     );
 
     this.commands.push(getReplicas);
@@ -147,7 +143,7 @@ export class CommandsComponent extends PartitionBaseControllerDirective{
         'https://docs.microsoft.com/powershell/module/servicefabric/move-servicefabricsecondaryreplica',
         CommandSafetyLevel.safe,
         `Move-ServiceFabricSecondaryReplica -ServiceName ${this.partition.parent.name} -PartitionId ${this.partitionId}`,
-        [ignoreConstraints, timeoutSec]
+        [currSecondReplica, ignoreConstraints, timeoutSec]
       )
       this.commands.push(moveSecondReplicaRandom);
     }

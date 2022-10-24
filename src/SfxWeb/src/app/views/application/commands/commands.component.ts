@@ -20,10 +20,7 @@ export class CommandsComponent extends ApplicationBaseControllerDirective{
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
-    return forkJoin([
-      this.app.serviceTypes.refresh(messageHandler),
-      this.app.services.refresh(messageHandler)
-    ]);
+    return this.app.serviceTypes.refresh(messageHandler);
   }
 
   afterDataSet(): void {
@@ -78,7 +75,7 @@ export class CommandsComponent extends ApplicationBaseControllerDirective{
       'https://docs.microsoft.com/powershell/module/servicefabric/get-servicefabricapplicationhealth',
       CommandSafetyLevel.safe,
       `Get-ServiceFabricApplicationHealth -ApplicationName ${this.app?.name}`,
-      [considerWarnAsErr, deployedAppFilter, eventsFilter, excludeHealthStat, maxPercUnhealthApp, maxPercUnhealthPart, maxPercUnhealthRep, maxPercUnhealthServ, servicesFilter, timeoutSec]
+      [deployedAppFilter, eventsFilter, servicesFilter, maxPercUnhealthApp, maxPercUnhealthPart, maxPercUnhealthRep, maxPercUnhealthServ, excludeHealthStat, considerWarnAsErr, timeoutSec]
     );
 
     this.commands.push(getHealth);
@@ -92,7 +89,6 @@ export class CommandsComponent extends ApplicationBaseControllerDirective{
     )
     this.commands.push(getApp);
 
-    const serviceName = new PowershellCommandParameter('ServiceName', CommandParamTypes.enum, { options: this.app.services.collection.map(service => service.name) });
     const serviceType = new PowershellCommandParameter('ServiceTypeName', CommandParamTypes.string, { options: this.app.serviceTypes.collection.map(_ => _.name), allowCustomValAndOptions: true });
     const getSinglePage = new PowershellCommandParameter('GetSinglePage', CommandParamTypes.switch);
     const maxResults = new PowershellCommandParameter('MaxResults', CommandParamTypes.number);
@@ -102,7 +98,7 @@ export class CommandsComponent extends ApplicationBaseControllerDirective{
       'https://docs.microsoft.com/powershell/module/servicefabric/get-servicefabricservice',
       CommandSafetyLevel.safe,
       `Get-ServiceFabricService -ApplicationName ${this.app?.name}`,
-      [serviceName, serviceType, getSinglePage, maxResults, timeoutSec]
+      [serviceType, getSinglePage, maxResults, timeoutSec]
     )
 
     this.commands.push(getServices);

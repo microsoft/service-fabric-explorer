@@ -50,7 +50,7 @@ export class CommandsComponent extends DeployedServicePackageBaseControllerDirec
       'https://docs.microsoft.com/powershell/module/servicefabric/get-servicefabricdeployedservicepackagehealth',
       CommandSafetyLevel.safe,
       `Get-ServiceFabricDeployedServicePackageHealth -ApplicationName ${this.servicePackage.parent.name} -ServiceManifestName ${this.servicePackage.name} -NodeName "${this.nodeName}"`,
-      [considerWarnAsErr, eventsFilter, servicePacActivId, timeoutSec]
+      [eventsFilter, servicePacActivId, considerWarnAsErr, timeoutSec]
     );
 
     this.commands.push(getHealth);
