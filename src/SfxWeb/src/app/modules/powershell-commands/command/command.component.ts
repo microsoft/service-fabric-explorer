@@ -17,5 +17,9 @@ export class CommandComponent  {
   safetyLevelEnum = CommandSafetyLevel;
   BadgeConstants = BadgeConstants;
 
+  goToReference(e: any) {
+    e.stopPropagation();
+    window.open(this.command.referenceUrl, '_blank');
+  }
 
 }

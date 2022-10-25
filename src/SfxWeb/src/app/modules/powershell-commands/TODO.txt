@@ -9,21 +9,14 @@ add tests:
     test input how?
     test copy how?
 
-
-remove reusing objects
-
-stop propagation for refrence link
-
-test commands: pay attention to filters
+test commands: pay attention to filters 
 
 commands without known values we can supply (connect to cluster)
 accessbility - required's color 
 two tabs: read and write tabs /commonly used vs rarely used
 safety rating: other ways to do it (group them into seperate groups ; comment out dangerous commands)
 
-remove connection
 add required text + seperate parameters
 split commands by safety level
-add Admin Only text to title
 modify clipboard: add disabled state, custom tooltip, add confirmation modal
 comment out dangerous command

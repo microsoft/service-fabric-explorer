@@ -1,7 +1,7 @@
 import { Component, Injector } from '@angular/core';
 import { Observable } from 'rxjs';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
-import { CommandParamTypes, CommandSafetyLevel, PowershellCommand, PowershellCommandParameter } from 'src/app/Models/PowershellCommand';
+import { CommandFactory, CommandParamTypes, CommandSafetyLevel, PowershellCommand, PowershellCommandParameter } from 'src/app/Models/PowershellCommand';
 import { DataService } from 'src/app/services/data.service';
 import { NodeBaseControllerDirective } from '../NodeBase';
 
@@ -28,39 +28,22 @@ export class CommandsComponent extends NodeBaseControllerDirective {
         new PowershellCommand('Restart Node',
             'https://docs.microsoft.com/powershell/module/servicefabric/restart-servicefabricnode',
             CommandSafetyLevel.unsafe,
-            `Restart-ServiceFabricNode -NodeName "${this.nodeName}" -NodeInstanceId ${this.node.raw.InstanceId}`)
+            `Restart-ServiceFabricNode -NodeName "${this.nodeName}" -NodeInstanceId ${this.node.raw.InstanceId}`, [], true)
     );
 
-    const healthState = new PowershellCommandParameter("HealthState", CommandParamTypes.enum, { options: ["OK", "Warning", "Error", "Unknown"], required: true });
-    const sourceId = new PowershellCommandParameter("SourceId", CommandParamTypes.string, {required: true});
-    const healthProperty = new PowershellCommandParameter("HealthProperty", CommandParamTypes.string, {required: true});
-    const description = new PowershellCommandParameter("Description", CommandParamTypes.string);
-    const ttl = new PowershellCommandParameter("TimeToLiveSec", CommandParamTypes.number);
-    const removeWhenExpired = new PowershellCommandParameter("RemoveWhenExpired", CommandParamTypes.switch)
-    const sequenceNum = new PowershellCommandParameter("SequenceNumber", CommandParamTypes.number);
-    const immediate = new PowershellCommandParameter("Immediate", CommandParamTypes.switch);
-    const timeoutSec = new PowershellCommandParameter("TimeoutSec", CommandParamTypes.number);
-    
-    const healthReport = new PowershellCommand(
-        'Send Health Report',
-        'https://docs.microsoft.com/powershell/module/servicefabric/send-servicefabricnodehealthreport',
-        CommandSafetyLevel.unsafe,
-        `Send-ServiceFabricNodeHealthReport -NodeName "${this.nodeName}"`,
-        [healthState, sourceId, healthProperty, description, ttl, removeWhenExpired, sequenceNum, immediate, timeoutSec]
-    );
-
+    const healthReport = CommandFactory.GenSendHealthReport("Node", `-NodeName "${this.nodeName}"`)
     this.commands.push(healthReport);
 
     const considerWarnAsErr = new PowershellCommandParameter("ConsiderWarningAsError", CommandParamTypes.bool);
     const maxPercUnhealthyNodes = new PowershellCommandParameter("MaxPercentUnhealthyNodes", CommandParamTypes.number);
-    const eventsFilter = new PowershellCommandParameter("EventsFilter", CommandParamTypes.enum, { options: ["Default", "None", "Ok", "Warning", "Error", "All"], allowCustomValAndOptions: true });
+    const eventsFilter = CommandFactory.GenHealthFilterParam("Events");
 
     const getHealth = new PowershellCommand(
       'Get Node Health',
       'https://docs.microsoft.com/powershell/module/servicefabric/get-servicefabricnodehealth',
       CommandSafetyLevel.safe,
       `Get-ServiceFabricNodeHealth -NodeName "${this.nodeName}"`,
-      [ eventsFilter, maxPercUnhealthyNodes, considerWarnAsErr, timeoutSec]
+      [ eventsFilter, maxPercUnhealthyNodes, considerWarnAsErr, CommandFactory.GenTimeoutSecParam()]
     );
 
     this.commands.push(getHealth);
@@ -70,7 +53,7 @@ export class CommandsComponent extends NodeBaseControllerDirective {
       'https://docs.microsoft.com/powershell/module/servicefabric/get-servicefabricnode',
       CommandSafetyLevel.safe,
       `Get-ServiceFabricNode -NodeName "${this.nodeName}"`,
-      [timeoutSec]
+      [CommandFactory.GenTimeoutSecParam()]
     );
     this.commands.push(getNode);
 
@@ -83,7 +66,7 @@ export class CommandsComponent extends NodeBaseControllerDirective {
       'https://docs.microsoft.com/powershell/module/servicefabric/get-servicefabricdeployedapplication',
       CommandSafetyLevel.safe,
       `Get-ServiceFabricDeployedApplication -NodeName "${this.nodeName}"`,
-      [getSinglePage, includeHealthState, maxResults]
+      [includeHealthState, getSinglePage, maxResults, CommandFactory.GenTimeoutSecParam()]
     );
 
     this.commands.push(getDeployedApp);
@@ -93,7 +76,7 @@ export class CommandsComponent extends NodeBaseControllerDirective {
       'https://docs.microsoft.com/powershell/module/servicefabric/get-servicefabricdeployedreplica',
       CommandSafetyLevel.safe,
       `Get-ServiceFabricDeployedReplica -NodeName "${this.nodeName}"`,
-      [timeoutSec]
+      [CommandFactory.GenTimeoutSecParam()]
     );
     
     this.commands.push(getReplica);

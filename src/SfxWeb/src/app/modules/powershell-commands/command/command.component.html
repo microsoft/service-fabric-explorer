@@ -9,10 +9,10 @@
             <app-health-badge *ngSwitchCase="safetyLevelEnum.dangerous"
             text="Dangerous Command" [showText]="false" [badgeClass]="BadgeConstants.BadgeError"></app-health-badge>
         </span>
-        <h5>{{command.name}}</h5>
-        <a target="_blank" [href]="command.referenceUrl" *ngIf="command.referenceUrl" [attr.aria-label]="'learn about' + command.name">
+        <h5>{{command.adminOnly? command.name + ' - Admin Only' : command.name}}</h5>
+        <button class="reference-link" *ngIf="command.referenceUrl" (click)="goToReference($event)" [attr.aria-label]="'learn about' + command.name">
             <span class="mif-info link"></span>
-        </a>
+        </button>
     </div>
 
     <div collapse-body>

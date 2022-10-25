@@ -1,7 +1,7 @@
 import { Component, Injector } from '@angular/core';
 import { Observable } from 'rxjs';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
-import { CommandParamTypes, CommandSafetyLevel, PowershellCommand, PowershellCommandParameter } from 'src/app/Models/PowershellCommand';
+import { CommandFactory, CommandParamTypes, CommandSafetyLevel, PowershellCommand, PowershellCommandParameter } from 'src/app/Models/PowershellCommand';
 import { DataService } from 'src/app/services/data.service';
 import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 import { map } from 'rxjs/operators';
@@ -32,14 +32,13 @@ export class CommandsComponent extends BaseControllerDirective {
     const excludeAppParam = new PowershellCommandParameter('ExcludeApplicationParameters', CommandParamTypes.switch);
     const getSinglePage = new PowershellCommandParameter('GetSinglePage', CommandParamTypes.switch);
     const maxResults = new PowershellCommandParameter('MaxResults', CommandParamTypes.number);
-    const timeOutSec = new PowershellCommandParameter('TimeOutSec', CommandParamTypes.number);
 
     const getApps = new PowershellCommand(
       'Get Applications',
       'https://docs.microsoft.com/powershell/module/servicefabric/get-servicefabricapplication',
       CommandSafetyLevel.safe,
       `Get-ServiceFabricApplication`,
-      [excludeAppParam, appDefKindFilter, maxResults, getSinglePage, timeOutSec]
+      [excludeAppParam, appDefKindFilter, maxResults, getSinglePage, CommandFactory.GenTimeoutSecParam()]
     )
     this.commands.push(getApps);
   }

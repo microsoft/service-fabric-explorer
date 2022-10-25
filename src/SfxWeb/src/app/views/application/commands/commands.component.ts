@@ -1,9 +1,8 @@
 import { Component, Injector } from '@angular/core';
-import { forkJoin, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
-import { CommandParamTypes, CommandSafetyLevel, PowershellCommand, PowershellCommandParameter } from 'src/app/Models/PowershellCommand';
+import { CommandFactory, CommandParamTypes, CommandSafetyLevel, PowershellCommand, PowershellCommandParameter } from 'src/app/Models/PowershellCommand';
 import { DataService } from 'src/app/services/data.service';
-import { ServiceApplicationsBaseControllerDirective } from '../../system-applications/SystemApplicationBase';
 import { ApplicationBaseControllerDirective } from '../applicationBase';
 
 @Component({
@@ -28,24 +27,7 @@ export class CommandsComponent extends ApplicationBaseControllerDirective{
   }
 
   private setUpCommands() {
-    const healthState = new PowershellCommandParameter("HealthState", CommandParamTypes.enum, { options: ["OK", "Warning", "Error", "Unknown"], required: true});
-    const sourceId = new PowershellCommandParameter("SourceId", CommandParamTypes.string, {required: true});
-    const healthProperty = new PowershellCommandParameter("HealthProperty", CommandParamTypes.string, {required: true});
-    const description = new PowershellCommandParameter("Description", CommandParamTypes.string);
-    const ttl = new PowershellCommandParameter("TimeToLiveSec", CommandParamTypes.number);
-    const removeWhenExpired = new PowershellCommandParameter("RemoveWhenExpired", CommandParamTypes.switch)
-    const sequenceNum = new PowershellCommandParameter("SequenceNumber", CommandParamTypes.number);
-    const immediate = new PowershellCommandParameter("Immediate", CommandParamTypes.switch);
-    const timeoutSec = new PowershellCommandParameter("TimeoutSec", CommandParamTypes.number);
-    
-    const healthReport = new PowershellCommand(
-        'Send Health Report',
-        'https://docs.microsoft.com/powershell/module/servicefabric/send-servicefabricapplicationhealthreport',
-        CommandSafetyLevel.unsafe,
-        `Send-ServiceFabricApplicationHealthReport -ApplicationName ${this.app?.name}`,
-        [healthState, sourceId, healthProperty, description, ttl, removeWhenExpired, sequenceNum, immediate, timeoutSec]
-    );
-
+    const healthReport = CommandFactory.GenSendHealthReport('Application', `-ApplicationName ${this.app?.name}`);
     this.commands.push(healthReport);
 
 
@@ -54,28 +36,26 @@ export class CommandsComponent extends ApplicationBaseControllerDirective{
       'https://docs.microsoft.com/powershell/module/servicefabric/get-servicefabricapplicationupgrade',
       CommandSafetyLevel.safe,
       `Get-ServiceFabricApplicationUpgrade -ApplicationName ${this.app?.name}`,
-      [timeoutSec]
+      [CommandFactory.GenTimeoutSecParam()]
     );
     this.commands.push(getUpgrade);
 
-    const healthStateFilter = ["Default", "None", "Ok", "Warning", "Error", "All"];
-
     const considerWarnAsErr = new PowershellCommandParameter("ConsiderWarningAsError", CommandParamTypes.bool);
-    const deployedAppFilter = new PowershellCommandParameter("DeployedApplicationFilter", CommandParamTypes.enum, { options: healthStateFilter, allowCustomValAndOptions: true });
-    const eventsFilter = new PowershellCommandParameter("EventsFilter", CommandParamTypes.enum, { options: healthStateFilter, allowCustomValAndOptions: true });
+    const deployedAppFilter = CommandFactory.GenHealthFilterParam('DeployedApplication');
+    const eventsFilter = CommandFactory.GenHealthFilterParam("Events");
     const excludeHealthStat = new PowershellCommandParameter("ExcludeHealthStatistics", CommandParamTypes.switch);
     const maxPercUnhealthApp = new PowershellCommandParameter("MaxPercentUnhealthyDeployedApplications", CommandParamTypes.number);
     const maxPercUnhealthPart = new PowershellCommandParameter("MaxPercentUnhealthyPartitionsPerService", CommandParamTypes.number);
     const maxPercUnhealthRep = new PowershellCommandParameter("MaxPercentUnhealthyReplicasPerPartition", CommandParamTypes.number);
     const maxPercUnhealthServ = new PowershellCommandParameter("MaxPercentUnhealthyServices", CommandParamTypes.number);
-    const servicesFilter = new PowershellCommandParameter("ServicesFilter", CommandParamTypes.enum, { options: healthStateFilter, allowCustomValAndOptions: true });
+    const servicesFilter = CommandFactory.GenHealthFilterParam("Services");
 
     const getHealth = new PowershellCommand(
       'Get Application Health',
       'https://docs.microsoft.com/powershell/module/servicefabric/get-servicefabricapplicationhealth',
       CommandSafetyLevel.safe,
       `Get-ServiceFabricApplicationHealth -ApplicationName ${this.app?.name}`,
-      [deployedAppFilter, eventsFilter, servicesFilter, maxPercUnhealthApp, maxPercUnhealthPart, maxPercUnhealthRep, maxPercUnhealthServ, excludeHealthStat, considerWarnAsErr, timeoutSec]
+      [deployedAppFilter, eventsFilter, servicesFilter, maxPercUnhealthApp, maxPercUnhealthPart, maxPercUnhealthRep, maxPercUnhealthServ, excludeHealthStat, considerWarnAsErr, CommandFactory.GenTimeoutSecParam()]
     );
 
     this.commands.push(getHealth);
@@ -85,7 +65,7 @@ export class CommandsComponent extends ApplicationBaseControllerDirective{
       'https://docs.microsoft.com/powershell/module/servicefabric/get-servicefabricapplication',
       CommandSafetyLevel.safe,
       `Get-ServiceFabricApplication -ApplicationName ${this.app?.name}`,
-      [new PowershellCommandParameter('ExcludeApplicationParameters', CommandParamTypes.switch), timeoutSec]
+      [new PowershellCommandParameter('ExcludeApplicationParameters', CommandParamTypes.switch), CommandFactory.GenTimeoutSecParam()]
     )
     this.commands.push(getApp);
 
@@ -98,7 +78,7 @@ export class CommandsComponent extends ApplicationBaseControllerDirective{
       'https://docs.microsoft.com/powershell/module/servicefabric/get-servicefabricservice',
       CommandSafetyLevel.safe,
       `Get-ServiceFabricService -ApplicationName ${this.app?.name}`,
-      [serviceType, getSinglePage, maxResults, timeoutSec]
+      [serviceType, getSinglePage, maxResults, CommandFactory.GenTimeoutSecParam()]
     )
 
     this.commands.push(getServices);

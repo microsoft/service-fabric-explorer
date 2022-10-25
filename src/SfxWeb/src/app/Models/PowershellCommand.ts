@@ -5,7 +5,8 @@ export class PowershellCommand{
         public referenceUrl: string,
         public safetyLevel: CommandSafetyLevel,
         public prefix: string,
-        public parameters: PowershellCommandParameter[] = []) {
+        public parameters: PowershellCommandParameter[] = [],
+        public adminOnly: boolean = false) {
     }
 
     //used to easily display value and name of the parameter seperately
@@ -36,7 +37,7 @@ export class PowershellCommand{
         }).join(' ');
         
     }
-    
+
 }
 
 export class PowershellCommandParameter{
@@ -76,4 +77,50 @@ export enum CommandSafetyLevel {
     safe = 'safe',
     unsafe = 'unsafe',
     dangerous = 'danger'
+}
+
+export class CommandFactory {
+    //----factory methods----
+    static GenTimeoutSecParam(): PowershellCommandParameter {
+        return new PowershellCommandParameter("TimeoutSec", CommandParamTypes.number);
+    }
+
+    static GenSendHealthReport(typeName: string, param: string = ''): PowershellCommand {
+        const healthState = new PowershellCommandParameter("HealthState", CommandParamTypes.enum, { options: ["OK", "Warning", "Error", "Unknown"], required: true });
+        const sourceId = new PowershellCommandParameter("SourceId", CommandParamTypes.string, { required: true });
+        const healthProperty = new PowershellCommandParameter("HealthProperty", CommandParamTypes.string, {required: true});
+        const description = new PowershellCommandParameter("Description", CommandParamTypes.string);
+        const ttl = new PowershellCommandParameter("TimeToLiveSec", CommandParamTypes.number);
+        const removeWhenExpired = new PowershellCommandParameter("RemoveWhenExpired", CommandParamTypes.switch)
+        const sequenceNum = new PowershellCommandParameter("SequenceNumber", CommandParamTypes.number);
+        const immediate = new PowershellCommandParameter("Immediate", CommandParamTypes.switch);
+        
+        return new PowershellCommand(
+        'Send Health Report',
+        `https://docs.microsoft.com/powershell/module/servicefabric/send-servicefabric${typeName.toLowerCase()}healthreport`,
+        CommandSafetyLevel.unsafe,
+        `Send-ServiceFabric${typeName}HealthReport ${param}`,
+            [healthState, sourceId, healthProperty, description, ttl, removeWhenExpired, sequenceNum, immediate, CommandFactory.GenTimeoutSecParam()],
+        true
+        );
+    }
+
+    static GenHealthFilterParam(typeName: string): PowershellCommandParameter {
+        return new PowershellCommandParameter(
+            `${typeName}Filter`,
+            CommandParamTypes.enum,
+            { options: ["Default", "None", "Ok", "Warning", "Error", "All"], allowCustomValAndOptions: true }
+        );
+
+    }
+
+    static GenIgnoreConstraintsParam() : PowershellCommandParameter {
+        return new PowershellCommandParameter('IgnoreConstraints', CommandParamTypes.switch);
+    }
+
+    static GenNodeListParam(paramName: string, nodes: string[]): PowershellCommandParameter {
+        return new PowershellCommandParameter(paramName, CommandParamTypes.string,
+        { required: true, options: nodes, allowCustomValAndOptions: true });
+    }
+
 }

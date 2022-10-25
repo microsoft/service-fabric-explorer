@@ -1,5 +1,5 @@
 import { Component, Injector } from '@angular/core';
-import { PowershellCommandParameter, CommandParamTypes, PowershellCommand, CommandSafetyLevel } from 'src/app/Models/PowershellCommand';
+import { PowershellCommandParameter, CommandParamTypes, PowershellCommand, CommandSafetyLevel, CommandFactory } from 'src/app/Models/PowershellCommand';
 import { DataService } from 'src/app/services/data.service';
 import { DeployedReplicaBaseControllerDirective } from '../DeployedReplicaBase';
 
@@ -21,14 +21,13 @@ export class CommandsComponent extends DeployedReplicaBaseControllerDirective {
   }
 
   setUpCommands() {
-    const timeoutSec = new PowershellCommandParameter("TimeoutSec", CommandParamTypes.number);
     
     const getReplica = new PowershellCommand(
       "Get Deployed Replica",
       'https://docs.microsoft.com/powershell/module/servicefabric/get-servicefabricdeployedreplica',
       CommandSafetyLevel.safe,
       `Get-ServiceFabricDeployedReplica -NodeName "${this.nodeName}" -ApplicationName ${this.replica.parent.parent.name} -ServiceManifestName ${this.replica.parent.name} -PartitionId ${this.partitionId}`,
-      [timeoutSec]
+      [CommandFactory.GenTimeoutSecParam()]
     );
     
     this.commands.push(getReplica);
