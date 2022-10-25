@@ -28,7 +28,9 @@ export class ClipBoardComponent implements OnChanges {
 
   checkConfirmation() {
     if (this.confirmationText) {
-      this.dialog.open(ConfirmationModalComponent, { data: { text: this.confirmationText} } );
+      const dialogRef = this.dialog.open(ConfirmationModalComponent, { data: { text: this.confirmationText} } );
+      
+      dialogRef.afterClosed().subscribe(result => result ? this.copy() : null);
       this.tooltip.close();
     }
     else {

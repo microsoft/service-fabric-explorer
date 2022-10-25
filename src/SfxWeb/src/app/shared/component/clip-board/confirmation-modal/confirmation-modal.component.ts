@@ -11,14 +11,4 @@ export class ConfirmationModalComponent{
   constructor(public dialogRef: MatDialogRef<ConfirmationModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any) { }
 
-  @Output() copyText = new EventEmitter();
-    
-  cancel() {
-    this.dialogRef.close();
-  }
-
-  copy() {
-    this.copyText.emit();
-  }
-
 }
