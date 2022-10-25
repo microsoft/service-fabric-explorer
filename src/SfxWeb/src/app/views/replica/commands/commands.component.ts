@@ -79,7 +79,7 @@ export class CommandsComponent extends ReplicaBaseControllerDirective{
       const moveInstance = new PowershellCommand(
         "Move Instance",
         'https://docs.microsoft.com/powershell/module/servicefabric/move-servicefabricinstance',
-        CommandSafetyLevel.safe,
+        CommandSafetyLevel.unsafe,
         `Move-ServiceFabricInstance -ServiceName ${this.replica.parent.parent.name} -PartitionId ${this.partitionId}`,
         [currInstance, newInstance, ignoreConstraints, timeoutSec]
       )
@@ -91,7 +91,7 @@ export class CommandsComponent extends ReplicaBaseControllerDirective{
       const restartReplica = new PowershellCommand(
         "Restart Replica",
         'https://docs.microsoft.com/powershell/module/servicefabric/restart-servicefabricreplica',
-        CommandSafetyLevel.safe,
+        CommandSafetyLevel.unsafe,
         `Restart-ServiceFabricReplica -ServiceName ${this.replica.parent.parent.name} -PartitionId ${this.partitionId} -ReplicaOrInstanceId ${this.replicaId}`,
         [completionMode, timeoutSec]
       )

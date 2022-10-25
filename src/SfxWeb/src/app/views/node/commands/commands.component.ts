@@ -25,9 +25,9 @@ export class CommandsComponent extends NodeBaseControllerDirective {
   protected setUpCommands(): void {
 
     this.commands.push(
-        new PowershellCommand('Restart',
+        new PowershellCommand('Restart Node',
             'https://docs.microsoft.com/powershell/module/servicefabric/restart-servicefabricnode',
-            CommandSafetyLevel.safe,
+            CommandSafetyLevel.unsafe,
             `Restart-ServiceFabricNode -NodeName "${this.nodeName}" -NodeInstanceId ${this.node.raw.InstanceId}`)
     );
 

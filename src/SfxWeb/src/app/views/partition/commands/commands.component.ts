@@ -93,7 +93,7 @@ export class CommandsComponent extends PartitionBaseControllerDirective{
       const restartPrimeReplica = new PowershellCommand(
         "Restart Primary Replica",
         'https://docs.microsoft.com/powershell/module/servicefabric/restart-servicefabricreplica',
-        CommandSafetyLevel.safe,
+        CommandSafetyLevel.unsafe,
         `Restart-ServiceFabricReplica -ServiceName ${this.partition.parent.name} -PartitionId ${this.partitionId} -ReplicaKindPrimary`,
         [completionMode, timeoutSec]
       )
@@ -107,7 +107,7 @@ export class CommandsComponent extends PartitionBaseControllerDirective{
       const movePrimeReplicaSpecific = new PowershellCommand(
         "Move Primary Replica To Specifc Node",
         'https://docs.microsoft.com/powershell/module/servicefabric/move-servicefabricprimaryreplica',
-        CommandSafetyLevel.safe,
+        CommandSafetyLevel.unsafe,
         `Move-ServiceFabricPrimaryReplica -ServiceName ${this.partition.parent.name} -PartitionId ${this.partitionId}`,
         [nodeName, ignoreConstraints, timeoutSec]
       )
@@ -116,7 +116,7 @@ export class CommandsComponent extends PartitionBaseControllerDirective{
       const movePrimeReplicaRandom = new PowershellCommand(
         "Move Primary Replica To Random Node",
         'https://docs.microsoft.com/powershell/module/servicefabric/move-servicefabricprimaryreplica',
-        CommandSafetyLevel.safe,
+        CommandSafetyLevel.unsafe,
         `Move-ServiceFabricPrimaryReplica -ServiceName ${this.partition.parent.name} -PartitionId ${this.partitionId}`,
         [ignoreConstraints, timeoutSec]
       )
@@ -132,7 +132,7 @@ export class CommandsComponent extends PartitionBaseControllerDirective{
       const moveSecondReplicaSpecific = new PowershellCommand(
         "Move Secondary Replica To Specifc Node",
         'https://docs.microsoft.com/powershell/module/servicefabric/move-servicefabricsecondaryreplica',
-        CommandSafetyLevel.safe,
+        CommandSafetyLevel.unsafe,
         `Move-ServiceFabricSecondaryReplica -ServiceName ${this.partition.parent.name} -PartitionId ${this.partitionId}`,
         [currSecondReplica, newSecondReplica, ignoreConstraints, timeoutSec]
       )
@@ -141,7 +141,7 @@ export class CommandsComponent extends PartitionBaseControllerDirective{
       const moveSecondReplicaRandom = new PowershellCommand(
         "Move Secondary Replica To Random Node",
         'https://docs.microsoft.com/powershell/module/servicefabric/move-servicefabricsecondaryreplica',
-        CommandSafetyLevel.safe,
+        CommandSafetyLevel.unsafe,
         `Move-ServiceFabricSecondaryReplica -ServiceName ${this.partition.parent.name} -PartitionId ${this.partitionId}`,
         [currSecondReplica, ignoreConstraints, timeoutSec]
       )
