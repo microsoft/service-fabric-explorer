@@ -28,14 +28,17 @@ export class PowershellCommand{
     }
     
     getScript(): string {
-        
+
+        let script = '';
         const displayedParams = this.paramsToStringArr();
 
-        return this.prefix + ' ' + displayedParams.map(param => {
+        if (this.safetyLevel === CommandSafetyLevel.dangerous) script = '#';
+        script = script + this.prefix + ' ' + displayedParams.map(param => {
             if (!param.name) return param.value;
             return param.name + ' ' + param.value;
         }).join(' ');
         
+        return script;
     }
 
 }

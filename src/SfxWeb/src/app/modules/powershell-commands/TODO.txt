@@ -19,4 +19,4 @@ safety rating: other ways to do it (group them into seperate groups ; comment ou
 add required text + seperate parameters
 split commands by safety level
 modify clipboard: add disabled state, custom tooltip, add confirmation modal
-comment out dangerous command
+comment out dangerous command -

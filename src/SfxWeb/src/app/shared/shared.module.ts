@@ -35,6 +35,7 @@ import {ClipboardModule} from '@angular/cdk/clipboard';
 
 import { WarningComponent } from './component/warning/warning.component';
 import { EventStoreTimelineComponent } from './component/event-store-timeline/event-store-timeline.component';
+import { ConfirmationModalComponent } from './component/clip-board/confirmation-modal/confirmation-modal.component';
 @NgModule({
   declarations: [NavbarComponent, ClipBoardComponent, HealthBadgeComponent, CandyBarCompactComponent, DetailViewPartComponent,
                  CollapseContainerComponent, RefreshRateComponent, DragDirective, ActionDialogComponent, ManifestComponent,
@@ -46,7 +47,7 @@ import { EventStoreTimelineComponent } from './component/event-store-timeline/ev
                  DisplayDurationComponent,
                  PhaseDiagramComponent,
                  NodeFilterComponent,
-                 WarningComponent, EventStoreTimelineComponent],
+                 WarningComponent, EventStoreTimelineComponent, ConfirmationModalComponent],
   imports: [
     CommonModule,
     RouterModule,

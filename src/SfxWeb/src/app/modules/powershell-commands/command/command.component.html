@@ -24,14 +24,9 @@
     
         <div class="card"c>
             <div class="card-body">
-                <span *ngIf="inputForm.valid; else disabledCopy">
-                    <app-clip-board style="float: right;" [text]="command.getScript()"></app-clip-board>
-                </span>
-                <ng-template #disabledCopy>
-                    <div class="mif-copy disabled-copy" ngbTooltip="missing required parameters!" tooltipClass="styled-tooltip"></div>
-                </ng-template>
+                <app-clip-board style="float: right;" [text]="command.getScript()" [disabled]="!inputForm.valid" [tooltipText]="inputForm.valid ? '' : 'Missing required parameters!'" confirmationText="hello"></app-clip-board>
                 <p class="card-text">
-                    {{command.prefix}}
+                    {{(command.safetyLevel === safetyLevelEnum.dangerous ? '#' : '') + command.prefix}}
                     <span *ngFor="let param of command.paramsToStringArr()"> {{param.name}} <span class="param-value"> {{param.value}} </span></span>
                 </p>
             </div>

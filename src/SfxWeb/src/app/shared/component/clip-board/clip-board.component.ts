@@ -1,7 +1,9 @@
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { Component, OnInit, Input, ChangeDetectionStrategy, ViewChild, ElementRef, ContentChild, OnChanges } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
+import { ConfirmationModalComponent } from './confirmation-modal/confirmation-modal.component';
 
 @Component({
   selector: 'app-clip-board',
@@ -12,14 +14,30 @@ import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
 export class ClipBoardComponent implements OnChanges {
 
   @Input() text = '';
+  @Input() tooltipText = '';
+  @Input() disabled = false;
+  @Input() confirmationText = '';
   @ViewChild('ref') ref: ElementRef;
   @ViewChild(NgbTooltip) tooltip: NgbTooltip; // First
   public ariaLabel = '';
 
   constructor(private liveAnnouncer: LiveAnnouncer,
-              private clipboard: Clipboard) { }
+              private clipboard: Clipboard,
+              private dialog: MatDialog) { }
+              
 
-  copy(){
+  checkConfirmation() {
+    if (this.confirmationText) {
+      this.dialog.open(ConfirmationModalComponent, { data: { text: this.confirmationText} } );
+      this.tooltip.close();
+    }
+    else {
+      this.copy();
+    }
+  }
+  copy() {
+    
+    
     this.clipboard.copy(this.text)
 
     this.tooltip.close();
@@ -29,7 +47,7 @@ export class ClipBoardComponent implements OnChanges {
       this.tooltip.triggers = 'manual';
       this.tooltip.closeDelay = 2000;
       this.tooltip.open();
-      this.tooltip.ngbTooltip = 'copy to clipboard';
+      this.tooltip.ngbTooltip = this.tooltipText ? this.tooltipText : 'copy to clipboard';
       this.liveAnnouncer.announce('Copied to clipboard');
     }, 250);
 

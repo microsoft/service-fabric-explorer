@@ -67,7 +67,7 @@ export class CommandsComponent extends BaseControllerDirective {
     const getRepairTasks = new PowershellCommand(
       "Get Repair Task",
       "https://docs.microsoft.com/powershell/module/servicefabric/get-servicefabricrepairtask",
-      CommandSafetyLevel.safe,
+      CommandSafetyLevel.dangerous,
       `Get-ServiceFabricRepairTask`,
       [taskId, state, CommandFactory.GenTimeoutSecParam()]
     );
