@@ -76,6 +76,31 @@ export class CommandsComponent extends ReplicaBaseControllerDirective{
         [completionMode, CommandFactory.GenTimeoutSecParam()], true
       );
       this.commands.push(restartReplica);
+
+      if(this.replica.role !== 'Primary'){
+        const nodes = this.data.nodes.collection.map(node => node.name);
+
+        const moveSecondReplicaSpecific = new PowershellCommand(
+          "Move Secondary Replica To Specifc Node",
+          'https://docs.microsoft.com/powershell/module/servicefabric/move-servicefabricsecondaryreplica',
+          CommandSafetyLevel.unsafe,
+          `Move-ServiceFabricSecondaryReplica -ServiceName ${this.replica.parent.parent.name} -PartitionId ${this.partitionId} -CurrentSecondaryNodeName ${this.replica.raw.NodeName}`,
+          [CommandFactory.GenNodeListParam("NewSecondaryNodeName", nodes),
+          CommandFactory.GenIgnoreConstraintsParam(),
+          CommandFactory.GenTimeoutSecParam()
+          ], true);
+        
+        this.commands.push(moveSecondReplicaSpecific);
+    
+        const moveSecondReplicaRandom = new PowershellCommand(
+          "Move Secondary Replica To Random Node",
+          'https://docs.microsoft.com/powershell/module/servicefabric/move-servicefabricsecondaryreplica',
+          CommandSafetyLevel.unsafe,
+          `Move-ServiceFabricSecondaryReplica -ServiceName ${this.replica.parent.parent.name} -PartitionId ${this.partitionId} -CurrentSecondaryNodeName ${this.replica.raw.NodeName}`,
+          [CommandFactory.GenIgnoreConstraintsParam(), CommandFactory.GenTimeoutSecParam()], true
+        )
+        this.commands.push(moveSecondReplicaRandom);
+      }
     }
   }
 }

@@ -101,27 +101,6 @@ export class CommandsComponent extends PartitionBaseControllerDirective{
       )
       this.commands.push(movePrimeReplicaRandom);
       
-      const moveSecondReplicaSpecific = new PowershellCommand(
-        "Move Secondary Replica To Specifc Node",
-        'https://docs.microsoft.com/powershell/module/servicefabric/move-servicefabricsecondaryreplica',
-        CommandSafetyLevel.unsafe,
-        `Move-ServiceFabricSecondaryReplica -ServiceName ${this.partition.parent.name} -PartitionId ${this.partitionId}`,
-        [CommandFactory.GenNodeListParam("CurrentSecondaryNodeName", nodes),
-        CommandFactory.GenNodeListParam("NewSecondaryNodeName", nodes),
-        CommandFactory.GenIgnoreConstraintsParam(),
-        CommandFactory.GenTimeoutSecParam()
-        ], true);
-      
-      this.commands.push(moveSecondReplicaSpecific);
-  
-      const moveSecondReplicaRandom = new PowershellCommand(
-        "Move Secondary Replica To Random Node",
-        'https://docs.microsoft.com/powershell/module/servicefabric/move-servicefabricsecondaryreplica',
-        CommandSafetyLevel.unsafe,
-        `Move-ServiceFabricSecondaryReplica -ServiceName ${this.partition.parent.name} -PartitionId ${this.partitionId}`,
-        [CommandFactory.GenNodeListParam("CurrentSecondaryNodeName", nodes), CommandFactory.GenIgnoreConstraintsParam(), CommandFactory.GenTimeoutSecParam()], true
-      )
-      this.commands.push(moveSecondReplicaRandom);
     }
   }
 }

@@ -35,8 +35,6 @@ import {ClipboardModule} from '@angular/cdk/clipboard';
 
 import { WarningComponent } from './component/warning/warning.component';
 import { EventStoreTimelineComponent } from './component/event-store-timeline/event-store-timeline.component';
-import { ConfirmationModalComponent } from './component/clip-board/confirmation-modal/confirmation-modal.component';
-import { MatDialogModule } from '@angular/material/dialog';
 @NgModule({
   declarations: [NavbarComponent, ClipBoardComponent, HealthBadgeComponent, CandyBarCompactComponent, DetailViewPartComponent,
                  CollapseContainerComponent, RefreshRateComponent, DragDirective, ActionDialogComponent, ManifestComponent,
@@ -48,7 +46,7 @@ import { MatDialogModule } from '@angular/material/dialog';
                  DisplayDurationComponent,
                  PhaseDiagramComponent,
                  NodeFilterComponent,
-                 WarningComponent, EventStoreTimelineComponent, ConfirmationModalComponent],
+                 WarningComponent, EventStoreTimelineComponent],
   imports: [
     CommonModule,
     RouterModule,
@@ -57,8 +55,7 @@ import { MatDialogModule } from '@angular/material/dialog';
     NgbToastModule,
     NgbDatepickerModule,
     NgbTooltipModule,
-    ClipboardModule,
-    MatDialogModule
+    ClipboardModule
   ],
   exports: [NavbarComponent, ClipBoardComponent, HealthBadgeComponent, CandyBarCompactComponent, DetailViewPartComponent,
             CollapseContainerComponent, RefreshRateComponent, DragDirective, ActionDialogComponent, ManifestComponent,

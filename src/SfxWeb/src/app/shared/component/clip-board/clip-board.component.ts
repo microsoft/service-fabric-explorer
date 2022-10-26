@@ -1,9 +1,7 @@
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { Clipboard } from '@angular/cdk/clipboard';
-import { Component, OnInit, Input, ChangeDetectionStrategy, ViewChild, ElementRef, ContentChild, OnChanges } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { Component, Input, ChangeDetectionStrategy, ViewChild, ElementRef, OnChanges } from '@angular/core';
 import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
-import { ConfirmationModalComponent } from './confirmation-modal/confirmation-modal.component';
 
 @Component({
   selector: 'app-clip-board',
@@ -22,23 +20,9 @@ export class ClipBoardComponent implements OnChanges {
   public ariaLabel = '';
 
   constructor(private liveAnnouncer: LiveAnnouncer,
-              private clipboard: Clipboard,
-              private dialog: MatDialog) { }
+              private clipboard: Clipboard) { }
               
-
-  checkConfirmation() {
-    if (this.confirmationText) {
-      const dialogRef = this.dialog.open(ConfirmationModalComponent, { data: { text: this.confirmationText} } );
-      
-      dialogRef.afterClosed().subscribe(result => result ? this.copy() : null);
-      this.tooltip.close();
-    }
-    else {
-      this.copy();
-    }
-  }
   copy() {
-    
     
     this.clipboard.copy(this.text)
 

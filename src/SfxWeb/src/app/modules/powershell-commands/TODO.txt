@@ -1,5 +1,3 @@
-object as param value: not have these for now
-
 add tests:
     how thorough?
         test each command?
@@ -11,12 +9,7 @@ add tests:
 
 test commands: pay attention to filters 
 
-commands without known values we can supply (connect to cluster)
-accessbility - required's color 
-two tabs: read and write tabs /commonly used vs rarely used
-safety rating: other ways to do it (group them into seperate groups ; comment out dangerous commands)
+add required text + seperate parameters; optional parameter collapsible
+split commands by safety level tab: add confirmation modal
 
-add required text + seperate parameters
-split commands by safety level
-modify clipboard: add disabled state, custom tooltip, add confirmation modal
-comment out dangerous command -
+force remove on idle secondary
