@@ -18,20 +18,8 @@ export function initApp(aadService: AdalService, standaloneIntegrationService: S
       if (aadService.aadEnabled) {
         console.log(aadService.userInfo)
         if(!aadService.context.urlContainsHash(window.location.hash) && !aadService.isAuthenticated) {
-          await aadService.context.loginPopup(
-          //   {
-          //   authority: aadService.config.raw.metadata.authority,
-          //   scopes: [`${aadService.config.raw.metadata.authority}/.default`]
-          // }
-          );
+          await aadService.login()
         }
-        // console.log(aadService.isAuthenticated)
-        // console.log(aadService.context.urlContainsHash(window.location.hash))
-        // if (!aadService.context.urlContainsHash(window.location.hash) && !aadService.isAuthenticated) {
-        //   aadService.login();
-        // }else{
-        //   console.log(aadService)
-        // }
       }
       console.log("done")
     } catch (e) {

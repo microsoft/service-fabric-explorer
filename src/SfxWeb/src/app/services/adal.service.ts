@@ -5,7 +5,7 @@ import { retry, map } from 'rxjs/operators';
 import { AadMetadata } from '../Models/DataModels/Aad';
 import AuthenticationContext, { Options } from 'adal-angular';
 import { StringUtils } from '../Utils/StringUtils';
-import { UserAgentApplication, Configuration, AuthenticationParameters, Logger, LogLevel } from "msal";
+import { UserAgentApplication, Configuration, AuthenticationParameters, Logger, LogLevel, AuthResponse } from "msal";
 
 @Injectable({
   providedIn: 'root'
@@ -14,6 +14,11 @@ export class AdalService {
   public context: UserAgentApplication;
   public config: AadMetadata;
   public aadEnabled = false;
+
+  private authority: string;
+  private scopes: string[] = [];
+
+  private pending: Promise<AuthResponse>;
 
   constructor(private http: RestClientService) { }
 
@@ -24,13 +29,15 @@ export class AdalService {
       return this.http.getAADmetadata().pipe(map(data => {
         this.config = data;
         if (data.isAadAuthType){
+          this.scopes = [this.config.raw.metadata.cluster];
+          this.authority = `https://login.windows.net/${this.config.raw.metadata.tenant}`
 
           const config: Configuration = {
             auth: {
               clientId:  data.raw.metadata.cluster,
-              authority: data.raw.metadata.authority,
-              // navigateToLoginRequestUrl: false,
+              authority: this.authority,
 
+              validateAuthority: false,
             },
             cache: {
               cacheLocation: 'localStorage'
@@ -38,43 +45,12 @@ export class AdalService {
             system: {
               logger: new Logger((level , message) => console.log(message))
             }
-
-            // tenant: data.raw.metadata.tenant,
-            // clientId: data.raw.metadata.cluster,
-            // cacheLocation: 'localStorage'
           };
 
-          // if (data.raw.metadata.login) {
-          //   config.instance = StringUtils.EnsureEndsWith(data.raw.metadata.login, '/');
-          // }
-
-          // this.context = new AuthenticationContext(config);
           console.log(config)
 
           this.context = new UserAgentApplication(config);
-          // console.log(this.context.getAccount())
-          this.context.handleRedirectCallback((err, tokenResponse) => {
-            console.log(err)
-            console.log("callback", tokenResponse);
-            // let accountObj = null;
-            // if (tokenResponse !== null) {
-            //   accountObj = tokenResponse.account;
-            //   // const id_token = tokenResponse.idToken;
-            //   // const access_token = tokenResponse.accessToken;
-            // } else {
-            //   const currentAccounts = this.context.getAllAccounts();
-            //   if (!currentAccounts || currentAccounts.length === 0) {
-            //     // No user signed in
-            //     return;
-            //   } else if (currentAccounts.length > 1) {
-            //     // More than one user signed in, find desired user with getAccountByUsername(username)
-            //   } else {
-            //     accountObj = currentAccounts[0];
-            //   }
-            // }
 
-            // const username = accountObj.username;
-          })
           console.log(this.context)
         this.aadEnabled = true;
 
@@ -84,8 +60,12 @@ export class AdalService {
     }
   }
 
-  login() {
-    this.context.loginRedirect();
+  async login() {
+    const data = await this.context.loginPopup({
+      authority: this.authority,
+      scopes: [this.config.metadata.cluster],
+    });
+    console.log(data);
   }
   logout() {
       this.context.logout()
@@ -106,26 +86,46 @@ export class AdalService {
       return this.context.isCallback(hash);
   }
 
-  public async acquireToken() {
-    const authParams: AuthenticationParameters = {
-      authority: this.config.raw.metadata.authority,
-      scopes: [`${this.config.raw.metadata.cluster}/.default`],
-    }
-    try {
-      return await this.context.acquireTokenSilent(authParams);
-    }catch(e) {
-      console.log(e)
-      return await this.context.acquireTokenPopup(authParams);
+  public async acquireToken(): Promise<AuthResponse> {
+    if(this.pending) {
+      return this.pending;
+    }else{
+      this.pending = new Promise(async (resolve, reject) => {
+        const authParams: AuthenticationParameters = {
+          authority: this.authority,
+          scopes: this.scopes
+        }
+        console.log(authParams)
+        let attemptPopup = false;
+        try {
+          const token = await this.context.acquireTokenSilent(authParams);
+          resolve(token);
+        }catch(e) {
+          console.log(e)
+          attemptPopup = true;
+        }
+
+        if(attemptPopup) {
+          try {
+            const token = await this.context.acquireTokenPopup(authParams);
+            resolve(token);
+          } catch(e) {
+            reject(e);
+          }
+        }
+      })
+
+      return this.pending;
     }
   }
 
-  public acquireTokenResilient(): Observable<any> {
-    return new Observable<any>((subscriber: Subscriber<any>) => {
+  public acquireTokenResilient(): Observable<string> {
+    return new Observable<any>((subscriber: Subscriber<string>) => {
         this.acquireToken().then(auth => {
           console.log(auth)
           subscriber.next(auth.idToken.rawIdToken);
           subscriber.complete();
-        }, err => {
+        }).catch(err => {
           console.log(err)
           subscriber.error(err);
           subscriber.complete();
