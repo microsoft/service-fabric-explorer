@@ -5,6 +5,8 @@ import { retry, map } from 'rxjs/operators';
 import { AadMetadata } from '../Models/DataModels/Aad';
 import { UserAgentApplication, Configuration, AuthenticationParameters, AuthResponse } from "msal";
 
+
+
 @Injectable({
   providedIn: 'root'
 })
@@ -34,6 +36,7 @@ export class AdalService {
             auth: {
               clientId:  data.raw.metadata.cluster,
               authority: this.authority,
+              validateAuthority: false
             },
             cache: {
               cacheLocation: 'localStorage'
@@ -42,7 +45,6 @@ export class AdalService {
 
           this.context = new UserAgentApplication(config);
           this.aadEnabled = true;
-
           return this.context;
         }
       }));

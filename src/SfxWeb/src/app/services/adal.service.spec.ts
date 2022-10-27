@@ -17,26 +17,26 @@ describe('AdalService', () => {
   });
 
   fit('load', async () => {
-    const service: AdalService = TestBed.inject(AdalService);
+      restClientMock.getAADmetadata = (messageHandler: IResponseMessageHandler): Observable<AadMetadata> => {
+        return of(new AadMetadata({
+          type: 'aad',
+          metadata: {
+            login: 'login',
+            authority: "https://login.microsoftonline.com/123412341234"
+            ,
+            client: 'client-id',
+            cluster: 'cluster-id',
+            redirect: 'redirect',
+            tenant: 'tenant-id'
+          }
+          }));
+        };
+      const service: AdalService = TestBed.inject(AdalService);
 
-    restClientMock.getAADmetadata = (messageHandler: IResponseMessageHandler): Observable<AadMetadata> => {
-      return of(new AadMetadata({
-        type: 'aad',
-        metadata: {
-          login: 'login',
-          authority: 'auth',
-          client: 'client-id',
-          cluster: 'cluster-id',
-          redirect: 'redirect',
-          tenant: 'tenant-id'
-        }
-        }));
-      };
+      await service.load().toPromise();
 
-    await service.load().toPromise();
-
-    expect(service.authContext).toBeDefined();
-    expect(service.aadEnabled).toBeTruthy();
+      expect(service.authContext).toBeDefined();
+      expect(service.aadEnabled).toBeTruthy();
   });
 
   fit('load non aad authed', async () => {
