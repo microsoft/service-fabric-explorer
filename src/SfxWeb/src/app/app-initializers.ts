@@ -16,7 +16,7 @@ export function initApp(aadService: AdalService, standaloneIntegrationService: S
       await aadService.load().toPromise();
 
       if (aadService.aadEnabled) {
-        if(!aadService.context.urlContainsHash(window.location.hash) && !aadService.isAuthenticated) {
+        if(!aadService.isAuthenticated) {
           await aadService.login()
         }
       }

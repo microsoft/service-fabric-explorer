@@ -16,7 +16,7 @@ describe('Http interceptors', () => {
     const dataService: Partial<DataService> = { readOnlyHeader: null, clusterNameMetadata: 'old-name' };
     const adalService: Partial<AdalService> = {
         aadEnabled: false,
-        acquireTokenResilient: (resource) => of('aad-token'),
+        acquireTokenResilient: () => of('aad-token'),
         config: new AadMetadata({
             type: 'aad',
             metadata: {
