@@ -3,7 +3,7 @@ import { RestClientService } from './rest-client.service';
 import { Observable, Subscriber, of } from 'rxjs';
 import { retry, map } from 'rxjs/operators';
 import { AadMetadata } from '../Models/DataModels/Aad';
-import { UserAgentApplication, Configuration, AuthenticationParameters, Logger, LogLevel, AuthResponse } from "msal";
+import { UserAgentApplication, Configuration, AuthenticationParameters, AuthResponse } from "msal";
 
 @Injectable({
   providedIn: 'root'
@@ -40,12 +40,8 @@ export class AdalService {
             }
           };
 
-          console.log(config)
-
           this.context = new UserAgentApplication(config);
-
-          console.log(this.context)
-        this.aadEnabled = true;
+          this.aadEnabled = true;
 
           return this.context;
         }
@@ -56,7 +52,7 @@ export class AdalService {
   async login() {
     return await this.context.loginPopup({
       authority: this.authority,
-      scopes: [this.config.metadata.cluster],
+      scopes: this.scopes,
     });
   }
   logout() {
