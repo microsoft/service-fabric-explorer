@@ -1,10 +1,8 @@
 import { Injectable } from '@angular/core';
 import { RestClientService } from './rest-client.service';
-import { Observable, Subscriber, of, Subject, ReplaySubject } from 'rxjs';
+import { Observable, Subscriber, of } from 'rxjs';
 import { retry, map } from 'rxjs/operators';
 import { AadMetadata } from '../Models/DataModels/Aad';
-import AuthenticationContext, { Options } from 'adal-angular';
-import { StringUtils } from '../Utils/StringUtils';
 import { UserAgentApplication, Configuration, AuthenticationParameters, Logger, LogLevel, AuthResponse } from "msal";
 
 @Injectable({
@@ -30,20 +28,15 @@ export class AdalService {
         this.config = data;
         if (data.isAadAuthType){
           this.scopes = [this.config.raw.metadata.cluster];
-          this.authority = `https://login.windows.net/${this.config.raw.metadata.tenant}`
+          this.authority =  this.config.metadata.authority
 
           const config: Configuration = {
             auth: {
               clientId:  data.raw.metadata.cluster,
               authority: this.authority,
-
-              validateAuthority: false,
             },
             cache: {
               cacheLocation: 'localStorage'
-            },
-            system: {
-              logger: new Logger((level , message) => console.log(message))
             }
           };
 
@@ -61,11 +54,10 @@ export class AdalService {
   }
 
   async login() {
-    const data = await this.context.loginPopup({
+    return await this.context.loginPopup({
       authority: this.authority,
       scopes: [this.config.metadata.cluster],
     });
-    console.log(data);
   }
   logout() {
       this.context.logout()
@@ -95,7 +87,7 @@ export class AdalService {
           authority: this.authority,
           scopes: this.scopes
         }
-        console.log(authParams)
+
         let attemptPopup = false;
         try {
           const token = await this.context.acquireTokenSilent(authParams);
@@ -122,7 +114,6 @@ export class AdalService {
   public acquireTokenResilient(): Observable<string> {
     return new Observable<any>((subscriber: Subscriber<string>) => {
         this.acquireToken().then(auth => {
-          console.log(auth)
           subscriber.next(auth.idToken.rawIdToken);
           subscriber.complete();
         }).catch(err => {

@@ -16,12 +16,10 @@ export function initApp(aadService: AdalService, standaloneIntegrationService: S
       await aadService.load().toPromise();
 
       if (aadService.aadEnabled) {
-        console.log(aadService.userInfo)
         if(!aadService.context.urlContainsHash(window.location.hash) && !aadService.isAuthenticated) {
           await aadService.login()
         }
       }
-      console.log("done")
     } catch (e) {
       console.log(e);
     }
