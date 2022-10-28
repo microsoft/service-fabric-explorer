@@ -60,5 +60,6 @@ export class CommandsComponent extends ServiceBaseControllerDirective {
       [CommandFactory.GenTimeoutSecParam()]
     )
     this.commands.push(getPartitions);
+    this.commands = [...this.commands];
   }
 }

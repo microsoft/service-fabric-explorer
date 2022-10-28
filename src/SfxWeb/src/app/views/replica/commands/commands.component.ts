@@ -102,5 +102,6 @@ export class CommandsComponent extends ReplicaBaseControllerDirective{
         this.commands.push(moveSecondReplicaRandom);
       }
     }
+    this.commands = [...this.commands];
   }
 }

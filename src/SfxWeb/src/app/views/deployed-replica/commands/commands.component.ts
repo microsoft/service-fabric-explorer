@@ -31,5 +31,7 @@ export class CommandsComponent extends DeployedReplicaBaseControllerDirective {
     );
     
     this.commands.push(getReplica);
+    this.commands = [...this.commands];
+
   }
 }

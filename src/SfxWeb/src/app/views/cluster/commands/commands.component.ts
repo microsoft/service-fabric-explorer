@@ -72,6 +72,7 @@ export class CommandsComponent extends BaseControllerDirective {
       [taskId, state, CommandFactory.GenTimeoutSecParam()]
     );
     this.commands.push(getRepairTasks);
+    this.commands = [...this.commands];
   }
 
 }

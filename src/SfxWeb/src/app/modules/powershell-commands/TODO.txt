@@ -10,6 +10,9 @@ add tests:
 test commands: pay attention to filters 
 
 add required text + seperate parameters; optional parameter collapsible
-split commands by safety level tab: add confirmation modal
 
 force remove on idle secondary
+
+used spread operator on setupCommands
+modal text, title
+added variable to setting - stay on refresh; unsafe & dangerous linked

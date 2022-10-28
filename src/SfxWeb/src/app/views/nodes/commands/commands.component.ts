@@ -33,6 +33,8 @@ export class CommandsComponent extends BaseControllerDirective {
       [statusFilter, getSinglePage, maxResults, CommandFactory.GenTimeoutSecParam()]
     );
     this.commands.push(getNodes);
+    this.commands = [...this.commands];
+
   }
 
 

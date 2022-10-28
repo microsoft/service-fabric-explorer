@@ -36,6 +36,8 @@ export class CommandsComponent extends ApplicationTypeBaseControllerDirective {
       [excludeAppParam, appDefKindFilter, maxResults, getSinglePage, CommandFactory.GenTimeoutSecParam()]
     )
     this.commands.push(getApps);
+    this.commands = [...this.commands];
+
   }
 
 }

@@ -58,5 +58,7 @@ export class CommandsComponent extends DeployedServicePackageBaseControllerDirec
     );
     
     this.commands.push(getReplica);
+    this.commands = [...this.commands];
+
   }
 }

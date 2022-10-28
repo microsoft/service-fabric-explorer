@@ -80,6 +80,8 @@ export class CommandsComponent extends NodeBaseControllerDirective {
     );
     
     this.commands.push(getReplica);
+    this.commands = [...this.commands];
+
   }
 
 

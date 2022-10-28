@@ -100,7 +100,7 @@ export class CommandsComponent extends PartitionBaseControllerDirective{
         [CommandFactory.GenIgnoreConstraintsParam(), CommandFactory.GenTimeoutSecParam()], true
       )
       this.commands.push(movePrimeReplicaRandom);
-      
     }
+    this.commands = [...this.commands];
   }
 }

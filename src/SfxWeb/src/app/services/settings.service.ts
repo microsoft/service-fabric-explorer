@@ -18,7 +18,8 @@ import { HtmlUtils } from '../Utils/HtmlUtils';
 export class SettingsService {
   private listSettings: Record<string, ListSettings>;
   private iPaginationLimit: number;
-  private iMetricsViewModel: MetricsViewModel;
+  private iMetricsViewModel: MetricsViewModel;  
+  private sessionVariables: { [key: string]: any } = {};
 
   public get paginationLimit(): number {
       return this.iPaginationLimit;
@@ -263,6 +264,22 @@ export class SettingsService {
           item.currentPage = 1;
           item.limit = limit;
       });
+  }
+
+  public getSessionVariable(key: string): any {
+    try {
+      return this.sessionVariables[key];
+    }
+    catch (e) {
+      if (e instanceof TypeError) {
+        return null;
+      }
+      throw (e);
+    }
+  }
+
+  public setSessionVariable(key: string, value: any) {
+    this.sessionVariables[key] = value;
   }
 }
 

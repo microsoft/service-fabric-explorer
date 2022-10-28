@@ -82,5 +82,6 @@ export class CommandsComponent extends ApplicationBaseControllerDirective{
     )
 
     this.commands.push(getServices);
+    this.commands = [...this.commands];
   }
 }

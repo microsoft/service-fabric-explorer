@@ -78,5 +78,7 @@ export class CommandsComponent extends DeployedAppBaseControllerDirective{
     );
     
     this.commands.push(getReplica);
+    this.commands = [...this.commands];
+
   }
 }
