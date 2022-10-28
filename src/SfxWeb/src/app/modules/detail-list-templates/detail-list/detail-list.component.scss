@@ -2,9 +2,13 @@ table {
   button {
     border-radius: var(--primary-border-radius);
     padding: 5px;
-    width: 100%;
+    flex: 1;
     text-align: left;
   }
+}
+
+.header-wrapper {
+  display: flex;
 }
 
 .table-responsive {
