@@ -102,6 +102,17 @@ export class CommandsComponent extends ReplicaBaseControllerDirective{
         this.commands.push(moveSecondReplicaRandom);
       }
     }
+
+    if (this.replica.role === 'IdleSecondary') {
+      const removeReplica = new PowershellCommand(
+        "Force Remove Replica/Instance",
+        'https://docs.microsoft.com/powershell/module/servicefabric/remove-servicefabricreplica',
+        CommandSafetyLevel.unsafe,
+        `Remove-ServiceFabricReplica -ForceRemove -ServiceName ${this.replica.parent.parent.name} -ReplicaOrInstanceId ${this.replicaId}`,
+        [new PowershellCommandParameter("CommandCompletionMode", CommandParamTypes.enum, { options: ['Invalid', 'DoNotVerify', 'Verify'] }), CommandFactory.GenTimeoutSecParam()], true
+      );
+      this.commands.push(removeReplica);
+    }
     this.commands = [...this.commands];
   }
 }

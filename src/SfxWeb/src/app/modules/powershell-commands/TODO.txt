@@ -16,3 +16,5 @@ force remove on idle secondary
 used spread operator on setupCommands
 modal text, title
 added variable to setting - stay on refresh; unsafe & dangerous linked
+form submission warning
+check replica type by string comparison
