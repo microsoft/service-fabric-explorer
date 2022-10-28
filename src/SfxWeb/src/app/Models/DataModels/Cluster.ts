@@ -118,6 +118,14 @@ export class ClusterHealth extends HealthBase<IRawClusterHealth> {
     }
 }
 
+// a dictionary of node type names to property key,value pairs
+export type NodeTypeProperties = Record<string, Record<string, string>>;
+
+export interface INodeTypeInfo {
+  name: string;
+  placementProperties: Record<string, string>;
+}
+
 export class ClusterManifest extends DataModelBase<IRawClusterManifest> {
     public clusterManifestName: string;
 
@@ -129,6 +137,7 @@ export class ClusterManifest extends DataModelBase<IRawClusterManifest> {
     public isRepairManagerEnabled = false;
     public isEventStoreEnabled = false;
     public eventStoreTimeRange = 30;
+    public nodeTypeProperties: INodeTypeInfo[];
 
     public constructor(data: DataService) {
         super(data);
@@ -147,6 +156,39 @@ export class ClusterManifest extends DataModelBase<IRawClusterManifest> {
                 break;
             }
         }
+    }
+
+  private getNodesProperty(manifest: Element) {
+    let nodeTypes: INodeTypeInfo[] = []
+    try {
+      let XMLnodeTypes = manifest.getElementsByTagName("NodeTypes")[0].getElementsByTagName("NodeType");
+
+      for (let nodeIndex = 0; nodeIndex < XMLnodeTypes.length; ++nodeIndex) {
+        const XMLnode = XMLnodeTypes[nodeIndex]
+        const nodeType = XMLnode.getAttribute("Name")
+        const placementProperties = XMLnode.getElementsByTagName("PlacementProperties")
+        let keyProperties: Record<string, string> = {}
+        for (let i = 0; i < placementProperties.length; ++i) {
+          const properties = placementProperties[i].getElementsByTagName("Property")
+
+          for (let j = 0; j < properties.length; j++) {
+            keyProperties[properties[j].getAttribute("Name")] = properties[j].getAttribute("Value")
+          }
+        }
+        nodeTypes.push({
+          placementProperties: keyProperties,
+          name: nodeType
+        });
+      }
+    } catch(e) {
+      console.log("unable to parse nodetypes", e)
+    }
+
+    return nodeTypes;
+  }
+
+    public getNodeProperties(nodeType: string) {
+      return this.nodeTypeProperties.find(properties => properties.name === nodeType);
     }
 
     protected updateInternal(): Observable<any> | void {
@@ -181,6 +223,8 @@ export class ClusterManifest extends DataModelBase<IRawClusterManifest> {
                 }
             }
         }
+
+        this.nodeTypeProperties = this.getNodesProperty(manifest);
     }
 }
 

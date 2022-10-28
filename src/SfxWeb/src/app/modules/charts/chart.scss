@@ -62,7 +62,7 @@ $dashboard-small-padding-horizontal: 12px;
                 position: relative;
                 width: 100%;
                 height: 100%;
-                padding-left: $dashboard-datapoint-leftbar-width * 2 + 10px !important;
+                padding-left: $dashboard-datapoint-leftbar-width * 2 + 10px;
 
                 .dashboard-tile-leftbar {
                     width: $dashboard-datapoint-leftbar-width * 2;
