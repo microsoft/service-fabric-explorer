@@ -2,7 +2,13 @@ table {
   button {
     border-radius: var(--primary-border-radius);
     padding: 5px;
+    width: 100%;
+    text-align: left;
   }
+}
+
+.table-responsive {
+  margin-top: 5px;
 }
 
 .check-options {
