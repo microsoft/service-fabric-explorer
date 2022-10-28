@@ -7,7 +7,7 @@
     width: 1.5rem;
     height: 1.5rem;
     border: 1px solid gray;
-    background: black;
+    background: var(--primary-background-color);
 }
 
 
@@ -27,6 +27,7 @@
 .disabled {
     .custom-day {
         color: gray;
+        background-color: var(--accent-background-color);
     }
     color: gray;
 }
@@ -47,19 +48,19 @@ background-color: rgba(2, 117, 216, 0.5);
 }
 
 .ngb-dp-month-name {
-    background: black !important;
+    background: var(--primary-background-color) !important;
     color: white;
 }
 
 .ngb-dp-month{
-    background: black !important;
+    background: --primary-background-color !important;
     color: white;
 }
 
 .ngb-dp-weekdays, .ngb-dp-weekday {
-    background: black !important;
+    background: --primary-background-color !important;
 }
 
 .ngb-dp-header {
-    background: black !important;
+    background: --primary-background-color !important;
 }

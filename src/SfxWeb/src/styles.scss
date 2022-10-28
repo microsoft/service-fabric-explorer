@@ -703,3 +703,8 @@ table.detail-list {
   align-self: center;
   color: var(--badge-warning);
 }
+
+.top-seperator {
+  border-bottom: 5px solid var(--accent-underline);
+  padding-bottom: 8px;
+}
