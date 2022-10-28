@@ -89,7 +89,13 @@ export class InfrastructureCollection extends DataModelCollectionBase<Infrastruc
         counter.add(node.raw.Type);
       })
 
-      const nodetypesWithoutEnoughNodes = this.collection.map(is => InfrastructureCollection.stripPrefix(is.name)).filter(is => (counter.entries().find(count => count.key === is)?.value || 0) < 5);
+      //condense cross AZ infrastructure services
+      const condensedIS = new Set<string>();
+      this.collection.forEach(is => {
+        condensedIS.add(InfrastructureCollection.stripPrefix(is.name).split("/")[0]);
+      })
+
+      const nodetypesWithoutEnoughNodes = Array.from(condensedIS).filter(is => (counter.entries().find(count => count.key === is)?.value || 0) < 5);
 
       if (nodetypesWithoutEnoughNodes.length > 0) {
         this.data.warnings.addOrUpdateNotification({
