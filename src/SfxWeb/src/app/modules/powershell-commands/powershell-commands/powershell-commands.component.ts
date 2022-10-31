@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component,  Input, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component,  Input, ViewChild, OnChanges } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { NgbNav, NgbNavChangeEvent } from '@ng-bootstrap/ng-bootstrap';
 import { result } from 'cypress/types/lodash';
@@ -15,48 +15,57 @@ import { ModalData } from 'src/app/ViewModels/Modal';
 })
 export class PowershellCommandsComponent implements ModalData{
 
-  constructor(public dialog: MatDialog, settings: SettingsService) {
-    this.settings = settings;
-    if (!this.settings.getSessionVariable('commandsWarned')) {
-      this.settings.setSessionVariable('commandsWarned', false);
-    }
-  }
+  constructor(protected dialog: MatDialog, protected settings: SettingsService) {}
   
-  settings: SettingsService;
-
-  title: string = 'Ok';
+  title: string = 'Acknowledge';
   modalTitle: string = 'Warning';
   modalMessage: string;
 
-  activeId;
+  activeId:any = 1;
   safetyLevelEnum = CommandSafetyLevel;
 
   @Input() commands: PowershellCommand[];
   @ViewChild('nav') nav: NgbNav;
 
-  onNavChange(e: NgbNavChangeEvent) {
-    if (e.nextId != 1 && !this.settings.getSessionVariable('commandsWarned')) {
-      e.preventDefault();
+  safeCommands: PowershellCommand[] = [];
+  unsafeCommands: PowershellCommand[] = [];
+  dangerousCommands: PowershellCommand[] = [];
 
-      if (e.nextId === 2) {
-        this.modalMessage = "The commands you are about to view are potentially unsafe, and executing them can result in undesirable results. Please ensure you understand their risks."
-      }
-      else {
-        this.modalMessage = "The commands you are about to view are potentially very dangerous to the cluster, and executing them incorrectly can lead to dire consequences."
-      }
-      let dialogRef = this.dialog.open(ActionDialogComponent, {
-        data: this, panelClass: 'mat-dialog-container-wrapper'
-      });
-      dialogRef.afterClosed().subscribe(result => {
-        if (result) {
-          this.nav.select(e.nextId);
-          this.settings.setSessionVariable('commandsWarned', true);
-        } 
-      });
+  ngOnChanges() {
+    this.safeCommands = this.getCommandsBySafety(this.safetyLevelEnum.safe);
+    this.unsafeCommands = this.getCommandsBySafety(this.safetyLevelEnum.unsafe);
+    this.dangerousCommands = this.getCommandsBySafety(this.safetyLevelEnum.dangerous);
+
+  }
+
+  onNavChange(e: NgbNavChangeEvent) {
+    if (e.nextId == 2 && !this.settings.getSessionVariable('unsafeCommandsWarned')) {
+      e.preventDefault();
+      this.modalMessage = "The commands you are about to view are potentially unsafe, and executing them can result in undesirable results. Please ensure you understand their risks."
+      this.openWarningModal('unsafeCommandsWarned', e.nextId);
     }
+    else if (e.nextId == 3 && !this.settings.getSessionVariable('dangerCommandsWarned')) {
+      e.preventDefault();
+      this.modalMessage = "The commands you are about to view are potentially very dangerous to the cluster, and executing them incorrectly can lead to dire consequences."
+      this.openWarningModal('dangerCommandsWarned', e.nextId);
+    }
+    
   }
 
   getCommandsBySafety(level: CommandSafetyLevel): PowershellCommand[] {
     return this.commands.filter(c => c.safetyLevel === level);
+  }
+
+  openWarningModal(warnedVar: string, navId: number) {
+    let dialogRef = this.dialog.open(ActionDialogComponent, {
+      data: this, panelClass: 'mat-dialog-container-wrapper'
+    });
+  
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.nav.select(navId);
+        this.settings.setSessionVariable(warnedVar, true);
+      } 
+    });
   }
 }

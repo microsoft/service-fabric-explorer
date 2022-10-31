@@ -19,7 +19,7 @@ export class CommandsComponent extends ApplicationBaseControllerDirective{
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
-    return this.app.serviceTypes.refresh(messageHandler);
+    return this.app?.serviceTypes.refresh(messageHandler);
   }
 
   afterDataSet(): void {
@@ -69,7 +69,7 @@ export class CommandsComponent extends ApplicationBaseControllerDirective{
     )
     this.commands.push(getApp);
 
-    const serviceType = new PowershellCommandParameter('ServiceTypeName', CommandParamTypes.string, { options: this.app.serviceTypes.collection.map(_ => _.name), allowCustomValAndOptions: true });
+    const serviceType = new PowershellCommandParameter('ServiceTypeName', CommandParamTypes.string, { options: this.app?.serviceTypes.collection.map(_ => _.name), allowCustomValAndOptions: true });
     const getSinglePage = new PowershellCommandParameter('GetSinglePage', CommandParamTypes.switch);
     const maxResults = new PowershellCommandParameter('MaxResults', CommandParamTypes.number);
 

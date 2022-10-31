@@ -52,14 +52,14 @@ export class CommandsComponent extends ReplicaBaseControllerDirective{
     );
     this.commands.push(getReplica);
 
-    if (!this.replica.isStatefulService) {
+    if (!this.replica?.isStatefulService) {
       const nodes = this.data.nodes.collection.map(node => node.name);
 
       const moveInstance = new PowershellCommand(
         "Move Instance",
         'https://docs.microsoft.com/powershell/module/servicefabric/move-servicefabricinstance',
         CommandSafetyLevel.unsafe,
-        `Move-ServiceFabricInstance -ServiceName ${this.replica.parent.parent.name} -PartitionId ${this.partitionId}`,
+        `Move-ServiceFabricInstance -ServiceName ${this.replica?.parent.parent.name} -PartitionId ${this.partitionId}`,
         [CommandFactory.GenNodeListParam("CurrentInstanceNodeName", nodes), CommandFactory.GenNodeListParam("NewInstanceNodeName", nodes), CommandFactory.GenIgnoreConstraintsParam(), CommandFactory.GenTimeoutSecParam()],
         true
       );
@@ -72,19 +72,19 @@ export class CommandsComponent extends ReplicaBaseControllerDirective{
         "Restart Replica",
         'https://docs.microsoft.com/powershell/module/servicefabric/restart-servicefabricreplica',
         CommandSafetyLevel.unsafe,
-        `Restart-ServiceFabricReplica -ServiceName ${this.replica.parent.parent.name} -PartitionId ${this.partitionId} -ReplicaOrInstanceId ${this.replicaId}`,
+        `Restart-ServiceFabricReplica -ServiceName ${this.replica?.parent.parent.name} -PartitionId ${this.partitionId} -ReplicaOrInstanceId ${this.replicaId}`,
         [completionMode, CommandFactory.GenTimeoutSecParam()], true
       );
       this.commands.push(restartReplica);
 
-      if(this.replica.role !== 'Primary'){
+      if(this.replica?.raw.ReplicaRole !== 'Primary'){
         const nodes = this.data.nodes.collection.map(node => node.name);
 
         const moveSecondReplicaSpecific = new PowershellCommand(
           "Move Secondary Replica To Specifc Node",
           'https://docs.microsoft.com/powershell/module/servicefabric/move-servicefabricsecondaryreplica',
           CommandSafetyLevel.unsafe,
-          `Move-ServiceFabricSecondaryReplica -ServiceName ${this.replica.parent.parent.name} -PartitionId ${this.partitionId} -CurrentSecondaryNodeName ${this.replica.raw.NodeName}`,
+          `Move-ServiceFabricSecondaryReplica -ServiceName ${this.replica?.parent.parent.name} -PartitionId ${this.partitionId} -CurrentSecondaryNodeName ${this.replica?.raw.NodeName}`,
           [CommandFactory.GenNodeListParam("NewSecondaryNodeName", nodes),
           CommandFactory.GenIgnoreConstraintsParam(),
           CommandFactory.GenTimeoutSecParam()
@@ -96,19 +96,19 @@ export class CommandsComponent extends ReplicaBaseControllerDirective{
           "Move Secondary Replica To Random Node",
           'https://docs.microsoft.com/powershell/module/servicefabric/move-servicefabricsecondaryreplica',
           CommandSafetyLevel.unsafe,
-          `Move-ServiceFabricSecondaryReplica -ServiceName ${this.replica.parent.parent.name} -PartitionId ${this.partitionId} -CurrentSecondaryNodeName ${this.replica.raw.NodeName}`,
+          `Move-ServiceFabricSecondaryReplica -ServiceName ${this.replica?.parent.parent.name} -PartitionId ${this.partitionId} -CurrentSecondaryNodeName ${this.replica?.raw.NodeName}`,
           [CommandFactory.GenIgnoreConstraintsParam(), CommandFactory.GenTimeoutSecParam()], true
         )
         this.commands.push(moveSecondReplicaRandom);
       }
     }
 
-    if (this.replica.role === 'IdleSecondary') {
+    if (this.replica?.raw.ReplicaRole === 'IdleSecondary') {
       const removeReplica = new PowershellCommand(
         "Force Remove Replica/Instance",
         'https://docs.microsoft.com/powershell/module/servicefabric/remove-servicefabricreplica',
         CommandSafetyLevel.unsafe,
-        `Remove-ServiceFabricReplica -ForceRemove -ServiceName ${this.replica.parent.parent.name} -ReplicaOrInstanceId ${this.replicaId}`,
+        `Remove-ServiceFabricReplica -ForceRemove -ServiceName ${this.replica?.parent.parent.name} -ReplicaOrInstanceId ${this.replicaId}`,
         [new PowershellCommandParameter("CommandCompletionMode", CommandParamTypes.enum, { options: ['Invalid', 'DoNotVerify', 'Verify'] }), CommandFactory.GenTimeoutSecParam()], true
       );
       this.commands.push(removeReplica);

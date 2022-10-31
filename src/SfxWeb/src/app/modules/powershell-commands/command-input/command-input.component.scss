@@ -34,3 +34,8 @@ label {
     border-left: 5px solid var(--badge-ok);
     border-radius: var(--primary-border-radius);
 }
+
+.required-text {
+    font-size: 8pt;
+    color: var(--badge-error);
+}

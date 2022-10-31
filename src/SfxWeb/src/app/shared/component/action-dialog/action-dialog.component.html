@@ -9,7 +9,7 @@
         </label>
     </div>
     <div class="modal-footer">
-        <button type="submit" class="solid-button blue" [disabled]="data.confirmationKeyword && (data.confirmationKeyword !== userInput.trim())" (click)="ok()" data-cy="submit">{{data.title}}</button>
+        <button type="button" class="solid-button blue" [disabled]="data.confirmationKeyword && (data.confirmationKeyword !== userInput.trim())" (click)="ok()" data-cy="submit">{{data.title}}</button>
         <button type="button" class="flat-button" (click)="cancel()">Cancel</button>
     </div>
 </form>

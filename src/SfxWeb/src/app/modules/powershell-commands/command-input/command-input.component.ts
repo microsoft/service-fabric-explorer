@@ -1,5 +1,5 @@
-import { Component, Input } from '@angular/core';
-import { ControlContainer, NgForm } from '@angular/forms';
+import { Component, Input, ViewChild } from '@angular/core';
+import { ControlContainer, FormControl, NgForm, NgModel } from '@angular/forms';
 import { PowershellCommandParameter, CommandParamTypes } from 'src/app/Models/PowershellCommand';
 
 @Component({
@@ -11,6 +11,8 @@ import { PowershellCommandParameter, CommandParamTypes } from 'src/app/Models/Po
 })
 export class CommandInputComponent{
 
+  @ViewChild('normalInput') normalInput: NgModel;
+  
   @Input() commandParam: PowershellCommandParameter;
 
   paramTypes = CommandParamTypes;

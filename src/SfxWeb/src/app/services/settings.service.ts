@@ -267,15 +267,7 @@ export class SettingsService {
   }
 
   public getSessionVariable(key: string): any {
-    try {
       return this.sessionVariables[key];
-    }
-    catch (e) {
-      if (e instanceof TypeError) {
-        return null;
-      }
-      throw (e);
-    }
   }
 
   public setSessionVariable(key: string, value: any) {
