@@ -8,11 +8,19 @@
 <div>
   <h3>Dataset</h3>
   <div style="display: flex;">
-    <div style="flex: 1;">
-      <app-detail-list [list]="[]" [listSettings]="listSettings"></app-detail-list>
+    <div style="flex: 1; overflow: auto;">
+      <div ngbNav #nav="ngbNav" class="nav-wrapper">
+        <div ngbNavItem *ngFor="let dataset of data.dataSets">
+          <a ngbNavLink>{{dataset.name}}</a>
+          <ng-template ngbNavContent>
+            <app-detail-list [list]="dataset.values" [listSettings]="listSettings"></app-detail-list>
+          </ng-template>
+        </div>
+      </div>
+      <div [ngbNavOutlet]="nav"></div>
+
     </div>
-    <div *ngIf="currentItem" style="white-space: pre; width: 400px; overflow: auto;">
+    <div *ngIf="currentItem" style="white-space: pre; width: 700px; overflow: auto;">
       {{currentItem | json}}
     </div>
   </div>
-</div>
