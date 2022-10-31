@@ -1,5 +1,5 @@
-import { Component, Input, ViewChild } from '@angular/core';
-import { ControlContainer, FormControl, NgForm, NgModel } from '@angular/forms';
+import { Component, Input, OnInit } from '@angular/core';
+import { ControlContainer, FormArray, FormControl, NgForm } from '@angular/forms';
 import { PowershellCommandParameter, CommandParamTypes } from 'src/app/Models/PowershellCommand';
 
 @Component({
@@ -9,16 +9,28 @@ import { PowershellCommandParameter, CommandParamTypes } from 'src/app/Models/Po
   viewProviders: [ { provide: ControlContainer, useExisting: NgForm }]
 
 })
-export class CommandInputComponent{
+export class CommandInputComponent implements OnInit{
 
-  @ViewChild('normalInput') normalInput: NgModel;
-  
   @Input() commandParam: PowershellCommandParameter;
+  @Input() inputArray: FormArray;
+  @Input() invalidInputs: { [key: string]: boolean }
+
+  value: FormControl = new FormControl('');
 
   paramTypes = CommandParamTypes;
 
-  setDropdownValue(event: any, param: PowershellCommandParameter) {
-    param.value = event.target.value;
+  ngOnInit() {
+    this.inputArray.push(this.value);
+  }
+
+  setDropdownValue(event: any) {
+    this.value.setValue(event.target.value);
+    this.setParamValue(event);
+  }
+
+  setParamValue(event: any) {
+    this.commandParam.value = event.target.value;
+    this.invalidInputs[this.commandParam.name] = !this.value.valid;
   }
 
 }

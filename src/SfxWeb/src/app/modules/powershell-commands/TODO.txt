@@ -9,7 +9,5 @@ add tests:
 
 test commands: pay attention to filters 
 
-add required text + seperate parameters; optional parameter collapsible
-
-tab: conditional render text; bigger font
-switch over to reactive form controll
+seperate parameters; optional parameter collapsible
+tab: conditional render - what happens when only unsafe /dangerous avaliable

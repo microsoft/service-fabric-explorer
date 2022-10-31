@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { PowershellCommandsComponent } from './powershell-commands/powershell-commands.component';
@@ -17,7 +17,8 @@ import { CommandInputComponent } from './command-input/command-input.component';
     CommonModule,
     SharedModule,
     FormsModule,
-    NgbModule
+    NgbModule,
+    ReactiveFormsModule
   ],
   exports: [
     PowershellCommandsComponent

@@ -1,12 +1,11 @@
 <label *ngIf="commandParam.type !== paramTypes.switch && commandParam.type !== paramTypes.bool" [for]="commandParam.name">{{commandParam.name}}</label>
-<p class="required-text" [hidden]="normalInput ? normalInput.valid : true">*Invalid Value</p>
 <div *ngIf="!commandParam.allowCustomValAndOptions; else dropDown" >
     <div [ngSwitch]="commandParam.type">
         <input *ngSwitchCase="paramTypes.string" [id]="commandParam.name" [name]="commandParam.name"
-        type="text" [(ngModel)]="commandParam.value" [required]="commandParam.required" class="input-flat" #normalInput="ngModel" />
+        type="text" [formControl]="value" (input)="setParamValue($event)" [required]="commandParam.required" class="input-flat" />
         
         <input *ngSwitchCase="paramTypes.number" [id]="commandParam.name" [name]="commandParam.name"
-        type="number" [(ngModel)]="commandParam.value" [required]="commandParam.required" class="input-flat"/>   
+        type="number" [formControl]="value" (input)="setParamValue($event)" [required]="commandParam.required" class="input-flat"/>   
         
         <div *ngSwitchCase="paramTypes.enum">
             <ng-container *ngTemplateOutlet="dropDown"></ng-container>
@@ -23,31 +22,29 @@
         
 </div>
 
-
 <!-- dropdown applies to enums but also others with predefined options -->
 <ng-template #dropDown>
-    <p class="required-text" [hidden]="dropDownInput.valid">*Invalid Value</p>
     <div ngbDropdown 
-    [class]="(dropDownInput.invalid ? 'invalid ' : 'valid ') + (commandParam.required ? 'required' : '')" >
+    [class]="(value.invalid ? 'invalid ' : 'valid ') + (commandParam.required ? 'required' : '')" >
         
-        <input [id]="commandParam.name" [name]="commandParam.name" #dropDownInput="ngModel"
-        type="hidden" [(ngModel)]="commandParam.value" [required]="commandParam.required" />
+        <input [id]="commandParam.name" [name]="commandParam.name"
+        type="hidden" [formControl]="value" [required]="commandParam.required" />
         
         <button class="simple-button" ngbDropdownToggle>{{commandParam.value ? commandParam.value : '-Select-'}}</button>
         
         <div ngbDropdownMenu>
             <div>
-                <button value="" ngbDropdownItem (click)="setDropdownValue($event, commandParam)">-Select-</button>
+                <button value="" ngbDropdownItem (click)="setDropdownValue($event)">-Select-</button>
             </div>
             <div *ngFor="let option of commandParam.options" >
                 <button [value]="option"  
-                ngbDropdownItem (click)="setDropdownValue($event, commandParam)">
+                ngbDropdownItem (click)="setDropdownValue($event)">
                     {{option}}
                 </button>
             </div>
             <div *ngIf="commandParam.allowCustomValAndOptions">
                 <input [id]="commandParam.name + '-custom'" [name]="commandParam.name + '-custom'"
-                type="text" [(ngModel)]="commandParam.value" placeholder="custom input" class="input-flat"/>
+                type="text" [formControl]="value" (input)="setParamValue($event)" placeholder="custom input" class="input-flat"/>
             </div>
         </div>
     </div>

@@ -16,10 +16,12 @@
     </div>
 
     <div collapse-body>
-        <form #inputForm="ngForm" class="input-group">
-            <div *ngFor="let commandParam of command.parameters">
-               <app-command-input [commandParam]="commandParam"></app-command-input>
-            </div>
+        <form class="input-group" [formGroup]="inputForm">
+            <ng-container formArrayName="inputArray">
+                <div *ngFor="let commandParam of command.parameters">
+                   <app-command-input [commandParam]="commandParam"[inputArray]="inputArray" [invalidInputs]="invalidInputs"></app-command-input>
+                </div>
+            </ng-container>
         </form>
     
         <div class="card"c>
@@ -31,7 +33,8 @@
                 </p>
             </div>
         </div>
+        <div *ngIf="!inputForm.valid">{{displayInvalidInputs()}}</div>
     </div>
-
+    
 </app-collapse-container>
 </div>
