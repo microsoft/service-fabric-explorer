@@ -94,7 +94,7 @@ export class InfrastructureCollection extends DataModelCollectionBase<Infrastruc
       this.collection.forEach(is => {
         condensedIS.add(InfrastructureCollection.stripPrefix(is.name).split("/")[0]);
       })
-
+      console.log(condensedIS, counter)
       const nodetypesWithoutEnoughNodes = Array.from(condensedIS).filter(is => (counter.entries().find(count => count.key === is)?.value || 0) < 5);
 
       if (nodetypesWithoutEnoughNodes.length > 0) {
