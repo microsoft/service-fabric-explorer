@@ -47,7 +47,7 @@ export class Utils {
      * @param key key for value
      */
     public static groupBy<T>(list: T[], key: string): Record<string, T[]> {
-        return list.reduce( (previous, current) => { previous[key] = (previous[key] || []).push(current) ; return previous; }, {});
+        return list.reduce( (previous, current) => { const itemKey = Utils.result(current, key) ;previous[itemKey] = (previous[itemKey] || []).push(current) ; return previous; }, {});
     }
 
     /**
