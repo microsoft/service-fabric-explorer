@@ -1,18 +1,23 @@
 import { Component, OnInit, Input, OnChanges, OnDestroy, ViewChildren, ElementRef, AfterViewInit, QueryList } from '@angular/core';
-import { Chart, Options, chart, SeriesOptionsType, Pointer, Point, color } from 'highcharts';
+import { Chart, Options, chart, SeriesOptionsType, Pointer, Point, color, PointOptionsObject } from 'highcharts';
 import { ListSettings } from 'src/app/Models/ListSettings';
 import { SettingsService } from 'src/app/services/settings.service';
 import { Utils } from 'src/app/Utils/Utils';
 
-export interface IDataSet {
+export interface IdataFormatter {
   name: string;
   xProperty: string;
   yProperty: string;
 }
 
+export interface  IDataSet{
+  values: any[],
+  name: string;
+}
+
 export interface IParallelChartData {
-  series: IDataSet[];
-  dataSet: any[];
+  series: IdataFormatter[];
+  dataSets: IDataSet[];
 }
 
 Pointer.prototype.reset = function () {
@@ -31,7 +36,7 @@ export class TimeseriesComponent implements AfterViewInit, OnChanges, OnDestroy 
   private charts: Chart[] = [];
   @ViewChildren('container') private container: QueryList<ElementRef>;
   listSettings: ListSettings;
-
+  currentItem: any;
   constructor(private settings: SettingsService) { }
 
   fontColor = {
@@ -53,9 +58,13 @@ export class TimeseriesComponent implements AfterViewInit, OnChanges, OnDestroy 
       enabled: false
     },
     legend: {
-      enabled: false
+      enabled: true,
+      itemStyle: {
+        color: '#fff'
+      }
     },
     xAxis: {
+      type: 'datetime',
       crosshair: true,
       events: {
         setExtremes: this.getSync(),
@@ -128,31 +137,42 @@ export class TimeseriesComponent implements AfterViewInit, OnChanges, OnDestroy 
 
   ngAfterViewInit() {
     this.charts = [];
+    const ref = this;
+
+
     this.data.series.forEach((chartData, index) => {
-      const dataSet = this.data.dataSet.map(item => {
-        const x = Utils.result(item, chartData.xProperty);
-        const y = Utils.result(item, chartData.yProperty);
+      const dataSet: SeriesOptionsType[] = this.data.dataSets.map(dataset => {
+        const values: PointOptionsObject[] = dataset.values.map(item => {
+          const x = Utils.result(item, chartData.xProperty);
+          const y = Utils.result(item, chartData.yProperty);
+          return {
+            x,
+            y,
+            itemData: item,
+            events: {
+              mouseOver: function (e) {
+                ref.currentItem = (this as any).itemData;
+                // console.log(this.itemData)
+              }
+            },
+          }
+        });
+
         return {
-          x,
-          y,
-          itemData: item,
-          events: {
-            click: function(e) {
-              console.log(this.itemData)
-            }
-          },
-        };
-      })
-      this.charts.push(chart(this.container.get(index).nativeElement, {...this.options, series: [
-        {
-          type:'line',
-          data: dataSet,
+          name: dataset.name,
+          type: 'line',
+          data: values,
           dataLabels: {
-            style: this.fontColor
+            style: this.fontColor,
           }
         }
-      ]}));
+
+      })
+      console.log(dataSet)
+      this.charts.push(chart(this.container.get(index).nativeElement, { ...this.options, series: dataSet }));
     })
+
+    console.log(this)
   }
 
   ngOnDestroy() {
