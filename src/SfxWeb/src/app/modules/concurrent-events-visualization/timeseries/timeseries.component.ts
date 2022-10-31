@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, OnChanges, OnDestroy, ViewChildren, ElementRef, AfterViewInit, QueryList } from '@angular/core';
 import { Chart, Options, chart, SeriesOptionsType, Pointer, Point, color, PointOptionsObject } from 'highcharts';
-import { ListSettings } from 'src/app/Models/ListSettings';
+import { ListColumnSetting, ListSettings } from 'src/app/Models/ListSettings';
 import { SettingsService } from 'src/app/services/settings.service';
 import { Utils } from 'src/app/Utils/Utils';
 
@@ -105,7 +105,12 @@ export class TimeseriesComponent implements AfterViewInit, OnChanges, OnDestroy 
   };
 
   ngOnInit(): void {
-    this.listSettings = this.settings.getNewOrExistingListSettings("naming", [], []);
+    const keys = Object.keys(this.data.dataSets[0].values[0]);
+
+    this.listSettings = this.settings.getNewOrExistingListSettings("naming", [
+    ],       keys.map(key => {
+      return new ListColumnSetting(key, key)
+    }).splice(0,5));
   }
 
   ngOnChanges() {
