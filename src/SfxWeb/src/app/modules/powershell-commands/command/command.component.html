@@ -16,15 +16,34 @@
     </div>
 
     <div collapse-body>
-        <form class="input-group" [formGroup]="inputForm">
-            <ng-container formArrayName="inputArray">
-                <div *ngFor="let commandParam of command.parameters">
-                   <app-command-input [commandParam]="commandParam"[inputArray]="inputArray" [invalidInputs]="invalidInputs"></app-command-input>
+        <form [formGroup]="inputForm">
+            <ng-container formArrayName="requiredInputs" *ngIf="requiredParams.length">
+                <h6>Required Parameters</h6>
+                <div class="input-group">
+                    <div *ngFor="let commandParam of requiredParams">
+                       <app-command-input [commandParam]="commandParam" [inputArray]="requiredInputs" [invalidInputs]="invalidInputs"></app-command-input>
+                    </div>
                 </div>
             </ng-container>
+            
+            <ng-container formArrayName="optionalInputs" *ngIf="optionalParams.length">
+                <app-collapse-container sectionName="Optional Parameters"[collapsed]="true" >
+                    <h6 collapse-header >Optional Parameters</h6>
+                    <div collapse-body class="input-group" >
+                        <div *ngFor="let commandParam of optionalParams">
+                            <app-command-input [commandParam]="commandParam" [inputArray]="optionalInputs" [invalidInputs]="invalidInputs"></app-command-input>
+                        </div>
+                    </div>
+                </app-collapse-container>
+            </ng-container>
         </form>
-    
-        <div class="card"c>
+
+        <div *ngIf="!inputForm.valid">
+            <p class="invalid-text">
+                The following parameters have invalid values: <span>{{displayInvalidInputs()}}</span>
+            </p>
+        </div>
+        <div class="card">
             <div class="card-body">
                 <app-clip-board style="float: right;" [text]="command.getScript()" [disabled]="!inputForm.valid" [tooltipText]="inputForm.valid ? '' : 'Missing required parameters!'" confirmationText="hello"></app-clip-board>
                 <p class="card-text">
@@ -33,7 +52,6 @@
                 </p>
             </div>
         </div>
-        <div *ngIf="!inputForm.valid">{{displayInvalidInputs()}}</div>
     </div>
     
 </app-collapse-container>

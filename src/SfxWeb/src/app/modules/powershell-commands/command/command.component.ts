@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
-import { PowershellCommand, CommandSafetyLevel } from 'src/app/Models/PowershellCommand';
+import { PowershellCommand, CommandSafetyLevel, PowershellCommandParameter } from 'src/app/Models/PowershellCommand';
 import { BadgeConstants } from 'src/app/Common/Constants';
 import { FormArray, FormGroup } from '@angular/forms';
 
@@ -14,16 +14,22 @@ export class CommandComponent implements OnInit{
   constructor() { }
 
   @Input() command: PowershellCommand;
-  inputForm: FormGroup = new FormGroup({ inputArray: new FormArray([]) });
-  invalidInputs: { [key: string]: boolean } = {};
-  
   safetyLevelEnum = CommandSafetyLevel;
   BadgeConstants = BadgeConstants;
+  
+  inputForm: FormGroup = new FormGroup({ requiredInputs: new FormArray([]), optionalInputs: new FormArray([]) });
+  invalidInputs: { [key: string]: boolean } = {};
+  
+  requiredParams: PowershellCommandParameter[];
+  optionalParams: PowershellCommandParameter[];
 
   ngOnInit() {
     this.command.parameters.forEach(p => {
       this.invalidInputs[p.name] = p.required;
     })
+
+    this.requiredParams = this.command.parameters.filter(p => p.required);
+    this.optionalParams = this.command.parameters.filter(p => !p.required);
   }
 
   goToReference(e: any) {
@@ -31,13 +37,15 @@ export class CommandComponent implements OnInit{
     window.open(this.command.referenceUrl, '_blank');
   }
 
-  get inputArray() {
-    return this.inputForm.controls['inputArray'] as FormArray;
+  get requiredInputs() {
+    return this.inputForm.controls['requiredInputs'] as FormArray;
   }
 
+  get optionalInputs() {
+    return this.inputForm.controls['optionalInputs'] as FormArray;
+  }
   displayInvalidInputs(): string {
-    console.log('he')
-    let result: string = "The following parameters have invalid values: ";
+    let result: string = "";
 
     for (let name in this.invalidInputs) {
       if (this.invalidInputs[name]) {

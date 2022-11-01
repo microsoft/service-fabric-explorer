@@ -9,5 +9,4 @@ add tests:
 
 test commands: pay attention to filters 
 
-seperate parameters; optional parameter collapsible
-tab: conditional render - what happens when only unsafe /dangerous avaliable
+test mock ups

@@ -1,26 +1,23 @@
-<label *ngIf="commandParam.type !== paramTypes.switch && commandParam.type !== paramTypes.bool" [for]="commandParam.name">{{commandParam.name}}</label>
-<div *ngIf="!commandParam.allowCustomValAndOptions; else dropDown" >
-    <div [ngSwitch]="commandParam.type">
-        <input *ngSwitchCase="paramTypes.string" [id]="commandParam.name" [name]="commandParam.name"
-        type="text" [formControl]="value" (input)="setParamValue($event)" [required]="commandParam.required" class="input-flat" />
-        
-        <input *ngSwitchCase="paramTypes.number" [id]="commandParam.name" [name]="commandParam.name"
-        type="number" [formControl]="value" (input)="setParamValue($event)" [required]="commandParam.required" class="input-flat"/>   
-        
-        <div *ngSwitchCase="paramTypes.enum">
-            <ng-container *ngTemplateOutlet="dropDown"></ng-container>
-        </div>
-        <!-- no need to account for required fields, as required switches are in the prefix -->
-        <div *ngIf="commandParam.type === paramTypes.switch || commandParam.type === paramTypes.bool">
-            <label class="toggle-label">
-                <span>{{commandParam.name}}</span>
+<label>
+    <span>{{commandParam.name}}</span>
+    <div *ngIf="!commandParam.allowCustomValAndOptions; else dropDown" >
+        <div [ngSwitch]="commandParam.type">
+            <input *ngSwitchCase="paramTypes.string" [id]="commandParam.name" [name]="commandParam.name"
+            type="text" [formControl]="value" (input)="setParamValue($event)" [required]="commandParam.required" class="input-flat" />
+            
+            <input *ngSwitchCase="paramTypes.number" [id]="commandParam.name" [name]="commandParam.name"
+            type="number" [formControl]="value" (input)="setParamValue($event)" [required]="commandParam.required" class="input-flat"/>   
+            
+            <div *ngSwitchCase="paramTypes.enum">
+                <ng-container *ngTemplateOutlet="dropDown"></ng-container>
+            </div>
+            <!-- no need to account for required fields, as required switches are in the prefix -->
+            <div *ngSwitchDefault>
                 <app-toggle [(state)]="commandParam.value"></app-toggle>
-            </label>
+            </div>
         </div>
-
     </div>
-        
-</div>
+</label>
 
 <!-- dropdown applies to enums but also others with predefined options -->
 <ng-template #dropDown>

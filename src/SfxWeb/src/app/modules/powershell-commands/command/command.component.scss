@@ -32,6 +32,14 @@
     }
 }
 
+.invalid-text {
+    font-weight: var(--font-weight-semibold);
+    span {
+        color: var(--badge-error);
+    }
+
+}
+
 .input-group{
     display: flex;
     flex-wrap: wrap;

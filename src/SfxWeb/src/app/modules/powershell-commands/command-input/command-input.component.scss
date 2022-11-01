@@ -16,14 +16,11 @@ $label-spacing: 5px;
 }
 
 label {
-    margin: $label-spacing;
-}
-
-.toggle-label {
     display: flex;
     flex-direction:column; 
     gap: $label-spacing;
 }
+
 
 .invalid {
     border-left: 5px solid var(--badge-error);
