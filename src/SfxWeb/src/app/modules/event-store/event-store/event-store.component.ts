@@ -218,6 +218,7 @@ export class EventStoreComponent implements OnInit, OnDestroy, OnChanges {
     const temp = getPeriodicEvent(differConfigs, rawEventlist);
 
     temp.forEach(temp => {
+      temp.events.sort((a,b) => Date.parse(a.timeStamp) - Date.parse(b.timeStamp))
       this.mergeTimelineData(combinedTimelineData, generateTimelineData(temp.events, temp.config, this.startDate, this.endDate));
     })
 

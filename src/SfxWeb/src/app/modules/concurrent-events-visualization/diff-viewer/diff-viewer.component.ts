@@ -33,9 +33,6 @@ export class DiffViewerComponent implements OnInit {
       columns[property.name] = new Set();
     })
 
-    this.diffResult.events.forEach(event => {
-
-    })
   }
 
 }
@@ -116,7 +113,7 @@ export class propertyTracker {
     this.states.slice(1).forEach(state => {
       const newValues = this.getValues(state);
       if(Utils.isDefined(newValues)) {
-        console.log(newValues)
+        console.log(currentValues, newValues)
         this.getRemoved(currentValues, newValues).forEach(removedValue => {
           items.add(this.generateTimelineItem(removedValue, valuesLastChanged[removedValue], new Date(state.timeStamp)))
           delete valuesLastChanged[removedValue]
@@ -162,7 +159,7 @@ export class propertyTracker {
       background-color:${Utils.randomColor()};
       border-width: 4px;
       border-style: solid;
-      border-radius: 20px;`
+      border-radius: 5px;`
     }
   }
 

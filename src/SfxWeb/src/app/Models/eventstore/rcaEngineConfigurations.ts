@@ -12,11 +12,12 @@ export interface IAnalysisResult {
   config: IAanalysis;
 }
 
-//Differ
+//Differ - specific property to show difference over time for
 export interface IDiffProperty extends IPropertyMapper {
   delimiter?: string;
   name: string;
   displayTransforms?: ITransform[]; //format how an item will be displayed on the timeline. does NOT format the axis value
+  group?: IPropertyMapper; //by default uses the value of the diffed property. i.e if a list is split 1,2,3 it would have groups 1,2,3
 }
 
 export interface IDiffAnalysis extends IAanalysis {
