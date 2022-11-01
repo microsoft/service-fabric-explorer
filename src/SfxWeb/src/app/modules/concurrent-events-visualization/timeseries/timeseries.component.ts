@@ -144,8 +144,13 @@ export class TimeseriesComponent implements AfterViewInit, OnChanges, OnDestroy 
     this.charts = [];
     const ref = this;
 
+    const colorMap = {};
+    this.data.dataSets.forEach(dataset => {
+      colorMap[dataset.name] = Utils.randomColor();
+    })
 
     this.data.series.forEach((chartData, index) => {
+
       const dataSet: SeriesOptionsType[] = this.data.dataSets.map(dataset => {
         const values: PointOptionsObject[] = dataset.values.map(item => {
           const x = Utils.result(item, chartData.xProperty);
@@ -157,7 +162,6 @@ export class TimeseriesComponent implements AfterViewInit, OnChanges, OnDestroy 
             events: {
               mouseOver: function (e) {
                 ref.currentItem = (this as any).itemData;
-                // console.log(this.itemData)
               }
             },
           }
@@ -169,7 +173,8 @@ export class TimeseriesComponent implements AfterViewInit, OnChanges, OnDestroy 
           data: values,
           dataLabels: {
             style: this.fontColor,
-          }
+          },
+          color: colorMap[dataset.name]
         }
 
       })
