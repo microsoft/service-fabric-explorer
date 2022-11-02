@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ControlContainer, FormArray, FormControl, NgForm } from '@angular/forms';
+import { ControlContainer, FormControl, FormGroup, NgForm } from '@angular/forms';
 import { PowershellCommandParameter, CommandParamTypes } from 'src/app/Models/PowershellCommand';
 
 @Component({
@@ -12,15 +12,14 @@ import { PowershellCommandParameter, CommandParamTypes } from 'src/app/Models/Po
 export class CommandInputComponent implements OnInit{
 
   @Input() commandParam: PowershellCommandParameter;
-  @Input() inputArray: FormArray;
-  @Input() invalidInputs: { [key: string]: boolean }
+  @Input() inputGroup: FormGroup;
 
   value: FormControl = new FormControl('');
 
   paramTypes = CommandParamTypes;
 
   ngOnInit() {
-    this.inputArray.push(this.value);
+    this.inputGroup.addControl(this.commandParam.name, this.value);
   }
 
   setDropdownValue(event: any) {
@@ -30,7 +29,6 @@ export class CommandInputComponent implements OnInit{
 
   setParamValue(event: any) {
     this.commandParam.value = event.target.value;
-    this.invalidInputs[this.commandParam.name] = !this.value.valid;
   }
 
 }

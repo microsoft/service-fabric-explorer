@@ -2,7 +2,7 @@
   <span class="{{iconSize}} mif-notification warning-icon"></span>
   <div>
     <div>
-      {{description}}
+      {{description}}<ng-content></ng-content>
     </div>
     <div>
       <ul>
@@ -12,8 +12,8 @@
       </ul>
 
     </div>
-        <div class="warning-link" *ngIf="linkText">
-          <a [href]="link" target="_blank" class="link">{{linkText}}</a>
-        </div>
+    <div class="warning-link" *ngIf="linkText">
+      <a [href]="link" target="_blank" class="link">{{linkText}}</a>
+    </div>
   </div>
 </div>

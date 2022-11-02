@@ -17,32 +17,35 @@
 
     <div collapse-body>
         <form [formGroup]="inputForm">
-            <ng-container formArrayName="requiredInputs" *ngIf="requiredParams.length">
+            <ng-container formGroupName="requiredInputs" *ngIf="requiredParams.length">
                 <h6>Required Parameters</h6>
                 <div class="input-group">
                     <div *ngFor="let commandParam of requiredParams">
-                       <app-command-input [commandParam]="commandParam" [inputArray]="requiredInputs" [invalidInputs]="invalidInputs"></app-command-input>
+                       <app-command-input [commandParam]="commandParam" [inputGroup]="requiredInputs"></app-command-input>
                     </div>
                 </div>
             </ng-container>
             
-            <ng-container formArrayName="optionalInputs" *ngIf="optionalParams.length">
+            <ng-container formGroupName="optionalInputs" *ngIf="optionalParams.length">
                 <app-collapse-container sectionName="Optional Parameters"[collapsed]="true" >
                     <h6 collapse-header >Optional Parameters</h6>
                     <div collapse-body class="input-group" >
                         <div *ngFor="let commandParam of optionalParams">
-                            <app-command-input [commandParam]="commandParam" [inputArray]="optionalInputs" [invalidInputs]="invalidInputs"></app-command-input>
+                            <app-command-input [commandParam]="commandParam" [inputGroup]="optionalInputs"></app-command-input>
                         </div>
                     </div>
                 </app-collapse-container>
             </ng-container>
         </form>
 
-        <div *ngIf="!inputForm.valid">
+        <app-warning *ngIf="!inputForm.valid" description="The following parameters have invalid values: " iconSize="mif-lg">
+            <span class="invalid-text">{{invalidInputs}}</span>
+        </app-warning>
+        <!-- <div *ngIf="!inputForm.valid">
             <p class="invalid-text">
-                The following parameters have invalid values: <span>{{displayInvalidInputs()}}</span>
+                The following parameters have invalid values: <span>{{invalidInputs}}</span>
             </p>
-        </div>
+        </div> -->
         <div class="card">
             <div class="card-body">
                 <app-clip-board style="float: right;" [text]="command.getScript()" [disabled]="!inputForm.valid" [tooltipText]="inputForm.valid ? '' : 'Missing required parameters!'" confirmationText="hello"></app-clip-board>

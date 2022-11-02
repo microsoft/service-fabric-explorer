@@ -33,11 +33,7 @@
 }
 
 .invalid-text {
-    font-weight: var(--font-weight-semibold);
-    span {
-        color: var(--badge-error);
-    }
-
+    color: var(--badge-warning);
 }
 
 .input-group{
@@ -47,6 +43,7 @@
     align-items: center;
     max-width: 1150px;
     margin-bottom: 15px;
+    padding-left: 15px;
 
 }
 
