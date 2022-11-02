@@ -10,9 +10,9 @@ import {
 } from './util.cy';
 
 const LOAD_INFO = "getloadinfo"
-const EVENT_TABS='[data-cy=eventtabs]'
-const OPTION_PICKER='[data-cy=option-picker]'
-const SELECT_EVENT_TYPES='[sectionName=select-event-types]'
+const EVENT_TABS = '[data-cy=eventtabs]'
+const OPTION_PICKER = '[data-cy=option-picker]'
+const SELECT_EVENT_TYPES = '[sectionName=select-event-types]'
 
 const serviceName = "VisualObjectsApplicationType~VisualObjects.ActorService";
 
@@ -223,7 +223,7 @@ context('Cluster page', () => {
 
         let count = 0;
         cy.get(ref).each(item => {
-          if(item.text().trim() !== "0") {
+          if (item.text().trim() !== "0") {
             count += parseInt(item.text().trim());
           }
         }).then(($lis) => {
@@ -359,7 +359,7 @@ context('Cluster page', () => {
         cy.wait(aliasedCreateBRS)
 
         cy.get(aliasedCreateBRS).its('request.body')
-          .should('deep.equal',{
+          .should('deep.equal', {
             "Name": name,
             "AutoRestoreOnDataLoss": true,
             "MaxIncrementalBackups": maxIncBackups,
@@ -448,34 +448,34 @@ context('Cluster page', () => {
 
         cy.wait(aliasedCreateBRS)
         cy.get(aliasedCreateBRS).its('request.body').should('deep.equal',
-        {
-          "Name": name,
-          "AutoRestoreOnDataLoss": false,
-          "MaxIncrementalBackups": maxIncBackups,
-          "Schedule": {
-            "ScheduleKind": "TimeBased",
-            "ScheduleFrequencyType": "Weekly",
-            "RunDays": [
-              "Tuesday",
-              "Saturday"
-            ],
-            "RunTimes": [],
-            "Interval": "PT15M"
-          },
-          "Storage": {
-            "StorageKind": "FileShare",
-            "FriendlyName": "",
-            "Path": "somePath",
-            "ConnectionString": "",
-            "ContainerName": "",
-            "BlobServiceUri": "",
-            "ManagedIdentityType": "",
-            "PrimaryUserName": "username",
-            "PrimaryPassword": "password",
-            "SecondaryUserName": "",
-            "SecondaryPassword": ""
-          }
-        })
+          {
+            "Name": name,
+            "AutoRestoreOnDataLoss": false,
+            "MaxIncrementalBackups": maxIncBackups,
+            "Schedule": {
+              "ScheduleKind": "TimeBased",
+              "ScheduleFrequencyType": "Weekly",
+              "RunDays": [
+                "Tuesday",
+                "Saturday"
+              ],
+              "RunTimes": [],
+              "Interval": "PT15M"
+            },
+            "Storage": {
+              "StorageKind": "FileShare",
+              "FriendlyName": "",
+              "Path": "somePath",
+              "ConnectionString": "",
+              "ContainerName": "",
+              "BlobServiceUri": "",
+              "ManagedIdentityType": "",
+              "PrimaryUserName": "username",
+              "PrimaryPassword": "password",
+              "SecondaryUserName": "",
+              "SecondaryPassword": ""
+            }
+          })
       })
 
     })
@@ -488,7 +488,7 @@ context('Cluster page', () => {
 
       cy.visit('/#/events')
 
-      cy.wait(['@getevents','@getrepairs'])
+      cy.wait(['@getevents', '@getrepairs'])
     };
 
     it("loads properly", () => {
@@ -512,7 +512,7 @@ context('Cluster page', () => {
       addRoute('repair-manager-manifest', 'manifestRepairManagerDisabled.json', manifest_route)
 
       cy.visit('/#/events')
-      cy.wait(['@getevents','@getrepair-manager-manifest'])
+      cy.wait(['@getevents', '@getrepair-manager-manifest'])
 
       cy.get(EVENT_TABS).within(() => {
         cy.contains(CLUSTER_TAB_NAME)
@@ -547,7 +547,7 @@ context('Cluster page', () => {
 
       cy.get(OPTION_PICKER).within(() => {
         cy.contains(REPAIR_TASK_TAB_NAME)
-        cy.get('[type=checkbox]').eq(1).check({force: true})
+        cy.get('[type=checkbox]').eq(1).check({ force: true })
       })
 
       cy.get(EVENT_TABS).within(() => {
@@ -556,7 +556,7 @@ context('Cluster page', () => {
       checkTableSize(6);
     })
 
-    it("failed request",() => {
+    it("failed request", () => {
       setup('failed-events.json', 'empty-list.json')
 
       cy.get(EVENT_TABS).within(() => {
@@ -678,14 +678,16 @@ context('Cluster page', () => {
     beforeEach(() => {
       addDefaultFixtures();
 
+
+    })
+
+    it('executing job', () => {
       addRoute("infra-service-data", "system-service/infrastructure-data.json", apiUrl(`/$/InvokeInfrastructureQuery?api-version=6.0&Command=GetJobs&ServiceId=System/InfrastructureService/Type134*`))
       addRoute("infra-service-data", "empty-list.json", apiUrl(`/$/InvokeInfrastructureQuery?api-version=6.0&Command=GetJobs&ServiceId=System/InfrastructureService/Type135*`))
       addRoute(FIXTURE_REF_SYSTEMAPPS, 'cluster-page/infra/systemServicesWithInfra.json', systemApps_route)
 
-      cy.visit(`/#/infrastructure`)
-    })
 
-    it('executing job', () => {
+      cy.visit(`/#/infrastructure`)
       cy.get('[data-cy=navtabs]').within(() => {
         cy.contains('infrastructure jobs').click();
       })
@@ -709,6 +711,37 @@ context('Cluster page', () => {
         cy.contains('Active : 1')
       })
 
+    })
+
+    describe('cross AZ infrastructure service', () => {
+      beforeEach(() => {
+        addRoute("infra-service-data", "empty-list.json", apiUrl(`/$/InvokeInfrastructureQuery?api-version=6.0&Command=GetJobs&ServiceId=System/InfrastructureService/**`))
+        addRoute(FIXTURE_REF_SYSTEMAPPS, 'system-service/cross-az-infra.json', systemApps_route)
+      })
+
+      it('5 nodes of one nodetype', () => {
+        cy.intercept('GET', nodes_route, { fixture: 'system-service/cross-az-nodes.json' })
+
+        cy.visit(`/#/infrastructure`)
+
+        cy.get('[data-cy=navtabs]').within(() => {
+          cy.contains('infrastructure jobs').click();
+        })
+
+        cy.contains('Nodetype worker is deployed with less than 5 VMs.').should('not.exist')
+      })
+
+      it('< 5 nodes of one node type', () => {
+        cy.intercept('GET', nodes_route, { fixture: 'system-service/cross-az-nodes-4.json' })
+
+        cy.visit(`/#/infrastructure`)
+
+        cy.get('[data-cy=navtabs]').within(() => {
+          cy.contains('infrastructure jobs').click();
+        })
+
+        cy.contains('Nodetype worker is deployed with less than 5 VMs.')
+      })
     })
   })
 

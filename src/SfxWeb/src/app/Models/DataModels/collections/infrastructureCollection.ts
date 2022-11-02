@@ -3,7 +3,7 @@ import { map, mergeMap } from 'rxjs/operators';
 import { Constants, StatusWarningLevel } from 'src/app/Common/Constants';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { DataService } from 'src/app/services/data.service';
-import { Counter } from 'src/app/Utils/Utils';
+import { Counter, Utils } from 'src/app/Utils/Utils';
 import { DataModelBase } from '../Base';
 import { InfrastructureJob } from '../infrastructureJob';
 import { DataModelCollectionBase } from './CollectionBase';
@@ -89,7 +89,24 @@ export class InfrastructureCollection extends DataModelCollectionBase<Infrastruc
         counter.add(node.raw.Type);
       })
 
-      const nodetypesWithoutEnoughNodes = this.collection.map(is => InfrastructureCollection.stripPrefix(is.name)).filter(is => (counter.entries().find(count => count.key === is)?.value || 0) < 5);
+      //condense cross AZ infrastructure services
+      const condensedIS = new Set<string>();
+      this.collection.forEach(is => {
+        condensedIS.add(InfrastructureCollection.stripPrefix(is.name).split("/")[0]);
+      })
+      console.log(condensedIS, counter)
+      const nodetypesWithoutEnoughNodes = Array.from(condensedIS).filter(is => {
+        //if IS is Coordinated_{GUID}
+        if(is.startsWith("Coordinated_")) {
+          const potentialGUID = is.split("Coordinated_")[0];
+          //ONLY if GUID skip check otherwise check incase name is Coordinated_notguid
+          if(Utils.isGUID(potentialGUID)) {
+            return false;
+          }
+        }
+
+        return (counter.entries().find(count => count.key === is)?.value || 0) < 5;
+      });
 
       if (nodetypesWithoutEnoughNodes.length > 0) {
         this.data.warnings.addOrUpdateNotification({
