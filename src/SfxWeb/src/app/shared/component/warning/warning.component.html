@@ -4,7 +4,7 @@
     <div>
       {{description}}<ng-content select="[description-add-on]"></ng-content>
     </div>
-    <div>
+    <div *ngIf="descriptionList.length">
       <ul>
         <li *ngFor="let lineItem of descriptionList">
           {{lineItem}}
