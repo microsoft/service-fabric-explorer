@@ -5,8 +5,6 @@ import { retry, map } from 'rxjs/operators';
 import { AadMetadata } from '../Models/DataModels/Aad';
 import { UserAgentApplication, Configuration, AuthenticationParameters, AuthResponse } from "msal";
 
-
-
 @Injectable({
   providedIn: 'root'
 })
@@ -23,20 +21,19 @@ export class AdalService {
   constructor(private http: RestClientService) { }
 
   load(): Observable<UserAgentApplication> {
-    if (!!this.context){
+    if (!!this.context) {
       return of(this.context);
-    }else{
+    } else {
       return this.http.getAADmetadata().pipe(map(data => {
         this.config = data;
-        if (data.isAadAuthType){
+        if (data.isAadAuthType) {
           this.scopes = [this.config.raw.metadata.cluster];
-          this.authority =  this.config.metadata.authority
+          this.authority = this.config.metadata.authority
 
           const config: Configuration = {
             auth: {
-              clientId:  data.raw.metadata.cluster,
+              clientId: data.raw.metadata.cluster,
               authority: this.authority,
-              validateAuthority: false
             },
             cache: {
               cacheLocation: 'localStorage'
@@ -57,6 +54,7 @@ export class AdalService {
       scopes: this.scopes,
     });
   }
+
   logout() {
       this.context.logout()
   }
@@ -72,40 +70,24 @@ export class AdalService {
     return !!this.context.getAccount();
   }
 
-  public isCallback(hash: string) {
-      return this.context.isCallback(hash);
-  }
-
   public async acquireToken(): Promise<AuthResponse> {
-    if(this.pending) {
-      return this.pending;
-    }else{
-      this.pending = new Promise(async (resolve, reject) => {
-        const authParams: AuthenticationParameters = {
-          authority: this.authority,
-          scopes: this.scopes
-        }
+    const authParams: AuthenticationParameters = {
+      authority: this.authority,
+      scopes: this.scopes
+    }
 
-        let attemptPopup = false;
-        try {
-          const token = await this.context.acquireTokenSilent(authParams);
-          resolve(token);
-        }catch(e) {
-          console.log(e)
-          attemptPopup = true;
-        }
+    let attemptPopup = false;
+    try {
+      const token = await this.context.acquireTokenSilent(authParams);
+      return token;
+    } catch (e) {
+      console.log(e)
+      attemptPopup = true;
+    }
 
-        if(attemptPopup) {
-          try {
-            const token = await this.context.acquireTokenPopup(authParams);
-            resolve(token);
-          } catch(e) {
-            reject(e);
-          }
-        }
-      })
-
-      return this.pending;
+    if (attemptPopup) {
+      const token = await this.context.acquireTokenPopup(authParams);
+      return token;
     }
   }
 
