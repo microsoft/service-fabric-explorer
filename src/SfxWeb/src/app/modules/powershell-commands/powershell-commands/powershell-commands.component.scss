@@ -1,5 +1,11 @@
 .nav-wrapper {
+    // padding-bottom: 5px;
+    margin-bottom: 10px;
     .nav-link {
         font-size: 12pt;
     }
+
+    
+    border-bottom: 1px solid var(--accent-underline);
+    
 }

@@ -152,23 +152,28 @@ context('node page', () => {
         })
     })
 
-    // describe("commands", () => {
-    //     it('view commands', () => {
-    //         cy.visit(`/#/node/${nodeName}`);
+    describe("commands", () => {
+        it.only('view commands', () => {
+            cy.visit(`/#/node/${nodeName}`);
             
-    //         cy.wait(nodeInfoRef);
+            cy.wait([nodeInfoRef, "@getnodehealthInfo"]);
 
-    //         cy.get('[data-cy=navtabs]').within(() => {
-    //             cy.contains('commands').click();
-    //         });
+            cy.get('[data-cy=navtabs]').within(() => {
+                cy.contains('commands').click();
+            });
 
-    //         cy.url().should('include', 'commands');
+            cy.url().should('include', 'commands');
             
-    //         cy.wait(nodeInfoRef);
+            cy.wait(nodeInfoRef);
 
-    //         cy.get('[data-cy=command]');
+            cy.wait(500);
 
-    //     })
-    // })
+            cy.get('[data-cy=safeCommands]');
+            cy.get('[data-cy=unsafeCommands]');
+
+            cy.get('[data-cy=command]').should('have.length', 4);
+
+        })
+    })
 
 })

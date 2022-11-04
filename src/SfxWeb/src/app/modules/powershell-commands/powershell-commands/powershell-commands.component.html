@@ -1,25 +1,25 @@
 <div ngbNav #nav="ngbNav" class="nav-wrapper" [(activeId)]="activeId" (navChange)="onNavChange($event)">
     <div *ngIf="safeCommands.length" [ngbNavItem]="1">
-        <a ngbNavLink>Safe Commands</a>
+        <a ngbNavLink data-cy="safeCommands">Safe Commands</a>
         <ng-template ngbNavContent>
             <div *ngFor="let command of safeCommands">
-                <app-command [command]="command" data-cy="safeCommand"></app-command>
+                <app-command [command]="command" data-cy="command"></app-command>
             </div>
         </ng-template>
     </div>
     <div *ngIf="unsafeCommands.length" [ngbNavItem]="2">
-        <a ngbNavLink>Unsafe Commands</a>
+        <a ngbNavLink data-cy="unsafeCommands">Unsafe Commands</a>
         <ng-template ngbNavContent>
             <div *ngFor="let command of unsafeCommands">
-                <app-command [command]="command" data-cy="unsafeCommand"></app-command>
+                <app-command [command]="command" data-cy="command"></app-command>
             </div>
         </ng-template>
     </div>
     <div *ngIf="dangerousCommands.length" [ngbNavItem]="3">
-        <a ngbNavLink>Dangerous Commands</a>
+        <a ngbNavLink data-cy="dangerousCommands">Dangerous Commands</a>
         <ng-template ngbNavContent>
             <div *ngFor="let command of dangerousCommands">
-                <app-command [command]="command" data-cy="dangerousCommand"></app-command>
+                <app-command [command]="command" data-cy="command"></app-command>
             </div>
         </ng-template>
     </div>
