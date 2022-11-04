@@ -153,7 +153,7 @@ context('node page', () => {
     })
 
     describe("commands", () => {
-        it.only('view commands', () => {
+        it('view commands', () => {
             cy.visit(`/#/node/${nodeName}`);
             
             cy.wait([nodeInfoRef, "@getnodehealthInfo"]);
@@ -172,6 +172,14 @@ context('node page', () => {
             cy.get('[data-cy=unsafeCommands]');
 
             cy.get('[data-cy=command]').should('have.length', 4);
+
+            cy.get('[data-cy=commandNav]').within(() => {
+                cy.contains('Unsafe Commands').click();
+            })
+
+            cy.get('[data-cy=submit]').click();
+
+            cy.get('[data-cy=command]').should('have.length', 2);
 
         })
     })
