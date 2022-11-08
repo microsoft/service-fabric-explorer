@@ -65,6 +65,33 @@ context('replica', () => {
 
             cy.url().should('include', '/events')
         })
+
+        // it('view primary commands', () => {
+        //     cy.wait(waitRequest)
+
+        //     cy.get('[data-cy=navtabs]').within(() => {
+        //         cy.contains('commands').click();
+        //     });
+    
+        //     cy.url().should('include', 'commands');
+            
+        //     cy.wait(500);
+    
+        //     cy.get('[data-cy=safeCommands]');
+        //     cy.get('[data-cy=unsafeCommands]');
+    
+        //     cy.get('[data-cy=command]').should('have.length', 2);
+    
+        //     cy.get('[data-cy=commandNav]').within(() => {
+        //         cy.contains('Unsafe Commands').click();
+        //     })
+    
+        //     cy.get('[data-cy=submit]').click();
+    
+        //     cy.get('[data-cy=command]').should('have.length', 2).within(() => {
+        //         cy.contains('Restart Replica')
+        //       });;
+        // })
     })
 
     describe("stateless", () => {

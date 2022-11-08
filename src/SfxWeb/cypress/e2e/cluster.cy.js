@@ -674,7 +674,7 @@ context('Cluster page', () => {
     })
   })
 
-  describe.only("systemService - infraservice", () => {
+  describe("systemService - infraservice", () => {
     beforeEach(() => {
       addDefaultFixtures();
 
@@ -745,7 +745,7 @@ context('Cluster page', () => {
 
     })
 
-    it.only('check command input', () => {
+    it('check command input', () => {
       cy.get('[data-cy=commandNav]').within(() => {
         cy.contains('Unsafe Commands').click();
       })
