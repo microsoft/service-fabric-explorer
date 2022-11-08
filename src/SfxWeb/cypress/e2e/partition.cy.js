@@ -22,7 +22,7 @@ context('partition', () => {
     describe("stateful", () => {
         beforeEach(() => {
             addRoute("partitions", "partition-page/partitions.json", apiUrl(`${routeFormatter(appName, serviceName)}?*`));
-            addRoute("partitionInfo", "partition-page/partition-info.json", apiUrl(`${routeFormatter(appName, serviceName)}/${partitionId}?*`));
+            addRoute("partitionInfo", "partition-page/stateful-partition-info.json", apiUrl(`${routeFormatter(appName, serviceName)}/${partitionId}?*`));
             addRoute("replicasList", "partition-page/replicas.json", apiUrl(`${routeFormatter(appName, serviceName)}/${partitionId}/$/GetReplicas?*`));
             addRoute("health", "partition-page/health.json", apiUrl(`${routeFormatter(appName, serviceName)}/${partitionId}/$/GetHealth?*`));
             addRoute("load", "partition-page/load.json", apiUrl(`${routeFormatter(appName, serviceName)}/${partitionId}/$/GetLoadInformation?*`));
@@ -120,6 +120,73 @@ context('partition', () => {
 
             cy.url().should('include', `${partitionId}/backups`)
           })
+        })
+      
+        it('view commands', () => {
+          cy.wait(waitRequest)
+
+          cy.get('[data-cy=navtabs]').within(() => {
+              cy.contains('commands').click();
+          });
+  
+          cy.url().should('include', 'commands');
+          
+          cy.wait(500);
+  
+          cy.get('[data-cy=safeCommands]');
+          cy.get('[data-cy=unsafeCommands]');
+  
+          cy.get('[data-cy=command]').should('have.length', 3);
+  
+          cy.get('[data-cy=commandNav]').within(() => {
+              cy.contains('Unsafe Commands').click();
+          })
+  
+          cy.get('[data-cy=submit]').click();
+  
+          cy.get('[data-cy=command]').should('have.length', 4).within(() => {
+            cy.contains('Restart Primary Replica')
+            cy.contains('Move Primary Replica To Specifc Node')
+            cy.contains('Move Primary Replica To Random Node')
+
+          });
+  
       })
     })
+  
+  describe("stateless", () => {
+    beforeEach(() => {
+      addRoute("partitions", "partition-page/partitions.json", apiUrl(`${routeFormatter(appName, serviceName)}?*`));
+      addRoute("partitionInfo", "partition-page/stateless-partition-info.json", apiUrl(`${routeFormatter(appName, serviceName)}/${partitionId}?*`));
+
+      cy.visit(urlFormatter(appName, serviceName, partitionId))
+    })
+
+    it('view commands', () => {
+      cy.wait(waitRequest)
+
+      cy.get('[data-cy=navtabs]').within(() => {
+          cy.contains('commands').click();
+      });
+
+      cy.url().should('include', 'commands');
+      
+      cy.wait(500);
+
+      cy.get('[data-cy=safeCommands]');
+      cy.get('[data-cy=unsafeCommands]');
+
+      cy.get('[data-cy=command]').should('have.length', 3);
+
+      cy.get('[data-cy=commandNav]').within(() => {
+          cy.contains('Unsafe Commands').click();
+      })
+
+      cy.get('[data-cy=submit]').click();
+
+      cy.get('[data-cy=command]').should('have.length', 1);
+
+    })
+    
+  })
 })

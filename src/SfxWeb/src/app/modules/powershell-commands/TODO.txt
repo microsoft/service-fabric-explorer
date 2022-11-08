@@ -10,3 +10,5 @@ add tests:
 test commands: pay attention to filters 
 
 test mock ups
+
+replica test: idle secondary how to

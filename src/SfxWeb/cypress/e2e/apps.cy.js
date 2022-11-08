@@ -87,4 +87,22 @@ context('apps list page', () => {
         })
     })
 
+    describe("commands", () => {
+        it('view commands', () => {
+            cy.wait(FIXTURE_REF_APPS);
+
+            cy.get('[data-cy=navtabs]').within(() => {
+                cy.contains('commands').click();
+            })
+
+            cy.url().should('include', 'commands');
+        
+            cy.wait(500);
+
+            cy.get('[data-cy=safeCommands]');
+            cy.get('[data-cy=command]').should('have.length', 1);
+
+        })
+    })
+
 })

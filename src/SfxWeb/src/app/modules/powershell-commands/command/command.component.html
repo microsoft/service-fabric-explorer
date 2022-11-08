@@ -21,7 +21,7 @@
                 <h6>Required Parameters</h6>
                 <div class="input-group">
                     <div *ngFor="let commandParam of requiredParams">
-                       <app-command-input [commandParam]="commandParam" [inputGroup]="requiredInputs"></app-command-input>
+                       <app-command-input [commandParam]="commandParam" [inputGroup]="requiredInputs" data-cy="requiredInput"></app-command-input>
                     </div>
                 </div>
             </ng-container>
@@ -31,21 +31,22 @@
                     <h6 collapse-header >Optional Parameters</h6>
                     <div collapse-body class="input-group" >
                         <div *ngFor="let commandParam of optionalParams">
-                            <app-command-input [commandParam]="commandParam" [inputGroup]="optionalInputs"></app-command-input>
+                            <app-command-input [commandParam]="commandParam" [inputGroup]="optionalInputs" data-cy="optionalInput"></app-command-input>
                         </div>
                     </div>
                 </app-collapse-container>
             </ng-container>
         </form>
 
-        <app-warning *ngIf="!inputForm.valid" description="The following parameters have invalid values: " iconSize="mif-lg">
+        <app-warning data-cy="warning" *ngIf="!inputForm.valid" description="The following parameters have invalid values: " iconSize="mif-lg">
             <span class="invalid-text" description-add-on>{{invalidInputs}}</span>
         </app-warning>
        
         <div class="card">
             <div class="card-body">
-                <app-clip-board style="float: right;" [text]="command.getScript()" [disabled]="!inputForm.valid" [tooltipText]="inputForm.valid ? '' : 'Missing required parameters!'" confirmationText="hello"></app-clip-board>
-                <p class="card-text">
+                <app-clip-board style="float: right;" [text]="command.getScript()" data-cy="clipboard" 
+                    [disabled]="!inputForm.valid" [tooltipText]="inputForm.valid ? '' : 'Missing required parameters!'" confirmationText="hello"></app-clip-board>
+                <p class="card-text" data-cy="copy-text">
                     {{(command.safetyLevel === safetyLevelEnum.dangerous ? '#' : '') + command.prefix}}
                     <span *ngFor="let param of command.paramsToStringArr()"> {{param.name}} <span class="param-value"> {{param.value}} </span></span>
                 </p>

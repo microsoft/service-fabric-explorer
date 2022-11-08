@@ -194,4 +194,32 @@ context('service', () => {
             })
         })
     })
+
+    describe("commands", () => {
+        it('view commands', () => {
+            cy.visit(urlFormatter(appName, serviceName))
+
+            cy.get('[data-cy=navtabs]').within(() => {
+                cy.contains('commands').click();
+            });
+    
+            cy.url().should('include', 'commands');
+            
+            cy.wait(500);
+    
+            cy.get('[data-cy=safeCommands]');
+            cy.get('[data-cy=unsafeCommands]');
+    
+            cy.get('[data-cy=command]').should('have.length', 3);
+    
+            cy.get('[data-cy=commandNav]').within(() => {
+                cy.contains('Unsafe Commands').click();
+            })
+    
+            cy.get('[data-cy=submit]').click();
+    
+            cy.get('[data-cy=command]').should('have.length', 1);
+    
+        })
+      })
 })

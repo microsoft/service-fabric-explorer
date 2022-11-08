@@ -712,36 +712,89 @@ context('Cluster page', () => {
     })
   })
 
-  // describe("commands", () => {
-  //   it.only('view commands', () => {
-  //       cy.visit('');
+  describe("commands", () => {
+    beforeEach(() => {
+      cy.visit('');
         
-  //       cy.wait([nodeInfoRef, "@getnodehealthInfo"]);
+      cy.wait(FIXTURE_REF_CLUSTERHEALTH)
 
-  //       cy.get('[data-cy=navtabs]').within(() => {
-  //           cy.contains('commands').click();
-  //       });
 
-  //       cy.url().should('include', 'commands');
+      cy.get('[data-cy=navtabs]').within(() => {
+          cy.contains('commands').click();
+      });
+
+      cy.url().should('include', 'commands');
+      
+      cy.wait(500);
+    })
+
+    it('view commands', () => {
+
+      cy.get('[data-cy=safeCommands]');
+      cy.get('[data-cy=unsafeCommands]');
+
+      cy.get('[data-cy=command]').should('have.length', 3);
+
+      cy.get('[data-cy=commandNav]').within(() => {
+          cy.contains('Unsafe Commands').click();
+      })
+
+      cy.get('[data-cy=submit]').click();
+
+      cy.get('[data-cy=command]').should('have.length', 1)
+
+    })
+
+    it.only('check command input', () => {
+      cy.get('[data-cy=commandNav]').within(() => {
+        cy.contains('Unsafe Commands').click();
+      })
+
+      cy.get('[data-cy=submit]').click();
+
+      cy.get('[data-cy=command]').within(() => {
+        cy.get('[data-cy=requiredInput]').should('have.length', 3)
+        cy.get('[data-cy=optionalInput]').should('have.length', 0)
+        cy.get('[data-cy=warning]').should('include.text', 'HealthState, SourceId, HealthProperty')
+        cy.get('[data-cy=clipboard]').get('button').should('be.disabled')
+        cy.get('[data-cy=copy-text]').should('have.text', ' Send-ServiceFabricClusterHealthReport  ')
+
+        cy.contains('Optional Parameters').click()
+        cy.get('[data-cy=optionalInput]').should('have.length', 6)
+
+        cy.contains('HealthState').click().contains('OK').click()
+        cy.get('[data-cy=warning]').should('not.include.text', 'HealthState')
+        cy.get('[data-cy=copy-text]').should('include.text', '-HealthState  OK')
+
+        cy.contains('SourceId').type('id')
+        cy.get('[data-cy=warning]').should('not.include.text', 'SourceId')
+        cy.get('[data-cy=copy-text]').should('include.text', '-SourceId  "id"')
+
+        cy.contains('HealthProperty').type('property')
+        cy.get('[data-cy=warning]').should('not.exist')
+        cy.get('[data-cy=copy-text]').should('include.text', '-HealthProperty  "property"')
+
+        cy.get('[data-cy=clipboard]').get('button').should('be.enabled')
+
+        cy.contains('Description').type('description sentence')
+        cy.get('[data-cy=copy-text]').should('include.text', '-Description  "description sentence"')
+      
+        cy.contains('TimeToLiveSec').type('10')
+        cy.get('[data-cy=copy-text]').should('include.text', '-TimeToLiveSec  10')
         
-  //       cy.wait(nodeInfoRef);
+        cy.contains('RemoveWhenExpired').click()
+        cy.get('[data-cy=copy-text]').should('include.text', '-RemoveWhenExpired')
 
-  //       cy.wait(500);
+        cy.contains('SequenceNumber').type('99')
+        cy.get('[data-cy=copy-text]').should('include.text', '-SequenceNumber  99')
 
-  //       cy.get('[data-cy=safeCommands]');
-  //       cy.get('[data-cy=unsafeCommands]');
+        cy.contains('Immediate').click()
+        cy.get('[data-cy=copy-text]').should('include.text', '-Immediate')
 
-  //       cy.get('[data-cy=command]').should('have.length', 4);
-
-  //       cy.get('[data-cy=commandNav]').within(() => {
-  //           cy.contains('Unsafe Commands').click();
-  //       })
-
-  //       cy.get('[data-cy=submit]').click();
-
-  //       cy.get('[data-cy=command]').should('have.length', 2);
-
-  //   })
-  // })
+        cy.contains('TimeoutSec').type('100')
+        cy.get('[data-cy=copy-text]').should('include.text', '-TimeoutSec  10')
+      })
+    })
+  })
 
 })

@@ -66,5 +66,22 @@ context('deployed replica', () => {
 
             cy.url().should('include', '/details')
         })
+
+        it('commands', () => {
+            cy.wait(waitRequest);
+    
+            cy.get('[data-cy=navtabs]').within(() => {
+                cy.contains('commands').click();
+            })
+    
+            cy.url().should('include', 'commands');
+        
+            cy.wait(500);
+    
+            cy.get('[data-cy=safeCommands]');
+            cy.get('[data-cy=command]').should('have.length', 1);
+    
+        })
     })
+
 })
