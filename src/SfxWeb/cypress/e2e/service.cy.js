@@ -205,7 +205,7 @@ context('service', () => {
     
             cy.url().should('include', 'commands');
             
-            cy.wait(500);
+            cy.wait(1000);
     
             cy.get('[data-cy=safeCommands]');
             cy.get('[data-cy=unsafeCommands]');

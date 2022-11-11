@@ -751,6 +751,7 @@ context('Cluster page', () => {
       })
 
       cy.get('[data-cy=submit]').click();
+      cy.wait(500);
 
       cy.get('[data-cy=command]').within(() => {
         cy.get('[data-cy=requiredInput]').should('have.length', 3)
