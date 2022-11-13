@@ -91,19 +91,24 @@ export class ReplicaStatusContainerComponent implements OnChanges, OnDestroy {
 
         this.replicationStatus = [
           {
-            descriptionName: 'Last Sequence Number(LSN) ',
-            copyTextValue: ref.LastSequenceNumber,
-            displayText: ref.LastSequenceNumber,
+            descriptionName: 'The LSN of the first completed operation + 1',
+            copyTextValue: ref.LsnCompletedHead,
+            displayText: ref.LsnCompletedHead,
           },
           {
-            descriptionName: 'Completed Sequence Number',
-            copyTextValue: ref.CompletedSequenceNumber,
-            displayText: ref.CompletedSequenceNumber,
+            descriptionName: 'The LSN of last in-order operation received + 1',
+            copyTextValue: ref.LsnHead,
+            displayText: ref.LsnHead,
           },
           {
-            descriptionName: 'Committed Sequence Number',
-            copyTextValue: ref.CommittedSequenceNumber,
-            displayText: ref.CommittedSequenceNumber,
+            descriptionName: 'The LSN of the first committed operation + 1',
+            copyTextValue: ref.LsnCommittedHead,
+            displayText: ref.LsnCommittedHead,
+          },
+          {
+            descriptionName: 'The LSN of the most advanced operation received in the ordering queue + 1',
+            copyTextValue: ref.LsnTail,
+            displayText: ref.LsnTail,
           },
         ];
       }));

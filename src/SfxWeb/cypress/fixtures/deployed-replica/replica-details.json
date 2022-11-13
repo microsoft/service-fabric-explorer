@@ -14,10 +14,10 @@
         "ReplicationQueueStatus": {
             "QueueUtilizationPercentage": 0,
             "QueueMemorySize": "0",
-            "FirstSequenceNumber": "0",
-            "CompletedSequenceNumber": "215925323",
-            "CommittedSequenceNumber": "215925323",
-            "LastSequenceNumber": "215925323"
+            "LsnHead": "0",
+            "LsnCompletedHead": "215925323",
+            "LsnCommittedHead": "215925323",
+            "LsnTail": "215925323"
         },
         "RemoteReplicators": [
             {

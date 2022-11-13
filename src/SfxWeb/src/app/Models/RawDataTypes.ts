@@ -652,10 +652,10 @@ export class IRawReplicatorStatus {
 export class IRawReplicatorQueueStatus {
         QueueUtilizationPercentage: string;
         QueueMemorySize: boolean;
-        FirstSequenceNumber: string;
-        CompletedSequenceNumber: string;
-        CommittedSequenceNumber: string;
-        LastSequenceNumber: string;
+        LsnHead: string;
+        LsnCompletedHead: string;
+        LsnCommittedHead: string;
+        LsnTail: string;
     }
 
 export class IRawRemoteReplicatorStatus {
