@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-import { apiUrl, addDefaultFixtures, checkTableSize, FIXTURE_REF_NODES, nodes_route, FIXTURE_NODES, addRoute } from './util.cy';
+import { apiUrl, addDefaultFixtures, checkTableSize, FIXTURE_REF_NODES, nodes_route, FIXTURE_NODES, addRoute, checkCommand } from './util.cy';
 
 const nodeName = "_nt_0"
 const nodeInfoRef = "@getnodeInfo"
@@ -158,29 +158,7 @@ context('node page', () => {
             
             cy.wait([nodeInfoRef, "@getnodehealthInfo"]);
 
-            cy.get('[data-cy=navtabs]').within(() => {
-                cy.contains('commands').click();
-            });
-
-            cy.url().should('include', 'commands');
-            
-            cy.wait(nodeInfoRef);
-
-            cy.wait(500);
-
-            cy.get('[data-cy=safeCommands]');
-            cy.get('[data-cy=unsafeCommands]');
-
-            cy.get('[data-cy=command]').should('have.length', 4);
-
-            cy.get('[data-cy=commandNav]').within(() => {
-                cy.contains('Unsafe Commands').click();
-            })
-
-            cy.get('[data-cy=submit]').click();
-
-            cy.get('[data-cy=command]').should('have.length', 2);
-
+            checkCommand(4, 2);
         })
     })
 

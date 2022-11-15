@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-import { addDefaultFixtures, apiUrl, addRoute } from './util.cy';
+import { addDefaultFixtures, apiUrl, addRoute, checkCommand } from './util.cy';
 
 const nodeName = "_nt_2"
 const appName = "VisualObjectsApplicationType";
@@ -60,24 +60,7 @@ context('deployed service package', () => {
         it('view commands', () => {
             cy.wait(waitRequest);
 
-            cy.get('[data-cy=navtabs]').within(() => {
-                cy.contains('commands').click();
-            })
-
-            cy.url().should('include', 'commands');
-        
-            cy.wait(500);
-
-            cy.get('[data-cy=safeCommands]');
-            cy.get('[data-cy=command]').should('have.length', 3);
-
-            cy.get('[data-cy=commandNav]').within(() => {
-                cy.contains('Unsafe Commands').click();
-            })
-    
-            cy.get('[data-cy=submit]').click();
-    
-            cy.get('[data-cy=command]').should('have.length', 1);
+            checkCommand(3, 1);
 
         })
     })

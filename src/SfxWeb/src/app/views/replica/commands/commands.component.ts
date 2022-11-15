@@ -13,20 +13,27 @@ import { ReplicaBaseControllerDirective } from '../ReplicaBase';
 export class CommandsComponent extends ReplicaBaseControllerDirective{
   
   commands: PowershellCommand[] = [];
+  replicaRole: string;
 
   constructor(protected data: DataService, injector: Injector) {
     super(data, injector);
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
+    if (this.replicaRole !== this.replica?.raw.ReplicaRole) {
+      this.afterDataSet();
+    }
+
     return this.data.getNodes();
   }
 
   afterDataSet(): void {
+    this.replicaRole = this.replica?.raw.ReplicaRole;
     this.setUpCommands();
   }
 
   private setUpCommands() {
+    this.commands = [];
 
     const healthReport = CommandFactory.GenSendHealthReport("Replica", `-PartitionId ${this.partitionId} -ReplicaId ${this.replicaId}`);
     this.commands.push(healthReport);
@@ -77,7 +84,7 @@ export class CommandsComponent extends ReplicaBaseControllerDirective{
       );
       this.commands.push(restartReplica);
 
-      if(this.replica?.raw.ReplicaRole !== 'Primary'){
+      if(this.replicaRole !== 'Primary'){
         const nodes = this.data.nodes.collection.map(node => node.name);
 
         const moveSecondReplicaSpecific = new PowershellCommand(
@@ -103,7 +110,7 @@ export class CommandsComponent extends ReplicaBaseControllerDirective{
       }
     }
 
-    if (this.replica?.raw.ReplicaRole === 'IdleSecondary') {
+    if (this.replicaRole === 'IdleSecondary') {
       const removeReplica = new PowershellCommand(
         "Force Remove Replica/Instance",
         'https://docs.microsoft.com/powershell/module/servicefabric/remove-servicefabricreplica',

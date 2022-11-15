@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-import { addDefaultFixtures, apiUrl, FIXTURE_REF_MANIFEST, EMPTY_LIST_TEXT, addRoute, refresh, aad_route } from './util.cy';
+import { addDefaultFixtures, apiUrl, FIXTURE_REF_MANIFEST, EMPTY_LIST_TEXT, addRoute, aad_route, checkCommand } from './util.cy';
 
 const appName = "VisualObjectsApplicationType";
 const waitRequest = "@getapp";
@@ -171,31 +171,12 @@ context('app', () => {
   
     describe("commands", () => {
       it('view commands', () => {
-          cy.visit(`/#/apptype/${appName}/app/${appName}`)
+        cy.visit(`/#/apptype/${appName}/app/${appName}`)
+        
+        cy.wait(waitRequest)
           
-          cy.wait(waitRequest)
-  
-          cy.get('[data-cy=navtabs]').within(() => {
-              cy.contains('commands').click();
-          });
-  
-          cy.url().should('include', 'commands');
+        checkCommand(4, 1);
           
-          cy.wait(500);
-  
-          cy.get('[data-cy=safeCommands]');
-          cy.get('[data-cy=unsafeCommands]');
-  
-          cy.get('[data-cy=command]').should('have.length', 4);
-  
-          cy.get('[data-cy=commandNav]').within(() => {
-              cy.contains('Unsafe Commands').click();
-          })
-  
-          cy.get('[data-cy=submit]').click();
-  
-          cy.get('[data-cy=command]').should('have.length', 1);
-  
       })
     })
 

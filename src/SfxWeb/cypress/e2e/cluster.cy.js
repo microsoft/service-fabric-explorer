@@ -6,7 +6,7 @@ import {
   checkTableErrorMessage, EMPTY_LIST_TEXT, FAILED_TABLE_TEXT, FAILED_LOAD_TEXT,
   repairTask_route, manifest_route, CLUSTER_TAB_NAME, REPAIR_TASK_TAB_NAME,
   FIXTURE_REF_NODES, FIXTURE_NODES, typeIntoInput, checkCheckBox, refresh,
-  FIXTURE_REF_SYSTEMAPPS, systemApps_route
+  FIXTURE_REF_SYSTEMAPPS, systemApps_route, checkCommand
 } from './util.cy';
 
 const LOAD_INFO = "getloadinfo"
@@ -717,7 +717,13 @@ context('Cluster page', () => {
       cy.visit('');
         
       cy.wait(FIXTURE_REF_CLUSTERHEALTH)
+    })
 
+    it('view commands', () => {
+      checkCommand(3, 1);
+    })
+
+    it('check command input', () => {
 
       cy.get('[data-cy=navtabs]').within(() => {
           cy.contains('commands').click();
@@ -726,26 +732,7 @@ context('Cluster page', () => {
       cy.url().should('include', 'commands');
       
       cy.wait(500);
-    })
 
-    it('view commands', () => {
-
-      cy.get('[data-cy=safeCommands]');
-      cy.get('[data-cy=unsafeCommands]');
-
-      cy.get('[data-cy=command]').should('have.length', 3);
-
-      cy.get('[data-cy=commandNav]').within(() => {
-          cy.contains('Unsafe Commands').click();
-      })
-
-      cy.get('[data-cy=submit]').click();
-
-      cy.get('[data-cy=command]').should('have.length', 1)
-
-    })
-
-    it('check command input', () => {
       cy.get('[data-cy=commandNav]').within(() => {
         cy.contains('Unsafe Commands').click();
       })

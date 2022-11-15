@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-import { apiUrl, addDefaultFixtures, checkTableSize, FIXTURE_REF_NODES, addRoute, FIXTURE_REF_MANIFEST } from './util.cy';
+import { apiUrl, addDefaultFixtures, checkTableSize, FIXTURE_REF_NODES, addRoute, FIXTURE_REF_MANIFEST, checkCommand } from './util.cy';
 
 context('nodes list page', () => {
     beforeEach(() => {
@@ -42,16 +42,7 @@ context('nodes list page', () => {
         it('view commands', () => {
             cy.wait(FIXTURE_REF_NODES);
 
-            cy.get('[data-cy=navtabs]').within(() => {
-                cy.contains('commands').click();
-            })
-
-            cy.url().should('include', 'commands');
-        
-            cy.wait(500);
-
-            cy.get('[data-cy=safeCommands]');
-            cy.get('[data-cy=command]').should('have.length', 1);
+            checkCommand(1);
 
         })
     })
