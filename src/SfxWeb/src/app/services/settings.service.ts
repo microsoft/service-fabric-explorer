@@ -266,11 +266,11 @@ export class SettingsService {
       });
   }
 
-  public getSessionVariable(key: string): any {
+  public getSessionVariable<T>(key: string): T {
       return this.sessionVariables[key];
   }
 
-  public setSessionVariable(key: string, value: any) {
+  public setSessionVariable<T>(key: string, value: T) {
     this.sessionVariables[key] = value;
   }
 }

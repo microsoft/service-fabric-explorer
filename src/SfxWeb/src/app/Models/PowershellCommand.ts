@@ -18,9 +18,13 @@ export class PowershellCommand{
             if (param.type === CommandParamTypes.switch) {
                 value = name;
                 name = '';
-            } 
-            else if (param.type === CommandParamTypes.bool) value = '$True'; //potential edge case with required bool param using default value of $True
-            else if (param.type === CommandParamTypes.string) value = '"' + param.value + '"';
+            }
+            else if (param.type === CommandParamTypes.bool) {
+                value = '$True'; //potential edge case with required bool param using default value of $True
+            }
+            else if (param.type === CommandParamTypes.string) {
+                value = `"${param.value}"`;
+            }
             else value = param.value.toString();
      
             return { name, value };
@@ -32,10 +36,14 @@ export class PowershellCommand{
         let script = '';
         const displayedParams = this.paramsToStringArr();
 
-        if (this.safetyLevel === CommandSafetyLevel.dangerous) script = '#';
-        script = script + this.prefix + ' ' + displayedParams.map(param => {
-            if (!param.name) return param.value;
-            return param.name + ' ' + param.value;
+        if (this.safetyLevel === CommandSafetyLevel.dangerous) {
+            script = '#';
+        }
+        script = `${script}${this.prefix} ` + displayedParams.map(param => {
+            if (!param.name) {
+                return param.value;
+            }
+            return `${param.name} ${param.value}`;
         }).join(' ');
         
         return script;
@@ -55,10 +63,15 @@ export class PowershellCommandParameter{
         public type: CommandParamTypes,
         optionalParams?: OptionalCommandParamParams
     ) { 
-        if (optionalParams?.options) this.options = optionalParams.options;
-        if (optionalParams?.required) this.required = optionalParams.required;
-        if (optionalParams?.allowCustomValAndOptions) this.allowCustomValAndOptions = optionalParams.allowCustomValAndOptions;
-
+        if (optionalParams?.options) {
+            this.options = optionalParams.options;
+        }
+        if (optionalParams?.required) {
+            this.required = optionalParams.required;
+        }
+        if (optionalParams?.allowCustomValAndOptions) {
+            this.allowCustomValAndOptions = optionalParams.allowCustomValAndOptions;
+        }
     }
 }
 

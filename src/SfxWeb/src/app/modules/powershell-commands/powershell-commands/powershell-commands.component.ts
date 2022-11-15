@@ -39,12 +39,12 @@ export class PowershellCommandsComponent implements ModalData{
   }
 
   onNavChange(e: NgbNavChangeEvent) {
-    if (e.nextId == 2 && !this.settings.getSessionVariable('unsafeCommandsWarned')) {
+    if (e.nextId == 2 && !this.settings.getSessionVariable<boolean>('unsafeCommandsWarned')) {
       e.preventDefault();
       this.modalMessage = "The commands you are about to view are potentially unsafe, and executing them can result in undesirable results. Please ensure you understand their risks."
       this.openWarningModal('unsafeCommandsWarned', e.nextId);
     }
-    else if (e.nextId == 3 && !this.settings.getSessionVariable('dangerCommandsWarned')) {
+    else if (e.nextId == 3 && !this.settings.getSessionVariable<boolean>('dangerCommandsWarned')) {
       e.preventDefault();
       this.modalMessage = "The commands you are about to view are potentially very dangerous to the cluster, and executing them incorrectly can lead to dire consequences."
       this.openWarningModal('dangerCommandsWarned', e.nextId);
@@ -64,7 +64,7 @@ export class PowershellCommandsComponent implements ModalData{
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.nav.select(navId);
-        this.settings.setSessionVariable(warnedVar, true);
+        this.settings.setSessionVariable<boolean>(warnedVar, true);
       } 
     });
   }
