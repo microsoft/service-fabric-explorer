@@ -13,24 +13,24 @@ import { ModalData } from 'src/app/ViewModels/Modal';
   styleUrls: ['./powershell-commands.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class PowershellCommandsComponent implements ModalData{
+export class PowershellCommandsComponent implements ModalData, OnChanges{
 
-  constructor(protected dialog: MatDialog, protected settings: SettingsService) {}
-  
   title: string = 'Acknowledge';
   modalTitle: string = 'Warning';
   modalMessage: string;
-
+  
   activeId:any = 1;
   safetyLevelEnum = CommandSafetyLevel;
-
+  
   @Input() commands: PowershellCommand[];
   @ViewChild('nav') nav: NgbNav;
-
+  
   safeCommands: PowershellCommand[] = [];
   unsafeCommands: PowershellCommand[] = [];
   dangerousCommands: PowershellCommand[] = [];
-
+  
+  constructor(protected dialog: MatDialog, protected settings: SettingsService) {}
+  
   ngOnChanges() {
     this.safeCommands = this.getCommandsBySafety(this.safetyLevelEnum.safe);
     this.unsafeCommands = this.getCommandsBySafety(this.safetyLevelEnum.unsafe);

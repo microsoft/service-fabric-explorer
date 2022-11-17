@@ -9,12 +9,12 @@ import { NodeBaseControllerDirective } from '../NodeBase';
   styleUrls: ['./commands.component.scss']
 })
 export class CommandsComponent extends NodeBaseControllerDirective {
+  commands: PowershellCommand[] = [];
+  
   constructor(protected data: DataService, injector: Injector) {
     super(data, injector);
   }
 
-  commands: PowershellCommand[] = [];
-  
   afterDataSet() {
     this.setUpCommands();
     

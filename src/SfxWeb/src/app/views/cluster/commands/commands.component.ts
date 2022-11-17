@@ -12,11 +12,11 @@ import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
   styleUrls: ['./commands.component.scss']
 })
 export class CommandsComponent extends BaseControllerDirective {
+  commands: PowershellCommand[] = [];
+  
   constructor(protected data: DataService, injector: Injector) {
     super(injector);
   }
-
-  commands: PowershellCommand[] = [];
   
   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
     return this.data.repairCollection.refresh(messageHandler);

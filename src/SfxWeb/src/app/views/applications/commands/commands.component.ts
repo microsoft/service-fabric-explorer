@@ -15,11 +15,11 @@ import { Application } from 'src/app/Models/DataModels/Application';
 })
 export class CommandsComponent extends BaseControllerDirective {
 
+  commands: PowershellCommand[] = [];
+  
   constructor(private data: DataService, injector: Injector) {
     super(injector);
    }
-
-  commands: PowershellCommand[] = [];
 
   afterDataSet(): void {
     this.setUpCommands();

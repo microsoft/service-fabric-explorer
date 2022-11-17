@@ -10,11 +10,11 @@ import { ApplicationTypeBaseControllerDirective } from '../ApplicationTypeBase';
 })
 export class CommandsComponent extends ApplicationTypeBaseControllerDirective {
 
+  commands: PowershellCommand[] = [];
+  
   constructor(protected data: DataService, injector: Injector) {
     super(data, injector);
    }
-
-  commands: PowershellCommand[] = [];
 
   afterDataSet(): void {
     this.setUpCommands();

@@ -11,8 +11,6 @@ import { FormGroup } from '@angular/forms';
 })
 export class CommandComponent implements OnInit{
 
-  constructor() { }
-
   @Input() command: PowershellCommand;
   safetyLevelEnum = CommandSafetyLevel;
   BadgeConstants = BadgeConstants;

@@ -10,12 +10,12 @@ import { DeployedReplicaBaseControllerDirective } from '../DeployedReplicaBase';
 })
 export class CommandsComponent extends DeployedReplicaBaseControllerDirective {
 
+  commands: PowershellCommand[] = [];
 
   constructor(protected data: DataService, injector: Injector) {
     super(data, injector);
   }
 
-  commands: PowershellCommand[] = [];
   afterDataSet(): void {
     this.setUpCommands();
   }
