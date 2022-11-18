@@ -27,14 +27,14 @@ export class CommandsComponent extends DeployedServicePackageBaseControllerDirec
     
     const considerWarnAsErr = new PowershellCommandParameter("ConsiderWarningAsError", CommandParamTypes.bool);
     const eventsFilter = CommandFactory.GenHealthFilterParam("Events");
-    const servicePacActivId = new PowershellCommandParameter("ServicePackageActivationId", CommandParamTypes.string);
+    const servicePacActivId = this.servicePackage.raw.ServicePackageActivationId;
 
     const getHealth = new PowershellCommand(
       'Get Deployed Service Health',
       'https://docs.microsoft.com/powershell/module/servicefabric/get-servicefabricdeployedservicepackagehealth',
       CommandSafetyLevel.safe,
-      `Get-ServiceFabricDeployedServicePackageHealth -ApplicationName ${this.servicePackage.parent.name} -ServiceManifestName ${this.servicePackage.name} -NodeName "${this.nodeName}"`,
-      [eventsFilter, servicePacActivId, considerWarnAsErr, CommandFactory.GenTimeoutSecParam()]
+      `Get-ServiceFabricDeployedServicePackageHealth -ApplicationName ${this.servicePackage.parent.name} -ServiceManifestName ${this.servicePackage.name} -NodeName "${this.nodeName}" ${servicePacActivId ? "-ServicePackageActivationId " + servicePacActivId : ""}`,
+      [eventsFilter, considerWarnAsErr, CommandFactory.GenTimeoutSecParam()]
     );
 
     this.commands.push(getHealth);

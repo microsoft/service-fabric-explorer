@@ -1,6 +1,7 @@
 import { Component, Injector } from '@angular/core';
 import { Command } from 'protractor';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { CommandFactory, CommandParamTypes, CommandSafetyLevel, PowershellCommand, PowershellCommandParameter } from 'src/app/Models/PowershellCommand';
 import { DataService } from 'src/app/services/data.service';
@@ -13,13 +14,21 @@ import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 })
 export class CommandsComponent extends BaseControllerDirective {
   commands: PowershellCommand[] = [];
-  
+  hasRepairTask: boolean = true;
+
   constructor(protected data: DataService, injector: Injector) {
     super(injector);
   }
   
   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
-    return this.data.repairCollection.refresh(messageHandler);
+    return this.data.getClusterManifest().pipe(map((manifest) => {
+      if (manifest.isRepairManagerEnabled) {
+        return this.data.repairCollection.refresh(messageHandler);
+      } else {
+        this.hasRepairTask = false;
+        return of(null);
+      }
+    }))
   }
   
   afterDataSet() {
@@ -64,14 +73,18 @@ export class CommandsComponent extends BaseControllerDirective {
     );
     const taskId = new PowershellCommandParameter('TaskId', CommandParamTypes.enum, { options: this.data.repairCollection.collection.map(task => task.id)});
     
-    const getRepairTasks = new PowershellCommand(
-      "Get Repair Task",
-      "https://docs.microsoft.com/powershell/module/servicefabric/get-servicefabricrepairtask",
-      CommandSafetyLevel.safe,
-      `Get-ServiceFabricRepairTask`,
-      [taskId, state, CommandFactory.GenTimeoutSecParam()]
-    );
-    this.commands.push(getRepairTasks);
+    if (this.hasRepairTask) {
+      const getRepairTasks = new PowershellCommand(
+        "Get Repair Task",
+        "https://docs.microsoft.com/powershell/module/servicefabric/get-servicefabricrepairtask",
+        CommandSafetyLevel.safe,
+        `Get-ServiceFabricRepairTask`,
+        [taskId, state, CommandFactory.GenTimeoutSecParam()]
+      );
+      this.commands.push(getRepairTasks);
+      
+    }
+    
     this.commands = [...this.commands];
   }
 

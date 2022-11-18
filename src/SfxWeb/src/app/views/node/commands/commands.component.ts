@@ -68,16 +68,6 @@ export class CommandsComponent extends NodeBaseControllerDirective {
     );
 
     this.commands.push(getDeployedApp);
-
-    const getReplica = new PowershellCommand(
-      "Get Deployed Replicas",
-      'https://docs.microsoft.com/powershell/module/servicefabric/get-servicefabricdeployedreplica',
-      CommandSafetyLevel.safe,
-      `Get-ServiceFabricDeployedReplica -NodeName "${this.nodeName}"`,
-      [CommandFactory.GenTimeoutSecParam()]
-    );
-    
-    this.commands.push(getReplica);
     this.commands = [...this.commands];
 
   }
