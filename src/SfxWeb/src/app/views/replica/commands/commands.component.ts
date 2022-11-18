@@ -66,8 +66,8 @@ export class CommandsComponent extends ReplicaBaseControllerDirective{
         "Move Instance",
         'https://docs.microsoft.com/powershell/module/servicefabric/move-servicefabricinstance',
         CommandSafetyLevel.unsafe,
-        `Move-ServiceFabricInstance -ServiceName ${this.replica?.parent.parent.name} -PartitionId ${this.partitionId}`,
-        [CommandFactory.GenNodeListParam("CurrentInstanceNodeName", nodes), CommandFactory.GenNodeListParam("NewInstanceNodeName", nodes), CommandFactory.GenIgnoreConstraintsParam(), CommandFactory.GenTimeoutSecParam()],
+        `Move-ServiceFabricInstance -ServiceName ${this.replica?.parent.parent.name} -PartitionId ${this.partitionId} -CurrentInstanceNodeName ${this.replica?.raw.NodeName}`,
+        [CommandFactory.GenNodeListParam("NewInstanceNodeName", nodes), CommandFactory.GenIgnoreConstraintsParam(), CommandFactory.GenTimeoutSecParam()],
         true
       );
       this.commands.push(moveInstance);  

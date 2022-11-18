@@ -102,7 +102,7 @@ export class CommandFactory {
     }
 
     static GenSendHealthReport(typeName: string, param: string = ''): PowershellCommand {
-        const healthState = new PowershellCommandParameter("HealthState", CommandParamTypes.enum, { options: ["OK", "Warning", "Error", "Unknown"], required: true });
+        const healthState = new PowershellCommandParameter("HealthState", CommandParamTypes.enum, { options: ["OK", "Warning", "Error"], required: true });
         const sourceId = new PowershellCommandParameter("SourceId", CommandParamTypes.string, { required: true });
         const healthProperty = new PowershellCommandParameter("HealthProperty", CommandParamTypes.string, {required: true});
         const description = new PowershellCommandParameter("Description", CommandParamTypes.string);
@@ -131,7 +131,7 @@ export class CommandFactory {
     }
 
     static GenIgnoreConstraintsParam() : PowershellCommandParameter {
-        return new PowershellCommandParameter('IgnoreConstraints', CommandParamTypes.switch);
+        return new PowershellCommandParameter('IgnoreConstraints', CommandParamTypes.bool);
     }
 
     static GenNodeListParam(paramName: string, nodes: string[]): PowershellCommandParameter {

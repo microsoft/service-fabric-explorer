@@ -41,7 +41,7 @@ export class CommandsComponent extends ApplicationBaseControllerDirective{
     this.commands.push(getUpgrade);
 
     const considerWarnAsErr = new PowershellCommandParameter("ConsiderWarningAsError", CommandParamTypes.bool);
-    const deployedAppFilter = CommandFactory.GenHealthFilterParam('DeployedApplication');
+    const deployedAppFilter = CommandFactory.GenHealthFilterParam('DeployedApplications');
     const eventsFilter = CommandFactory.GenHealthFilterParam("Events");
     const excludeHealthStat = new PowershellCommandParameter("ExcludeHealthStatistics", CommandParamTypes.switch);
     const maxPercUnhealthApp = new PowershellCommandParameter("MaxPercentUnhealthyDeployedApplications", CommandParamTypes.number);
