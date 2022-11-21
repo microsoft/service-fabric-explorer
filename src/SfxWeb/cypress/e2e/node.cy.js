@@ -158,7 +158,7 @@ context('node page', () => {
             
             cy.wait([nodeInfoRef, "@getnodehealthInfo"]);
 
-            checkCommand(4, 2);
+            checkCommand(3, 2);
         })
     })
 
