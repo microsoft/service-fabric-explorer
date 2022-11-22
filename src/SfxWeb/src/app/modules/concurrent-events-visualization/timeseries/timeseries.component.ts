@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, OnChanges, OnDestroy, ViewChildren, ElementRef, AfterViewInit, QueryList } from '@angular/core';
-import { Chart, Options, chart, SeriesOptionsType, Pointer, Point, color, PointOptionsObject } from 'highcharts';
+import { Chart, Options, chart, SeriesOptionsType, Pointer, Point, color, PointOptionsObject, YAxisLabelsOptions, YAxisOptions, XAxisOptions } from 'highcharts';
 import { ListColumnSetting, ListSettings } from 'src/app/Models/ListSettings';
 import { SettingsService } from 'src/app/services/settings.service';
 import { Utils } from 'src/app/Utils/Utils';
@@ -8,6 +8,10 @@ export interface IdataFormatter {
   name: string;
   xProperty: string;
   yProperty: string;
+  xLabel?: string;
+  xUnits?: string;
+  yLabel?: string;
+  yUnits?: string;
 }
 
 export interface  IDataSet{
@@ -37,6 +41,9 @@ export class TimeseriesComponent implements AfterViewInit, OnChanges, OnDestroy 
   @ViewChildren('container') private container: QueryList<ElementRef>;
   listSettings: ListSettings;
   currentItem: any;
+
+  visibleItems = new Set();
+
   constructor(private settings: SettingsService) { }
 
   fontColor = {
@@ -179,7 +186,46 @@ export class TimeseriesComponent implements AfterViewInit, OnChanges, OnDestroy 
 
       })
       console.log(dataSet)
-      this.charts.push(chart(this.container.get(index).nativeElement, { ...this.options, series: dataSet }));
+      const yAxis: YAxisOptions = {
+        labels: {
+          style: this.fontColor,
+        },
+        title: {
+          style: this.fontColor,
+        }
+      }
+
+      if(chartData.yUnits) {
+        yAxis.labels.format = `{value} ${chartData.yUnits}`
+      }
+
+      if(chartData.yLabel) {
+        yAxis.title.text = chartData.yLabel
+      }
+
+      const xAxis: XAxisOptions = {
+        labels: {
+          style: this.fontColor,
+        },
+        title: {
+          style: this.fontColor,
+        },
+
+      }
+
+      if(chartData.xUnits) {
+        xAxis.labels.format = `{value} ${chartData.xUnits}`
+      }
+
+      if(chartData.xLabel) {
+        xAxis.title.text = chartData.xLabel
+      }
+
+
+      this.charts.push(chart(this.container.get(index).nativeElement, {
+        ...this.options, series: dataSet, yAxis,
+        // xAxis
+      }));
     })
 
     console.log(this)

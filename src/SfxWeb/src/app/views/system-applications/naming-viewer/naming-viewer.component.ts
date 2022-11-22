@@ -57,17 +57,22 @@ export class NamingViewerComponent implements OnInit {
       {
         name: 'Average Latency',
         xProperty: 'TimeStamp',
-        yProperty: 'AverageLatency'
+        yProperty: 'AverageLatency',
+        yUnits: 'MS',
+        yLabel: 'Latency'
       },
       {
         name: 'Average Response Size',
         xProperty: 'TimeStamp',
-        yProperty: 'AverageResponseSize'
+        yProperty: 'AverageResponseSize',
+        yUnits: 'Bytes',
+        yLabel: 'Size'
       },
       {
         name: 'Request Volume',
         xProperty: 'TimeStamp',
-        yProperty: 'RequestCount'
+        yProperty: 'RequestCount',
+        yLabel: 'Count'
       }
     ]
   }
