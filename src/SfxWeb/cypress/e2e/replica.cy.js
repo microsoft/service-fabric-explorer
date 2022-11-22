@@ -14,7 +14,7 @@ context('replica', () => {
         addRoute("services", "app-page/services.json", apiUrl(`/Applications/${appName}/$/GetServices?*`))
     })
 
-    describe.only("stateful", () => {
+    describe("stateful", () => {
         const serviceName = "VisualObjects.ActorService";
         const partitionId = "28bfaf73-37b0-467d-9d47-d011b0aedbc0";
         const replicaId = "132429154475414363";
