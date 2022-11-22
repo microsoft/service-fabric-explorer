@@ -5,6 +5,7 @@ import { EssentialsComponent } from './essentials/essentials.component';
 import { DetailsComponent } from './details/details.component';
 import { BackupsComponent } from './backups/backups.component';
 import { EventsComponent } from './events/events.component';
+import { CommandsComponent } from './commands/commands.component';
 
 
 const routes: Routes = [{
@@ -13,6 +14,7 @@ const routes: Routes = [{
     { path: 'details', component: DetailsComponent },
     { path: 'backups', component: BackupsComponent },
     { path: 'events', component: EventsComponent },
+    { path: 'commands', component: CommandsComponent}
     ]
   }
 ];

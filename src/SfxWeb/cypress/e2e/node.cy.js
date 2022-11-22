@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-import { apiUrl, addDefaultFixtures, checkTableSize, FIXTURE_REF_NODES, nodes_route, FIXTURE_NODES, addRoute } from './util.cy';
+import { apiUrl, addDefaultFixtures, checkTableSize, FIXTURE_REF_NODES, nodes_route, FIXTURE_NODES, addRoute, checkCommand } from './util.cy';
 
 const nodeName = "_nt_0"
 const nodeInfoRef = "@getnodeInfo"
@@ -149,6 +149,16 @@ context('node page', () => {
 
             cy.wait("@getevents");
             cy.url().should('include', 'events');
+        })
+    })
+
+    describe("commands", () => {
+        it('view commands', () => {
+            cy.visit(`/#/node/${nodeName}`);
+            
+            cy.wait([nodeInfoRef, "@getnodehealthInfo"]);
+
+            checkCommand(3, 2);
         })
     })
 

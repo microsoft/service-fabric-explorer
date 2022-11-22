@@ -442,12 +442,17 @@ table.detail-list {
 
 .input-flat {
     padding: 3px 6px;
-    font-size: 8pt;
+    font-size: 10pt;
     border-style: solid;
     border-width: 1px;
     border-color: #727272;
     background-color: transparent;
-    color: var(--font-primary-color);
+    color: var(--font-accent-color);
+    border-radius: var(--primary-border-radius);
+
+    &:focus, &:hover {
+      box-shadow: var(--heavy-box-shadow);
+    }
 }
 
 .input-flat.ng-valid[required], .input-flat.ng-valid.required  {

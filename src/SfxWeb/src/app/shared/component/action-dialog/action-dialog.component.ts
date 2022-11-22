@@ -1,6 +1,6 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Action, ActionWithConfirmationDialog } from 'src/app/Models/Action';
+import { ModalData } from 'src/app/ViewModels/Modal';
 
 @Component({
   selector: 'app-action-dialog',
@@ -12,7 +12,7 @@ export class ActionDialogComponent implements OnInit {
   userInput = '';
   placeHolderText = '';
   constructor(public dialogRef: MatDialogRef<ActionDialogComponent>,
-              @Inject(MAT_DIALOG_DATA) public data: ActionWithConfirmationDialog) { }
+              @Inject(MAT_DIALOG_DATA) public data: ModalData) { }
 
   ngOnInit() {
     this.placeHolderText = `Type in ${this.data.confirmationKeyword} to continue`;
