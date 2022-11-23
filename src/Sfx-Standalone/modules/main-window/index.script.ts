@@ -44,4 +44,3 @@ import { ISettings } from "sfx.settings";
         console.log(error);
     }
 })();
-

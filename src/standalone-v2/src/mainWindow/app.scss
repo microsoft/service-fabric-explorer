@@ -1,0 +1,210 @@
+@use 'toggle/toggle.scss';
+
+
+.root {
+    height: 100%;
+    overflow: auto;
+}
+
+.left-panel {
+    width: 300px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+
+    .cluster-list {
+        flex: 1;
+        overflow: auto;
+    }
+}
+
+.add-cluster {
+    margin: 5px;
+}
+
+.slide-open {
+    animation-name: slideopen;
+    animation-duration: 1s;
+    animation-timing-function: linear;
+    animation-fill-mode: forwards;
+    max-height: 0px;
+    overflow: hidden;
+}
+
+@keyframes slideopen {
+    from {
+        max-height: 0%;
+    }
+
+    to {
+        max-height: 100%;
+    }
+}
+
+
+h5 {
+    margin-top: 0.5rem;
+}
+
+.input-item {
+    display: flex;
+    gap: 10px;
+    padding-bottom: 5px;
+    margin-bottom: 5px;
+
+    >:first-child {
+        min-width: 40px;
+        white-space: nowrap;
+    }
+
+    >:last-child {
+        flex: 1;
+    }   
+}
+
+.bottom-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.list-item {
+    background-color: var(--accent-underline);
+    border-radius: 10px;
+    margin: 2px;
+    padding: 5px;
+    box-shadow: var(--primary-box-shadow);
+    cursor: pointer;
+    transition: background-color .25s;
+    &:hover, &:focus-within {
+        background-color: var(--primary-background-color);
+    }
+}
+
+.list-item-inner {
+    align-items: center;
+    padding-left: 10px;
+}
+
+
+
+.flex-between {
+    display: flex;
+    justify-content: space-between;
+}
+
+
+.list-item.active {
+    background-color: var(--accent-darkblue) !important;
+    box-shadow: var(--heavy-box-shadow);
+
+}
+
+.cluster-header {
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    h5 {
+        margin: auto;
+    }
+}
+
+.add-button {
+    display: flex;
+    gap: 5px;
+    justify-content: center;
+    align-content: center;
+    font-size: 13px;
+
+    transition: all .25s;
+    background-color: transparent;
+
+    &:hover {
+        background-color: var(--accent-underline);
+    }
+}
+
+.cert-container {
+    padding: 10px 0px;
+}
+
+.auth-container {
+    margin: 10px 0px;
+}
+
+.error-list {
+    ul {
+        padding-inline-start: 18px;
+        color: var(--badge-error);
+    }
+}
+
+.filter-list {
+    margin: 5px;
+}
+
+.cluster-title {
+    padding-top: 5px;
+}
+
+.right-container {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    padding-top: 15%;
+    text-align: center;
+}
+
+.mif-import-export {
+    font-size: 23px;
+    line-height: .5;
+    width: 15px;
+    display: flex;
+    justify-content: center;
+}
+
+input {
+    border-radius: 5px;
+}
+
+
+.text-show {
+    width: auto;
+    display: inline-flex;
+    transition: .3s all;
+
+    .icon {
+        z-index: 2;
+    }
+
+    .text {
+        width: 0;
+        transition: .3s all;
+        overflow: hidden;
+        color: var(--font-primary-color);
+        white-space: nowrap;
+        font-size: 16px;
+        padding-left: 10px;
+    }
+
+    &:hover,
+    &:focus {
+        max-width: 100%;
+
+        .text {
+            width: 100%;
+        }
+    }
+}
+
+.folder {
+    .folder-name {
+        font-size: 20px;
+        border-top: 2px solid var(--accent-underline);
+        margin: 5px 15px;
+    }
+}
+
+.input-full {
+    width: 100%
+}

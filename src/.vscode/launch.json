@@ -1,0 +1,14 @@
+{
+    "type": "node",
+    "request": "launch",
+    "name": "standalone-v2",
+    "runtimeExecutable": "${workspaceFolder}/standalone-v2/node_modules/.bin/electron-forge-vscode-nix",
+    "windows": {
+      "runtimeExecutable": "${workspaceFolder}/standalone-v2/node_modules/.bin/electron-forge-vscode-win.cmd"
+    },
+ 
+    "runtimeArgs": [
+ 
+    ],
+    "cwd": "${workspaceFolder}/standalone-v2"
+  }

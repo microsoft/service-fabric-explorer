@@ -1,0 +1,65 @@
+
+name: standalone build
+on: 
+  push:
+  pull_request:
+  schedule:
+    - cron: 0 0 * * * # daily
+
+defaults:
+  run:
+    working-directory: src/SfxWeb
+
+jobs:
+  build_on_linux:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@master
+      with:
+        node-version: 16
+    - name: install sfx dependencies
+      run: npm ci
+    - name: build sfx
+      run: npm run build:electron
+    - name: install dependencies
+      working-directory: src/standalone-v2
+      run: npm install
+    - name: build
+      working-directory: src/standalone-v2
+      run: npm run make
+  build_on_mac:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@master
+      with:
+        node-version: 16
+    - name: install sfx dependencies
+      run: npm ci
+    - name: build sfx
+      run: npm run build:electron
+    - name: install dependencies
+      working-directory: src/standalone-v2
+      run: npm install
+    - name: build
+      working-directory: src/standalone-v2
+      run: npm run make
+  build_on_win:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@master
+      with:
+        node-version: 16
+    - name: install sfx dependencies
+      run: npm ci
+    - name: build sfx
+      run: npm run build:electron
+    - name: install dependencies
+      working-directory: src/standalone-v2
+      run: npm install
+    - name: build
+      working-directory: src/standalone-v2
+      run: npm run make
+

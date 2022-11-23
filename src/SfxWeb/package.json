@@ -5,6 +5,7 @@
     "ng": "ng",
     "start": "ng serve --proxy-config=proxy.conf.json --port 3000",
     "build": "ng build",
+    "build:electron": "ng build --base-href ./ -c=electron --output-path=../standalone-v2/src/sfx",
     "build:prod": "ng build --configuration production  --output-hashing=none --named-chunks",
     "build:accesstesting": "ng build --configuration production --outputPath=../Sfx-Proxy/wwwroot --configuration=accesstesting --output-hashing=none",
     "test": "ng test",

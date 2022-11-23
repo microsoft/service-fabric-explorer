@@ -26,7 +26,6 @@ import { IRequest, NetworkDebugger } from '../Models/DataModels/networkDebugger'
   providedIn: 'root'
 })
 export class RestClientService {
-
   constructor(private httpClient: HttpClient, private message: MessageService) {
 
   }
