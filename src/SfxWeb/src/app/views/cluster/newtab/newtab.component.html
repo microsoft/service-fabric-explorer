@@ -1,0 +1,13 @@
+<p *ngIf="failedToLoadEvents; else worked">
+    Uh, oh :(
+</p>
+<ng-template #worked>
+    <!-- {{ this.eventStoreHandler?.eventsList.detailsSettings | json }} -->
+    {{this.eventStoreHandler?.displayName | json}}<br><br>
+    <div *ngFor="let node of nodesMap | keyvalue:f">
+        {{node.key}}:<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;Status: {{node.value.status}},<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;SeedNode: {{node.value.isSeed}},<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;NodeId: {{node.value.id}}<br><br>
+    </div>
+</ng-template>
