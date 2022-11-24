@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { NewtabComponent } from './newtab.component';
+import { FederationComponent } from './federation.component';
 
-describe('NewtabComponent', () => {
-  let component: NewtabComponent;
-  let fixture: ComponentFixture<NewtabComponent>;
+describe('FederationComponent', () => {
+  let component: FederationComponent;
+  let fixture: ComponentFixture<FederationComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ NewtabComponent ]
+      declarations: [ FederationComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(NewtabComponent);
+    fixture = TestBed.createComponent(FederationComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
