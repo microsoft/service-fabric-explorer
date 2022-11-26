@@ -1,10 +1,13 @@
 import { KeyValue } from '@angular/common';
 import { Component, Injector, OnInit } from '@angular/core';
+import { data } from 'cypress/types/jquery';
+import Highcharts from 'highcharts';
 import { Observable, of } from 'rxjs';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { NodeEventList } from 'src/app/Models/DataModels/collections/Collections';
 import { NodeEvent } from 'src/app/Models/eventstore/Events';
 import { IEventStoreData } from 'src/app/modules/event-store/event-store/event-store.component';
+import { NodeDeactivationInfoComponent } from 'src/app/modules/node-deactivation/node-deactivation-info/node-deactivation-info.component';
 import { DataService } from 'src/app/services/data.service';
 import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 
@@ -28,6 +31,8 @@ export class FederationComponent extends BaseControllerDirective {
   eventStoreHandler: IEventStoreData<NodeEventList, NodeEvent>;
   failedToLoadEvents: boolean;
   nodesMap = new Map<string, NodeData>();
+  Highcharts: typeof Highcharts = Highcharts;
+  neighSize: number = 2;
 
   constructor(protected data: DataService, injector: Injector) {
     super(injector);
@@ -87,6 +92,95 @@ export class FederationComponent extends BaseControllerDirective {
 
               }
             }
+
+            let mapArray = [...this.nodesMap];
+            let len = mapArray.length;
+            let ddata = [];
+            for (let i = 0; i < len-1; ++i) {
+              ddata.push([mapArray[i][0], mapArray[i+1][0]]);
+            }
+            ddata.push([mapArray[len-1][0], mapArray[0][0]]);
+            
+            let nodeHover = [];
+            for (let node of this.nodesMap) {
+              let struct = {
+                'id': node[1].name,
+                title: 
+                  "Status: " + node[1].status + 
+                  "<br/>IsSeed: " + node[1].isSeed +
+                  "<br/>NodeId: " + node[1].id +
+                  "<br/>NodeInstance: " + node[1].instanceId
+              };
+              nodeHover.push(struct);
+            }
+
+            let nSize = this.neighSize;
+            Highcharts.chart('container', {
+              chart: {
+                renderTo: 'container',
+                type: 'networkgraph',
+                height: '100%'
+              },
+              title: {
+                text: 'Federation'
+              },
+              plotOptions: {
+                networkgraph: {
+                  keys: ['from', 'to'],
+                  layoutAlgorithm: {
+                    enableSimulation: false
+                    //friction: -0.9
+                  }
+                }/*,
+                series: {
+                    states: {
+                        hover: {
+                            enabled: false
+                        }
+                    }
+                }*/
+              },
+              tooltip: {
+                formatter: function() {
+  
+                  let ind = this.point.index;
+                  for (let i = 1; i < nSize; ++i) {
+                      let ind1 = (ind+1)%len;
+                      let ind2 = ind-i-1;
+                      if (ind2 < 0) ind2 += len;
+                      this.series.data[ind1].setState('hover');
+                      this.series.data[ind2].setState('hover');
+                  }
+
+                  const {
+                    title
+                  } = this.point.options;
+                  return title;
+                }
+              },
+              series: [{
+                type: 'networkgraph',
+                allowPointSelect: true,
+                marker: {
+                  radius: 50
+                },
+                accessibility: {
+                  enabled: false
+                },
+                dataLabels: {
+                  enabled: true,
+                  linkFormat: '',
+                  style: {
+                    fontSize: '20',
+                  },
+                  y: 25
+                },
+                id: 'federation',
+                nodes: nodeHover,
+                data: ddata
+              }]
+            });
+            
           }
         });
       }

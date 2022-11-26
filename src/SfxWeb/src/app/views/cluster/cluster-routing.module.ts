@@ -26,7 +26,8 @@ const routes: Routes = [{
     { path: 'infrastructure', component: InfrastructureViewComponent },
     { path: 'commands', component: CommandsComponent },
     { path: '', component: EssentialsComponent },
-    { path: 'federation', component: FederationComponent}
+    { path: 'federation', component: FederationComponent},
+    { path: 'newtab', component: NewtabComponent }
   ]
   }
 ];
