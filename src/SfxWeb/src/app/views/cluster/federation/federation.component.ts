@@ -1,6 +1,5 @@
 import { KeyValue } from '@angular/common';
 import { Component, Injector, OnInit } from '@angular/core';
-import { data } from 'cypress/types/jquery';
 import Highcharts from 'highcharts';
 import { Observable, of } from 'rxjs';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
@@ -93,23 +92,25 @@ export class FederationComponent extends BaseControllerDirective {
               }
             }
 
-            let mapArray = [...this.nodesMap];
+            let mapArray = [...this.nodesMap].sort((a, b) => a[1].id.localeCompare(b[1].id));
+            //let mapArray = [...this.nodesMap];
             let len = mapArray.length;
             let ddata = [];
             for (let i = 0; i < len-1; ++i) {
-              ddata.push([mapArray[i][0], mapArray[i+1][0]]);
+                ddata.push([mapArray[i][0], mapArray[i+1][0]]);
             }
             ddata.push([mapArray[len-1][0], mapArray[0][0]]);
             
             let nodeHover = [];
-            for (let node of this.nodesMap) {
+            for (let node of mapArray) {
               let struct = {
                 'id': node[1].name,
                 title: 
                   "Status: " + node[1].status + 
                   "<br/>IsSeed: " + node[1].isSeed +
                   "<br/>NodeId: " + node[1].id +
-                  "<br/>NodeInstance: " + node[1].instanceId
+                  "<br/>NodeInstance: " + node[1].instanceId,
+                color: node[1].inCluster ? '#c0f77b' : '#5db7fa'
               };
               nodeHover.push(struct);
             }
@@ -131,21 +132,14 @@ export class FederationComponent extends BaseControllerDirective {
                     enableSimulation: false
                     //friction: -0.9
                   }
-                }/*,
-                series: {
-                    states: {
-                        hover: {
-                            enabled: false
-                        }
-                    }
-                }*/
+                }
               },
               tooltip: {
                 formatter: function() {
   
                   let ind = this.point.index;
                   for (let i = 1; i < nSize; ++i) {
-                      let ind1 = (ind+1)%len;
+                      let ind1 = (ind+i)%len;
                       let ind2 = ind-i-1;
                       if (ind2 < 0) ind2 += len;
                       this.series.data[ind1].setState('hover');
