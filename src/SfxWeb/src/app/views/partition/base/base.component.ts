@@ -22,6 +22,10 @@ export class BaseComponent extends PartitionBaseControllerDirective {
     {
       name: 'details',
       route: './details'
+    },
+    {
+      name: 'commands',
+      route: './commands'
     }
   ];
 

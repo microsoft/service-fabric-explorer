@@ -3,6 +3,7 @@ import { mergeMap, finalize } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { ActionDialogComponent } from '../shared/component/action-dialog/action-dialog.component';
 import { ComponentType } from '@angular/cdk/portal';
+import { ModalData } from '../ViewModels/Modal';
 
 // -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -89,7 +90,7 @@ export class ActionWithDialog extends Action {
     }
 }
 
-export class ActionWithConfirmationDialog extends ActionWithDialog {
+export class ActionWithConfirmationDialog extends ActionWithDialog implements ModalData{
     constructor(
         public dialog: MatDialog,
         public name: string,
@@ -97,8 +98,8 @@ export class ActionWithConfirmationDialog extends ActionWithDialog {
         public runningTitle: string,
         public execute: (...params: any[]) => Observable<any>,
         public canRun: () => boolean,
-        public confirmationDialogTitle?: string,
-        public confirmationDialogMessage?: string,
+        public modalTitle?: string,
+        public modalMessage?: string,
         public confirmationKeyword?: string) {
 
         super(dialog, name, title, runningTitle, execute, canRun);

@@ -15,33 +15,35 @@
                         [ngStyle]="{'width': columnSetting.fixedWidthPx ? columnSetting.fixedWidthPx + 'px' : ''}"
                         [attr.aria-sort]="listSettings.isSortedByColumn(columnSetting) ? listSettings.sortReverse ? 'descending' : 'ascending' : 'none'">
                         <!-- Header label -->
-                        <button  class="flat-button supress-hover" [ngClass]="{'active': columnSetting.sortable, 'shift-expander-col': i === 0 && listSettings.secondRowCollapsible}" tabindex="0"
-                            style="padding-left: 0px;" (click)="sort(columnSetting);" [title]="'Sort by ' + columnSetting.displayName + (listSettings.sortReverse ? ' descending' : ' ascending')">
-                            {{columnSetting.displayName}}
+                        <div class="header-wrapper">
+                          <button  class="flat-button supress-hover" [ngClass]="{'active': columnSetting.sortable, 'shift-expander-col': i === 0 && listSettings.secondRowCollapsible}" tabindex="0"
+                          style="padding-left: 0px;" (click)="sort(columnSetting);" [title]="'Sort by ' + columnSetting.displayName + (listSettings.sortReverse ? ' descending' : ' ascending')">
+                          {{columnSetting.displayName}}
 
-                            <span class="bowtie-icon sort-icon" [ngClass]="{'mif-arrow-up': listSettings.sortReverse, 'mif-arrow-down': !listSettings.sortReverse}"  *ngIf="columnSetting.sortable && listSettings.isSortedByColumn(columnSetting)">
-                            </span>
-                      </button>
+                          <span class="bowtie-icon sort-icon" [ngClass]="{'mif-arrow-up': listSettings.sortReverse, 'mif-arrow-down': !listSettings.sortReverse}"  *ngIf="columnSetting.sortable && listSettings.isSortedByColumn(columnSetting)">
+                          </span>
+                    </button>
 
-                        <div ngbDropdown *ngIf="columnSetting.hasFilters" [attr.aria-hidden]="!columnSetting.hasFilters" style="display: inline-block;" class="hidden-toggle"
-                            (openChange)="closeChange($event)" container="body" display="dynamic">
-                            <button class="flat-button supress-hover" style="background-color: transparent;" ngbDropdownToggle aria-label="Filter" [title]="'filter by ' + columnSetting.displayName + ' options'" [attr.aria-haspopup]="false">
-                                <span  class="mif-filter" [ngClass]="{'link': columnSetting.hasEffectiveFilters}" placement="bottom-left"></span>
-                            </button>
-                            <ul ngbDropdownMenu role="menu" class="dropdown-layout"  >
-                                <li role="menuitem" class="check-options item" *ngIf="!columnSetting.allChecked">
-                                  <button aria-label="Check all options" class="flat-button" (click)="columnSetting.checkAll(); updateList()">Check All</button>
-                                </li>
-                                <li role="menuitem" class="check-options item" *ngIf="!columnSetting.noneChecked">
-                                  <button aria-label="unCheck all options" class="flat-button" (click)="columnSetting.uncheckAll(); updateList()">Uncheck All</button>
-                                </li>
-                                <li role="menuitem"  *ngFor="let filterValue of columnSetting.filterValues; let last = last;" class="item">
-                                    <label>
-                                        <input type="checkbox" [(ngModel)]="filterValue.isChecked" (ngModelChange)="updateList();" (click)=" $event.stopPropagation()"   (keydown.tab)="last ? closeDropDown() : null"/>
-                                        {{filterValue.value}}
-                                    </label>
-                                </li>
-                            </ul>
+                      <div ngbDropdown *ngIf="columnSetting.hasFilters" [attr.aria-hidden]="!columnSetting.hasFilters" style="display: inline-block;" class="hidden-toggle"
+                          (openChange)="closeChange($event)" container="body" display="dynamic">
+                          <button class="flat-button supress-hover" style="background-color: transparent;" ngbDropdownToggle aria-label="Filter" [title]="'filter by ' + columnSetting.displayName + ' options'" [attr.aria-haspopup]="false">
+                              <span  class="mif-filter" [ngClass]="{'link': columnSetting.hasEffectiveFilters}" placement="bottom-left"></span>
+                          </button>
+                          <ul ngbDropdownMenu role="menu" class="dropdown-layout"  >
+                              <li role="menuitem" class="check-options item" *ngIf="!columnSetting.allChecked">
+                                <button aria-label="Check all options" class="flat-button" (click)="columnSetting.checkAll(); updateList()">Check All</button>
+                              </li>
+                              <li role="menuitem" class="check-options item" *ngIf="!columnSetting.noneChecked">
+                                <button aria-label="unCheck all options" class="flat-button" (click)="columnSetting.uncheckAll(); updateList()">Uncheck All</button>
+                              </li>
+                              <li role="menuitem"  *ngFor="let filterValue of columnSetting.filterValues; let last = last;" class="item">
+                                  <label>
+                                      <input type="checkbox" [(ngModel)]="filterValue.isChecked" (ngModelChange)="updateList();" (click)=" $event.stopPropagation()"   (keydown.tab)="last ? closeDropDown() : null"/>
+                                      {{filterValue.value}}
+                                  </label>
+                              </li>
+                          </ul>
+                      </div>
                         </div>
                         </th>
                     </tr>

@@ -5,6 +5,7 @@ import { AllComponent } from './all/all.component';
 import { EventsComponent } from './events/events.component';
 import { UpgradingComponent } from './upgrading/upgrading.component';
 import { ApptypesComponent } from './apptypes/apptypes.component';
+import { CommandsComponent } from './commands/commands.component';
 
 
 const routes: Routes = [{
@@ -13,6 +14,7 @@ const routes: Routes = [{
     { path: 'apptypes', component: ApptypesComponent },
     { path: 'upgrades', component: UpgradingComponent },
     { path: 'events', component: EventsComponent },
+    { path: 'commands', component: CommandsComponent}
     ]
   }
 ];

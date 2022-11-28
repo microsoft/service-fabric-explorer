@@ -23,6 +23,10 @@ export class BaseComponent extends DeployedReplicaBaseControllerDirective {
     {
       name: 'details',
       route: './details'
+    },
+    {
+      name: 'commands',
+      route: './commands'
     }
   ];
 

@@ -4,6 +4,7 @@ import { BaseComponent } from './base/base.component';
 import { EssentialsComponent } from './essentials/essentials.component';
 import { DetailsComponent } from './details/details.component';
 import { ManifestComponent } from './manifest/manifest.component';
+import { CommandsComponent } from './commands/commands.component';
 
 
 const routes: Routes = [{
@@ -11,6 +12,7 @@ const routes: Routes = [{
     { path: '', component: EssentialsComponent },
     { path: 'details', component: DetailsComponent },
     { path: 'manifest', component: ManifestComponent },
+    { path: 'commands', component: CommandsComponent}
     ]
   }
 ];

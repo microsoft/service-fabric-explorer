@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-import { addDefaultFixtures, apiUrl, FIXTURE_REF_MANIFEST, EMPTY_LIST_TEXT, addRoute, refresh, aad_route } from './util.cy';
+import { addDefaultFixtures, apiUrl, FIXTURE_REF_MANIFEST, EMPTY_LIST_TEXT, addRoute, aad_route, checkCommand } from './util.cy';
 
 const appName = "VisualObjectsApplicationType";
 const waitRequest = "@getapp";
@@ -167,6 +167,17 @@ context('app', () => {
             cy.wait('@getevents')
             cy.url().should('include', '/events')
         })
+    })
+  
+    describe("commands", () => {
+      it('view commands', () => {
+        cy.visit(`/#/apptype/${appName}/app/${appName}`)
+        
+        cy.wait(waitRequest)
+          
+        checkCommand(4, 1);
+          
+      })
     })
 
 })

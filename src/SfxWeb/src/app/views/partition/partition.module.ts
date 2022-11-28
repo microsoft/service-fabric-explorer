@@ -18,10 +18,12 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BackupinfoComponent } from './backupinfo/backupinfo.component';
 import { ChartsModule } from 'src/app/modules/charts/charts.module';
 import { HealthStateModule } from 'src/app/modules/health-state/health-state.module';
+import { CommandsComponent } from './commands/commands.component';
+import { PowershellCommandsModule } from 'src/app/modules/powershell-commands/powershell-commands.module';
 
 
 @NgModule({
-  declarations: [BaseComponent, EssentialsComponent, DetailsComponent, EventsComponent, BackupsComponent, PartitionRestoreBackUpComponent, PartitionTriggerBackUpComponent, BackupinfoComponent],
+  declarations: [BaseComponent, EssentialsComponent, DetailsComponent, EventsComponent, BackupsComponent, PartitionRestoreBackUpComponent, PartitionTriggerBackUpComponent, BackupinfoComponent, CommandsComponent],
   imports: [
     CommonModule,
     PartitionRoutingModule,
@@ -33,7 +35,8 @@ import { HealthStateModule } from 'src/app/modules/health-state/health-state.mod
     PartitionReplicationModule,
     FormsModule,
     ChartsModule,
-    HealthStateModule
+    HealthStateModule,
+    PowershellCommandsModule
   ],
   exports: [BackupinfoComponent]
 })

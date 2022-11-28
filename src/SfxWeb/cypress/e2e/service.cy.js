@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-import { addDefaultFixtures, apiUrl, FIXTURE_REF_MANIFEST, addRoute } from './util.cy';
+import { addDefaultFixtures, apiUrl, FIXTURE_REF_MANIFEST, addRoute, checkCommand } from './util.cy';
 
 const appName = "VisualObjectsApplicationType";
 const serviceName = "VisualObjects.ActorService";
@@ -102,7 +102,14 @@ context('service', () => {
 
             cy.url().should('include', '/backup')
         })
-    })
+
+        it('view commands', () => {
+            cy.wait(waitRequest);
+
+            checkCommand(3, 1);
+    
+        })
+      })
 
     describe("stateful - with auxiliary replicas", () => {
         beforeEach(() => {
