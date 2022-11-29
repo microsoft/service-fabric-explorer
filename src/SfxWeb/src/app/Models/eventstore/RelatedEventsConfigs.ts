@@ -291,12 +291,14 @@ export const differConfigs: IDiffAnalysis[] = [
   {
     type: 'diff',
     name: 'replication',
+    group: 'Replica placement',
     eventType: 'PartitionReconfigurationStarted',
     properties: [
       {
         delimiter: ' ',
         property: 'raw.NewPrimaryNodeName',
         name: 'primary',
+        extendToEnd: true,
         displayTransforms: [
           {
             type: "prefix",
@@ -313,6 +315,47 @@ export const differConfigs: IDiffAnalysis[] = [
         delimiter: ' ',
         property: 'raw.NewSecondaryNodeNames',
         name: 'secondary',
+        extendToEnd: true,
+        displayTransforms: [
+          {
+            type: "prefix",
+            value: "secondary"
+          },
+        ],
+        transforms: [
+          {
+            type: "trimWhiteSpace"
+          },
+          {
+            type: "nullIfEmptyString"
+          },
+        ]
+      },
+
+      {
+        delimiter: ' ',
+        property: 'raw.OldPrimaryNodeName',
+        name: 'primary',
+        extendFromStart: true,
+        firstOnlyEvent: true,
+        displayTransforms: [
+          {
+            type: "prefix",
+            value: "primary"
+          },
+        ],
+        transforms: [
+          {
+            type: "trimWhiteSpace"
+          },
+        ]
+      },
+      {
+        delimiter: ' ',
+        property: 'raw.OldSecondaryNodeNames',
+        name: 'secondary',
+        extendFromStart: true,
+        firstOnlyEvent: true,
         displayTransforms: [
           {
             type: "prefix",

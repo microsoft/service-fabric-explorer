@@ -61,7 +61,7 @@ export const generateTimelineData = (items: IRCAItem[], config: IDiffAnalysis, s
   };
 
   config.properties.forEach(property => {
-    mergeTimelineData(result, new propertyTracker(property, items).generateItems(start, end));
+    mergeTimelineData(result, new propertyTracker(property, property.firstOnlyEvent ? items.slice(0,1) : items).generateItems(start, end));
   })
 
   result.groups.add({
@@ -105,7 +105,7 @@ export class propertyTracker {
     if(Utils.isDefined(currentValues)) {
       currentValues.forEach(value => uniqueValues.add(value));
       currentValues.forEach(value => {
-        valuesLastChanged[value] = startDate;
+        valuesLastChanged[value] = this.property.extendFromStart ? startDate : new Date(this.states[0].timeStamp);
       })
     }
 
@@ -129,9 +129,11 @@ export class propertyTracker {
     })
 
     console.log(valuesLastChanged)
-    Object.keys(valuesLastChanged).forEach(value => {
-      items.add(this.generateTimelineItem(value, valuesLastChanged[value], endDate))
-    })
+    if(this.property.extendToEnd) {
+      Object.keys(valuesLastChanged).forEach(value => {
+        items.add(this.generateTimelineItem(value, valuesLastChanged[value], endDate))
+      })
+    }
 
     const groups: DataGroup[] = Array.from(uniqueValues).map(value => {
       return {
