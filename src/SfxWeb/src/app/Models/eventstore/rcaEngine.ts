@@ -26,10 +26,6 @@ export interface IRelevantEventsConfig {
   result?: string;
 }
 
-export interface IDurationEventConfig {
-
-}
-
 export interface IConcurrentEventsConfig {
   eventType: string; // the event type we are investigating
   relevantEventsType: IRelevantEventsConfig[]; // possible causes we are considering

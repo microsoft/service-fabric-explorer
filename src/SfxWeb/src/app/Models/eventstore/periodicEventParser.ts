@@ -30,7 +30,7 @@ export const generateTimelineData = (items: IRCAItem[], config: IDiffAnalysis, s
   };
 
   config.properties.forEach(property => {
-    const timelineData = new propertyTracker(property, property.firstOnlyEvent ? items.slice(0,1) : items).generateItems(start, end);
+    const timelineData = generateItems(property, property.firstOnlyEvent ? items.slice(0,1) : items, start, end);
     mergeTimelineData(result, timelineData);
   })
 
@@ -66,112 +66,99 @@ export const generateTimelineData = (items: IRCAItem[], config: IDiffAnalysis, s
   return result;
 }
 
-export class propertyTracker {
-  constructor(public property: IDiffProperty, private states: IRCAItem[] = []) { }
-
-  generateItems(startDate: Date, endDate: Date): ITimelineData {
-    if(this.states.length === 0) {
-      return {
-        start: startDate,
-        end: endDate,
-        groups: new DataSet<DataGroup>(),
-        items: new DataSet(),
-      }
-    }
-
-    const items = new DataSet<ITimelineItem>();
-    let uniqueValues = new Set();
-    let valuesLastChanged: Record<string, {event: IRCAItem, date: Date}> = {};
-
-    let currentValues = this.getValues(this.states[0]) || [];
-    if(Utils.isDefined(currentValues)) {
-      currentValues.forEach(value => uniqueValues.add(value));
-      currentValues.forEach(value => {
-        valuesLastChanged[value] = {
-          date: this.property.extendFromStart ? startDate : new Date(this.states[0].timeStamp),
-          event: this.states[0]
-        };
-        if(this.property.firstOnlyEvent) {
-
-        }
-      })
-    }
-
-
-    this.states.slice(1).forEach(state => {
-      const newValues = this.getValues(state);
-      if(Utils.isDefined(newValues)) {
-        this.getRemoved(currentValues, newValues).forEach(removedValue => {
-          items.add(this.generateTimelineItem(removedValue, valuesLastChanged[removedValue].date, new Date(state.timeStamp)))
-          delete valuesLastChanged[removedValue]
-        })
-
-        this.getAdded(currentValues, newValues).forEach(addedValue => {
-          valuesLastChanged[addedValue] = {
-            event: state,
-            date: new Date(state.timeStamp)
-          };
-        })
-
-        currentValues = newValues;
-        currentValues.forEach(value => uniqueValues.add(value));
-      }
-    })
-
-       Object.keys(valuesLastChanged).forEach(value => {
-        const eventDate = valuesLastChanged[value].date;
-        if(this.property.extendToEnd) {
-          items.add(this.generateTimelineItem(value, eventDate, endDate))
-        }else if(new Date(valuesLastChanged[value].event.timeStamp) !== eventDate){
-          items.add(this.generateTimelineItem(value, eventDate, new Date(valuesLastChanged[value].event.timeStamp)))
-        }
-      })
-
-    let groups: DataGroup[] = Array.from(uniqueValues).map(value => {
-      return {
-        id: value.toString(), content: value.toString()
-      }
-    })
-
-    // console.log(items.map(item => item))
+const generateItems = ( property: IDiffProperty, states: IRCAItem[], startDate: Date, endDate: Date): ITimelineData => {
+  if(states.length === 0) {
     return {
       start: startDate,
       end: endDate,
-      groups: new DataSet<DataGroup>(groups),
-      items,
+      groups: new DataSet<DataGroup>(),
+      items: new DataSet(),
     }
   }
 
-  generateTimelineItem(value: any, additionDate: Date, removalDate: Date): ITimelineItem {
+  const items = new DataSet<ITimelineItem>();
+  let uniqueValues = new Set();
+  let valuesLastChanged: Record<string, {event: IRCAItem, date: Date}> = {};
+
+  let currentValues = getValues(states[0], property) || [];
+  if(Utils.isDefined(currentValues)) {
+    currentValues.forEach(value => uniqueValues.add(value));
+    currentValues.forEach(value => {
+      valuesLastChanged[value] = {
+        date: property.extendFromStart ? startDate : new Date(states[0].timeStamp),
+        event: states[0]
+      };
+    })
+  }
+
+
+  states.slice(1).forEach(state => {
+    const newValues = getValues(state, property);
+    if(Utils.isDefined(newValues)) {
+      getRemoved(currentValues, newValues).forEach(removedValue => {
+        items.add(generatePeriodicTimelineItem(removedValue, valuesLastChanged[removedValue].date, new Date(state.timeStamp), property))
+        delete valuesLastChanged[removedValue]
+      })
+
+      getAdded(currentValues, newValues).forEach(addedValue => {
+        valuesLastChanged[addedValue] = {
+          event: state,
+          date: new Date(state.timeStamp)
+        };
+      })
+
+      currentValues = newValues;
+      currentValues.forEach(value => uniqueValues.add(value));
+    }
+  })
+
+     Object.keys(valuesLastChanged).forEach(value => {
+      const eventDate = valuesLastChanged[value].date;
+      if(property.extendToEnd) {
+        items.add(generatePeriodicTimelineItem(value, eventDate, endDate, property))
+      }else if(new Date(valuesLastChanged[value].event.timeStamp) !== eventDate){
+        items.add(generatePeriodicTimelineItem(value, eventDate, new Date(valuesLastChanged[value].event.timeStamp), property))
+      }
+    })
+
+  let groups: DataGroup[] = Array.from(uniqueValues).map(value => {
     return {
-      kind: '',
-      content: Transforms.getTransformations(this.property.displayTransforms || [], value.toString()),
-      group: value.toString(),
-      start: additionDate,
-      end: removalDate,
-      style: `border-color:${Utils.randomColor() };
-      background-color:${Utils.randomColor()};
-      border-width: 4px;
-      border-style: solid;
-      border-radius: 5px;`
+      id: value.toString(), content: value.toString()
     }
+  })
+
+  return {
+    start: startDate,
+    end: endDate,
+    groups: new DataSet<DataGroup>(groups),
+    items,
   }
+}
 
-  getAdded(currentValues: any[], newValues: any[]) {
-    return newValues.filter(item => !currentValues.includes(item))
+const generatePeriodicTimelineItem = (value: any, additionDate: Date, removalDate: Date, property:IDiffProperty): ITimelineItem => {
+  return {
+    kind: '',
+    content: EventStoreUtils.tooltipFormat({}, additionDate.toDateString(), removalDate.toDateString(), Transforms.getTransformations(property.displayTransforms || [], value.toString())),
+    group: value.toString(),
+    start: additionDate,
+    end: removalDate,
+    style:  EventStoreUtils.singleItemStyleOverride(Utils.randomColor())
   }
+}
 
-  getRemoved(currentValues: any[], newValues: any[]) {
-    return currentValues.filter(item => !newValues.includes(item))
-  }
+const getAdded = (currentValues: any[], newValues: any[]) => {
+  return newValues.filter(item => !currentValues.includes(item))
+}
 
-  getValues(item: IRCAItem): any[] {
-    const values = getAndTransform(item, this.property);
-    if (values && this.property.delimiter) {
-      return (values as string).split(this.property.delimiter);
-    } else {
-      return values as any[];
-    }
+const getRemoved = (currentValues: any[], newValues: any[]) => {
+  return currentValues.filter(item => !newValues.includes(item))
+}
 
+const getValues = (item: IRCAItem, property:IDiffProperty): any[] => {
+  const values = getAndTransform(item, property);
+  if (values && property.delimiter) {
+    return (values as string).split(property.delimiter);
+  } else {
+    return values as any[];
   }
 }

@@ -213,12 +213,11 @@ export class EventStoreComponent implements OnInit, OnDestroy, OnChanges {
       };
     }
 
-    console.log(rawEventlist)
-    const temp = getPeriodicEvent(differConfigs, rawEventlist);
+    const periodicEventResults = getPeriodicEvent(differConfigs, rawEventlist);
 
-    temp.forEach(temp => {
-      temp.events.sort((a,b) => Date.parse(a.timeStamp) - Date.parse(b.timeStamp))
-      this.mergeTimelineData(combinedTimelineData, generateTimelineData(temp.events, temp.config, this.startDate, this.endDate));
+    periodicEventResults.forEach(periodicResult => {
+      periodicResult.events.sort((a,b) => Date.parse(a.timeStamp) - Date.parse(b.timeStamp))
+      this.mergeTimelineData(combinedTimelineData, generateTimelineData(periodicResult.events, periodicResult.config, this.startDate, this.endDate));
     })
 
     return combinedTimelineData;

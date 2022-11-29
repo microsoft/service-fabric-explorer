@@ -91,6 +91,14 @@ export class EventStoreUtils {
                 </div>`;
     }
 
+    public static singleItemStyleOverride = (color: string) => {
+      return `border-color:${color};
+              background-color:${color};
+              border-width: 4px;
+              border-style: solid;
+              border-radius: 20px;`
+    }
+
     public static parseUpgradeAndRollback(rollbackCompleteEvent: FabricEventBase, eventIndex: number, rollbackStartedEvent: ClusterEvent, items: DataSet<ITimelineItem>,
                                           startOfRange: Date, group: string, targetVersionProperty: string) {
         const rollbackEnd = rollbackCompleteEvent.timeStamp;
