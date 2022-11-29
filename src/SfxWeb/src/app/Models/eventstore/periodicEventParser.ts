@@ -1,4 +1,3 @@
-import { Component, Input, OnInit } from '@angular/core';
 import { getAndTransform, IPropertyMapper, IRCAItem } from 'src/app/Models/eventstore/rcaEngine';
 import { IAnalysisResultDiff, IDiffAnalysis, IDiffProperty } from 'src/app/Models/eventstore/rcaEngineConfigurations';
 import { EventStoreUtils, ITimelineData, ITimelineItem } from 'src/app/Models/eventstore/timelineGenerators';
@@ -6,36 +5,6 @@ import { Transforms } from 'src/app/Utils/Transforms';
 import { Utils } from 'src/app/Utils/Utils';
 import { DataSet } from 'vis-data';
 import { DataGroup } from 'vis-timeline';
-
-
-//handle strings, numbers and arrays differently
-
-@Component({
-  selector: 'app-diff-viewer',
-  templateUrl: './diff-viewer.component.html',
-  styleUrls: ['./diff-viewer.component.scss']
-})
-export class DiffViewerComponent implements OnInit {
-
-  @Input() diffResult: IAnalysisResultDiff;
-
-  constructor() { }
-
-  ngOnInit(): void {
-
-  }
-
-  generatePoints() {
-
-    const columns: Record<string, Set<string>> = {};
-
-    this.diffResult.config.properties.forEach(property => {
-      columns[property.name] = new Set();
-    })
-
-  }
-
-}
 
 export function mergeTimelineData(combinedData: ITimelineData, data: ITimelineData) {
   data.items.forEach(item => combinedData.items.add(item));
@@ -61,7 +30,8 @@ export const generateTimelineData = (items: IRCAItem[], config: IDiffAnalysis, s
   };
 
   config.properties.forEach(property => {
-    mergeTimelineData(result, new propertyTracker(property, property.firstOnlyEvent ? items.slice(0,1) : items).generateItems(start, end));
+    const timelineData = new propertyTracker(property, property.firstOnlyEvent ? items.slice(0,1) : items).generateItems(start, end);
+    mergeTimelineData(result, timelineData);
   })
 
   result.groups.add({
@@ -71,7 +41,7 @@ export const generateTimelineData = (items: IRCAItem[], config: IDiffAnalysis, s
 
   items.forEach(item => {
     result.items.add({
-      id: item.eventInstanceId,//`${eventIndex}---${event.eventInstanceId}`,
+      id: item.eventInstanceId,
       content: '',
       start: item.timeStamp,
       kind: item.kind,
@@ -80,6 +50,18 @@ export const generateTimelineData = (items: IRCAItem[], config: IDiffAnalysis, s
       className: 'blue'
     });
   })
+
+  if(config.group) {
+    const majorGroup: DataGroup = {
+      id: config.group,
+      content: config.group,
+      nestedGroups: []
+    }
+    result.groups.forEach(group => {
+      majorGroup.nestedGroups.push(group.id);
+    })
+    result.groups.add(majorGroup);
+  }
 
   return result;
 }
@@ -99,13 +81,19 @@ export class propertyTracker {
 
     const items = new DataSet<ITimelineItem>();
     let uniqueValues = new Set();
-    let valuesLastChanged: Record<string, Date> = {};
+    let valuesLastChanged: Record<string, {event: IRCAItem, date: Date}> = {};
 
     let currentValues = this.getValues(this.states[0]) || [];
     if(Utils.isDefined(currentValues)) {
       currentValues.forEach(value => uniqueValues.add(value));
       currentValues.forEach(value => {
-        valuesLastChanged[value] = this.property.extendFromStart ? startDate : new Date(this.states[0].timeStamp);
+        valuesLastChanged[value] = {
+          date: this.property.extendFromStart ? startDate : new Date(this.states[0].timeStamp),
+          event: this.states[0]
+        };
+        if(this.property.firstOnlyEvent) {
+
+        }
       })
     }
 
@@ -113,14 +101,16 @@ export class propertyTracker {
     this.states.slice(1).forEach(state => {
       const newValues = this.getValues(state);
       if(Utils.isDefined(newValues)) {
-        console.log(currentValues, newValues)
         this.getRemoved(currentValues, newValues).forEach(removedValue => {
-          items.add(this.generateTimelineItem(removedValue, valuesLastChanged[removedValue], new Date(state.timeStamp)))
+          items.add(this.generateTimelineItem(removedValue, valuesLastChanged[removedValue].date, new Date(state.timeStamp)))
           delete valuesLastChanged[removedValue]
         })
 
         this.getAdded(currentValues, newValues).forEach(addedValue => {
-          valuesLastChanged[addedValue] = new Date(state.timeStamp);
+          valuesLastChanged[addedValue] = {
+            event: state,
+            date: new Date(state.timeStamp)
+          };
         })
 
         currentValues = newValues;
@@ -128,20 +118,22 @@ export class propertyTracker {
       }
     })
 
-    console.log(valuesLastChanged)
-    if(this.property.extendToEnd) {
-      Object.keys(valuesLastChanged).forEach(value => {
-        items.add(this.generateTimelineItem(value, valuesLastChanged[value], endDate))
+       Object.keys(valuesLastChanged).forEach(value => {
+        const eventDate = valuesLastChanged[value].date;
+        if(this.property.extendToEnd) {
+          items.add(this.generateTimelineItem(value, eventDate, endDate))
+        }else if(new Date(valuesLastChanged[value].event.timeStamp) !== eventDate){
+          items.add(this.generateTimelineItem(value, eventDate, new Date(valuesLastChanged[value].event.timeStamp)))
+        }
       })
-    }
 
-    const groups: DataGroup[] = Array.from(uniqueValues).map(value => {
+    let groups: DataGroup[] = Array.from(uniqueValues).map(value => {
       return {
         id: value.toString(), content: value.toString()
       }
     })
 
-    console.log(items.map(item => item))
+    // console.log(items.map(item => item))
     return {
       start: startDate,
       end: endDate,
@@ -174,9 +166,7 @@ export class propertyTracker {
   }
 
   getValues(item: IRCAItem): any[] {
-    // console.log(item, this.property.property)
     const values = getAndTransform(item, this.property);
-    console.log(item, values)
     if (values && this.property.delimiter) {
       return (values as string).split(this.property.delimiter);
     } else {

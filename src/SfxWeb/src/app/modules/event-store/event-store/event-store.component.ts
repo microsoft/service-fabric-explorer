@@ -11,12 +11,11 @@ import { IOptionConfig, IOptionData } from '../option-picker/option-picker.compo
 import { TelemetryService } from 'src/app/services/telemetry.service';
 import { TelemetryEventNames } from 'src/app/Common/Constants';
 import { differConfigs, RelatedEventsConfigs } from '../../../Models/eventstore/RelatedEventsConfigs';
-import { Utils } from 'src/app/Utils/Utils';
 import { ListColumnSettingWithCustomComponent } from 'src/app/Models/ListSettings';
 import { VisualizationToolComponent } from '../../concurrent-events-visualization/visualization-tool/visualization-tool.component';
 import { VisualizationLogoComponent } from '../../concurrent-events-visualization/visualization-logo/visualization-logo.component';
 import { getPeriodicEvent, getSimultaneousEventsForEvent, IConcurrentEvents, IRCAItem } from 'src/app/Models/eventstore/rcaEngine';
-import { generateTimelineData } from '../../concurrent-events-visualization/diff-viewer/diff-viewer.component';
+import { generateTimelineData } from 'src/app/Models/eventstore/periodicEventParser';
 
 export interface IQuickDates {
   display: string;

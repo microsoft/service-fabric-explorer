@@ -7,7 +7,6 @@ import { RcaOverviewComponent } from './rca-overview/rca-overview.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { RelationViewerComponent } from './relation-viewer/relation-viewer.component';
-import { DiffViewerComponent } from './diff-viewer/diff-viewer.component';
 
 @NgModule({
   declarations: [
@@ -16,7 +15,6 @@ import { DiffViewerComponent } from './diff-viewer/diff-viewer.component';
     RcaSummaryComponent,
     RcaOverviewComponent,
     RelationViewerComponent,
-    DiffViewerComponent
   ],
   imports: [
     CommonModule,
@@ -26,7 +24,6 @@ import { DiffViewerComponent } from './diff-viewer/diff-viewer.component';
   exports:[
     VisualizationToolComponent,
     RcaSummaryComponent,
-    DiffViewerComponent
   ]
 })
 export class ConcurrentEventsVisualizationModule { }
