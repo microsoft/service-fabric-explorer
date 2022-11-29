@@ -709,12 +709,12 @@ export class RestClientService {
       return this.getEvents(ClusterEvent, 'EventsStore/Cluster/Events', startTime, endTime, [], messageHandler, RestClientService.apiVersion80);
   }
 
-  public getNodeEvents(startTime: Date, endTime: Date, nodeName?: string, messageHandler?: IResponseMessageHandler): Observable<NodeEvent[]> {
+  public getNodeEvents(startTime: Date, endTime: Date, nodeName?: string, eventsFilter: string[] = [], messageHandler?: IResponseMessageHandler): Observable<NodeEvent[]> {
       const url = 'EventsStore/'
           + 'Nodes/'
           + (nodeName ? (encodeURIComponent(nodeName) + '/$/') : '')
           + 'Events';
-      return this.getEvents(NodeEvent, url, startTime, endTime, [], messageHandler);
+      return this.getEvents(NodeEvent, url, startTime, endTime, eventsFilter, messageHandler);
   }
 
   public getApplicationEvents(startTime: Date, endTime: Date, eventsFilter: string[], applicationId?: string, messageHandler?: IResponseMessageHandler): Observable<ApplicationEvent[]> {
@@ -725,29 +725,29 @@ export class RestClientService {
       return this.getEvents(ApplicationEvent, url, startTime, endTime, eventsFilter, messageHandler);
   }
 
-  public getServiceEvents(startTime: Date, endTime: Date, serviceId?: string, messageHandler?: IResponseMessageHandler): Observable<ServiceEvent[]> {
+  public getServiceEvents(startTime: Date, endTime: Date, serviceId?: string, eventsFilter: string[] = [], messageHandler?: IResponseMessageHandler): Observable<ServiceEvent[]> {
       const url = 'EventsStore/'
           + 'Services/'
           + (serviceId ? (encodeURIComponent(serviceId) + '/$/') : '')
           + 'Events';
-      return this.getEvents(ServiceEvent, url, startTime, endTime, [], messageHandler);
+      return this.getEvents(ServiceEvent, url, startTime, endTime, eventsFilter, messageHandler);
   }
 
-  public getPartitionEvents(startTime: Date, endTime: Date, partitionId?: string, messageHandler?: IResponseMessageHandler): Observable<PartitionEvent[]> {
+  public getPartitionEvents(startTime: Date, endTime: Date, partitionId?: string, eventsFilter: string[] = [], messageHandler?: IResponseMessageHandler): Observable<PartitionEvent[]> {
       const url = 'EventsStore/'
           + 'Partitions/'
           + (partitionId ? (encodeURIComponent(partitionId) + '/$/') : '')
           + 'Events';
-      return this.getEvents(PartitionEvent, url, startTime, endTime, [], messageHandler);
+      return this.getEvents(PartitionEvent, url, startTime, endTime, eventsFilter, messageHandler);
   }
 
-  public getReplicaEvents(startTime: Date, endTime: Date, partitionId: string, replicaId?: string, messageHandler?: IResponseMessageHandler): Observable<ReplicaEvent[]> {
+  public getReplicaEvents(startTime: Date, endTime: Date, partitionId: string, replicaId?: string, eventsFilter: string[] = [], messageHandler?: IResponseMessageHandler): Observable<ReplicaEvent[]> {
       const url = 'EventsStore/'
           + 'Partitions/'
           + encodeURIComponent(partitionId) + '/$/' + 'Replicas/'
           + (replicaId ? (encodeURIComponent(replicaId) + '/$/') : '')
           + 'Events';
-      return this.getEvents(ReplicaEvent, url, startTime, endTime, [], messageHandler);
+      return this.getEvents(ReplicaEvent, url, startTime, endTime, eventsFilter, messageHandler);
   }
 
   public getCorrelatedEvents(eventInstanceId: string, messageHandler?: IResponseMessageHandler): Observable<FabricEvent[]> {

@@ -497,7 +497,7 @@ export class NodeEventList extends EventListBase<NodeEvent> {
     }
 
     protected retrieveEvents(messageHandler?: IResponseMessageHandler): Observable<FabricEventInstanceModel<NodeEvent>[]> {
-        return this.data.restClient.getNodeEvents(this.queryStartDate, this.queryEndDate, this.nodeName, messageHandler)
+        return this.data.restClient.getNodeEvents(this.queryStartDate, this.queryEndDate, this.nodeName, this.eventsTypesFilter, messageHandler)
             .pipe(map(result => {
                 return result.map(event => new FabricEventInstanceModel<NodeEvent>(this.data, event));
             }));
@@ -552,7 +552,7 @@ export class ServiceEventList extends EventListBase<ServiceEvent> {
     }
 
     protected retrieveEvents(messageHandler?: IResponseMessageHandler): Observable<FabricEventInstanceModel<ServiceEvent>[]> {
-        return this.data.restClient.getServiceEvents(this.queryStartDate, this.queryEndDate, this.serviceId, messageHandler)
+        return this.data.restClient.getServiceEvents(this.queryStartDate, this.queryEndDate, this.serviceId, this.eventsTypesFilter, messageHandler)
             .pipe(map(result => {
                 return result.map(event => new FabricEventInstanceModel<ServiceEvent>(this.data, event));
             }));
@@ -577,7 +577,7 @@ export class PartitionEventList extends EventListBase<PartitionEvent> {
     }
 
     protected retrieveEvents(messageHandler?: IResponseMessageHandler): Observable<FabricEventInstanceModel<PartitionEvent>[]> {
-        return this.data.restClient.getPartitionEvents(this.queryStartDate, this.queryEndDate, this.partitionId, messageHandler)
+        return this.data.restClient.getPartitionEvents(this.queryStartDate, this.queryEndDate, this.partitionId, this.eventsTypesFilter, messageHandler)
             .pipe(map(result => {
                 return result.map(event => new FabricEventInstanceModel<PartitionEvent>(this.data, event));
             }));
@@ -604,7 +604,7 @@ export class ReplicaEventList extends EventListBase<ReplicaEvent> {
     }
 
     protected retrieveEvents(messageHandler?: IResponseMessageHandler): Observable<FabricEventInstanceModel<ReplicaEvent>[]> {
-        return this.data.restClient.getReplicaEvents(this.queryStartDate, this.queryEndDate, this.partitionId, this.replicaId, messageHandler)
+        return this.data.restClient.getReplicaEvents(this.queryStartDate, this.queryEndDate, this.partitionId, this.replicaId, this.eventsTypesFilter, messageHandler)
             .pipe(map(result => {
                 return result.map(event => new FabricEventInstanceModel<ReplicaEvent>(this.data, event));
             }));
