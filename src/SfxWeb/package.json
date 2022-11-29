@@ -20,7 +20,8 @@
     "test:coverage": "npx nyc report --reporter=lcov --reporter=text-summary",
     "analyze": "webpack-bundle-analyzer dist/stats.json",
     "replaceEnv": "node replaceEnvVars.js",
-    "test-coverage": "node combined.js"
+    "test-coverage": "node combined.js",
+    "stop-only": "stop-only --folder cypress/e2e"
   },
   "private": true,
   "dependencies": {
@@ -96,6 +97,7 @@
     "protractor": "~7.0.0",
     "source-map-support": "^0.5.20",
     "start-server-and-test": "^1.12.0",
+    "stop-only": "^3.1.2",
     "ts-node": "^7.0.1",
     "typescript": "~4.6.4",
     "webpack-bundle-analyzer": "^4.5.0"
