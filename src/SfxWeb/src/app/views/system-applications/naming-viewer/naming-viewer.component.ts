@@ -89,7 +89,7 @@ export class NamingViewerComponent implements OnInit {
       const ess = [];
       app.partitions.ensureInitialized().subscribe(_ => {
         forkJoin(app.partitions.collection.map(partition => {
-          const es = this.dataService.getPartitionEventData(partition.id);
+          const es = this.dataService.getReplicaEventData(partition.id);
           ess.push(es);
           return es.eventsList.refresh();
         })).subscribe(() => {
