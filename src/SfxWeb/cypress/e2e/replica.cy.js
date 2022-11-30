@@ -72,22 +72,22 @@ context('replica', () => {
             cy.get('[data-cy=navtabs]').within(() => {
                 cy.contains('commands').click();
             });
-    
+
             cy.url().should('include', 'commands');
-            
+
             cy.wait(500);
-    
+
             cy.get('[data-cy=safeCommands]');
             cy.get('[data-cy=unsafeCommands]');
-    
+
             cy.get('[data-cy=command]').should('have.length', 2);
-    
+
             cy.get('[data-cy=commandNav]').within(() => {
                 cy.contains('Unsafe Commands').click();
             })
-    
+
             cy.get('[data-cy=submit]').click();
-    
+
             cy.get('[data-cy=command]').should('have.length', 2).within(() => {
                 cy.contains('Restart Replica')
             });
@@ -100,22 +100,22 @@ context('replica', () => {
             cy.get('[data-cy=navtabs]').within(() => {
                 cy.contains('commands').click();
             });
-    
+
             cy.url().should('include', 'commands');
-            
+
             cy.wait(500);
-    
+
             cy.get('[data-cy=safeCommands]');
             cy.get('[data-cy=unsafeCommands]');
-    
+
             cy.get('[data-cy=command]').should('have.length', 2);
-    
+
             cy.get('[data-cy=commandNav]').within(() => {
                 cy.contains('Unsafe Commands').click();
             })
-    
+
             cy.get('[data-cy=submit]').click();
-    
+
             cy.get('[data-cy=command]').should('have.length', 5).within(() => {
                 cy.contains('Restart Replica')
                 cy.contains('Move Secondary Replica To Specifc Node')
@@ -141,7 +141,7 @@ context('replica', () => {
             addRoute("replicaHealth", "replica-page/health.json", apiUrl(`${baseUrl}/$/GetReplicas/${replicaId}/$/GetHealth?*`))
             addRoute("details", "replica-page/stateless-replica-detail.json", apiUrl(`/Nodes/_nt_3/$/GetPartitions/${partitionId}/$/GetReplicas/${replicaId}/$/GetDetail?*`))
             addRoute("partitions", "replica-page/stateless-service-partitions.json", apiUrl(`/Applications/${appName}/$/GetServices/${appName}%2F${serviceName}/$/GetPartitions?*`))
-            
+
             cy.visit(`/#/apptype/${appName}/app/${appName}/service/${appName}%252F${serviceName}/partition/${partitionId}/replica/${replicaId}`)
         })
 
@@ -167,22 +167,22 @@ context('replica', () => {
             cy.get('[data-cy=navtabs]').within(() => {
                 cy.contains('commands').click();
             });
-    
+
             cy.url().should('include', 'commands');
-            
+
             cy.wait(500);
-    
+
             cy.get('[data-cy=safeCommands]');
             cy.get('[data-cy=unsafeCommands]');
-    
+
             cy.get('[data-cy=command]').should('have.length', 2);
-    
+
             cy.get('[data-cy=commandNav]').within(() => {
                 cy.contains('Unsafe Commands').click();
             })
-    
+
             cy.get('[data-cy=submit]').click();
-    
+
             cy.get('[data-cy=command]').should('have.length', 2).within(() => {
                 cy.contains('Move Instance')
             });;

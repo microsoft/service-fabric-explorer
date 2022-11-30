@@ -6,7 +6,7 @@ import {
   checkTableErrorMessage, EMPTY_LIST_TEXT, FAILED_TABLE_TEXT, FAILED_LOAD_TEXT,
   repairTask_route, manifest_route, CLUSTER_TAB_NAME, REPAIR_TASK_TAB_NAME,
   FIXTURE_REF_NODES, FIXTURE_NODES, typeIntoInput, checkCheckBox, refresh,
-  FIXTURE_REF_SYSTEMAPPS, systemApps_route, checkCommand
+  FIXTURE_REF_SYSTEMAPPS, systemApps_route, checkCommand, FIXTURE_REF_APPTYPES
 } from './util.cy';
 
 const LOAD_INFO = "getloadinfo"
@@ -574,7 +574,7 @@ context('Cluster page', () => {
       addRoute('repairs', file, apiUrl('/$/GetRepairTaskList?*'))
       cy.visit('/#/repairtasks')
 
-      cy.wait("@getrepairs")
+      cy.wait(["@getrepairs", FIXTURE_REF_APPTYPES])
     }
 
     it('loads properly', () => {
@@ -748,7 +748,7 @@ context('Cluster page', () => {
   describe("commands", () => {
     beforeEach(() => {
       cy.visit('');
-        
+
       cy.wait(FIXTURE_REF_CLUSTERHEALTH)
     })
 
@@ -763,7 +763,7 @@ context('Cluster page', () => {
       });
 
       cy.url().should('include', 'commands');
-      
+
       cy.wait(500);
 
       cy.get('[data-cy=commandNav]').within(() => {
@@ -800,10 +800,10 @@ context('Cluster page', () => {
 
         cy.contains('Description').type('description sentence')
         cy.get('[data-cy=copy-text]').should('include.text', '-Description  "description sentence"')
-      
+
         cy.contains('TimeToLiveSec').type('10')
         cy.get('[data-cy=copy-text]').should('include.text', '-TimeToLiveSec  10')
-        
+
         cy.contains('RemoveWhenExpired').click()
         cy.get('[data-cy=copy-text]').should('include.text', '-RemoveWhenExpired')
 
