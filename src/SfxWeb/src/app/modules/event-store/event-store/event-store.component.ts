@@ -16,7 +16,6 @@ import { VisualizationToolComponent } from '../../concurrent-events-visualizatio
 import { VisualizationLogoComponent } from '../../concurrent-events-visualization/visualization-logo/visualization-logo.component';
 import { getPeriodicEvent, getSimultaneousEventsForEvent, IConcurrentEvents, IRCAItem } from 'src/app/Models/eventstore/rcaEngine';
 import { generateTimelineData } from 'src/app/Models/eventstore/periodicEventParser';
-
 export interface IQuickDates {
   display: string;
   hours: number;
@@ -217,7 +216,10 @@ export class EventStoreComponent implements OnInit, OnDestroy, OnChanges {
 
     periodicEventResults.forEach(periodicResult => {
       periodicResult.events.sort((a,b) => Date.parse(a.timeStamp) - Date.parse(b.timeStamp))
-      this.mergeTimelineData(combinedTimelineData, generateTimelineData(periodicResult.events, periodicResult.config, this.startDate, this.endDate));
+      const data = generateTimelineData(periodicResult.events, periodicResult.config, this.startDate, this.endDate);
+      if(data.items.length > 0) {
+        this.mergeTimelineData(combinedTimelineData, data);
+      }
     })
 
     return combinedTimelineData;

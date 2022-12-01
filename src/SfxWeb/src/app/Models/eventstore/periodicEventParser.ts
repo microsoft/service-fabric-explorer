@@ -94,8 +94,10 @@ const generateItems = ( property: IDiffProperty, states: IRCAItem[], startDate: 
 
   states.slice(1).forEach(state => {
     const newValues = getValues(state, property);
+    console.log(newValues)
     if(Utils.isDefined(newValues)) {
       getRemoved(currentValues, newValues).forEach(removedValue => {
+        console.log(removedValue)
         items.add(generatePeriodicTimelineItem(removedValue, valuesLastChanged[removedValue].date, new Date(state.timeStamp), property))
         delete valuesLastChanged[removedValue]
       })
@@ -138,11 +140,12 @@ const generateItems = ( property: IDiffProperty, states: IRCAItem[], startDate: 
 const generatePeriodicTimelineItem = (value: any, additionDate: Date, removalDate: Date, property:IDiffProperty): ITimelineItem => {
   return {
     kind: '',
-    content: EventStoreUtils.tooltipFormat({}, additionDate.toDateString(), removalDate.toDateString(), Transforms.getTransformations(property.displayTransforms || [], value.toString())),
+    content: Transforms.getTransformations(property.displayTransforms || [], value.toString()),
+    title:  EventStoreUtils.tooltipFormat({}, additionDate.toISOString(), removalDate.toISOString(), Transforms.getTransformations(property.displayTransforms || [], value.toString())),
     group: value.toString(),
     start: additionDate,
     end: removalDate,
-    style:  EventStoreUtils.singleItemStyleOverride(Utils.randomColor())
+    style:  EventStoreUtils.singleItemStyleOverride(Utils.randomColor(), 5)
   }
 }
 

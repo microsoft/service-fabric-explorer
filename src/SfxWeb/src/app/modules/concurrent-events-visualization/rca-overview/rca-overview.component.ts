@@ -140,7 +140,7 @@ export class RcaOverviewComponent implements AfterViewInit, OnChanges {
           kind: item.kind,
           title: EventStoreUtils.tooltipFormat(item.eventProperties, item.eventInstanceId, item.timeStamp),
           className: 'hidden-dot',
-          style: EventStoreUtils.singleItemStyleOverride(this.colorKey[group[0]])
+          style: EventStoreUtils.singleItemStyleOverride(this.colorKey[group[0]], 20)
         };
         items.add(timelineItem)
       })
