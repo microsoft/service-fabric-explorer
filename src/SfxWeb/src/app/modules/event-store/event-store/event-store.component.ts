@@ -6,7 +6,7 @@ import { Subject, Subscription, forkJoin } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { DataService } from 'src/app/services/data.service';
 import { DataGroup, DataItem, DataSet, Timeline } from 'vis-timeline/standalone/esm';
-import { ListColumnSettingWithEmbeddedVisTool, ListSettings } from 'src/app/Models/ListSettings';
+import { ListColumnSetting, ListColumnSettingWithEmbeddedVisTool, ListSettings } from 'src/app/Models/ListSettings';
 import { IOptionConfig, IOptionData } from '../option-picker/option-picker.component';
 import { TelemetryService } from 'src/app/services/telemetry.service';
 import { TelemetryEventNames } from 'src/app/Common/Constants';
@@ -16,6 +16,78 @@ import { ListColumnSettingWithCustomComponent } from 'src/app/Models/ListSetting
 import { VisualizationToolComponent } from '../../concurrent-events-visualization/visualization-tool/visualization-tool.component';
 import { VisualizationLogoComponent } from '../../concurrent-events-visualization/visualization-logo/visualization-logo.component';
 import { getSimultaneousEventsForEvent, IConcurrentEvents, IRCAItem } from 'src/app/Models/eventstore/rcaEngine';
+import initSqlJs, { Database } from 'sql.js';
+
+const isoChecker = new RegExp(/\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+([+-][0-2]\d:[0-5]\d|Z)/);
+
+const getPropertyList = (object, prefix = "") => {
+
+  let columns = [];
+  let flattenedObject = {};
+  Object.keys(object).forEach(key => {
+    const value = object[key];
+    const properKey = prefix + key;
+    const type = typeof value;
+
+    let isObj = false;
+
+    if (type === "string") {
+      if (isoChecker.test(value)) {
+        // columns.push({
+        //     key: properKey,
+        //     type: 'date'
+        // })
+      } else {
+        columns.push({
+          key: properKey,
+          type: 'MEDIUMTEXT'
+        })
+      }
+    } else if (type === "number") {
+      columns.push({
+        key: properKey,
+        type: object[properKey] % 1 === 0 ? 'INTEGER' : 'FLOAT'
+      })
+    } else if (type === "boolean") {
+      columns.push({
+        key: properKey,
+        type: 'BOOLEAN'
+      })
+    } else if (type === "object" && !Array.isArray(value)) {
+      const result = getPropertyList(value, key + "_");
+      columns = columns.concat(result.columns);
+      flattenedObject = { ...flattenedObject, ...result.properties }
+      isObj = true;
+    }
+
+    if (!isObj) {
+      flattenedObject[properKey] = value;
+    }
+  })
+
+  return { columns, properties: flattenedObject };
+}
+
+const getPropertiesFromList = (objects) => {
+  const allProperties = [];
+  const seenProperties = new Set();
+
+  const flattenedObjects = [];
+  objects.forEach(obj => {
+    const objProperties = getPropertyList(obj);
+    flattenedObjects.push(objProperties.properties);
+    objProperties.columns.forEach(obj => {
+      if (!seenProperties.has(obj.key)) {
+        allProperties.push(obj);
+        seenProperties.add(obj.key)
+      }
+    })
+  })
+
+  return { allProperties, flattenedObjects };
+}
+
+
 
 export interface IQuickDates {
   display: string;
@@ -42,6 +114,11 @@ export interface IEventStoreData<IVisPresentEvent, S> {
 export class EventStoreComponent implements OnInit, OnDestroy, OnChanges {
 
   constructor(public dataService: DataService, private telemService: TelemetryService) { }
+
+  queryString = "";
+  db: Database;
+  result = {};
+  resultTableSettings: ListSettings;
 
   public get showAllEvents() { return this.pshowAllEvents; }
   public set showAllEvents(state: boolean) {
@@ -77,6 +154,33 @@ export class EventStoreComponent implements OnInit, OnDestroy, OnChanges {
 
   public simulEvents: IConcurrentEvents[] = [];
   public activeTab: string;
+
+  query() {
+    try {
+     this.result = this.db.exec(this.queryString);
+      console.log(this.result);
+     this.resultTableSettings = new ListSettings(100, [], 'results', []);
+     const columns = this.result[0].columns;
+     columns.forEach(column => {
+      this.resultTableSettings.columnSettings.push(new ListColumnSetting(column, column));
+     })
+
+     this.result['objs'] = this.result[0].values.map(items => {
+      const r = {};
+      columns.forEach((column, i) => {
+        r[column] = items[i];
+      })
+
+      return r;
+     })
+
+    } catch(e) {
+      this.resultTableSettings = null;
+      this.result = {
+        error: e.toString()
+      }
+    }
+  }
 
   ngOnInit() {
     this.pshowAllEvents = this.checkAllOption();
@@ -178,28 +282,87 @@ export class EventStoreComponent implements OnInit, OnDestroy, OnChanges {
       const names = this.listEventStoreData.map(item => item.displayName).sort();
       this.telemService.trackActionEvent(TelemetryEventNames.CombinedEventStore, { value: names.toString() }, names.toString());
     }
-    for (const data of this.listEventStoreData) {
-      if (data.eventsList.lastRefreshWasSuccessful) {
-        try {
-          if (this.pshowAllEvents) {
-            if (data.setDateWindow) {
-              rawEventlist = rawEventlist.concat(data.getEvents());
+
+    // const initSqlJs = require('sql.js');
+    initSqlJs({
+      locateFile: file => `https://sql.js.org/dist/${file}`
+
+    }).then(SQL => {
+      // Create a database
+      const db = new SQL.Database();
+      this.db = db;
+      // NOTE: You can also use new SQL.Database(data) where
+      // data is an Uint8Array representing an SQLite database file
+
+
+      for (const data of this.listEventStoreData) {
+        if (data.eventsList.lastRefreshWasSuccessful) {
+          try {
+            if (this.pshowAllEvents) {
+              if (data.setDateWindow) {
+                rawEventlist = rawEventlist.concat(data.getEvents());
+              }
+
+            } else if (data.timelineGenerator) {
+              // If we have more than one element in the timeline the events get grouped by the displayName of the element.
+              data.timelineData = data.timelineGenerator.generateTimeLineData(data.getEvents(), this.startDate, this.endDate, addNestedGroups ? data.displayName : null);
+
             }
 
-          } else if (data.timelineGenerator) {
-            // If we have more than one element in the timeline the events get grouped by the displayName of the element.
-            data.timelineData = data.timelineGenerator.generateTimeLineData(data.getEvents(), this.startDate, this.endDate, addNestedGroups ? data.displayName : null);
+            console.log(data.getEvents())
+            const properties = getPropertiesFromList(data.getEvents().map(item => item.raw));
+            console.log(properties);
 
-            this.mergeTimelineData(combinedTimelineData, data.timelineData);
+            // Execute a single SQL string that contains multiple statements
+            if(properties.allProperties.length > 0 ){
+              const createTableLine = `CREATE TABLE ${data.displayName} (${properties.allProperties.map((key, index) => key.key + " " + key.type)})`;
+
+              const prefix = `INSERT INTO ${data.displayName} VALUES `;
+              let rows = "";
+              properties.flattenedObjects.forEach(obj => {
+                const propertiesList = [];
+
+                properties.allProperties.forEach(prop => {
+                  if (prop.key in obj) {
+                    if (prop.type === "MEDIUMTEXT") {
+                      propertiesList.push(`"${obj[prop.key]}"`)
+
+                    } else {
+                      propertiesList.push(obj[prop.key])
+                    }
+                  } else {
+                    propertiesList.push('null')
+                  }
+                })
+
+                rows += `${prefix} (${propertiesList}); \n`
+              })
+
+              let sqlstr = `
+                          ${createTableLine};
+                          ${rows}`;
+              // CREATE TABLE hello (a int, b char);
+              // console.log(sqlstr)
+              const r = db.run(sqlstr); // Run the query without returning anything
+
+              // Prepare an sql statement
+              // const stmt = db.exec(`select * from Nodes where NodeInstanceId = 133143180153373540`);
+              // console.log(db.exec(`select * from Nodes where NodeInstanceId = 133143180153373540`))
+              // console.log(db.exec(`select * from ${data.displayName}`))
+            }
+          } catch (e) {
+            console.error(e);
           }
-        } catch (e) {
-          console.error(e);
         }
+        else {
+          this.failedRefresh = true;
+        }
+
+        this.mergeTimelineData(combinedTimelineData, data.timelineData);
+
       }
-      else {
-        this.failedRefresh = true;
-      }
-    }
+
+    })
 
     if (this.pshowAllEvents) {
       const d = parseEventsGenerically(rawEventlist, this.transformText);
@@ -230,13 +393,13 @@ export class EventStoreComponent implements OnInit, OnDestroy, OnChanges {
     this.simulEvents = getSimultaneousEventsForEvent(RelatedEventsConfigs, sourceEvents, sourceEvents);
     // grab highcharts data for all events
     for (let parsedEvent of allEvents) {
-        let rootEvent = this.simulEvents.find(event => event.eventInstanceId === parsedEvent.eventInstanceId);
-        let visPresent = false;
-        if (rootEvent.reason) {
-            visPresent = true;
-        }
+      let rootEvent = this.simulEvents.find(event => event.eventInstanceId === parsedEvent.eventInstanceId);
+      let visPresent = false;
+      if (rootEvent.reason) {
+        visPresent = true;
+      }
 
-        (parsedEvent as any).visPresent = visPresent;
+      (parsedEvent as any).visPresent = visPresent;
 
     }
 
