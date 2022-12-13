@@ -1,11 +1,11 @@
 <div class="essen-pane detail-pane">
-  <div style="margin-bottom: 10px;">
+  <div class="flex-container" style="margin-bottom: 10px; flex-wrap: wrap; gap: 10px;">
     <app-time-picker (dateChange)="setDate($event)"></app-time-picker>
-  </div>
-  <div ngbDropdown style="margin-left: 10px;"  *ngIf="optionsConfig">
-    <button class="simple-button" ngbDropdownToggle sectionName="select-event-types">Event Types </button>
-    <div ngbDropdownMenu>
-      <app-option-picker [optionsConfig]="optionsConfig" (selectedOption)="processData($event)" [listEventStoreData]="listEventStoreData"></app-option-picker>
+    <div>
+      <p *ngIf="timeLineEventsData?.potentiallyMissingEvents" style="display: inline-block; margin-left: 10px;">
+        <app-health-badge badgeClass="badge-warning"></app-health-badge>
+        Potentially missing or misleading events!
+      </p>
     </div>
   </div>
   <div *ngIf="startDate && endDate">

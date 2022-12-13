@@ -1,6 +1,9 @@
-import { Component, Input, OnChanges, ViewChildren, QueryList, AfterViewInit, Type } from '@angular/core';
-import { ITimelineData, TimeLineGeneratorBase } from 'src/app/Models/eventstore/timelineGenerators';
+import { Component, OnInit, Input, OnDestroy, OnChanges } from '@angular/core';
+import { ITimelineData, TimeLineGeneratorBase, parseEventsGenerically, ITimelineItem } from 'src/app/Models/eventstore/timelineGenerators';
+import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { IOnDateChange } from '../../time-picker/double-slider/double-slider.component';
+import { Subject, Subscription, forkJoin } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { DataService } from 'src/app/services/data.service';
 import { ListColumnSettingWithEmbeddedVisTool, ListSettings } from 'src/app/Models/ListSettings';
 import { IOptionConfig, IOptionData } from '../option-picker/option-picker.component';
@@ -9,12 +12,6 @@ import { ListColumnSettingWithCustomComponent } from 'src/app/Models/ListSetting
 import { VisualizationToolComponent } from '../../concurrent-events-visualization/visualization-tool/visualization-tool.component';
 import { VisualizationLogoComponent } from '../../concurrent-events-visualization/visualization-logo/visualization-logo.component';
 import { getSimultaneousEventsForEvent, IConcurrentEvents, IRCAItem } from 'src/app/Models/eventstore/rcaEngine';
-import { TimelineComponent } from '../timeline/timeline.component';
-import { forkJoin } from 'rxjs';
-import { VisualizationDirective } from '../visualization.directive';
-import { VisualizationComponent } from '../visualizationComponents';
-import { RcaVisualizationComponent } from '../rca-visualization/rca-visualization.component';
-
 export interface IEventStoreData<IVisPresentEvent, S> {
   eventsList: IVisPresentEvent;
   timelineGenerator?: TimeLineGeneratorBase<S>;
@@ -31,54 +28,43 @@ export interface IEventStoreData<IVisPresentEvent, S> {
   templateUrl: './event-store.component.html',
   styleUrls: ['./event-store.component.scss']
 })
-export class EventStoreComponent implements OnChanges, AfterViewInit {
+export class EventStoreComponent implements OnInit, OnChanges {
 
-  constructor(public dataService: DataService) { }
+  constructor(public dataService: DataService, private telemService: TelemetryService) { }
+
+  // public get showAllEvents() { return this.pshowAllEvents; }
+  // public set showAllEvents(state: boolean) {
+  //   this.pshowAllEvents = state;
+  //   this.timeLineEventsData = this.getTimelineData();
+  // }
+
 
   @ViewChildren(VisualizationDirective) vizDirs: QueryList<VisualizationDirective>;
   @Input() listEventStoreData: IEventStoreData<any, any>[];
   @Input() optionsConfig: IOptionConfig;
 
   public failedRefresh = false;
+  // public timeLineEventsData: ITimelineData;
+
+  // public transformText = 'Category,Kind';
+
+  // private pshowAllEvents = false;
+  // public showCorrelatedBtn = false;
+
   public simulEvents: IConcurrentEvents[] = [];
   public activeTab: string;
 
-  public startDate: Date;
-  public endDate: Date;
+  private startDate: Date;
+  private endDate: Date;
 
-  private visualizations: VisualizationComponent[] = [];
-  private vizRefs: Type<any>[] = [TimelineComponent, RcaVisualizationComponent];
-  
-  ngAfterViewInit() {
-    this.setVisualizations();
+  ngOnInit() {
+    // this.pshowAllEvents = this.checkAllOption();
+    // this.showCorrelatedBtn = !this.pshowAllEvents;
+    // this.setTimelineData();
+    
   }
 
   ngOnChanges(): void {
-    this.update();
-  }
-
-  private setVisualizations(): void {
-    this.vizDirs.forEach((dir, i) => {
-      const componentRef = dir.viewContainerRef.createComponent<VisualizationComponent>(this.vizRefs[i]);
-      const instance = componentRef.instance;
-      
-      instance.listEventStoreData = this.listEventStoreData;
-      
-      if (instance.startDate) {
-        instance.startDate = this.startDate;
-      }
-
-      if (instance.endDate) {
-        instance.endDate = this.endDate;
-      }
-      
-      if (instance.selectEvent) {
-        instance.selectEvent.subscribe((id) => this.setSearch(id));
-      }
-
-      this.visualizations.push(instance);
-    })
-
     this.update();
   }
 
@@ -86,20 +72,28 @@ export class EventStoreComponent implements OnChanges, AfterViewInit {
   public setDate(newDate: IOnDateChange) {
     this.endDate = newDate.endDate;
     this.startDate = newDate.startDate;
-    this.setNewDateWindow(true);
+    this.setTimelineData();
   }
   
   /* initiated from timeline, but affect the list*/
-  public setSearch(id: string) {
-    console.log(id);
-    this.listEventStoreData.forEach((list, i) => {
-      if (list.timelineResolver(id)) {
-        this.activeTab = list.displayName
-        setTimeout(() =>
-          list.listSettings.search = id, 1)
-      }
-    })
+  public setSearch(search?: string) {
+    if (search) {
+      const item = this.timeLineEventsData.items.get(search);
+      const id = (item.id as string).split('---')[1];
+      this.listEventStoreData.forEach((list, i) => {
+        if (list.timelineResolver(id)) {
+          this.activeTab = list.displayName
+          setTimeout(() =>
+            list.listSettings.search = id, 1)
+        }
+      })
+    }
   }
+
+  /* linked to correlated/all button */
+  // public checkAllOption(): boolean {
+  //   return this.listEventStoreData.some(data => !data.timelineGenerator);
+  // }
 
   /* work w/ processData to check if update needed */
   private setNewDateWindow(forceRefresh: boolean = false): void {
@@ -118,6 +112,73 @@ export class EventStoreComponent implements OnChanges, AfterViewInit {
       this.update();
     }
   }
+
+  // public mergeTimelineData(combinedData: ITimelineData, data: ITimelineData): void {
+  //   data.items.forEach(item => combinedData.items.add(item));
+
+  //   data.groups.forEach(group => combinedData.groups.add(group));
+
+  //   combinedData.potentiallyMissingEvents =
+  //     combinedData.potentiallyMissingEvents || data.potentiallyMissingEvents;
+  // }
+
+  // private initializeTimelineData(): ITimelineData {
+  //   return {
+  //     start: this.startDate,
+  //     end: this.endDate,
+  //     groups: new DataSet<DataGroup>(),
+  //     items: new DataSet<ITimelineItem>()
+  //   };
+  // }
+
+  // private getTimelineData(): ITimelineData {
+  //   let rawEventlist = [];
+  //   let combinedTimelineData = this.initializeTimelineData();
+  //   this.failedRefresh = false;
+  //   const addNestedGroups = this.listEventStoreData.length > 1;
+
+  //   // only emit metrics when more than 1 event type is added
+  //   if (this.listEventStoreData.length > 1) {
+  //     const names = this.listEventStoreData.map(item => item.displayName).sort();
+  //     this.telemService.trackActionEvent(TelemetryEventNames.CombinedEventStore, { value: names.toString() }, names.toString());
+  //   }
+  //   for (const data of this.listEventStoreData) {
+  //     if (data.eventsList.lastRefreshWasSuccessful) {
+  //       try {
+  //         if (this.pshowAllEvents) {
+  //           if (data.setDateWindow) {
+  //             rawEventlist = rawEventlist.concat(data.getEvents());
+  //           }
+
+  //         } else if (data.timelineGenerator) {
+  //           // If we have more than one element in the timeline the events get grouped by the displayName of the element.
+  //           data.timelineData = data.timelineGenerator.generateTimeLineData(data.getEvents(), this.startDate, this.endDate, addNestedGroups ? data.displayName : null);
+
+  //           this.mergeTimelineData(combinedTimelineData, data.timelineData);
+  //         }
+  //       } catch (e) {
+  //         console.error(e);
+  //       }
+  //     }
+  //     else {
+  //       this.failedRefresh = true;
+  //     }
+  //   }
+
+  //   if (this.pshowAllEvents) {
+  //     const d = parseEventsGenerically(rawEventlist, this.transformText);
+
+  //     combinedTimelineData = {
+  //       start: this.startDate,
+  //       end: this.endDate,
+  //       items: d.items,
+  //       groups: d.groups
+  //     };
+  //   }
+
+  //   return combinedTimelineData;
+  // }
+
 
   private getConcurrentEventsData() {
     let allEvents: IRCAItem[] = [];
@@ -171,15 +232,13 @@ export class EventStoreComponent implements OnChanges, AfterViewInit {
   }
 
   /* potential new starting point for calling updates on all visualizations*/
-  public update(): void {
-    const timelineEventSubs = this.listEventStoreData.map(data => data.eventsList.refresh());
-
-    forkJoin(timelineEventSubs).subscribe((refreshList) => {
-      this.failedRefresh = refreshList.some(e => !e);
-      this.visualizations.forEach(e => e.update())
-      this.getConcurrentEventsData();
-    });
-  }
+  // public setTimelineData(): void {
+  //   const timelineEventSubs = this.listEventStoreData.map(data => data.eventsList.refresh());
+  //   forkJoin(timelineEventSubs).subscribe(() => {
+  //     this.timeLineEventsData = this.getTimelineData();
+  //     this.getConcurrentEventsData();
+  //   });
+  // }
 
   /* filter event types; then update everything */
   processData(option: IOptionData) {

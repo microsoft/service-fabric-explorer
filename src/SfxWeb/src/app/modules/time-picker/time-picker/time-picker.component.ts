@@ -76,8 +76,6 @@ export class TimePickerComponent implements OnInit, OnDestroy {
         this.startDate = new Date(this.dateMin);
       }
     }
-
-    this.dateChange.emit({endDate: this.endDate, startDate: this.startDate})
   }
 
   public setDate(date: IQuickDates) {
