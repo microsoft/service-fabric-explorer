@@ -3,8 +3,8 @@ import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { create, API } from 'nouislider';
 
 export interface IOnDateChange {
-  endDate: any;
-  startDate: any;
+  endDate: Date;
+  startDate: Date;
 }
 @Component({
   selector: 'app-double-slider',
