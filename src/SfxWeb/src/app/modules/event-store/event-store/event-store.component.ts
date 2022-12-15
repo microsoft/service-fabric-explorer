@@ -1,23 +1,18 @@
-import { Component, OnInit, Input, OnDestroy, OnChanges, ViewChildren, QueryList, AfterViewInit } from '@angular/core';
-import { ITimelineData, TimeLineGeneratorBase, parseEventsGenerically, ITimelineItem } from 'src/app/Models/eventstore/timelineGenerators';
-import { TimeUtils } from 'src/app/Utils/TimeUtils';
+import { Component, Input, OnChanges, ViewChildren, QueryList, AfterViewInit } from '@angular/core';
+import { ITimelineData, TimeLineGeneratorBase } from 'src/app/Models/eventstore/timelineGenerators';
 import { IOnDateChange } from '../../time-picker/double-slider/double-slider.component';
-import { Subject, Subscription, forkJoin } from 'rxjs';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { DataService } from 'src/app/services/data.service';
-import { DataGroup, DataItem, DataSet, Timeline } from 'vis-timeline/standalone/esm';
-import { ListColumnSetting, ListColumnSettingWithEmbeddedVisTool, ListSettings } from 'src/app/Models/ListSettings';
+import { ListColumnSettingWithEmbeddedVisTool, ListSettings } from 'src/app/Models/ListSettings';
 import { IOptionConfig, IOptionData } from '../option-picker/option-picker.component';
-import { TelemetryService } from 'src/app/services/telemetry.service';
-import { TelemetryEventNames } from 'src/app/Common/Constants';
 import { RelatedEventsConfigs } from '../../../Models/eventstore/RelatedEventsConfigs';
-import { Utils } from 'src/app/Utils/Utils';
 import { ListColumnSettingWithCustomComponent } from 'src/app/Models/ListSettings';
 import { VisualizationToolComponent } from '../../concurrent-events-visualization/visualization-tool/visualization-tool.component';
 import { VisualizationLogoComponent } from '../../concurrent-events-visualization/visualization-logo/visualization-logo.component';
 import { getSimultaneousEventsForEvent, IConcurrentEvents, IRCAItem } from 'src/app/Models/eventstore/rcaEngine';
-import { Visualization } from '../visualization';
 import { TimelineComponent } from '../timeline/timeline.component';
+import { forkJoin } from 'rxjs';
+import { VisualizationDirective } from '../visualization.directive';
+import { VisualizationComponent } from '../visualizationComponents';
 export interface IEventStoreData<IVisPresentEvent, S> {
   eventsList: IVisPresentEvent;
   timelineGenerator?: TimeLineGeneratorBase<S>;
@@ -34,11 +29,11 @@ export interface IEventStoreData<IVisPresentEvent, S> {
   templateUrl: './event-store.component.html',
   styleUrls: ['./event-store.component.scss']
 })
-export class EventStoreComponent implements  OnChanges, AfterViewInit {
+export class EventStoreComponent implements OnChanges, AfterViewInit {
 
   constructor(public dataService: DataService) { }
 
-  @ViewChildren(TimelineComponent) visualizations: QueryList<Visualization>;
+  @ViewChildren(VisualizationDirective) vizDirs: QueryList<VisualizationDirective>;
   @Input() listEventStoreData: IEventStoreData<any, any>[];
   @Input() optionsConfig: IOptionConfig;
 
@@ -49,11 +44,28 @@ export class EventStoreComponent implements  OnChanges, AfterViewInit {
   public startDate: Date;
   public endDate: Date;
 
+  private visualizations: VisualizationComponent[] = [];
+  private vizRefs = [TimelineComponent];
+  
   ngAfterViewInit() {
-    this.update();
+    this.setVisualizations();
   }
 
   ngOnChanges(): void {
+    this.update();
+  }
+
+  private setVisualizations(): void {
+    this.vizDirs.forEach((dir, i) => {
+      const componentRef = dir.viewContainerRef.createComponent(this.vizRefs[i]);
+      componentRef.instance.startDate = this.startDate;
+      componentRef.instance.endDate = this.endDate;
+      componentRef.instance.listEventStoreData = this.listEventStoreData;
+
+      componentRef.instance.selectEvent.subscribe((id) => this.setSearch(id));
+      this.visualizations.push(componentRef.instance);
+    })
+
     this.update();
   }
 
@@ -66,6 +78,7 @@ export class EventStoreComponent implements  OnChanges, AfterViewInit {
   
   /* initiated from timeline, but affect the list*/
   public setSearch(id: string) {
+    console.log(id);
     this.listEventStoreData.forEach((list, i) => {
       if (list.timelineResolver(id)) {
         this.activeTab = list.displayName

@@ -1,12 +1,11 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, OnInit, Output } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnInit, Output } from '@angular/core';
 import { TelemetryEventNames } from 'src/app/Common/Constants';
 import { ITimelineData, ITimelineItem, parseEventsGenerically} from 'src/app/Models/eventstore/timelineGenerators';
 import { DataService } from 'src/app/services/data.service';
 import { TelemetryService } from 'src/app/services/telemetry.service';
-import { DataSet } from 'vis-data';
-import { DataGroup } from 'vis-timeline';
+import { DataSet, DataGroup } from 'vis-timeline/standalone/esm';
 import { IEventStoreData } from '../event-store/event-store.component';
-import { Visualization } from '../visualization';
+import { VisualizationComponent } from '../visualizationComponents';
 
 @Component({
   selector: 'app-timeline',
@@ -14,7 +13,7 @@ import { Visualization } from '../visualization';
   styleUrls: ['./timeline.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TimelineComponent extends Visualization implements OnInit, OnChanges {
+export class TimelineComponent implements OnInit, VisualizationComponent {
 
   @Input() listEventStoreData: IEventStoreData<any, any>[];
   @Input() startDate: Date;
@@ -35,17 +34,16 @@ export class TimelineComponent extends Visualization implements OnInit, OnChange
   private pshowAllEvents = false;
 
 
-  constructor(public dataService: DataService, private telemService: TelemetryService) {
-    super();
-  }
+  constructor(
+    public dataService: DataService,
+    private telemService: TelemetryService,
+    public changeDetector: ChangeDetectorRef) { }
 
   ngOnInit() {
     this.pshowAllEvents = this.checkAllOption();
     this.showCorrelatedBtn = !this.pshowAllEvents;
   }
 
-  ngOnChanges(): void {
-  }
 
   public checkAllOption(): boolean {
     return this.listEventStoreData.some(data => !data.timelineGenerator);
@@ -127,7 +125,7 @@ export class TimelineComponent extends Visualization implements OnInit, OnChange
   }
 
   public update() {
-    console.log('hi')
     this.timeLineEventsData = this.getTimelineData();
+    this.changeDetector.markForCheck();
   }
 }
