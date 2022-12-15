@@ -11,9 +11,10 @@ import { OptionPickerComponent } from './option-picker/option-picker.component';
 import { ConcurrentEventsVisualizationModule } from '../concurrent-events-visualization/concurrent-events-visualization.module';
 import { TimelineComponent } from './timeline/timeline.component';
 import { TimePickerModule } from '../time-picker/time-picker.module';
+import { VisualizationDirective } from './visualization.directive';
 
 @NgModule({
-  declarations: [EventStoreComponent, FullDescriptionComponent, RowDisplayComponent, OptionPickerComponent, TimelineComponent],
+  declarations: [EventStoreComponent, FullDescriptionComponent, RowDisplayComponent, OptionPickerComponent, TimelineComponent, VisualizationDirective],
   imports: [
     CommonModule,
     DetailListTemplatesModule,
