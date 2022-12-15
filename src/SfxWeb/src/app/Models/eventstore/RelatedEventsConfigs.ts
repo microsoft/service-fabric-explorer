@@ -260,5 +260,94 @@ export let RelatedEventsConfigs: IConcurrentEventsConfig[] = [
     "relevantEventsType": [
     ],
     "result": "eventProperties.ReconfigType"
+  },
+  {
+    "eventType": "ClusterNewHealthReport",
+    "relevantEventsType": [
+      {
+        eventType: "NodeClosed",
+        propertyMappings: [
+          {
+            sourceProperty: "eventProperties.Description",
+            targetProperty: "nodeName",
+            sourceTransform: [
+              {
+                type: "trimFront",
+                value: ":"
+              },
+              {
+                type: "trimFront",
+                value: ":"
+              },
+              {
+                type: "trimBack",
+                value: "("
+              },
+              {
+                type: "trimWhiteSpace"
+              },
+            ]
+          },
+          {
+            sourceProperty: "eventProperties.Description",
+            targetProperty: "raw.NodeId",
+            sourceTransform: [
+              {
+                type: "trimFront",
+                value: "("
+              },
+              {
+                type: "trimFront",
+                value: "("
+              },
+              {
+                type: "trimBack",
+                value: ")"
+              },
+              {
+                type: "trimWhiteSpace"
+              },
+            ]
+          }
+        ],
+      },
+    ],
+    result: "eventProperties.Description",
+    resultTransform: [
+      {
+        type: "trimFront",
+        value: ":"
+      },
+      {
+        type: "trimFront",
+        value: ":"
+      },
+      {
+        type: "trimBack",
+        value: "("
+      },
+      {
+        type: "trimWhiteSpace"
+      },
+    ]
+  },
+  {
+    "eventType": "NodeClosed",
+    "relevantEventsType": [
+      {
+        eventType: "NodeDown",
+        propertyMappings: [
+          {
+            sourceProperty: "nodeName",
+            targetProperty: "nodeName"
+          },
+          {
+            sourceProperty: "raw.NodeInstance",
+            targetProperty: "raw.NodeInstance"
+          }
+        ],
+      },
+    ],
+    result: ""
   }
 ];
