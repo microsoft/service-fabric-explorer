@@ -32,6 +32,7 @@ import { InfrastructureJobModule } from 'src/app/modules/infrastructure-job/infr
 import { RepairTasksModule } from 'src/app/modules/repair-tasks/repair-tasks.module';
 import { CommandsComponent } from './commands/commands.component';
 import { PowershellCommandsModule } from 'src/app/modules/powershell-commands/powershell-commands.module';
+import { ConcurrentEventsVisualizationModule } from 'src/app/modules/concurrent-events-visualization/concurrent-events-visualization.module';
 
 @NgModule({
   declarations: [EssentialsComponent, DetailsComponent, BaseComponent, MetricsComponent, ClustermapComponent,
@@ -58,7 +59,8 @@ import { PowershellCommandsModule } from 'src/app/modules/powershell-commands/po
     InfrastructureJobModule,
     RepairTasksModule,
     NgbTooltipModule,
-    PowershellCommandsModule
+    PowershellCommandsModule,
+    ConcurrentEventsVisualizationModule
   ]
 })
 export class ClusterModule { }

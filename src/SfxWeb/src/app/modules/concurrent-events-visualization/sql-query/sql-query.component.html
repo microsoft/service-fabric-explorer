@@ -1,0 +1,16 @@
+<div>
+  <div style="display: flex">
+    <textarea style="flex: 1;"  [(ngModel)]="queryString"></textarea>
+    <button (click)="query()">query</button>
+  </div>
+  <div style="display: flex; gap: 10px;">
+    <span *ngFor="let query of tables">{{query.name}}</span>
+  </div>
+  <div *ngIf="resultTableSettings">
+    <app-detail-list [list]="result['objs']" [listSettings]="resultTableSettings"></app-detail-list>
+  </div>
+  <div *ngIf="!resultTableSettings">
+    {{result | json}}
+  </div>
+
+</div>
