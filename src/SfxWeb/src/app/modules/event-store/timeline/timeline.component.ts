@@ -79,7 +79,6 @@ export class TimelineComponent implements OnInit, VisualizationComponent {
   private getTimelineData(): ITimelineData {
     let rawEventlist = [];
     let combinedTimelineData = this.initializeTimelineData();
-    // this.failedRefresh = false;
     const addNestedGroups = this.listEventStoreData.length > 1;
 
     // only emit metrics when more than 1 event type is added
@@ -104,9 +103,6 @@ export class TimelineComponent implements OnInit, VisualizationComponent {
         } catch (e) {
           console.error(e);
         }
-      }
-      else {
-        // this.failedRefresh = true;
       }
     }
 
