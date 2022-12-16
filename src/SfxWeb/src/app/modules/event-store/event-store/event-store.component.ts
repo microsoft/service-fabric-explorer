@@ -160,8 +160,9 @@ export class EventStoreComponent implements OnChanges, AfterViewInit {
   /* potential new starting point for calling updates on all visualizations*/
   public update(): void {
     const timelineEventSubs = this.listEventStoreData.map(data => data.eventsList.refresh());
-    forkJoin(timelineEventSubs).subscribe(() => {
-      // this.timeLineEventsData = this.getTimelineData();
+
+    forkJoin(timelineEventSubs).subscribe((refreshList) => {
+      this.failedRefresh = refreshList.some(e => !e);
       this.visualizations.forEach(e => e.update())
       this.getConcurrentEventsData();
     });
@@ -176,7 +177,6 @@ export class EventStoreComponent implements OnChanges, AfterViewInit {
       this.listEventStoreData = this.listEventStoreData.filter(item => item.displayName !== option.data.displayName);
     }
     this.setNewDateWindow(true);
-    // this.getConcurrentEventsData();
   }
 
 }
