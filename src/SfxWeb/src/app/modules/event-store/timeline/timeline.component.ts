@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnInit, Output } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { TelemetryEventNames } from 'src/app/Common/Constants';
 import { ITimelineData, ITimelineItem, parseEventsGenerically} from 'src/app/Models/eventstore/timelineGenerators';
 import { DataService } from 'src/app/services/data.service';
