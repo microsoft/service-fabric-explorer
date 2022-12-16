@@ -1,0 +1,8 @@
+<app-collapse-container *ngIf="simulEvents.length > 0" class="essen-pane detail-pane">
+    <div collapse-header>
+      <h5>Summary</h5>
+    </div>
+    <div collapse-body>
+      <app-rca-summary [events]="simulEvents"></app-rca-summary>
+    </div>
+  </app-collapse-container>

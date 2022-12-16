@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, ViewChildren, QueryList, AfterViewInit } from '@angular/core';
+import { Component, Input, OnChanges, ViewChildren, QueryList, AfterViewInit, Type } from '@angular/core';
 import { ITimelineData, TimeLineGeneratorBase } from 'src/app/Models/eventstore/timelineGenerators';
 import { IOnDateChange } from '../../time-picker/double-slider/double-slider.component';
 import { DataService } from 'src/app/services/data.service';
@@ -13,6 +13,8 @@ import { TimelineComponent } from '../timeline/timeline.component';
 import { forkJoin } from 'rxjs';
 import { VisualizationDirective } from '../visualization.directive';
 import { VisualizationComponent } from '../visualizationComponents';
+import { RcaVisualizationComponent } from '../rca-visualization/rca-visualization.component';
+
 export interface IEventStoreData<IVisPresentEvent, S> {
   eventsList: IVisPresentEvent;
   timelineGenerator?: TimeLineGeneratorBase<S>;
@@ -45,7 +47,7 @@ export class EventStoreComponent implements OnChanges, AfterViewInit {
   public endDate: Date;
 
   private visualizations: VisualizationComponent[] = [];
-  private vizRefs = [TimelineComponent];
+  private vizRefs: Type<any>[] = [TimelineComponent, RcaVisualizationComponent];
   
   ngAfterViewInit() {
     this.setVisualizations();
@@ -57,13 +59,24 @@ export class EventStoreComponent implements OnChanges, AfterViewInit {
 
   private setVisualizations(): void {
     this.vizDirs.forEach((dir, i) => {
-      const componentRef = dir.viewContainerRef.createComponent(this.vizRefs[i]);
-      componentRef.instance.startDate = this.startDate;
-      componentRef.instance.endDate = this.endDate;
-      componentRef.instance.listEventStoreData = this.listEventStoreData;
+      const componentRef = dir.viewContainerRef.createComponent<VisualizationComponent>(this.vizRefs[i]);
+      const instance = componentRef.instance;
+      
+      instance.listEventStoreData = this.listEventStoreData;
+      
+      if (instance.startDate) {
+        instance.startDate = this.startDate;
+      }
 
-      componentRef.instance.selectEvent.subscribe((id) => this.setSearch(id));
-      this.visualizations.push(componentRef.instance);
+      if (instance.endDate) {
+        instance.endDate = this.endDate;
+      }
+      
+      if (instance.selectEvent) {
+        instance.selectEvent.subscribe((id) => this.setSearch(id));
+      }
+
+      this.visualizations.push(instance);
     })
 
     this.update();
