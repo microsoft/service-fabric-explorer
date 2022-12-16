@@ -2,6 +2,8 @@
     Uh, oh :(
 </p>
 <ng-template #worked>
+    <!-- This part is not removed since it uses nice example of json and keyvalue pipelines.
+    This part could be pretty useful in further implementations. -->
     <!-- {{ this.eventStoreHandler?.eventsList.detailsSettings | json }} -->
     <!-- {{this.eventStoreHandler?.displayName | json}} -->
     <!-- <div *ngFor="let node of nodesMap | keyvalue:f">
@@ -13,7 +15,29 @@
             &nbsp;&nbsp;&nbsp;&nbsp; NodeInstance: {{node.value.instanceId}}<br><br>
         </div>
     </div> -->
+ 
     <figure class="highcharts-figure">
         <div id="container"></div>
     </figure>
+
+    <br> Start date: {{ startDate }}
+    <br> End date: {{ endDate }} <br><br>
+
+    <div class="flex-container wrap">
+        <app-dual-date-picker [minDate]="startDateMin" [maxDate]="startDateMax" (dateChanged)="setNewDates($event)"
+              [currentStartDate]="startDate" [currentEndDate]="endDate"></app-dual-date-picker>
+      <div ngbDropdown style="margin-right: 10px;">
+        <button class="simple-button" ngbDropdownToggle>Quick Dates </button>
+        <div ngbDropdownMenu>
+          <button *ngFor="let date of quickDates" ngbDropdownItem (click)="setDate(date)">
+            {{date.display}}
+          </button>
+        </div>
+      </div>
+      <div class="slider-wrapper">
+        <app-double-slider [startDate]="startDate" [endDate]="endDate" (dateChanged)="setNewDates($event)">
+        </app-double-slider>
+      </div>
+    </div>
+    
 </ng-template>
