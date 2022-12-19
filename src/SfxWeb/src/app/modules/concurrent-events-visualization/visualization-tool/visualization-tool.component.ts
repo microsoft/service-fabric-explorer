@@ -106,7 +106,7 @@ export class VisualizationToolComponent implements OnChanges, AfterViewInit, Det
           maxHeight = Math.max(currSize, maxHeight);
           for (let i = 0; i < currSize; i++) {
               let currEvent = queue.shift();
-              let action = currEvent.reasonForEvent ? currEvent.reasonForEvent : "";
+              let action = currEvent.reasonForEvent ? "Reason: " + currEvent.reasonForEvent + "</br>" : "";
               let newNodeComponent : SeriesSankeyNodesOptionsObject = {
                   id: fontPrefix + currEvent.eventInstanceId + "</p>",
                   title: titlePrefix + action + currEvent.kind + "</p>",
