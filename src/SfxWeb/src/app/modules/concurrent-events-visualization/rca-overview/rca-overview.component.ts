@@ -105,10 +105,10 @@ export class RcaOverviewComponent implements AfterViewInit, OnChanges {
         }
 
         return key
-      } else if (item.reasonForEvent) {
+      } else if (item.reasonForEvent != " " && item.reasonForEvent) {
         return item.reasonForEvent;
       } else {
-        return 'unknown'
+        return 'Unknown'
       }
     }));
     this.reasons = grouped.sort((a, b) => b[1].length - a[1].length).map(reason => {
