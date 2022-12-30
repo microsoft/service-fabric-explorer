@@ -1,6 +1,6 @@
 <div class="essen-pane detail-pane">
   <div style="margin-bottom: 10px;">
-    <app-time-picker (dateChange)="setDate($event)"></app-time-picker>
+    <app-time-picker [dateMin]="dateMin" (dateChange)="setDate($event)"></app-time-picker>
   </div>
   <div ngbDropdown style="margin-left: 10px;"  *ngIf="optionsConfig">
     <button class="simple-button" ngbDropdownToggle sectionName="select-event-types">Event Types </button>
