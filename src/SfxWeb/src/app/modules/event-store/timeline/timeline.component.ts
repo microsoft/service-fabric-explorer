@@ -16,8 +16,8 @@ import { VisualizationComponent } from '../visualizationComponents';
 export class TimelineComponent implements OnInit, VisualizationComponent {
 
   @Input() listEventStoreData: IEventStoreData<any, any>[];
-  @Input() startDate: Date;
-  @Input() endDate: Date;
+  @Input() startDate: Date = new Date();
+  @Input() endDate: Date = new Date();
   @Output() selectEvent = new EventEmitter<string>();
 
 

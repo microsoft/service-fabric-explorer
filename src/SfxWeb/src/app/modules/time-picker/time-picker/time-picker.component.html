@@ -10,7 +10,7 @@
     </div>
   </div>
   <div class="slider-wrapper">
-    <app-double-slider [startDate]="startDate" [endDate]="endDate" (dateChanged)="setNewDates($event)">
+    <app-double-slider [startDate]="startDate" [endDate]="endDate" [minDate]="dateMin" (dateChanged)="setNewDates($event)">
     </app-double-slider>
   </div>
 </div>

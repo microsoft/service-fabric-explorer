@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, ViewChildren, QueryList, AfterViewInit, Type } from '@angular/core';
+import { Component, Input, OnInit, OnChanges, ViewChildren, QueryList, AfterViewInit, Type } from '@angular/core';
 import { ITimelineData, TimeLineGeneratorBase } from 'src/app/Models/eventstore/timelineGenerators';
 import { IOnDateChange } from '../../time-picker/double-slider/double-slider.component';
 import { DataService } from 'src/app/services/data.service';
@@ -9,6 +9,7 @@ import { forkJoin } from 'rxjs';
 import { VisualizationDirective } from '../visualization.directive';
 import { VisualizationComponent } from '../visualizationComponents';
 import { RcaVisualizationComponent } from '../rca-visualization/rca-visualization.component';
+import { TimeUtils } from 'src/app/Utils/TimeUtils';
 
 export interface IEventStoreData<IVisPresentEvent, S> {
   eventsList: IVisPresentEvent;
@@ -26,7 +27,7 @@ export interface IEventStoreData<IVisPresentEvent, S> {
   templateUrl: './event-store.component.html',
   styleUrls: ['./event-store.component.scss']
 })
-export class EventStoreComponent implements OnChanges, AfterViewInit {
+export class EventStoreComponent implements OnInit, OnChanges, AfterViewInit {
 
   constructor(public dataService: DataService) { }
 
@@ -39,10 +40,18 @@ export class EventStoreComponent implements OnChanges, AfterViewInit {
 
   public startDate: Date;
   public endDate: Date;
+  public dateMin: Date;
 
   private visualizations: VisualizationComponent[] = [];
   private vizRefs: Type<any>[] = [TimelineComponent, RcaVisualizationComponent];
   
+
+  ngOnInit() {
+    this.dataService.clusterManifest.ensureInitialized().subscribe(() => {
+      this.dateMin = TimeUtils.AddDays(new Date(), -this.dataService.clusterManifest.eventStoreTimeRange);
+    });
+  }
+
   ngAfterViewInit() {
     this.setVisualizations();
   }
