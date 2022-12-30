@@ -1,5 +1,4 @@
-import { Component, OnInit, OnChanges, AfterViewInit, Input, ViewChild, ElementRef } from '@angular/core';
-import { EventStoreComponent } from '../../event-store/event-store/event-store.component';
+import { Component, OnChanges, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
 import * as Highcharts from 'highcharts';
 import { chart, Chart, Options, SeriesOptionsType, SeriesSankeyNodesOptionsObject } from 'highcharts';
 import HighchartsSankey from "highcharts/modules/sankey";
@@ -12,8 +11,7 @@ HighchartsSankey(Highcharts);
 HighchartsOrganization(Highcharts);
 
 export interface IEventStoreRef extends ListColumnSetting {
-  eventStoreRef: EventStoreComponent;
-}
+  visEvents : IConcurrentEvents[];}
 
 
 
@@ -72,7 +70,7 @@ export class VisualizationToolComponent implements OnChanges, AfterViewInit, Det
   }
 
   ngAfterViewInit(): void {
-    this.visEvents = this.listSetting.eventStoreRef.simulEvents.find(
+    this.visEvents = this.listSetting.visEvents.find(
       visEvent => visEvent.eventInstanceId == this.item.eventInstanceId);
     this.options.series = [this.traverse()];
     const data = this.traverse();

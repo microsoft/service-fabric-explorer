@@ -10,7 +10,7 @@ import { UtcTimestampComponent } from '../modules/detail-list-templates/utc-time
 import { ITextAndBadge } from '../Utils/ValueResolver';
 import { ShortenComponent } from '../modules/detail-list-templates/shorten/shorten.component';
 import { HealthbadgeComponent } from '../modules/detail-list-templates/healthbadge/healthbadge.component';
-import { EventStoreComponent } from '../modules/event-store/event-store/event-store.component';
+import { IConcurrentEvents } from './eventstore/rcaEngine';
 
 // -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -361,7 +361,7 @@ export class ListColumnSettingWithEmbeddedVisTool extends ListColumnSetting impl
     public constructor(public template: Type<DetailBaseComponent>,
                        public propertyPath: string = '',
                        public displayName: string = '',
-                       public eventStoreRef: EventStoreComponent,
+                       public visEvents: IConcurrentEvents[],
                        config?: IListColumnAdditionalSettings) {
         super(propertyPath, displayName, config);
     }
