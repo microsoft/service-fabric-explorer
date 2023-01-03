@@ -6,13 +6,14 @@ import { Observable } from 'rxjs';
 import { ListSettings } from 'src/app/Models/ListSettings';
 import { SettingsService } from 'src/app/services/settings.service';
 import { RepairTask } from 'src/app/Models/DataModels/repairTask';
-import { ITimelineData, RepairTaskTimelineGenerator } from 'src/app/Models/eventstore/timelineGenerators';
+import { ITimelineData, RepairTaskTimelineGenerator, TimelineGeneratorFactory } from 'src/app/Models/eventstore/timelineGenerators';
 import { RepairTaskCollection } from 'src/app/Models/DataModels/collections/RepairTaskCollection';
 import { map } from 'rxjs/operators';
 import { Counter, ICounterMostCommonEntry } from 'src/app/Utils/Utils';
 import { ISortOrdering } from 'src/app/modules/detail-list-templates/detail-list/detail-list.component';
 import { TelemetryService } from 'src/app/services/telemetry.service';
 import { TelemetryEventNames } from 'src/app/Common/Constants';
+import { EventType } from 'src/app/modules/event-store/event-store/event-store.component';
 
 interface ITileListItem {
   primaryText: string;
@@ -52,7 +53,7 @@ export class RepairTasksComponent extends BaseControllerDirective {
 
   setup() {
     this.repairTaskCollection = this.data.repairCollection;
-    this.timelineGenerator = new RepairTaskTimelineGenerator();
+    this.timelineGenerator = TimelineGeneratorFactory.GetTimelineGenerator(EventType.RepairTask);
     this.repairTaskListSettings = this.settings.getNewOrExistingPendingRepairTaskListSettings();
     this.completedRepairTaskListSettings = this.settings.getNewOrExistingCompletedRepairTaskListSettings();
   }
