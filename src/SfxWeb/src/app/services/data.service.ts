@@ -34,7 +34,7 @@ import { DeployedApplicationCollection } from '../Models/DataModels/collections/
 import { MatDialog } from '@angular/material/dialog';
 import { RepairTaskCollection } from '../Models/DataModels/collections/RepairTaskCollection';
 import { ApplicationEvent, ClusterEvent, FabricEventBase, NodeEvent, PartitionEvent, ReplicaEvent, ServiceEvent } from '../Models/eventstore/Events';
-import { IEventStoreData } from '../modules/event-store/event-store/event-store.component';
+import { EventType, IEventStoreData } from '../modules/event-store/event-store/event-store.component';
 import { SettingsService } from './settings.service';
 import { RepairTask } from '../Models/DataModels/repairTask';
 import { ApplicationTimelineGenerator, ClusterTimelineGenerator, NodeTimelineGenerator, PartitionTimelineGenerator, RepairTaskTimelineGenerator } from '../Models/eventstore/timelineGenerators';
@@ -342,7 +342,7 @@ export class DataService {
     public getRepairTasksData(settings: SettingsService): IEventStoreData<RepairTaskCollection, RepairTask>{
         return {
             eventsList: this.repairCollection,
-            timelineGenerator: new RepairTaskTimelineGenerator(),
+            type: EventType.RepairTask,
             displayName: 'Repair Tasks',
             listSettings: settings.getNewOrExistingCompletedRepairTaskListSettings(),
             getEvents: () => this.repairCollection.collection,
@@ -356,7 +356,7 @@ export class DataService {
         const list = new ClusterEventList(this);
         const d = {
             eventsList : list,
-            timelineGenerator : new ClusterTimelineGenerator(),
+            type : EventType.Cluster,
             displayName : 'Cluster',
         };
 
@@ -368,7 +368,7 @@ export class DataService {
         const list = new NodeEventList(this, nodeName);
         const d = {
             eventsList: list,
-            timelineGenerator: new NodeTimelineGenerator(),
+            type: EventType.Node,
             displayName: nodeName ? nodeName : 'Nodes',
         };
 
@@ -380,7 +380,7 @@ export class DataService {
         const list = new ApplicationEventList(this, applicationId);
         const d = {
             eventsList : list,
-            timelineGenerator : applicationId ? new ApplicationTimelineGenerator() : null,
+            type : applicationId ? EventType.Application : null,
             displayName : applicationId ? applicationId : 'Apps',
         };
 
@@ -403,7 +403,7 @@ export class DataService {
         const list = new PartitionEventList(this, partitionId);
         const d = {
             eventsList : list,
-            timelineGenerator : new PartitionTimelineGenerator(),
+            type : EventType.Partition,
             displayName : partitionId
         };
 

@@ -11,10 +11,16 @@ import { VisualizationComponent } from '../visualizationComponents';
 import { RcaVisualizationComponent } from '../rca-visualization/rca-visualization.component';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 
+export enum EventType {
+  Cluster,
+  Node,
+  Application,
+  Partition,
+  RepairTask
+}
 export interface IEventStoreData<IVisPresentEvent, S> {
   eventsList: IVisPresentEvent;
-  timelineGenerator?: TimeLineGeneratorBase<S>;
-  timelineData?: ITimelineData;
+  type?: EventType;
   displayName: string;
   listSettings?: ListSettings;
   getEvents?(): S[];

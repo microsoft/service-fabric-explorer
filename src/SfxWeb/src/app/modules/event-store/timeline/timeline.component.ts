@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { TelemetryEventNames } from 'src/app/Common/Constants';
-import { ITimelineData, ITimelineItem, parseEventsGenerically} from 'src/app/Models/eventstore/timelineGenerators';
+import { ITimelineData, ITimelineItem, parseEventsGenerically, TimelineGeneratorFactory} from 'src/app/Models/eventstore/timelineGenerators';
 import { DataService } from 'src/app/services/data.service';
 import { TelemetryService } from 'src/app/services/telemetry.service';
 import { DataSet, DataGroup } from 'vis-timeline/standalone/esm';
@@ -46,7 +46,7 @@ export class TimelineComponent implements OnInit, VisualizationComponent {
 
 
   public checkAllOption(): boolean {
-    return this.listEventStoreData.some(data => !data.timelineGenerator);
+    return this.listEventStoreData.some(data => !data.type);
   }
 
   public setSearch(search?: string) {
@@ -94,11 +94,12 @@ export class TimelineComponent implements OnInit, VisualizationComponent {
               rawEventlist = rawEventlist.concat(data.getEvents());
             }
 
-          } else if (data.timelineGenerator) {
+          } else if (data.type) {
             // If we have more than one element in the timeline the events get grouped by the displayName of the element.
-            data.timelineData = data.timelineGenerator.generateTimeLineData(data.getEvents(), this.startDate, this.endDate, addNestedGroups ? data.displayName : null);
+            const timelineGenerator = TimelineGeneratorFactory.GetTimelineGenerator(data.type);
+            const timelineData = timelineGenerator.generateTimeLineData(data.getEvents(), this.startDate, this.endDate, addNestedGroups ? data.displayName : null);
 
-            this.mergeTimelineData(combinedTimelineData, data.timelineData);
+            this.mergeTimelineData(combinedTimelineData, timelineData);
           }
         } catch (e) {
           console.error(e);
