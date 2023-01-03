@@ -20,6 +20,10 @@ export class BaseComponent extends NodeBaseControllerDirective {
   {
     name: 'details',
     route: './details'
+  },
+  {
+    name: 'commands',
+    route: './commands'
   }
   ];
 
