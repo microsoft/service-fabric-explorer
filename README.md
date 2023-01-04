@@ -6,20 +6,6 @@ Windows | Linux / macOS
 ------------ | -------------
 ![Image of Windows Build Badge](https://ci.appveyor.com/api/projects/status/ejfk6b0c3dlunkws/branch/master) | ![Image of Linux/macOS Build Badge](https://travis-ci.org/Microsoft/service-fabric-explorer.svg?branch=master) 
 
-## Installation
-
-Microsoft publishes the following installer packages for SFX:
-
-- Windows
-  - https://aka.ms/sfx-windows
-
-- Linux
-  - https://aka.ms/sfx-linux-x86
-  - https://aka.ms/sfx-linux-x64
-
-- macOS
-  - https://aka.ms/sfx-macos
-
 For more information about the application and how to use it: https://docs.microsoft.com/en-us/azure/service-fabric/service-fabric-visualizing-your-cluster
 
 ## Developer Help and Documentation
