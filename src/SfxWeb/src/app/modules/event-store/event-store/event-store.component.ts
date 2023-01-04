@@ -1,5 +1,4 @@
 import { Component, Input, OnInit, OnChanges, ViewChildren, QueryList, AfterViewInit, Type } from '@angular/core';
-import { ITimelineData, TimeLineGeneratorBase } from 'src/app/Models/eventstore/timelineGenerators';
 import { IOnDateChange } from '../../time-picker/double-slider/double-slider.component';
 import { DataService } from 'src/app/services/data.service';
 import { ListSettings } from 'src/app/Models/ListSettings';
@@ -10,6 +9,7 @@ import { VisualizationDirective } from '../visualization.directive';
 import { VisualizationComponent } from '../visualizationComponents';
 import { RcaVisualizationComponent } from '../rca-visualization/rca-visualization.component';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
+import { IDataModel } from 'src/app/Models/DataModels/Base';
 
 export enum EventType {
   Cluster,
@@ -25,7 +25,7 @@ export interface IEventStoreData<IVisPresentEvent, S> {
   listSettings?: ListSettings;
   getEvents?(): S[];
   setDateWindow?(startDate: Date, endDate: Date): boolean;
-  timelineResolver?(id: string): boolean; //used to determine if the data contains a given event;
+  objectResolver?(id: string): IDataModel<any>; //used to determine if the data contains a given event;
 }
 
 @Component({
@@ -102,7 +102,7 @@ export class EventStoreComponent implements OnInit, OnChanges, AfterViewInit {
   public setSearch(id: string) {
     console.log(id);
     this.listEventStoreData.forEach((list, i) => {
-      if (list.timelineResolver(id)) {
+      if (list.objectResolver(id)) {
         this.activeTab = list.displayName
         setTimeout(() =>
           list.listSettings.search = id, 1)

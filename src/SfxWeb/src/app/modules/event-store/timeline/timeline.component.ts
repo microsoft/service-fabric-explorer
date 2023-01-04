@@ -1,8 +1,9 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { TelemetryEventNames } from 'src/app/Common/Constants';
-import { ITimelineData, ITimelineItem, parseEventsGenerically, TimelineGeneratorFactory} from 'src/app/Models/eventstore/timelineGenerators';
+import { ITimelineData, ITimelineItem, parseEventsGenerically } from 'src/app/Models/eventstore/timelineGenerators';
 import { DataService } from 'src/app/services/data.service';
 import { TelemetryService } from 'src/app/services/telemetry.service';
+import { TimelineGeneratorFactoryService } from 'src/app/services/timeline-generator-factory.service';
 import { DataSet, DataGroup } from 'vis-timeline/standalone/esm';
 import { IEventStoreData } from '../event-store/event-store.component';
 import { VisualizationComponent } from '../visualizationComponents';
@@ -37,7 +38,8 @@ export class TimelineComponent implements OnInit, VisualizationComponent {
   constructor(
     public dataService: DataService,
     private telemService: TelemetryService,
-    public changeDetector: ChangeDetectorRef) { }
+    public changeDetector: ChangeDetectorRef,
+    private timelineGeneratorFactoryService: TimelineGeneratorFactoryService) { }
 
   ngOnInit() {
     this.pshowAllEvents = this.checkAllOption();
@@ -96,7 +98,7 @@ export class TimelineComponent implements OnInit, VisualizationComponent {
 
           } else if (data.type) {
             // If we have more than one element in the timeline the events get grouped by the displayName of the element.
-            const timelineGenerator = TimelineGeneratorFactory.GetTimelineGenerator(data.type);
+            const timelineGenerator = this.timelineGeneratorFactoryService.getTimelineGenerator(data.type);
             const timelineData = timelineGenerator.generateTimeLineData(data.getEvents(), this.startDate, this.endDate, addNestedGroups ? data.displayName : null);
 
             this.mergeTimelineData(combinedTimelineData, timelineData);
