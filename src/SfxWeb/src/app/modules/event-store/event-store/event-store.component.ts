@@ -1,27 +1,26 @@
-import { Component, OnInit, Input, OnDestroy, OnChanges, ViewChildren, QueryList, AfterViewInit } from '@angular/core';
-import { ITimelineData, TimeLineGeneratorBase, parseEventsGenerically, ITimelineItem } from 'src/app/Models/eventstore/timelineGenerators';
-import { TimeUtils } from 'src/app/Utils/TimeUtils';
+import { Component, Input, OnInit, OnChanges, ViewChildren, QueryList, AfterViewInit, Type } from '@angular/core';
+import { ITimelineData, TimeLineGeneratorBase } from 'src/app/Models/eventstore/timelineGenerators';
 import { IOnDateChange } from '../../time-picker/double-slider/double-slider.component';
-import { Subject, Subscription, forkJoin } from 'rxjs';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { DataService } from 'src/app/services/data.service';
-import { DataGroup, DataItem, DataSet, Timeline } from 'vis-timeline/standalone/esm';
-import { ListColumnSettingWithEmbeddedVisTool, ListSettings } from 'src/app/Models/ListSettings';
+import { ListSettings } from 'src/app/Models/ListSettings';
 import { IOptionConfig, IOptionData } from '../option-picker/option-picker.component';
-import { TelemetryService } from 'src/app/services/telemetry.service';
-import { TelemetryEventNames } from 'src/app/Common/Constants';
-import { RelatedEventsConfigs } from '../../../Models/eventstore/RelatedEventsConfigs';
-import { Utils } from 'src/app/Utils/Utils';
-import { ListColumnSettingWithCustomComponent } from 'src/app/Models/ListSettings';
-import { VisualizationToolComponent } from '../../concurrent-events-visualization/visualization-tool/visualization-tool.component';
-import { VisualizationLogoComponent } from '../../concurrent-events-visualization/visualization-logo/visualization-logo.component';
-import { getSimultaneousEventsForEvent, IConcurrentEvents, IRCAItem } from 'src/app/Models/eventstore/rcaEngine';
-import { Visualization } from '../visualization';
 import { TimelineComponent } from '../timeline/timeline.component';
+import { forkJoin } from 'rxjs';
+import { VisualizationDirective } from '../visualization.directive';
+import { VisualizationComponent } from '../visualizationComponents';
+import { RcaVisualizationComponent } from '../rca-visualization/rca-visualization.component';
+import { TimeUtils } from 'src/app/Utils/TimeUtils';
+
+export enum EventType {
+  Cluster,
+  Node,
+  Application,
+  Partition,
+  RepairTask
+}
 export interface IEventStoreData<IVisPresentEvent, S> {
   eventsList: IVisPresentEvent;
-  timelineGenerator?: TimeLineGeneratorBase<S>;
-  timelineData?: ITimelineData;
+  type?: EventType;
   displayName: string;
   listSettings?: ListSettings;
   getEvents?(): S[];
@@ -34,26 +33,61 @@ export interface IEventStoreData<IVisPresentEvent, S> {
   templateUrl: './event-store.component.html',
   styleUrls: ['./event-store.component.scss']
 })
-export class EventStoreComponent implements  OnChanges, AfterViewInit {
+export class EventStoreComponent implements OnInit, OnChanges, AfterViewInit {
 
   constructor(public dataService: DataService) { }
 
-  @ViewChildren(TimelineComponent) visualizations: QueryList<Visualization>;
+  @ViewChildren(VisualizationDirective) vizDirs: QueryList<VisualizationDirective>;
   @Input() listEventStoreData: IEventStoreData<any, any>[];
   @Input() optionsConfig: IOptionConfig;
 
   public failedRefresh = false;
-  public simulEvents: IConcurrentEvents[] = [];
   public activeTab: string;
 
   public startDate: Date;
   public endDate: Date;
+  public dateMin: Date;
+
+  private visualizations: VisualizationComponent[] = [];
+  private vizRefs: Type<any>[] = [TimelineComponent, RcaVisualizationComponent];
+  
+
+  ngOnInit() {
+    this.dataService.clusterManifest.ensureInitialized().subscribe(() => {
+      this.dateMin = TimeUtils.AddDays(new Date(), -this.dataService.clusterManifest.eventStoreTimeRange);
+    });
+  }
 
   ngAfterViewInit() {
-    this.update();
+    this.setVisualizations();
   }
 
   ngOnChanges(): void {
+    this.update();
+  }
+
+  private setVisualizations(): void {
+    this.vizDirs.forEach((dir, i) => {
+      const componentRef = dir.viewContainerRef.createComponent<VisualizationComponent>(this.vizRefs[i]);
+      const instance = componentRef.instance;
+      
+      instance.listEventStoreData = this.listEventStoreData;
+      
+      if (instance.startDate) {
+        instance.startDate = this.startDate;
+      }
+
+      if (instance.endDate) {
+        instance.endDate = this.endDate;
+      }
+      
+      if (instance.selectEvent) {
+        instance.selectEvent.subscribe((id) => this.setSearch(id));
+      }
+
+      this.visualizations.push(instance);
+    })
+
     this.update();
   }
 
@@ -66,6 +100,7 @@ export class EventStoreComponent implements  OnChanges, AfterViewInit {
   
   /* initiated from timeline, but affect the list*/
   public setSearch(id: string) {
+    console.log(id);
     this.listEventStoreData.forEach((list, i) => {
       if (list.timelineResolver(id)) {
         this.activeTab = list.displayName
@@ -93,64 +128,13 @@ export class EventStoreComponent implements  OnChanges, AfterViewInit {
     }
   }
 
-  private getConcurrentEventsData() {
-    let allEvents: IRCAItem[] = [];
-    let sourceEvents = [];
-    for (const data of this.listEventStoreData) {
-      if (data.eventsList.lastRefreshWasSuccessful) {
-        sourceEvents = sourceEvents.concat(data.getEvents());
-        allEvents = allEvents.concat(data.eventsList.collection);
-      }
-    }
-
-    // refresh vis-event-list
-    this.simulEvents = getSimultaneousEventsForEvent(RelatedEventsConfigs, sourceEvents, sourceEvents);
-    // grab highcharts data for all events
-    for (let parsedEvent of allEvents) {
-        let rootEvent = this.simulEvents.find(event => event.eventInstanceId === parsedEvent.eventInstanceId);
-        let visPresent = false;
-        if (rootEvent.reason) {
-            visPresent = true;
-        }
-
-        (parsedEvent as any).visPresent = visPresent;
-
-    }
-
-    for (const data of this.listEventStoreData) {
-      //add presentation column if not already there
-      if (!data.listSettings.columnSettings.some(setting => setting.propertyPath == "visPresent")) {
-        let newLogoSetting = new ListColumnSettingWithCustomComponent(
-          VisualizationLogoComponent,
-          'visPresent',
-          'Visualization',
-          {
-            enableFilter: true,
-            colspan: 1
-          });
-        newLogoSetting.fixedWidthPx = 100;
-        data.listSettings.columnSettings.splice(1, 0, newLogoSetting);
-        data.listSettings.secondRowColumnSettings.push(new ListColumnSettingWithEmbeddedVisTool(
-          VisualizationToolComponent,
-          '',
-          '',
-          this,
-          {
-            enableFilter: false,
-            colspan: 3
-          }
-        ));
-      }
-    }
-  }
-
   /* potential new starting point for calling updates on all visualizations*/
   public update(): void {
     const timelineEventSubs = this.listEventStoreData.map(data => data.eventsList.refresh());
-    forkJoin(timelineEventSubs).subscribe(() => {
-      // this.timeLineEventsData = this.getTimelineData();
+
+    forkJoin(timelineEventSubs).subscribe((refreshList) => {
+      this.failedRefresh = refreshList.some(e => !e);
       this.visualizations.forEach(e => e.update())
-      this.getConcurrentEventsData();
     });
   }
 
@@ -163,7 +147,6 @@ export class EventStoreComponent implements  OnChanges, AfterViewInit {
       this.listEventStoreData = this.listEventStoreData.filter(item => item.displayName !== option.data.displayName);
     }
     this.setNewDateWindow(true);
-    // this.getConcurrentEventsData();
   }
 
 }

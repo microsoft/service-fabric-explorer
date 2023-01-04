@@ -1,12 +1,11 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, OnInit, Output } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { TelemetryEventNames } from 'src/app/Common/Constants';
-import { ITimelineData, ITimelineItem, parseEventsGenerically} from 'src/app/Models/eventstore/timelineGenerators';
+import { ITimelineData, ITimelineItem, parseEventsGenerically, TimelineGeneratorFactory} from 'src/app/Models/eventstore/timelineGenerators';
 import { DataService } from 'src/app/services/data.service';
 import { TelemetryService } from 'src/app/services/telemetry.service';
-import { DataSet } from 'vis-data';
-import { DataGroup } from 'vis-timeline';
+import { DataSet, DataGroup } from 'vis-timeline/standalone/esm';
 import { IEventStoreData } from '../event-store/event-store.component';
-import { Visualization } from '../visualization';
+import { VisualizationComponent } from '../visualizationComponents';
 
 @Component({
   selector: 'app-timeline',
@@ -14,11 +13,11 @@ import { Visualization } from '../visualization';
   styleUrls: ['./timeline.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TimelineComponent extends Visualization implements OnInit, OnChanges {
+export class TimelineComponent implements OnInit, VisualizationComponent {
 
   @Input() listEventStoreData: IEventStoreData<any, any>[];
-  @Input() startDate: Date;
-  @Input() endDate: Date;
+  @Input() startDate: Date = new Date();
+  @Input() endDate: Date = new Date();
   @Output() selectEvent = new EventEmitter<string>();
 
 
@@ -35,20 +34,19 @@ export class TimelineComponent extends Visualization implements OnInit, OnChange
   private pshowAllEvents = false;
 
 
-  constructor(public dataService: DataService, private telemService: TelemetryService) {
-    super();
-  }
+  constructor(
+    public dataService: DataService,
+    private telemService: TelemetryService,
+    public changeDetector: ChangeDetectorRef) { }
 
   ngOnInit() {
     this.pshowAllEvents = this.checkAllOption();
     this.showCorrelatedBtn = !this.pshowAllEvents;
   }
 
-  ngOnChanges(): void {
-  }
 
   public checkAllOption(): boolean {
-    return this.listEventStoreData.some(data => !data.timelineGenerator);
+    return this.listEventStoreData.some(data => !data.type);
   }
 
   public setSearch(search?: string) {
@@ -81,7 +79,6 @@ export class TimelineComponent extends Visualization implements OnInit, OnChange
   private getTimelineData(): ITimelineData {
     let rawEventlist = [];
     let combinedTimelineData = this.initializeTimelineData();
-    // this.failedRefresh = false;
     const addNestedGroups = this.listEventStoreData.length > 1;
 
     // only emit metrics when more than 1 event type is added
@@ -97,18 +94,16 @@ export class TimelineComponent extends Visualization implements OnInit, OnChange
               rawEventlist = rawEventlist.concat(data.getEvents());
             }
 
-          } else if (data.timelineGenerator) {
+          } else if (data.type) {
             // If we have more than one element in the timeline the events get grouped by the displayName of the element.
-            data.timelineData = data.timelineGenerator.generateTimeLineData(data.getEvents(), this.startDate, this.endDate, addNestedGroups ? data.displayName : null);
+            const timelineGenerator = TimelineGeneratorFactory.GetTimelineGenerator(data.type);
+            const timelineData = timelineGenerator.generateTimeLineData(data.getEvents(), this.startDate, this.endDate, addNestedGroups ? data.displayName : null);
 
-            this.mergeTimelineData(combinedTimelineData, data.timelineData);
+            this.mergeTimelineData(combinedTimelineData, timelineData);
           }
         } catch (e) {
           console.error(e);
         }
-      }
-      else {
-        // this.failedRefresh = true;
       }
     }
 
@@ -127,7 +122,7 @@ export class TimelineComponent extends Visualization implements OnInit, OnChange
   }
 
   public update() {
-    console.log('hi')
     this.timeLineEventsData = this.getTimelineData();
+    this.changeDetector.markForCheck();
   }
 }

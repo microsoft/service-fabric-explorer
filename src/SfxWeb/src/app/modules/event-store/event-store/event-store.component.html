@@ -1,6 +1,6 @@
 <div class="essen-pane detail-pane">
   <div style="margin-bottom: 10px;">
-    <app-time-picker (dateChange)="setDate($event)"></app-time-picker>
+    <app-time-picker [dateMin]="dateMin" (dateChange)="setDate($event)"></app-time-picker>
   </div>
   <div ngbDropdown style="margin-left: 10px;"  *ngIf="optionsConfig">
     <button class="simple-button" ngbDropdownToggle sectionName="select-event-types">Event Types </button>
@@ -9,20 +9,13 @@
     </div>
   </div>
   <div *ngIf="startDate && endDate">
-    <app-timeline #test [listEventStoreData]="listEventStoreData" [startDate]="startDate" [endDate]="endDate"></app-timeline>
+    <ng-template appVisualization></ng-template>
     <br>
   </div>
 
 </div>
 
-<app-collapse-container *ngIf="simulEvents.length > 0" class="essen-pane detail-pane">
-  <div collapse-header>
-    <h5>Summary</h5>
-  </div>
-  <div collapse-body>
-    <app-rca-summary [events]="simulEvents"></app-rca-summary>
-  </div>
-</app-collapse-container>
+<ng-template appVisualization></ng-template>
 
 <div class="essen-pane">
   <div style="height: 20px;">
