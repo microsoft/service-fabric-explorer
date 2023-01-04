@@ -335,7 +335,7 @@ export class DataService {
         data.listSettings = data.eventsList.settings;
         data.getEvents = () => data.eventsList.collection.map(event => event.raw);
         data.setDateWindow = (startDate: Date, endDate: Date) => data.eventsList.setDateWindow(startDate, endDate);
-        data.timelineResolver = (id: string) => data.eventsList.collection.some(item => item.raw.eventInstanceId === id);
+        data.objectResolver = (id: string) => data.eventsList.collection.find(item => item.raw.eventInstanceId === id);
         return data;
     }
 
@@ -346,8 +346,8 @@ export class DataService {
             displayName: 'Repair Tasks',
             listSettings: settings.getNewOrExistingCompletedRepairTaskListSettings(),
             getEvents: () => this.repairCollection.collection,
-            timelineResolver:  (id: string) => {
-              return this.repairCollection.collection.some(task => task.raw.TaskId === id);
+            objectResolver:  (id: string) => {
+              return this.repairCollection.collection.find(task => task.raw.TaskId === id);
             }
         };
     }

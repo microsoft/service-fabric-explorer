@@ -47,52 +47,6 @@ export interface ITimelineDataGenerator<T extends FabricEventBase>{
     consume(events: T[], startOfRange: Date, endOfRange: Date): ITimelineData;
 }
 
-export class TimelineGeneratorFactory {
-
-  private static clusterGenerator?: ClusterTimelineGenerator;
-  private static nodeGenerator?: NodeTimelineGenerator;
-  private static appGenerator?: ApplicationTimelineGenerator;
-  private static partitionGenerator?: PartitionTimelineGenerator;
-  private static repairGenerator?: RepairTaskTimelineGenerator;
-
-  public static GetTimelineGenerator(type: EventType): TimeLineGeneratorBase<any> {
-    switch (type) {
-      case EventType.Cluster:
-        if (!this.clusterGenerator) {
-          this.clusterGenerator = new ClusterTimelineGenerator();
-        }
-        return this.clusterGenerator;
-      
-      case EventType.Node:
-        if (!this.nodeGenerator) {
-          this.nodeGenerator = new NodeTimelineGenerator();
-        }
-        return this.nodeGenerator;
-      
-      case EventType.Application:
-        if (!this.appGenerator) {
-          this.appGenerator = new ApplicationTimelineGenerator();
-        }
-        return this.appGenerator;
-      
-      case EventType.Partition:
-        if (!this.partitionGenerator) {
-          this.partitionGenerator = new PartitionTimelineGenerator();
-        }
-        return this.partitionGenerator;
-          
-      case EventType.RepairTask:
-        if (!this.repairGenerator) {
-          this.repairGenerator = new RepairTaskTimelineGenerator();
-        }
-        return this.repairGenerator;
-          
-      default:
-        return null;
-    }
-  }
-
-}
 export class EventStoreUtils {
 
     private static internalToolTipFormatterObject = (data: any) => {
