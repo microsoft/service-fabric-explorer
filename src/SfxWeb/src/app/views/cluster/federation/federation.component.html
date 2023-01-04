@@ -1,43 +1,58 @@
-<p *ngIf="failedToLoadEvents; else worked">
-    Uh, oh :(
-</p>
-<ng-template #worked>
-    <!-- This part is not removed since it uses nice example of json and keyvalue pipelines.
-    This part could be pretty useful in further implementations. -->
-    <!-- {{ this.eventStoreHandler?.eventsList.detailsSettings | json }} -->
-    <!-- {{this.eventStoreHandler?.displayName | json}} -->
-    <!-- <div *ngFor="let node of nodesMap | keyvalue:f">
-        <div *ngIf="node.value.inCluster">
-            {{node.key}}:<br>
-            &nbsp;&nbsp;&nbsp;&nbsp; Status: {{node.value.status}}<br>
-            &nbsp;&nbsp;&nbsp;&nbsp; SeedNode: {{node.value.isSeed}}<br>
-            &nbsp;&nbsp;&nbsp;&nbsp; NodeId: {{node.value.id}}<br>
-            &nbsp;&nbsp;&nbsp;&nbsp; NodeInstance: {{node.value.instanceId}}<br><br>
-        </div>
-    </div> -->
- 
-    <figure class="highcharts-figure">
-        <div id="container"></div>
-    </figure>
-
-    <br> Start date: {{ startDate }}
-    <br> End date: {{ endDate }} <br><br>
-
-    <div class="flex-container wrap">
-        <app-dual-date-picker [minDate]="startDateMin" [maxDate]="startDateMax" (dateChanged)="setNewDates($event)"
-              [currentStartDate]="startDate" [currentEndDate]="endDate"></app-dual-date-picker>
-      <div ngbDropdown style="margin-right: 10px;">
-        <button class="simple-button" ngbDropdownToggle>Quick Dates </button>
-        <div ngbDropdownMenu>
-          <button *ngFor="let date of quickDates" ngbDropdownItem (click)="setDate(date)">
-            {{date.display}}
-          </button>
-        </div>
-      </div>
-      <div class="slider-wrapper">
-        <app-double-slider [startDate]="startDate" [endDate]="endDate" (dateChanged)="setNewDates($event)">
-        </app-double-slider>
-      </div>
+<!-- This part is not removed since it uses nice example of json and keyvalue pipelines.
+This part could be pretty useful in further implementations. -->
+<!-- {{ this.eventStoreHandler?.eventsList.detailsSettings | json }} -->
+<!-- {{this.eventStoreHandler?.displayName | json}} -->
+<!-- <div *ngFor="let node of nodesMap | keyvalue:f">
+    <div *ngIf="node.value.inCluster">
+        {{node.key}}:<br>
+        &nbsp;&nbsp;&nbsp;&nbsp; Status: {{node.value.status}}<br>
+        &nbsp;&nbsp;&nbsp;&nbsp; SeedNode: {{node.value.isSeed}}<br>
+        &nbsp;&nbsp;&nbsp;&nbsp; NodeId: {{node.value.id}}<br>
+        &nbsp;&nbsp;&nbsp;&nbsp; NodeInstance: {{node.value.instanceId}}<br><br>
     </div>
-    
-</ng-template>
+</div> -->
+
+<br> Start date: {{ startDate }}
+<br> End date: {{ endDate }} <br><br>
+
+<div class="flex-container wrap">
+    <app-dual-date-picker [minDate]="startDateMin" [maxDate]="startDateMax" (dateChanged)="setNewDates($event)"
+          [currentStartDate]="startDate" [currentEndDate]="endDate"></app-dual-date-picker>
+  <div ngbDropdown style="margin-right: 10px;">
+    <button class="simple-button" ngbDropdownToggle>Quick Dates </button>
+    <div ngbDropdownMenu>
+      <button *ngFor="let date of quickDates" ngbDropdownItem (click)="setDate(date)">
+        {{date.display}}
+      </button>
+    </div>
+  </div>
+  <div class="slider-wrapper">
+    <app-double-slider [startDate]="startDate" [endDate]="endDate" (dateChanged)="setNewDates($event)">
+    </app-double-slider>
+  </div>
+</div><br>
+
+<label id="labInfos" for="infos"> Node information: </label><br>
+<textarea id="infos" name="infos" rows="7" cols="70" disabled></textarea><br><br>
+
+<label id="labInputNode" for="inputNode"> Enter node id: </label><br>
+<input id="inputNode" size="68" (change)="onChangeInput($event)"><br><br>
+
+<label id="labActions" for="actions"> Select action: </label><br>
+<input type="radio" id="noneAction" name="contact" (click)="onClickRadio($event)" checked>
+<label for="noneAction"> &nbsp; None &nbsp; </label>
+<input type="radio" id="fmAction" name="contact" (click)="onClickRadio($event)">
+<label for="fmAction"> &nbsp; FM nodes &nbsp; </label>
+<input type="radio" id="fmmAction" name="contact" (click)="onClickRadio($event)">
+<label for="fmmAction"> &nbsp; FMM nodes &nbsp; </label>
+<input type="radio" id="seedAction" name="contact" (click)="onClickRadio($event)">
+<label for="seedAction"> &nbsp; Seed nodes &nbsp; </label>
+<input type="radio" id="notUpAction" name="contact" (click)="onClickRadio($event)">
+<label for="notUpAction"> &nbsp; Not "Up" nodes &nbsp; </label>
+<input type="radio" id="leaseAction" name="contact" (click)="onClickRadio($event)">
+<label for="leaseAction"> &nbsp; Lease failed nodes &nbsp; </label>
+<select id="selectActions" name="list" (change)="onChangedCombo($event)"></select>
+
+<figure class="highcharts-figure">
+    <div id="container"></div>
+</figure>
