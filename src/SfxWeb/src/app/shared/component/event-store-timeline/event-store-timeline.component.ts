@@ -1,4 +1,5 @@
-import { Component, ViewChild, ElementRef, Input, AfterViewInit, OnChanges, ChangeDetectionStrategy, Output, EventEmitter, OnDestroy } from '@angular/core';
+import { Component, ViewChild, ElementRef, Input, AfterViewInit, OnChanges, ChangeDetectionStrategy, Output, EventEmitter, OnDestroy, SecurityContext } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
 import { ITimelineData } from 'src/app/Models/eventstore/timelineGenerators';
 import { Timeline, DataItem, DataGroup, moment, DataSet } from 'vis-timeline/standalone/esm';
 
@@ -31,7 +32,7 @@ export class EventStoreTimelineComponent implements AfterViewInit, OnChanges, On
   @ViewChild('visualization') container: ElementRef;
 
 
-  constructor() { }
+  constructor(private sanitzer: DomSanitizer) { }
 
   ngOnChanges() {
     if (this.timeline) {
@@ -47,7 +48,7 @@ export class EventStoreTimelineComponent implements AfterViewInit, OnChanges, On
     this.timeline = new Timeline(this.container.nativeElement, items, {
       locale: 'en_US',
       xss: {
-        disabled: true,
+        disabled: false,
         filterOptions: {
           whiteList: {
             "div": ['class', 'inner-tooltip', 'white-space', 'margin-left', 'color'],
@@ -71,6 +72,15 @@ export class EventStoreTimelineComponent implements AfterViewInit, OnChanges, On
     })
 
     this.updateList(this.events);
+  }
+
+  private sanitizeData(items: DataSet<DataGroup | DataItem>) {
+    items.forEach(item => {
+      item.content = this.sanitzer.sanitize(SecurityContext.HTML, item.content);
+      if(item.title) {
+        item.title = this.sanitzer.sanitize(SecurityContext.HTML, item.title);
+      }
+    })
   }
 
   public flipTimeZone() {
@@ -123,11 +133,13 @@ export class EventStoreTimelineComponent implements AfterViewInit, OnChanges, On
 
     if (events) {
       if (events.groups) {
+        this.sanitizeData(events.groups)
         this.timeline.setData({
           groups: events.groups,
         });
       }
       if (events.items) {
+        this.sanitizeData(events.items);
         this.timeline.setData({
           items: events.items
         });
@@ -149,7 +161,6 @@ export class EventStoreTimelineComponent implements AfterViewInit, OnChanges, On
           }
         },
         tooltip: {
-          overflowMethod: "flip" as any,
           template: (itemData) => {
             if(itemData.isCluster) {
               return `<div class="inner-tooltip">
