@@ -1,7 +1,4 @@
 # Service Fabric Explorer (SFX)
-
-NOTE: Sfx is currently in the process of migrating from angularjs(Sfx v1) to angular 10(Sfx v2). The Sfx folder holds the previous version and SfxWeb is the new version. While this migration is happening, Sfx v1 will still be available but once Sfx v2 is considered safe and has 100% parity with V1 will be removed and official deprecated. All new development is being focused on V2 and unless its a critical bug with V1, V1 will not be getting any continued support.
-
 Service Fabric Explorer is an application for inspecting and managing cloud applications and nodes in a Microsoft Azure Service Fabric cluster.
 
 ## Build Status
