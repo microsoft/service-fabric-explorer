@@ -7,11 +7,6 @@ Windows | Linux / macOS
 ![Image of Windows Build Badge](https://ci.appveyor.com/api/projects/status/ejfk6b0c3dlunkws/branch/master) | ![Image of Linux/macOS Build Badge](https://travis-ci.org/Microsoft/service-fabric-explorer.svg?branch=master) 
 
 For more information about the application and how to use it: https://docs.microsoft.com/en-us/azure/service-fabric/service-fabric-visualizing-your-cluster
-
-## Developer Help and Documentation
-
-Service Fabric Explorer consists of two main components, an AngularJS based application (Sfx) and an Electron part to host the AngularJS application (Sfx-Standalone).
-
 ### Preparing the development machine
 
 To develop Service Fabric Explorer, the following components are required.
