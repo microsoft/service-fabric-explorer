@@ -15,6 +15,10 @@ export class BaseComponent implements OnInit {
   tabs: ITab[] = [{
     name: 'all nodes',
     route: './'
+  },
+    {
+      name: 'commands',
+     route: './commands' 
     }
   ];
   constructor(public tree: TreeService, private data: DataService) { }

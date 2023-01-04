@@ -4,9 +4,14 @@
 }
 
 button {
+    
     background-color: transparent;
     border: 0px solid white;
     padding: 0px;
     margin: 0px;
     display: inline-block;
+}
+
+button:disabled {
+    color: var(--disabled);
 }

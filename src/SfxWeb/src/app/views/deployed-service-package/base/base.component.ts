@@ -23,7 +23,11 @@ export class BaseComponent extends DeployedServicePackageBaseControllerDirective
     {
         name: 'manifest',
         route: './manifest'
-      }
+    },
+    {
+      name: 'commands',
+      route: './commands'
+    }
   ];
 
   constructor(protected data: DataService, injector: Injector, private tree: TreeService) {

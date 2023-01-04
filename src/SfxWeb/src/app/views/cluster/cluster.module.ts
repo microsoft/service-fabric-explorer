@@ -31,11 +31,13 @@ import { InfrastructureViewComponent } from './infrastructure-view/infrastructur
 import { InfrastructureJobModule } from 'src/app/modules/infrastructure-job/infrastructure-job.module';
 import { RepairTasksModule } from 'src/app/modules/repair-tasks/repair-tasks.module';
 import { ConcurrentEventsVisualizationModule } from 'src/app/modules/concurrent-events-visualization/concurrent-events-visualization.module';
+import { CommandsComponent } from './commands/commands.component';
+import { PowershellCommandsModule } from 'src/app/modules/powershell-commands/powershell-commands.module';
 
 @NgModule({
   declarations: [EssentialsComponent, DetailsComponent, BaseComponent, MetricsComponent, ClustermapComponent,
                  ImagestoreComponent, ManifestComponent, EventsComponent, ActionCreateBackupPolicyComponent,
-                 StatusWarningsComponent, BackupsComponent, RepairTasksComponent, MetricTileComponent, InfrastructureViewComponent],
+                 StatusWarningsComponent, BackupsComponent, RepairTasksComponent, MetricTileComponent, InfrastructureViewComponent, CommandsComponent],
   imports: [
     CommonModule,
     ClusterRoutingModule,
@@ -57,7 +59,8 @@ import { ConcurrentEventsVisualizationModule } from 'src/app/modules/concurrent-
     InfrastructureJobModule,
     RepairTasksModule,
     NgbTooltipModule,
-    ConcurrentEventsVisualizationModule
+    ConcurrentEventsVisualizationModule,
+    PowershellCommandsModule
   ]
 })
 export class ClusterModule { }

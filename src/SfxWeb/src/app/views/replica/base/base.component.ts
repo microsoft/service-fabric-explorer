@@ -20,6 +20,10 @@ export class BaseComponent extends ReplicaBaseControllerDirective {
     {
       name: 'details',
       route: './details'
+    },
+    {
+      name: 'commands',
+      route: './commands'
     }
   ];
 
