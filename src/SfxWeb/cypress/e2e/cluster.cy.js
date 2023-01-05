@@ -5,15 +5,12 @@ import {
   upgradeProgress_route, FIXTURE_REF_UPGRADEPROGRESS, FIXTURE_REF_MANIFEST, addRoute,
   checkTableErrorMessage, EMPTY_LIST_TEXT, FAILED_TABLE_TEXT, FAILED_LOAD_TEXT,
   repairTask_route, manifest_route, CLUSTER_TAB_NAME, REPAIR_TASK_TAB_NAME,
-  FIXTURE_REF_NODES, FIXTURE_NODES, typeIntoInput, checkCheckBox, refresh,
+  FIXTURE_REF_NODES, OPTION_PICKER, typeIntoInput, SELECT_EVENT_TYPES, refresh,
   FIXTURE_REF_SYSTEMAPPS, systemApps_route, checkCommand, FIXTURE_REF_APPTYPES
 } from './util.cy';
 
 const LOAD_INFO = "getloadinfo"
 const EVENT_TABS = '[data-cy=eventtabs]'
-const OPTION_PICKER = '[data-cy=option-picker]'
-const SELECT_EVENT_TYPES = '[sectionName=select-event-types]'
-
 const serviceName = "VisualObjectsApplicationType~VisualObjects.ActorService";
 
 context('Cluster page', () => {

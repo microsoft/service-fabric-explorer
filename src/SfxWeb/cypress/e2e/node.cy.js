@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-import { apiUrl, addDefaultFixtures, checkTableSize, FIXTURE_REF_NODES, nodes_route, FIXTURE_NODES, addRoute, checkCommand } from './util.cy';
+import { apiUrl, addDefaultFixtures, checkTableSize, FIXTURE_REF_NODES, nodes_route, FIXTURE_NODES, addRoute, checkCommand, xssHtml, partialXssDecoding, OPTION_PICKER, CLUSTER_TAB_NAME, SELECT_EVENT_TYPES, renderedSanitizedXSS } from './util.cy';
 
 const nodeName = "_nt_0"
 const nodeInfoRef = "@getnodeInfo"
@@ -150,12 +150,27 @@ context('node page', () => {
             cy.wait("@getevents");
             cy.url().should('include', 'events');
         })
+
+        it.only('xss - url payload', () => {
+          addRoute('events', 'cluster-page/eventstore/cluster-events.json', apiUrl(`/EventsStore/Cluster/Events?*`))
+          addRoute("events", "empty-list.json", apiUrl(`/EventsStore/Nodes/${partialXssDecoding}/$/Events?**`));
+
+          cy.visit(`/#/node/${xssHtml}/events`);
+
+          cy.get(SELECT_EVENT_TYPES).click()
+          cy.get(OPTION_PICKER).within(() => {
+            cy.contains(CLUSTER_TAB_NAME)
+            cy.get('[type=checkbox]').eq(1).check({ force: true })
+          })
+
+          cy.contains(renderedSanitizedXSS)
+        })
     })
 
     describe("commands", () => {
         it('view commands', () => {
             cy.visit(`/#/node/${nodeName}`);
-            
+
             cy.wait([nodeInfoRef, "@getnodehealthInfo"]);
 
             checkCommand(3, 2);

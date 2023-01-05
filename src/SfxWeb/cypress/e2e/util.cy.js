@@ -155,24 +155,30 @@ export const checkCommand = (numSafeCommands, numUnsafeCommands = 0) => {
   cy.url().should('include', 'commands');
 
   cy.wait(500);
-  
+
   cy.get('[data-cy=safeCommands]');
-  
+
   cy.get('[data-cy=command]').should('have.length', numSafeCommands);
-  
+
   if (numUnsafeCommands) {
-    
+
     cy.get('[data-cy=unsafeCommands]');
     cy.get('[data-cy=commandNav]').within(() => {
       cy.contains('Unsafe Commands').click();
     })
-    
+
     cy.get('[data-cy=submit]').click();
-    
+
     cy.get('[data-cy=command]').should('have.length', numUnsafeCommands);
   }
 }
 
+export const xssHtml = `xss%22%3C%3Cimg%20src%3D1%20onerror%3Dalert%28document.domain%29%3Exss`;
+export const partialXssDecoding = `xss%22%3C%3Cimg%20src%3D1%20onerror%3Dalert(document.domain)%3Exss`
+export const renderedSanitizedXSS = `xss"<<img src="1">xss`;
 // Tabs names
+export const OPTION_PICKER = '[data-cy=option-picker]'
+export const SELECT_EVENT_TYPES = '[sectionName=select-event-types]'
+
 export const REPAIR_TASK_TAB_NAME = "Repair Tasks";
 export const CLUSTER_TAB_NAME = "Cluster";
