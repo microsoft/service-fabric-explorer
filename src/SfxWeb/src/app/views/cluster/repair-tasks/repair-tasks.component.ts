@@ -54,7 +54,7 @@ export class RepairTasksComponent extends BaseControllerDirective {
 
   setup() {
     this.repairTaskCollection = this.data.repairCollection;
-    this.timelineGenerator = this.timelineGeneratorFactoryService.getTimelineGenerator(EventType.RepairTask);
+    this.timelineGenerator = this.timelineGeneratorFactoryService.getTimelineGenerator("RepairTask");
     this.repairTaskListSettings = this.settings.getNewOrExistingPendingRepairTaskListSettings();
     this.completedRepairTaskListSettings = this.settings.getNewOrExistingCompletedRepairTaskListSettings();
   }

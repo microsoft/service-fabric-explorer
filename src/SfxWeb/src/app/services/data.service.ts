@@ -342,7 +342,7 @@ export class DataService {
     public getRepairTasksData(settings: SettingsService): IEventStoreData<RepairTaskCollection, RepairTask>{
         return {
             eventsList: this.repairCollection,
-            type: EventType.RepairTask,
+            type: "RepairTask",
             displayName: 'Repair Tasks',
             listSettings: settings.getNewOrExistingCompletedRepairTaskListSettings(),
             getEvents: () => this.repairCollection.collection,
@@ -354,9 +354,9 @@ export class DataService {
 
     public getClusterEventData(): IEventStoreData<ClusterEventList, ClusterEvent>{
         const list = new ClusterEventList(this);
-        const d = {
+        const d : IEventStoreData<ClusterEventList, ClusterEvent> = {
             eventsList : list,
-            type : EventType.Cluster,
+            type : "Cluster",
             displayName : 'Cluster',
         };
 
@@ -366,9 +366,9 @@ export class DataService {
 
     public getNodeEventData(nodeName?: string): IEventStoreData<NodeEventList, NodeEvent>{
         const list = new NodeEventList(this, nodeName);
-        const d = {
+        const d: IEventStoreData<NodeEventList, NodeEvent> = {
             eventsList: list,
-            type: EventType.Node,
+            type: "Node",
             displayName: nodeName ? nodeName : 'Nodes',
         };
 
@@ -378,9 +378,9 @@ export class DataService {
 
     public getApplicationEventData(applicationId?: string): IEventStoreData<ApplicationEventList, ApplicationEvent> {
         const list = new ApplicationEventList(this, applicationId);
-        const d = {
+        const d: IEventStoreData<ApplicationEventList, ApplicationEvent> = {
             eventsList : list,
-            type : applicationId ? EventType.Application : null,
+            type : applicationId ? "Application" : null,
             displayName : applicationId ? applicationId : 'Apps',
         };
 
@@ -401,9 +401,9 @@ export class DataService {
 
     public getPartitionEventData(partitionId?: string): IEventStoreData<PartitionEventList, PartitionEvent> {
         const list = new PartitionEventList(this, partitionId);
-        const d = {
+        const d: IEventStoreData<PartitionEventList, PartitionEvent> = {
             eventsList : list,
-            type : EventType.Partition,
+            type : "Partition",
             displayName : partitionId
         };
 

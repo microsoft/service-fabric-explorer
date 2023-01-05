@@ -6,18 +6,18 @@ import { IOptionConfig, IOptionData } from '../option-picker/option-picker.compo
 import { TimelineComponent } from '../timeline/timeline.component';
 import { forkJoin } from 'rxjs';
 import { VisualizationDirective } from '../visualization.directive';
-import { VisualizationComponent } from '../visualizationComponents';
+import { EventColumnUpdate, VisualizationComponent } from '../visualizationComponents';
 import { RcaVisualizationComponent } from '../rca-visualization/rca-visualization.component';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { IDataModel } from 'src/app/Models/DataModels/Base';
 
-export enum EventType {
-  Cluster,
-  Node,
-  Application,
-  Partition,
-  RepairTask
-}
+export type EventType =
+  "Cluster" |
+  "Node" |
+  'Application' |
+  "Partition" |
+  "RepairTask"
+
 export interface IEventStoreData<IVisPresentEvent, S> {
   eventsList: IVisPresentEvent;
   type?: EventType;
@@ -85,6 +85,10 @@ export class EventStoreComponent implements OnInit, OnChanges, AfterViewInit {
         instance.selectEvent.subscribe((id) => this.setSearch(id));
       }
 
+      if (instance.updateColumn) {
+        instance.updateColumn.subscribe((update) => this.updateColumn(update));
+      }
+
       this.visualizations.push(instance);
     })
 
@@ -100,7 +104,6 @@ export class EventStoreComponent implements OnInit, OnChanges, AfterViewInit {
   
   /* initiated from timeline, but affect the list*/
   public setSearch(id: string) {
-    console.log(id);
     this.listEventStoreData.forEach((list, i) => {
       if (list.objectResolver(id)) {
         this.activeTab = list.displayName
@@ -108,6 +111,30 @@ export class EventStoreComponent implements OnInit, OnChanges, AfterViewInit {
           list.listSettings.search = id, 1)
       }
     })
+  }
+
+  private updateColumn(update: EventColumnUpdate) {
+
+    for (const data of this.listEventStoreData) {
+      let index: number;
+      
+      if (update.isSecondRow) {
+        index = data.listSettings.secondRowColumnSettings.findIndex(setting => setting.id === update.columnSetting.id);
+      }
+      else {
+        index = data.listSettings.columnSettings.findIndex(setting => setting.id === update.columnSetting.id);
+      }
+
+      if (index != -1) {
+        if (update.isSecondRow) {
+          data.listSettings.secondRowColumnSettings[index] = update.columnSetting;
+        }
+        else {
+          data.listSettings.columnSettings[index] = update.columnSetting;
+        }
+      }
+    }
+      
   }
 
   /* work w/ processData to check if update needed */
@@ -134,14 +161,17 @@ export class EventStoreComponent implements OnInit, OnChanges, AfterViewInit {
 
     forkJoin(timelineEventSubs).subscribe((refreshList) => {
       this.failedRefresh = refreshList.some(e => !e);
-      this.visualizations.forEach(e => e.update())
+      this.visualizations.forEach(visualization => {
+        visualization.listEventStoreData = this.listEventStoreData;
+        visualization.update();
+      })
     });
   }
 
   /* filter event types; then update everything */
   processData(option: IOptionData) {
     if (option.addToList) {
-      this.listEventStoreData.push(option.data);
+      this.listEventStoreData = [...this.listEventStoreData, option.data];
     }
     else {
       this.listEventStoreData = this.listEventStoreData.filter(item => item.displayName !== option.data.displayName);

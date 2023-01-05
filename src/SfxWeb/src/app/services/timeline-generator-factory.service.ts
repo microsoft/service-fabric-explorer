@@ -15,31 +15,31 @@ export class TimelineGeneratorFactoryService {
 
   public getTimelineGenerator(type: EventType): TimeLineGeneratorBase<any> {
     switch (type) {
-      case EventType.Cluster:
+      case "Cluster":
         if (!this.clusterGenerator) {
           this.clusterGenerator = new ClusterTimelineGenerator();
         }
         return this.clusterGenerator;
       
-      case EventType.Node:
+      case "Node":
         if (!this.nodeGenerator) {
           this.nodeGenerator = new NodeTimelineGenerator();
         }
         return this.nodeGenerator;
       
-      case EventType.Application:
+      case "Application":
         if (!this.appGenerator) {
           this.appGenerator = new ApplicationTimelineGenerator();
         }
         return this.appGenerator;
       
-      case EventType.Partition:
+      case "Partition":
         if (!this.partitionGenerator) {
           this.partitionGenerator = new PartitionTimelineGenerator();
         }
         return this.partitionGenerator;
           
-      case EventType.RepairTask:
+      case "RepairTask":
         if (!this.repairGenerator) {
           this.repairGenerator = new RepairTaskTimelineGenerator();
         }

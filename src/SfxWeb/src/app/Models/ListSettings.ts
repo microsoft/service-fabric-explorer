@@ -165,6 +165,8 @@ export class ListColumnSetting {
 
     public fixedWidthPx?: number;
 
+    public id?: string;
+
     public get hasFilters(): boolean {
         return this.config.enableFilter && this.filterValues.length > 0;
     }
@@ -362,6 +364,7 @@ export class ListColumnSettingWithEmbeddedVisTool extends ListColumnSetting impl
                        public propertyPath: string = '',
                        public displayName: string = '',
                        public visEvents: IConcurrentEvents[],
+                       public id?: string,
                        config?: IListColumnAdditionalSettings) {
         super(propertyPath, displayName, config);
     }
