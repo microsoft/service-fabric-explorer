@@ -1,4 +1,4 @@
-<div *ngIf="timeLineEventsData">
+<div *ngIf="timeLineEventsData && startDate && endDate">
   
   <app-event-store-timeline [events]="timeLineEventsData" (itemClicked)="setSearch($event)">
     <div buttons class="flex-center">
