@@ -70,8 +70,7 @@ export class VisualizationToolComponent implements OnChanges, AfterViewInit, Det
   }
 
   ngAfterViewInit(): void {
-    this.visEvents = this.listSetting.visEvents.find(
-      visEvent => visEvent.eventInstanceId == this.item.eventInstanceId);
+   
     this.options.series = [this.traverse()];
     const data = this.traverse();
     this.options.chart.height = data.levels.length * 110;
@@ -92,6 +91,8 @@ export class VisualizationToolComponent implements OnChanges, AfterViewInit, Det
     }
     // perform BFS to convert to organization chart
     let queue: IConcurrentEvents[] = [];
+    this.visEvents = this.listSetting.visEvents.find(
+      visEvent => visEvent.eventInstanceId == this.item.eventInstanceId);
     if (this.visEvents) {
       queue = [this.visEvents];
 

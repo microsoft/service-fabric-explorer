@@ -1,11 +1,11 @@
-import { ChangeDetectorRef, Component, Input } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angular/core';
 import { IRCAItem, getSimultaneousEventsForEvent, IConcurrentEvents } from 'src/app/Models/eventstore/rcaEngine';
 import { RelatedEventsConfigs } from 'src/app/Models/eventstore/RelatedEventsConfigs';
 import { ListColumnSettingWithCustomComponent, ListColumnSettingWithEmbeddedVisTool } from 'src/app/Models/ListSettings';
 import { VisualizationLogoComponent } from '../../concurrent-events-visualization/visualization-logo/visualization-logo.component';
 import { VisualizationToolComponent } from '../../concurrent-events-visualization/visualization-tool/visualization-tool.component';
 import { IEventStoreData } from '../event-store/event-store.component';
-import { VisualizationComponent } from '../visualizationComponents';
+import { EventColumnUpdate, VisualizationComponent } from '../visualizationComponents';
 
 @Component({
   selector: 'app-rca-visualization',
@@ -15,6 +15,8 @@ import { VisualizationComponent } from '../visualizationComponents';
 export class RcaVisualizationComponent implements VisualizationComponent {
 
   @Input() listEventStoreData: IEventStoreData<any, any>[];
+  @Output() updateColumn = new EventEmitter<EventColumnUpdate>();
+
   public simulEvents: IConcurrentEvents[] = [];
 
   constructor(public changeDetector: ChangeDetectorRef) { }
@@ -61,11 +63,27 @@ export class RcaVisualizationComponent implements VisualizationComponent {
           '',
           '',
           this.simulEvents,
+          'visTool',
           {
             enableFilter: false,
             colspan: 3
           }
         ));
+      }
+      else {
+        const updatedVisTool = new ListColumnSettingWithEmbeddedVisTool(
+          VisualizationToolComponent,
+          '',
+          '',
+          this.simulEvents,
+          'visTool',
+          {
+            enableFilter: false,
+            colspan: 3
+          }
+        );
+        this.updateColumn.emit({ columnSetting: updatedVisTool, isSecondRow: true} );
+
       }
     }
   }
