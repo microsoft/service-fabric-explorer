@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, OnChanges, ViewChildren, QueryList, AfterViewInit, Type } from '@angular/core';
+import { Component, Input, OnChanges, ViewChildren, QueryList, AfterViewInit, Type } from '@angular/core';
 import { IOnDateChange } from '../../time-picker/double-slider/double-slider.component';
 import { DataService } from 'src/app/services/data.service';
 import { ListSettings } from 'src/app/Models/ListSettings';
@@ -33,7 +33,7 @@ export interface IEventStoreData<IVisPresentEvent, S> {
   templateUrl: './event-store.component.html',
   styleUrls: ['./event-store.component.scss']
 })
-export class EventStoreComponent implements OnInit, OnChanges, AfterViewInit {
+export class EventStoreComponent implements OnChanges, AfterViewInit {
 
   constructor(public dataService: DataService) { }
 
@@ -51,15 +51,11 @@ export class EventStoreComponent implements OnInit, OnChanges, AfterViewInit {
   private visualizations: VisualizationComponent[] = [];
   private vizRefs: Type<any>[] = [TimelineComponent, RcaVisualizationComponent];
   
-
-  ngOnInit() {
+  ngAfterViewInit() {
     this.dataService.clusterManifest.ensureInitialized().subscribe(() => {
       this.dateMin = TimeUtils.AddDays(new Date(), -this.dataService.clusterManifest.eventStoreTimeRange);
+      this.setVisualizations();
     });
-  }
-
-  ngAfterViewInit() {
-    this.setVisualizations();
   }
 
   ngOnChanges(): void {
@@ -73,11 +69,11 @@ export class EventStoreComponent implements OnInit, OnChanges, AfterViewInit {
       
       instance.listEventStoreData = this.listEventStoreData;
       
-      if (instance.startDate) {
+      if (instance.startDate && this.startDate) {
         instance.startDate = this.startDate;
       }
 
-      if (instance.endDate) {
+      if (instance.endDate && this.endDate) {
         instance.endDate = this.endDate;
       }
       
@@ -163,6 +159,8 @@ export class EventStoreComponent implements OnInit, OnChanges, AfterViewInit {
       this.failedRefresh = refreshList.some(e => !e);
       this.visualizations.forEach(visualization => {
         visualization.listEventStoreData = this.listEventStoreData;
+        visualization.startDate && (visualization.startDate = this.startDate);
+        visualization.endDate && (visualization.endDate = this.endDate);
         visualization.update();
       })
     });
