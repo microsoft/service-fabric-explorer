@@ -46,6 +46,19 @@ export class RcaVisualizationComponent implements VisualizationComponent {
     }
 
     for (const data of this.listEventStoreData) {
+      
+      const visTool = new ListColumnSettingWithEmbeddedVisTool(
+        VisualizationToolComponent,
+        '',
+        '',
+        this.simulEvents,
+        'visTool',
+        {
+          enableFilter: false,
+          colspan: 3
+        }
+      );
+
       //add presentation column if not already there
       if (!data.listSettings.columnSettings.some(setting => setting.propertyPath == "visPresent")) {
         let newLogoSetting = new ListColumnSettingWithCustomComponent(
@@ -57,32 +70,12 @@ export class RcaVisualizationComponent implements VisualizationComponent {
             colspan: 1
           });
         newLogoSetting.fixedWidthPx = 100;
-        data.listSettings.columnSettings.splice(1, 0, newLogoSetting);
-        data.listSettings.secondRowColumnSettings.push(new ListColumnSettingWithEmbeddedVisTool(
-          VisualizationToolComponent,
-          '',
-          '',
-          this.simulEvents,
-          'visTool',
-          {
-            enableFilter: false,
-            colspan: 3
-          }
-        ));
+        
+        this.updateColumn.emit({ columnSetting: newLogoSetting, listName: data.displayName, isExisting: false, isSecondRow: false, index: 1});
+        this.updateColumn.emit({ columnSetting: visTool, listName: data.displayName, isExisting: false, isSecondRow: true} );
       }
       else {
-        const updatedVisTool = new ListColumnSettingWithEmbeddedVisTool(
-          VisualizationToolComponent,
-          '',
-          '',
-          this.simulEvents,
-          'visTool',
-          {
-            enableFilter: false,
-            colspan: 3
-          }
-        );
-        this.updateColumn.emit({ columnSetting: updatedVisTool, isSecondRow: true} );
+        this.updateColumn.emit({ columnSetting: visTool, listName: data.displayName, isExisting: true, isSecondRow: true} );
 
       }
     }
