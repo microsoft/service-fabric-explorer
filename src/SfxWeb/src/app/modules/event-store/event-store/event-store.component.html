@@ -12,8 +12,11 @@
 
 </div>
 
-<div *ngFor="let _ of vizRefs;">
+<div *ngFor="let ref of vizRefs">
   <app-collapse-container class="essen-pane detail-pane">
+    <h5 collapse-header>
+      {{ref.name}}
+    </h5>
     <div collapse-body>
       <ng-template appVisualization></ng-template>
     </div>
