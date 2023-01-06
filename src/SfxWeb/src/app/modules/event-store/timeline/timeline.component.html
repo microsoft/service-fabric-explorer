@@ -18,7 +18,7 @@
       <span *ngIf="dataService.isAdvancedModeEnabled() && showAllEvents" class="flex-center">
         <app-input placeholder="query string" [(model)]="transformText">
         </app-input>
-        <button class="simple-button" (click)="update()">filter</button>
+        <button class="simple-button" (click)="getTimelineData">filter</button>
       </span>
   
     </div>
