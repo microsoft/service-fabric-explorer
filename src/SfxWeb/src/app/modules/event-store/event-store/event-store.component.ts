@@ -28,6 +28,11 @@ export interface IEventStoreData<IVisPresentEvent, S> {
   objectResolver?(id: string): IDataModel<any>; //used to determine if the data contains a given event;
 }
 
+interface VisReference {
+  name: string,
+  component: Type<any>
+}
+
 @Component({
   selector: 'app-event-store',
   templateUrl: './event-store.component.html',
@@ -49,7 +54,12 @@ export class EventStoreComponent implements OnChanges, AfterViewInit {
   public dateMin: Date;
 
   private visualizations: VisualizationComponent[] = [];
-  public vizRefs: Type<any>[] = [TimelineComponent, RcaVisualizationComponent];
+  public vizRefs: VisReference[] =
+    [
+      { name: "Timeline", component: TimelineComponent },
+      { name: "RCA Summary", component: RcaVisualizationComponent }
+    ];
+  
   private visualizationsReady = false;
   
   ngAfterViewInit() {
@@ -64,20 +74,30 @@ export class EventStoreComponent implements OnChanges, AfterViewInit {
 
   private setVisualizations(): void {
 
+    if (this.vizDirs.length < this.visualizations.length) { //if some visualizations have been removed, clear the array
+      this.visualizations.splice(this.vizDirs.length);  
+    }
+
     this.vizDirs.forEach((dir, i) => {
-      // if()
-      const componentRef = dir.viewContainerRef.createComponent<VisualizationComponent>(this.vizRefs[i]);
-      const instance = componentRef.instance;
-      
-      if (instance.selectEvent) {
-        instance.selectEvent.subscribe((id) => this.setSearch(id));
-      }
 
-      if (instance.updateColumn) {
-        instance.updateColumn.subscribe((update) => this.updateColumn(update));
-      }
+      if (dir.name !== this.vizRefs[i].name) { //check and update each visualization directive template
+        dir.name = this.vizRefs[i].name;
+        dir.viewContainerRef.clear();
 
-      this.visualizations.push(instance);
+        const componentRef = dir.viewContainerRef.createComponent<VisualizationComponent>(this.vizRefs[i].component);
+        const instance = componentRef.instance;
+        
+        if (instance.selectEvent) {
+          instance.selectEvent.subscribe((id) => this.setSearch(id));
+        }
+  
+        if (instance.updateColumn) {
+          instance.updateColumn.subscribe((update) => this.updateColumn(update));
+        }
+  
+        this.visualizations.splice(i, 1, instance);
+        
+      }
     })
   }
 
@@ -89,7 +109,8 @@ export class EventStoreComponent implements OnChanges, AfterViewInit {
     this.setNewDateWindow(true);
   }
   
-  /* initiated from timeline, but affect the list*/
+  //handle outputs from visualizations
+
   public setSearch(id: string) {
     this.listEventStoreData.forEach((list, i) => {
       if (list.objectResolver(id)) {
@@ -142,7 +163,7 @@ export class EventStoreComponent implements OnChanges, AfterViewInit {
     }
   }
 
-  /* potential new starting point for calling updates on all visualizations*/
+  //update loop for visualizations
   public update(): void {
 
     if (this.visualizationsReady) {

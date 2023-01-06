@@ -5,6 +5,8 @@ import { Directive, ViewContainerRef } from '@angular/core';
 })
 export class VisualizationDirective {
 
+  public name: string;
+
   constructor(public viewContainerRef: ViewContainerRef) { }
 
 }
