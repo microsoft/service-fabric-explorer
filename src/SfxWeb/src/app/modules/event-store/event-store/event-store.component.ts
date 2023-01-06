@@ -1,7 +1,7 @@
 import { Component, Input, OnChanges, ViewChildren, QueryList, AfterViewInit, Type } from '@angular/core';
 import { IOnDateChange } from '../../time-picker/double-slider/double-slider.component';
 import { DataService } from 'src/app/services/data.service';
-import { ListSettings } from 'src/app/Models/ListSettings';
+import { ListColumnSetting, ListSettings } from 'src/app/Models/ListSettings';
 import { IOptionConfig, IOptionData } from '../option-picker/option-picker.component';
 import { TimelineComponent } from '../timeline/timeline.component';
 import { forkJoin } from 'rxjs';
@@ -10,6 +10,77 @@ import { EventColumnUpdate, VisualizationComponent } from '../visualizationCompo
 import { RcaVisualizationComponent } from '../rca-visualization/rca-visualization.component';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { IDataModel } from 'src/app/Models/DataModels/Base';
+import initSqlJs, { Database } from 'sql.js';
+
+const isoChecker = new RegExp(/\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+([+-][0-2]\d:[0-5]\d|Z)/);
+
+const getPropertyList = (object, prefix = "") => {
+
+  let columns = [];
+  let flattenedObject = {};
+  Object.keys(object).forEach(key => {
+    const value = object[key];
+    const properKey = prefix + key;
+    const type = typeof value;
+
+    let isObj = false;
+
+    if (type === "string") {
+      if (isoChecker.test(value)) {
+        // columns.push({
+        //     key: properKey,
+        //     type: 'date'
+        // })
+      } else {
+        columns.push({
+          key: properKey,
+          type: 'MEDIUMTEXT'
+        })
+      }
+    } else if (type === "number") {
+      columns.push({
+        key: properKey,
+        type: object[properKey] % 1 === 0 ? 'INTEGER' : 'FLOAT'
+      })
+    } else if (type === "boolean") {
+      columns.push({
+        key: properKey,
+        type: 'BOOLEAN'
+      })
+    } else if (type === "object" && !Array.isArray(value)) {
+      const result = getPropertyList(value, key + "_");
+      columns = columns.concat(result.columns);
+      flattenedObject = { ...flattenedObject, ...result.properties }
+      isObj = true;
+    }
+
+    if (!isObj) {
+      flattenedObject[properKey] = value;
+    }
+  })
+
+  return { columns, properties: flattenedObject };
+}
+
+const getPropertiesFromList = (objects) => {
+  const allProperties = [];
+  const seenProperties = new Set();
+
+  const flattenedObjects = [];
+  objects.forEach(obj => {
+    const objProperties = getPropertyList(obj);
+    flattenedObjects.push(objProperties.properties);
+    objProperties.columns.forEach(obj => {
+      if (!seenProperties.has(obj.key)) {
+        allProperties.push(obj);
+        seenProperties.add(obj.key)
+      }
+    })
+  })
+
+  return { allProperties, flattenedObjects };
+}
+
 
 export type EventType =
   "Cluster" |
@@ -39,6 +110,37 @@ interface VisReference {
   styleUrls: ['./event-store.component.scss']
 })
 export class EventStoreComponent implements OnChanges, AfterViewInit {
+
+  queryString = "";
+  db: Database;
+  result = {};
+  resultTableSettings: ListSettings;
+  query() {
+    try {
+     this.result = this.db.exec(this.queryString);
+      console.log(this.result);
+     this.resultTableSettings = new ListSettings(100, [], 'results', []);
+     const columns = this.result[0].columns;
+     columns.forEach(column => {
+      this.resultTableSettings.columnSettings.push(new ListColumnSetting(column, column));
+     })
+
+     this.result['objs'] = this.result[0].values.map(items => {
+      const r = {};
+      columns.forEach((column, i) => {
+        r[column] = items[i];
+      })
+
+      return r;
+     })
+
+    } catch(e) {
+      this.resultTableSettings = null;
+      this.result = {
+        error: e.toString()
+      }
+    }
+  }
 
   constructor(public dataService: DataService) { }
 
