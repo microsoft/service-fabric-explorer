@@ -7,11 +7,13 @@ export interface EventColumnUpdate {
     isSecondRow: boolean;
 }
 
-export interface VisualizationComponent {
-    update();
+export interface VisUpdateData {
     listEventStoreData: IEventStoreData<any, any>[];
-    startDate?: Date;
-    endDate?: Date;
+    startDate: Date;
+    endDate: Date;
+}
+export interface VisualizationComponent {
+    update(data: VisUpdateData);
     selectEvent?: EventEmitter<any>;
     updateColumn?: EventEmitter<EventColumnUpdate>;
 }

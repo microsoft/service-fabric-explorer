@@ -6,7 +6,7 @@ import { TelemetryService } from 'src/app/services/telemetry.service';
 import { TimelineGeneratorFactoryService } from 'src/app/services/timeline-generator-factory.service';
 import { DataSet, DataGroup } from 'vis-timeline/standalone/esm';
 import { IEventStoreData } from '../event-store/event-store.component';
-import { VisualizationComponent } from '../visualizationComponents';
+import { VisualizationComponent, VisUpdateData } from '../visualizationComponents';
 
 @Component({
   selector: 'app-timeline',
@@ -14,7 +14,7 @@ import { VisualizationComponent } from '../visualizationComponents';
   styleUrls: ['./timeline.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TimelineComponent implements OnInit, VisualizationComponent {
+export class TimelineComponent implements VisualizationComponent {
 
   @Input() listEventStoreData: IEventStoreData<any, any>[];
   @Input() startDate: Date = new Date();
@@ -25,7 +25,7 @@ export class TimelineComponent implements OnInit, VisualizationComponent {
   public get showAllEvents() { return this.pshowAllEvents; }
   public set showAllEvents(state: boolean) {
     this.pshowAllEvents = state;
-    this.timeLineEventsData = this.getTimelineData();
+    this.getTimelineData();
   }
 
   public timeLineEventsData: ITimelineData;
@@ -40,12 +40,6 @@ export class TimelineComponent implements OnInit, VisualizationComponent {
     private telemService: TelemetryService,
     public changeDetector: ChangeDetectorRef,
     private timelineGeneratorFactoryService: TimelineGeneratorFactoryService) { }
-
-  ngOnInit() {
-    this.pshowAllEvents = this.checkAllOption();
-    this.showCorrelatedBtn = !this.pshowAllEvents;
-  }
-
 
   public checkAllOption(): boolean {
     return this.listEventStoreData.some(data => !data.type);
@@ -78,7 +72,7 @@ export class TimelineComponent implements OnInit, VisualizationComponent {
     };
   }
 
-  private getTimelineData(): ITimelineData {
+  public getTimelineData() {
     let rawEventlist = [];
     let combinedTimelineData = this.initializeTimelineData();
     const addNestedGroups = this.listEventStoreData.length > 1;
@@ -120,11 +114,18 @@ export class TimelineComponent implements OnInit, VisualizationComponent {
       };
     }
 
-    return combinedTimelineData;
+    this.timeLineEventsData = combinedTimelineData;
+    this.changeDetector.markForCheck();
   }
 
-  public update() {
-    this.timeLineEventsData = this.getTimelineData();
-    this.changeDetector.markForCheck();
+  public update(data: VisUpdateData) {
+    this.listEventStoreData = data.listEventStoreData;
+    this.startDate = data.startDate;
+    this.endDate = data.endDate;
+
+    this.pshowAllEvents = this.checkAllOption();
+    this.showCorrelatedBtn = !this.pshowAllEvents;
+
+    this.getTimelineData();
   }
 }

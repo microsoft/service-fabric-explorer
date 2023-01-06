@@ -5,7 +5,7 @@ import { ListColumnSettingWithCustomComponent, ListColumnSettingWithEmbeddedVisT
 import { VisualizationLogoComponent } from '../../concurrent-events-visualization/visualization-logo/visualization-logo.component';
 import { VisualizationToolComponent } from '../../concurrent-events-visualization/visualization-tool/visualization-tool.component';
 import { IEventStoreData } from '../event-store/event-store.component';
-import { EventColumnUpdate, VisualizationComponent } from '../visualizationComponents';
+import { EventColumnUpdate, VisualizationComponent, VisUpdateData } from '../visualizationComponents';
 
 @Component({
   selector: 'app-rca-visualization',
@@ -88,7 +88,9 @@ export class RcaVisualizationComponent implements VisualizationComponent {
     }
   }
 
-  public update() {
+  public update(data: VisUpdateData) {
+    this.listEventStoreData = data.listEventStoreData;
+
     this.getConcurrentEventsData();
     this.changeDetector.markForCheck();
   }

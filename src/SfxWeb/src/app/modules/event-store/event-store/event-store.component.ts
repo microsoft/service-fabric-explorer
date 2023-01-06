@@ -49,12 +49,12 @@ export class EventStoreComponent implements OnChanges, AfterViewInit {
   public dateMin: Date;
 
   private visualizations: VisualizationComponent[] = [];
-  private vizRefs: Type<any>[] = [TimelineComponent, RcaVisualizationComponent];
+  public vizRefs: Type<any>[] = [TimelineComponent, RcaVisualizationComponent];
+  private visualizationsReady = false;
   
   ngAfterViewInit() {
     this.dataService.clusterManifest.ensureInitialized().subscribe(() => {
       this.dateMin = TimeUtils.AddDays(new Date(), -this.dataService.clusterManifest.eventStoreTimeRange);
-      this.setVisualizations();
     });
   }
 
@@ -63,19 +63,11 @@ export class EventStoreComponent implements OnChanges, AfterViewInit {
   }
 
   private setVisualizations(): void {
+
     this.vizDirs.forEach((dir, i) => {
+      // if()
       const componentRef = dir.viewContainerRef.createComponent<VisualizationComponent>(this.vizRefs[i]);
       const instance = componentRef.instance;
-      
-      instance.listEventStoreData = this.listEventStoreData;
-      
-      if (instance.startDate && this.startDate) {
-        instance.startDate = this.startDate;
-      }
-
-      if (instance.endDate && this.endDate) {
-        instance.endDate = this.endDate;
-      }
       
       if (instance.selectEvent) {
         instance.selectEvent.subscribe((id) => this.setSearch(id));
@@ -87,14 +79,13 @@ export class EventStoreComponent implements OnChanges, AfterViewInit {
 
       this.visualizations.push(instance);
     })
-
-    this.update();
   }
 
   /* date determines the data */
   public setDate(newDate: IOnDateChange) {
     this.endDate = newDate.endDate;
     this.startDate = newDate.startDate;
+    this.visualizationsReady = true;
     this.setNewDateWindow(true);
   }
   
@@ -153,17 +144,18 @@ export class EventStoreComponent implements OnChanges, AfterViewInit {
 
   /* potential new starting point for calling updates on all visualizations*/
   public update(): void {
-    const timelineEventSubs = this.listEventStoreData.map(data => data.eventsList.refresh());
 
-    forkJoin(timelineEventSubs).subscribe((refreshList) => {
-      this.failedRefresh = refreshList.some(e => !e);
-      this.visualizations.forEach(visualization => {
-        visualization.listEventStoreData = this.listEventStoreData;
-        visualization.startDate && (visualization.startDate = this.startDate);
-        visualization.endDate && (visualization.endDate = this.endDate);
-        visualization.update();
-      })
-    });
+    if (this.visualizationsReady) {
+      this.setVisualizations();
+      const timelineEventSubs = this.listEventStoreData.map(data => data.eventsList.refresh());
+  
+      forkJoin(timelineEventSubs).subscribe((refreshList) => {
+        this.failedRefresh = refreshList.some(e => !e);
+        this.visualizations.forEach(visualization => {
+          visualization.update({listEventStoreData: this.listEventStoreData, startDate: this.startDate, endDate: this.endDate});
+        })
+      });
+    }
   }
 
   /* filter event types; then update everything */

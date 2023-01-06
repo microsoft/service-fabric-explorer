@@ -1,54 +1,59 @@
-  <div class="essen-pane detail-pane">
-    <div style="margin-bottom: 10px;" *ngIf="dateMin">
-      <app-time-picker [dateMin]="dateMin" (dateChange)="setDate($event)"></app-time-picker>
-    </div>
-    <div ngbDropdown style="margin-left: 10px;"  *ngIf="optionsConfig">
-      <button class="simple-button" ngbDropdownToggle sectionName="select-event-types">Event Types </button>
-      <div ngbDropdownMenu>
-        <app-option-picker [optionsConfig]="optionsConfig" (selectedOption)="processData($event)" [listEventStoreData]="listEventStoreData"></app-option-picker>
-      </div>
-    </div>
-    <ng-template appVisualization></ng-template>
-    <br>
-  
+<div class="essen-pane detail-pane">
+  <div style="margin-bottom: 10px;" *ngIf="dateMin">
+    <app-time-picker [dateMin]="dateMin" (dateChange)="setDate($event)"></app-time-picker>
   </div>
-  
-  <ng-template appVisualization></ng-template>
-  
-  <div class="essen-pane">
-    <div style="height: 20px;">
-      <a class="link" style="float: right;"> Why is data missing?
-        <span class="mif-info"
-          title="This timeline may present incomplete information and not fully represent the cluster for this date range. Events may also be missing due to data loss and lead to incomplete states. E.g.: A cluster upgrade starting before or ending after this time range will not be shown."></span>
+  <div ngbDropdown style="margin-left: 10px;"  *ngIf="optionsConfig">
+    <button class="simple-button" ngbDropdownToggle sectionName="select-event-types">Event Types </button>
+    <div ngbDropdownMenu>
+      <app-option-picker [optionsConfig]="optionsConfig" (selectedOption)="processData($event)" [listEventStoreData]="listEventStoreData"></app-option-picker>
+    </div>
+  </div>
+  <br>
+
+</div>
+
+<div *ngFor="let _ of vizRefs;">
+  <app-collapse-container class="essen-pane detail-pane">
+    <div collapse-body>
+      <ng-template appVisualization></ng-template>
+    </div>
+  </app-collapse-container>
+</div>
+
+<div class="essen-pane">
+  <div style="height: 20px;">
+    <a class="link" style="float: right;"> Why is data missing?
+      <span class="mif-info"
+        title="This timeline may present incomplete information and not fully represent the cluster for this date range. Events may also be missing due to data loss and lead to incomplete states. E.g.: A cluster upgrade starting before or ending after this time range will not be shown."></span>
+    </a>
+  </div>
+
+  <app-health-badge *ngIf="failedRefresh" text=" Some items failed to load." badgeClass="badge-warning">
+  </app-health-badge>
+
+  <div ngbNav #nav="ngbNav" data-cy="eventtabs" class="nav-wrapper" [(activeId)]="activeTab">
+    <div ngbNavItem *ngFor="let data of listEventStoreData" [ngbNavItem]="data.displayName">
+      <a ngbNavLink class="bar-name">
+        <div *ngIf="data.eventsList.isRefreshing" class="mif-refresh rotate link"
+              ngbTooltip="This data is currently loading."  tooltipClass="styled-tooltip"></div>
+        <app-health-badge *ngIf="!data.eventsList.lastRefreshWasSuccessful" text="Error" [showText]="false"
+          badgeClass="badge-error"></app-health-badge>
+        {{data.displayName}} ({{data.eventsList.collection.length}})
       </a>
+      <ng-template ngbNavContent>
+        <app-detail-list [list]="data.eventsList.collection" [listSettings]="data.listSettings"
+          [isLoading]="!data.eventsList.isInitialized" [successfulLoad]="data.eventsList.lastRefreshWasSuccessful">
+        </app-detail-list>
+      </ng-template>
     </div>
-  
-    <app-health-badge *ngIf="failedRefresh" text=" Some items failed to load." badgeClass="badge-warning">
-    </app-health-badge>
-  
-    <div ngbNav #nav="ngbNav" data-cy="eventtabs" class="nav-wrapper" [(activeId)]="activeTab">
-      <div ngbNavItem *ngFor="let data of listEventStoreData" [ngbNavItem]="data.displayName">
-        <a ngbNavLink class="bar-name">
-          <div *ngIf="data.eventsList.isRefreshing" class="mif-refresh rotate link"
-                ngbTooltip="This data is currently loading."  tooltipClass="styled-tooltip"></div>
-          <app-health-badge *ngIf="!data.eventsList.lastRefreshWasSuccessful" text="Error" [showText]="false"
-            badgeClass="badge-error"></app-health-badge>
-          {{data.displayName}} ({{data.eventsList.collection.length}})
-        </a>
-        <ng-template ngbNavContent>
-          <app-detail-list [list]="data.eventsList.collection" [listSettings]="data.listSettings"
-            [isLoading]="!data.eventsList.isInitialized" [successfulLoad]="data.eventsList.lastRefreshWasSuccessful">
-          </app-detail-list>
-        </ng-template>
+  </div>
+  <div [ngbNavOutlet]="nav"></div>
+  <div>
+    <div style="float: right; padding: 15px 0 0 0; margin: 0px;">
+      <span class="dropdown-toggle dark-background-link bowtie-icon bowtie-status-error limit-wrapper"></span>
+      <div style="display: inline-block;">
+        There is a limit of up to 500 events for a given range.
       </div>
     </div>
-    <div [ngbNavOutlet]="nav"></div>
-    <div>
-      <div style="float: right; padding: 15px 0 0 0; margin: 0px;">
-        <span class="dropdown-toggle dark-background-link bowtie-icon bowtie-status-error limit-wrapper"></span>
-        <div style="display: inline-block;">
-          There is a limit of up to 500 events for a given range.
-        </div>
-      </div>
-    </div>
-  </div>  
+  </div>
+</div>  
