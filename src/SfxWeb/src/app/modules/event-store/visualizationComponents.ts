@@ -4,7 +4,10 @@ import { ListColumnSetting } from "src/app/Models/ListSettings";
 
 export interface EventColumnUpdate {
     columnSetting: ListColumnSetting;
+    listName: string;
     isSecondRow: boolean;
+    isExisting: boolean;
+    index?: number
 }
 
 export interface VisUpdateData {
