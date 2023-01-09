@@ -1,0 +1,12 @@
+<div ngbDropdown style="margin-left: 10px;">
+    <button class="simple-button" ngbDropdownToggle>Type</button>
+    <div ngbDropdownMenu>
+        <div *ngFor="let type of types">
+            <div ngbDropdownItem>{{type}}</div>
+        </div>
+    </div>
+</div>
+<label>
+    <span>Name/Id: </span>
+    <input>
+</label>
