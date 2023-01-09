@@ -38,29 +38,6 @@ $border-radius: 5px;
    }
 }
 
-.bar-name{
-    font-size: 12pt;
-    background-color: rgba(0, 0, 0, 0) !important;
-    display: flex;
-    gap: 10px;
-    align-items: center;
-    padding-bottom: 0px;
-}
-
-
-.flex-container {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 5px;
-    width: 100%;
-}
-
-.limit-wrapper {
-    margin-right: 2px;
-    vertical-align: top;
-}
-
 .correlated-icon {
     vertical-align: middle;
     margin-right: 3px;
