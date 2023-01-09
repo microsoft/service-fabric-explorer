@@ -1,28 +1,38 @@
 /// <reference types="cypress" />
 
-import { addDefaultFixtures, apiUrl, FIXTURE_REF_MANIFEST, EMPTY_LIST_TEXT, addRoute, aad_route, checkCommand } from './util.cy';
+import { decode } from 'punycode';
+import { addDefaultFixtures, apiUrl, FIXTURE_REF_MANIFEST, EMPTY_LIST_TEXT, addRoute, aad_route, checkCommand, xssPrefix, watchForAlert, unsanitizedXSS } from './util.cy';
 
 const appName = "VisualObjectsApplicationType";
 const waitRequest = "@getapp";
+
+const initializeRoutes = (app, prefix = "") => {
+  addDefaultFixtures(prefix);
+  addRoute("upgradeProgress", prefix + "app-page/upgrade-progress.json", apiUrl(`/Applications/${app}/$/GetUpgradeProgress?*`))
+  addRoute("services", prefix + "app-page/services.json", apiUrl(`/Applications/${app}/$/GetServices?*`))
+  addRoute("apphealth", prefix + "app-page/app-health.json", apiUrl(`/Applications/${app}/$/GetHealth?*`))
+  addRoute("app", prefix + "app-page/app-type.json", apiUrl(`/Applications/${app}/?a*`))
+
+}
+
 context('app', () => {
     beforeEach(() => {
-        addDefaultFixtures();
-        addRoute("upgradeProgress", "app-page/upgrade-progress.json", apiUrl(`/Applications/${appName}/$/GetUpgradeProgress?*`))
-        addRoute("services", "app-page/services.json", apiUrl(`/Applications/${appName}/$/GetServices?*`))
-        addRoute("apphealth", "app-page/app-health.json", apiUrl(`/Applications/${appName}/$/GetHealth?*`))
-        addRoute("app", "app-page/app-type.json", apiUrl(`/Applications/${appName}/?a*`))
-        addRoute("appParams", "app-page/app-type-excluded-params.json", apiUrl(`/Applications/${appName}/?ExcludeApplicationParameters=true*`))
-        addRoute("events", "app-page/app-events.json", apiUrl(`/EventsStore/Applications/${appName}/$/Events?*`))
+      initializeRoutes(appName);
+      addRoute("appParams", "app-page/app-type-excluded-params.json", apiUrl(`/Applications/${appName}/?ExcludeApplicationParameters=true*`))
+      addRoute("events", "app-page/app-events.json", apiUrl(`/EventsStore/Applications/${appName}/$/Events?*`))
 
-        addRoute("manifest", "app-page/manifest.json", apiUrl(`/Applications/${appName}/$/GetApplicationManifest?*`))
-        addRoute("serviceTypes", "app-page/service-types.json", apiUrl(`/ApplicationTypes/${appName}/$/GetServiceTypes?ApplicationTypeVersion=16.0.0*`))
+      addRoute("manifest", "app-page/manifest.json", apiUrl(`/Applications/${appName}/$/GetApplicationManifest?*`))
+      addRoute("serviceTypes", "app-page/service-types.json", apiUrl(`/ApplicationTypes/${appName}/$/GetServiceTypes?ApplicationTypeVersion=16.0.0*`))
+
     })
 
     describe("essentials", () => {
-        it('load essentials', () => {
+        const visit = () => {
           cy.visit(`/#/apptype/${appName}/app/${appName}`)
-
-            cy.wait(waitRequest);
+          cy.wait(waitRequest);
+        }
+        it('load essentials', () => {
+            visit();
             cy.get('[data-cy=header').within(() => {
                 cy.contains(appName).click();
             })
@@ -49,6 +59,14 @@ context('app', () => {
             cy.contains("ApplicationProcessExited - 1 Events")
         })
 
+        it('xss', () => {
+          addDefaultFixtures(xssPrefix);
+
+          watchForAlert(() => {
+            visit();
+          })
+        });
+
         it('upgrade in progress', () => {
           addRoute("upgradeProgress", "app-page/upgrade-in-progress.json", apiUrl(`/Applications/${appName}/$/GetUpgradeProgress?*`))
 
@@ -71,11 +89,12 @@ context('app', () => {
 
     describe("details", () => {
         const param = "Parameters"
-
+        const visit = (app) => {
+          cy.visit(`/#/apptype/${app}/app/${app}`)
+          cy.wait([waitRequest, "@getapphealth"]);
+        }
         it('view details', () => {
-          cy.visit(`/#/apptype/${appName}/app/${appName}`)
-
-            cy.wait([waitRequest, "@getapphealth"]);
+            visit(appName);
 
             cy.get('[data-cy=navtabs]').within(() => {
                 cy.contains('details').click();
@@ -85,6 +104,16 @@ context('app', () => {
 
             cy.contains(param).should('exist')
         })
+
+        it.only('xss', () => {
+          const xssName = "%253C%253Cimg%2520src%253D'1'%2520onerror%253D'window.alert%28document.domain%29'%253E";
+          initializeRoutes("%3C%3Cimg%20src%3D'1'%20onerror%3D'window.alert(document.domain)'%3E", xssPrefix);
+          initializeRoutes(xssName, xssPrefix);
+
+          watchForAlert(() => {
+            visit(xssName);
+          })
+        });
 
       it('view details - no params', () => {
         cy.intercept('GET', aad_route,
@@ -168,15 +197,15 @@ context('app', () => {
             cy.url().should('include', '/events')
         })
     })
-  
+
     describe("commands", () => {
       it('view commands', () => {
         cy.visit(`/#/apptype/${appName}/app/${appName}`)
-        
+
         cy.wait(waitRequest)
-          
+
         checkCommand(4, 1);
-          
+
       })
     })
 
