@@ -6,7 +6,6 @@ export interface EventColumnUpdate {
     columnSetting: ListColumnSetting;
     listName: string;
     isSecondRow: boolean;
-    isExisting: boolean;
     index?: number
 }
 

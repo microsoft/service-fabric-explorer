@@ -123,28 +123,23 @@ export class EventStoreComponent implements OnChanges, AfterViewInit {
 
   private updateColumn(update: EventColumnUpdate) {
 
-    console.log(update);
-    const list = this.listEventStoreData.find(list => list.displayName === update.listName); 
-      
-    if (update.isExisting) {
-
-      if (update.isSecondRow) {
-        update.index = list.listSettings.secondRowColumnSettings.findIndex(setting => setting.id === update.columnSetting.id);
-      }
-      else {
-        update.index = list.listSettings.columnSettings.findIndex(setting => setting.id === update.columnSetting.id);
-      }
-    }
-    else if (update.index == undefined) {
-      update.index = update.isSecondRow ? list.listSettings.secondRowColumnSettings.length : list.listSettings.columnSettings.length;
-    }
-
+    const listSettings = this.listEventStoreData.find(list => list.displayName === update.listName).listSettings; 
+    let columnSettings = listSettings.columnSettings;;
+    
     if (update.isSecondRow) {
-      list.listSettings.secondRowColumnSettings.splice(update.index, update.isExisting ? 1: 0, update.columnSetting);
+      columnSettings = listSettings.secondRowColumnSettings;
+    }
+
+    const index = columnSettings.findIndex(setting => setting.id === update.columnSetting.id);
+
+    if (index == -1) {
+      update.index = update.index != undefined ? update.index : columnSettings.length;
     }
     else {
-      list.listSettings.columnSettings.splice(update.index, update.isExisting ? 1 : 0, update.columnSetting);
+      update.index = index;  
     }
+
+    columnSettings.splice(update.index, index == -1 ? 0 : 1, update.columnSetting);
       
   }
 

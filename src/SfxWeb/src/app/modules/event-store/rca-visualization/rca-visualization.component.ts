@@ -52,10 +52,10 @@ export class RcaVisualizationComponent implements VisualizationComponent {
         '',
         '',
         this.simulEvents,
-        'visTool',
         {
           enableFilter: false,
-          colspan: 3
+          colspan: 3,
+          id: 'visTool',
         }
       );
 
@@ -67,15 +67,17 @@ export class RcaVisualizationComponent implements VisualizationComponent {
           'Visualization',
           {
             enableFilter: true,
-            colspan: 1
+            colspan: 1,
+            id: 'visPresent'
           });
         newLogoSetting.fixedWidthPx = 100;
+        newLogoSetting.id 
         
-        this.updateColumn.emit({ columnSetting: newLogoSetting, listName: data.displayName, isExisting: false, isSecondRow: false, index: 1});
-        this.updateColumn.emit({ columnSetting: visTool, listName: data.displayName, isExisting: false, isSecondRow: true} );
+        this.updateColumn.emit({ columnSetting: newLogoSetting, listName: data.displayName, isSecondRow: false, index: 1});
+        this.updateColumn.emit({ columnSetting: visTool, listName: data.displayName, isSecondRow: true} );
       }
       else {
-        this.updateColumn.emit({ columnSetting: visTool, listName: data.displayName, isExisting: true, isSecondRow: true} );
+        this.updateColumn.emit({ columnSetting: visTool, listName: data.displayName, isSecondRow: true} );
 
       }
     }

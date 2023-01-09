@@ -153,6 +153,7 @@ export interface IListColumnAdditionalSettings {
     clickEvent?: (item) => void;
     canNotExport?: boolean;
     alternateExportFormat?: (item) => string;
+    id?: string;
 }
 
 export interface ITemplate {
@@ -164,8 +165,6 @@ export class ListColumnSetting {
     public filterValues: FilterValue[] = [];
 
     public fixedWidthPx?: number;
-
-    public id?: string;
 
     public get hasFilters(): boolean {
         return this.config.enableFilter && this.filterValues.length > 0;
@@ -187,6 +186,9 @@ export class ListColumnSetting {
         return this.filterValues.every(val => !val.isChecked);
     }
 
+    public get id() {
+        return this.config.id;
+    }
     /**
      * Create a column setting
      * @param propertyPath The property path to retrieve display object/value
@@ -364,7 +366,6 @@ export class ListColumnSettingWithEmbeddedVisTool extends ListColumnSetting impl
                        public propertyPath: string = '',
                        public displayName: string = '',
                        public visEvents: IConcurrentEvents[],
-                       public id?: string,
                        config?: IListColumnAdditionalSettings) {
         super(propertyPath, displayName, config);
     }
