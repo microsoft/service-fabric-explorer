@@ -6,7 +6,7 @@ import {
   checkTableErrorMessage, EMPTY_LIST_TEXT, FAILED_TABLE_TEXT, FAILED_LOAD_TEXT,
   repairTask_route, manifest_route, CLUSTER_TAB_NAME, REPAIR_TASK_TAB_NAME,
   FIXTURE_REF_NODES, OPTION_PICKER, typeIntoInput, SELECT_EVENT_TYPES, refresh,
-  FIXTURE_REF_SYSTEMAPPS, systemApps_route, checkCommand, FIXTURE_REF_APPTYPES
+  FIXTURE_REF_SYSTEMAPPS, systemApps_route, checkCommand, FIXTURE_REF_APPTYPES, watchForAlert, xssPrefix, FIXTURE_MANIFEST
 } from './util.cy';
 
 const LOAD_INFO = "getloadinfo"
@@ -71,6 +71,14 @@ context('Cluster page', () => {
 
     })
 
+    it('xss', () => {
+
+      addDefaultFixtures('xss/');
+
+      watchForAlert(() => {
+        cy.visit('')
+      })
+    });
   })
 
   describe("details", () => {
@@ -114,6 +122,15 @@ context('Cluster page', () => {
       })
 
     })
+
+    it('xss', () => {
+
+      addDefaultFixtures('xss/');
+
+      watchForAlert(() => {
+        cy.visit('/#/details')
+      })
+    });
 
     it('upgrade in progress - manual mode', () => {
       cy.intercept('GET', upgradeProgress_route, { fixture: 'cluster-page/upgrade/manual-mode-upgrade.json' }).as("upgrade");
@@ -199,22 +216,39 @@ context('Cluster page', () => {
   })
 
   describe("metrics", () => {
+    const visit = () => {
+      const url = "/#/metrics";
+      const waitUrl = "@nodeLoad";
+      cy.visit(url)
+      cy.wait(waitUrl);
+    }
     it('load metrics', () => {
       cy.intercept('GET', nodes_route, { fixture: 'cluster-page/nodes-1-warning.json' })
       cy.intercept('GET', apiUrl('/Nodes/_nt_0/$/GetLoadInformation?*'), { fixture: 'node-load/get-node-load-information.json' }).as("nodeLoad")
       cy.intercept(apiUrl('/Nodes/_nt_0/$/GetHealth?EventsHealthStateFilter=0&api-version=3.0'), { fixture: 'cluster-page/node-health.json' }).as('getnodeHealth')
 
-      cy.visit('/#/metrics')
-      cy.wait("@nodeLoad");
+      visit();
 
       cy.get('app-metrics').within(() => {
         cy.contains("Reserved CpuCores");
       })
     })
 
+    it('xss', () => {
+      cy.intercept('GET', nodes_route, { fixture: 'cluster-page/nodes-1-warning.json' })
+      cy.intercept('GET', apiUrl('/Nodes/_nt_0/$/GetLoadInformation?*'), { fixture: 'node-load/get-node-load-information.json' }).as("nodeLoad")
+      cy.intercept(apiUrl('/Nodes/_nt_0/$/GetHealth?EventsHealthStateFilter=0&api-version=3.0'), { fixture: 'cluster-page/node-health.json' }).as('getnodeHealth')
+
+      addDefaultFixtures(xssPrefix);
+
+      watchForAlert(() => {
+        visit();
+      })
+    });
   })
 
   describe("clustermap", () => {
+    const url = '/#/clustermap';
     it('load clustermap', () => {
       const checkNodes = (ref, expectedCount) => {
 
@@ -236,7 +270,7 @@ context('Cluster page', () => {
 
       const down_node_ref = '[data-cy=down-nodes]';
 
-      cy.visit('/#/clustermap')
+      cy.visit(url)
 
       checkNodes(down_node_ref, 0);
 
@@ -268,22 +302,30 @@ context('Cluster page', () => {
       })
     })
 
+    it('xss', () => {
+      addDefaultFixtures(xssPrefix);
+
+      watchForAlert(() => {
+        cy.visit(url)
+      })
+    });
+
   })
 
   describe("image store", () => {
-    it('load image store', () => {
-      addRoute('baseDirectory', 'cluster-page/imagestore/base-directory.json', apiUrl('/ImageStore?*'))
+    const waitRef = 'baseDirectory';
+    const url = '/#/imagestore';
+
+    const visit = () => {
+      cy.visit(url)
+      cy.wait('@get' + waitRef)
+    }
+    it.only('load image store', () => {
+      addRoute(waitRef, 'cluster-page/imagestore/base-directory.json', apiUrl('/ImageStore?*'))
       addRoute('nestedDictectory', 'cluster-page/imagestore/nested-directory.json', apiUrl('/ImageStore/StoreTest?*'))
       addRoute('loadSize', 'cluster-page/imagestore/load-size.json', apiUrl('/ImageStore/Store/VisualObjectsApplicationType/$/FolderSize?*'))
 
-      // cy.intercept('GET', apiUrl('/ImageStore?*'), 'fixture:cluster-page/imagestore/base-directory').as('getbaseDirectory')
-      // cy.intercept('GET', apiUrl('/ImageStore/StoreTest?*'), 'fixture:cluster-page/imagestore/nested-directory').as('getnestedDictectory')
-      // cy.intercept('GET', apiUrl('/ImageStore/Store/VisualObjectsApplicationType/$/FolderSize?*'),
-      // 'fixture:cluster-page/imagestore/load-size.json').as('getloadSize')
-
-      cy.visit('/#/imagestore')
-
-      cy.wait('@getbaseDirectory')
+      visit();
 
       cy.get('[data-cy=imagestore]').within(() => {
 
@@ -299,18 +341,38 @@ context('Cluster page', () => {
 
     })
 
+    it('xss', () => {
+      addDefaultFixtures(xssPrefix);
+      addRoute(waitRef, xssPrefix + 'cluster-page/imagestore/base-directory.json', apiUrl('/ImageStore?*'))
+
+      watchForAlert(() => {
+        visit();
+      })
+    });
+
   })
 
   describe("manifest", () => {
+    const visit = () => {
+      cy.visit('/#/manifest');
+      cy.wait(FIXTURE_REF_MANIFEST);
+    }
     it('load manifest page', () => {
-      cy.visit('/#/manifest')
 
-      cy.wait(FIXTURE_REF_MANIFEST)
+      visit();
 
       cy.get('app-manifest-viewer').within(() => {
         cy.contains("WRP_Generated_ClusterManifest");
       })
     })
+
+    it('xss', () => {
+      addDefaultFixtures(xssPrefix);
+
+      watchForAlert(() => {
+        visit();
+      })
+    });
   })
 
   describe("back up restore", () => {
