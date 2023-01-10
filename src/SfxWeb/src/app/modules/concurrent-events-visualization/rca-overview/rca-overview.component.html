@@ -13,13 +13,13 @@
               <app-relation-viewer [key]="item.key"></app-relation-viewer>
             </div>
             {{item.displayText}}
-            <div class="legend" [ngStyle]="{'background-color': colorKey[item.key]}"></div>
+            <div class="legend" [ngStyle]="{'background-color': colorKey[item.key].hex}"></div>
           </div>
         </app-essential-item>
       </div>
     </div>
   </div>
   <div *ngIf="timelineData">
-    <app-event-store-timeline [events]="timelineData"></app-event-store-timeline>
+    <app-event-store-timeline [events]="timelineData" [additionalWhiteListClasses]="whiteLists"></app-event-store-timeline>
   </div>
 </div>

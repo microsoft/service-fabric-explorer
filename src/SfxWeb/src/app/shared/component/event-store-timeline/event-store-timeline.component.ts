@@ -1,5 +1,6 @@
 import { Component, ViewChild, ElementRef, Input, AfterViewInit, OnChanges, ChangeDetectionStrategy, Output, EventEmitter, OnDestroy, SecurityContext } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
+import { pregeneratedColors } from 'src/app/Common/Constants';
 import { ITimelineData } from 'src/app/Models/eventstore/timelineGenerators';
 import { Timeline, DataItem, DataGroup, moment, DataSet } from 'vis-timeline/standalone/esm';
 
@@ -12,7 +13,7 @@ import { Timeline, DataItem, DataGroup, moment, DataSet } from 'vis-timeline/sta
 export class EventStoreTimelineComponent implements AfterViewInit, OnChanges, OnDestroy {
 
   @Input() events: ITimelineData;
-
+  @Input() additionalWhiteListClasses = [];
   @Input() fitOnDataChange = true;
   @Input() displayMoveToStart = true;
   @Input() displayMoveToEnd = true;
@@ -51,7 +52,7 @@ export class EventStoreTimelineComponent implements AfterViewInit, OnChanges, On
         disabled: false,
         filterOptions: {
           whiteList: {
-            "div": ['class', 'inner-tooltip', 'white-space', 'margin-left', 'color'],
+            "div": ['class', 'inner-tooltip', 'white-space', 'margin-left', 'color', 'background-color'].concat(pregeneratedColors.map(c => "color-"+c)),
             "table": [],
             "tbody": [],
             "tr": [],
@@ -59,10 +60,6 @@ export class EventStoreTimelineComponent implements AfterViewInit, OnChanges, On
             "b": [],
             "br": []
           },
-          css: {
-            'color': true,
-            'background-color': true
-          }
         }
       }
     });
@@ -150,7 +147,7 @@ export class EventStoreTimelineComponent implements AfterViewInit, OnChanges, On
         selectable: false,
         template: (itemData, element, data) => {
           if (data.isCluster) {
-            return `<div style="background-color:${itemData.items[0].color}">${data.items.length} ${data.items[0].kind} events </div>`
+            return `<div class="${itemData.items[0].groupColor}">${data.items.length} ${data.items[0].kind} events </div>`
           } else {
             return `<div>${data.content}</div>`;
           }
