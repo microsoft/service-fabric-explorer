@@ -36,7 +36,9 @@
             "allowedCommonJsDependencies": [
               "lodash",
               "nouislider",
-              "highcharts"
+              "highcharts",
+              "dayjs",
+              "adal-angular"
             ],
             "scripts": [],
             "stylePreprocessorOptions": {

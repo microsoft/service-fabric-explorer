@@ -23,7 +23,7 @@
             </dd>
             <dt title="Service Package Activation Mode">Service Package Activation Mode</dt>
             <dd>
-              <div class="btn-group btn-group-toggle">
+              <div class="btn-group btn-group-toggle radio-btns">
                 <ng-container *ngFor="let activationMode of description.servicePackageActivationModes; let i = index;">
                   <div class="checkbox-push">
                     <input type="radio" [value]="i.toString()" name="a" [id]="i + 'a'" [(ngModel)]="description.raw.ServicePackageActivationMode" [ngModelOptions]="{standalone: true}">
@@ -99,7 +99,7 @@
                     <dt>Partition Scheme</dt>
                     <dd>
 
-                        <div class="btn-group btn-group-toggle">
+                        <div class="btn-group btn-group-toggle radio-btns">
                             <ng-container
                                 *ngFor="let partitionScheme of description.servicePartitionKinds;  let i = index;">
                                 <div class="checkbox-push">
