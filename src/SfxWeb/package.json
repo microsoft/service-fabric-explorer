@@ -44,7 +44,7 @@
     "dayjs": "^1.8.20",
     "highcharts": "^9.0.0",
     "lodash": "^4.17.21",
-    "luxon": "^1.22.0",
+    "luxon": "^3.2.1",
     "metro4": "^4.3.5",
     "moment": "^2.29.2",
     "nouislider": "^15.4.0",
