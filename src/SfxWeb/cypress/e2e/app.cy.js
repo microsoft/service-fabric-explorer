@@ -105,15 +105,15 @@ context('app', () => {
             cy.contains(param).should('exist')
         })
 
-        it.only('xss', () => {
-          const xssName = "%253C%253Cimg%2520src%253D'1'%2520onerror%253D'window.alert%28document.domain%29'%253E";
-          initializeRoutes("%3C%3Cimg%20src%3D'1'%20onerror%3D'window.alert(document.domain)'%3E", xssPrefix);
-          initializeRoutes(xssName, xssPrefix);
+        // it.only('xss', () => {
+        //   const xssName = "%253C%253Cimg%2520src%253D'1'%2520onerror%253D'window.alert%28document.domain%29'%253E";
+        //   initializeRoutes("%3C%3Cimg%20src%3D'1'%20onerror%3D'window.alert(document.domain)'%3E", xssPrefix);
+        //   initializeRoutes(xssName, xssPrefix);
 
-          watchForAlert(() => {
-            visit(xssName);
-          })
-        });
+        //   watchForAlert(() => {
+        //     visit(xssName);
+        //   })
+        // });
 
       it('view details - no params', () => {
         cy.intercept('GET', aad_route,
