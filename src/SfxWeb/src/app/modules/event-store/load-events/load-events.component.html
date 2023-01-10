@@ -1,12 +1,17 @@
 <div ngbDropdown style="margin-left: 10px;">
-    <button class="simple-button" ngbDropdownToggle>Type</button>
+    <button class="simple-button" ngbDropdownToggle>{{type? type : 'Type'}}</button>
     <div ngbDropdownMenu>
         <div *ngFor="let type of types">
-            <div ngbDropdownItem>{{type}}</div>
+            <button [value]='type' ngbDropdownItem (click)="setType($event)">{{type}}</button>
         </div>
     </div>
 </div>
 <label>
     <span>Name/Id: </span>
-    <input>
+    <input [(ngModel)]="id">
 </label>
+<label>
+    <span>EventFilter: </span>
+    <input [(ngModel)]="filterString">
+</label>
+<button (click)="getEvents()">Get Events</button>

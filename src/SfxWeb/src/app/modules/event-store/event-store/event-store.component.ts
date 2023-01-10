@@ -188,4 +188,8 @@ export class EventStoreComponent implements OnChanges, AfterViewInit {
     this.setNewDateWindow(true);
   }
 
+  addEvents(events: IEventStoreData<any, any>) {
+    this.listEventStoreData = [...this.listEventStoreData, events];
+    this.setNewDateWindow(true);
+  }
 }

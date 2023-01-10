@@ -8,7 +8,7 @@
       <app-option-picker [optionsConfig]="optionsConfig" (selectedOption)="processData($event)" [listEventStoreData]="listEventStoreData"></app-option-picker>
     </div>
   </div>
-  <app-load-events></app-load-events>
+  <app-load-events (loadedEvents)="addEvents($event)"></app-load-events>
 </div>
 
 <div *ngFor="let ref of vizRefs">
