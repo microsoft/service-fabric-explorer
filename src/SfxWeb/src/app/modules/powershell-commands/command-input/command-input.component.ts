@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ControlContainer, FormControl, FormGroup, NgForm } from '@angular/forms';
+import { ControlContainer, UntypedFormControl, UntypedFormGroup, NgForm } from '@angular/forms';
 import { PowershellCommandParameter, CommandParamTypes } from 'src/app/Models/PowershellCommand';
 
 @Component({
@@ -12,9 +12,9 @@ import { PowershellCommandParameter, CommandParamTypes } from 'src/app/Models/Po
 export class CommandInputComponent implements OnInit{
 
   @Input() commandParam: PowershellCommandParameter;
-  @Input() inputGroup: FormGroup;
+  @Input() inputGroup: UntypedFormGroup;
 
-  value: FormControl = new FormControl('');
+  value: UntypedFormControl = new UntypedFormControl('');
 
   paramTypes = CommandParamTypes;
 
