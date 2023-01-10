@@ -20,7 +20,7 @@
         "@angular/platform-browser-dynamic": "^14.2.12",
         "@angular/router": "^14.2.12",
         "@microsoft/applicationinsights-web": "^2.5.10",
-        "@ng-bootstrap/ng-bootstrap": "^12.1.2",
+        "@ng-bootstrap/ng-bootstrap": "^13.1.1",
         "@types/adal-angular": "^1.0.1",
         "adal-angular": "^1.0.18",
         "bootstrap": "^4.4.1",
@@ -3740,16 +3740,17 @@
       "license": "MIT"
     },
     "node_modules/@ng-bootstrap/ng-bootstrap": {
-      "version": "12.1.2",
-      "license": "MIT",
+      "version": "13.1.1",
+      "resolved": "https://registry.npmjs.org/@ng-bootstrap/ng-bootstrap/-/ng-bootstrap-13.1.1.tgz",
+      "integrity": "sha512-R6qnmFKT2EwwijBHw7rUXqyo5W90OImHOv7BlsxMNnZLIksWIhqwU00k4UBTfRTnd6JsTPuj/co3MaP61ajILA==",
       "dependencies": {
         "tslib": "^2.3.0"
       },
       "peerDependencies": {
-        "@angular/common": "^13.0.0",
-        "@angular/core": "^13.0.0",
-        "@angular/forms": "^13.0.0",
-        "@angular/localize": "^13.0.0",
+        "@angular/common": "^14.1.0",
+        "@angular/core": "^14.1.0",
+        "@angular/forms": "^14.1.0",
+        "@angular/localize": "^14.1.0",
         "@popperjs/core": "^2.10.2",
         "rxjs": "^6.5.3 || ^7.4.0"
       }
@@ -20755,7 +20756,9 @@
       "version": "1.1.0"
     },
     "@ng-bootstrap/ng-bootstrap": {
-      "version": "12.1.2",
+      "version": "13.1.1",
+      "resolved": "https://registry.npmjs.org/@ng-bootstrap/ng-bootstrap/-/ng-bootstrap-13.1.1.tgz",
+      "integrity": "sha512-R6qnmFKT2EwwijBHw7rUXqyo5W90OImHOv7BlsxMNnZLIksWIhqwU00k4UBTfRTnd6JsTPuj/co3MaP61ajILA==",
       "requires": {
         "tslib": "^2.3.0"
       }
