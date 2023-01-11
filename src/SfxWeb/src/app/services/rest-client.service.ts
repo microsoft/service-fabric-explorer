@@ -705,8 +705,8 @@ export class RestClientService {
       return this.get(this.getApiUrl(url, RestClientService.apiVersion65), 'Get Image Store Folder Size', messageHandler);
   }
 
-  public getClusterEvents(startTime: Date, endTime: Date, messageHandler?: IResponseMessageHandler): Observable<ClusterEvent[]> {
-      return this.getEvents(ClusterEvent, 'EventsStore/Cluster/Events', startTime, endTime, [], messageHandler, RestClientService.apiVersion80);
+  public getClusterEvents(startTime: Date, endTime: Date, eventsFilter: string[] = [], messageHandler?: IResponseMessageHandler): Observable<ClusterEvent[]> {
+      return this.getEvents(ClusterEvent, 'EventsStore/Cluster/Events', startTime, endTime, eventsFilter, messageHandler, RestClientService.apiVersion80);
   }
 
   public getNodeEvents(startTime: Date, endTime: Date, nodeName?: string, eventsFilter: string[] = [], messageHandler?: IResponseMessageHandler): Observable<NodeEvent[]> {
@@ -786,7 +786,9 @@ export class RestClientService {
       const paramObject = {
         'starttimeutc': startTime.toISOString().substring(0, 19) + 'Z',
         'endtimeutc': endTime.toISOString().substr(0, 19) + 'Z',
-        'eventTypesFilter': eventTypesFilter.join()
+      }
+      if (eventTypesFilter.length != 0) {
+        paramObject['eventsTypesFilter'] = eventTypesFilter.join();
       }
 
       const params = new HttpParams({

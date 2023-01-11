@@ -7,7 +7,11 @@
         </div>
     </div>
 </div>
-<label>
+<label *ngIf="type === 'Replica'">
+    <span>Partition Id: </span>
+    <input class="input-flat" [(ngModel)]="partitionId">
+</label>
+<label *ngIf="type !== 'Cluster'">
     <span>Name/Id: </span>
     <input class="input-flat" [(ngModel)]="id">
 </label>
@@ -15,5 +19,5 @@
     <span>EventFilter: </span>
     <input class="input-flat" [(ngModel)]="filterString">
 </label>
-<button class="simple-button" (click)="getEvents()">Load Events</button>
+<button class="simple-button" [disabled]="!type" (click)="getEvents()">Load Events</button>
 </div>
