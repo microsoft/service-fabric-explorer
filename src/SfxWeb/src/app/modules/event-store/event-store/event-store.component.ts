@@ -6,10 +6,11 @@ import { IOptionConfig, IOptionData } from '../option-picker/option-picker.compo
 import { TimelineComponent } from '../timeline/timeline.component';
 import { forkJoin } from 'rxjs';
 import { VisualizationDirective } from '../visualization.directive';
-import { EventColumnUpdate, VisualizationComponent } from '../visualizationComponents';
+import { IEventColumnUpdate, VisualizationComponent } from '../visualizationComponents';
 import { RcaVisualizationComponent } from '../rca-visualization/rca-visualization.component';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { IDataModel } from 'src/app/Models/DataModels/Base';
+import { IEventsData } from '../load-events/load-events.component';
 
 export type EventType =
   "Cluster" |
@@ -28,7 +29,7 @@ export interface IEventStoreData<IVisPresentEvent, S> {
   objectResolver?(id: string): IDataModel<any>; //used to determine if the data contains a given event;
 }
 
-interface VisReference {
+interface IVisReference {
   name: string,
   component: Type<any>
 }
@@ -54,7 +55,7 @@ export class EventStoreComponent implements OnChanges, AfterViewInit {
   public dateMin: Date;
 
   private visualizations: VisualizationComponent[] = [];
-  public vizRefs: VisReference[] =
+  public vizRefs: IVisReference[] =
     [
       { name: "Timeline", component: TimelineComponent },
       { name: "RCA Summary", component: RcaVisualizationComponent }
@@ -121,7 +122,7 @@ export class EventStoreComponent implements OnChanges, AfterViewInit {
     })
   }
 
-  private updateColumn(update: EventColumnUpdate) {
+  private updateColumn(update: IEventColumnUpdate) {
 
     const listSettings = this.listEventStoreData.find(list => list.displayName === update.listName).listSettings; 
     let columnSettings = listSettings.columnSettings;;
@@ -188,8 +189,8 @@ export class EventStoreComponent implements OnChanges, AfterViewInit {
     this.setNewDateWindow(true);
   }
 
-  addEvents(events: IEventStoreData<any, any>) {
-    this.listEventStoreData = [...this.listEventStoreData, events];
+  addEvents(events: IEventsData) {
+    this.listEventStoreData = [...this.listEventStoreData, events.events];
     this.setNewDateWindow(true);
   }
 }

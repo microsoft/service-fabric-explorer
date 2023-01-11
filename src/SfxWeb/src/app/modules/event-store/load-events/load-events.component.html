@@ -11,7 +11,7 @@
     <span>Partition Id: </span>
     <input class="input-flat" [(ngModel)]="partitionId">
 </label>
-<label *ngIf="type !== 'Cluster'">
+<label *ngIf="type !== 'Cluster' && type !== 'RepairTask'">
     <span>Name/Id: </span>
     <input class="input-flat" [(ngModel)]="id">
 </label>

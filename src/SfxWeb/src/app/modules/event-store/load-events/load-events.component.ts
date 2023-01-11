@@ -3,6 +3,11 @@ import { DataService } from 'src/app/services/data.service';
 import { SettingsService } from 'src/app/services/settings.service';
 import { IEventStoreData } from '../event-store/event-store.component';
 
+export interface IEventsData {
+  events: IEventStoreData<any, any>;
+  id: string;
+}
+
 type EventType =
   "Cluster" |
   "Node" |
@@ -19,7 +24,7 @@ type EventType =
 })
 export class LoadEventsComponent {
 
-  @Output() loadedEvents = new EventEmitter<IEventStoreData<any, any>>();
+  @Output() loadedEvents = new EventEmitter<IEventsData>();
   types: EventType[] = ['Cluster', 'Node', 'Application', 'Service', 'Partition', 'Replica', 'RepairTask'];
   constructor(public dataService: DataService, public settings: SettingsService) { }
 
@@ -65,7 +70,7 @@ export class LoadEventsComponent {
     }
     events.eventsList.setEventFilter(filter);
 
-    this.loadedEvents.emit(events);
+    this.loadedEvents.emit({ events, id : this.id });
   }
   
 }

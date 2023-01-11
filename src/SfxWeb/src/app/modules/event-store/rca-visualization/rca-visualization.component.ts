@@ -5,7 +5,7 @@ import { ListColumnSettingWithCustomComponent, ListColumnSettingWithEmbeddedVisT
 import { VisualizationLogoComponent } from '../../concurrent-events-visualization/visualization-logo/visualization-logo.component';
 import { VisualizationToolComponent } from '../../concurrent-events-visualization/visualization-tool/visualization-tool.component';
 import { IEventStoreData } from '../event-store/event-store.component';
-import { EventColumnUpdate, VisualizationComponent, VisUpdateData } from '../visualizationComponents';
+import { IEventColumnUpdate, VisualizationComponent, IVisUpdateData } from '../visualizationComponents';
 
 @Component({
   selector: 'app-rca-visualization',
@@ -15,7 +15,7 @@ import { EventColumnUpdate, VisualizationComponent, VisUpdateData } from '../vis
 export class RcaVisualizationComponent implements VisualizationComponent {
 
   @Input() listEventStoreData: IEventStoreData<any, any>[];
-  @Output() updateColumn = new EventEmitter<EventColumnUpdate>();
+  @Output() updateColumn = new EventEmitter<IEventColumnUpdate>();
 
   public simulEvents: IConcurrentEvents[] = [];
 
@@ -83,7 +83,7 @@ export class RcaVisualizationComponent implements VisualizationComponent {
     }
   }
 
-  public update(data: VisUpdateData) {
+  public update(data: IVisUpdateData) {
     this.listEventStoreData = data.listEventStoreData;
 
     this.getConcurrentEventsData();
