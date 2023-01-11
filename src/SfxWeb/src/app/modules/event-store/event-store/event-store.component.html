@@ -2,13 +2,16 @@
   <div style="margin-bottom: 10px;" *ngIf="dateMin">
     <app-time-picker [dateMin]="dateMin" (dateChange)="setDate($event)"></app-time-picker>
   </div>
-  <div ngbDropdown style="margin-left: 10px;"  *ngIf="optionsConfig">
-    <button class="simple-button" ngbDropdownToggle sectionName="select-event-types">Event Types </button>
-    <div ngbDropdownMenu>
-      <app-option-picker [optionsConfig]="optionsConfig" (selectedOption)="processData($event)" [listEventStoreData]="listEventStoreData"></app-option-picker>
+  <div class="flex-container wrap">
+    <div ngbDropdown style="margin-left: 10px;"  *ngIf="optionsConfig">
+      <button class="simple-button" ngbDropdownToggle sectionName="select-event-types">Event Types </button>
+      <div ngbDropdownMenu>
+        <app-option-picker [optionsConfig]="optionsConfig" (selectedOption)="processData($event)" [listEventStoreData]="listEventStoreData"></app-option-picker>
+      </div>
     </div>
+    <app-load-events (loadedEvents)="addEvents($event)"></app-load-events>
+
   </div>
-  <app-load-events (loadedEvents)="addEvents($event)"></app-load-events>
 </div>
 
 <div *ngFor="let ref of vizRefs">

@@ -1,3 +1,4 @@
+<div class="flex-container wrap">
 <div ngbDropdown style="margin-left: 10px;">
     <button class="simple-button" ngbDropdownToggle>{{type? type : 'Type'}}</button>
     <div ngbDropdownMenu>
@@ -8,10 +9,11 @@
 </div>
 <label>
     <span>Name/Id: </span>
-    <input [(ngModel)]="id">
+    <input class="input-flat" [(ngModel)]="id">
 </label>
 <label>
     <span>EventFilter: </span>
-    <input [(ngModel)]="filterString">
+    <input class="input-flat" [(ngModel)]="filterString">
 </label>
-<button (click)="getEvents()">Get Events</button>
+<button class="simple-button" (click)="getEvents()">Load Events</button>
+</div>
