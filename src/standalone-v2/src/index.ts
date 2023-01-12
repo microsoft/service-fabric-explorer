@@ -12,6 +12,7 @@ import { CertificateHandlerFactory } from './auth/certificate';
 import { NotificationManager } from './notificationManager';
 import { Logger } from './logger';
 import { ExtensionsLoader } from './extensionLoader';
+import { AadHandlerFactory } from './auth/aad2';
 
 //TODO TEMP
 // process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
@@ -52,7 +53,8 @@ const createWindow = async () => {
   //configure default auth options
   const unsecureAuth = unsecureAuthOption(clusterManager);
   const certificateAuth = CertificateHandlerFactory(clusterManager, logger);
-  const aadAuth = new AADFactory(clusterManager);
+  // const aadAuth = new AADFactory(clusterManager); swap back with msal?
+  const aadAuth = AadHandlerFactory(clusterManager, logger);
 
   authenticationManager.registerAuthOption(aadAuth);
   authenticationManager.registerAuthOption(unsecureAuth);
@@ -104,7 +106,7 @@ const createWindow = async () => {
         }
       }
     })
-    await aadAuth.logout(data);
+    // await aadAuth.logout(data);
   })
 
   ipcMain.handle(MainWindowEvents.validateAuthConfig, (_, data: IClusterAuth) => {
@@ -116,9 +118,9 @@ const createWindow = async () => {
   })
 
 
-  ipcMain.on(MainWindowEvents.requestAADConfigurations, (_) => {
-    aadAuth.emitAccountsAndTenants();
-  })
+  // ipcMain.on(MainWindowEvents.requestAADConfigurations, (_) => {
+  //   aadAuth.emitAccountsAndTenants();
+  // })
 
   ipcMain.on(MainWindowEvents.requestClusterState, (_) => {
     clusterManager.emitState();
@@ -155,23 +157,23 @@ const createWindow = async () => {
   })
 
   //SEND DATA TO RENDERERS
-  clusterManager.observable.subscribe(data => {
+  clusterManager.observable.subscribe((data: any) => {
     bw.webContents.send(MainWindowEvents.clusterStatesChange, data);
   })
 
-  aadAuth.observable.subscribe(data => {
-    bw.webContents.send(MainWindowEvents.AADConfigurationsChange, data);
-  })
+  // aadAuth.observable.subscribe(data => {
+  //   bw.webContents.send(MainWindowEvents.AADConfigurationsChange, data);
+  // })
 
-  aadAuth.observable.subscribe(data => {
-    bw.webContents.send(MainWindowEvents.AADConfigurationsChange, data);
-  })
+  // aadAuth.observable.subscribe(data => {
+  //   bw.webContents.send(MainWindowEvents.AADConfigurationsChange, data);
+  // })
 
-  authenticationManager.authOptionsChanges.subscribe(data => {
+  authenticationManager.authOptionsChanges.subscribe((data: any) => {
     bw.webContents.send(MainWindowEvents.authConfigOptionsChanges, data);
   })
 
-  notificationManager.observable.subscribe(data => {
+  notificationManager.observable.subscribe((data: any) => {
     bw.webContents.send(MainWindowEvents.notificationEvent, data);
   })
 
