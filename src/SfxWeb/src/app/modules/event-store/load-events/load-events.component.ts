@@ -1,11 +1,12 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { DataService } from 'src/app/services/data.service';
 import { SettingsService } from 'src/app/services/settings.service';
+import { IEventChip } from '../event-chip/event-chip.component';
 import { IEventStoreData } from '../event-store/event-store.component';
 
-export interface IEventsData {
+export interface IEventChipData {
   events: IEventStoreData<any, any>;
-  id: string;
+  data: IEventChip;
 }
 
 type EventType =
@@ -24,7 +25,7 @@ type EventType =
 })
 export class LoadEventsComponent {
 
-  @Output() loadedEvents = new EventEmitter<IEventsData>();
+  @Output() loadedEvents = new EventEmitter<IEventChipData>();
   types: EventType[] = ['Cluster', 'Node', 'Application', 'Service', 'Partition', 'Replica', 'RepairTask'];
   constructor(public dataService: DataService, public settings: SettingsService) { }
 
@@ -70,7 +71,12 @@ export class LoadEventsComponent {
     }
     events.eventsList.setEventFilter(filter);
 
-    this.loadedEvents.emit({ events, id : this.id });
+
+    if (this.filterString) {
+      events.displayName = `${events.displayName}-${this.filterString}`;
+    }
+
+    this.loadedEvents.emit({ events, data: { id: this.id, type: this.type, name: events.displayName, eventsFilter: this.filterString }});
   }
   
 }

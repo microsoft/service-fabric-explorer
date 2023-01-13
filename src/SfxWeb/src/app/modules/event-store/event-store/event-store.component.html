@@ -10,7 +10,9 @@
       </div>
     </div>
     <app-load-events (loadedEvents)="addEvents($event)"></app-load-events>
-
+  </div>
+  <div *ngFor="let data of listEventsData">
+    <app-event-chip data="data"></app-event-chip>
   </div>
 </div>
 

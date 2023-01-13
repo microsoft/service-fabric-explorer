@@ -1,5 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 
+
+export interface IEventChip {
+  name: string;
+  type: string;
+  id: string;
+  eventsFilter: string;
+}
 @Component({
   selector: 'app-event-chip',
   templateUrl: './event-chip.component.html',
@@ -7,10 +14,7 @@ import { Component, OnInit } from '@angular/core';
 })
 export class EventChipComponent implements OnInit {
 
-  name: string;
-  type: string;
-  id: string;
-  eventsFilter: string;
+  @Input() data: IEventChip;
 
   constructor() { }
 

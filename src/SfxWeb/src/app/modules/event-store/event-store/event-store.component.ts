@@ -10,7 +10,8 @@ import { IEventColumnUpdate, VisualizationComponent } from '../visualizationComp
 import { RcaVisualizationComponent } from '../rca-visualization/rca-visualization.component';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { IDataModel } from 'src/app/Models/DataModels/Base';
-import { IEventsData } from '../load-events/load-events.component';
+import { IEventChipData } from '../load-events/load-events.component';
+import { IEventChip } from '../event-chip/event-chip.component';
 
 export type EventType =
   "Cluster" |
@@ -46,6 +47,8 @@ export class EventStoreComponent implements OnChanges, AfterViewInit {
   @ViewChildren(VisualizationDirective) vizDirs: QueryList<VisualizationDirective>;
   @Input() listEventStoreData: IEventStoreData<any, any>[];
   @Input() optionsConfig: IOptionConfig;
+
+  public listEventsData: IEventChip[] = [];
 
   public failedRefresh = false;
   public activeTab: string;
@@ -189,8 +192,19 @@ export class EventStoreComponent implements OnChanges, AfterViewInit {
     this.setNewDateWindow(true);
   }
 
-  addEvents(events: IEventsData) {
-    this.listEventStoreData = [...this.listEventStoreData, events.events];
+  addEvents(eventData: IEventChipData) {
+    const index = this.listEventStoreData.findIndex(e => e.displayName === eventData.events.displayName);
+
+    if (index == -1) {
+      this.listEventStoreData = [...this.listEventStoreData, eventData.events];
+      this.listEventsData.push(eventData.data);
+
+    }
+    else {
+      this.listEventStoreData[index] = eventData.events;
+      this.listEventStoreData = [...this.listEventStoreData];
+    }
+    
     this.setNewDateWindow(true);
   }
 }
