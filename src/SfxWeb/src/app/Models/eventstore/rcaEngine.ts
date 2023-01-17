@@ -1,6 +1,16 @@
 import { Transforms } from "src/app/Utils/Transforms";
 import { Utils } from "src/app/Utils/Utils";
-import { IEventPropertiesCollection } from "./Events";
+
+export interface IFabricEventMetadata {
+  kind: string;
+  eventInstanceId: string;
+  timeStamp: string;
+  hasCorrelatedEvents?: boolean;
+}
+
+export interface IEventPropertiesCollection {
+  eventProperties: { [key: string]: any; };
+}
 
 export interface IPropertyMapping {
   sourceProperty: any;
@@ -42,18 +52,25 @@ export interface IRCAItem extends IEventPropertiesCollection {
   timeStamp: string;
 }
 
-export const getSimultaneousEventsForEvent = (configs: IConcurrentEventsConfig[], inputEvents: IRCAItem[], events: IRCAItem[], existingEvents?: IConcurrentEvents[]): IConcurrentEvents[] => {
+export interface IgetSimultaneousEventsForEvent {
+  configs: IConcurrentEventsConfig[];
+  inputEvents: IRCAItem[];
+  events: IRCAItem[];
+  existingEvents?: IConcurrentEvents[];
+}
+
+export const getSimultaneousEventsForEvent = (data: IgetSimultaneousEventsForEvent): IConcurrentEvents[] => {
   /*
       Grab the events that occur concurrently with an inputted current event.
   */
-  let simulEvents: IConcurrentEvents[] = existingEvents || [];
+  let simulEvents: IConcurrentEvents[] = data.existingEvents || [];
 
   const findEvent = (events: IConcurrentEvents[], event: IRCAItem) => {
     return events.find(e => e.eventInstanceId === event.eventInstanceId);
   }
 
   // iterate through all the input events
-  inputEvents.forEach(inputEvent => {
+  data.inputEvents.forEach(inputEvent => {
     if (findEvent(simulEvents, inputEvent)) {
       return;
     }
@@ -64,7 +81,7 @@ export const getSimultaneousEventsForEvent = (configs: IConcurrentEventsConfig[]
     let moreSpecificReason = "";
 
     // iterate through all configurations
-    configs.forEach(config => {
+    data.configs.forEach(config => {
       let parsed = "";
       if (config.eventType == inputEvent.kind) {
         // iterate through all events to find relevant ones
@@ -114,7 +131,7 @@ export const getSimultaneousEventsForEvent = (configs: IConcurrentEventsConfig[]
               reasonForEvent = action;
             }
           }
-          events.forEach(iterEvent => {
+          data.events.forEach(iterEvent => {
             if (relevantEventType.eventType == iterEvent.kind) {
               // see if each property mapping holds true
               let valid = true;
@@ -141,7 +158,12 @@ export const getSimultaneousEventsForEvent = (configs: IConcurrentEventsConfig[]
                   reason = existingEvent;
                 }else{
                   //generate events needed to build chain
-                  const reasons = getSimultaneousEventsForEvent(configs, [iterEvent], events, simulEvents);
+                  const reasons = getSimultaneousEventsForEvent({
+                    configs: data.configs,
+                    inputEvents: [iterEvent],
+                    events: data.events,
+                    existingEvents: simulEvents
+                  });
                   reasons.forEach(event => {
                     if(!findEvent(simulEvents, event)) {
                       simulEvents.push(event)

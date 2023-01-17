@@ -1,22 +1,13 @@
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { DataModelBase } from '../DataModels/Base';
 import { DataService } from 'src/app/services/data.service';
+import { IEventPropertiesCollection, IFabricEventMetadata } from './rcaEngine';
 
 // -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
 // -----------------------------------------------------------------------------
 
-export interface IFabricEventMetadata {
-    kind: string;
-    eventInstanceId: string;
-    timeStamp: string;
-    hasCorrelatedEvents?: boolean;
-}
-
-export interface IEventPropertiesCollection {
-    eventProperties: { [key: string]: any; };
-}
 
 export abstract class FabricEventBase implements IFabricEventMetadata, IEventPropertiesCollection {
     public hasCorrelatedEvents: boolean;

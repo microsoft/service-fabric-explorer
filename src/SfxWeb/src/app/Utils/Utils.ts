@@ -5,8 +5,6 @@
 export class Utils {
     private static SingleUrlRegExp = new RegExp('^https?:\/\/[^;,]+');
 
-    public static isIEOrEdge = /msie\s|trident\/|edg\//i.test(window.navigator.userAgent);
-
     /**
      * checks if two arrays have the same primitives;
      */

@@ -6,9 +6,9 @@ import { SettingsService } from 'src/app/services/settings.service';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { NgbDropdown, NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
 import { Platform } from '@angular/cdk/platform';
-import { Utils } from 'src/app/Utils/Utils';
 import { TelemetryService } from 'src/app/services/telemetry.service';
 import { environment } from 'src/environments/environment';
+import { isIEOrEdge } from 'src/app/Utils/browserUtils';
 
 @Component({
   selector: 'app-advanced-option',
@@ -40,7 +40,7 @@ export class AdvancedOptionComponent implements OnInit {
   }
 
   closeChange(state: boolean) {
-    if (!Utils.isIEOrEdge) {
+    if (!isIEOrEdge) {
       this.liveAnnouncer.announce(`Settings dropdown button is now ${state ? 'Expanded' : 'Collapsed'}`);
     }
   }

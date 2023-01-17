@@ -10,7 +10,6 @@ import filter from 'lodash/filter';
 import uniq from 'lodash/uniq';
 import includes from 'lodash/includes';
 import every from 'lodash/every';
-
 import { Utils } from 'src/app/Utils/Utils';
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
@@ -18,6 +17,7 @@ import { NgbDropdown } from '@ng-bootstrap/ng-bootstrap';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { MatDialog } from '@angular/material/dialog';
 import { ExportModalComponent } from '../export-modal/export-modal.component';
+import { isIEOrEdge } from 'src/app/Utils/browserUtils';
 
 export interface ISortOrdering {
   direction: boolean;
@@ -119,7 +119,7 @@ export class DetailListComponent implements OnInit, OnDestroy {
     this.displayPath = columnSetting.propertyPath;
     this.updateList();
 
-    if (!Utils.isIEOrEdge) {
+    if (!isIEOrEdge) {
       this.liveAnnouncer.announce(`Table is sorted by ${columnSetting.displayName} and is ${this.listSettings.sortReverse ? 'descending' : 'ascending'}`);
     }
   }

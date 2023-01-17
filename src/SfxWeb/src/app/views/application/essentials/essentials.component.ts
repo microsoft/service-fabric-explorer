@@ -16,6 +16,7 @@ import { ApplicationEventList } from 'src/app/Models/DataModels/collections/Coll
 import { IEventStoreData } from 'src/app/modules/event-store/event-store/event-store.component';
 import { getSimultaneousEventsForEvent, IConcurrentEvents } from 'src/app/Models/eventstore/rcaEngine';
 import { RelatedEventsConfigs } from 'src/app/Models/eventstore/RelatedEventsConfigs';
+import { WebworkerHandlerService } from 'src/app/services/webworker-handler.service';
 @Component({
   selector: 'app-essentials',
   templateUrl: './essentials.component.html',
@@ -37,7 +38,10 @@ export class EssentialsComponent extends ApplicationBaseControllerDirective {
   highValueEvents: IConcurrentEvents[] = null;
   failedToLoadEvents = false;
 
-  constructor(protected data: DataService, injector: Injector, private settings: SettingsService) {
+  constructor(protected data: DataService,
+              injector: Injector,
+              private settings: SettingsService,
+              private webWorker: WebworkerHandlerService) {
     super(data, injector);
   }
 
@@ -66,9 +70,13 @@ export class EssentialsComponent extends ApplicationBaseControllerDirective {
       if(manifest.isEventStoreEnabled) {
         this.eventStoreHandler = this.data.getApplicationEventData(this.appId);
         this.eventStoreHandler.eventsList.setEventFilter(['ApplicationProcessExited', 'ApplicationContainerInstanceExited']);
-        this.eventStoreHandler.eventsList.refresh().subscribe((success) => {
+        this.eventStoreHandler.eventsList.refresh().subscribe(async (success) => {
           if(success) {
-            this.highValueEvents = getSimultaneousEventsForEvent(RelatedEventsConfigs, this.eventStoreHandler.getEvents(), this.eventStoreHandler.getEvents());
+            this.highValueEvents = await this.webWorker.requestFunction("rca", {
+              configs: RelatedEventsConfigs,
+              inputEvents: this.eventStoreHandler.getEvents(),
+              events: this.eventStoreHandler.getEvents()
+            })
           }else{
             this.failedToLoadEvents = true;
           }

@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, Input, OnChanges, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Input, OnChanges, OnInit, ViewChild } from '@angular/core';
 import { Chart, Options, chart, PointOptionsObject } from 'highcharts';
 import { IPregeneratedColor, pregeneratedColors } from 'src/app/Common/Constants';
 import { IConcurrentEvents } from 'src/app/Models/eventstore/rcaEngine';
@@ -14,7 +14,8 @@ interface ExtendedListItem extends IEssentialListItem {
 @Component({
   selector: 'app-rca-overview',
   templateUrl: './rca-overview.component.html',
-  styleUrls: ['./rca-overview.component.scss']
+  styleUrls: ['./rca-overview.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RcaOverviewComponent implements AfterViewInit, OnChanges {
   @Input() type: string;
@@ -71,7 +72,7 @@ export class RcaOverviewComponent implements AfterViewInit, OnChanges {
   public reasons: ExtendedListItem[] = [];
   public timelineData: ITimelineData;
 
-  constructor() { }
+  constructor(private detectorRef: ChangeDetectorRef) { }
 
   generateDataSet(listItems: ExtendedListItem[]) {
     return listItems.map(item => {
@@ -150,11 +151,14 @@ export class RcaOverviewComponent implements AfterViewInit, OnChanges {
       })
     })
 
-    this.timelineData = {
-      groups,
-      items: items as any,
-      allowClustering: true
-    }
+    setTimeout(() => {
+      this.timelineData = {
+        groups,
+        items: items as any,
+        allowClustering: true
+      }
+      this.detectorRef.markForCheck();
+    }, 1)
 
     if (this.chart) {
       const data = this.generateDataSet(this.reasons);

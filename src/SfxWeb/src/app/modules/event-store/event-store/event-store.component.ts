@@ -11,11 +11,11 @@ import { IOptionConfig, IOptionData } from '../option-picker/option-picker.compo
 import { TelemetryService } from 'src/app/services/telemetry.service';
 import { TelemetryEventNames } from 'src/app/Common/Constants';
 import { RelatedEventsConfigs } from '../../../Models/eventstore/RelatedEventsConfigs';
-import { Utils } from 'src/app/Utils/Utils';
 import { ListColumnSettingWithCustomComponent } from 'src/app/Models/ListSettings';
 import { VisualizationToolComponent } from '../../concurrent-events-visualization/visualization-tool/visualization-tool.component';
 import { VisualizationLogoComponent } from '../../concurrent-events-visualization/visualization-logo/visualization-logo.component';
 import { getSimultaneousEventsForEvent, IConcurrentEvents, IRCAItem } from 'src/app/Models/eventstore/rcaEngine';
+import { WebworkerHandlerService } from 'src/app/services/webworker-handler.service';
 
 export interface IQuickDates {
   display: string;
@@ -41,7 +41,9 @@ export interface IEventStoreData<IVisPresentEvent, S> {
 })
 export class EventStoreComponent implements OnInit, OnDestroy, OnChanges {
 
-  constructor(public dataService: DataService, private telemService: TelemetryService) { }
+  constructor(public dataService: DataService,
+              private telemService: TelemetryService,
+              private webworker: WebworkerHandlerService) { }
 
   public get showAllEvents() { return this.pshowAllEvents; }
   public set showAllEvents(state: boolean) {
@@ -216,7 +218,7 @@ export class EventStoreComponent implements OnInit, OnDestroy, OnChanges {
   }
 
 
-  private getConcurrentEventsData() {
+  private async getConcurrentEventsData() {
     let allEvents: IRCAItem[] = [];
     let sourceEvents = [];
     for (const data of this.listEventStoreData) {
@@ -227,7 +229,11 @@ export class EventStoreComponent implements OnInit, OnDestroy, OnChanges {
     }
 
     // refresh vis-event-list
-    this.simulEvents = getSimultaneousEventsForEvent(RelatedEventsConfigs, sourceEvents, sourceEvents);
+    this.simulEvents = await this.webworker.requestFunction("rca", {
+        configs: RelatedEventsConfigs,
+        inputEvents: sourceEvents,
+        events: sourceEvents
+      })
     // grab highcharts data for all events
     for (let parsedEvent of allEvents) {
         let rootEvent = this.simulEvents.find(event => event.eventInstanceId === parsedEvent.eventInstanceId);

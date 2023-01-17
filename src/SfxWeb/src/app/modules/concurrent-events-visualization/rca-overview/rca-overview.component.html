@@ -1,4 +1,4 @@
-<div style="flex: 1;">
+<div>
   <div style="display: flex; align-items: center;">
     <div>
       <div #chart></div>
@@ -20,6 +20,6 @@
     </div>
   </div>
   <div *ngIf="timelineData">
-    <app-event-store-timeline [events]="timelineData" [additionalWhiteListClasses]="whiteLists"></app-event-store-timeline>
+      <app-event-store-timeline [events]="timelineData" [additionalWhiteListClasses]="whiteLists"></app-event-store-timeline>
   </div>
 </div>

@@ -2,7 +2,7 @@ import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
 import { ActionCollection } from 'src/app/Models/ActionCollection';
 import { DataService } from 'src/app/services/data.service';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
-import { Utils } from 'src/app/Utils/Utils';
+import { isIEOrEdge } from 'src/app/Utils/browserUtils';
 
 @Component({
   selector: 'app-action-collection-drop-down',
@@ -17,7 +17,7 @@ export class ActionCollectionDropDownComponent {
   constructor(public dataService: DataService, private liveAnnouncer: LiveAnnouncer) { }
 
   closeChange(state: boolean) {
-    if (!Utils.isIEOrEdge) {
+    if (!isIEOrEdge) {
       this.liveAnnouncer.announce(`Actions dropdown button is now ${state ? 'Expanded' : 'Collapsed'}`);
     }
 

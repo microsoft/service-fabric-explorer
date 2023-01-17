@@ -19,4 +19,8 @@ export class RcaSummaryComponent implements OnChanges {
     const explained = this.events.filter(event => RelatedEventsConfigs.some(config => config.eventType === event.kind));
     this.data = Utils.groupByFunc<IConcurrentEvents>(explained, item => item.kind);
   }
+
+  trackByItems(index: number, item: any): number {
+    return item.key;
+  }
 }

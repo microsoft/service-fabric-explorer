@@ -33,8 +33,8 @@
         "nouislider": "^15.4.0",
         "rxjs": "~6.5.4",
         "tslib": "^2.0.0",
-        "vis-data": "^6.4.1",
-        "vis-timeline": "^7.1.3",
+        "vis-data": "^6.1.4",
+        "vis-timeline": "^7.7.0",
         "vis-uuid": "^1.1.4",
         "xml2js": "^0.4.22",
         "zone.js": "~0.11.4"
@@ -16491,9 +16491,9 @@
       }
     },
     "node_modules/vis-timeline": {
-      "version": "7.5.1",
-      "resolved": "https://registry.npmjs.org/vis-timeline/-/vis-timeline-7.5.1.tgz",
-      "integrity": "sha512-XZMHHbA8xm9/Y/iu3mE9MT7J5tfWgbdsW+PmqrgINU2QRX24AiqifNHZHV4YYzeJstiTSOg9Gs5qRkxQ0BvZJw==",
+      "version": "7.7.0",
+      "resolved": "https://registry.npmjs.org/vis-timeline/-/vis-timeline-7.7.0.tgz",
+      "integrity": "sha512-et5xobQTEp7i8lqcEjgMWoGE4s4qn+2VtEJ35uRZiL5Y3qRzi84bCTkUKAjOM/HTzVFiLTWET+DZZi1iHYriuA==",
       "hasInstallScript": true,
       "funding": {
         "type": "opencollective",
@@ -28058,9 +28058,9 @@
       }
     },
     "vis-timeline": {
-      "version": "7.5.1",
-      "resolved": "https://registry.npmjs.org/vis-timeline/-/vis-timeline-7.5.1.tgz",
-      "integrity": "sha512-XZMHHbA8xm9/Y/iu3mE9MT7J5tfWgbdsW+PmqrgINU2QRX24AiqifNHZHV4YYzeJstiTSOg9Gs5qRkxQ0BvZJw==",
+      "version": "7.7.0",
+      "resolved": "https://registry.npmjs.org/vis-timeline/-/vis-timeline-7.7.0.tgz",
+      "integrity": "sha512-et5xobQTEp7i8lqcEjgMWoGE4s4qn+2VtEJ35uRZiL5Y3qRzi84bCTkUKAjOM/HTzVFiLTWET+DZZi1iHYriuA==",
       "requires": {}
     },
     "vis-util": {
