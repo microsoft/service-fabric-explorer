@@ -10,8 +10,7 @@ import { IEventColumnUpdate, VisualizationComponent } from '../visualizationComp
 import { RcaVisualizationComponent } from '../rca-visualization/rca-visualization.component';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { IDataModel } from 'src/app/Models/DataModels/Base';
-import { IEventChipData } from '../load-events/load-events.component';
-import { IEventChip } from '../event-chip/event-chip.component';
+import { EventChip, IEventChipData } from '../event-chip/event-chip.component';
 
 export type EventType =
   "Cluster" |
@@ -48,7 +47,7 @@ export class EventStoreComponent implements OnChanges, AfterViewInit {
   @Input() listEventStoreData: IEventStoreData<any, any>[];
   @Input() optionsConfig: IOptionConfig;
 
-  public listEventsData: IEventChip[] = [];
+  public listEventChips: EventChip[] = [];
 
   public failedRefresh = false;
   public activeTab: string;
@@ -197,7 +196,8 @@ export class EventStoreComponent implements OnChanges, AfterViewInit {
 
     if (index == -1) {
       this.listEventStoreData = [...this.listEventStoreData, eventData.events];
-      this.listEventsData.push(eventData.data);
+      if(eventData.data)
+        this.listEventChips.push(eventData.data);
 
     }
     else {

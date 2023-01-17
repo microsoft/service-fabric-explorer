@@ -9,11 +9,12 @@
         <app-option-picker [optionsConfig]="optionsConfig" (selectedOption)="processData($event)" [listEventStoreData]="listEventStoreData"></app-option-picker>
       </div>
     </div>
-    <app-load-events (loadedEvents)="addEvents($event)"></app-load-events>
   </div>
-  <div *ngFor="let data of listEventsData">
-    <app-event-chip data="data"></app-event-chip>
+  <div *ngFor="let data of listEventChips">
+    <app-event-chip [chip]="data" (loadedEvents)="addEvents($event)"></app-event-chip>
   </div>
+    <app-event-chip [addChip]="true" (loadedEvents)="addEvents($event)"></app-event-chip>
+
 </div>
 
 <div *ngFor="let ref of vizRefs">
