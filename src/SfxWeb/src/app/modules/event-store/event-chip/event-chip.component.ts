@@ -40,7 +40,9 @@ export class EventChipComponent {
 
   @Input() chip: EventChip = new EventChip();
   @Input() addChip: boolean = false;
-  @Output() loadedEvents = new EventEmitter<IEventChipData>();
+  @Output() onLoad = new EventEmitter<IEventChipData>();
+  @Output() onRemove = new EventEmitter<string>();
+
   types: EventType[] = ['Cluster', 'Node', 'Application', 'Service', 'Partition', 'Replica', 'RepairTask'];
   constructor(public dataService: DataService, public settings: SettingsService) { }
 
@@ -49,7 +51,6 @@ export class EventChipComponent {
   }
 
   getEvents() {
-
     // removes whitespace
     this.chip.eventsFilter = this.chip.eventsFilter.replace(/\s+/g, '');
 
@@ -89,13 +90,16 @@ export class EventChipComponent {
     this.chip.name = events.displayName;
 
     if (this.addChip) {
-      this.loadedEvents.emit({ events, data: { ...this.chip } });
+      this.onLoad.emit({ events, data: { ...this.chip } });
       this.chip = new EventChip();
     }
     else {
-      this.loadedEvents.emit({ events });
+      this.onLoad.emit({ events });
     }
   }
   
+  removeEvent() {
+    this.onRemove.emit(this.chip.name);
+  }
 
 }

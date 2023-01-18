@@ -392,7 +392,7 @@ export class DataService {
         const list = new ServiceEventList(this, serviceId);
         const d = {
             eventsList : list,
-            displayName : serviceId
+            displayName : serviceId ? serviceId : 'Services'
         };
 
         this.addFabricEventData<ServiceEventList, ServiceEvent>(d);
@@ -404,7 +404,7 @@ export class DataService {
         const d: IEventStoreData<PartitionEventList, PartitionEvent> = {
             eventsList : list,
             type : "Partition",
-            displayName : partitionId
+            displayName : partitionId ? partitionId : 'Partitions'
         };
 
         this.addFabricEventData<PartitionEventList, PartitionEvent>(d);
@@ -415,7 +415,7 @@ export class DataService {
         const list = new ReplicaEventList(this, partitionId, replicaId);
         const d = {
             eventsList : list,
-            displayName : replicaId
+            displayName : replicaId ? replicaId : 'Replicas'
         };
 
         this.addFabricEventData<ReplicaEventList, ReplicaEvent>(d);

@@ -146,7 +146,7 @@ export class EventStoreComponent implements OnChanges, AfterViewInit {
       
   }
 
-  /* work w/ processData to check if update needed */
+  /*check if update needed */
   private setNewDateWindow(forceRefresh: boolean = false): void {
     // If the data interface has that function implemented, we call it. If it doesn't we discard it by returning false.
     let refreshData = false;
@@ -192,19 +192,26 @@ export class EventStoreComponent implements OnChanges, AfterViewInit {
   }
 
   addEvents(eventData: IEventChipData) {
-    const index = this.listEventStoreData.findIndex(e => e.displayName === eventData.events.displayName);
-
-    if (index == -1) {
+    if (eventData.data) {
+      this.listEventChips.push(eventData.data);
       this.listEventStoreData = [...this.listEventStoreData, eventData.events];
-      if(eventData.data)
-        this.listEventChips.push(eventData.data);
-
     }
     else {
-      this.listEventStoreData[index] = eventData.events;
-      this.listEventStoreData = [...this.listEventStoreData];
+      //find index of item not associated w/ a chip
+      const index = this.listEventStoreData.findIndex(e => !this.listEventChips.map(chip => chip.name).includes(e.displayName));
+      if (index != -1) {
+        this.listEventStoreData[index] = eventData.events;
+        this.listEventStoreData = [...this.listEventStoreData];
+      }
+      
     }
     
     this.setNewDateWindow(true);
   }
+
+  removeEvents(name: string) {
+    this.listEventStoreData = this.listEventStoreData.filter(item => item.displayName !== name);
+    this.setNewDateWindow(true);
+  }
+
 }
