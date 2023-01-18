@@ -30,7 +30,7 @@ export interface IEventStoreData<IVisPresentEvent, S> {
 
 interface VisReference {
   name: string,
-  component: Type<any>
+  component: Type<VisualizationComponent>
 }
 
 @Component({
@@ -45,7 +45,12 @@ export class EventStoreComponent implements OnChanges, AfterViewInit {
   @ViewChildren(VisualizationDirective) vizDirs: QueryList<VisualizationDirective>;
   @Input() listEventStoreData: IEventStoreData<any, any>[];
   @Input() optionsConfig: IOptionConfig;
-
+  @Input() vizRefs: VisReference[] =
+    [
+      { name: "Timeline", component: TimelineComponent },
+      { name: "RCA Summary", component: RcaVisualizationComponent }
+    ];
+  
   public failedRefresh = false;
   public activeTab: string;
 
@@ -54,12 +59,6 @@ export class EventStoreComponent implements OnChanges, AfterViewInit {
   public dateMin: Date;
 
   private visualizations: VisualizationComponent[] = [];
-  public vizRefs: VisReference[] =
-    [
-      { name: "Timeline", component: TimelineComponent },
-      { name: "RCA Summary", component: RcaVisualizationComponent }
-    ];
-  
   private visualizationsReady = false;
   
   ngAfterViewInit() {
@@ -124,7 +123,7 @@ export class EventStoreComponent implements OnChanges, AfterViewInit {
   private updateColumn(update: EventColumnUpdate) {
 
     const listSettings = this.listEventStoreData.find(list => list.displayName === update.listName).listSettings; 
-    let columnSettings = listSettings.columnSettings;;
+    let columnSettings = listSettings.columnSettings;
     
     if (update.isSecondRow) {
       columnSettings = listSettings.secondRowColumnSettings;

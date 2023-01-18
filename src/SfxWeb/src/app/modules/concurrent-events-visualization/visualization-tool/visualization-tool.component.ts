@@ -11,7 +11,8 @@ HighchartsSankey(Highcharts);
 HighchartsOrganization(Highcharts);
 
 export interface IEventStoreRef extends ListColumnSetting {
-  visEvents : IConcurrentEvents[];}
+  visEvents: IConcurrentEvents[];
+}
 
 
 

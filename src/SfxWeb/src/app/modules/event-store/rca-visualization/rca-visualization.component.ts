@@ -74,12 +74,9 @@ export class RcaVisualizationComponent implements VisualizationComponent {
         newLogoSetting.id 
         
         this.updateColumn.emit({ columnSetting: newLogoSetting, listName: data.displayName, isSecondRow: false, index: 1});
-        this.updateColumn.emit({ columnSetting: visTool, listName: data.displayName, isSecondRow: true} );
       }
-      else {
-        this.updateColumn.emit({ columnSetting: visTool, listName: data.displayName, isSecondRow: true} );
 
-      }
+      this.updateColumn.emit({ columnSetting: visTool, listName: data.displayName, isSecondRow: true });
     }
   }
 
