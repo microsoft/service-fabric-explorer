@@ -786,7 +786,9 @@ export class RestClientService {
       const paramObject = {
         'starttimeutc': startTime.toISOString().substring(0, 19) + 'Z',
         'endtimeutc': endTime.toISOString().substr(0, 19) + 'Z',
-        'eventTypesFilter': eventTypesFilter.join()
+      }
+      if (eventTypesFilter.length != 0) {
+        paramObject['eventsTypesFilter'] = eventTypesFilter.join()
       }
 
       const params = new HttpParams({

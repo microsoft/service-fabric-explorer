@@ -1,20 +1,45 @@
-<!-- This part is not removed since it uses nice example of json and keyvalue pipelines.
-This part could be pretty useful in further implementations. -->
-<!-- {{ this.eventStoreHandler?.eventsList.detailsSettings | json }} -->
-<!-- {{this.eventStoreHandler?.displayName | json}} -->
-<!-- <div *ngFor="let node of nodesMap | keyvalue:f">
-    <div *ngIf="node.value.inCluster">
-        {{node.key}}:<br>
-        &nbsp;&nbsp;&nbsp;&nbsp; Status: {{node.value.status}}<br>
-        &nbsp;&nbsp;&nbsp;&nbsp; SeedNode: {{node.value.isSeed}}<br>
-        &nbsp;&nbsp;&nbsp;&nbsp; NodeId: {{node.value.id}}<br>
-        &nbsp;&nbsp;&nbsp;&nbsp; NodeInstance: {{node.value.instanceId}}<br><br>
-    </div>
-</div> -->
+<!-- Area reserved for showing Cluster/None or specific node's neighborhood -->
+<div id="mynetwork" ></div><br/>
 
+<!-- Section for showing current cluster state (number of nodes in specific state) -->
+<label id="labUp"></label><br/>
+<label id="labDown"></label><br/>
+<label id="labGray"></label><br/><br/>
+
+<!-- Input for getting neighborhood of specific node -->
+<!-- If input not properly given, Cluster/None is shown -->
+<label id="labInputNode" for="inputNode"> Search node by: &nbsp; &nbsp; </label>
+<input type="radio" id="byId" name="ctc" checked>
+<label for="byId"> &nbsp; Id &nbsp; </label>
+<input type="radio" id="byName" name="ctc">
+<label for="byName"> &nbsp; Name &nbsp; &nbsp; </label>
+<input id="inputNode" size="68" (change)="onChangeInput($event)"><br/><br/>
+
+<!-- Section for listing and chosing nodes of interest -->
+<label id="labActions" for="actions"> Select action: </label><br>
+<input type="radio" id="noneAction" name="contact" (click)="onClickRadio($event)" checked>
+<label for="noneAction"> &nbsp; None &nbsp; </label>
+<input type="radio" id="fmAction" name="contact" (click)="onClickRadio($event)">
+<label for="fmAction"> &nbsp; FM nodes &nbsp; </label>
+<input type="radio" id="fmmAction" name="contact" (click)="onClickRadio($event)">
+<label for="fmmAction"> &nbsp; FMM node &nbsp; </label>
+<input type="radio" id="seedAction" name="contact" (click)="onClickRadio($event)">
+<label for="seedAction"> &nbsp; Seed nodes &nbsp; </label>
+<input type="radio" id="downAction" name="contact" (click)="onClickRadio($event)">
+<label for="downAction"> &nbsp; Down nodes &nbsp; </label>
+<input type="radio" id="leaseAction" name="contact" (click)="onClickRadio($event)">
+<label for="leaseAction"> &nbsp; Lease failed nodes &nbsp; </label>
+<input type="radio" id="openAction" name="contact" (click)="onClickRadio($event)">
+<label for="openAction"> &nbsp; Open failed nodes &nbsp; </label>
+<input type="radio" id="grayAction" name="contact" (click)="onClickRadio($event)">
+<label for="grayAction"> &nbsp; Gray nodes &nbsp; </label>
+<select id="selectActions" name="list" (change)="onChangeCombo($event)"></select><br/>
+
+<!-- Textual info about current dates selected -->
 <br> Start date: {{ startDate }}
 <br> End date: {{ endDate }} <br><br>
 
+<!-- Timeline bar with double slider and date picker -->
 <div class="flex-container wrap">
     <app-dual-date-picker [minDate]="startDateMin" [maxDate]="startDateMax" (dateChanged)="setNewDates($event)"
           [currentStartDate]="startDate" [currentEndDate]="endDate"></app-dual-date-picker>
@@ -31,28 +56,3 @@ This part could be pretty useful in further implementations. -->
     </app-double-slider>
   </div>
 </div><br>
-
-<label id="labInfos" for="infos"> Node information: </label><br>
-<textarea id="infos" name="infos" rows="7" cols="70" disabled></textarea><br><br>
-
-<label id="labInputNode" for="inputNode"> Enter node id: </label><br>
-<input id="inputNode" size="68" (change)="onChangeInput($event)"><br><br>
-
-<label id="labActions" for="actions"> Select action: </label><br>
-<input type="radio" id="noneAction" name="contact" (click)="onClickRadio($event)" checked>
-<label for="noneAction"> &nbsp; None &nbsp; </label>
-<input type="radio" id="fmAction" name="contact" (click)="onClickRadio($event)">
-<label for="fmAction"> &nbsp; FM nodes &nbsp; </label>
-<input type="radio" id="fmmAction" name="contact" (click)="onClickRadio($event)">
-<label for="fmmAction"> &nbsp; FMM nodes &nbsp; </label>
-<input type="radio" id="seedAction" name="contact" (click)="onClickRadio($event)">
-<label for="seedAction"> &nbsp; Seed nodes &nbsp; </label>
-<input type="radio" id="notUpAction" name="contact" (click)="onClickRadio($event)">
-<label for="notUpAction"> &nbsp; Not "Up" nodes &nbsp; </label>
-<input type="radio" id="leaseAction" name="contact" (click)="onClickRadio($event)">
-<label for="leaseAction"> &nbsp; Lease failed nodes &nbsp; </label>
-<select id="selectActions" name="list" (change)="onChangedCombo($event)"></select>
-
-<figure class="highcharts-figure">
-    <div id="container"></div>
-</figure>
