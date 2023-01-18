@@ -145,9 +145,13 @@ export class EventStoreTimelineComponent implements AfterViewInit, OnChanges, On
 
       const options = {
         selectable: false,
-        template: (itemData, element, data) => {
+        template: (itemData, element: HTMLElement, data) => {
           if (data.isCluster) {
-            return `<div class="${itemData.items[0].groupColor}">${data.items.length} ${data.items[0].kind} events </div>`
+            const color = itemData.items[0].groupColor;
+            if(color) {
+              element.classList.add(color);
+            }
+            return `<div class="${color}">${data.items.length} ${data.items[0].kind} events </div>`
           } else {
             return `<div>${data.content}</div>`;
           }

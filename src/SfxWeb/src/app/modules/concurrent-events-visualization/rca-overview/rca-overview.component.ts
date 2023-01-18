@@ -140,7 +140,7 @@ export class RcaOverviewComponent implements AfterViewInit, OnChanges {
           kind: item.kind,
           groupColor: "color-" + this.colorKey[group[0]].color,
           title: EventStoreUtils.tooltipFormat(item.eventProperties, item.eventInstanceId, item.timeStamp),
-          className: 'hidden-dot color-' + this.colorKey[group[0]],
+          className: 'hidden-dot color-' + this.colorKey[group[0]].color,
           style: `border-width: 4px;
                   border-style: solid;
                   border-radius: 20px;`
