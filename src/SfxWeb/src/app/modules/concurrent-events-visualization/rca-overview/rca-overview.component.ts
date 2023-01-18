@@ -23,7 +23,7 @@ export class RcaOverviewComponent implements AfterViewInit, OnChanges {
   @ViewChild('chart') private chartContainer: ElementRef;
   private chart: Chart;
   private preGeneratedColors = [...pregeneratedColors];
-  public whiteLists = pregeneratedColors.map(c => "color-"+c).concat(['rca-summary-key']);
+  public whiteLists = pregeneratedColors.map(c => "color-"+c).concat(['rca-summary-key']); //add all of the pregenerated safe timeline colors and the summary key item
 
   public options: Options = {
     chart: {

@@ -253,47 +253,8 @@ export interface IPregeneratedColor {
   hex: string
 }
 
+//pregenerated safe colors for the timeline to use
 export const pregeneratedColors: IPregeneratedColor[] = [
-    {
-        "color": "FFB399",
-        "hex": "#FFB399"
-    },
-    {
-        "color": "FF33FF",
-        "hex": "#FF33FF"
-    },
-    {
-        "color": "FFFF99",
-        "hex": "#FFFF99"
-    },
-    {
-        "color": "00B3E6",
-        "hex": "#00B3E6"
-    },
-    {
-        "color": "E6B333",
-        "hex": "#E6B333"
-    },
-    {
-        "color": "3366E6",
-        "hex": "#3366E6"
-    },
-    {
-        "color": "999966",
-        "hex": "#999966"
-    },
-    {
-        "color": "99FF99",
-        "hex": "#99FF99"
-    },
-    {
-        "color": "B34D4D",
-        "hex": "#B34D4D"
-    },
-    {
-        "color": "80B300",
-        "hex": "#80B300"
-    },
     {
         "color": "809900",
         "hex": "#809900"
@@ -425,5 +386,45 @@ export const pregeneratedColors: IPregeneratedColor[] = [
     {
         "color": "6666FF",
         "hex": "#6666FF"
-    }
+    },
+    {
+        "color": "FFB399",
+        "hex": "#FFB399"
+    },
+    {
+        "color": "2f7ed8",
+        "hex": "#2f7ed8"
+    },
+    {
+        "color": "0d233a",
+        "hex": "#0d233a"
+    },
+    {
+        "color": "8bbc21",
+        "hex": "#8bbc21"
+    },
+    {
+        "color": "910000",
+        "hex": "#910000"
+    },
+    {
+        "color": "1aadce",
+        "hex": "#1aadce"
+    },
+    {
+        "color": "492970",
+        "hex": "#492970"
+    },
+    {
+        "color": "f28f43",
+        "hex": "#f28f43"
+    },
+    {
+        "color": "77a1e5",
+        "hex": "#77a1e5"
+    },
+    {
+        "color": "a6c96a",
+        "hex": "#a6c96a"
+    },
 ]
