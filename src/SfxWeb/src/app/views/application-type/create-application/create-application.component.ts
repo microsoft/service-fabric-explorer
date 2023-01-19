@@ -2,7 +2,7 @@ import { Component, OnInit, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { IsolatedAction } from 'src/app/Models/Action';
 import { ApplicationType } from 'src/app/Models/DataModels/ApplicationType';
-import { Validators, FormBuilder, FormGroup } from '@angular/forms';
+import { Validators, UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { Constants } from 'src/app/Common/Constants';
 
 @Component({
@@ -13,11 +13,11 @@ import { Constants } from 'src/app/Common/Constants';
 export class CreateApplicationComponent implements OnInit {
 
   app: ApplicationType;
-  form: FormGroup;
+  form: UntypedFormGroup;
 
   constructor(public dialogRef: MatDialogRef<CreateApplicationComponent>,
               @Inject(MAT_DIALOG_DATA) public data: IsolatedAction,
-              private formBuilder: FormBuilder) { }
+              private formBuilder: UntypedFormBuilder) { }
 
   ngOnInit(): void {
    this.app = this.data.data.appType;
