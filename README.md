@@ -1,7 +1,4 @@
 # Service Fabric Explorer (SFX)
-
-NOTE: Sfx is currently in the process of migrating from angularjs(Sfx v1) to angular 10(Sfx v2). The Sfx folder holds the previous version and SfxWeb is the new version. While this migration is happening, Sfx v1 will still be available but once Sfx v2 is considered safe and has 100% parity with V1 will be removed and official deprecated. All new development is being focused on V2 and unless its a critical bug with V1, V1 will not be getting any continued support.
-
 Service Fabric Explorer is an application for inspecting and managing cloud applications and nodes in a Microsoft Azure Service Fabric cluster.
 
 ## Build Status
@@ -9,26 +6,7 @@ Windows | Linux / macOS
 ------------ | -------------
 ![Image of Windows Build Badge](https://ci.appveyor.com/api/projects/status/ejfk6b0c3dlunkws/branch/master) | ![Image of Linux/macOS Build Badge](https://travis-ci.org/Microsoft/service-fabric-explorer.svg?branch=master) 
 
-## Installation
-
-Microsoft publishes the following installer packages for SFX:
-
-- Windows
-  - https://aka.ms/sfx-windows
-
-- Linux
-  - https://aka.ms/sfx-linux-x86
-  - https://aka.ms/sfx-linux-x64
-
-- macOS
-  - https://aka.ms/sfx-macos
-
 For more information about the application and how to use it: https://docs.microsoft.com/en-us/azure/service-fabric/service-fabric-visualizing-your-cluster
-
-## Developer Help and Documentation
-
-Service Fabric Explorer consists of two main components, an AngularJS based application (Sfx) and an Electron part to host the AngularJS application (Sfx-Standalone).
-
 ### Preparing the development machine
 
 To develop Service Fabric Explorer, the following components are required.
