@@ -361,11 +361,11 @@ export class ListColumnSettingWithCustomComponent extends ListColumnSetting impl
     }
 }
 
-export class ListColumnSettingWithEmbeddedVisTool extends ListColumnSetting implements ITemplate {
+export class ListColumnSettingWithEmbeddedVis extends ListColumnSetting implements ITemplate {
     public constructor(public template: Type<DetailBaseComponent>,
                        public propertyPath: string = '',
                        public displayName: string = '',
-                       public visEvents: IConcurrentEvents[],
+                       public visEvents: Record<string, IConcurrentEvents>,
                        config?: IListColumnAdditionalSettings) {
         super(propertyPath, displayName, config);
     }
