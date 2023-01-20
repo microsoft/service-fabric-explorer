@@ -10,9 +10,9 @@
       </div>
     </div>
   </div>
-  <div *ngFor="let chip of listEventChips">
+  <span *ngFor="let chip of listEventChips">
     <app-event-chip [chip]="chip" (onLoad)="addEvents($event)" (onRemove)="removeEvents($event)"></app-event-chip>
-  </div>
+  </span>
     <app-event-chip [addChip]="true" (onLoad)="addEvents($event)"></app-event-chip>
 
 </div>

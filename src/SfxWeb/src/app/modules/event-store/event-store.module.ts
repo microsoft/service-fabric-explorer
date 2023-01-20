@@ -14,9 +14,10 @@ import { TimePickerModule } from '../time-picker/time-picker.module';
 import { VisualizationDirective } from './visualization.directive';
 import { RcaVisualizationComponent } from './rca-visualization/rca-visualization.component';
 import { EventChipComponent } from './event-chip/event-chip.component';
+import { ChipModalComponent } from './chip-modal/chip-modal.component';
 
 @NgModule({
-  declarations: [EventStoreComponent, FullDescriptionComponent, RowDisplayComponent, OptionPickerComponent, TimelineComponent, VisualizationDirective, RcaVisualizationComponent, EventChipComponent],
+  declarations: [EventStoreComponent, FullDescriptionComponent, RowDisplayComponent, OptionPickerComponent, TimelineComponent, VisualizationDirective, RcaVisualizationComponent, EventChipComponent, ChipModalComponent],
   imports: [
     CommonModule,
     DetailListTemplatesModule,

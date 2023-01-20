@@ -1,6 +1,8 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { DataService } from 'src/app/services/data.service';
 import { SettingsService } from 'src/app/services/settings.service';
+import { ChipModalComponent } from '../chip-modal/chip-modal.component';
 import { IEventStoreData } from '../event-store/event-store.component';
 
 export interface IEventChipData {
@@ -22,15 +24,6 @@ export class EventChip {
   eventsFilter: string;
 }
 
-type EventType =
-  "Cluster" |
-  "Node" |
-  'Application' |
-  'Service' |
-  'Replica' |
-  "Partition" |
-  "RepairTask"
-
 @Component({
   selector: 'app-event-chip',
   templateUrl: './event-chip.component.html',
@@ -43,11 +36,21 @@ export class EventChipComponent {
   @Output() onLoad = new EventEmitter<IEventChipData>();
   @Output() onRemove = new EventEmitter<string>();
 
-  types: EventType[] = ['Cluster', 'Node', 'Application', 'Service', 'Partition', 'Replica', 'RepairTask'];
-  constructor(public dataService: DataService, public settings: SettingsService) { }
+  constructor(public dataService: DataService,
+              public settings: SettingsService,
+              protected dialog: MatDialog) { }
 
-  setType(event: any) {
-    this.chip.type = event.target.value;
+  openChipModal() {
+    let dialogRef = this.dialog.open(ChipModalComponent, {
+      data: this.chip, panelClass: 'mat-dialog-container-wrapper'
+    });
+  
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.chip = result;
+        this.getEvents(); 
+      }
+    });
   }
 
   getEvents() {

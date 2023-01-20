@@ -1,24 +1,7 @@
-<span class="badge">{{addChip ? '+' : chip.name}}</span>
-<div class="flex-container wrap">
-    <div ngbDropdown style="margin-left: 10px;">
-        <button class="simple-button" ngbDropdownToggle>{{chip.type? chip.type : 'Type'}}</button>
-        <div ngbDropdownMenu>
-            <div *ngFor="let type of types">
-                <button [value]='type' ngbDropdownItem (click)="setType($event)">{{type}}</button>
-            </div>
-        </div>
-    </div>
-    <label *ngIf="chip.type === 'Replica'">
-        <span>Partition Id: </span>
-        <input class="input-flat" [(ngModel)]="chip.partitionId">
-    </label>
-    <label *ngIf="chip.type !== 'Cluster' && chip.type !== 'RepairTask'">
-        <span>Name/Id: </span>
-        <input class="input-flat" [(ngModel)]="chip.id">
-    </label>
-    <label>
-        <span>EventFilter: </span>
-        <input class="input-flat" [(ngModel)]="chip.eventsFilter">
-    </label>
-    <button class="simple-button" [disabled]="!chip.type" (click)="getEvents()">Load Events</button>
-    </div>
+<label class="toggle-wrapper">
+    <a class="badge" (click)="openChipModal()">
+        <span *ngIf="addChip; else name" class="mif-add"></span> 
+        <span #name>{{chip.name}}</span>
+    </a>
+    <span class="mif-cross" *ngIf="!addChip" (click)="removeEvent()"></span>
+</label>
