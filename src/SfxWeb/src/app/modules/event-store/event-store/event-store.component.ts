@@ -73,7 +73,10 @@ export class EventStoreComponent implements OnChanges, AfterViewInit {
   }
 
   ngOnChanges(): void {
-    this.listEventChipData.filter(data => !this.listEventChips.map(chip => chip.name).includes(data.events.displayName)).forEach(data => this.addEvents(data));
+    if (this.listEventChipData) {
+      this.listEventChipData.filter(data => !this.listEventStoreData.map(data => data.displayName).includes(data.events.displayName)).forEach(data => this.addEvents(data));
+    }
+    
     this.update();
   }
 
@@ -171,6 +174,11 @@ export class EventStoreComponent implements OnChanges, AfterViewInit {
 
     if (this.visualizationsReady) {
       this.setVisualizations();
+
+      if (!this.listEventStoreData.some(data => data.displayName === this.activeTab)) {
+        this.activeTab = this.listEventStoreData[0].displayName;
+      }
+
       const timelineEventSubs = this.listEventStoreData.map(data => data.eventsList.refresh());
   
       forkJoin(timelineEventSubs).subscribe((refreshList) => {
@@ -213,7 +221,7 @@ export class EventStoreComponent implements OnChanges, AfterViewInit {
 
   removeEvents(name: string) {
     this.listEventStoreData = this.listEventStoreData.filter(item => item.displayName !== name);
-    this.listEventChips = this.listEventChips.filter(item => item.name !== name)
+    this.listEventChips = this.listEventChips.filter(item => item.name !== name);
     this.setNewDateWindow(true);
   }
 
