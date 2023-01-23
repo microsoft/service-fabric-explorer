@@ -33,8 +33,8 @@ export class EventChipComponent {
 
   @Input() chip: EventChip = new EventChip();
   @Input() addChip: boolean = false;
-  @Output() onLoad = new EventEmitter<IEventChipData>();
-  @Output() onRemove = new EventEmitter<string>();
+  @Output() loadEvent = new EventEmitter<IEventChipData>();
+  @Output() removeEvent = new EventEmitter<string>();
 
   constructor(public dataService: DataService,
               public settings: SettingsService,
@@ -93,16 +93,16 @@ export class EventChipComponent {
     this.chip.name = events.displayName;
 
     if (this.addChip) {
-      this.onLoad.emit({ events, chip: { ...this.chip } });
+      this.loadEvent.emit({ events, chip: { ...this.chip } });
       this.chip = new EventChip();
     }
     else {
-      this.onLoad.emit({ events });
+      this.loadEvent.emit({ events });
     }
   }
   
-  removeEvent() {
-    this.onRemove.emit(this.chip.name);
+  removeEvents() {
+    this.removeEvent.emit(this.chip.name);
   }
 
 }
