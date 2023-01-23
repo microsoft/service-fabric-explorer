@@ -7,7 +7,7 @@ import { IEventStoreData } from '../event-store/event-store.component';
 
 export interface IEventChipData {
   events: IEventStoreData<any, any>;
-  data?: EventChip;
+  chip?: EventChip;
 }
 
 export class EventChip {
@@ -93,7 +93,7 @@ export class EventChipComponent {
     this.chip.name = events.displayName;
 
     if (this.addChip) {
-      this.onLoad.emit({ events, data: { ...this.chip } });
+      this.onLoad.emit({ events, chip: { ...this.chip } });
       this.chip = new EventChip();
     }
     else {

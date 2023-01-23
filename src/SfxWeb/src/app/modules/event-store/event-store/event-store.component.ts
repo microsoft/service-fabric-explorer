@@ -44,7 +44,8 @@ export class EventStoreComponent implements OnChanges, AfterViewInit {
   constructor(public dataService: DataService) { }
 
   @ViewChildren(VisualizationDirective) vizDirs: QueryList<VisualizationDirective>;
-  @Input() listEventStoreData: IEventStoreData<any, any>[];
+  @Input() listEventStoreData: IEventStoreData<any, any>[] = [];
+  @Input() listEventChipData: IEventChipData[];
   @Input() optionsConfig: IOptionConfig;
 
   public listEventChips: EventChip[] = [];
@@ -72,6 +73,7 @@ export class EventStoreComponent implements OnChanges, AfterViewInit {
   }
 
   ngOnChanges(): void {
+    this.listEventChipData.filter(data => !this.listEventChips.map(chip => chip.name).includes(data.events.displayName)).forEach(data => this.addEvents(data));
     this.update();
   }
 
@@ -192,8 +194,8 @@ export class EventStoreComponent implements OnChanges, AfterViewInit {
   }
 
   addEvents(eventData: IEventChipData) {
-    if (eventData.data) {
-      this.listEventChips.push(eventData.data);
+    if (eventData.chip) {
+      this.listEventChips.push(eventData.chip);
       this.listEventStoreData = [...this.listEventStoreData, eventData.events];
     }
     else {
