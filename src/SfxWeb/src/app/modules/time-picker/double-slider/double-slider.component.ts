@@ -3,8 +3,8 @@ import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { create, API } from 'nouislider';
 
 export interface IOnDateChange {
-  endDate: any;
-  startDate: any;
+  endDate: Date;
+  startDate: Date;
 }
 @Component({
   selector: 'app-double-slider',
@@ -16,6 +16,7 @@ export class DoubleSliderComponent implements OnChanges, AfterViewInit {
 
   @Input() startDate: any;
   @Input() endDate: any;
+  @Input() minDate: Date;
 
   @Output() dateChanged = new EventEmitter<IOnDateChange>();
 
@@ -39,7 +40,7 @@ export class DoubleSliderComponent implements OnChanges, AfterViewInit {
         tooltips: true,
         connect: true,
         range: {
-            min: TimeUtils.AddDays(new Date(), -30).getTime(),
+            min: this.minDate ? this.minDate.getTime() : TimeUtils.AddDays(new Date(), -30).getTime(),
             max: new Date().getTime(),
         },
         handleAttributes: [
