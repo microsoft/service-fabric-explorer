@@ -4,16 +4,11 @@ import { chart, Chart, Options, SeriesOptionsType, SeriesSankeyNodesOptionsObjec
 import HighchartsSankey from "highcharts/modules/sankey";
 import HighchartsOrganization from "highcharts/modules/organization";
 import { DetailBaseComponent } from 'src/app/ViewModels/detail-table-base.component';
-import { ListColumnSetting } from 'src/app/Models/ListSettings';
+import { ListColumnSetting, ListColumnSettingWithEmbeddedVis } from 'src/app/Models/ListSettings';
 import { IConcurrentEvents, IRCAItem } from 'src/app/Models/eventstore/rcaEngine';
 
 HighchartsSankey(Highcharts);
 HighchartsOrganization(Highcharts);
-
-export interface IEventStoreRef extends ListColumnSetting {
-  visEvents : IConcurrentEvents[];}
-
-
 
 @Component({
   selector: 'app-visualization-tool',
@@ -29,7 +24,7 @@ export class VisualizationToolComponent implements OnChanges, AfterViewInit, Det
 
   visEvents : IConcurrentEvents;
   item : IRCAItem;
-  listSetting : IEventStoreRef;
+  listSetting : ListColumnSettingWithEmbeddedVis;
 
   @ViewChild('container') private container: ElementRef;
 
@@ -73,7 +68,7 @@ export class VisualizationToolComponent implements OnChanges, AfterViewInit, Det
    
     this.options.series = [this.traverse()];
     const data = this.traverse();
-    this.options.chart.height = data.levels.length * 110;
+    this.options.chart.height = data.levels.length * 110 || 1;
     this.chart = chart(this.container.nativeElement, this.options);
   }
 
@@ -91,8 +86,7 @@ export class VisualizationToolComponent implements OnChanges, AfterViewInit, Det
     }
     // perform BFS to convert to organization chart
     let queue: IConcurrentEvents[] = [];
-    this.visEvents = this.listSetting.visEvents.find(
-      visEvent => visEvent.eventInstanceId == this.item.eventInstanceId);
+    this.visEvents = this.listSetting.visEvents[this.item.eventInstanceId];
     if (this.visEvents) {
       queue = [this.visEvents];
 

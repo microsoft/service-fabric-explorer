@@ -29,9 +29,9 @@ export interface IEventStoreData<IVisPresentEvent, S> {
   objectResolver?(id: string): IDataModel<any>; //used to determine if the data contains a given event;
 }
 
-interface IVisReference {
+interface VisReference {
   name: string,
-  component: Type<any>
+  component: Type<VisualizationComponent>
 }
 
 @Component({
@@ -63,7 +63,7 @@ export class EventStoreComponent implements OnChanges, AfterViewInit {
       { name: "Timeline", component: TimelineComponent },
       { name: "RCA Summary", component: RcaVisualizationComponent }
     ];
-  
+
   private visualizationsReady = false;
   
   ngAfterViewInit() {
@@ -76,7 +76,6 @@ export class EventStoreComponent implements OnChanges, AfterViewInit {
     if (this.listEventChipData) {
       this.listEventChipData.filter(data => !this.listEventStoreData.map(data => data.displayName).includes(data.events.displayName)).forEach(data => this.addEvents(data));
     }
-    
     this.update();
   }
 
@@ -85,7 +84,6 @@ export class EventStoreComponent implements OnChanges, AfterViewInit {
     if (this.vizDirs.length < this.visualizations.length) { //if some visualizations have been removed, clear the array
       this.visualizations.splice(this.vizDirs.length);  
     }
-
     this.vizDirs.forEach((dir, i) => {
 
       if (dir.name !== this.vizRefs[i].name) { //check and update each visualization directive template
@@ -231,5 +229,5 @@ export class EventStoreComponent implements OnChanges, AfterViewInit {
     this.listEventChips = this.listEventChips.filter(item => item.name !== name);
     this.setNewDateWindow(true);
   }
-
+  
 }

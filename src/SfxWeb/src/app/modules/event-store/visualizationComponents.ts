@@ -9,6 +9,7 @@ export interface IEventColumnUpdate {
     index?: number
 }
 
+
 export interface IVisUpdateData {
     listEventStoreData: IEventStoreData<any, any>[];
     startDate: Date;
