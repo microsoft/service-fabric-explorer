@@ -40,7 +40,7 @@
   </app-health-badge>
 
   <div ngbNav #nav="ngbNav" data-cy="eventtabs" class="nav-wrapper" [(activeId)]="activeTab">
-    <div ngbNavItem *ngFor="let data of listEventStoreData" [ngbNavItem]="data.displayName">
+    <div ngbNavItem *ngFor="let data of listEventStoreData; let i = index" [ngbNavItem]="i">
       <a ngbNavLink class="bar-name">
         <div *ngIf="data.eventsList.isRefreshing" class="mif-refresh rotate link"
               ngbTooltip="This data is currently loading."  tooltipClass="styled-tooltip"></div>

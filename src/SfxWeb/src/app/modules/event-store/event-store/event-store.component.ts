@@ -51,7 +51,7 @@ export class EventStoreComponent implements OnChanges, AfterViewInit {
   public listEventChips: EventChip[] = [];
 
   public failedRefresh = false;
-  public activeTab: string;
+  public activeTab: number;
 
   public startDate: Date;
   public endDate: Date;
@@ -122,7 +122,7 @@ export class EventStoreComponent implements OnChanges, AfterViewInit {
   public setSearch(id: string) {
     this.listEventStoreData.forEach((list, i) => {
       if (list.objectResolver(id)) {
-        this.activeTab = list.displayName
+        this.activeTab = i
         setTimeout(() =>
           list.listSettings.search = id, 1)
       }
@@ -175,18 +175,25 @@ export class EventStoreComponent implements OnChanges, AfterViewInit {
     if (this.visualizationsReady) {
       this.setVisualizations();
 
-      if (!this.listEventStoreData.some(data => data.displayName === this.activeTab)) {
-        this.activeTab = this.listEventStoreData[0].displayName;
+      if (this.activeTab >= this.listEventStoreData.length) {
+        this.activeTab = 0;
       }
 
       const timelineEventSubs = this.listEventStoreData.map(data => data.eventsList.refresh());
   
-      forkJoin(timelineEventSubs).subscribe((refreshList) => {
-        this.failedRefresh = refreshList.some(e => !e);
+      if (timelineEventSubs.length) {
+        forkJoin(timelineEventSubs).subscribe((refreshList) => {
+          this.failedRefresh = refreshList.some(e => !e);
+          this.visualizations.forEach(visualization => {
+            visualization.update({listEventStoreData: this.listEventStoreData, startDate: this.startDate, endDate: this.endDate});
+          })
+        });
+      }
+      else {
         this.visualizations.forEach(visualization => {
-          visualization.update({listEventStoreData: this.listEventStoreData, startDate: this.startDate, endDate: this.endDate});
-        })
-      });
+          visualization.update({ listEventStoreData: this.listEventStoreData, startDate: this.startDate, endDate: this.endDate });
+        });
+      }
     }
   }
 
