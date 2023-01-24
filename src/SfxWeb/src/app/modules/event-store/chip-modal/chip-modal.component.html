@@ -22,7 +22,7 @@
             <input class="input-flat" [(ngModel)]="data.id" name="id">
         </label>
         
-        <label>
+        <label *ngIf="data.type !== 'RepairTask'">
             <span>EventFilter: </span>
             <input class="input-flat" [(ngModel)]="data.eventsFilter" name="filter">
         </label>

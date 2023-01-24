@@ -10,7 +10,9 @@ import { IEventColumnUpdate, VisualizationComponent } from '../visualizationComp
 import { RcaVisualizationComponent } from '../rca-visualization/rca-visualization.component';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { IDataModel } from 'src/app/Models/DataModels/Base';
-import { EventChip, IEventChipData } from '../event-chip/event-chip.component';
+import { EventChip } from '../event-chip/event-chip.component';
+import { EventService } from 'src/app/services/event.service';
+import { SimpleChanges } from '@angular/core';
 
 export type EventType =
   "Cluster" |
@@ -29,7 +31,7 @@ export interface IEventStoreData<IVisPresentEvent, S> {
   objectResolver?(id: string): IDataModel<any>; //used to determine if the data contains a given event;
 }
 
-interface VisReference {
+interface IVisReference {
   name: string,
   component: Type<VisualizationComponent>
 }
@@ -41,14 +43,13 @@ interface VisReference {
 })
 export class EventStoreComponent implements OnChanges, AfterViewInit {
 
-  constructor(public dataService: DataService) { }
+  constructor(public dataService: DataService, public eventService: EventService) { }
 
   @ViewChildren(VisualizationDirective) vizDirs: QueryList<VisualizationDirective>;
   @Input() listEventStoreData: IEventStoreData<any, any>[] = [];
-  @Input() listEventChipData: IEventChipData[];
   @Input() optionsConfig: IOptionConfig;
 
-  public listEventChips: EventChip[] = [];
+  @Input() listEventChips: EventChip[] = [];
 
   public failedRefresh = false;
   public activeTab: number;
@@ -58,7 +59,7 @@ export class EventStoreComponent implements OnChanges, AfterViewInit {
   public dateMin: Date;
 
   private visualizations: VisualizationComponent[] = [];
-  public vizRefs: VisReference[] =
+  public vizRefs: IVisReference[] =
     [
       { name: "Timeline", component: TimelineComponent },
       { name: "RCA Summary", component: RcaVisualizationComponent }
@@ -72,10 +73,13 @@ export class EventStoreComponent implements OnChanges, AfterViewInit {
     });
   }
 
-  ngOnChanges(): void {
-    if (this.listEventChipData) {
-      this.listEventChipData.filter(data => !this.listEventStoreData.map(data => data.displayName).includes(data.events.displayName)).forEach(data => this.addEvents(data));
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.listEventChips) {
+      const len = changes.listEventChips.currentValue.length - (changes.listEventChips.previousValue?.length || 0);
+      const newChips = changes.listEventChips.currentValue.splice(-(len));
+      newChips.forEach(c => this.addEvents(c));
     }
+
     this.update();
   }
 
@@ -206,21 +210,25 @@ export class EventStoreComponent implements OnChanges, AfterViewInit {
     this.setNewDateWindow(true);
   }
 
-  addEvents(eventData: IEventChipData) {
-    if (eventData.chip) {
-      this.listEventChips.push(eventData.chip);
-      this.listEventStoreData = [...this.listEventStoreData, eventData.events];
+  addEvents(chip: EventChip) {
+
+    const events = this.eventService.getEvents({ type: chip.type, eventsFilter: chip.eventsFilter, id: chip.id, partitionId: chip.partitionId, });
+
+    const chipIndex = this.listEventChips.findIndex(c => c.name === chip.name); //find position by the old name
+    chip.name = events.displayName; //then update name
+    
+    if (chipIndex == -1) {
+      this.listEventChips.push(chip);
+      this.listEventStoreData.push(events);  
     }
     else {
-      //find index of item not associated w/ a chip
-      const index = this.listEventStoreData.findIndex(e => !this.listEventChips.map(chip => chip.name).includes(e.displayName));
-      if (index != -1) {
-        this.listEventStoreData[index] = eventData.events;
-        this.listEventStoreData = [...this.listEventStoreData];
-      }
-      
+      this.listEventChips[chipIndex] = chip;
+      this.listEventStoreData[chipIndex] = events;  
     }
-    
+
+    this.listEventChips = [...this.listEventChips];
+    this.listEventStoreData = [...this.listEventStoreData];
+
     this.setNewDateWindow(true);
   }
 

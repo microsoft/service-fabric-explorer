@@ -33,7 +33,7 @@ export class EventChipComponent {
 
   @Input() chip: EventChip = new EventChip();
   @Input() addChip: boolean = false;
-  @Output() loadEvent = new EventEmitter<IEventChipData>();
+  @Output() loadEvent = new EventEmitter<EventChip>();
   @Output() removeEvent = new EventEmitter<string>();
 
   constructor(public dataService: DataService,
@@ -48,57 +48,12 @@ export class EventChipComponent {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.chip = result;
-        this.getEvents(); 
+        this.loadEvent.emit(this.chip); 
+        if (this.addChip) {
+          this.chip = new EventChip();
+        }
       }
     });
-  }
-
-  getEvents() {
-    // removes whitespace
-    this.chip.eventsFilter = this.chip.eventsFilter.replace(/\s+/g, '');
-
-    let events: IEventStoreData<any, any>;
-
-    const filter = this.chip.eventsFilter.split(',').filter(e => e);
-    switch (this.chip.type) {
-      case 'Cluster':
-        events = this.dataService.getClusterEventData();
-        break;
-      case 'Application':
-        events = this.dataService.getApplicationEventData(this.chip.id);
-        break;
-      case 'Node':
-        events = this.dataService.getNodeEventData(this.chip.id);
-        break;
-      case 'Service':
-        events = this.dataService.getServiceEventData(this.chip.id);
-        break;
-      case 'Partition':
-        events = this.dataService.getPartitionEventData(this.chip.id);
-        break;
-      case 'Replica':
-        events = this.dataService.getReplicaEventData(this.chip.partitionId, this.chip.id);
-        break;
-      case 'RepairTask':
-        events = this.dataService.getRepairTasksData(this.settings);
-        break;
-    }
-    events.eventsList.setEventFilter(filter);
-
-
-    if (this.chip.eventsFilter) {
-      events.displayName = `${events.displayName}-${this.chip.eventsFilter}`;
-    }
-
-    this.chip.name = events.displayName;
-
-    if (this.addChip) {
-      this.loadEvent.emit({ events, chip: { ...this.chip } });
-      this.chip = new EventChip();
-    }
-    else {
-      this.loadEvent.emit({ events });
-    }
   }
   
   removeEvents() {
