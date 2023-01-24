@@ -58,7 +58,7 @@ export class EventStoreComponent implements OnChanges, AfterViewInit {
   public dateMin: Date;
 
   private visualizations: VisualizationComponent[] = [];
-  public vizRefs: IVisReference[] =
+  public vizRefs: VisReference[] =
     [
       { name: "Timeline", component: TimelineComponent },
       { name: "RCA Summary", component: RcaVisualizationComponent }
