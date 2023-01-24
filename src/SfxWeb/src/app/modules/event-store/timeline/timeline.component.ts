@@ -6,7 +6,7 @@ import { TelemetryService } from 'src/app/services/telemetry.service';
 import { TimelineGeneratorFactoryService } from 'src/app/services/timeline-generator-factory.service';
 import { DataSet, DataGroup } from 'vis-timeline/standalone/esm';
 import { IEventStoreData } from '../event-store/event-store.component';
-import { VisualizationComponent, VisUpdateData } from '../visualizationComponents';
+import { VisualizationComponent, IVisUpdateData } from '../visualizationComponents';
 
 @Component({
   selector: 'app-timeline',
@@ -118,7 +118,7 @@ export class TimelineComponent implements VisualizationComponent {
     this.changeDetector.markForCheck();
   }
 
-  public update(data: VisUpdateData) {
+  public update(data: IVisUpdateData) {
     this.listEventStoreData = data.listEventStoreData;
     this.startDate = data.startDate;
     this.endDate = data.endDate;

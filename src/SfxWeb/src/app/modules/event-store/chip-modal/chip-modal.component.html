@@ -1,0 +1,34 @@
+<form class="action-modal">
+    <div class="modal-header">
+        <h4 class="modal-title">Load Event</h4>
+    </div>
+    <div class="modal-body">
+        <div ngbDropdown style="margin-left: 10px;">
+            <button class="simple-button" ngbDropdownToggle>{{data.type? data.type : 'Type'}}</button>
+            <div ngbDropdownMenu>
+                <div *ngFor="let type of types">
+                    <button [value]='type' ngbDropdownItem (click)="setType($event)">{{type}}</button>
+                </div>
+            </div>
+        </div>
+
+        <label *ngIf="data.type === 'Replica'">
+            <span>Partition Id: </span>
+            <input class="input-flat" [(ngModel)]="data.partitionId" required name="partitionId">
+        </label>
+
+        <label *ngIf="data.type !== 'Cluster' && data.type !== 'RepairTask'">
+            <span>Name/Id: </span>
+            <input class="input-flat" [(ngModel)]="data.id" name="id">
+        </label>
+        
+        <label>
+            <span>EventFilter: </span>
+            <input class="input-flat" [(ngModel)]="data.eventsFilter" name="filter">
+        </label>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="solid-button blue" [disabled]="formInvalid()" (click)="ok()" data-cy="submit">Load</button>
+        <button type="button" class="flat-button" (click)="cancel()">Cancel</button>
+    </div>
+</form>

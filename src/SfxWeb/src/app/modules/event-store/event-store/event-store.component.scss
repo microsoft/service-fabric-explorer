@@ -11,3 +11,11 @@
     margin-right: 2px;
     vertical-align: top;
 }
+
+.flex-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 5px;
+    width: 100%;
+}

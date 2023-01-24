@@ -2,14 +2,18 @@
   <div style="margin-bottom: 10px;" *ngIf="dateMin">
     <app-time-picker [dateMin]="dateMin" (dateChange)="setDate($event)"></app-time-picker>
   </div>
-  <div ngbDropdown style="margin-left: 10px;"  *ngIf="optionsConfig">
-    <button class="simple-button" ngbDropdownToggle sectionName="select-event-types">Event Types </button>
-    <div ngbDropdownMenu>
-      <app-option-picker [optionsConfig]="optionsConfig" (selectedOption)="processData($event)" [listEventStoreData]="listEventStoreData"></app-option-picker>
+  <div class="flex-container wrap">
+    <div ngbDropdown style="margin-left: 10px;"  *ngIf="optionsConfig">
+      <button class="simple-button" ngbDropdownToggle sectionName="select-event-types">Event Types </button>
+      <div ngbDropdownMenu>
+        <app-option-picker [optionsConfig]="optionsConfig" (selectedOption)="processData($event)" [listEventStoreData]="listEventStoreData"></app-option-picker>
+      </div>
     </div>
   </div>
-  <br>
-
+  <span *ngFor="let chip of listEventChips">
+    <app-event-chip [chip]="chip" (loadEvent)="addEvents($event)" (removeEvent)="removeEvents($event)"></app-event-chip>
+  </span>
+    <app-event-chip [addChip]="true" (loadEvent)="addEvents($event)"></app-event-chip>
 </div>
 
 <div *ngFor="let ref of vizRefs">
@@ -35,7 +39,7 @@
   </app-health-badge>
 
   <div ngbNav #nav="ngbNav" data-cy="eventtabs" class="nav-wrapper" [(activeId)]="activeTab">
-    <div ngbNavItem *ngFor="let data of listEventStoreData" [ngbNavItem]="data.displayName">
+    <div ngbNavItem *ngFor="let data of listEventStoreData; let i = index" [ngbNavItem]="i">
       <a ngbNavLink class="bar-name">
         <div *ngIf="data.eventsList.isRefreshing" class="mif-refresh rotate link"
               ngbTooltip="This data is currently loading."  tooltipClass="styled-tooltip"></div>

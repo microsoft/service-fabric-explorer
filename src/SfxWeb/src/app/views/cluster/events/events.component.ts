@@ -3,6 +3,7 @@ import { DataService } from 'src/app/services/data.service';
 import { IEventStoreData } from 'src/app/modules/event-store/event-store/event-store.component';
 import { IOptionConfig } from 'src/app/modules/event-store/option-picker/option-picker.component';
 import { SettingsService } from 'src/app/services/settings.service';
+import { IEventChipData } from 'src/app/modules/event-store/event-chip/event-chip.component';
 
 @Component({
   selector: 'app-events',
@@ -11,21 +12,60 @@ import { SettingsService } from 'src/app/services/settings.service';
 })
 export class EventsComponent implements OnInit {
 
-  listEventStoreData: IEventStoreData<any, any> [];
+  // listEventStoreData: IEventStoreData<any, any>[];
+  listEventStoreChip: IEventChipData[] = [];
   optionsConfig: IOptionConfig;
 
   constructor(public data: DataService, private settings: SettingsService) { }
 
   ngOnInit() {
-    this.listEventStoreData = [
-      this.data.getClusterEventData(),
-      this.data.getNodeEventData()
-    ];
+    // this.listEventStoreData = [
+    //   this.data.getClusterEventData(),
+    //   this.data.getNodeEventData()
+    // ];
 
+    const clusterEvents = this.data.getClusterEventData();
+    this.listEventStoreChip.push(
+      {
+        events: clusterEvents,
+        chip: {
+          name: clusterEvents.displayName,
+          type: 'Cluster',
+          id: '',
+          eventsFilter: ''
+        }
+      }
+    );
+
+    const nodeEvents = this.data.getNodeEventData();
+    this.listEventStoreChip.push(
+      {
+        events: nodeEvents,
+        chip: {
+          name: nodeEvents.displayName,
+          type: 'Node',
+          id: '',
+          eventsFilter: ''
+        }
+      }
+    );
+      
     this.data.clusterManifest.ensureInitialized().subscribe(() => {
       if (this.data.clusterManifest.isRepairManagerEnabled) {
         this.data.repairCollection.ensureInitialized().subscribe(() => {
-          this.listEventStoreData = this.listEventStoreData.concat([this.data.getRepairTasksData(this.settings)]);
+          // this.listEventStoreData = this.listEventStoreData.concat([this.data.getRepairTasksData(this.settings)]);
+          const repairEvents = this.data.getRepairTasksData(this.settings);
+          this.listEventStoreChip = this.listEventStoreChip.concat(
+            [{
+              events: repairEvents,
+              chip: {
+                name: repairEvents.displayName,
+                type: 'RepairTask',
+                id: '',
+                eventsFilter: ''
+              }
+            }]
+          );
         });
       }
     });

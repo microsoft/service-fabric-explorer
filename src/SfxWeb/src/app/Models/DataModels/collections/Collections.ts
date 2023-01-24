@@ -472,7 +472,7 @@ export class ClusterEventList extends EventListBase<ClusterEvent> {
     }
 
     protected retrieveEvents(messageHandler?: IResponseMessageHandler): Observable<FabricEventInstanceModel<ClusterEvent>[]> {
-        return this.data.restClient.getClusterEvents(this.queryStartDate, this.queryEndDate, messageHandler)
+        return this.data.restClient.getClusterEvents(this.queryStartDate, this.queryEndDate, this.eventsTypesFilter, messageHandler)
             .pipe(map(result => {
                 return result.map(event => new FabricEventInstanceModel<ClusterEvent>(this.data, event));
             }));

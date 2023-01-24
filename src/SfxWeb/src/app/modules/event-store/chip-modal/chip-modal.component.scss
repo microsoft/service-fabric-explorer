@@ -1,0 +1,7 @@
+$label-spacing: 5px;
+
+label {
+    display: flex;
+    flex-direction:column; 
+    gap: $label-spacing;
+}

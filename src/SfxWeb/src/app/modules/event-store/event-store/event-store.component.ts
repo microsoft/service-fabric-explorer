@@ -6,10 +6,11 @@ import { IOptionConfig, IOptionData } from '../option-picker/option-picker.compo
 import { TimelineComponent } from '../timeline/timeline.component';
 import { forkJoin } from 'rxjs';
 import { VisualizationDirective } from '../visualization.directive';
-import { EventColumnUpdate, VisualizationComponent } from '../visualizationComponents';
+import { IEventColumnUpdate, VisualizationComponent } from '../visualizationComponents';
 import { RcaVisualizationComponent } from '../rca-visualization/rca-visualization.component';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { IDataModel } from 'src/app/Models/DataModels/Base';
+import { EventChip, IEventChipData } from '../event-chip/event-chip.component';
 
 export type EventType =
   "Cluster" |
@@ -43,22 +44,26 @@ export class EventStoreComponent implements OnChanges, AfterViewInit {
   constructor(public dataService: DataService) { }
 
   @ViewChildren(VisualizationDirective) vizDirs: QueryList<VisualizationDirective>;
-  @Input() listEventStoreData: IEventStoreData<any, any>[];
+  @Input() listEventStoreData: IEventStoreData<any, any>[] = [];
+  @Input() listEventChipData: IEventChipData[];
   @Input() optionsConfig: IOptionConfig;
-  @Input() vizRefs: VisReference[] =
-    [
-      { name: "Timeline", component: TimelineComponent },
-      { name: "RCA Summary", component: RcaVisualizationComponent }
-    ];
-  
+
+  public listEventChips: EventChip[] = [];
+
   public failedRefresh = false;
-  public activeTab: string;
+  public activeTab: number;
 
   public startDate: Date;
   public endDate: Date;
   public dateMin: Date;
 
   private visualizations: VisualizationComponent[] = [];
+  public vizRefs: IVisReference[] =
+    [
+      { name: "Timeline", component: TimelineComponent },
+      { name: "RCA Summary", component: RcaVisualizationComponent }
+    ];
+
   private visualizationsReady = false;
   
   ngAfterViewInit() {
@@ -68,6 +73,9 @@ export class EventStoreComponent implements OnChanges, AfterViewInit {
   }
 
   ngOnChanges(): void {
+    if (this.listEventChipData) {
+      this.listEventChipData.filter(data => !this.listEventStoreData.map(data => data.displayName).includes(data.events.displayName)).forEach(data => this.addEvents(data));
+    }
     this.update();
   }
 
@@ -76,7 +84,6 @@ export class EventStoreComponent implements OnChanges, AfterViewInit {
     if (this.vizDirs.length < this.visualizations.length) { //if some visualizations have been removed, clear the array
       this.visualizations.splice(this.vizDirs.length);  
     }
-
     this.vizDirs.forEach((dir, i) => {
 
       if (dir.name !== this.vizRefs[i].name) { //check and update each visualization directive template
@@ -113,17 +120,17 @@ export class EventStoreComponent implements OnChanges, AfterViewInit {
   public setSearch(id: string) {
     this.listEventStoreData.forEach((list, i) => {
       if (list.objectResolver(id)) {
-        this.activeTab = list.displayName
+        this.activeTab = i
         setTimeout(() =>
           list.listSettings.search = id, 1)
       }
     })
   }
 
-  private updateColumn(update: EventColumnUpdate) {
+  private updateColumn(update: IEventColumnUpdate) {
 
     const listSettings = this.listEventStoreData.find(list => list.displayName === update.listName).listSettings; 
-    let columnSettings = listSettings.columnSettings;
+    let columnSettings = listSettings.columnSettings;;
     
     if (update.isSecondRow) {
       columnSettings = listSettings.secondRowColumnSettings;
@@ -142,7 +149,7 @@ export class EventStoreComponent implements OnChanges, AfterViewInit {
       
   }
 
-  /* work w/ processData to check if update needed */
+  /*check if update needed */
   private setNewDateWindow(forceRefresh: boolean = false): void {
     // If the data interface has that function implemented, we call it. If it doesn't we discard it by returning false.
     let refreshData = false;
@@ -165,14 +172,26 @@ export class EventStoreComponent implements OnChanges, AfterViewInit {
 
     if (this.visualizationsReady) {
       this.setVisualizations();
+
+      if (this.activeTab >= this.listEventStoreData.length) {
+        this.activeTab = 0;
+      }
+
       const timelineEventSubs = this.listEventStoreData.map(data => data.eventsList.refresh());
   
-      forkJoin(timelineEventSubs).subscribe((refreshList) => {
-        this.failedRefresh = refreshList.some(e => !e);
+      if (timelineEventSubs.length) {
+        forkJoin(timelineEventSubs).subscribe((refreshList) => {
+          this.failedRefresh = refreshList.some(e => !e);
+          this.visualizations.forEach(visualization => {
+            visualization.update({listEventStoreData: this.listEventStoreData, startDate: this.startDate, endDate: this.endDate});
+          })
+        });
+      }
+      else {
         this.visualizations.forEach(visualization => {
-          visualization.update({listEventStoreData: this.listEventStoreData, startDate: this.startDate, endDate: this.endDate});
-        })
-      });
+          visualization.update({ listEventStoreData: this.listEventStoreData, startDate: this.startDate, endDate: this.endDate });
+        });
+      }
     }
   }
 
@@ -187,4 +206,28 @@ export class EventStoreComponent implements OnChanges, AfterViewInit {
     this.setNewDateWindow(true);
   }
 
+  addEvents(eventData: IEventChipData) {
+    if (eventData.chip) {
+      this.listEventChips.push(eventData.chip);
+      this.listEventStoreData = [...this.listEventStoreData, eventData.events];
+    }
+    else {
+      //find index of item not associated w/ a chip
+      const index = this.listEventStoreData.findIndex(e => !this.listEventChips.map(chip => chip.name).includes(e.displayName));
+      if (index != -1) {
+        this.listEventStoreData[index] = eventData.events;
+        this.listEventStoreData = [...this.listEventStoreData];
+      }
+      
+    }
+    
+    this.setNewDateWindow(true);
+  }
+
+  removeEvents(name: string) {
+    this.listEventStoreData = this.listEventStoreData.filter(item => item.displayName !== name);
+    this.listEventChips = this.listEventChips.filter(item => item.name !== name);
+    this.setNewDateWindow(true);
+  }
+  
 }
