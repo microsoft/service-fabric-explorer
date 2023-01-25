@@ -75,8 +75,8 @@ export class EventStoreComponent implements OnChanges, AfterViewInit {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.listEventChips) {
-      const len = changes.listEventChips.currentValue.length - (changes.listEventChips.previousValue?.length || 0);
-      const newChips = changes.listEventChips.currentValue.splice(-(len));
+      let len = changes.listEventChips.currentValue.length - (changes.listEventChips.previousValue?.length || 0);
+      const newChips = changes.listEventChips.currentValue.slice(-1 * (len));
       newChips.forEach(c => this.addEvents(c));
     }
 

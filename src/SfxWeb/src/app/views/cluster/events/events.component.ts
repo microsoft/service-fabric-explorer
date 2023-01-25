@@ -19,23 +19,14 @@ export class EventsComponent implements OnInit {
   constructor(public data: DataService, private settings: SettingsService) { }
 
   ngOnInit() {
-    // this.listEventStoreData = [
-    //   this.data.getClusterEventData(),
-    //   this.data.getNodeEventData()
-    // ];
 
-    // const clusterEvents = this.data.getClusterEventData();
-    this.listEventStoreChip.push(
+    this.listEventStoreChip = [
       {
           name: '',
           type: 'Cluster',
           id: '',
           eventsFilter: '' 
-      }
-    );
-
-    // const nodeEvents = this.data.getNodeEventData();
-    this.listEventStoreChip.push(
+      },
       {
           name: '',
           type: 'Node',
@@ -43,13 +34,11 @@ export class EventsComponent implements OnInit {
           eventsFilter: ''
         
       }
-    );
+    ];
       
     this.data.clusterManifest.ensureInitialized().subscribe(() => {
       if (this.data.clusterManifest.isRepairManagerEnabled) {
         this.data.repairCollection.ensureInitialized().subscribe(() => {
-          // this.listEventStoreData = this.listEventStoreData.concat([this.data.getRepairTasksData(this.settings)]);
-          // const repairEvents = this.data.getRepairTasksData(this.settings);
           this.listEventStoreChip = this.listEventStoreChip.concat(
             [{
                 name: '',
