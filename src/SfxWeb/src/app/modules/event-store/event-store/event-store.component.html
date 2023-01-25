@@ -2,14 +2,6 @@
   <div style="margin-bottom: 10px;" *ngIf="dateMin">
     <app-time-picker [dateMin]="dateMin" (dateChange)="setDate($event)"></app-time-picker>
   </div>
-  <div class="flex-container wrap">
-    <div ngbDropdown style="margin-left: 10px;"  *ngIf="optionsConfig">
-      <button class="simple-button" ngbDropdownToggle sectionName="select-event-types">Event Types </button>
-      <div ngbDropdownMenu>
-        <app-option-picker [optionsConfig]="optionsConfig" (selectedOption)="processData($event)" [listEventStoreData]="listEventStoreData"></app-option-picker>
-      </div>
-    </div>
-  </div>
   <span *ngFor="let chip of listEventChips">
     <app-event-chip [chip]="chip" (loadEvent)="addEvents($event)" (removeEvent)="removeEvents($event)"></app-event-chip>
   </span>

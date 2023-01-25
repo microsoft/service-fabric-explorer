@@ -1,9 +1,7 @@
-import { Component, OnInit, Injector } from '@angular/core';
+import { Component, Injector } from '@angular/core';
 import { PartitionBaseControllerDirective } from '../PartitionBase';
 import { DataService } from 'src/app/services/data.service';
-import { PartitionTimelineGenerator } from 'src/app/Models/eventstore/timelineGenerators';
-import { IEventStoreData } from 'src/app/modules/event-store/event-store/event-store.component';
-import { IOptionConfig } from 'src/app/modules/event-store/option-picker/option-picker.component';
+import { EventChip } from 'src/app/modules/event-store/event-chip/event-chip.component';
 
 @Component({
   selector: 'app-events',
@@ -12,23 +10,21 @@ import { IOptionConfig } from 'src/app/modules/event-store/option-picker/option-
 })
 export class EventsComponent extends PartitionBaseControllerDirective {
 
-  listEventStoreData: IEventStoreData<any, any> [];
-  optionsConfig: IOptionConfig;
+  listEventStoreChips: EventChip[];
 
   constructor(protected data: DataService, injector: Injector) {
     super(data, injector);
   }
 
   setup() {
-    this.listEventStoreData = [
-      this.data.getPartitionEventData(this.partitionId)
+    this.listEventStoreChips = [
+      {
+        name: '',
+        type: 'Partition',
+        id: this.partitionId,
+        eventsFilter: '' 
+      }
     ];
-
-    this.optionsConfig = {
-      enableCluster: true,
-      enableNodes: true,
-      enableRepairTasks: true
-    };
   }
 
 }

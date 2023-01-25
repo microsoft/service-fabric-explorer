@@ -1,9 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { DataService } from 'src/app/services/data.service';
-import { IEventStoreData } from 'src/app/modules/event-store/event-store/event-store.component';
-import { IOptionConfig } from 'src/app/modules/event-store/option-picker/option-picker.component';
-import { SettingsService } from 'src/app/services/settings.service';
-import { EventChip, IEventChipData } from 'src/app/modules/event-store/event-chip/event-chip.component';
+import { EventChip } from 'src/app/modules/event-store/event-chip/event-chip.component';
 
 @Component({
   selector: 'app-events',
@@ -12,11 +9,9 @@ import { EventChip, IEventChipData } from 'src/app/modules/event-store/event-chi
 })
 export class EventsComponent implements OnInit {
 
-  // listEventStoreData: IEventStoreData<any, any>[];
   listEventStoreChip: EventChip[] = [];
-  optionsConfig: IOptionConfig;
 
-  constructor(public data: DataService, private settings: SettingsService) { }
+  constructor(public data: DataService) { }
 
   ngOnInit() {
 
@@ -52,10 +47,6 @@ export class EventsComponent implements OnInit {
       }
     });
 
-    this.optionsConfig = {
-      enableNodes: true,
-      enableRepairTasks: true
-    };
   }
 
 }

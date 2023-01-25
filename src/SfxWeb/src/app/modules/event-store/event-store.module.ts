@@ -7,7 +7,6 @@ import { RowDisplayComponent } from './row-display/row-display.component';
 import { FormsModule } from '@angular/forms';
 import { NgbDropdownModule, NgbModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { SharedModule } from 'src/app/shared/shared.module';
-import { OptionPickerComponent } from './option-picker/option-picker.component';
 import { ConcurrentEventsVisualizationModule } from '../concurrent-events-visualization/concurrent-events-visualization.module';
 import { TimelineComponent } from './timeline/timeline.component';
 import { TimePickerModule } from '../time-picker/time-picker.module';
@@ -17,7 +16,7 @@ import { EventChipComponent } from './event-chip/event-chip.component';
 import { ChipModalComponent } from './chip-modal/chip-modal.component';
 
 @NgModule({
-  declarations: [EventStoreComponent, FullDescriptionComponent, RowDisplayComponent, OptionPickerComponent, TimelineComponent, VisualizationDirective, RcaVisualizationComponent, EventChipComponent, ChipModalComponent],
+  declarations: [EventStoreComponent, FullDescriptionComponent, RowDisplayComponent, TimelineComponent, VisualizationDirective, RcaVisualizationComponent, EventChipComponent, ChipModalComponent],
   imports: [
     CommonModule,
     DetailListTemplatesModule,
@@ -29,6 +28,6 @@ import { ChipModalComponent } from './chip-modal/chip-modal.component';
     ConcurrentEventsVisualizationModule,
     TimePickerModule
   ],
-  exports: [EventStoreComponent, FullDescriptionComponent, RowDisplayComponent, OptionPickerComponent, TimelineComponent],
+  exports: [EventStoreComponent, FullDescriptionComponent, RowDisplayComponent, TimelineComponent],
 })
 export class EventStoreModule { }

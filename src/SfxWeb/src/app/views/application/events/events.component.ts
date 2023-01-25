@@ -1,8 +1,7 @@
-import { Component, OnInit, Injector } from '@angular/core';
+import { Component, Injector } from '@angular/core';
 import { ApplicationBaseControllerDirective } from '../applicationBase';
 import { DataService } from 'src/app/services/data.service';
-import { IEventStoreData } from 'src/app/modules/event-store/event-store/event-store.component';
-import { IOptionConfig } from 'src/app/modules/event-store/option-picker/option-picker.component';
+import { EventChip } from 'src/app/modules/event-store/event-chip/event-chip.component';
 
 @Component({
   selector: 'app-events',
@@ -11,9 +10,7 @@ import { IOptionConfig } from 'src/app/modules/event-store/option-picker/option-
 })
 export class EventsComponent extends ApplicationBaseControllerDirective {
 
-  listEventStoreData: IEventStoreData<any, any> [];
-  visEventStoreData: IEventStoreData<any, any> [];
-  optionsConfig: IOptionConfig;
+  listEventStoreChips: EventChip[];
 
   constructor(protected data: DataService, injector: Injector) {
     super(data, injector);
@@ -21,15 +18,15 @@ export class EventsComponent extends ApplicationBaseControllerDirective {
 
   setup() {    
     // grab event data for all nodes for concurrent events visualization tool    
-    this.listEventStoreData = [
-      this.data.getApplicationEventData(this.appId)   
+    this.listEventStoreChips = [
+      {
+        name: '',
+        type: 'Application',
+        id: this.appId,
+        eventsFilter: '' 
+      }
     ];
 
-    this.optionsConfig = {
-      enableCluster: true,
-      enableNodes: true,
-      enableRepairTasks: true
-    };
   }
 
 }

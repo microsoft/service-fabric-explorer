@@ -1,8 +1,7 @@
-import { Component, OnInit, Injector } from '@angular/core';
+import { Component, Injector } from '@angular/core';
 import { DataService } from 'src/app/services/data.service';
 import { NodeBaseControllerDirective } from '../NodeBase';
-import { IEventStoreData } from 'src/app/modules/event-store/event-store/event-store.component';
-import { IOptionConfig } from 'src/app/modules/event-store/option-picker/option-picker.component';
+import { EventChip } from 'src/app/modules/event-store/event-chip/event-chip.component';
 
 @Component({
   selector: 'app-events',
@@ -11,22 +10,21 @@ import { IOptionConfig } from 'src/app/modules/event-store/option-picker/option-
 })
 export class EventsComponent extends NodeBaseControllerDirective {
 
-  listEventStoreData: IEventStoreData<any, any> [];
-  optionsConfig: IOptionConfig;
+  listEventStoreChips: EventChip[];
 
   constructor(protected data: DataService, injector: Injector) {
     super(data, injector);
   }
 
   setup() {
-    this.listEventStoreData = [
-      this.data.getNodeEventData(this.nodeName)
+    this.listEventStoreChips = [
+      {
+        name: '',
+        type: 'Node',
+        id: this.nodeName,
+        eventsFilter: '' 
+      }
     ];
-
-    this.optionsConfig = {
-      enableCluster: true,
-      enableRepairTasks: true
-    };
   }
 
 }

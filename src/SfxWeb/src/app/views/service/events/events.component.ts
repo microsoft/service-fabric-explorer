@@ -2,6 +2,7 @@ import { Component, OnInit, Injector } from '@angular/core';
 import { ServiceBaseControllerDirective } from '../ServiceBase';
 import { DataService } from 'src/app/services/data.service';
 import { IEventStoreData } from 'src/app/modules/event-store/event-store/event-store.component';
+import { EventChip } from 'src/app/modules/event-store/event-chip/event-chip.component';
 
 @Component({
   selector: 'app-events',
@@ -10,16 +11,20 @@ import { IEventStoreData } from 'src/app/modules/event-store/event-store/event-s
 })
 export class EventsComponent extends ServiceBaseControllerDirective {
 
-  listEventStoreData: IEventStoreData<any, any> [];
+  listEventStoreChips: EventChip[];
 
   constructor(protected data: DataService, injector: Injector) {
     super(data, injector);
   }
 
   setup() {
-    this.listEventStoreData = [
-      this.data.getServiceEventData(this.serviceId)
-    ];
+    this.listEventStoreChips = [
+      {
+        name: '',
+        type: 'Service',
+        id: this.serviceId,
+        eventsFilter: '' 
+      }    ];
   }
 
 }

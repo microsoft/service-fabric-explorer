@@ -2,7 +2,6 @@ import { Component, Input, OnChanges, ViewChildren, QueryList, AfterViewInit, Ty
 import { IOnDateChange } from '../../time-picker/double-slider/double-slider.component';
 import { DataService } from 'src/app/services/data.service';
 import { ListSettings } from 'src/app/Models/ListSettings';
-import { IOptionConfig, IOptionData } from '../option-picker/option-picker.component';
 import { TimelineComponent } from '../timeline/timeline.component';
 import { forkJoin } from 'rxjs';
 import { VisualizationDirective } from '../visualization.directive';
@@ -46,25 +45,25 @@ export class EventStoreComponent implements OnChanges, AfterViewInit {
   constructor(public dataService: DataService, public eventService: EventService) { }
 
   @ViewChildren(VisualizationDirective) vizDirs: QueryList<VisualizationDirective>;
-  @Input() listEventStoreData: IEventStoreData<any, any>[] = [];
-  @Input() optionsConfig: IOptionConfig;
-
+  
   @Input() listEventChips: EventChip[] = [];
-
+  
+  public listEventStoreData: IEventStoreData<any, any>[] = [];
+  
   public failedRefresh = false;
   public activeTab: number;
-
+  
   public startDate: Date;
   public endDate: Date;
   public dateMin: Date;
+  
+  public vizRefs: IVisReference[] =
+  [
+    { name: "Timeline", component: TimelineComponent },
+    { name: "RCA Summary", component: RcaVisualizationComponent }
+  ];
 
   private visualizations: VisualizationComponent[] = [];
-  public vizRefs: IVisReference[] =
-    [
-      { name: "Timeline", component: TimelineComponent },
-      { name: "RCA Summary", component: RcaVisualizationComponent }
-    ];
-
   private visualizationsReady = false;
   
   ngAfterViewInit() {
@@ -75,9 +74,7 @@ export class EventStoreComponent implements OnChanges, AfterViewInit {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.listEventChips) {
-      let len = changes.listEventChips.currentValue.length - (changes.listEventChips.previousValue?.length || 0);
-      const newChips = changes.listEventChips.currentValue.slice(-1 * (len));
-      newChips.forEach(c => this.addEvents(c));
+      changes.listEventChips.currentValue.filter(c => c.name === '').forEach(c => this.addEvents(c));
     }
 
     this.update();
@@ -197,17 +194,6 @@ export class EventStoreComponent implements OnChanges, AfterViewInit {
         });
       }
     }
-  }
-
-  /* filter event types; then update everything */
-  processData(option: IOptionData) {
-    if (option.addToList) {
-      this.listEventStoreData = [...this.listEventStoreData, option.data];
-    }
-    else {
-      this.listEventStoreData = this.listEventStoreData.filter(item => item.displayName !== option.data.displayName);
-    }
-    this.setNewDateWindow(true);
   }
 
   addEvents(chip: EventChip) {

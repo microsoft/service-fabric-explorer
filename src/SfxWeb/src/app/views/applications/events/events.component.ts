@@ -1,10 +1,6 @@
-import { Component, OnInit, Injector } from '@angular/core';
-import { DataService } from 'src/app/services/data.service';
+import { Component, Injector } from '@angular/core';
 import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
-import { IResponseMessageHandler, EventsStoreResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
-import { Observable } from 'rxjs';
-import { IEventStoreData } from 'src/app/modules/event-store/event-store/event-store.component';
-import { IOptionConfig } from 'src/app/modules/event-store/option-picker/option-picker.component';
+import { EventChip } from 'src/app/modules/event-store/event-chip/event-chip.component';
 
 @Component({
   selector: 'app-events',
@@ -13,22 +9,20 @@ import { IOptionConfig } from 'src/app/modules/event-store/option-picker/option-
 })
 export class EventsComponent extends BaseControllerDirective {
 
-  listEventStoreData: IEventStoreData<any, any> [];
-  optionsConfig: IOptionConfig;
+  listEventStoreChips: EventChip[];
 
-  constructor(private data: DataService, injector: Injector) {
+  constructor(injector: Injector) {
     super(injector);
    }
 
    setup() {
-    this.listEventStoreData = [
-      this.data.getApplicationEventData()
+     this.listEventStoreChips = [
+      {
+        name: '',
+        type: 'Application',
+        id: '',
+        eventsFilter: '' 
+      }
     ];
-
-    this.optionsConfig = {
-      enableCluster: true,
-      enableNodes: true,
-      enableRepairTasks: true
-    };
    }
 }

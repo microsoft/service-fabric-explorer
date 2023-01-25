@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { DataService } from 'src/app/services/data.service';
-import { IEventStoreData } from 'src/app/modules/event-store/event-store/event-store.component';
 import { SettingsService } from 'src/app/services/settings.service';
-import { IOptionConfig } from 'src/app/modules/event-store/option-picker/option-picker.component';
+import { EventChip } from 'src/app/modules/event-store/event-chip/event-chip.component';
 
 @Component({
   selector: 'app-events',
@@ -11,20 +10,19 @@ import { IOptionConfig } from 'src/app/modules/event-store/option-picker/option-
 })
 export class EventsComponent implements OnInit {
 
-  listEventStoreData: IEventStoreData<any, any> [];
-  optionsConfig: IOptionConfig;
+  listEventStoreChips: EventChip[];
 
   constructor(public data: DataService, public settings: SettingsService) { }
 
   ngOnInit() {
-    this.listEventStoreData = [
-      this.data.getNodeEventData()
+    this.listEventStoreChips = [
+      {
+        name: '',
+        type: 'Node',
+        id: '',
+        eventsFilter: '' 
+      }
     ];
-
-    this.optionsConfig = {
-      enableCluster: true,
-      enableRepairTasks: true
-    };
   }
 
 }

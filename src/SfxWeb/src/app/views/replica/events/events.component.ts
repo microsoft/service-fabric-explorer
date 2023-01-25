@@ -1,7 +1,7 @@
-import { Component, OnInit, Injector } from '@angular/core';
+import { Component, Injector } from '@angular/core';
 import { ReplicaBaseControllerDirective } from '../ReplicaBase';
 import { DataService } from 'src/app/services/data.service';
-import { IEventStoreData } from 'src/app/modules/event-store/event-store/event-store.component';
+import { EventChip } from 'src/app/modules/event-store/event-chip/event-chip.component';
 
 @Component({
   selector: 'app-events',
@@ -10,15 +10,21 @@ import { IEventStoreData } from 'src/app/modules/event-store/event-store/event-s
 })
 export class EventsComponent extends ReplicaBaseControllerDirective {
 
-  listEventStoreData: IEventStoreData<any, any> [];
+  listEventStoreChips: EventChip[];
 
   constructor(protected data: DataService, injector: Injector) {
     super(data, injector);
   }
 
   setup() {
-    this.listEventStoreData = [
-      this.data.getReplicaEventData(this.partitionId, this.replicaId)
+    this.listEventStoreChips = [
+      {
+        name: '',
+        type: 'Replica',
+        id: this.replicaId,
+        partitionId: this.partitionId,
+        eventsFilter: '' 
+      }
     ];
   }
 
