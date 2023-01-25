@@ -380,7 +380,7 @@ export class DataService {
         const list = new ApplicationEventList(this, applicationId);
         const d: IEventStoreData<ApplicationEventList, ApplicationEvent> = {
             eventsList : list,
-            type : applicationId ? "Application" : null,
+            type : "Application",
             displayName : applicationId ? applicationId : 'Apps',
         };
 
@@ -390,8 +390,9 @@ export class DataService {
 
     public getServiceEventData(serviceId?: string): IEventStoreData<ServiceEventList, ServiceEvent> {
         const list = new ServiceEventList(this, serviceId);
-        const d = {
-            eventsList : list,
+        const d: IEventStoreData<ServiceEventList, ServiceEvent> = {
+            eventsList: list,
+            type: "Service",
             displayName : serviceId ? serviceId : 'Services'
         };
 
@@ -413,8 +414,9 @@ export class DataService {
 
     public getReplicaEventData(partitionId: string, replicaId?: string): IEventStoreData<ReplicaEventList, ReplicaEvent> {
         const list = new ReplicaEventList(this, partitionId, replicaId);
-        const d = {
-            eventsList : list,
+        const d: IEventStoreData<ReplicaEventList, ReplicaEvent> = {
+            eventsList: list,
+            type: "Replica",
             displayName : replicaId ? replicaId : 'Replicas'
         };
 

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ClusterTimelineGenerator, NodeTimelineGenerator, ApplicationTimelineGenerator, PartitionTimelineGenerator, RepairTaskTimelineGenerator, TimeLineGeneratorBase } from '../Models/eventstore/timelineGenerators';
+import { ClusterTimelineGenerator, NodeTimelineGenerator, ApplicationTimelineGenerator, PartitionTimelineGenerator, RepairTaskTimelineGenerator, TimeLineGeneratorBase, ServiceTimelineGenerator, ReplicaTimelineGenerator } from '../Models/eventstore/timelineGenerators';
 import { EventType } from '../modules/event-store/event-store/event-store.component';
 
 @Injectable({
@@ -10,7 +10,9 @@ export class TimelineGeneratorFactoryService {
   private clusterGenerator?: ClusterTimelineGenerator;
   private nodeGenerator?: NodeTimelineGenerator;
   private appGenerator?: ApplicationTimelineGenerator;
+  private serviceGenerator?: ServiceTimelineGenerator;
   private partitionGenerator?: PartitionTimelineGenerator;
+  private replicaGenerator?: ReplicaTimelineGenerator;
   private repairGenerator?: RepairTaskTimelineGenerator;
 
   public getTimelineGenerator(type: EventType): TimeLineGeneratorBase<any> {
@@ -33,12 +35,24 @@ export class TimelineGeneratorFactoryService {
         }
         return this.appGenerator;
       
+      case "Service":
+        if (!this.serviceGenerator) {
+          this.serviceGenerator = new ServiceTimelineGenerator();
+        }
+        return this.serviceGenerator;
+      
       case "Partition":
         if (!this.partitionGenerator) {
           this.partitionGenerator = new PartitionTimelineGenerator();
         }
         return this.partitionGenerator;
-          
+      
+      case "Replica":
+        if (!this.replicaGenerator) {
+          this.replicaGenerator = new ReplicaTimelineGenerator();
+        }
+        return this.replicaGenerator;
+      
       case "RepairTask":
         if (!this.repairGenerator) {
           this.repairGenerator = new RepairTaskTimelineGenerator();

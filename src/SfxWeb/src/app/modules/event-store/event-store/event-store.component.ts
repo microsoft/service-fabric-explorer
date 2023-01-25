@@ -17,6 +17,8 @@ export type EventType =
   "Cluster" |
   "Node" |
   'Application' |
+  'Service' |
+  'Replica' |
   "Partition" |
   "RepairTask"
 

@@ -1,12 +1,11 @@
 
 
-import { FabricEventBase, ClusterEvent, NodeEvent, ApplicationEvent, FabricEvent, PartitionEvent } from './Events';
+import { FabricEventBase, ClusterEvent, NodeEvent, ApplicationEvent, FabricEvent, PartitionEvent, ServiceEvent, ReplicaEvent } from './Events';
 import { DataGroup, DataItem, DataSet, IdType } from 'vis-timeline/standalone/esm';
 import padStart from 'lodash/padStart';
 import findIndex from 'lodash/findIndex';
 import { HtmlUtils } from 'src/app/Utils/HtmlUtils';
 import { RepairTask } from 'src/app/Models/DataModels/repairTask';
-import { EventType } from 'src/app/modules/event-store/event-store/event-store.component';
 
 /*
     NOTES:
@@ -581,15 +580,25 @@ export class ApplicationTimelineGenerator extends TimeLineGeneratorBase<Applicat
     consume(events: ApplicationEvent[], startOfRange: Date, endOfRange: Date): ITimelineData {
       const items = new DataSet<ITimelineItem>();
 
-        // state necessary for some events
-        let previousApplicationUpgrade: ApplicationEvent;
-        let upgradeApplicationStarted: ApplicationEvent;
+      // state necessary for some events
+      let previousApplicationUpgrade: ApplicationEvent;
+      let upgradeApplicationStarted: ApplicationEvent;
+      
+      const applicationRollBacks: Record<string, {complete: ApplicationEvent, start?: ApplicationEvent}> = {};
+      const processExitedGroups: Record<string, DataGroup> = {};
+      const containerExitedGroups: Record<string, DataGroup> = {};
+      
+      const appEventMap: Record<string, ApplicationEvent[]> = {};
 
-        const applicationRollBacks: Record<string, {complete: ApplicationEvent, start?: ApplicationEvent}> = {};
-        const processExitedGroups: Record<string, DataGroup> = {};
-        const containerExitedGroups: Record<string, DataGroup> = {};
+      events.forEach(event => {
+        if(!(event.applicationId in appEventMap)){
+          appEventMap[event.applicationId] = [];
+        }
+        appEventMap[event.applicationId].push(event);
+      });
+        
+      Object.keys(appEventMap).forEach(appId => {appEventMap[appId].forEach((event, index) => {
 
-        events.forEach((event, index) => {
             // we want the oldest upgrade started before finding any previousApplicationUpgrade
             // this means we should have an ongoing application upgrade
             if ( (event.kind === 'ApplicationUpgradeStarted' || event.kind === 'ApplicationUpgradeRollbackStarted') && !previousApplicationUpgrade ) {
@@ -613,7 +622,8 @@ export class ApplicationTimelineGenerator extends TimeLineGeneratorBase<Applicat
             }else if (event.kind === 'ApplicationUpgradeRollbackStarted' && event.eventInstanceId in applicationRollBacks) {
                 applicationRollBacks[event.eventInstanceId].start = event;
             }
-        });
+        })
+      });
 
         // we have to parse application upgrade roll backs into 2 seperate events and require 2 seperate events to piece together
         // we gather them up and add them at the end so we can get corresponding events
@@ -711,7 +721,16 @@ export class PartitionTimelineGenerator extends TimeLineGeneratorBase<PartitionE
     consume(events: PartitionEvent[], startOfRange: Date, endOfRange: Date): ITimelineData {
       const items = new DataSet<ITimelineItem>();
 
-        events.forEach( (event, index) => {
+      const partitionEventMap: Record<string, PartitionEvent[]> = {};
+
+      events.forEach(event => {
+        if(!(event.partitionId in partitionEventMap)){
+          partitionEventMap[event.partitionId] = [];
+        }
+        partitionEventMap[event.partitionId].push(event);
+      });
+        
+      Object.keys(partitionEventMap).forEach(appId => {partitionEventMap[appId].forEach((event, index) => {
             if (event.category === 'StateTransition' && event.eventProperties.ReconfigType === 'SwapPrimary') {
                 const end = event.timeStamp;
                 const endDate = new Date(end);
@@ -732,7 +751,8 @@ export class PartitionTimelineGenerator extends TimeLineGeneratorBase<PartitionE
                 });
 
             }
-        });
+        })
+      });
 
         const groups = new DataSet<DataGroup>([
             {id: PartitionTimelineGenerator.swapPrimaryLabel, content: PartitionTimelineGenerator.swapPrimaryLabel},
@@ -778,6 +798,19 @@ export class RepairTaskTimelineGenerator extends TimeLineGeneratorBase<RepairTas
         };
     }
 }
+
+export class ServiceTimelineGenerator extends TimeLineGeneratorBase<ServiceEvent>{
+  consume(events: ServiceEvent[], startOfRange: Date, endOfRange: Date): ITimelineData {
+    return parseEventsGenerically(events);
+  }
+}
+
+export class ReplicaTimelineGenerator extends TimeLineGeneratorBase<ReplicaEvent>{
+  consume(events: ReplicaEvent[], startOfRange: Date, endOfRange: Date): ITimelineData {
+    return parseEventsGenerically(events);
+  }
+}
+
 
 /**
  * Take a csv string and parses the event into groups with nested references to properties specified in the query string.
