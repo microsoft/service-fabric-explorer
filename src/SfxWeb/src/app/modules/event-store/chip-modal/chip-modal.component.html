@@ -18,7 +18,21 @@
 
         <label *ngIf="chip.type !== 'Cluster' && chip.type !== 'RepairTask'">
             <span>Name/Id: </span>
-            <input class="input-flat" [(ngModel)]="chip.id" name="id">
+            <div *ngIf="chip.type === 'Application' || chip.type ==='Node'" ngbDropdown>
+                <button class="simple-button" ngbDropdownToggle>{{chip.id? chip.id : '-Select-' }}</button>
+                <div ngbDropdownMenu>
+                    <div *ngFor="let option of (chip.type==='Application' ? appNames : nodeNames)" >
+                        <button [value]="option"  
+                        ngbDropdownItem (click)="setId($event)">
+                            {{option}}
+                        </button>
+                    </div>
+                    <div>
+                        <input type="text" (input)="setId($event)" [value]="chip.id" placeholder="custom input" class="input-flat"/>
+                    </div>
+                </div>
+            </div>
+            <input class="input-flat" [(ngModel)]="chip.id" name="id" [type]="chip.type === 'Application' || chip.type ==='Node' ? 'hidden' : 'text' ">
         </label>
         
         <label *ngIf="chip.type !== 'RepairTask'">

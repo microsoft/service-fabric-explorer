@@ -1,5 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { DataService } from 'src/app/services/data.service';
 import { EventChip } from '../event-chip/event-chip.component';
 
 type EventType =
@@ -23,18 +24,33 @@ export class ChipModalComponent implements OnInit{
 
   chip: EventChip;
 
-  constructor(public dialogRef: MatDialogRef<ChipModalComponent>,
+  appNames: string[];
+  nodeNames: string[];
+
+  constructor(public dataService: DataService, public dialogRef: MatDialogRef<ChipModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: EventChip) { }
 
   
   ngOnInit(): void {
-    this.chip = new EventChip(this.data);    
+    this.chip = new EventChip(this.data);
+
+    this.dataService.getNodes(true).subscribe(nodes => {
+      this.nodeNames = nodes.collection.map(node => node.name);
+    })
+    this.dataService.getApps(true).subscribe(apps => {
+      this.appNames = apps.collection.map(app => app.name);
+    })
+    
   }
   
   setType(event: any) {
     this.chip.type = event.target.value;
   }
 
+  setId(event: any) {
+    this.chip.id = event.target.value;
+  }
+  
   formInvalid() : boolean {
     let result = true;
     if (this.chip.type?.length) {
