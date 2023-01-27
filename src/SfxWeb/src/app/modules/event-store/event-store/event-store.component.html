@@ -2,10 +2,12 @@
   <div style="margin-bottom: 10px;" *ngIf="dateMin">
     <app-time-picker [dateMin]="dateMin" (dateChange)="setDate($event)"></app-time-picker>
   </div>
-  <span *ngFor="let chip of listEventChips">
-    <app-event-chip [chip]="chip" (loadEvent)="addEvents($event)" (removeEvent)="removeEvents($event)"></app-event-chip>
-  </span>
+  <div id="chips">
+    <span *ngFor="let chip of listEventChips">
+      <app-event-chip [chip]="chip" (loadEvent)="addEvents($event)" (removeEvent)="removeEvents($event)"></app-event-chip>
+    </span>
     <app-event-chip [addChip]="true" (loadEvent)="addEvents($event)"></app-event-chip>
+  </div>
 </div>
 
 <div *ngFor="let ref of vizRefs">

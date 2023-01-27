@@ -1,3 +1,10 @@
-.toggle-wrapper:hover{
-    cursor: pointer;
+.flat-button{
+    background-color: var(--accent-background-color);
+}
+
+#remove-icon {
+    transform: rotate(45deg);
+    color: var(--accent-darkblue);
+    font-size: 1.5rem;
+    font-weight: 500;
 }

@@ -5,3 +5,7 @@ label {
     flex-direction:column; 
     gap: $label-spacing;
 }
+
+.modal-body {
+    overflow: visible;
+}

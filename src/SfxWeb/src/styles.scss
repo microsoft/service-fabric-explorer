@@ -740,3 +740,10 @@ table.detail-list {
 
 }
 
+.mat-dialog-visible-overflow {
+
+    .mat-dialog-container{
+        overflow: visible;
+    }
+}
+

@@ -801,13 +801,13 @@ export class RepairTaskTimelineGenerator extends TimeLineGeneratorBase<RepairTas
 
 export class ServiceTimelineGenerator extends TimeLineGeneratorBase<ServiceEvent>{
   consume(events: ServiceEvent[], startOfRange: Date, endOfRange: Date): ITimelineData {
-    return parseEventsGenerically(events);
+    return parseEventsGenerically(events, 'Category,Kind');
   }
 }
 
 export class ReplicaTimelineGenerator extends TimeLineGeneratorBase<ReplicaEvent>{
   consume(events: ReplicaEvent[], startOfRange: Date, endOfRange: Date): ITimelineData {
-    return parseEventsGenerically(events);
+    return parseEventsGenerically(events, 'Category,Kind');
   }
 }
 

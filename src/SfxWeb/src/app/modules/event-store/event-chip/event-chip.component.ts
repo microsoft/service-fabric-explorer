@@ -42,7 +42,7 @@ export class EventChipComponent {
 
   openChipModal() {
     let dialogRef = this.dialog.open(ChipModalComponent, {
-      data: this.chip, panelClass: 'mat-dialog-container-wrapper'
+      data: this.chip, panelClass: ['mat-dialog-container-wrapper', 'mat-dialog-visible-overflow']
     });
   
     dialogRef.afterClosed().subscribe(result => {

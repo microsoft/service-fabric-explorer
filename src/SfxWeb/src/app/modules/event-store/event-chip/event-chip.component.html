@@ -1,9 +1,7 @@
-<label class="toggle-wrapper">
-    <a class="badge" (click)="openChipModal()">
-        <span *ngIf="addChip; else name" class="mif-add"></span> 
-        <ng-template #name>
-            <span>{{chip.name}}</span>
-        </ng-template>
-    </a>
-    <span class="mif-cross" *ngIf="!addChip" (click)="removeEvents()"></span>
-</label>
+<button class="flat-button round flex-center" (click)="openChipModal()">
+    <span *ngIf="addChip; else name" class="mif-add"></span> 
+    <ng-template #name>
+        <span>{{chip.name}}</span>
+    </ng-template>
+    <span class="mif-add" id="remove-icon"  *ngIf="!addChip" (click)="removeEvents()"></span>
+</button>
