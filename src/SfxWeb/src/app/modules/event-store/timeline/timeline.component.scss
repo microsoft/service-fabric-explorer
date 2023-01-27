@@ -21,21 +21,21 @@ $border-radius: 5px;
     border: 2px solid var(--accent-lightblue)  !important;
   }
 
-   label {
-     &:first-child {
-      border-bottom-left-radius: $border-radius !important;
-      border-top-left-radius: $border-radius !important;
-     }
+  div {
+    &:first-child label{
+    border-bottom-left-radius: $border-radius !important;
+    border-top-left-radius: $border-radius !important;
+    }
 
-     &:last-child {
-      border-bottom-right-radius: $border-radius !important;
-      border-top-right-radius: $border-radius !important;
-     }
+    &:last-child label{
+    border-bottom-right-radius: $border-radius !important;
+    border-top-right-radius: $border-radius !important;
+    }
 
-     &.active {
-       background-color: var(--accent-darkblue);;
-     }
-   }
+    &.active {
+      background-color: var(--accent-darkblue);;
+    }
+  }
 }
 
 .correlated-icon {
