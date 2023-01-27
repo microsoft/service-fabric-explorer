@@ -3,32 +3,35 @@
         <h4 class="modal-title">Load Event</h4>
     </div>
     <div class="modal-body">
-        <div ngbDropdown style="margin-left: 10px;">
-            <button class="simple-button" ngbDropdownToggle>{{data.type? data.type : 'Type'}}</button>
+        <div ngbDropdown>
+            <button class="simple-button" ngbDropdownToggle>{{chip.type? chip.type : 'Type'}}</button>
             <div ngbDropdownMenu>
                 <div *ngFor="let type of types">
                     <button [value]='type' ngbDropdownItem (click)="setType($event)">{{type}}</button>
                 </div>
             </div>
         </div>
-
-        <label *ngIf="data.type === 'Replica'">
+        <label *ngIf="chip.type === 'Replica'">
             <span>Partition Id: </span>
-            <input class="input-flat" [(ngModel)]="data.partitionId" required name="partitionId">
+            <input class="input-flat" [(ngModel)]="chip.partitionId" required name="partitionId">
         </label>
 
-        <label *ngIf="data.type !== 'Cluster' && data.type !== 'RepairTask'">
+        <label *ngIf="chip.type !== 'Cluster' && chip.type !== 'RepairTask'">
             <span>Name/Id: </span>
-            <input class="input-flat" [(ngModel)]="data.id" name="id">
+            <input class="input-flat" [(ngModel)]="chip.id" name="id">
         </label>
         
-        <label *ngIf="data.type !== 'RepairTask'">
-            <span>EventFilter: </span>
-            <input class="input-flat" [(ngModel)]="data.eventsFilter" name="filter">
+        <label *ngIf="chip.type !== 'RepairTask'">
+            <span>
+            <a href="https://learn.microsoft.com/azure/service-fabric/service-fabric-diagnostics-event-generation-operational" target="_blank" class="mif-info link"></a>
+            EventFilter: 
+            </span>
+            <input class="input-flat" [(ngModel)]="chip.eventsFilter" name="filter">
         </label>
     </div>
     <div class="modal-footer">
         <button type="button" class="solid-button blue" [disabled]="formInvalid()" (click)="ok()" data-cy="submit">Load</button>
+        <button type="button" class="solid-button red" (click)="delete()">Remove</button>
         <button type="button" class="flat-button" (click)="cancel()">Cancel</button>
     </div>
 </form>

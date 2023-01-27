@@ -12,11 +12,14 @@ export interface IEventChipData {
 
 export class EventChip {
 
-  constructor() {
-    this.name = '';
-    this.id = '';
-    this.eventsFilter = '';
+  constructor(chip?: EventChip) {
+    this.name = chip?.name || '';
+    this.id = chip?.id || '';
+    this.eventsFilter = chip?.eventsFilter || '';
+    this.type = chip?.type || '';
+    this.partitionId = chip?.partitionId || null;
   }
+
   name: string;
   type: string;
   id: string;
@@ -46,12 +49,15 @@ export class EventChipComponent {
     });
   
     dialogRef.afterClosed().subscribe(result => {
-      if (result) {
+      if (result instanceof EventChip) {
         this.chip = result;
         this.loadEvent.emit(this.chip); 
         if (this.addChip) {
           this.chip = new EventChip();
         }
+      }
+      else if (result) {
+        this.removeEvents();
       }
     });
   }

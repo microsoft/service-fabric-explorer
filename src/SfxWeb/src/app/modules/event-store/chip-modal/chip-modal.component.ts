@@ -17,23 +17,29 @@ type EventType =
   templateUrl: './chip-modal.component.html',
   styleUrls: ['./chip-modal.component.scss']
 })
-export class ChipModalComponent {
+export class ChipModalComponent implements OnInit{
 
   types: EventType[] = ['Cluster', 'Node', 'Application', 'Service', 'Partition', 'Replica', 'RepairTask'];
+
+  chip: EventChip;
 
   constructor(public dialogRef: MatDialogRef<ChipModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: EventChip) { }
 
   
+  ngOnInit(): void {
+    this.chip = new EventChip(this.data);    
+  }
+  
   setType(event: any) {
-    this.data.type = event.target.value;
+    this.chip.type = event.target.value;
   }
 
   formInvalid() : boolean {
     let result = true;
-    if (this.data.type?.length) {
+    if (this.chip.type?.length) {
       result = false;
-      if (this.data.type === 'Replica' && !this.data.partitionId?.length) {
+      if (this.chip.type === 'Replica' && !this.chip.partitionId?.length) {
         result = true;
       }
     }
@@ -41,10 +47,14 @@ export class ChipModalComponent {
   }
 
   ok(){
-    this.dialogRef.close(this.data);
+    this.dialogRef.close(this.chip);
   }
 
+  delete() {
+    this.dialogRef.close(true);
+  }
   cancel() {
+    this.chip = new EventChip(this.data);
     this.dialogRef.close(false);
   }
   

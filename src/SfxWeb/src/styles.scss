@@ -400,6 +400,16 @@ table.detail-list {
       border-radius: 50px;
     }
 
+    &.left-round {
+        border-top-left-radius: 50px;
+        border-bottom-left-radius: 50px;
+    }
+
+    &.right-round {
+        border-top-right-radius: 50px;
+        border-bottom-right-radius: 50px;
+    }
+
     &:hover {
         background-color: rgba(0, 0, 0, 0.25);
     }
