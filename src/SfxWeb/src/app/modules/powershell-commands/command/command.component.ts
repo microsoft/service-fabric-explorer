@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
 import { PowershellCommand, CommandSafetyLevel, PowershellCommandParameter } from 'src/app/Models/PowershellCommand';
 import { BadgeConstants } from 'src/app/Common/Constants';
-import { FormGroup } from '@angular/forms';
+import { UntypedFormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-command',
@@ -15,7 +15,7 @@ export class CommandComponent implements OnInit{
   safetyLevelEnum = CommandSafetyLevel;
   BadgeConstants = BadgeConstants;
   
-  inputForm: FormGroup = new FormGroup({ requiredInputs: new FormGroup({}), optionalInputs: new FormGroup({}) });
+  inputForm: UntypedFormGroup = new UntypedFormGroup({ requiredInputs: new UntypedFormGroup({}), optionalInputs: new UntypedFormGroup({}) });
   invalidInputs: string;
   
   requiredParams: PowershellCommandParameter[];
@@ -35,11 +35,11 @@ export class CommandComponent implements OnInit{
   }
 
   get requiredInputs() {
-    return this.inputForm.controls['requiredInputs'] as FormGroup;
+    return this.inputForm.controls['requiredInputs'] as UntypedFormGroup;
   }
 
   get optionalInputs() {
-    return this.inputForm.controls['optionalInputs'] as FormGroup;
+    return this.inputForm.controls['optionalInputs'] as UntypedFormGroup;
   }
 
   updateInvalidInputText() {
