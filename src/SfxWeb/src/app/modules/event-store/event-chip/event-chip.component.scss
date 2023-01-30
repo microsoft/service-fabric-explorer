@@ -8,8 +8,8 @@
 }
 
 .icon {
+    
     color: var(--accent-darkblue);
-
     &.add {
         font-size: 1.5rem;
         line-height: 1.2rem;
@@ -17,6 +17,8 @@
 
     &.edit {
         padding-left: 5px;
+        // padding:0px 5px;
+
     }
     // font-size: 1.5rem;
     // line-height: 1.2rem;
