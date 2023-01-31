@@ -73,7 +73,7 @@ export class EventStoreTimelineComponent implements AfterViewInit, OnChanges, On
 
     this.timeline.on('click', data => {
       this.itemClicked.emit(data.item)
-    })
+    });
 
     this.updateList(this.events);
   }
