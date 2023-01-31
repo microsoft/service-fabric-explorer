@@ -3,11 +3,16 @@
     <app-time-picker [dateMin]="dateMin" (dateChange)="setDate($event)"></app-time-picker>
   </div>
   <div id="chips">
+    <h5>Events: </h5>
     <span *ngFor="let chip of listEventChips">
       <app-event-chip [chip]="chip" (loadEvent)="addEvents($event)" (removeEvent)="removeEvents($event)"></app-event-chip>
     </span>
     <app-event-chip [addChip]="true" (loadEvent)="addEvents($event)"></app-event-chip>
   </div>
+  <b>
+    <a href="https://learn.microsoft.com/azure/service-fabric/service-fabric-diagnostics-event-generation-operational" target="_blank" class="mif-info link" title="reference for list of events"></a>
+    The preset can be edited, added to, or removed.
+  </b>
 </div>
 
 <div *ngFor="let ref of vizRefs">
@@ -42,6 +47,12 @@
         {{data.displayName}} ({{data.eventsList.collection.length}})
       </a>
       <ng-template ngbNavContent>
+        <div *ngIf="listEventChips[i].eventsFilter.length">
+          <span>
+            Types being filtered: 
+            <b>{{listEventChips[i].eventsFilter}}</b>
+          </span>
+        </div>
         <app-detail-list [list]="data.eventsList.collection" [listSettings]="data.listSettings"
           [isLoading]="!data.eventsList.isInitialized" [successfulLoad]="data.eventsList.lastRefreshWasSuccessful">
         </app-detail-list>

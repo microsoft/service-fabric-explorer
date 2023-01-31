@@ -52,10 +52,6 @@ export class EventService {
       events.eventsList.setEventFilter(filter);
     }
 
-    if (param.eventsFilter.length) {
-      events.displayName = `${events.displayName}-${param.eventsFilter}`;
-    }
-
     return events;
   }
 }

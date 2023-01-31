@@ -200,18 +200,22 @@ export class EventStoreComponent implements OnChanges, AfterViewInit {
 
   addEvents(chip: EventChip) {
 
-    const events = this.eventService.getEvents({ type: chip.type, eventsFilter: chip.eventsFilter, id: chip.id, partitionId: chip.partitionId, });
+    const event = this.eventService.getEvents({ type: chip.type, eventsFilter: chip.eventsFilter, id: chip.id, partitionId: chip.partitionId, });
 
     const chipIndex = this.listEventChips.findIndex(c => c.name === chip.name); //find position by the old name
-    chip.name = events.displayName; //then update name
+
+    const rawOldName = this.getRawNameAndNum(chip.name).name;
+    if (rawOldName !== event.displayName) {
+      this.renameEvent(chip, event, chipIndex);
+    }
     
     if (chipIndex == -1) {
       this.listEventChips.push(chip);
-      this.listEventStoreData.push(events);  
+      this.listEventStoreData.push(event);  
     }
     else {
       this.listEventChips[chipIndex] = chip;
-      this.listEventStoreData[chipIndex] = events;  
+      this.listEventStoreData[chipIndex] = event;  
     }
 
     this.listEventChips = [...this.listEventChips];
@@ -226,4 +230,34 @@ export class EventStoreComponent implements OnChanges, AfterViewInit {
     this.setNewDateWindow(true);
   }
   
+  private getRawNameAndNum(name: string): { name: string, num: number } {
+    const splitUpName = name.split('|');
+    const rawName = splitUpName.slice(0, -1).join('|');
+    if (rawName.length) {
+      return { name: rawName, num: parseInt(splitUpName.pop()) };
+    }
+    else {
+      return { name, num: 0 };
+    }
+  }
+
+  private renameEvent(chip: EventChip, event: IEventStoreData<any, any>, posInList: number) {
+    
+    let maxNum = -1;
+
+    this.listEventStoreData.forEach((e, i) => {
+      if (i === posInList) {
+        return;
+      }
+
+      const currNameAndNum = this.getRawNameAndNum(e.displayName);
+      if (event.displayName === currNameAndNum.name) {
+        maxNum = Math.max(maxNum, currNameAndNum.num);    
+      }
+    });
+    if (maxNum >= 0) {
+      event.displayName = `${event.displayName}|${maxNum+1}`;
+    }
+    chip.name = event.displayName;
+  }
 }
