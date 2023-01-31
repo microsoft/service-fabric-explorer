@@ -239,7 +239,7 @@ export class DetailListComponent implements OnInit, OnDestroy {
 // TODO verify this works
 const sortByProperty = (items: any[], propertyPath: string[], sortReverse: boolean): any[] => {
   // need to continually check each property in this list
-  const direction = sortReverse ? 1 : -1;
+  const direction = sortReverse ? -1 : 1; //If sorting descending, this needs to flip the sort comparison sign
   return items.sort( (a, b) => {
     let i = 0;
 
