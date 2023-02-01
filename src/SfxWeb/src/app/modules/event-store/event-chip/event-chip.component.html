@@ -1,7 +1,7 @@
 
 <button class="flat-button round flex-center" (click)="openChipModal()"
      [ngbTooltip]="chip.eventsFilter.length ? 'Events Filtered: ' + chip.eventsFilter : null"
-     [openDelay]="500" placement="bottom">
+     [openDelay]="200" placement="bottom">
     <span *ngIf="addChip; else name" class="mif-add add icon"></span> 
     <ng-template #name>
         <span>{{chip.displayName}}</span>

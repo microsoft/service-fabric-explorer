@@ -4,7 +4,7 @@
     </div>
     <div class="modal-body">
         <label>
-            <span>EventType: </span>
+            <span>Entity Type: </span>
             <div ngbDropdown>
                 <button class="simple-button" ngbDropdownToggle>{{chip.type? chip.type : 'Type'}}</button>
                 <div ngbDropdownMenu>
@@ -41,7 +41,7 @@
         <label *ngIf="chip.type !== 'RepairTask'">
             <span>
             <a href="https://learn.microsoft.com/azure/service-fabric/service-fabric-diagnostics-event-generation-operational" target="_blank" class="mif-info link"></a>
-            EventFilter: 
+            Event Filter: 
             </span>
             <input class="input-flat" [(ngModel)]="chip.eventsFilter" name="filter">
         </label>

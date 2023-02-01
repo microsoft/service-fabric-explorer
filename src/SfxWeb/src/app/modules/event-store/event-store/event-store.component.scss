@@ -30,3 +30,13 @@
     gap: 5px;
     align-items: baseline;
 }
+
+.filter-box {
+    width: fit-content;
+    border: 1px solid;
+    border-radius: 10px;
+    padding: 5px;
+    // margin-top: 10px;
+    margin-bottom: 5px;
+    // font-size: var(--font-size-medium);
+}

@@ -5,11 +5,11 @@
   <div class="event-title">
     <h5>Events: </h5>
     <b>
-      The preset can be edited, added to, or removed.
+      This preset can be edited, added to, or removed.
     </b>
       <a href="https://learn.microsoft.com/azure/service-fabric/service-fabric-diagnostics-event-generation-operational" target="_blank" title="reference for list of events">
         <i class="mif-info link" ></i>
-        Learn about different event types and filters.
+        Learn about different entity types and event filters.
       </a>
   </div>
   <div id="chips">
@@ -52,14 +52,16 @@
         {{data.displayName}} ({{data.eventsList.collection.length}})
       </a>
       <ng-template ngbNavContent>
-        <div *ngIf="listEventChips[i].eventsFilter.length">
-          <span>
-            Types being filtered: 
-            <b>{{listEventChips[i].eventsFilter}}</b>
-          </span>
-        </div>
+        
         <app-detail-list [list]="data.eventsList.collection" [listSettings]="data.listSettings"
           [isLoading]="!data.eventsList.isInitialized" [successfulLoad]="data.eventsList.lastRefreshWasSuccessful">
+          <div *ngIf="listEventChips[i].eventsFilter.length" class="filter-box">
+            <span>
+              <i class="mif-info"></i>
+               | Event Types Being Filtered: 
+              <b>{{listEventChips[i].eventsFilter}}</b>
+            </span>
+          </div>
         </app-detail-list>
       </ng-template>
     </div>
