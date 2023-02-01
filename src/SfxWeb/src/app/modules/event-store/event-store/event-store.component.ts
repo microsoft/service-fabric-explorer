@@ -200,14 +200,18 @@ export class EventStoreComponent implements OnChanges, AfterViewInit {
 
   addEvents(chip: EventChip) {
 
-    const event = this.eventService.getEvents({ type: chip.type, eventsFilter: chip.eventsFilter, id: chip.id, partitionId: chip.partitionId, });
+    const event = this.eventService.getEvents(chip);
 
-    const chipIndex = this.listEventChips.findIndex(c => c.name === chip.name); //find position by the old name
+    const chipIndex = this.listEventChips.findIndex(c => c.guid === chip.guid);
 
-    const rawOldName = this.getRawNameAndNum(chip.name).name;
-    if (rawOldName !== event.displayName) {
-      this.renameEvent(chip, event, chipIndex);
+    if (chipIndex === -1 || chip.name !== event.displayName) { //new or type/id has changed
+      chip.name = event.displayName;
+      this.setChipDup(chip, chipIndex);
     }
+    else {
+      chip.name = event.displayName;
+    }
+    event.displayName = chip.displayName;
     
     if (chipIndex == -1) {
       this.listEventChips.push(chip);
@@ -229,35 +233,22 @@ export class EventStoreComponent implements OnChanges, AfterViewInit {
     this.listEventChips = this.listEventChips.filter(item => item.name !== name);
     this.setNewDateWindow(true);
   }
-  
-  private getRawNameAndNum(name: string): { name: string, num: number } {
-    const splitUpName = name.split('|');
-    const rawName = splitUpName.slice(0, -1).join('|');
-    if (rawName.length) {
-      return { name: rawName, num: parseInt(splitUpName.pop()) };
-    }
-    else {
-      return { name, num: 0 };
-    }
-  }
 
-  private renameEvent(chip: EventChip, event: IEventStoreData<any, any>, posInList: number) {
+  private setChipDup(chip: EventChip, posInList: number) {
     
     let maxNum = -1;
 
-    this.listEventStoreData.forEach((e, i) => {
+    this.listEventChips.forEach((c, i) => {
       if (i === posInList) {
         return;
       }
 
-      const currNameAndNum = this.getRawNameAndNum(e.displayName);
-      if (event.displayName === currNameAndNum.name) {
-        maxNum = Math.max(maxNum, currNameAndNum.num);    
+      if (c.name === chip.name) {
+        maxNum = Math.max(maxNum, c.dupNum);    
       }
     });
     if (maxNum >= 0) {
-      event.displayName = `${event.displayName}|${maxNum+1}`;
+      chip.dupNum = maxNum + 1;
     }
-    chip.name = event.displayName;
   }
 }

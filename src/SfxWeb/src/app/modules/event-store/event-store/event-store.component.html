@@ -2,17 +2,22 @@
   <div style="margin-bottom: 10px;" *ngIf="dateMin">
     <app-time-picker [dateMin]="dateMin" (dateChange)="setDate($event)"></app-time-picker>
   </div>
-  <div id="chips">
+  <div class="event-title">
     <h5>Events: </h5>
+    <b>
+      The preset can be edited, added to, or removed.
+    </b>
+      <a href="https://learn.microsoft.com/azure/service-fabric/service-fabric-diagnostics-event-generation-operational" target="_blank" title="reference for list of events">
+        <i class="mif-info link" ></i>
+        Learn about different event types and filters.
+      </a>
+  </div>
+  <div id="chips">
     <span *ngFor="let chip of listEventChips">
       <app-event-chip [chip]="chip" (loadEvent)="addEvents($event)" (removeEvent)="removeEvents($event)"></app-event-chip>
     </span>
     <app-event-chip [addChip]="true" (loadEvent)="addEvents($event)"></app-event-chip>
   </div>
-  <b>
-    <a href="https://learn.microsoft.com/azure/service-fabric/service-fabric-diagnostics-event-generation-operational" target="_blank" class="mif-info link" title="reference for list of events"></a>
-    The preset can be edited, added to, or removed.
-  </b>
 </div>
 
 <div *ngFor="let ref of vizRefs">

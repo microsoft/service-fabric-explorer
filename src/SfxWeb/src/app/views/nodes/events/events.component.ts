@@ -15,14 +15,11 @@ export class EventsComponent implements OnInit {
   constructor(public data: DataService, public settings: SettingsService) { }
 
   ngOnInit() {
-    this.listEventStoreChips = [
-      {
-        name: '',
-        type: 'Node',
-        id: '',
-        eventsFilter: '' 
-      }
-    ];
+
+    const chip = new EventChip();
+    chip.type = 'Node';
+
+    this.listEventStoreChips = [chip];
   }
 
 }

@@ -15,14 +15,10 @@ export class EventsComponent extends BaseControllerDirective {
     super(injector);
    }
 
-   setup() {
-     this.listEventStoreChips = [
-      {
-        name: '',
-        type: 'Application',
-        id: '',
-        eventsFilter: '' 
-      }
-    ];
+  setup() {
+    const chip = new EventChip();
+    chip.type = 'Application';
+  
+    this.listEventStoreChips = [chip];
    }
 }

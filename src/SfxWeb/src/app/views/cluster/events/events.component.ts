@@ -15,34 +15,20 @@ export class EventsComponent implements OnInit {
 
   ngOnInit() {
 
-    this.listEventStoreChip = [
-      {
-          name: '',
-          type: 'Cluster',
-          id: '',
-          eventsFilter: '' 
-      },
-      {
-          name: '',
-          type: 'Node',
-          id: '',
-          eventsFilter: ''
-        
-      }
-    ];
+    const clusterChip = new EventChip();
+    clusterChip.type = 'Cluster';
+
+    const nodeChip = new EventChip();
+    nodeChip.type = 'Node';
+
+    this.listEventStoreChip = [clusterChip, nodeChip];
       
     this.data.clusterManifest.ensureInitialized().subscribe(() => {
       if (this.data.clusterManifest.isRepairManagerEnabled) {
         this.data.repairCollection.ensureInitialized().subscribe(() => {
-          this.listEventStoreChip = this.listEventStoreChip.concat(
-            [{
-                name: '',
-                type: 'RepairTask',
-                id: '',
-                eventsFilter: ''
-              
-            }]
-          );
+          const repairChip = new EventChip();
+          repairChip.type = 'RepairTask';
+          this.listEventStoreChip = this.listEventStoreChip.concat([repairChip]);
         });
       }
     });

@@ -17,14 +17,12 @@ export class EventsComponent extends NodeBaseControllerDirective {
   }
 
   setup() {
-    this.listEventStoreChips = [
-      {
-        name: '',
-        type: 'Node',
-        id: this.nodeName,
-        eventsFilter: '' 
-      }
-    ];
+
+    const chip = new EventChip();
+    chip.type = 'Node';
+    chip.id = this.nodeName;
+
+    this.listEventStoreChips = [chip];
   }
 
 }

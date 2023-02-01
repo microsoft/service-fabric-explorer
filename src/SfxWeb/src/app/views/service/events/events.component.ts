@@ -18,13 +18,11 @@ export class EventsComponent extends ServiceBaseControllerDirective {
   }
 
   setup() {
-    this.listEventStoreChips = [
-      {
-        name: '',
-        type: 'Service',
-        id: this.serviceId,
-        eventsFilter: '' 
-      }    ];
+    const chip = new EventChip();
+    chip.type = 'Service';
+    chip.id = this.serviceId;
+    
+    this.listEventStoreChips = [chip];
   }
 
 }

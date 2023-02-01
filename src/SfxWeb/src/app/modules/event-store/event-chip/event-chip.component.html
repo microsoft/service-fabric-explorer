@@ -1,30 +1,10 @@
-<!-- <button *ngIf="addChip; else name" class="flat-button round flex-center" (click)="openChipModal()">
-    <i class="mif-add icon add"></i>
-</button> 
 
-<ng-template #name >
-    <span class="flex-center">
-
-        <button class="flat-button left-round" (click)="openChipModal()">{{chip.name}}</button>
-        <button class="flat-button right-round" (click)="removeEvents()">
-            <i class="mif-cross icon"></i>
-        </button>    
-    </span>
-</ng-template> -->
-
-<!-- <button class="flat-button round flex-center" (click)="openChipModal()">
-    <span *ngIf="addChip; else name" class="mif-add icon"></span> 
-    <ng-template #name>
-        <span>{{chip.name}}</span>
-        <i class="mif-add remove icon" (click)="removeEvents()"></i>
-    </ng-template>
-</button> -->
-
-<button class="flat-button round flex-center" (click)="openChipModal()">
+<button class="flat-button round flex-center" (click)="openChipModal()"
+     [ngbTooltip]="chip.eventsFilter.length ? 'Events Filtered: ' + chip.eventsFilter : null"
+     [openDelay]="500" placement="bottom">
     <span *ngIf="addChip; else name" class="mif-add add icon"></span> 
     <ng-template #name>
-        <span>{{chip.name}}</span>
+        <span>{{chip.displayName}}</span>
         <i class="mif-pencil icon edit"></i>
-        <!-- <i class="mif-cross icon"></i> -->
     </ng-template>
 </button>

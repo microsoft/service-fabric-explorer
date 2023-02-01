@@ -17,14 +17,11 @@ export class EventsComponent extends PartitionBaseControllerDirective {
   }
 
   setup() {
-    this.listEventStoreChips = [
-      {
-        name: '',
-        type: 'Partition',
-        id: this.partitionId,
-        eventsFilter: '' 
-      }
-    ];
+    const chip = new EventChip();
+    chip.type = 'Partition';
+    chip.id = this.partitionId;
+
+    this.listEventStoreChips = [chip];
   }
 
 }

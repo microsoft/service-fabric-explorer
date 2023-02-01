@@ -18,14 +18,11 @@ export class EventsComponent extends ApplicationBaseControllerDirective {
 
   setup() {    
     // grab event data for all nodes for concurrent events visualization tool    
-    this.listEventStoreChips = [
-      {
-        name: '',
-        type: 'Application',
-        id: this.appId,
-        eventsFilter: '' 
-      }
-    ];
+    const chip = new EventChip();
+    chip.type = 'Application';
+    chip.id = this.appId;
+
+    this.listEventStoreChips = [chip];
 
   }
 

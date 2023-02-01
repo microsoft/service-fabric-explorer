@@ -4,6 +4,7 @@ import { DataService } from 'src/app/services/data.service';
 import { SettingsService } from 'src/app/services/settings.service';
 import { ChipModalComponent } from '../chip-modal/chip-modal.component';
 import { IEventStoreData } from '../event-store/event-store.component';
+import { v4 as uuidv4 } from 'uuid';
 
 export interface IEventChipData {
   events: IEventStoreData<any, any>;
@@ -18,6 +19,8 @@ export class EventChip {
     this.eventsFilter = chip?.eventsFilter || '';
     this.type = chip?.type || '';
     this.partitionId = chip?.partitionId || null;
+    this.dupNum = chip?.dupNum || 0;
+    this.guid = chip?.guid || uuidv4();
   }
 
   name: string;
@@ -25,6 +28,17 @@ export class EventChip {
   id: string;
   partitionId?: string;
   eventsFilter: string;
+  guid: string;
+  
+  dupNum: number; //used for displaying purpose; to distinguish between chips with same id/type
+  get displayName() {
+    if (this.dupNum) {
+      return `${this.name}-${this.dupNum}`;
+    }
+    else {
+      return this.name;
+    }
+  }
 }
 
 @Component({

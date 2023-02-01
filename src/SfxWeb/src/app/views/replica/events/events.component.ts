@@ -17,15 +17,12 @@ export class EventsComponent extends ReplicaBaseControllerDirective {
   }
 
   setup() {
-    this.listEventStoreChips = [
-      {
-        name: '',
-        type: 'Replica',
-        id: this.replicaId,
-        partitionId: this.partitionId,
-        eventsFilter: '' 
-      }
-    ];
+    const chip = new EventChip();
+    chip.type = 'Replica';
+    chip.id = this.replicaId;
+    chip.partitionId = this.partitionId;
+
+    this.listEventStoreChips = [chip];
   }
 
 }

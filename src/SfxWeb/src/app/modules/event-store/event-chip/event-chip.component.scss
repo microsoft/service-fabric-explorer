@@ -1,10 +1,5 @@
 .flat-button{
-    // background-color: var(--accent-background-color);
     border-color: var(--accent-darkblue);
-    &.right-round {
-    background-color: var(--accent-darkblue);
-
-    }
 }
 
 .icon {
@@ -14,16 +9,8 @@
         font-size: 1.5rem;
         line-height: 1.2rem;
     }
-
     &.edit {
         padding-left: 5px;
-        // padding:0px 5px;
+    }      
+}
 
-    }
-    // font-size: 1.5rem;
-    // line-height: 1.2rem;
-      
-}
-.remove {
-    transform: rotate(45deg);
-}
