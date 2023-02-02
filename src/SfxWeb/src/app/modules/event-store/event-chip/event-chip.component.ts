@@ -77,7 +77,7 @@ export class EventChipComponent {
   }
   
   removeEvents() {
-    this.removeEvent.emit(this.chip.name);
+    this.removeEvent.emit(this.chip.guid);
   }
 
 }

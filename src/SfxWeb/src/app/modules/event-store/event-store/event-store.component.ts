@@ -228,9 +228,10 @@ export class EventStoreComponent implements OnChanges, AfterViewInit {
     this.setNewDateWindow(true);
   }
 
-  removeEvents(name: string) {
-    this.listEventStoreData = this.listEventStoreData.filter(item => item.displayName !== name);
-    this.listEventChips = this.listEventChips.filter(item => item.name !== name);
+  removeEvents(guid: string) {
+    const chip = this.listEventChips.find(c => c.guid === guid);
+    this.listEventStoreData = this.listEventStoreData.filter(item => item.displayName !== chip.displayName);
+    this.listEventChips = this.listEventChips.filter(item => item.guid !== guid);
     this.setNewDateWindow(true);
   }
 

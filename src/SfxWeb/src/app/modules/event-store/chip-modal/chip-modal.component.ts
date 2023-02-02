@@ -20,7 +20,7 @@ type EventType =
 })
 export class ChipModalComponent implements OnInit{
 
-  types: EventType[] = ['Cluster', 'Node', 'Application', 'Service', 'Partition', 'Replica', 'RepairTask'];
+  types: EventType[] = ['Cluster', 'Node', 'Application', 'Service', 'Partition', 'Replica'];
 
   chip: EventChip;
 
@@ -33,6 +33,14 @@ export class ChipModalComponent implements OnInit{
   
   ngOnInit(): void {
     this.chip = new EventChip(this.data);
+
+    this.dataService.clusterManifest.ensureInitialized().subscribe(() => {
+      if (this.dataService.clusterManifest.isRepairManagerEnabled) {
+        this.dataService.repairCollection.ensureInitialized().subscribe(() => { 
+          this.types.push('RepairTask');
+        })
+      }
+    })
 
     this.dataService.getNodes(true).subscribe(nodes => {
       this.nodeNames = nodes.collection.map(node => node.name);
