@@ -11,8 +11,7 @@ import {
 
 const LOAD_INFO = "getloadinfo"
 const EVENT_TABS = '[data-cy=eventtabs]'
-const OPTION_PICKER = '[data-cy=option-picker]'
-const SELECT_EVENT_TYPES = '[sectionName=select-event-types]'
+const EVENT_CHIPS = '[data-cy=event-chips]'
 
 const serviceName = "VisualObjectsApplicationType~VisualObjects.ActorService";
 
@@ -519,10 +518,8 @@ context('Cluster page', () => {
       })
       checkTableErrorMessage(EMPTY_LIST_TEXT);
 
-      cy.get(SELECT_EVENT_TYPES).click()
-
-      cy.get(OPTION_PICKER).within(() => {
-        cy.get(REPAIR_TASK_TAB_NAME).should('not.exist')
+      cy.get(EVENT_CHIPS).within(() => {
+        cy.contains("Repair Tasks").should('not.exist')
       })
     })
 
@@ -543,11 +540,8 @@ context('Cluster page', () => {
       })
       checkTableSize(15);
 
-      cy.get(SELECT_EVENT_TYPES).click()
-
-      cy.get(OPTION_PICKER).within(() => {
-        cy.contains(REPAIR_TASK_TAB_NAME)
-        cy.get('[type=checkbox]').eq(1).check({ force: true })
+      cy.get(EVENT_CHIPS).within(() => {
+        cy.contains("Repair Tasks")
       })
 
       cy.get(EVENT_TABS).within(() => {

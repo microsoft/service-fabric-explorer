@@ -12,7 +12,7 @@
         Learn about different entity types and event filters.
       </a>
   </div>
-  <div id="chips">
+  <div id="chips" data-cy="event-chips">
     <span *ngFor="let chip of listEventChips">
       <app-event-chip [chip]="chip" (loadEvent)="addEvents($event)" (removeEvent)="removeEvents($event)"></app-event-chip>
     </span>
