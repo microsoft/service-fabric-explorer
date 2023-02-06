@@ -23,6 +23,7 @@
 #chips {
     display: flex;
     gap: 5px;
+    flex-wrap: wrap;
 }
 
 .event-title {
@@ -31,12 +32,19 @@
     align-items: baseline;
 }
 
-.filter-box {
+
+.card {
+    background-color: var(--accent-background-color);
     width: fit-content;
-    border: 1px solid;
-    border-radius: 10px;
-    padding: 5px;
-    // margin-top: 10px;
+    max-width: 100%;
     margin-bottom: 5px;
-    // font-size: var(--font-size-medium);
+
+    .card-body {
+        padding: 10px;
+
+        .card-title {
+            font-size: var(--font-size-medium);
+            margin: 0;
+        }
+    }
 }

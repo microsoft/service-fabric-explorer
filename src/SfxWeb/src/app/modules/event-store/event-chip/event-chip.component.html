@@ -1,10 +1,13 @@
 
 <button class="flat-button round flex-center" (click)="openChipModal()"
-     [ngbTooltip]="chip.eventsFilter.length ? 'Events Filtered: ' + chip.eventsFilter : null"
-     [openDelay]="200" placement="bottom">
+     [ngbTooltip]="addChip ? 'Add Events' : 
+     ('Applied Filters: ' + (chip.eventsFilter.length ? chip.eventsFilter : 'None'))"
+      placement="bottom" tooltipClass="styled-tooltip">
     <span *ngIf="addChip; else name" class="mif-add add icon"></span> 
     <ng-template #name>
         <span>{{chip.displayName}}</span>
+        <!-- <i *ngIf="chip.eventsFilter.length" class="mif-filter" style="padding-left: 5px;"></i>  -->
+        <span *ngIf="chip.eventsFilter.length" style="padding-left: 5px;">{{displayFilterCount()}}</span>
         <i class="mif-pencil icon edit"></i>
     </ng-template>
 </button>

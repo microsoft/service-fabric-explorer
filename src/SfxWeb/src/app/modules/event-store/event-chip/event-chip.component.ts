@@ -80,4 +80,13 @@ export class EventChipComponent {
     this.removeEvent.emit(this.chip.guid);
   }
 
+  displayFilterCount() {
+    const filter = this.chip.eventsFilter.split(',').filter(e => e);
+    if (filter.length) {
+      return ` (${filter.length} filters)`
+    }
+    else {
+      return null;
+    }
+  }
 }
