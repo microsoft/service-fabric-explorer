@@ -1,23 +1,23 @@
 <!-- Area reserved for showing Cluster/None or specific node's neighborhood -->
-<div id="mynetwork" ></div><br/>
+<div id="myNetwork" #myNetwork></div><br/>
 
 <!-- Section for showing current cluster state (number of nodes in specific state) -->
-<label id="labUp"></label><br/>
-<label id="labDown"></label><br/>
-<label id="labGray"></label><br/><br/>
+<label id="labUp" #labUp>Number of UP nodes: {{lUpCnt}}</label><br/>
+<label id="labDown" #labDown>Number of DOWN nodes: {{lDownCnt}}</label><br/>
+<label id="labGray" #labGray>Number of GRAY nodes: {{lGrayCnt}}</label><br/><br/>
 
 <!-- Input for getting neighborhood of specific node -->
 <!-- If input not properly given, Cluster/None is shown -->
 <label id="labInputNode" for="inputNode"> Search node by: &nbsp; &nbsp; </label>
-<input type="radio" id="byId" name="ctc" checked>
+<input type="radio" id="byId" name="ctc" checked #byId>
 <label for="byId"> &nbsp; Id &nbsp; </label>
-<input type="radio" id="byName" name="ctc">
+<input type="radio" id="byName" name="ctc" #byName>
 <label for="byName"> &nbsp; Name &nbsp; &nbsp; </label>
-<input id="inputNode" size="68" (change)="onChangeInput($event)"><br/><br/>
+<input id="inputNode" size="68" (change)="onChangeInput($event)" #inputNode><br/><br/>
 
 <!-- Section for listing and chosing nodes of interest -->
 <label id="labActions" for="actions"> Select action: </label><br>
-<input type="radio" id="noneAction" name="contact" (click)="onClickRadio($event)" checked>
+<input type="radio" id="noneAction" name="contact" (click)="onClickRadio($event)" #noneAction>
 <label for="noneAction"> &nbsp; None &nbsp; </label>
 <input type="radio" id="fmAction" name="contact" (click)="onClickRadio($event)">
 <label for="fmAction"> &nbsp; FM nodes &nbsp; </label>
@@ -33,7 +33,9 @@
 <label for="openAction"> &nbsp; Open failed nodes &nbsp; </label>
 <input type="radio" id="grayAction" name="contact" (click)="onClickRadio($event)">
 <label for="grayAction"> &nbsp; Gray nodes &nbsp; </label>
-<select id="selectActions" name="list" (change)="onChangeCombo($event)"></select><br/>
+<select id="selectActions" name="list" (change)="onChangeCombo($event)" #selectActions>
+  <option *ngFor="let elem of selectionArr">{{elem}}</option>
+</select><br/>
 
 <!-- Textual info about current dates selected -->
 <br> Start date: {{ startDate }}

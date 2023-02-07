@@ -787,7 +787,7 @@ export class RestClientService {
         'starttimeutc': startTime.toISOString().substring(0, 19) + 'Z',
         'endtimeutc': endTime.toISOString().substr(0, 19) + 'Z',
       }
-      if (eventTypesFilter.length != 0) {
+      if (eventTypesFilter.length !== 0) {
         paramObject['eventsTypesFilter'] = eventTypesFilter.join()
       }
 

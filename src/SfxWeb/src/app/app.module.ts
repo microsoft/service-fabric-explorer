@@ -19,7 +19,6 @@ import { TelemetrySnackBarComponent } from './telemetry-snack-bar/telemetry-snac
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { AppInsightsErrorHandler } from './error-handling';
 import { StandaloneIntegrationService } from './services/standalone-integration.service';
-import { DoubleSliderComponent } from './modules/event-store/double-slider/double-slider.component';
 
 @NgModule({
   declarations: [
