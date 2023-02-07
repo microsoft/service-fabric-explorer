@@ -60,12 +60,8 @@
           [isLoading]="!data.eventsList.isInitialized" [successfulLoad]="data.eventsList.lastRefreshWasSuccessful">
           <div *ngIf="listEventChips[i].eventsFilter.length" class="card">
             <div class="card-body">
-              <div class="card-title">
-                Events Filter
-              </div>
-
               <span class="card-text">
-                <b>{{listEventChips[i].eventsFilter}}</b>
+                Applied Filter: <b>{{listEventChips[i].eventsFilter}}</b>
               </span>
             </div>
           </div>
