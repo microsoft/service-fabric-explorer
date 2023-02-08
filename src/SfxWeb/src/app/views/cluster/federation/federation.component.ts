@@ -1,4 +1,4 @@
-import { Component, ElementRef, Injector, OnDestroy, OnInit, SecurityContext, ViewChild } from '@angular/core';
+import { Component, ElementRef, Injector, OnInit, SecurityContext, ViewChild } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { NodeEventList, PartitionEventList } from 'src/app/Models/DataModels/collections/Collections';
 import { NodeEvent, PartitionEvent } from 'src/app/Models/eventstore/Events';
@@ -28,7 +28,7 @@ export interface NodeData {
   templateUrl: './federation.component.html',
   styleUrls: ['./federation.component.scss']
 })
-export class FederationComponent extends BaseControllerDirective implements OnInit, OnDestroy {
+export class FederationComponent extends BaseControllerDirective implements OnInit {
   // nodeEvents
   eventStoreHandler: IEventStoreData<NodeEventList, NodeEvent>;
   eventStoreHandlerSubscription: Subscription;
@@ -125,12 +125,6 @@ export class FederationComponent extends BaseControllerDirective implements OnIn
 
   ngOnInit() {
     super.ngOnInit();
-  }
-
-  ngOnDestroy() {
-    // free the resources
-    // this.eventStoreHandlerFMSubscription.unsubscribe();
-    // this.eventStoreHandlerSubscription.unsubscribe();
   }
 
   // represent selected node's neighborhood
