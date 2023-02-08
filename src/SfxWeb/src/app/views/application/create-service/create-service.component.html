@@ -133,7 +133,7 @@
                                             <tr>
                                                 <th>Name</th>
                                                 <th>
-                                                    <button (click)="description.addName()" role="button" class="flat-button">Add</button>
+                                                    <button (click)="description.addName()" aria-label="Add " class="flat-button">Add</button>
                                                 </th>
                                             </tr>
                                         </thead>
@@ -165,7 +165,7 @@
                                         <th>Type</th>
                                         <th>Domain Name</th>
                                         <th>
-                                            <button (click)="description.addPlacementPolicy()" class="simple-button">
+                                            <button (click)="description.addPlacementPolicy()" class="simple-button" aria-label="add placement policy">
                                                 Add
                                             </button>
                                         </th>
@@ -210,7 +210,7 @@
                                         <th>Scheme</th>
                                         <th>Service Name</th>
                                         <th>
-                                            <button (click)="description.addServiceCorrelation()" class="simple-button">Add</button>
+                                            <button (click)="description.addServiceCorrelation()" class="simple-button" aria-label="add Service Correlation scheme">Add</button>
                                         </th>
                                     </tr>
                                 </thead>
@@ -229,17 +229,6 @@
                                                     </span>
                                                 </div>
                                             </div>
-                                            <!-- <div uib-dropdown dropdown-append-to-body>
-                                                <button type="button" class="btn btn-primary dropdown-toggle" uib-dropdown-toggle aria-label="Select a scheme">
-                                                    {{description.resolveCorrelationScheme(correlation.Scheme)}}
-                                                    <span class="caret"></span>
-                                                </button>
-                                                <ul role="menu" class="dropdown-menu" uib-dropdown-menu>
-                                                    <li class="dropdown-item" *ngFor="let correlationSchemeOption of description.serviceCorrelationSchemes">
-                                                        <button (click)="correlation.Scheme = index.toString()" *ngIf="index > 0">{{correlationSchemeOption}}</button>
-                                                    </li>
-                                                </ul>
-                                            </div> -->
                                         </td>
                                         <td>
                                             <input type="text" class="input-flat" autocomplete="off" [ngModelOptions]="{standalone: true}" [(ngModel)]="correlation.ServiceName" required aria-label="Service name">
@@ -267,7 +256,7 @@
                                         <th *ngIf="description.raw.AuxiliaryReplicaCount > 0">Auxiliary</th>
                                         <th>Weight</th>
                                         <th>
-                                            <button (click)="description.addLoadMetric()" class="simple-button">Add</button>
+                                            <button (click)="description.addLoadMetric()" class="simple-button" aria-label="Add load metric">Add</button>
                                         </th>
                                     </tr>
                                 </thead>

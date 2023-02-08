@@ -67,6 +67,63 @@ context('app', () => {
           })
       })
 
+      describe.only('create service', () => {
+        const createService = "createBRS";
+        const aliasedCreateService = "@" + createService;
+        beforeEach(() => {
+
+          cy.intercept('POST', apiUrl(`/Applications/${appName}/$/GetServices/$/Create?api-version=3.0*`), { statusCode: 200 }).as(createService)
+
+          cy.visit(`/#/apptype/${appName}/app/${appName}`)
+          cy.contains(' Create ').click();
+        })
+
+        it('singleton and advanced options ', () => {
+          cy.contains('Show Advanced Options').click();
+          cy.get(`[aria-label="Service Dns Name"]`).type('dns name')
+          cy.get(`[aria-label="Placement Constraints"]`).type('placement constraint')
+          cy.get(`[aria-label="add placement policy"]`).click();
+          cy.get(`[aria-label="Domain name"]`).type('domain name')
+
+          cy.get(`[aria-label="add Service Correlation scheme"]`).click();
+          cy.get(`[aria-label="Service name"]`).type('Service name');
+
+          cy.get(`[aria-label="Add load metric"]`).click();
+          cy.get(`[aria-label="Metric name"]`).type('loadmetric');
+          cy.get(`[aria-label="Primary default load"]`).type('1');
+          cy.get(`[aria-label="Secondary default load"]`).type('2');
+
+          cy.get(aliasedCreateService).its('request.body')
+          .should('deep.equal', {
+            "Name": name,
+            "AutoRestoreOnDataLoss": false,
+            "MaxIncrementalBackups": maxIncBackups,
+            "Schedule": {
+              "ScheduleKind": "FrequencyBased",
+              "ScheduleFrequencyType": "",
+              "RunDays": [],
+              "RunTimes": [],
+              "Interval": interval
+            },
+            "Storage": {
+              "StorageKind": "ManagedIdentityAzureBlobStore",
+              "FriendlyName": "",
+              "Path": "",
+              "ConnectionString": "",
+              "ContainerName": "sillycontainername",
+              "BlobServiceUri": "BSUURI",
+              "ManagedIdentityType": "Cluster",
+              "PrimaryUserName": "",
+              "PrimaryPassword": "",
+              "SecondaryUserName": "",
+              "SecondaryPassword": ""
+            }
+          })
+      })
+
+        })
+      })
+
     })
 
     describe("details", () => {
@@ -168,15 +225,15 @@ context('app', () => {
             cy.url().should('include', '/events')
         })
     })
-  
+
     describe("commands", () => {
       it('view commands', () => {
         cy.visit(`/#/apptype/${appName}/app/${appName}`)
-        
+
         cy.wait(waitRequest)
-          
+
         checkCommand(4, 1);
-          
+
       })
     })
 
