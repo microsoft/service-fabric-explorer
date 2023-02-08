@@ -26,16 +26,14 @@
         "bootstrap": "^4.4.1",
         "dayjs": "^1.8.20",
         "highcharts": "^9.0.0",
-        "highcharts-angular": "^3.0.0",
         "lodash": "^4.17.21",
         "luxon": "^3.2.1",
         "metro4": "^4.3.5",
         "moment": "^2.29.2",
         "nouislider": "^15.4.0",
-        "panzoom": "^9.4.3",
         "rxjs": "~6.5.4",
         "tslib": "^2.0.0",
-        "vis-data": "^6.4.1",
+        "vis-network": "^9.1.2",
         "vis-timeline": "^7.1.3",
         "vis-uuid": "^1.1.4",
         "xml2js": "^0.4.22",
@@ -5340,14 +5338,6 @@
         "ajv": "^6.9.1"
       }
     },
-    "node_modules/amator": {
-      "version": "1.1.0",
-      "resolved": "https://registry.npmjs.org/amator/-/amator-1.1.0.tgz",
-      "integrity": "sha512-V5+aH8pe+Z3u/UG3L3pG3BaFQGXAyXHVQDroRwjPHdh08bcUEchAVsU1MCuJSCaU5o60wTK6KaE6te5memzgYw==",
-      "dependencies": {
-        "bezier-easing": "^2.0.3"
-      }
-    },
     "node_modules/angular-http-server": {
       "version": "1.9.0",
       "dev": true,
@@ -5825,11 +5815,6 @@
       "dependencies": {
         "tweetnacl": "^0.14.3"
       }
-    },
-    "node_modules/bezier-easing": {
-      "version": "2.1.0",
-      "resolved": "https://registry.npmjs.org/bezier-easing/-/bezier-easing-2.1.0.tgz",
-      "integrity": "sha512-gbIqZ/eslnUFC1tjEvtz0sgx+xTK20wDnYMIA27VA04R7w6xxXQPZDbibjA9DTWZRA2CXtwHykkVzlCaAJAZig=="
     },
     "node_modules/big.js": {
       "version": "5.2.2",
@@ -9941,19 +9926,6 @@
       "version": "9.0.0",
       "license": "https://www.highcharts.com/license"
     },
-    "node_modules/highcharts-angular": {
-      "version": "3.0.0",
-      "resolved": "https://registry.npmjs.org/highcharts-angular/-/highcharts-angular-3.0.0.tgz",
-      "integrity": "sha512-v2jMlvmzmLqqKVQdsARBewmYaQOL44lmioF9WEseuIF2KyTeZIeUtYbrEqG9uz+/dl0bsDZL6WtUrgCa42D3DQ==",
-      "dependencies": {
-        "tslib": "^2.0.0"
-      },
-      "peerDependencies": {
-        "@angular/common": ">=9.0.0",
-        "@angular/core": ">=9.0.0",
-        "highcharts": ">=6.0.0"
-      }
-    },
     "node_modules/hosted-git-info": {
       "version": "5.2.1",
       "resolved": "https://registry.npmjs.org/hosted-git-info/-/hosted-git-info-5.2.1.tgz",
@@ -12564,11 +12536,6 @@
       "dev": true,
       "license": "MIT"
     },
-    "node_modules/ngraph.events": {
-      "version": "1.2.2",
-      "resolved": "https://registry.npmjs.org/ngraph.events/-/ngraph.events-1.2.2.tgz",
-      "integrity": "sha512-JsUbEOzANskax+WSYiAPETemLWYXmixuPAlmZmhIbIj6FH/WDgEGCGnRwUQBK0GjOnVm8Ui+e5IJ+5VZ4e32eQ=="
-    },
     "node_modules/ngx-build-plus": {
       "version": "14.0.0",
       "resolved": "https://registry.npmjs.org/ngx-build-plus/-/ngx-build-plus-14.0.0.tgz",
@@ -13729,16 +13696,6 @@
       "version": "1.0.10",
       "dev": true,
       "license": "(MIT AND Zlib)"
-    },
-    "node_modules/panzoom": {
-      "version": "9.4.3",
-      "resolved": "https://registry.npmjs.org/panzoom/-/panzoom-9.4.3.tgz",
-      "integrity": "sha512-xaxCpElcRbQsUtIdwlrZA90P90+BHip4Vda2BC8MEb4tkI05PmR6cKECdqUCZ85ZvBHjpI9htJrZBxV5Gp/q/w==",
-      "dependencies": {
-        "amator": "^1.1.0",
-        "ngraph.events": "^1.2.2",
-        "wheel": "^1.0.0"
-      }
     },
     "node_modules/parent-module": {
       "version": "1.0.1",
@@ -16979,6 +16936,12 @@
       "integrity": "sha512-eHY7nBftgThBqOyHGVN+l8gF0BucP09fMo0oO/Lb0w1OF80dJv+lDVpXG60WMQvkcxAkNybKsrEIE3ZtKGmPrA==",
       "dev": true
     },
+    "node_modules/timsort": {
+      "version": "0.3.0",
+      "resolved": "https://registry.npmjs.org/timsort/-/timsort-0.3.0.tgz",
+      "integrity": "sha512-qsdtZH+vMoCARQtyod4imc2nIJwg9Cc7lPRrw9CzF8ZKR0khdr8+2nX80PBhET3tcyTtJDxAffGh2rXH4tyU8A==",
+      "peer": true
+    },
     "node_modules/tmp": {
       "version": "0.0.33",
       "resolved": "https://registry.npmjs.org/tmp/-/tmp-0.0.33.tgz",
@@ -17371,27 +17334,37 @@
       }
     },
     "node_modules/vis-data": {
-      "version": "6.4.1",
+      "version": "7.1.4",
+      "resolved": "https://registry.npmjs.org/vis-data/-/vis-data-7.1.4.tgz",
+      "integrity": "sha512-usy+ePX1XnArNvJ5BavQod7YRuGQE1pjFl+pu7IS6rCom2EBoG0o1ZzCqf3l5US6MW51kYkLR+efxRbnjxNl7w==",
       "hasInstallScript": true,
-      "license": "(Apache-2.0 OR MIT)",
+      "peer": true,
       "funding": {
         "type": "opencollective",
         "url": "https://opencollective.com/visjs"
       },
-      "optionalDependencies": {
-        "vis-util": "3.0.0"
+      "peerDependencies": {
+        "uuid": "^7.0.0 || ^8.0.0",
+        "vis-util": "^4.0.0 || ^5.0.0"
       }
     },
-    "node_modules/vis-data/node_modules/vis-util": {
-      "version": "3.0.0",
-      "license": "(Apache-2.0 OR MIT)",
-      "optional": true,
-      "engines": {
-        "node": ">=8"
-      },
+    "node_modules/vis-network": {
+      "version": "9.1.2",
+      "resolved": "https://registry.npmjs.org/vis-network/-/vis-network-9.1.2.tgz",
+      "integrity": "sha512-BdapguKg7sk3NvdZaDsM7T6rNhOBFz0/F4ZScxctK4klRzQPLQPTEcmbioXaZhMkkgWymzBR3lFCxL1q+eYyAw==",
+      "hasInstallScript": true,
       "funding": {
         "type": "opencollective",
         "url": "https://opencollective.com/visjs"
+      },
+      "peerDependencies": {
+        "@egjs/hammerjs": "^2.0.0",
+        "component-emitter": "^1.3.0",
+        "keycharm": "^0.2.0 || ^0.3.0 || ^0.4.0",
+        "timsort": "^0.3.0",
+        "uuid": "^3.4.0 || ^7.0.0 || ^8.0.0",
+        "vis-data": "^7.0.0",
+        "vis-util": "^5.0.1"
       }
     },
     "node_modules/vis-timeline": {
@@ -17416,9 +17389,9 @@
       }
     },
     "node_modules/vis-util": {
-      "version": "4.3.4",
-      "resolved": "https://registry.npmjs.org/vis-util/-/vis-util-4.3.4.tgz",
-      "integrity": "sha512-hJIZNrwf4ML7FYjs+m+zjJfaNvhjk3/1hbMdQZVnwwpOFJS/8dMG8rdbOHXcKoIEM6U5VOh3HNpaDXxGkOZGpw==",
+      "version": "5.0.3",
+      "resolved": "https://registry.npmjs.org/vis-util/-/vis-util-5.0.3.tgz",
+      "integrity": "sha512-Wf9STUcFrDzK4/Zr7B6epW2Kvm3ORNWF+WiwEz2dpf5RdWkLUXFSbLcuB88n1W6tCdFwVN+v3V4/Xmn9PeL39g==",
       "peer": true,
       "engines": {
         "node": ">=8"
@@ -17426,6 +17399,10 @@
       "funding": {
         "type": "opencollective",
         "url": "https://opencollective.com/visjs"
+      },
+      "peerDependencies": {
+        "@egjs/hammerjs": "^2.0.0",
+        "component-emitter": "^1.3.0"
       }
     },
     "node_modules/vis-uuid": {
@@ -17971,11 +17948,6 @@
       "engines": {
         "node": ">=0.8.0"
       }
-    },
-    "node_modules/wheel": {
-      "version": "1.0.0",
-      "resolved": "https://registry.npmjs.org/wheel/-/wheel-1.0.0.tgz",
-      "integrity": "sha512-XiCMHibOiqalCQ+BaNSwRoZ9FDTAvOsXxGHXChBugewDj7HC8VBIER71dEOiRH1fSdLbRCQzngKTSiZ06ZQzeA=="
     },
     "node_modules/which": {
       "version": "1.3.1",
@@ -21946,14 +21918,6 @@
       "dev": true,
       "requires": {}
     },
-    "amator": {
-      "version": "1.1.0",
-      "resolved": "https://registry.npmjs.org/amator/-/amator-1.1.0.tgz",
-      "integrity": "sha512-V5+aH8pe+Z3u/UG3L3pG3BaFQGXAyXHVQDroRwjPHdh08bcUEchAVsU1MCuJSCaU5o60wTK6KaE6te5memzgYw==",
-      "requires": {
-        "bezier-easing": "^2.0.3"
-      }
-    },
     "angular-http-server": {
       "version": "1.9.0",
       "dev": true,
@@ -22260,11 +22224,6 @@
       "requires": {
         "tweetnacl": "^0.14.3"
       }
-    },
-    "bezier-easing": {
-      "version": "2.1.0",
-      "resolved": "https://registry.npmjs.org/bezier-easing/-/bezier-easing-2.1.0.tgz",
-      "integrity": "sha512-gbIqZ/eslnUFC1tjEvtz0sgx+xTK20wDnYMIA27VA04R7w6xxXQPZDbibjA9DTWZRA2CXtwHykkVzlCaAJAZig=="
     },
     "big.js": {
       "version": "5.2.2",
@@ -24983,14 +24942,6 @@
     "highcharts": {
       "version": "9.0.0"
     },
-    "highcharts-angular": {
-      "version": "3.0.0",
-      "resolved": "https://registry.npmjs.org/highcharts-angular/-/highcharts-angular-3.0.0.tgz",
-      "integrity": "sha512-v2jMlvmzmLqqKVQdsARBewmYaQOL44lmioF9WEseuIF2KyTeZIeUtYbrEqG9uz+/dl0bsDZL6WtUrgCa42D3DQ==",
-      "requires": {
-        "tslib": "^2.0.0"
-      }
-    },
     "hosted-git-info": {
       "version": "5.2.1",
       "resolved": "https://registry.npmjs.org/hosted-git-info/-/hosted-git-info-5.2.1.tgz",
@@ -26773,11 +26724,6 @@
       "version": "2.6.2",
       "dev": true
     },
-    "ngraph.events": {
-      "version": "1.2.2",
-      "resolved": "https://registry.npmjs.org/ngraph.events/-/ngraph.events-1.2.2.tgz",
-      "integrity": "sha512-JsUbEOzANskax+WSYiAPETemLWYXmixuPAlmZmhIbIj6FH/WDgEGCGnRwUQBK0GjOnVm8Ui+e5IJ+5VZ4e32eQ=="
-    },
     "ngx-build-plus": {
       "version": "14.0.0",
       "resolved": "https://registry.npmjs.org/ngx-build-plus/-/ngx-build-plus-14.0.0.tgz",
@@ -27592,16 +27538,6 @@
     "pako": {
       "version": "1.0.10",
       "dev": true
-    },
-    "panzoom": {
-      "version": "9.4.3",
-      "resolved": "https://registry.npmjs.org/panzoom/-/panzoom-9.4.3.tgz",
-      "integrity": "sha512-xaxCpElcRbQsUtIdwlrZA90P90+BHip4Vda2BC8MEb4tkI05PmR6cKECdqUCZ85ZvBHjpI9htJrZBxV5Gp/q/w==",
-      "requires": {
-        "amator": "^1.1.0",
-        "ngraph.events": "^1.2.2",
-        "wheel": "^1.0.0"
-      }
     },
     "parent-module": {
       "version": "1.0.1",
@@ -29767,6 +29703,12 @@
       "integrity": "sha512-eHY7nBftgThBqOyHGVN+l8gF0BucP09fMo0oO/Lb0w1OF80dJv+lDVpXG60WMQvkcxAkNybKsrEIE3ZtKGmPrA==",
       "dev": true
     },
+    "timsort": {
+      "version": "0.3.0",
+      "resolved": "https://registry.npmjs.org/timsort/-/timsort-0.3.0.tgz",
+      "integrity": "sha512-qsdtZH+vMoCARQtyod4imc2nIJwg9Cc7lPRrw9CzF8ZKR0khdr8+2nX80PBhET3tcyTtJDxAffGh2rXH4tyU8A==",
+      "peer": true
+    },
     "tmp": {
       "version": "0.0.33",
       "resolved": "https://registry.npmjs.org/tmp/-/tmp-0.0.33.tgz",
@@ -30012,16 +29954,17 @@
       }
     },
     "vis-data": {
-      "version": "6.4.1",
-      "requires": {
-        "vis-util": "3.0.0"
-      },
-      "dependencies": {
-        "vis-util": {
-          "version": "3.0.0",
-          "optional": true
-        }
-      }
+      "version": "7.1.4",
+      "resolved": "https://registry.npmjs.org/vis-data/-/vis-data-7.1.4.tgz",
+      "integrity": "sha512-usy+ePX1XnArNvJ5BavQod7YRuGQE1pjFl+pu7IS6rCom2EBoG0o1ZzCqf3l5US6MW51kYkLR+efxRbnjxNl7w==",
+      "peer": true,
+      "requires": {}
+    },
+    "vis-network": {
+      "version": "9.1.2",
+      "resolved": "https://registry.npmjs.org/vis-network/-/vis-network-9.1.2.tgz",
+      "integrity": "sha512-BdapguKg7sk3NvdZaDsM7T6rNhOBFz0/F4ZScxctK4klRzQPLQPTEcmbioXaZhMkkgWymzBR3lFCxL1q+eYyAw==",
+      "requires": {}
     },
     "vis-timeline": {
       "version": "7.5.1",
@@ -30030,10 +29973,11 @@
       "requires": {}
     },
     "vis-util": {
-      "version": "4.3.4",
-      "resolved": "https://registry.npmjs.org/vis-util/-/vis-util-4.3.4.tgz",
-      "integrity": "sha512-hJIZNrwf4ML7FYjs+m+zjJfaNvhjk3/1hbMdQZVnwwpOFJS/8dMG8rdbOHXcKoIEM6U5VOh3HNpaDXxGkOZGpw==",
-      "peer": true
+      "version": "5.0.3",
+      "resolved": "https://registry.npmjs.org/vis-util/-/vis-util-5.0.3.tgz",
+      "integrity": "sha512-Wf9STUcFrDzK4/Zr7B6epW2Kvm3ORNWF+WiwEz2dpf5RdWkLUXFSbLcuB88n1W6tCdFwVN+v3V4/Xmn9PeL39g==",
+      "peer": true,
+      "requires": {}
     },
     "vis-uuid": {
       "version": "1.1.4"
@@ -30400,11 +30344,6 @@
       "resolved": "https://registry.npmjs.org/websocket-extensions/-/websocket-extensions-0.1.4.tgz",
       "integrity": "sha512-OqedPIGOfsDlo31UNwYbCFMSaO9m9G/0faIHj5/dZFDMFqPTcx6UwqyOy3COEaEOg/9VsGIpdqn62W5KhoKSpg==",
       "dev": true
-    },
-    "wheel": {
-      "version": "1.0.0",
-      "resolved": "https://registry.npmjs.org/wheel/-/wheel-1.0.0.tgz",
-      "integrity": "sha512-XiCMHibOiqalCQ+BaNSwRoZ9FDTAvOsXxGHXChBugewDj7HC8VBIER71dEOiRH1fSdLbRCQzngKTSiZ06ZQzeA=="
     },
     "which": {
       "version": "1.3.1",

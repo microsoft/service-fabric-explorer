@@ -32,10 +32,11 @@ import { InfrastructureJobModule } from 'src/app/modules/infrastructure-job/infr
 import { RepairTasksModule } from 'src/app/modules/repair-tasks/repair-tasks.module';
 import { CommandsComponent } from './commands/commands.component';
 import { PowershellCommandsModule } from 'src/app/modules/powershell-commands/powershell-commands.module';
+import { FederationComponent } from './federation/federation.component';
 
 @NgModule({
   declarations: [EssentialsComponent, DetailsComponent, BaseComponent, MetricsComponent, ClustermapComponent,
-                 ImagestoreComponent, ManifestComponent, EventsComponent, ActionCreateBackupPolicyComponent,
+                 ImagestoreComponent, ManifestComponent, EventsComponent, ActionCreateBackupPolicyComponent, FederationComponent,
                  StatusWarningsComponent, BackupsComponent, RepairTasksComponent, MetricTileComponent, InfrastructureViewComponent, CommandsComponent],
   imports: [
     CommonModule,

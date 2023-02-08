@@ -1,17 +1,14 @@
 import { Component, ElementRef, Injector, OnDestroy, OnInit, SecurityContext, ViewChild } from '@angular/core';
-import { Subject, Subscription } from 'rxjs';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { Subscription } from 'rxjs';
 import { NodeEventList, PartitionEventList } from 'src/app/Models/DataModels/collections/Collections';
 import { NodeEvent, PartitionEvent } from 'src/app/Models/eventstore/Events';
-import { IOnDateChange } from 'src/app/modules/event-store/double-slider/double-slider.component';
-import { IEventStoreData, IQuickDates } from 'src/app/modules/event-store/event-store/event-store.component';
-import { IOptionConfig } from 'src/app/modules/event-store/option-picker/option-picker.component';
+import { IEventStoreData } from 'src/app/modules/event-store/event-store/event-store.component';
 import { DataService } from 'src/app/services/data.service';
 import { TelemetryService } from 'src/app/services/telemetry.service';
-import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 import { Network} from "vis-network/standalone"
 import { DomSanitizer} from '@angular/platform-browser';
+import { IOnDateChange } from 'src/app/modules/time-picker/double-slider/double-slider.component';
 
 // structure that has all the relevant info about particular node
 export interface NodeData {
@@ -91,21 +88,6 @@ export class FederationComponent extends BaseControllerDirective implements OnIn
       hover: true
     }
   };
-  // timeline bar and dates related settings
-  optionsConfig: IOptionConfig;
-  private debounceHandler: Subject<IOnDateChange> = new Subject<IOnDateChange>();
-  private debouncerHandlerSubscription: Subscription;
-  public startDateMin: Date;
-  public startDateMax: Date;
-  public startDate: Date;
-  public endDate: Date;
-  public quickDates = [
-    { display: 'Last 1 Hour', hours: 1 },
-    { display: 'Last 3 Hours', hours: 3 },
-    { display: 'Last 6 Hours', hours: 6 },
-    { display: 'Last 1 Day', hours: 24 },
-    { display: 'Last 7 Days', hours: 168 }
-  ];
   // constants
   static readonly CONST = {
     STATUS_GRAY: "Gray",
@@ -132,6 +114,10 @@ export class FederationComponent extends BaseControllerDirective implements OnIn
   lUpCnt: number;
   lDownCnt: number;
   lGrayCnt: number;
+  // time-picker
+  public dateMin: Date;
+  public startDate: Date;
+  public endDate: Date;
 
   constructor(protected data: DataService, injector: Injector, private telemService: TelemetryService, private sanitized: DomSanitizer) {
     super(injector);
@@ -139,29 +125,10 @@ export class FederationComponent extends BaseControllerDirective implements OnIn
 
   ngOnInit() {
     super.ngOnInit();
-
-    // timeline bar config
-    this.optionsConfig = {
-      enableNodes: true,
-      enableRepairTasks: true
-    };
-
-    // setting up the timeline bar
-    // debounceTime is wanted delay for frequent bar changes
-    this.resetSelectionProperties();
-    this.debouncerHandlerSubscription = this.debounceHandler
-      .pipe(debounceTime(400), distinctUntilChanged())
-      .subscribe(dates => {
-        this.startDate = new Date(dates.startDate);
-        this.endDate = new Date(dates.endDate);
-        this.noneAction.nativeElement.checked = true; 
-        this.noneAction.nativeElement.dispatchEvent(new Event('click'));
-    });
   }
 
   ngOnDestroy() {
     // free the resources
-    this.debouncerHandlerSubscription.unsubscribe();
     // this.eventStoreHandlerFMSubscription.unsubscribe();
     // this.eventStoreHandlerSubscription.unsubscribe();
   }
@@ -216,7 +183,6 @@ export class FederationComponent extends BaseControllerDirective implements OnIn
         break;
       default:
         mapArray = [];
-        //this.inputNodeValue = "";
         this.inputNode.nativeElement.value = "";
         this.inputNode.nativeElement.dispatchEvent(new Event('change'));
         break;
@@ -232,7 +198,6 @@ export class FederationComponent extends BaseControllerDirective implements OnIn
     if (this.selectionArr[0] == "Nodes")
       this.selectionArr.shift();
     this.byId.nativeElement.checked = true;
-    //this.inputNodeValue = this.nameToIdMap.get(event.target.value);
     this.inputNode.nativeElement.value = this.nameToIdMap.get(event.target.value);
     this.inputNode.nativeElement.dispatchEvent(new Event('change'));
   }
@@ -472,25 +437,6 @@ export class FederationComponent extends BaseControllerDirective implements OnIn
     });
   }
 
-  // timeline bar restart
-  private resetSelectionProperties(): void {
-    const todaysDate = new Date();
-    this.startDate = TimeUtils.AddDays(todaysDate, -7);
-    this.endDate = this.startDateMax = todaysDate;
-    this.startDateMin = TimeUtils.AddDays(todaysDate, -30);
-  }
-
-  public setDate(date: IQuickDates) {
-    this.setNewDates({
-      endDate: new Date(this.endDate),
-      startDate: TimeUtils.AddHours(this.endDate, -1 * date.hours)
-    });
-  }
-
-  setNewDates(dates: IOnDateChange) {
-    this.debounceHandler.next(dates);
-  }
-
   // data shown on node hover
   formTitle(elem: [string, NodeData]): string {
     let res: string = `Id: ${elem[1].id}\nStatus: ${elem[1].status}\nPhase: ${elem[1].phase}`;
@@ -659,6 +605,14 @@ export class FederationComponent extends BaseControllerDirective implements OnIn
       this.edges.push({ from: localMapArray[k][1].id, to: nElem[0] });
       this.drawGraph("neighborhood");
     }
+  }
+
+  // setting the bounds of selected time range
+  public setDate(newDate: IOnDateChange) {
+    this.endDate = newDate.endDate;
+    this.startDate = newDate.startDate;
+    this.noneAction.nativeElement.checked = true; 
+    this.noneAction.nativeElement.dispatchEvent(new Event('click'));
   }
 
 }

@@ -42,19 +42,6 @@
 <br> End date: {{ endDate }} <br><br>
 
 <!-- Timeline bar with double slider and date picker -->
-<div class="flex-container wrap">
-    <app-dual-date-picker [minDate]="startDateMin" [maxDate]="startDateMax" (dateChanged)="setNewDates($event)"
-          [currentStartDate]="startDate" [currentEndDate]="endDate"></app-dual-date-picker>
-  <div ngbDropdown style="margin-right: 10px;">
-    <button class="simple-button" ngbDropdownToggle>Quick Dates </button>
-    <div ngbDropdownMenu>
-      <button *ngFor="let date of quickDates" ngbDropdownItem (click)="setDate(date)">
-        {{date.display}}
-      </button>
-    </div>
-  </div>
-  <div class="slider-wrapper">
-    <app-double-slider [startDate]="startDate" [endDate]="endDate" (dateChanged)="setNewDates($event)">
-    </app-double-slider>
-  </div>
-</div><br>
+<div style="margin-bottom: 10px;">
+    <app-time-picker [dateMin]="dateMin" (dateChange)="setDate($event)"></app-time-picker>
+</div>
