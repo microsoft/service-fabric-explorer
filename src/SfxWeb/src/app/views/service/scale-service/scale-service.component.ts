@@ -4,7 +4,7 @@ import { DataService } from 'src/app/services/data.service';
 import { IsolatedAction } from 'src/app/Models/Action';
 import { Service } from 'src/app/Models/DataModels/Service';
 import { IRawStatelessServiceDescription, IRawUpdateServiceDescription } from 'src/app/Models/RawDataTypes';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-scale-service',
@@ -18,11 +18,11 @@ export class ScaleServiceComponent implements OnInit {
 
   updateServiceDescription: IRawUpdateServiceDescription;
 
-  form: FormGroup;
+  form: UntypedFormGroup;
 
   constructor(public dialogRef: MatDialogRef<ScaleServiceComponent>,
               @Inject(MAT_DIALOG_DATA) public data: IsolatedAction,
-              private formBuilder: FormBuilder) { }
+              private formBuilder: UntypedFormBuilder) { }
 
   ngOnInit() {
     this.service = this.data.data;

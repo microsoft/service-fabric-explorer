@@ -1,7 +1,7 @@
 import { Constants } from '../Common/Constants';
 import { Utils } from './Utils';
 import dayjs from 'dayjs';
-import Duration from 'luxon/src/duration';
+import { Duration } from 'luxon';
 
 // -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
