@@ -151,9 +151,9 @@ export class EventStoreTimelineComponent implements AfterViewInit, OnChanges, On
             if(color) {
               element.classList.add(color);
             }
-            return `<div class="${color}">${data.items.length} ${data.items[0].kind} events </div>`
+            return this.sanitzer.sanitize(SecurityContext.HTML, `<div class="${color}">${data.items.length} ${data.items[0].kind} events </div>`)
           } else {
-            return `<div>${data.content}</div>`;
+            return this.sanitzer.sanitize(SecurityContext.HTML, `<div>${data.content}</div>`);
           }
         },
         margin: {
@@ -163,8 +163,10 @@ export class EventStoreTimelineComponent implements AfterViewInit, OnChanges, On
         },
         tooltip: {
           template: (itemData) => {
+            let content = itemData.title;
+
             if(itemData.isCluster) {
-              return `<div class="inner-tooltip">
+              content =  `<div class="inner-tooltip">
                   <div>
                   ${itemData.items[0].group} ${itemData.items.length}  events
                   </div>
@@ -174,9 +176,9 @@ export class EventStoreTimelineComponent implements AfterViewInit, OnChanges, On
                     end : ${itemData.items[itemData.items.length - 1].start}
                   </div>
               </div>`
-            }else {
-              return `${itemData.title}`
             }
+
+            return this.sanitzer.sanitize(SecurityContext.HTML, content);
           }
         },
         stack: true,
