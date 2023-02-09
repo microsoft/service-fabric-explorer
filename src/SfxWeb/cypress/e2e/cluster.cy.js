@@ -6,7 +6,7 @@ import {
   checkTableErrorMessage, EMPTY_LIST_TEXT, FAILED_TABLE_TEXT, FAILED_LOAD_TEXT,
   repairTask_route, manifest_route, CLUSTER_TAB_NAME, REPAIR_TASK_TAB_NAME,
   FIXTURE_REF_NODES, FIXTURE_NODES, typeIntoInput, checkCheckBox, refresh,
-  FIXTURE_REF_SYSTEMAPPS, systemApps_route, checkCommand, FIXTURE_REF_APPTYPES
+  FIXTURE_REF_SYSTEMAPPS, systemApps_route, checkCommand, FIXTURE_REF_APPTYPES, NODE_TAB_NAME
 } from './util.cy';
 
 const LOAD_INFO = "getloadinfo"
@@ -480,7 +480,7 @@ context('Cluster page', () => {
     })
 
   })
-  describe("events", () => {
+  describe.only("events", () => {
     const setup = (fileCluster, fileTasks) => {
       addRoute('events', fileCluster, apiUrl(`/EventsStore/Cluster/Events?*`))
       addRoute('repairs', fileTasks, repairTask_route)
@@ -513,41 +513,74 @@ context('Cluster page', () => {
       cy.visit('/#/events')
       cy.wait(['@getevents', '@getrepair-manager-manifest'])
 
+      cy.get(EVENT_CHIPS).within(() => {
+        cy.contains(CLUSTER_TAB_NAME)
+      })
+
       cy.get(EVENT_TABS).within(() => {
         cy.contains(CLUSTER_TAB_NAME)
       })
       checkTableErrorMessage(EMPTY_LIST_TEXT);
 
       cy.get(EVENT_CHIPS).within(() => {
-        cy.contains("Repair Tasks").should('not.exist')
+        cy.contains(REPAIR_TASK_TAB_NAME).should('not.exist')
       })
     })
 
     it("cluster events", () => {
       setup('cluster-page/eventstore/cluster-events.json', 'empty-list.json')
 
+      cy.get(EVENT_CHIPS).within(() => {
+        cy.contains(CLUSTER_TAB_NAME)
+      })
+      
       cy.get(EVENT_TABS).within(() => {
         cy.contains(CLUSTER_TAB_NAME)
       })
+      
       checkTableSize(15);
     })
 
     it("all events", () => {
       setup('cluster-page/eventstore/cluster-events.json', 'cluster-page/repair-jobs/simple.json')
+      
+      cy.get(EVENT_CHIPS).within(() => {
+        cy.contains(CLUSTER_TAB_NAME);
+        cy.contains(NODE_TAB_NAME);
+        cy.contains(REPAIR_TASK_TAB_NAME);
+      })
 
       cy.get(EVENT_TABS).within(() => {
         cy.contains(CLUSTER_TAB_NAME);
       })
       checkTableSize(15);
 
-      cy.get(EVENT_CHIPS).within(() => {
-        cy.contains("Repair Tasks")
+      cy.get(EVENT_TABS).within(() => {
+        cy.contains(NODE_TAB_NAME).click();
       })
+      checkTableSize(15);
 
       cy.get(EVENT_TABS).within(() => {
         cy.contains(REPAIR_TASK_TAB_NAME).click();
       })
       checkTableSize(6);
+    })
+
+    it.only("modify events", () => {
+      setup('cluster-page/eventstore/cluster-events.json', 'cluster-page/repair-jobs/simple.json')
+      addRoute('events', 'cluster-page/eventstore/cluster-upgrade-complete-events.json', apiUrl(`/EventsStore/Cluster/Events?**&eventsTypesFilter=ClusterUpgradeCompleted*`))
+
+      cy.get(EVENT_CHIPS).within(() => {
+        cy.contains(CLUSTER_TAB_NAME).click();
+      })
+      
+      cy.get('[data-cy=event-modal').within(() => {
+        cy.contains('Event Filter: ').type('ClusterUpgradeCompleted');
+        cy.get('[data-cy=submit]').click();
+
+      })
+      
+
     })
 
     it("failed request", () => {

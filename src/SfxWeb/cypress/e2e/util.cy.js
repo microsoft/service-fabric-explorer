@@ -176,3 +176,4 @@ export const checkCommand = (numSafeCommands, numUnsafeCommands = 0) => {
 // Tabs names
 export const REPAIR_TASK_TAB_NAME = "Repair Tasks";
 export const CLUSTER_TAB_NAME = "Cluster";
+export const NODE_TAB_NAME = "Nodes";
