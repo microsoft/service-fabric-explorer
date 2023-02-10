@@ -37,6 +37,7 @@ export interface ITimelineData {
 
 export interface ITimelineItem extends DataItem {
     kind: string
+    groupingClass?: string;
 }
 
 export interface ITimelineDataGenerator<T extends FabricEventBase>{

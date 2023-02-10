@@ -248,3 +248,183 @@ export class RepairTaskMessages {
   }
 }
 
+export interface IPregeneratedColor {
+  color: string,
+  hex: string
+}
+
+//pregenerated safe colors for the timeline to use
+export const pregeneratedColors: IPregeneratedColor[] = [
+    {
+        "color": "809900",
+        "hex": "#809900"
+    },
+    {
+        "color": "E6B3B3",
+        "hex": "#E6B3B3"
+    },
+    {
+        "color": "6680B3",
+        "hex": "#6680B3"
+    },
+    {
+        "color": "66991A",
+        "hex": "#66991A"
+    },
+    {
+        "color": "FF99E6",
+        "hex": "#FF99E6"
+    },
+    {
+        "color": "CCFF1A",
+        "hex": "#CCFF1A"
+    },
+    {
+        "color": "33FFCC",
+        "hex": "#33FFCC"
+    },
+    {
+        "color": "66994D",
+        "hex": "#66994D"
+    },
+    {
+        "color": "B366CC",
+        "hex": "#B366CC"
+    },
+    {
+        "color": "4D8000",
+        "hex": "#4D8000"
+    },
+    {
+        "color": "CC80CC",
+        "hex": "#CC80CC"
+    },
+    {
+        "color": "66664D",
+        "hex": "#66664D"
+    },
+    {
+        "color": "991AFF",
+        "hex": "#991AFF"
+    },
+    {
+        "color": "E666FF",
+        "hex": "#E666FF"
+    },
+    {
+        "color": "4DB3FF",
+        "hex": "#4DB3FF"
+    },
+    {
+        "color": "1AB399",
+        "hex": "#1AB399"
+    },
+    {
+        "color": "E666B3",
+        "hex": "#E666B3"
+    },
+    {
+        "color": "33991A",
+        "hex": "#33991A"
+    },
+    {
+        "color": "CC9999",
+        "hex": "#CC9999"
+    },
+    {
+        "color": "B3B31A",
+        "hex": "#B3B31A"
+    },
+    {
+        "color": "00E680",
+        "hex": "#00E680"
+    },
+    {
+        "color": "4D8066",
+        "hex": "#4D8066"
+    },
+    {
+        "color": "809980",
+        "hex": "#809980"
+    },
+    {
+        "color": "E6FF80",
+        "hex": "#E6FF80"
+    },
+    {
+        "color": "1AFF33",
+        "hex": "#1AFF33"
+    },
+    {
+        "color": "999933",
+        "hex": "#999933"
+    },
+    {
+        "color": "CCCC00",
+        "hex": "#CCCC00"
+    },
+    {
+        "color": "66E64D",
+        "hex": "#66E64D"
+    },
+    {
+        "color": "4D80CC",
+        "hex": "#4D80CC"
+    },
+    {
+        "color": "9900B3",
+        "hex": "#9900B3"
+    },
+    {
+        "color": "4DB380",
+        "hex": "#4DB380"
+    },
+    {
+        "color": "99E6E6",
+        "hex": "#99E6E6"
+    },
+    {
+        "color": "6666FF",
+        "hex": "#6666FF"
+    },
+    {
+        "color": "FFB399",
+        "hex": "#FFB399"
+    },
+    {
+        "color": "2f7ed8",
+        "hex": "#2f7ed8"
+    },
+    {
+        "color": "0d233a",
+        "hex": "#0d233a"
+    },
+    {
+        "color": "8bbc21",
+        "hex": "#8bbc21"
+    },
+    {
+        "color": "910000",
+        "hex": "#910000"
+    },
+    {
+        "color": "1aadce",
+        "hex": "#1aadce"
+    },
+    {
+        "color": "492970",
+        "hex": "#492970"
+    },
+    {
+        "color": "f28f43",
+        "hex": "#f28f43"
+    },
+    {
+        "color": "77a1e5",
+        "hex": "#77a1e5"
+    },
+    {
+        "color": "a6c96a",
+        "hex": "#a6c96a"
+    },
+]
