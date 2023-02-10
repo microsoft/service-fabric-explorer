@@ -81,9 +81,9 @@ export class EventStoreUtils {
         const outline = EventStoreUtils.internalToolTipFormatterObject(data);
         return `<div class="inner-tooltip">
                   ${title.length > 0 ? title + '<br>' : ''}
-                  Start: ${start}
+                  Start (local time): ${start}
                   <br>
-                  ${ end ? 'End: ' + end + '<br>' : ''}
+                  ${ end ? 'End (local time): ' + end + '<br>' : ''}
                   <b>
                     Details
                   </b>
