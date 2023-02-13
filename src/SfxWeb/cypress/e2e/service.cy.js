@@ -152,7 +152,7 @@ context('service', () => {
             cy.visit(urlFormatter(appName, statelessServiceName))
         })
 
-        it.only('stateless information - with placement constraints', () => {
+        it('stateless information - with placement constraints', () => {
             cy.wait(waitRequest);
 
             cy.get('[data-cy=state-data]').within(() => {
