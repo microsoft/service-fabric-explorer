@@ -542,7 +542,8 @@ context('Cluster page', () => {
     })
 
     it("all events", () => {
-      setup('cluster-page/eventstore/cluster-events.json', 'cluster-page/repair-jobs/simple.json')
+      addRoute('nodes', 'cluster-page/eventstore/node-events.json', apiUrl(`/EventsStore/Nodes/Events?*`))
+      setup('cluster-page/eventstore/cluster-events.json', 'cluster-page/repair-jobs/simple.json');
       
       cy.get(EVENT_CHIPS).within(() => {
         cy.contains(CLUSTER_TAB_NAME);
@@ -566,20 +567,68 @@ context('Cluster page', () => {
       checkTableSize(6);
     })
 
-    it.only("modify events", () => {
+    it("modify events", () => {
+      addRoute('nodeevents', 'cluster-page/eventstore/node-events.json', apiUrl(`/EventsStore/Nodes/Events?*`))
       setup('cluster-page/eventstore/cluster-events.json', 'cluster-page/repair-jobs/simple.json')
       addRoute('events', 'cluster-page/eventstore/cluster-upgrade-complete-events.json', apiUrl(`/EventsStore/Cluster/Events?**&eventsTypesFilter=ClusterUpgradeCompleted*`))
 
+      cy.get(EVENT_TABS).within(() => {
+        cy.contains(CLUSTER_TAB_NAME);
+      })
+      checkTableSize(15);
+      
       cy.get(EVENT_CHIPS).within(() => {
         cy.contains(CLUSTER_TAB_NAME).click();
       })
       
       cy.get('[data-cy=event-modal').within(() => {
-        cy.contains('Event Filter: ').type('ClusterUpgradeCompleted');
+        cy.get('[data-cy=event-filter]').type('ClusterUpgradeCompleted');
         cy.get('[data-cy=submit]').click();
 
       })
+
+      cy.get(EVENT_CHIPS).within(() => {
+        cy.contains(CLUSTER_TAB_NAME + ' (1 filters)')
+      })
+
+      cy.get(EVENT_TABS).within(() => {
+        cy.contains(CLUSTER_TAB_NAME)
+        cy.get('.mif-filter').should('exist')
+      })
+      checkTableSize(1);
+      cy.get('[data-cy=filter-card]').contains("ClusterUpgradeCompleted")
+
+      cy.get(EVENT_CHIPS).within(() => {
+        cy.contains(NODE_TAB_NAME).click();
+      })
+
+      cy.get('[data-cy=event-modal').within(() => {
+        cy.get('[data-cy=event-type]').click();
+        cy.contains('Application').click();
+        cy.get('[data-cy=submit]').click();
+
+      })
+
+      cy.get(EVENT_TABS).within(() => {
+        cy.contains("Apps").click();
+      })
+
+      checkTableSize(15);
+
+      cy.get(EVENT_CHIPS).within(() => {
+        cy.get('[data-cy=add-event]').click();
+      })
+
       
+      cy.get('[data-cy=event-modal').within(() => {
+        cy.get('[data-cy=event-type]').click();
+        cy.contains('Application').click();
+        cy.get('[data-cy=submit]').click();
+      })
+
+      cy.get(EVENT_TABS).within(() => {
+        cy.contains("Apps-1")
+      })
 
     })
 

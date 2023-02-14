@@ -6,7 +6,7 @@
         <label>
             <span>Entity Type: </span>
             <div ngbDropdown>
-                <button class="simple-button" ngbDropdownToggle>{{chip.type? chip.type : 'Type'}}</button>
+                <button class="simple-button" data-cy="event-type" ngbDropdownToggle>{{chip.type? chip.type : 'Type'}}</button>
                 <div ngbDropdownMenu>
                     <div *ngFor="let type of types">
                         <button [value]='type' ngbDropdownItem (click)="setType($event)">{{type}}</button>
@@ -38,7 +38,7 @@
             <input class="input-flat" [(ngModel)]="chip.id" name="id" [type]="chip.type === 'Application' || chip.type ==='Node' ? 'hidden' : 'text' ">
         </label>
         
-        <label *ngIf="chip.type !== 'RepairTask'">
+        <label *ngIf="chip.type !== 'RepairTask'" data-cy="event-filter">
             <span>
             <a href="https://learn.microsoft.com/azure/service-fabric/service-fabric-diagnostics-event-generation-operational" target="_blank" class="mif-info link"></a>
             Event Filter: 

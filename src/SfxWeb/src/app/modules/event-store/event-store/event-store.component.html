@@ -16,7 +16,7 @@
     <span *ngFor="let chip of listEventChips">
       <app-event-chip [chip]="chip" (loadEvent)="addEvents($event)" (removeEvent)="removeEvents($event)"></app-event-chip>
     </span>
-    <app-event-chip [addChip]="true" (loadEvent)="addEvents($event)"></app-event-chip>
+    <app-event-chip [addChip]="true" (loadEvent)="addEvents($event)" data-cy="add-event"></app-event-chip>
   </div>
 </div>
 
@@ -60,7 +60,7 @@
           [isLoading]="!data.eventsList.isInitialized" [successfulLoad]="data.eventsList.lastRefreshWasSuccessful">
           <div *ngIf="listEventChips[i].eventsFilter.length" class="card">
             <div class="card-body">
-              <span class="card-text">
+              <span class="card-text" data-cy="filter-card">
                 Applied Filter: <b>{{listEventChips[i].eventsFilter}}</b>
               </span>
             </div>
