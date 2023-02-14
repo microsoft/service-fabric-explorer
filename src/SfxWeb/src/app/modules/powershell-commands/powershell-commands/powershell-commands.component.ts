@@ -5,7 +5,7 @@ import { result } from 'cypress/types/lodash';
 import { CommandSafetyLevel, PowershellCommand } from 'src/app/Models/PowershellCommand';
 import { SettingsService } from 'src/app/services/settings.service';
 import { ActionDialogComponent } from 'src/app/shared/component/action-dialog/action-dialog.component';
-import { ModalData } from 'src/app/ViewModels/Modal';
+import { IModalData } from 'src/app/ViewModels/Modal';
 
 @Component({
   selector: 'app-powershell-commands',
@@ -13,7 +13,7 @@ import { ModalData } from 'src/app/ViewModels/Modal';
   styleUrls: ['./powershell-commands.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class PowershellCommandsComponent implements ModalData, OnChanges{
+export class PowershellCommandsComponent implements IModalData, OnChanges{
 
   title: string = 'Acknowledge';
   modalTitle: string = 'Warning';

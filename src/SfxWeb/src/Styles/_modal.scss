@@ -26,6 +26,10 @@ $dialog-input-bg-color: #242424;
         padding: 18px 15px 18px 15px;
         border: none !important;
 
+        &.warning {
+            background-color: var(--badge-warning) !important;
+        }
+
         .modal-title {
           font-weight: var(--font-weight-normal);
           font-size: 18pt;
