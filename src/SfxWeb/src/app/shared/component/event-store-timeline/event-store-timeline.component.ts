@@ -68,9 +68,8 @@ export class EventStoreTimelineComponent implements AfterViewInit, OnChanges, On
       this.itemClicked.emit(data.item)
     })
 
-    this.timeline.setOptions({
-      moment: this.isUTC ? moment.utc : moment
-    });
+    this.flipTimeZone(this.isUTC);
+
     this.updateList(this.events);
   }
 
