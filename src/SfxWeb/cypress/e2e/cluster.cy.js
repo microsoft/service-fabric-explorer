@@ -480,7 +480,7 @@ context('Cluster page', () => {
     })
 
   })
-  describe.only("events", () => {
+  describe("events", () => {
     const setup = (fileCluster, fileTasks) => {
       addRoute('events', fileCluster, apiUrl(`/EventsStore/Cluster/Events?*`))
       addRoute('repairs', fileTasks, repairTask_route)
@@ -569,6 +569,7 @@ context('Cluster page', () => {
 
     it("modify events", () => {
       addRoute('nodeevents', 'cluster-page/eventstore/node-events.json', apiUrl(`/EventsStore/Nodes/Events?*`))
+      addRoute('appevents', 'cluster-page/eventstore/app-events.json', apiUrl(`/EventsStore/Applications/Events?*`))
       setup('cluster-page/eventstore/cluster-events.json', 'cluster-page/repair-jobs/simple.json')
       addRoute('events', 'cluster-page/eventstore/cluster-upgrade-complete-events.json', apiUrl(`/EventsStore/Cluster/Events?**&eventsTypesFilter=ClusterUpgradeCompleted*`))
 
@@ -588,12 +589,17 @@ context('Cluster page', () => {
       })
 
       cy.get(EVENT_CHIPS).within(() => {
-        cy.contains(CLUSTER_TAB_NAME + ' (1 filters)')
+        cy.contains(CLUSTER_TAB_NAME + ' (1 filters)').trigger('focusin');
+        cy.contains("ClusterUpgradeCompleted");
+        cy.contains(CLUSTER_TAB_NAME + ' (1 filters)').trigger('focusout');
       })
 
       cy.get(EVENT_TABS).within(() => {
         cy.contains(CLUSTER_TAB_NAME)
-        cy.get('.mif-filter').should('exist')
+        cy.get('.mif-filter').should('exist').trigger('focusin')
+        cy.contains("ClusterUpgradeCompleted");
+        cy.get('.mif-filter').trigger('focusout')
+
       })
       checkTableSize(1);
       cy.get('[data-cy=filter-card]').contains("ClusterUpgradeCompleted")
