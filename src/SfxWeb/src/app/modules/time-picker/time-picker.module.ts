@@ -10,7 +10,7 @@ import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 
 
 @NgModule({
-  declarations: [DoubleSliderComponent, FullTimePickerComponent],
+  declarations: [DoubleSliderComponent, FullTimePickerComponent, TimePickerComponent],
   imports: [
     CommonModule,
     SharedModule,
@@ -20,7 +20,8 @@ import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
   ],
   exports: [
     DoubleSliderComponent,
-    FullTimePickerComponent
+    FullTimePickerComponent,
+    TimePickerComponent
   ]
 })
 export class TimePickerModule { }
