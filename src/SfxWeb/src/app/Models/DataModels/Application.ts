@@ -76,6 +76,10 @@ export class Application extends DataModelBase<IRawApplication> {
         return RoutesService.getAppTypeViewPath(this.raw.TypeName);
     }
 
+    public get resourceId(): string {
+        return this.raw.ApplicationMetadata?.ArmMetaData?.ArmResourceId;
+    }
+
     public delete(): Observable<any> {
         const compose = this.raw.ApplicationDefinitionKind === Constants.ComposeApplicationDefinitionKind;
         const action = compose ? this.data.restClient.deleteComposeApplication(this.id) : this.data.restClient.deleteApplication(this.id);

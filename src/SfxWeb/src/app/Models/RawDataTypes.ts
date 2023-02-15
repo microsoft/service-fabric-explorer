@@ -22,6 +22,7 @@ export interface IRawApplication {
         Status: string;
         HealthState: string;
         ApplicationDefinitionKind: string;
+        ApplicationMetadata?: IRawApplicationMetaData
     }
 export class IRawBackupEntity{
     EntityKind: BackupEntityKind;
@@ -718,6 +719,7 @@ export interface IRawService {
         HasPersistedState: boolean; // Only shows up when this is a stateful service.
         HealthState: string;
         IsServiceGroup: boolean;
+        ServiceMetadata?: IRawServiceMetadata
     }
 
 export interface IRawServiceCorrelationDescription {
@@ -1145,4 +1147,19 @@ export interface IRawApplicationNameInfo{
 export interface IRawServiceNameInfo{
         Id: string;
         Name: string;
-    }
+}
+    
+export interface IRawApplicationMetaData{
+    ArmMetaData: IRawArmMetadata;
+    HealthState: string;
+    Id: string;
+}
+
+export interface IRawServiceMetadata{
+    ArmMetaData: IRawArmMetadata;
+    ServiceStatus: string;
+    TypeName: string;
+}
+export interface IRawArmMetadata{
+    ArmResourceId?: string;
+}

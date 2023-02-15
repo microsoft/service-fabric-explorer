@@ -70,6 +70,10 @@ export class Service extends DataModelBase<IRawService> {
         return RoutesService.getServiceViewPath(this.parent.raw.TypeName, this.parent.id, this.id);
     }
 
+    public get resourceId(): string {
+        return this.raw.ServiceMetadata?.ArmMetaData?.ArmResourceId;
+    }
+
     public addHealthStateFiltersForChildren(clusterHealthChunkQueryDescription: IClusterHealthChunkQueryDescription): IServiceHealthStateFilter {
         const appFilter = this.parent.addHealthStateFiltersForChildren(clusterHealthChunkQueryDescription);
         let serviceFilter = appFilter.ServiceFilters.find(filter => filter.ServiceNameFilter === this.name);
