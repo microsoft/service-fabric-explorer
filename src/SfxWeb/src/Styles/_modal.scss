@@ -28,6 +28,8 @@ $dialog-input-bg-color: #242424;
 
         &.warning {
             background-color: var(--badge-warning) !important;
+            color: var(--primary-background-color) !important;
+
         }
 
         .modal-title {

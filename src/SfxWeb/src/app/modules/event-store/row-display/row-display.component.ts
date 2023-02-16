@@ -22,11 +22,11 @@ export class RowDisplayComponent implements OnInit, DetailBaseComponent {
     this.value = Utils.result(this.item, this.listSetting.propertyPath);
     let color = null;
     if (HtmlUtils.eventTypesUtil.isResolved(this.item.raw)) {
-        color = '#3AA655';
+        color = 'var(--badge-ok)';
     } else if (HtmlUtils.eventTypesUtil.isWarning(this.item.raw)) {
-        color = '#F2C649';
+        color = 'var(--badge-warning)';
     } else if (HtmlUtils.eventTypesUtil.isError(this.item.raw)) {
-        color = '#FF5349';
+        color = 'var(--badge-error-text)';
     }
     if (color) {
       this.color = color;
