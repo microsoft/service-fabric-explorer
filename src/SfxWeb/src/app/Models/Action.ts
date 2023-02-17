@@ -3,7 +3,9 @@ import { mergeMap, finalize } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { ActionDialogComponent } from '../shared/component/action-dialog/action-dialog.component';
 import { ComponentType } from '@angular/cdk/portal';
-import { IModalData, IModalDataAdditionalParameter } from '../ViewModels/Modal';
+import { IModalData } from '../ViewModels/Modal';
+import { Type } from '@angular/core';
+import { DialogBodyComponent } from '../shared/component/DialogBodyComponent';
 
 // -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -101,7 +103,9 @@ export class ActionWithConfirmationDialog extends ActionWithDialog implements IM
         public modalTitle?: string,
         public modalMessage?: string,
         public confirmationKeyword?: string,
-        public additionalParam?: IModalDataAdditionalParameter) {
+        public isWarning?: boolean,
+        public bodyTemplate?: Type<DialogBodyComponent>,
+        public bodyInputs?: any) {
 
         super(dialog, name, title, runningTitle, execute, canRun);
     }

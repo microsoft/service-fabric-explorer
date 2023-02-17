@@ -1,18 +1,13 @@
 <form class="action-modal">
-    <div [class]="(additionalParam?.resourceId ? 'warning ': '') + 'modal-header'">
+    <div [class]="(data.isWarning ? 'warning ': '') + 'modal-header'">
         <h1 class="modal-title">{{data.modalTitle}}</h1>
     </div>
     <div class="modal-body">
-      <app-warning *ngIf="additionalParam?.resourceId" description="This is an ARM managed resource. ARM amanged resources should only be modified during ARM deployments." 
-        [link]="'https://ms.portal.azure.com/#@microsoft.onmicrosoft.com/resource' + additionalParam.resourceId + '/overview'" linkText="Any modifications done here should be replicated using ARM deployments. Click here to visit this resource in the Azure portal."
-        iconSize="mif-lg"></app-warning>
-        <label>{{data.modalMessage}}
-            <input class="input-flat"  data-cy="input-dialog" type="text" [placeholder]="placeHolderText" name="userInput" style="width: 100%;"
-            *ngIf="data.confirmationKeyword" [(ngModel)]="userInput">
-        </label>
+     
+        <ng-template appDialogBody></ng-template>
     </div>
     <div class="modal-footer">
-        <button type="button" class="solid-button blue" [disabled]="data.confirmationKeyword && (data.confirmationKeyword !== userInput.trim())" (click)="ok()" data-cy="submit">{{data.title}}</button>
+        <button type="button" class="solid-button blue" [disabled]="data.confirmationKeyword && disableSubmit" (click)="ok()" data-cy="submit">{{data.title}}</button>
         <button type="button" class="flat-button" (click)="cancel()">Cancel</button>
     </div>
 </form>

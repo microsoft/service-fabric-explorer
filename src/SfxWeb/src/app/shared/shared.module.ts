@@ -36,6 +36,10 @@ import {ClipboardModule} from '@angular/cdk/clipboard';
 import { WarningComponent } from './component/warning/warning.component';
 import { EventStoreTimelineComponent } from './component/event-store-timeline/event-store-timeline.component';
 import { FocusableDirective } from './directive/focusable.directive';
+import { ActionDialogTemplateComponent } from './component/action-dialog-template/action-dialog-template.component';
+import { DialogBodyDirective } from './component/dialog-body.directive';
+import { ArmWarningComponent } from './component/arm-warning/arm-warning.component';
+
 @NgModule({
   declarations: [NavbarComponent, ClipBoardComponent, HealthBadgeComponent, CandyBarCompactComponent, DetailViewPartComponent,
                  CollapseContainerComponent, RefreshRateComponent, DragDirective, ActionDialogComponent, ManifestComponent,
@@ -47,7 +51,7 @@ import { FocusableDirective } from './directive/focusable.directive';
                  DisplayDurationComponent,
                  PhaseDiagramComponent,
                  NodeFilterComponent,
-                 WarningComponent, EventStoreTimelineComponent, FocusableDirective],
+                 WarningComponent, EventStoreTimelineComponent, FocusableDirective, ActionDialogTemplateComponent, DialogBodyDirective, ArmWarningComponent],
   imports: [
     CommonModule,
     RouterModule,
@@ -64,6 +68,6 @@ import { FocusableDirective } from './directive/focusable.directive';
             ClusterUpgradeBannerComponent, DualDatePickerComponent, AdvancedOptionComponent, ReplicaAddressComponent,
             FormatDatePipe, LocalTimeComponent, DisplayTimeComponent, ToggleComponent, StatusResolverComponent,
             StateInfoComponent, EssentialItemComponent, DisplayDurationComponent, PhaseDiagramComponent, NodeFilterComponent,
-            WarningComponent, EventStoreTimelineComponent]
+            WarningComponent, EventStoreTimelineComponent, ActionDialogTemplateComponent, ArmWarningComponent]
 })
 export class SharedModule { }

@@ -1,24 +1,37 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { ComponentType } from '@angular/cdk/portal';
+import { Component, OnInit, Inject, ViewChild, AfterViewInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { IModalData, IModalDataAdditionalParameter } from 'src/app/ViewModels/Modal';
+import { IModalData } from 'src/app/ViewModels/Modal';
+import { ActionDialogTemplateComponent } from '../action-dialog-template/action-dialog-template.component';
+import { DialogBodyDirective } from '../dialog-body.directive';
+import { DialogBodyComponent } from '../DialogBodyComponent';
 
 @Component({
   selector: 'app-action-dialog',
   templateUrl: './action-dialog.component.html',
   styleUrls: ['./action-dialog.component.scss']
 })
-export class ActionDialogComponent implements OnInit {
+export class ActionDialogComponent implements AfterViewInit {
 
-  userInput = '';
-  placeHolderText = '';
-  additionalParam: IModalDataAdditionalParameter = null;
+  @ViewChild(DialogBodyDirective) body: DialogBodyDirective;
+  disableSubmit = false;
+
   constructor(public dialogRef: MatDialogRef<ActionDialogComponent>,
               @Inject(MAT_DIALOG_DATA) public data: IModalData) { }
 
-  ngOnInit() {
-    this.placeHolderText = `Type in ${this.data.confirmationKeyword} to continue`;
-    if (this.data.additionalParam) {
-      this.additionalParam = this.data.additionalParam;
+  ngAfterViewInit() {
+    let modalBody: DialogBodyComponent;
+    if (!this.data.bodyTemplate) {
+      modalBody = this.body.viewContainerRef.createComponent(ActionDialogTemplateComponent).instance;
+      modalBody.inputs = { message: this.data.modalMessage, confirmationKeyword: this.data.confirmationKeyword }; 
+    }
+    else {
+      modalBody = this.body.viewContainerRef.createComponent(this.data.bodyTemplate).instance;
+      modalBody.inputs = this.data.bodyInputs;    
+    }
+
+    if (modalBody.disableSubmit) {
+      modalBody.disableSubmit.subscribe((value) => this.setSumbitDisable(value));
     }
   }
 
@@ -30,4 +43,7 @@ export class ActionDialogComponent implements OnInit {
     this.dialogRef.close(false);
   }
 
+  setSumbitDisable(value: boolean) {
+    this.disableSubmit = value;
+  }
 }
