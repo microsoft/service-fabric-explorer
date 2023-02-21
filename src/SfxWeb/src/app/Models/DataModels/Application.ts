@@ -20,6 +20,7 @@ import { ActionWithConfirmationDialog, IsolatedAction } from '../Action';
 import isEmpty from 'lodash/isEmpty';
 import { ViewBackupComponent } from 'src/app/modules/backup-restore/view-backup/view-backup.component';
 import { RoutesService } from 'src/app/services/routes.service';
+import { ArmWarningComponent } from 'src/app/modules/action-dialog/arm-warning/arm-warning.component';
 // -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
@@ -77,7 +78,8 @@ export class Application extends DataModelBase<IRawApplication> {
     }
 
     public get resourceId(): string {
-        return this.raw.ApplicationMetadata?.ArmMetaData?.ArmResourceId;
+        // return this.raw.ApplicationMetadata?.ArmMetaData?.ArmResourceId;
+        return "test";
     }
 
     public delete(): Observable<any> {
@@ -114,6 +116,7 @@ export class Application extends DataModelBase<IRawApplication> {
         if (this.raw.TypeName === Constants.SystemAppTypeName) {
             return;
         }
+
         this.actions.add(new ActionWithConfirmationDialog(
             this.data.dialog,
             'deleteApplication',
@@ -123,7 +126,14 @@ export class Application extends DataModelBase<IRawApplication> {
             () => true,
             'Confirm Application Deletion',
             `Delete application ${this.name} from cluster ${window.location.host}?`,
-            this.name));
+            this.name,
+            this.resourceId? true: false,
+            this.resourceId ? ArmWarningComponent : null,
+            this.resourceId ? 
+                {resourceId: this.resourceId,
+                    message: `Delete application ${this.name} from cluster ${window.location.host}?`, confirmationKeyword: this.name}
+                     : null
+            ));
     }
 
     private setAdvancedActions(): void {

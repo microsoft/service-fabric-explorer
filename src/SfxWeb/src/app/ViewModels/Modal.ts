@@ -1,4 +1,4 @@
-import { DialogBodyComponent } from "../shared/component/DialogBodyComponent";
+import { DialogBodyComponent } from "../modules/action-dialog/DialogBodyComponent";
 import { Type } from "@angular/core"
 export interface IModalData {
     title: string,

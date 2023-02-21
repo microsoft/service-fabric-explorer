@@ -1,5 +1,4 @@
-import { ComponentType } from '@angular/cdk/portal';
-import { Component, OnInit, Inject, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, Inject, ViewChild, AfterViewInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { IModalData } from 'src/app/ViewModels/Modal';
 import { ActionDialogTemplateComponent } from '../action-dialog-template/action-dialog-template.component';

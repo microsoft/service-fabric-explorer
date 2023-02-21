@@ -1,11 +1,11 @@
 import { Observable, of } from 'rxjs';
 import { mergeMap, finalize } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
-import { ActionDialogComponent } from '../shared/component/action-dialog/action-dialog.component';
+import { ActionDialogComponent } from '../modules/action-dialog/action-dialog/action-dialog.component';
 import { ComponentType } from '@angular/cdk/portal';
 import { IModalData } from '../ViewModels/Modal';
 import { Type } from '@angular/core';
-import { DialogBodyComponent } from '../shared/component/DialogBodyComponent';
+import { DialogBodyComponent } from '../modules/action-dialog/DialogBodyComponent';
 
 // -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.

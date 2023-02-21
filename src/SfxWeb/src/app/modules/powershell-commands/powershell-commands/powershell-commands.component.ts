@@ -1,10 +1,9 @@
 import { ChangeDetectionStrategy, Component,  Input, ViewChild, OnChanges } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { NgbNav, NgbNavChangeEvent } from '@ng-bootstrap/ng-bootstrap';
-import { result } from 'cypress/types/lodash';
 import { CommandSafetyLevel, PowershellCommand } from 'src/app/Models/PowershellCommand';
 import { SettingsService } from 'src/app/services/settings.service';
-import { ActionDialogComponent } from 'src/app/shared/component/action-dialog/action-dialog.component';
+import { ActionDialogComponent } from 'src/app/modules/action-dialog/action-dialog/action-dialog.component';
 import { IModalData } from 'src/app/ViewModels/Modal';
 
 @Component({
