@@ -71,7 +71,7 @@ context('Cluster page', () => {
 
     })
 
-    it('xss', () => {
+    it.only('xss', () => {
 
       addDefaultFixtures('xss/');
 
@@ -123,7 +123,7 @@ context('Cluster page', () => {
 
     })
 
-    it('xss', () => {
+    it.only('xss', () => {
 
       addDefaultFixtures('xss/');
 

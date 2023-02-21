@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-import { addDefaultFixtures, FIXTURE_REF_APPS, apiUrl, checkCommand } from './util.cy';
+import { addDefaultFixtures, FIXTURE_REF_APPS, apiUrl, checkCommand, watchForAlert } from './util.cy';
 
 const appTypeName = "VisualObjectsApplicationType";
 const appname = "fabric:/VisualObjectsApplicationType";
@@ -71,11 +71,23 @@ context('app type', () => {
             cy.url().should('include', `/#/apptype/${appTypeName}/details`)
         })
     })
-  
+
     describe("commands", () => {
       it('view commands', () => {
         cy.wait(FIXTURE_REF_APPS);
         checkCommand(1);
       })
   })
+
+  describe("xss", () => {
+    it.only("essentials/detailst", () => {
+      addDefaultFixtures('xss/');
+      watchForAlert(() => {
+        const xssName = "%253C%253Cimg%2520src%253D'1'%2520onerror%253D'window.alert%28document.domain%29'%253E";
+
+        cy.visit(`/#/apptype/${xssName}/`)
+      })
+    })
+  })
+
 })

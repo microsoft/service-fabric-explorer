@@ -1,0 +1,59 @@
+[
+    {
+        "Name": "<img src='1' onerror='window.alert(document.domain)'>",
+        "Version": "3.0.0",
+        "ServiceManifestName": "<img src='1' onerror='window.alert(document.domain)'>",
+        "Status": "Active",
+        "RunFrequencyInterval": 0,
+        "SetupEntryPoint": {
+            "EntryPointLocation": "",
+            "ProcessId": "0",
+            "RunAsUserName": "",
+            "NextActivationTime": "0001-01-01T00:00:00.000Z",
+            "Status": "Invalid",
+            "CodePackageEntryPointStatistics": {
+                "LastExitCode": 0,
+                "LastActivationTime": "0001-01-01T00:00:00.000Z",
+                "LastExitTime": "0001-01-01T00:00:00.000Z",
+                "LastSuccessfulActivationTime": "0001-01-01T00:00:00.000Z",
+                "LastSuccessfulExitTime": "0001-01-01T00:00:00.000Z",
+                "ActivationFailureCount": 0,
+                "ContinuousActivationFailureCount": 0,
+                "ExitFailureCount": 0,
+                "ContinuousExitFailureCount": 0,
+                "ActivationCount": 0,
+                "ExitCount": 0
+            },
+            "InstanceId": "0"
+        },
+        "MainEntryPoint": {
+            "EntryPointLocation": "D:\\SvcFab\\_App\\<img src='1' onerror='window.alert(document.domain)'>\\VisualObjects.ActorServicePkg.Code.3.0.0\\VisualObjects.ActorService.exe",
+            "ProcessId": "836",
+            "RunAsUserName": "<img src='1' onerror='window.alert(document.domain)'>",
+            "NextActivationTime": "0001-01-01T00:00:00.000Z",
+            "Status": "Started",
+            "CodePackageEntryPointStatistics": {
+                "LastExitCode": 0,
+                "LastActivationTime": "0001-01-01T00:00:00.000Z",
+                "LastExitTime": "2020-09-21T19:18:36.589Z",
+                "LastSuccessfulActivationTime": "2020-09-21T19:18:36.589Z",
+                "LastSuccessfulExitTime": "0001-01-01T00:00:00.000Z",
+                "ActivationFailureCount": 0,
+                "ContinuousActivationFailureCount": 0,
+                "ExitFailureCount": 0,
+                "ContinuousExitFailureCount": 0,
+                "ActivationCount": 1,
+                "ExitCount": 0
+            },
+            "InstanceId": "132451894779231453"
+        },
+        "HasSetupEntryPoint": false,
+        "ServicePackageActivationId": "",
+        "HostType": "ExeHost",
+        "HostIsolationMode": "None",
+        "CodePackageUsageStatistics": {
+            "CodePackageStats": {},
+            "TimeRead": "0001-01-01T00:00:00.000Z"
+        }
+    }
+]

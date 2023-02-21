@@ -59,11 +59,16 @@ context('app', () => {
             cy.contains("ApplicationProcessExited - 1 Events")
         })
 
-        it('xss', () => {
+        it.only('xss', () => {
           addDefaultFixtures(xssPrefix);
+          const xssName = "%253C%253Cimg%2520src%253D'1'%2520onerror%253D'window.alert%28document.domain%29'%253E";
 
           watchForAlert(() => {
-            visit();
+            cy.visit(`/#/apptype/${appName}/app/${xssName}`)
+          })
+
+          watchForAlert(() => {
+            cy.visit(`/#/apptype/${appName}/app/${xssName}/details`)
           })
         });
 
@@ -106,9 +111,9 @@ context('app', () => {
         })
 
         // it.only('xss', () => {
-        //   const xssName = "%253C%253Cimg%2520src%253D'1'%2520onerror%253D'window.alert%28document.domain%29'%253E";
-        //   initializeRoutes("%3C%3Cimg%20src%3D'1'%20onerror%3D'window.alert(document.domain)'%3E", xssPrefix);
-        //   initializeRoutes(xssName, xssPrefix);
+        //   // const xssName = "%253C%253Cimg%2520src%253D'1'%2520onerror%253D'window.alert%28document.domain%29'%253E";
+        //   // initializeRoutes("%3C%3Cimg%20src%3D'1'%20onerror%3D'window.alert(document.domain)'%3E", xssPrefix);
+        //   // initializeRoutes(xssName, xssPrefix);
 
         //   watchForAlert(() => {
         //     visit(xssName);

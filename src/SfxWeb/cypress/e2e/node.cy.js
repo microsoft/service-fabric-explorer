@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-import { apiUrl, addDefaultFixtures, checkTableSize, FIXTURE_REF_NODES, nodes_route, FIXTURE_NODES, addRoute, checkCommand, xssHtml, partialXssDecoding, OPTION_PICKER, CLUSTER_TAB_NAME, SELECT_EVENT_TYPES, renderedSanitizedXSS } from './util.cy';
+import { apiUrl, addDefaultFixtures, checkTableSize, FIXTURE_REF_NODES, nodes_route, FIXTURE_NODES, addRoute, checkCommand, xssHtml, partialXssDecoding, OPTION_PICKER, CLUSTER_TAB_NAME, SELECT_EVENT_TYPES, renderedSanitizedXSS, xssPrefix, watchForAlert } from './util.cy';
 
 const nodeName = "_nt_0"
 const nodeInfoRef = "@getnodeInfo"
@@ -63,7 +63,6 @@ context('node page', () => {
 
             cy.get('[data-cy=deactivated').should('not.exist');
             cy.get('[data-cy=repair-jobs').should('not.exist');
-
         })
 
         it('down node', () => {
@@ -151,20 +150,6 @@ context('node page', () => {
             cy.url().should('include', 'events');
         })
 
-        it.only('xss - url payload', () => {
-          addRoute('events', 'cluster-page/eventstore/cluster-events.json', apiUrl(`/EventsStore/Cluster/Events?*`))
-          addRoute("events", "empty-list.json", apiUrl(`/EventsStore/Nodes/${partialXssDecoding}/$/Events?**`));
-
-          cy.visit(`/#/node/${xssHtml}/events`);
-
-          cy.get(SELECT_EVENT_TYPES).click()
-          cy.get(OPTION_PICKER).within(() => {
-            cy.contains(CLUSTER_TAB_NAME)
-            cy.get('[type=checkbox]').eq(1).check({ force: true })
-          })
-
-          cy.contains(renderedSanitizedXSS)
-        })
     })
 
     describe("commands", () => {
@@ -175,6 +160,39 @@ context('node page', () => {
 
             checkCommand(3, 2);
         })
+    })
+
+    describe("xss" , () => {
+      it.only('essentials/details ', () => {
+        const xssName = "%253C%253Cimg%2520src%253D'1'%2520onerror%253D'window.alert%28document.domain%29'%253E";
+
+        addDefaultFixtures(xssPrefix);
+
+        watchForAlert(() => {
+          cy.visit(`/#/node/${xssName}`);
+        })
+
+
+        watchForAlert(() => {
+          cy.visit(`/#/node/${xssName}/details`);
+        })
+
+      })
+
+      it.only('url payload', () => {
+        addRoute('events', 'cluster-page/eventstore/cluster-events.json', apiUrl(`/EventsStore/Cluster/Events?*`))
+        addRoute("events", "empty-list.json", apiUrl(`/EventsStore/Nodes/${partialXssDecoding}/$/Events?**`));
+
+        cy.visit(`/#/node/${xssHtml}/events`);
+
+        cy.get(SELECT_EVENT_TYPES).click()
+        cy.get(OPTION_PICKER).within(() => {
+          cy.contains(CLUSTER_TAB_NAME)
+          cy.get('[type=checkbox]').eq(1).check({ force: true })
+        })
+
+        cy.contains(renderedSanitizedXSS)
+      })
     })
 
 })

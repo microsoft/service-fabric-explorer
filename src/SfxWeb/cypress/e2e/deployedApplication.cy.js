@@ -1,25 +1,29 @@
 /// <reference types="cypress" />
 
-import { addDefaultFixtures, apiUrl, checkCommand, checkTableSize } from './util.cy';
+import { addDefaultFixtures, apiUrl, checkCommand, checkTableSize, watchForAlert } from './util.cy';
 
 const nodeName = "_nt_2"
-const appName = "VisualObjectsApplicationType";
+const applicationName = "VisualObjectsApplicationType";
 const waitRequest = "@appInfo";
+
+const setup = (appName, prefix = "") => {
+  addDefaultFixtures(prefix);
+
+  cy.intercept(apiUrl(`/Nodes/${nodeName}/$/GetApplications?*`), { fixture: prefix + 'deployed-app-page/deployed-apps.json' }).as('apps');
+  cy.intercept(apiUrl(`/Nodes/${nodeName}/$/GetApplications/${appName}?*`), { fixture: prefix + 'deployed-app-page/deployed-app-info.json' }).as('appInfo');
+  cy.intercept(apiUrl(`/Nodes/${nodeName}/$/GetApplications/${appName}/$/GetHealth?*`), { fixture: prefix + 'deployed-app-page/health.json' }).as('health');
+  cy.intercept(apiUrl(`/Nodes/${nodeName}/$/GetApplications/${appName}/$/GetServicePackages?*`), { fixture: prefix + 'deployed-app-page/service-packages.json' }).as('services');
+
+  cy.visit(`/#/node/${nodeName}/deployedapp/${appName}`)
+}
+
 context('deployed app', () => {
-    beforeEach(() => {
-        addDefaultFixtures();
-
-        cy.intercept(apiUrl(`/Nodes/${nodeName}/$/GetApplications?*`), { fixture: 'deployed-app-page/deployed-apps.json' }).as('apps');
-        cy.intercept(apiUrl(`/Nodes/${nodeName}/$/GetApplications/${appName}?*`), { fixture: 'deployed-app-page/deployed-app-info.json' }).as('appInfo');
-        cy.intercept(apiUrl(`/Nodes/${nodeName}/$/GetApplications/${appName}/$/GetHealth?*`), { fixture: 'deployed-app-page/health.json' }).as('health');
-        cy.intercept(apiUrl(`/Nodes/${nodeName}/$/GetApplications/${appName}/$/GetServicePackages?*`), { fixture: 'deployed-app-page/service-packages.json' }).as('services');
-
-        cy.visit(`/#/node/_nt_2/deployedapp/${appName}`)
-    })
 
     describe("essentials", () => {
         it('load essentials', () => {
-            cy.wait(waitRequest);
+          setup(applicationName)
+
+          cy.wait(waitRequest);
             cy.get('[data-cy=header').within(() => {
                 cy.contains("fabric:/VisualObjectsApplicationType").click();
             })
@@ -34,7 +38,9 @@ context('deployed app', () => {
 
     describe("details", () => {
         it('view details', () => {
-            cy.wait(waitRequest);
+          setup(applicationName)
+
+          cy.wait(waitRequest);
 
             cy.get('[data-cy=navtabs]').within(() => {
                 cy.contains('details').click();
@@ -42,7 +48,8 @@ context('deployed app', () => {
 
             cy.url().should('include', '/details')
         })
-    })
+
+      })
 
     describe("commands", () => {
         it('view commands', () => {
@@ -50,6 +57,20 @@ context('deployed app', () => {
 
             checkCommand(4, 1);
         })
+    })
+
+    describe('xss', () => {
+      it.only('essentials/details', () => {
+        const xssName = "%253Cimg%2520src%253D'1'%2520onerror%253D'window.alert%28document.domain%29'%253E";
+
+        watchForAlert(() => {
+          setup(xssName, "xss/");
+        })
+
+        watchForAlert(() => {
+          cy.visit(`/#/node/${nodeName}/deployedapp/${xssName}`)
+        })
+      })
     })
 
 })
