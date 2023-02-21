@@ -9,7 +9,7 @@ import { DeployedApplicationCollection } from 'src/app/Models/DataModels/collect
 import { NodeBaseControllerDirective } from '../NodeBase';
 import { IEssentialListItem } from 'src/app/modules/charts/essential-health-tile/essential-health-tile.component';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
-import { NodeStatusConstants } from 'src/app/Common/Constants';
+import { INodeTypeInfo } from 'src/app/Models/DataModels/Cluster';
 
 @Component({
   selector: 'app-essentials',
@@ -27,6 +27,7 @@ export class EssentialsComponent extends NodeBaseControllerDirective {
   repairJobs = [];
   repairJobSettings: ListSettings;
 
+  placementProperties: INodeTypeInfo;
 
   constructor(protected data: DataService, injector: Injector, private settings: SettingsService) {
     super(data, injector);
@@ -100,6 +101,7 @@ export class EssentialsComponent extends NodeBaseControllerDirective {
         this.deployedApps = this.node.deployedApps;
       })),
       this.data.clusterManifest.ensureInitialized().pipe(mergeMap(() => {
+        this.placementProperties = this.data.clusterManifest.getNodeProperties(this.node.raw.Type);
         if (this.data.clusterManifest.isRepairManagerEnabled) {
           return this.data.repairCollection.refresh().pipe(map(() => {
             this.repairJobs = this.data.repairCollection.getRepairJobsForANode(this.node.name);

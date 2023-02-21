@@ -9,6 +9,15 @@
     <app-essential-health-tile [listItems]="ringInfo" data-cy="node-ring-info">
     </app-essential-health-tile>
 
+    <app-dashboard-text-scale-tile *ngIf="placementProperties" data-cy="placementconstraints">
+      <div class="placement-constraint-wrapper text-center">
+        <h5 class="top-seperator">Placement Properties</h5>
+        <div class="inner-list" *ngFor="let property of placementProperties.placementProperties | keyvalue">
+          <div>{{property.key}} : {{property.value}}</div>
+        </div>
+      </div>
+    </app-dashboard-text-scale-tile>
+
     <ng-container *ngIf="node?.loadInformation?.isInitialized" >
       <app-dashboard-text-tile [count]="node.loadInformation.metrics.Count" title="Total Count" middleMargin="0px 0"
       helpTextLink="https://aka.ms/sf/loadinformation">

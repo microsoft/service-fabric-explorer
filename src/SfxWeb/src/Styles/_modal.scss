@@ -8,12 +8,6 @@ $dialog-input-bg-color: #242424;
     background-color: #373737;
     font-weight: var(--font-weight-normal);
 
-    .input-flat {
-        background-color: $dialog-input-bg-color;
-        border: 0px solid;
-        color: white;
-    }
-
     [type="checkbox"] + label:before {
         background-color: $dialog-input-bg-color;
     }
@@ -34,7 +28,7 @@ $dialog-input-bg-color: #242424;
         color: var(--font-primary-color);
         max-height: 550px;
         overflow-y: auto;
-        padding: 12px 15px 0px 15px;
+        padding: 12px 15px 5px 15px;
         border: none !important;
 
         .dl-horizontal {

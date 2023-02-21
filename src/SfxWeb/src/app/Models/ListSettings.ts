@@ -10,7 +10,7 @@ import { UtcTimestampComponent } from '../modules/detail-list-templates/utc-time
 import { ITextAndBadge } from '../Utils/ValueResolver';
 import { ShortenComponent } from '../modules/detail-list-templates/shorten/shorten.component';
 import { HealthbadgeComponent } from '../modules/detail-list-templates/healthbadge/healthbadge.component';
-import { EventStoreComponent } from '../modules/event-store/event-store/event-store.component';
+import { IConcurrentEvents } from './eventstore/rcaEngine';
 
 // -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -153,6 +153,7 @@ export interface IListColumnAdditionalSettings {
     clickEvent?: (item) => void;
     canNotExport?: boolean;
     alternateExportFormat?: (item) => string;
+    id?: string;
 }
 
 export interface ITemplate {
@@ -185,6 +186,9 @@ export class ListColumnSetting {
         return this.filterValues.every(val => !val.isChecked);
     }
 
+    public get id() {
+        return this.config.id;
+    }
     /**
      * Create a column setting
      * @param propertyPath The property path to retrieve display object/value
@@ -357,11 +361,11 @@ export class ListColumnSettingWithCustomComponent extends ListColumnSetting impl
     }
 }
 
-export class ListColumnSettingWithEmbeddedVisTool extends ListColumnSetting implements ITemplate {
+export class ListColumnSettingWithEmbeddedVis extends ListColumnSetting implements ITemplate {
     public constructor(public template: Type<DetailBaseComponent>,
                        public propertyPath: string = '',
                        public displayName: string = '',
-                       public eventStoreRef: EventStoreComponent,
+                       public visEvents: Record<string, IConcurrentEvents>,
                        config?: IListColumnAdditionalSettings) {
         super(propertyPath, displayName, config);
     }

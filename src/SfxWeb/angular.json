@@ -36,7 +36,9 @@
             "allowedCommonJsDependencies": [
               "lodash",
               "nouislider",
-              "highcharts"
+              "highcharts",
+              "dayjs",
+              "adal-angular"
             ],
             "scripts": [],
             "stylePreprocessorOptions": {
@@ -151,9 +153,10 @@
       }
     }
   },
-  "defaultProject": "SfxWeb",
   "cli": {
     "analytics": false,
-    "defaultCollection": "@angular-eslint/schematics"
+    "schematicCollections": [
+      "@angular-eslint/schematics"
+    ]
   }
 }

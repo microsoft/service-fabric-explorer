@@ -30,7 +30,13 @@ dl {
     }
 }
 
-.active {
-    background-color: #0075c9 !important;
-    border-width: 2px;
+
+.checkbox-push {
+  input {
+    display: none;
+  }
+}
+
+input:checked + label{
+  background-color: var(--accent-darkblue) !important;
 }

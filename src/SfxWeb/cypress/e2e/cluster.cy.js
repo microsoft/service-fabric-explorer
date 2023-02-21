@@ -6,7 +6,7 @@ import {
   checkTableErrorMessage, EMPTY_LIST_TEXT, FAILED_TABLE_TEXT, FAILED_LOAD_TEXT,
   repairTask_route, manifest_route, CLUSTER_TAB_NAME, REPAIR_TASK_TAB_NAME,
   FIXTURE_REF_NODES, FIXTURE_NODES, typeIntoInput, checkCheckBox, refresh,
-  FIXTURE_REF_SYSTEMAPPS, systemApps_route
+  FIXTURE_REF_SYSTEMAPPS, systemApps_route, checkCommand, FIXTURE_REF_APPTYPES
 } from './util.cy';
 
 const LOAD_INFO = "getloadinfo"
@@ -574,7 +574,7 @@ context('Cluster page', () => {
       addRoute('repairs', file, apiUrl('/$/GetRepairTaskList?*'))
       cy.visit('/#/repairtasks')
 
-      cy.wait("@getrepairs")
+      cy.wait(["@getrepairs", FIXTURE_REF_APPTYPES])
     }
 
     it('loads properly', () => {
@@ -674,7 +674,7 @@ context('Cluster page', () => {
     })
   })
 
-  describe.only("systemService - infraservice", () => {
+  describe("systemService - infraservice", () => {
     beforeEach(() => {
       addDefaultFixtures();
 
@@ -741,6 +741,80 @@ context('Cluster page', () => {
         })
 
         cy.contains('Nodetype worker is deployed with less than 5 VMs.')
+      })
+    })
+  })
+
+  describe("commands", () => {
+    beforeEach(() => {
+      cy.visit('');
+
+      cy.wait(FIXTURE_REF_CLUSTERHEALTH)
+    })
+
+    it('view commands', () => {
+      checkCommand(3, 1);
+    })
+
+    it('check command input', () => {
+
+      cy.get('[data-cy=navtabs]').within(() => {
+          cy.contains('commands').click();
+      });
+
+      cy.url().should('include', 'commands');
+
+      cy.wait(500);
+
+      cy.get('[data-cy=commandNav]').within(() => {
+        cy.contains('Unsafe Commands').click();
+      })
+
+      cy.get('[data-cy=submit]').click();
+      cy.wait(500);
+
+      cy.get('[data-cy=command]').within(() => {
+        cy.get('.detail-pane').should('have.css', 'border-left-color', 'rgb(252, 209, 22)')
+        cy.get('[data-cy=requiredInput]').should('have.length', 3)
+        cy.get('[data-cy=optionalInput]').should('have.length', 0)
+        cy.get('[data-cy=warning]').should('include.text', 'HealthState, SourceId, HealthProperty')
+        cy.get('[data-cy=clipboard]').get('button').should('be.disabled')
+        cy.get('[data-cy=copy-text]').should('have.text', ' Send-ServiceFabricClusterHealthReport  ')
+
+        cy.contains('Optional Parameters').click()
+        cy.get('[data-cy=optionalInput]').should('have.length', 6)
+
+        cy.contains('HealthState').click().contains('OK').click()
+        cy.get('[data-cy=warning]').should('not.include.text', 'HealthState')
+        cy.get('[data-cy=copy-text]').should('include.text', '-HealthState  OK')
+
+        cy.contains('SourceId').type('id')
+        cy.get('[data-cy=warning]').should('not.include.text', 'SourceId')
+        cy.get('[data-cy=copy-text]').should('include.text', '-SourceId  "id"')
+
+        cy.contains('HealthProperty').type('property')
+        cy.get('[data-cy=warning]').should('not.exist')
+        cy.get('[data-cy=copy-text]').should('include.text', '-HealthProperty  "property"')
+
+        cy.get('[data-cy=clipboard]').get('button').should('be.enabled')
+
+        cy.contains('Description').type('description sentence')
+        cy.get('[data-cy=copy-text]').should('include.text', '-Description  "description sentence"')
+
+        cy.contains('TimeToLiveSec').type('10')
+        cy.get('[data-cy=copy-text]').should('include.text', '-TimeToLiveSec  10')
+
+        cy.contains('RemoveWhenExpired').click()
+        cy.get('[data-cy=copy-text]').should('include.text', '-RemoveWhenExpired')
+
+        cy.contains('SequenceNumber').type('99')
+        cy.get('[data-cy=copy-text]').should('include.text', '-SequenceNumber  99')
+
+        cy.contains('Immediate').click()
+        cy.get('[data-cy=copy-text]').should('include.text', '-Immediate')
+
+        cy.contains('TimeoutSec').type('100')
+        cy.get('[data-cy=copy-text]').should('include.text', '-TimeoutSec  10')
       })
     })
   })

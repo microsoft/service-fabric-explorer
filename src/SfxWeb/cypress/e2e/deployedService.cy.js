@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-import { addDefaultFixtures, apiUrl, addRoute } from './util.cy';
+import { addDefaultFixtures, apiUrl, addRoute, checkCommand } from './util.cy';
 
 const nodeName = "_nt_2"
 const appName = "VisualObjectsApplicationType";
@@ -53,6 +53,15 @@ context('deployed service package', () => {
             })
 
             cy.url().should('include', '/manifest')
+        })
+    })
+
+    describe("commands", () => {
+        it('view commands', () => {
+            cy.wait(waitRequest);
+
+            checkCommand(3, 1);
+
         })
     })
 })

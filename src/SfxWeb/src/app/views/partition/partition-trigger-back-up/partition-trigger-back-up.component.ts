@@ -1,5 +1,5 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { DataService } from 'src/app/services/data.service';
 import { Partition } from 'src/app/Models/DataModels/Partition';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
@@ -12,9 +12,9 @@ import { IsolatedAction } from 'src/app/Models/Action';
 })
 export class PartitionTriggerBackUpComponent implements OnInit {
 
-  form: FormGroup;
+  form: UntypedFormGroup;
 
-  constructor(private formBuilder: FormBuilder,
+  constructor(private formBuilder: UntypedFormBuilder,
               private data: DataService,
               @Inject(MAT_DIALOG_DATA) public partition: IsolatedAction,
               public dialogRef: MatDialogRef<PartitionTriggerBackUpComponent>) { }

@@ -9,17 +9,20 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { DetailListTemplatesModule } from 'src/app/modules/detail-list-templates/detail-list-templates.module';
 import { ChartsModule } from 'src/app/modules/charts/charts.module';
 import { HealthStateModule } from 'src/app/modules/health-state/health-state.module';
+import { CommandsComponent } from './commands/commands.component';
+import { PowershellCommandsModule } from 'src/app/modules/powershell-commands/powershell-commands.module';
 
 
 @NgModule({
-  declarations: [BaseComponent, DetailsComponent, ManifestComponent, EssentialsComponent],
+  declarations: [BaseComponent, DetailsComponent, ManifestComponent, EssentialsComponent, CommandsComponent],
   imports: [
     CommonModule,
     SharedModule,
     DeployedServicePackageRoutingModule,
     DetailListTemplatesModule,
     ChartsModule,
-    HealthStateModule
+    HealthStateModule,
+    PowershellCommandsModule
   ]
 })
 export class DeployedServicePackageModule { }
