@@ -64,6 +64,10 @@ context('node page', () => {
             cy.get('[data-cy=deactivated').should('not.exist');
             cy.get('[data-cy=repair-jobs').should('not.exist');
 
+            cy.get('[data-cy=placementconstraints]').within(() => {
+              cy.contains("NodeTypeName : nt")
+            })
+
         })
 
         it('down node', () => {
@@ -155,7 +159,7 @@ context('node page', () => {
     describe("commands", () => {
         it('view commands', () => {
             cy.visit(`/#/node/${nodeName}`);
-            
+
             cy.wait([nodeInfoRef, "@getnodehealthInfo"]);
 
             checkCommand(3, 2);

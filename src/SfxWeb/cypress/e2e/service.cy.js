@@ -29,12 +29,16 @@ context('service', () => {
             cy.visit(urlFormatter(appName, serviceName))
         })
 
-        it('load essentials', () => {
-            cy.wait(waitRequest);
+        it('load essentials - no placement constraints', () => {
+          cy.wait(waitRequest);
 
-            cy.get('[data-cy=header]').within(() => {
-                cy.contains(serviceName).click();
-            })
+          cy.get('[data-cy=header]').within(() => {
+              cy.contains(serviceName).click();
+          })
+
+          cy.get("[data-cy=placementconstraints]").within(() => {
+            cy.contains('No placement constraints defined')
+          })
         })
 
         it('stateful information', () => {
@@ -107,7 +111,7 @@ context('service', () => {
             cy.wait(waitRequest);
 
             checkCommand(3, 1);
-    
+
         })
       })
 
@@ -148,12 +152,16 @@ context('service', () => {
             cy.visit(urlFormatter(appName, statelessServiceName))
         })
 
-        it('stateless information', () => {
+        it('stateless information - with placement constraints', () => {
             cy.wait(waitRequest);
 
             cy.get('[data-cy=state-data]').within(() => {
                 cy.contains("Stateless")
                 cy.contains("Instance Count")
+            })
+
+            cy.get("[data-cy=placementconstraints]").within(() => {
+              cy.contains('nodetype == "main")')
             })
         })
 
