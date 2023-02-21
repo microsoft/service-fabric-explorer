@@ -16,6 +16,40 @@
   <app-dashboard-tile [data]="replicasDashboard" *ngIf="replicasDashboard"></app-dashboard-tile>
 </div>
 
+<app-collapse-container *ngIf="eventStoreHandler" class="essen-pane detail-pane">
+  <h5 collapse-header>Recent Application and Container Exit Event Reasons</h5>
+  <div collapse-body>
+    <div style="margin-left: 30px">
+      <a routerLink="./events">
+        <i class="mif-link"></i>
+        For additional events visit the Events tab
+      </a>
+    </div>
+    <div style="margin-left: 30px">
+      <a href="https://docs.microsoft.com/azure/service-fabric/service-fabric-diagnostics-code-package-errors"
+        target="_blank">
+        <i class="mif-info"></i>
+        learn more about exit events
+      </a>
+    </div>
+
+    <div *ngIf="eventStoreHandler.eventsList.isRefreshing">
+      Loading information about any recent Application Process Exit or Container Exit Events
+    </div>
+    <div *ngIf="eventStoreHandler.eventsList.isInitialized && highValueEvents">
+      <div style="min-height: 200px" *ngIf="highValueEvents.length > 0">
+        <app-rca-summary [events]="highValueEvents"></app-rca-summary>
+      </div>
+      <div class="text-center" *ngIf="highValueEvents.length === 0">
+        No Recent events
+      </div>
+    </div>
+    <div *ngIf="failedToLoadEvents" class="text-center">
+      Failed to load events
+    </div>
+  </div>
+</app-collapse-container>
+
 <div data-cy="upgradeDetails" *ngIf="upgradeProgress && upgradeProgress.isInitialized" class="detail-pane essen-pane">
     <app-collapse-container [sectionName]="app.isUpgrading ? 'Upgrade In Progress' : 'Latest Upgrade State'">
         <div collapse-header>

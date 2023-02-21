@@ -11,10 +11,12 @@ import { ActionRowComponent } from './action-row/action-row.component';
 import { CreateApplicationComponent } from './create-application/create-application.component';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { NgbNavModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
+import { CommandsComponent } from './commands/commands.component';
+import { PowershellCommandsModule } from 'src/app/modules/powershell-commands/powershell-commands.module';
 
 
 @NgModule({
-    declarations: [BaseComponent, EssentialsComponent, DetailsComponent, ActionRowComponent, CreateApplicationComponent],
+    declarations: [BaseComponent, EssentialsComponent, DetailsComponent, ActionRowComponent, CreateApplicationComponent, CommandsComponent],
     imports: [
         CommonModule,
         ApplicationTypeRoutingModule,
@@ -23,7 +25,8 @@ import { NgbNavModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
         ReactiveFormsModule,
         FormsModule,
         NgbNavModule,
-        NgbTooltipModule
+        NgbTooltipModule,
+        PowershellCommandsModule
     ]
 })
 export class ApplicationTypeModule { }

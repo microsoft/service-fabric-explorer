@@ -56,6 +56,10 @@ export const FIXTURE_UPGRADEREPAIRTASK ="GetRepairTaskList";
 export const FIXTURE_REF_UPGRADEREPAIRTASK = exportFormat(FIXTURE_UPGRADEPROGRESS);
 export const repairTask_route = apiUrl('/$/GetRepairTaskList?*');
 
+export const FIXTURE_SYSTEMAPPS ="getSystemApps";
+export const FIXTURE_REF_SYSTEMAPPS = exportFormat(FIXTURE_UPGRADEPROGRESS);
+export const systemApps_route = apiUrl('/Applications/System/$/GetServices?*');
+
 export const addRoute = (fixtureName, fixtureFileName, route, requestType = 'GET') => {
     cy.intercept(requestType, route, {fixture: fixtureFileName}).as(fixtureRequestFormatter(fixtureName))
 }
@@ -70,8 +74,8 @@ export const addDefaultFixtures = () => {
     addRoute(FIXTURE_NODES, 'nodes.json', nodes_route)
     addRoute(FIXTURE_SYSTEMAPPLICATIONS_HEALTH, 'systemApplicationHealth.json', systemApplicationHealth_route)
     addRoute(FIXTURE_UPGRADEPROGRESS, 'upgradeProgress.json', upgradeProgress_route)
+    addRoute(FIXTURE_REF_SYSTEMAPPS, 'systemApps.json', systemApps_route)
     addRoute(FIXTURE_UPGRADEREPAIRTASK, 'emptyRepairJobs.json', repairTask_route)
-
     addRoute('visualObjectsApplicationType', 'visualObjectsApplicationType.json', apiUrl('/Applications/VisualObjectsApplicationType/?*'))
 }
 
@@ -140,6 +144,33 @@ export const checkCheckBox = (inputRef) => {
   cy.get(inputRef).within(() => {
       cy.get('input').check()
   })
+}
+
+export const checkCommand = (numSafeCommands, numUnsafeCommands = 0) => {
+
+  cy.get('[data-cy=navtabs]').within(() => {
+    cy.contains('commands').click();
+  })
+
+  cy.url().should('include', 'commands');
+
+  cy.wait(500);
+  
+  cy.get('[data-cy=safeCommands]');
+  
+  cy.get('[data-cy=command]').should('have.length', numSafeCommands);
+  
+  if (numUnsafeCommands) {
+    
+    cy.get('[data-cy=unsafeCommands]');
+    cy.get('[data-cy=commandNav]').within(() => {
+      cy.contains('Unsafe Commands').click();
+    })
+    
+    cy.get('[data-cy=submit]').click();
+    
+    cy.get('[data-cy=command]').should('have.length', numUnsafeCommands);
+  }
 }
 
 // Tabs names

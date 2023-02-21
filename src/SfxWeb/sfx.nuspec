@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>ServiceFabric.Explorer</id>
+    <version>1.0</version>
+    <title>Service Fabric Explorer</title>
+    <authors>ServiceFabric</authors>
+    <owners>ServiceFabric</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Service fabric explorer</description>
+    <releaseNotes>Create package</releaseNotes>
+    <copyright>Copyright © 2018 Microsoft Corporation</copyright>
+    <tags></tags>
+    <contentFiles>
+        <files include="any\any\sfx\**" buildAction="None" copyToOutput="true" />
+    </contentFiles>
+  </metadata>
+  <files>
+    <file src="dist\**" target="Content" />
+    <file src="dist\**" target="contentFiles\any\any\sfx" />
+  </files>
+</package>

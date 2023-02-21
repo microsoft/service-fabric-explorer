@@ -137,6 +137,8 @@ export class ClusterManifest extends DataModelBase<IRawClusterManifest> {
     public isRepairManagerEnabled = false;
     public isEventStoreEnabled = false;
     public nodeTypeProperties: INodeTypeInfo[];
+    public eventStoreTimeRange = 30;
+
     public constructor(data: DataService) {
         super(data);
     }
@@ -178,6 +180,13 @@ export class ClusterManifest extends DataModelBase<IRawClusterManifest> {
                 this.isRepairManagerEnabled = true;
             }else if (item.getAttribute('Name') === 'EventStoreService'){
                 this.isEventStoreEnabled = true;
+            } else if (item.getAttribute('Name') === 'AzureBlobServiceFabricEtw') {
+                const params = item.getElementsByTagName('Parameter');
+                for (let j = 0; j < params.length; j++){
+                    if (params.item(j).getAttribute('Name') === 'DataDeletionAgeInDays') {
+                        this.eventStoreTimeRange = +params.item(j).getAttribute('Value')
+                    }
+                }
             }
         }
 

@@ -34,12 +34,13 @@ import { DeployedApplicationCollection } from '../Models/DataModels/collections/
 import { MatDialog } from '@angular/material/dialog';
 import { RepairTaskCollection } from '../Models/DataModels/collections/RepairTaskCollection';
 import { ApplicationEvent, ClusterEvent, FabricEventBase, NodeEvent, PartitionEvent, ReplicaEvent, ServiceEvent } from '../Models/eventstore/Events';
-import { IEventStoreData } from '../modules/event-store/event-store/event-store.component';
+import { EventType, IEventStoreData } from '../modules/event-store/event-store/event-store.component';
 import { SettingsService } from './settings.service';
 import { RepairTask } from '../Models/DataModels/repairTask';
 import { ApplicationTimelineGenerator, ClusterTimelineGenerator, NodeTimelineGenerator, PartitionTimelineGenerator, RepairTaskTimelineGenerator } from '../Models/eventstore/timelineGenerators';
 import groupBy from 'lodash/groupBy';
 import { StandaloneIntegrationService } from './standalone-integration.service';
+import { InfrastructureCollection } from '../Models/DataModels/collections/infrastructureCollection';
 
 @Injectable({
   providedIn: 'root'
@@ -48,6 +49,7 @@ export class DataService {
 
   public systemApp: SystemApplication;
   public clusterManifest: ClusterManifest;
+  public clusterHealth: ClusterHealth;
   public clusterUpgradeProgress: ClusterUpgradeProgress;
   public clusterLoadInformation: ClusterLoadInformation;
   public appTypeGroups: ApplicationTypeGroupCollection;
@@ -56,6 +58,7 @@ export class DataService {
   public imageStore: ImageStore;
   public backupPolicies: BackupPolicyCollection;
   public repairCollection: RepairTaskCollection;
+  public infrastructureCollection: InfrastructureCollection;
 
   public readOnlyHeader: boolean =  null;
   public clusterNameMetadata: string = null;
@@ -79,7 +82,8 @@ export class DataService {
     this.systemApp = new SystemApplication(this);
     this.backupPolicies = new BackupPolicyCollection(this);
     this.repairCollection = new RepairTaskCollection(this);
-
+    this.infrastructureCollection = new InfrastructureCollection(this);
+    this.clusterHealth = this.getClusterHealth(HealthStateFilterFlags.Default, HealthStateFilterFlags.None, HealthStateFilterFlags.None);
     if(standalone.isStandalone()) {
       this.clusterNameMetadata = standalone.clusterUrl;
       this.readOnlyHeader = !!standalone.integrationConfig.isReadOnlyMode;
@@ -119,6 +123,10 @@ export class DataService {
     applicationsHealthStateFilter: HealthStateFilterFlags = HealthStateFilterFlags.Default
   ): ClusterHealth {
     return new ClusterHealth(this, eventsHealthStateFilter, nodesHealthStateFilter, applicationsHealthStateFilter);
+  }
+
+  public getDefaultClusterHealth(forceRefresh: boolean = false, messageHandler?: IResponseMessageHandler) {
+    return this.clusterHealth.ensureInitialized(forceRefresh, messageHandler).pipe(map(() => this.clusterHealth));
   }
 
   public getClusterManifest(forceRefresh: boolean = false, messageHandler?: IResponseMessageHandler): Observable<ClusterManifest> {
@@ -327,23 +335,28 @@ export class DataService {
         data.listSettings = data.eventsList.settings;
         data.getEvents = () => data.eventsList.collection.map(event => event.raw);
         data.setDateWindow = (startDate: Date, endDate: Date) => data.eventsList.setDateWindow(startDate, endDate);
+        data.objectResolver = (id: string) => data.eventsList.collection.find(item => item.raw.eventInstanceId === id);
+        return data;
     }
 
     public getRepairTasksData(settings: SettingsService): IEventStoreData<RepairTaskCollection, RepairTask>{
         return {
             eventsList: this.repairCollection,
-            timelineGenerator: new RepairTaskTimelineGenerator(),
+            type: "RepairTask",
             displayName: 'Repair Tasks',
             listSettings: settings.getNewOrExistingCompletedRepairTaskListSettings(),
-            getEvents: () => this.repairCollection.collection
+            getEvents: () => this.repairCollection.collection,
+            objectResolver:  (id: string) => {
+              return this.repairCollection.collection.find(task => task.raw.TaskId === id);
+            }
         };
     }
 
     public getClusterEventData(): IEventStoreData<ClusterEventList, ClusterEvent>{
         const list = new ClusterEventList(this);
-        const d = {
+        const d : IEventStoreData<ClusterEventList, ClusterEvent> = {
             eventsList : list,
-            timelineGenerator : new ClusterTimelineGenerator(),
+            type : "Cluster",
             displayName : 'Cluster',
         };
 
@@ -353,9 +366,9 @@ export class DataService {
 
     public getNodeEventData(nodeName?: string): IEventStoreData<NodeEventList, NodeEvent>{
         const list = new NodeEventList(this, nodeName);
-        const d = {
+        const d: IEventStoreData<NodeEventList, NodeEvent> = {
             eventsList: list,
-            timelineGenerator: new NodeTimelineGenerator(),
+            type: "Node",
             displayName: nodeName ? nodeName : 'Nodes',
         };
 
@@ -365,9 +378,9 @@ export class DataService {
 
     public getApplicationEventData(applicationId?: string): IEventStoreData<ApplicationEventList, ApplicationEvent> {
         const list = new ApplicationEventList(this, applicationId);
-        const d = {
+        const d: IEventStoreData<ApplicationEventList, ApplicationEvent> = {
             eventsList : list,
-            timelineGenerator : applicationId ? new ApplicationTimelineGenerator() : null,
+            type : applicationId ? "Application" : null,
             displayName : applicationId ? applicationId : 'Apps',
         };
 
@@ -388,9 +401,9 @@ export class DataService {
 
     public getPartitionEventData(partitionId?: string): IEventStoreData<PartitionEventList, PartitionEvent> {
         const list = new PartitionEventList(this, partitionId);
-        const d = {
+        const d: IEventStoreData<PartitionEventList, PartitionEvent> = {
             eventsList : list,
-            timelineGenerator : new PartitionTimelineGenerator(),
+            type : "Partition",
             displayName : partitionId
         };
 

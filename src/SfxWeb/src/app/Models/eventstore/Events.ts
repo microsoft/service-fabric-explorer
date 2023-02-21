@@ -67,12 +67,14 @@ export class FabricEventInstanceModel<T extends FabricEventBase> extends DataMod
     public isSecondRowCollapsed = true;
     public constructor(data: DataService, raw: T) {
         super(data, raw);
+        this.eventInstanceId = this.raw.eventInstanceId;
     }
 
     // A temp solution till we have instanceId unique.
     public get uniqueId() { return this.raw.kind + this.raw.eventInstanceId + this.raw.timeStamp; }
     public get id() { return this.raw.eventInstanceId; }
     public get name() { return `${this.raw.kind} (${this.raw.eventInstanceId})`; }
+    public eventInstanceId: string;
 }
 
 export class FabricEvent extends FabricEventBase {

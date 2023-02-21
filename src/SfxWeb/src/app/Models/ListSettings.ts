@@ -10,6 +10,7 @@ import { UtcTimestampComponent } from '../modules/detail-list-templates/utc-time
 import { ITextAndBadge } from '../Utils/ValueResolver';
 import { ShortenComponent } from '../modules/detail-list-templates/shorten/shorten.component';
 import { HealthbadgeComponent } from '../modules/detail-list-templates/healthbadge/healthbadge.component';
+import { IConcurrentEvents } from './eventstore/rcaEngine';
 
 // -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -19,6 +20,7 @@ import { HealthbadgeComponent } from '../modules/detail-list-templates/healthbad
 export class ListSettings {
     public search = '';
     public sortPropertyPaths: string[] = [];
+    public additionalSearchableProperties: string[] = [];
     public sortReverse = false;
 
     private iCurrentPage = 1;
@@ -114,6 +116,13 @@ export class ListSettings {
         if (this.columnSettings.length > 0) {
             const newObj = {};
             Utils.unique(this.columnSettings.concat(this.secondRowColumnSettings)).forEach(column => newObj[column.propertyPath] = column.getTextValue(item));
+
+            if(this.additionalSearchableProperties) {
+              this.additionalSearchableProperties.forEach(path => {
+                newObj[path] = Utils.result(item, path);
+              })
+            }
+
             return newObj;
         }
         return item;
@@ -144,6 +153,7 @@ export interface IListColumnAdditionalSettings {
     clickEvent?: (item) => void;
     canNotExport?: boolean;
     alternateExportFormat?: (item) => string;
+    id?: string;
 }
 
 export interface ITemplate {
@@ -176,6 +186,9 @@ export class ListColumnSetting {
         return this.filterValues.every(val => !val.isChecked);
     }
 
+    public get id() {
+        return this.config.id;
+    }
     /**
      * Create a column setting
      * @param propertyPath The property path to retrieve display object/value
@@ -331,7 +344,7 @@ export class ListColumnSettingWithEventStoreFullDescription extends ListColumnSe
     template = FullDescriptionComponent;
     public constructor() {
         super('raw.eventInstanceId', '', {
-            colspan: -1,
+            colspan: 2,
             enableFilter: false
         });
     }
@@ -344,6 +357,16 @@ export class ListColumnSettingWithCustomComponent extends ListColumnSetting impl
                        public displayName: string = '',
                        config?: IListColumnAdditionalSettings) {
 
+        super(propertyPath, displayName, config);
+    }
+}
+
+export class ListColumnSettingWithEmbeddedVis extends ListColumnSetting implements ITemplate {
+    public constructor(public template: Type<DetailBaseComponent>,
+                       public propertyPath: string = '',
+                       public displayName: string = '',
+                       public visEvents: Record<string, IConcurrentEvents>,
+                       config?: IListColumnAdditionalSettings) {
         super(propertyPath, displayName, config);
     }
 }

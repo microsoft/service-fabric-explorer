@@ -32,10 +32,9 @@ import { DisplayDurationComponent } from './component/display-duration/display-d
 import { PhaseDiagramComponent } from './component/phase-diagram/phase-diagram.component';
 import { NodeFilterComponent } from './component/node-filter/node-filter.component';
 import {ClipboardModule} from '@angular/cdk/clipboard';
-
 import { WarningComponent } from './component/warning/warning.component';
 import { NgbPaginationModule} from '@ng-bootstrap/ng-bootstrap';
-
+import { EventStoreTimelineComponent } from './component/event-store-timeline/event-store-timeline.component';
 @NgModule({
   declarations: [NavbarComponent, ClipBoardComponent, HealthBadgeComponent, CandyBarCompactComponent, DetailViewPartComponent,
                  CollapseContainerComponent, RefreshRateComponent, DragDirective, ActionDialogComponent, ManifestComponent,
@@ -47,7 +46,7 @@ import { NgbPaginationModule} from '@ng-bootstrap/ng-bootstrap';
                  DisplayDurationComponent,
                  PhaseDiagramComponent,
                  NodeFilterComponent,
-                 WarningComponent],
+                 WarningComponent, EventStoreTimelineComponent],
   imports: [
     CommonModule,
     RouterModule,
@@ -63,6 +62,7 @@ import { NgbPaginationModule} from '@ng-bootstrap/ng-bootstrap';
             ActionCollectionDropDownComponent, InputComponent, ToastContainerComponent, CheckBoxComponent,
             ClusterUpgradeBannerComponent, DualDatePickerComponent, AdvancedOptionComponent, ReplicaAddressComponent,
             FormatDatePipe, LocalTimeComponent, DisplayTimeComponent, ToggleComponent, StatusResolverComponent,
-            StateInfoComponent, EssentialItemComponent, DisplayDurationComponent, PhaseDiagramComponent, NodeFilterComponent, WarningComponent]
+            StateInfoComponent, EssentialItemComponent, DisplayDurationComponent, PhaseDiagramComponent, NodeFilterComponent,
+            WarningComponent, EventStoreTimelineComponent]
 })
 export class SharedModule { }

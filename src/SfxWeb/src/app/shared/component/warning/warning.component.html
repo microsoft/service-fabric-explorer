@@ -1,10 +1,10 @@
 <div class="warning-message">
-  <span class="mif-4x mif-notification warning-icon"></span>
+  <span class="{{iconSize}} mif-notification warning-icon"></span>
   <div>
     <div>
-      {{description}}
+      {{description}}<ng-content select="[description-add-on]"></ng-content>
     </div>
-    <div>
+    <div *ngIf="descriptionList.length">
       <ul>
         <li *ngFor="let lineItem of descriptionList">
           {{lineItem}}
@@ -12,8 +12,8 @@
       </ul>
 
     </div>
-        <div class="warning-link" *ngIf="linkText">
-          <a [href]="link" target="_blank" class="link">{{linkText}}</a>
-        </div>
+    <div class="warning-link" *ngIf="linkText">
+      <a [href]="link" target="_blank" class="link">{{linkText}}</a>
+    </div>
   </div>
 </div>

@@ -9,17 +9,20 @@ import { EventsComponent } from './events/events.component';
 import { DetailListTemplatesModule } from 'src/app/modules/detail-list-templates/detail-list-templates.module';
 import { EventStoreModule } from 'src/app/modules/event-store/event-store.module';
 import { ChartsModule } from 'src/app/modules/charts/charts.module';
+import { CommandsComponent } from './commands/commands.component';
+import { PowershellCommandsModule } from 'src/app/modules/powershell-commands/powershell-commands.module';
 
 
 @NgModule({
-  declarations: [BaseComponent, AllNodesComponent, EventsComponent],
+  declarations: [BaseComponent, AllNodesComponent, EventsComponent, CommandsComponent],
   imports: [
     CommonModule,
     NodesRoutingModule,
     SharedModule,
     DetailListTemplatesModule,
     EventStoreModule,
-    ChartsModule
+    ChartsModule,
+    PowershellCommandsModule
   ]
 })
 export class NodesModule { }

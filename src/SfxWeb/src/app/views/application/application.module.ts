@@ -14,14 +14,17 @@ import { EventStoreModule } from 'src/app/modules/event-store/event-store.module
 import { UpgradeProgressModule } from 'src/app/modules/upgrade-progress/upgrade-progress.module';
 import { CreateServiceComponent } from './create-service/create-service.component';
 import { FormsModule } from '@angular/forms';
-import { NgbTypeaheadModule, NgbDropdownModule, NgbButtonsModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbTypeaheadModule, NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { ActionRowComponent } from './action-row/action-row.component';
 import { BackupComponent } from './backup/backup.component';
 import { ChartsModule } from 'src/app/modules/charts/charts.module';
 import { HealthStateModule } from 'src/app/modules/health-state/health-state.module';
+import { ConcurrentEventsVisualizationModule } from 'src/app/modules/concurrent-events-visualization/concurrent-events-visualization.module';
+import { CommandsComponent } from './commands/commands.component';
+import { PowershellCommandsModule } from 'src/app/modules/powershell-commands/powershell-commands.module';
 
 @NgModule({
-  declarations: [BaseComponent, EssentialsComponent, DetailsComponent, DeploymentsComponent, ManifestComponent, EventsComponent, CreateServiceComponent, ActionRowComponent, BackupComponent],
+  declarations: [BaseComponent, EssentialsComponent, DetailsComponent, DeploymentsComponent, ManifestComponent, EventsComponent, CreateServiceComponent, ActionRowComponent, BackupComponent, CommandsComponent],
   imports: [
     CommonModule,
     ApplicationRoutingModule,
@@ -31,10 +34,11 @@ import { HealthStateModule } from 'src/app/modules/health-state/health-state.mod
     FormsModule,
     NgbTypeaheadModule,
     NgbDropdownModule,
-    NgbButtonsModule,
+    ConcurrentEventsVisualizationModule,
     UpgradeProgressModule,
     ChartsModule,
-    HealthStateModule
+    HealthStateModule,
+    PowershellCommandsModule
   ]
 })
 export class ApplicationModule { }

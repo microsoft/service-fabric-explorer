@@ -1088,6 +1088,7 @@ export interface IRawInfrastructureJob {
     CurrentlyImpactedRoleInstances: IRawRoleInstanceImpact[];
     RepairTasks: InfraRepairTask[];
     RoleInstancesToBeImpacted: string[];
+    IsThrottled: boolean;
 }
 export interface IRawInfraRepairTask {
     TaskId: string;

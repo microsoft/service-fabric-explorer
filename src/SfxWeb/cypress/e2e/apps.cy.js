@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-import { apiUrl, addDefaultFixtures, addRoute, FIXTURE_REF_APPS, apps_route, EMPTY_LIST_TEXT, refresh, FIXTURE_APPS } from './util.cy';
+import { apiUrl, addDefaultFixtures, addRoute, FIXTURE_REF_APPS, apps_route, EMPTY_LIST_TEXT, refresh, FIXTURE_APPS, checkCommand } from './util.cy';
 
 const appName = "fabric:/VisualObjectsApplicationType";
 
@@ -54,6 +54,25 @@ context('apps list page', () => {
         })
     })
 
+  describe("app types", () => {
+    it('view app types', () => {
+      cy.wait(FIXTURE_REF_APPS);
+
+      cy.get('[data-cy=navtabs]').within(() => {
+        cy.contains('app types').click();
+      })
+
+      cy.url().should('include', `/#/apps/apptypes`)
+      cy.get('[data-cy=active-app-type]').within(() => {
+        cy.contains("1")
+      })
+
+      cy.get('[data-cy=inactive-app-type]').within(() => {
+        cy.contains("1")
+      })
+    })
+  })
+
     describe("events", () => {
         it('view events', () => {
             cy.wait(FIXTURE_REF_APPS);
@@ -65,6 +84,14 @@ context('apps list page', () => {
 
             cy.wait('@getevents')
             cy.url().should('include', '/apps/events')
+        })
+    })
+
+    describe("commands", () => {
+        it('view commands', () => {
+            cy.wait(FIXTURE_REF_APPS);
+
+            checkCommand(1);
         })
     })
 

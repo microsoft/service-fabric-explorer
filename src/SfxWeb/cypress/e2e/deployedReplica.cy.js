@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-import { addDefaultFixtures, apiUrl, checkTableSize } from './util.cy';
+import { addDefaultFixtures, apiUrl, checkCommand, checkTableSize } from './util.cy';
 
 const nodeName = "_nt_2"
 const appName = "VisualObjectsApplicationType";
@@ -66,5 +66,13 @@ context('deployed replica', () => {
 
             cy.url().should('include', '/details')
         })
+
+        it('commands', () => {
+            cy.wait(waitRequest);
+    
+            checkCommand(1);
+    
+        })
     })
+
 })

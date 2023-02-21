@@ -48,7 +48,7 @@ export class AdvancedOptionComponent implements OnInit {
   @HostListener("document:click", ["$event"])
   handleClickEvent(event: PointerEvent) {
     try {
-      if(this.dropdown.isOpen() && !event.target['closest']("#container")) {
+      if(this.dropdown.isOpen() && !event.target['closest']("#advanced-options-container")) {
         this.dropdown.close();
       }
     } catch(e) {

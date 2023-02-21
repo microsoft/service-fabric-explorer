@@ -19,6 +19,10 @@ export class BaseComponent extends DeployedAppBaseControllerDirective {
     {
       name: 'details',
       route: './details'
+    },
+    {
+      name: 'commands',
+      route: './commands'
     }
   ];
 

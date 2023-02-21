@@ -37,6 +37,10 @@ export class BaseComponent implements OnInit {
     {
       name: 'manifest',
       route: '/manifest'
+    },
+    {
+      name: 'commands',
+      route: '/commands'
     }
   ];
   constructor(public tree: TreeService, public dataService: DataService) { }
@@ -60,6 +64,13 @@ export class BaseComponent implements OnInit {
         this.tabs = this.tabs.concat({
           name: 'repair jobs',
           route: '/repairtasks'
+        });
+      }
+
+      if (this.dataService.clusterManifest.isRepairManagerEnabled) {
+        this.tabs = this.tabs.concat({
+          name: 'infrastructure jobs',
+          route: '/infrastructure'
         });
       }
     });

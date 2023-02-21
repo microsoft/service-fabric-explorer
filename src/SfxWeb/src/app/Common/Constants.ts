@@ -74,10 +74,6 @@ export class Constants {
     public static SvgTransitionDuration = 250;
     public static SvgTransitionDurationSlow = 600;
 
-    public static executingInfraJobsSuggestion = 'If the repair task corresponding to Infrastructure updates is stuck in Preparing for long, check the Repair Task page.';
-    public static pendingInfraJobsSuggestion = 'Pending updates when 2 or more updates are in Active state are not executed because of throttling policy in Infrastructure Service.';
-    public static longExecutingInfraJobsSuggestion = 'Infrastructure Jobs are in Executing state for more than 1 hour after approval from Service Fabric. Engage Compute platform teams if its taking too much time.';
-    public static readonly  MaxExecutingInfraJobDuration= 1000 * 60 * 60;
     public static readonly EventsTab: ITab = {
       name: 'events',
       route: './events'
@@ -226,3 +222,209 @@ export class TelemetryEventNames {
   public static listSize = 'set list size';
   public static advancedMode = 'enable advanced mode';
 }
+
+
+export class RepairTaskMessages {
+  public static longExecutingMessage = "This update can prevent other updates from going through. Please reach out to the Azure Compute teams (“Compute Manager/Blackbird”) to figure out why the platform updates are not completing.";
+  public static longExecutingId = "longExecuting";
+  public static seedNodeChecks = "Disabling a seed node can get stuck indefinitely. This is blocked by design to prevent any risk to the cluster availability. There are multiple options available to come out of this state. read more here https://aka.ms/sfseednodequoromtsg";
+  public static seedNodeChecksId = "seedNode";
+  public static safetyChecks = `This usually happens due to the following reasons:
+                                Service health related issues. This is expected when the preparing/restoring health checks have been enabled in this cluster and there is any entity which is not healthy.
+                                Please ensure all entities in the cluster like nodes and services are healthy for this check to pass and allow the updates to proceed.`
+  public static safetyChecksId = "safetychecks";
+  public static clusterHealthCheck = `This is due to cluster health related issues. This is expected when the restoring or preparing health checks have been enabled in this cluster and there is any
+                                      entity which is not healthy. Please ensure all entities in the cluster like nodes and services are healthy
+                                      for this check to pass and allow the updates to proceed.`;
+  public static clusterHealthCheckId = "clusterhealthcheck";
+
+  public static messageMap(id: string) {
+    const map = {};
+    map[RepairTaskMessages.longExecutingId] = "Repair jobs in the executing state for too long can cause issues. " +RepairTaskMessages.longExecutingMessage;
+    map[RepairTaskMessages.seedNodeChecksId] = RepairTaskMessages.seedNodeChecks;
+    map[RepairTaskMessages.safetyChecksId] = RepairTaskMessages.safetyChecks;
+    map[RepairTaskMessages.clusterHealthCheckId] = RepairTaskMessages.clusterHealthCheck;
+    return map[id];
+  }
+}
+
+export interface IPregeneratedColor {
+  color: string,
+  hex: string
+}
+
+//pregenerated safe colors for the timeline to use
+export const pregeneratedColors: IPregeneratedColor[] = [
+    {
+        "color": "809900",
+        "hex": "#809900"
+    },
+    {
+        "color": "E6B3B3",
+        "hex": "#E6B3B3"
+    },
+    {
+        "color": "6680B3",
+        "hex": "#6680B3"
+    },
+    {
+        "color": "66991A",
+        "hex": "#66991A"
+    },
+    {
+        "color": "FF99E6",
+        "hex": "#FF99E6"
+    },
+    {
+        "color": "CCFF1A",
+        "hex": "#CCFF1A"
+    },
+    {
+        "color": "33FFCC",
+        "hex": "#33FFCC"
+    },
+    {
+        "color": "66994D",
+        "hex": "#66994D"
+    },
+    {
+        "color": "B366CC",
+        "hex": "#B366CC"
+    },
+    {
+        "color": "4D8000",
+        "hex": "#4D8000"
+    },
+    {
+        "color": "CC80CC",
+        "hex": "#CC80CC"
+    },
+    {
+        "color": "66664D",
+        "hex": "#66664D"
+    },
+    {
+        "color": "991AFF",
+        "hex": "#991AFF"
+    },
+    {
+        "color": "E666FF",
+        "hex": "#E666FF"
+    },
+    {
+        "color": "4DB3FF",
+        "hex": "#4DB3FF"
+    },
+    {
+        "color": "1AB399",
+        "hex": "#1AB399"
+    },
+    {
+        "color": "E666B3",
+        "hex": "#E666B3"
+    },
+    {
+        "color": "33991A",
+        "hex": "#33991A"
+    },
+    {
+        "color": "CC9999",
+        "hex": "#CC9999"
+    },
+    {
+        "color": "B3B31A",
+        "hex": "#B3B31A"
+    },
+    {
+        "color": "00E680",
+        "hex": "#00E680"
+    },
+    {
+        "color": "4D8066",
+        "hex": "#4D8066"
+    },
+    {
+        "color": "809980",
+        "hex": "#809980"
+    },
+    {
+        "color": "E6FF80",
+        "hex": "#E6FF80"
+    },
+    {
+        "color": "1AFF33",
+        "hex": "#1AFF33"
+    },
+    {
+        "color": "999933",
+        "hex": "#999933"
+    },
+    {
+        "color": "CCCC00",
+        "hex": "#CCCC00"
+    },
+    {
+        "color": "66E64D",
+        "hex": "#66E64D"
+    },
+    {
+        "color": "4D80CC",
+        "hex": "#4D80CC"
+    },
+    {
+        "color": "9900B3",
+        "hex": "#9900B3"
+    },
+    {
+        "color": "4DB380",
+        "hex": "#4DB380"
+    },
+    {
+        "color": "99E6E6",
+        "hex": "#99E6E6"
+    },
+    {
+        "color": "6666FF",
+        "hex": "#6666FF"
+    },
+    {
+        "color": "FFB399",
+        "hex": "#FFB399"
+    },
+    {
+        "color": "2f7ed8",
+        "hex": "#2f7ed8"
+    },
+    {
+        "color": "0d233a",
+        "hex": "#0d233a"
+    },
+    {
+        "color": "8bbc21",
+        "hex": "#8bbc21"
+    },
+    {
+        "color": "910000",
+        "hex": "#910000"
+    },
+    {
+        "color": "1aadce",
+        "hex": "#1aadce"
+    },
+    {
+        "color": "492970",
+        "hex": "#492970"
+    },
+    {
+        "color": "f28f43",
+        "hex": "#f28f43"
+    },
+    {
+        "color": "77a1e5",
+        "hex": "#77a1e5"
+    },
+    {
+        "color": "a6c96a",
+        "hex": "#a6c96a"
+    },
+]

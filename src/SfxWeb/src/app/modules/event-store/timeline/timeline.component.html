@@ -1,0 +1,27 @@
+<div *ngIf="timeLineEventsData && startDate && endDate">
+  
+  <app-event-store-timeline [events]="timeLineEventsData" (itemClicked)="setSearch($event)">
+    <div buttons class="flex-center">
+      <span class="mif-info mif-lg correlated-icon" placement="right"  tooltipClass="styled-tooltip"
+        ngbTooltip="Correlated: Only certain high value scenarios are plotted, created from multiple events.&#010;All: Every event listed is plotted."></span>
+  
+        <div class="btn-group btn-group-toggle radio-btns" style="margin-right: 5px;">
+          <div class="checkbox-push" *ngIf="showCorrelatedBtn">
+            <input type="radio" id="correlated" [value]="false" [(ngModel)]="showAllEvents">
+            <label class="flat-button solid-grey" for="correlated">Correlated</label>
+          </div>
+          <div class="checkbox-push">
+            <input type="radio" id="all" [value]="true" [(ngModel)]="showAllEvents">
+            <label class="flat-button solid-grey" for="all">All</label>
+          </div>
+        </div>
+  
+      <span *ngIf="dataService.isAdvancedModeEnabled() && showAllEvents" class="flex-center">
+        <app-input placeholder="query string" [(model)]="transformText">
+        </app-input>
+        <button class="simple-button" (click)="getTimelineData">filter</button>
+      </span>
+  
+    </div>
+  </app-event-store-timeline><br>
+</div>

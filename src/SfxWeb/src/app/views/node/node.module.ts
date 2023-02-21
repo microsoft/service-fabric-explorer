@@ -12,11 +12,13 @@ import { EventStoreModule } from 'src/app/modules/event-store/event-store.module
 import { UpgradeProgressModule } from 'src/app/modules/upgrade-progress/upgrade-progress.module';
 import { NodeDeactivationModule } from 'src/app/modules/node-deactivation/node-deactivation.module';
 import { ChartsModule } from 'src/app/modules/charts/charts.module';
-import { ClusterModule } from '../cluster/cluster.module';
 import { HealthStateModule } from 'src/app/modules/health-state/health-state.module';
+import { RepairTasksModule } from 'src/app/modules/repair-tasks/repair-tasks.module';
+import { CommandsComponent } from './commands/commands.component';
+import { PowershellCommandsModule } from 'src/app/modules/powershell-commands/powershell-commands.module';
 
 @NgModule({
-  declarations: [BaseComponent, EssentialsComponent, DetailsComponent, EventsComponent],
+  declarations: [BaseComponent, EssentialsComponent, DetailsComponent, EventsComponent, CommandsComponent],
   imports: [
     CommonModule,
     NodeRoutingModule,
@@ -26,8 +28,9 @@ import { HealthStateModule } from 'src/app/modules/health-state/health-state.mod
     UpgradeProgressModule,
     NodeDeactivationModule,
     ChartsModule,
-    ClusterModule,
-    HealthStateModule
+    HealthStateModule,
+    RepairTasksModule,
+    PowershellCommandsModule
   ]
 })
 export class NodeModule { }

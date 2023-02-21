@@ -23,6 +23,8 @@ export class InfrastructureJobTileComponent implements OnChanges, OnInit {
 
   repairJobs: ListSettings;
   repairTask: RepairTask[];
+  completed: RepairTask[];
+  allCollapsed: boolean = true;
 
   constructor(public settings: SettingsService,
               public dataService: DataService) { }
@@ -77,8 +79,12 @@ export class InfrastructureJobTileComponent implements OnChanges, OnInit {
       }
     ];
 
+    this.completed = this.dataService.repairCollection.collection.filter(job => job.raw.TaskId.includes(this.job.id));
     this.dataService.getRepairJobById(this.job.RepairTask.TaskId).subscribe(job => {
       this.repairTask = [job];
+    }, error => {
+      console.log(error)
+      this.repairTask = [];
     });
   }
 }

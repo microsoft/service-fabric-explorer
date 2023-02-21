@@ -57,10 +57,11 @@ const writeRequest = async (req, resp) => {
 }
 
 const loadRequest = async (req) => {
+    const url = reformatUrl(req);
     try {
-        return JSON.parse(await fs.readFile(reformatUrl(req)));
+        return JSON.parse(await fs.readFile(url));
     } catch(e) {
-        console.log("FAILED TO LOAD: " + req)
+       throw new Error(`failed to load ${url}`)
     }
 }
 
@@ -113,6 +114,7 @@ app.all('/*', async (req, res) => {
     if(stripEventSToreRequests) {
         delete req.query['starttimeutc'];
         delete req.query['endtimeutc'];
+        delete req.query['eventTypesFilter'];
     }
 
 
@@ -131,7 +133,8 @@ app.all('/*', async (req, res) => {
     console.log(`${req.url} ${req.method}`);
 
     if(!resp) {
-      res.status(200).end();
+        console.log("failed to forward the request")
+        res.status(200).end();
       return;
     }
 

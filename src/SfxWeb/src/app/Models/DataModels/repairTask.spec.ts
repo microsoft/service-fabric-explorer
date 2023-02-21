@@ -2,6 +2,9 @@ import { RepairTask, Status } from './repairTask';
 import { IRawRepairTask } from '../RawDataTypes';
 import { DataService } from 'src/app/services/data.service';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
+import { of } from 'rxjs';
+import { Node } from './Node';
+import { ClusterHealth } from './Cluster';
 
 
 describe('RepairTask', () => {
@@ -104,7 +107,6 @@ describe('RepairTask', () => {
         const task = new RepairTask(dataService, testData, dateRef);
 
         expect(task.inProgress).toBe(true);
-        console.log(task.history)
         expect(task.history).toContain({
             name: 'Executing',
             timestamp: '2020-07-17T03:17:48.437Z',
@@ -125,6 +127,128 @@ describe('RepairTask', () => {
         expect(task.historyPhases[2].status).toBe('Not Started');
         expect(task.historyPhases[2].startCollapsed).toBeTruthy();
     });
+
+    describe("stuck jobs", () => {
+      fit("long executing", () => {
+        testData.State = 'Executing';
+        testData.History = {
+            CreatedUtcTimestamp: '2020-07-17T03:17:33.342Z',
+            ClaimedUtcTimestamp: '2020-07-17T03:17:33.342Z',
+            PreparingUtcTimestamp: '2020-07-17T03:17:33.342Z',
+            ApprovedUtcTimestamp: '2020-07-17T03:17:33.530Z',
+            ExecutingUtcTimestamp: '2020-07-17T03:17:48.437Z',
+            RestoringUtcTimestamp: '0001-01-01T00:00:00.000Z',
+            CompletedUtcTimestamp: '0001-01-01T00:00:00.000Z',
+            PreparingHealthCheckStartUtcTimestamp: '2020-07-17T03:17:33.420Z',
+            PreparingHealthCheckEndUtcTimestamp: '2020-07-17T03:17:33.467Z',
+            RestoringHealthCheckStartUtcTimestamp: '0001-01-01T00:00:00.000Z',
+            RestoringHealthCheckEndUtcTimestamp: '0001-01-01T00:00:00.000Z'
+        };
+        const task = new RepairTask(dataService, testData);
+        expect(task.concerningJobInfo.type).toBe("longExecuting");
+      })
+
+      fit("seed node", () => {
+        dataService.getNode = (name, refresh, messegage) => {
+          return of({ raw: {
+            NodeDeactivationInfo: {
+              PendingSafetyChecks: [
+                {
+                  SafetyCheck: {
+                    Kind: 'EnsureSeedNodeQuorum'
+                  }
+                }
+              ]
+            }
+          } } as Node)
+        }
+
+        testData.State = 'Preparing';
+        testData.History = {
+            CreatedUtcTimestamp: '2020-07-17T03:17:33.342Z',
+            ClaimedUtcTimestamp: '2020-07-17T03:17:33.342Z',
+            PreparingUtcTimestamp: '2020-07-17T03:17:33.342Z',
+            ApprovedUtcTimestamp: '0001-01-01T00:00:00.000Z',
+            ExecutingUtcTimestamp: '0001-01-01T00:00:00.000Z',
+            RestoringUtcTimestamp: '0001-01-01T00:00:00.000Z',
+            CompletedUtcTimestamp: '0001-01-01T00:00:00.000Z',
+            PreparingHealthCheckStartUtcTimestamp: '2020-07-17T03:17:33.420Z',
+            PreparingHealthCheckEndUtcTimestamp: '0001-01-01T00:00:00.000Z',
+            RestoringHealthCheckStartUtcTimestamp: '0001-01-01T00:00:00.000Z',
+            RestoringHealthCheckEndUtcTimestamp: '0001-01-01T00:00:00.000Z'
+        };
+        testData.Impact.NodeImpactList = [{
+          NodeName: 'testnode'
+        }]
+        const task = new RepairTask(dataService, testData);
+        expect(task.concerningJobInfo.type).toBe("seedNode");
+      })
+
+      fit("health check (not seed node)", () => {
+        dataService.getNode = (name, refresh, messegage) => {
+          return of({ raw: {
+            NodeDeactivationInfo: {
+              PendingSafetyChecks: [
+                {
+                  SafetyCheck: {
+                    Kind: 'EnsureAvailability'
+                  }
+                }
+              ]
+            }
+          } } as Node)
+        }
+
+        testData.State = 'Preparing';
+        testData.History = {
+            CreatedUtcTimestamp: '2020-07-17T03:17:33.342Z',
+            ClaimedUtcTimestamp: '2020-07-17T03:17:33.342Z',
+            PreparingUtcTimestamp: '2020-07-17T03:17:33.342Z',
+            ApprovedUtcTimestamp: '0001-01-01T00:00:00.000Z',
+            ExecutingUtcTimestamp: '0001-01-01T00:00:00.000Z',
+            RestoringUtcTimestamp: '0001-01-01T00:00:00.000Z',
+            CompletedUtcTimestamp: '0001-01-01T00:00:00.000Z',
+            PreparingHealthCheckStartUtcTimestamp: '2020-07-17T03:17:33.420Z',
+            PreparingHealthCheckEndUtcTimestamp: '0001-01-01T00:00:00.000Z',
+            RestoringHealthCheckStartUtcTimestamp: '0001-01-01T00:00:00.000Z',
+            RestoringHealthCheckEndUtcTimestamp: '0001-01-01T00:00:00.000Z'
+        };
+        testData.Impact.NodeImpactList = [{
+          NodeName: 'testnode'
+        }]
+        const task = new RepairTask(dataService, testData);
+        expect(task.concerningJobInfo.type).toBe("safetychecks");
+      })
+
+      fit("stuck preparing", () => {
+        dataService.getDefaultClusterHealth = () => {
+          return of({
+            raw: {
+              AggregatedHealthState: 'Warning'
+            }
+          } as ClusterHealth)
+        }
+
+        testData.State = 'Preparing';
+        testData.History = {
+            CreatedUtcTimestamp: '2020-07-17T03:17:33.342Z',
+            ClaimedUtcTimestamp: '2020-07-17T03:17:33.342Z',
+            PreparingUtcTimestamp: '2020-07-17T03:17:33.342Z',
+            ApprovedUtcTimestamp: '0001-01-01T00:00:00.000Z',
+            ExecutingUtcTimestamp: '0001-01-01T00:00:00.000Z',
+            RestoringUtcTimestamp: '0001-01-01T00:00:00.000Z',
+            CompletedUtcTimestamp: '0001-01-01T00:00:00.000Z',
+            PreparingHealthCheckStartUtcTimestamp: '2020-07-17T03:17:33.420Z',
+            PreparingHealthCheckEndUtcTimestamp: '0001-01-01T00:00:00.000Z',
+            RestoringHealthCheckStartUtcTimestamp: '0001-01-01T00:00:00.000Z',
+            RestoringHealthCheckEndUtcTimestamp: '0001-01-01T00:00:00.000Z'
+        };
+
+        const task = new RepairTask(dataService, testData);
+        expect(task.concerningJobInfo.type).toBe("clusterhealthcheck");
+      })
+
+    })
 
 });
 

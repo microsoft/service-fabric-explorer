@@ -14,31 +14,32 @@ import { BackupComponent } from './backup/backup.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ChartsModule } from 'src/app/modules/charts/charts.module';
 import { HealthStateModule } from 'src/app/modules/health-state/health-state.module';
-import { InfrastructureJobsComponent } from './infrastructurejobs/infrastructurejobs.component';
-import { InfrastructureJobModule } from 'src/app/modules/infrastructure-job/infrastructure-job.module';
 import { ClusterModule } from '../cluster/cluster.module';
 import { PlacementComponent } from './placementConstraints/placement.component';
 import { NgbPaginationModule, NgbDropdownModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { PlacementConstraintsModule } from 'src/app/modules/placement-constraints/placement-constraints.module';
+import { CommandsComponent } from './commands/commands.component';
+import { PowershellCommandsModule } from 'src/app/modules/powershell-commands/powershell-commands.module';
+
 
 @NgModule({
-  declarations: [EssentialsComponent, BaseComponent, DetailsComponent, ManifestComponent, EventsComponent, ScaleServiceComponent, BackupComponent, InfrastructureJobsComponent,PlacementComponent],
-  imports: [
-    CommonModule,
-    ServiceRoutingModule,
-    SharedModule,
-    DetailListTemplatesModule,
-    EventStoreModule,
-    FormsModule,
-    ReactiveFormsModule,
-    ChartsModule,
-    HealthStateModule,
-    InfrastructureJobModule,
-    ClusterModule,
-    NgbPaginationModule,
-    NgbDropdownModule,
-    NgbTooltipModule,
-    PlacementConstraintsModule
-  ]
+    declarations: [EssentialsComponent, BaseComponent, DetailsComponent, ManifestComponent, EventsComponent, ScaleServiceComponent, BackupComponent, CommandsComponent, PlacementComponent],
+    imports: [
+        CommonModule,
+        ServiceRoutingModule,
+        SharedModule,
+        DetailListTemplatesModule,
+        EventStoreModule,
+        FormsModule,
+        ReactiveFormsModule,
+        ChartsModule,
+        HealthStateModule,
+        PowershellCommandsModule,
+        ClusterModule,
+        NgbPaginationModule,
+        NgbDropdownModule,
+        NgbTooltipModule,
+        PlacementConstraintsModule
+    ]
 })
 export class ServiceModule { }

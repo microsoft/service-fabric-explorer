@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-import { addDefaultFixtures, FIXTURE_REF_APPS, apiUrl } from './util.cy';
+import { addDefaultFixtures, FIXTURE_REF_APPS, apiUrl, checkCommand } from './util.cy';
 
 const appTypeName = "VisualObjectsApplicationType";
 const appname = "fabric:/VisualObjectsApplicationType";
@@ -71,4 +71,11 @@ context('app type', () => {
             cy.url().should('include', `/#/apptype/${appTypeName}/details`)
         })
     })
+  
+    describe("commands", () => {
+      it('view commands', () => {
+        cy.wait(FIXTURE_REF_APPS);
+        checkCommand(1);
+      })
+  })
 })
