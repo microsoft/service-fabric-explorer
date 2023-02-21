@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, FormControl, AbstractControl } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder, Validators, FormControl, AbstractControl } from '@angular/forms';
 
 @Component({
   selector: 'app-storage-form',
@@ -8,12 +8,12 @@ import { FormGroup, FormBuilder, Validators, FormControl, AbstractControl } from
 })
 export class StorageFormComponent implements OnInit {
 
-  @Input() form: FormGroup;
+  @Input() form: UntypedFormGroup;
   @Input() data: any;
   @Input() required = true;
 
-  localForm: FormGroup;
-  constructor(private formBuilder: FormBuilder) { }
+  localForm: UntypedFormGroup;
+  constructor(private formBuilder: UntypedFormBuilder) { }
 
   ngOnInit() {
     this.localForm = this.formBuilder.group({

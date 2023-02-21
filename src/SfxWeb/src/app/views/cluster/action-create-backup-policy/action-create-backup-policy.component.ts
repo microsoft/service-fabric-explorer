@@ -1,7 +1,7 @@
 import { Component, OnInit, Inject, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { DataService } from 'src/app/services/data.service';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { FormGroup, FormBuilder, Validators, FormArray, AbstractControl } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder, Validators, UntypedFormArray, AbstractControl } from '@angular/forms';
 import { IsolatedAction } from 'src/app/Models/Action';
 
 @Component({
@@ -12,7 +12,7 @@ import { IsolatedAction } from 'src/app/Models/Action';
 })
 export class ActionCreateBackupPolicyComponent implements OnInit {
 
-  form: FormGroup;
+  form: UntypedFormGroup;
 
   public date = '';
   public weekDay: string[]  = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
@@ -22,7 +22,7 @@ export class ActionCreateBackupPolicyComponent implements OnInit {
   constructor(public dialogRef: MatDialogRef<ActionCreateBackupPolicyComponent>,
               @Inject(MAT_DIALOG_DATA) public data: IsolatedAction,
               private dataService: DataService,
-              private formBuilder: FormBuilder,
+              private formBuilder: UntypedFormBuilder,
               private cdr: ChangeDetectorRef) {
   }
 
@@ -115,11 +115,11 @@ export class ActionCreateBackupPolicyComponent implements OnInit {
   }
 
   get RunTimes() {
-    return this.form.get('Schedule').get('RunTimes') as FormArray;
+    return this.form.get('Schedule').get('RunTimes') as UntypedFormArray;
   }
 
   get RunDays() {
-    return this.form.get('Schedule').get('RunDays') as FormArray;
+    return this.form.get('Schedule').get('RunDays') as UntypedFormArray;
   }
 
   addRunTime() {
@@ -141,7 +141,7 @@ export class ActionCreateBackupPolicyComponent implements OnInit {
   }
 
   setDays(days: string[]) {
-    const runDays = this.form.get(['Schedule', 'RunDays']) as FormArray;
+    const runDays = this.form.get(['Schedule', 'RunDays']) as UntypedFormArray;
     this.weekDay.forEach( (day, i) => {
       runDays.at(i).setValue(days.includes(day));
     });

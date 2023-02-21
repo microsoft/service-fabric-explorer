@@ -6,6 +6,7 @@ import padStart from 'lodash/padStart';
 import findIndex from 'lodash/findIndex';
 import { HtmlUtils } from 'src/app/Utils/HtmlUtils';
 import { RepairTask } from 'src/app/Models/DataModels/repairTask';
+import { EventType } from 'src/app/modules/event-store/event-store/event-store.component';
 
 /*
     NOTES:
@@ -37,6 +38,7 @@ export interface ITimelineData {
 export interface ITimelineItem extends DataItem {
     kind: string
     color?: string;
+    groupingClass?: string;
 }
 
 export interface ITimelineDataGenerator<T extends FabricEventBase>{
@@ -80,9 +82,9 @@ export class EventStoreUtils {
         const outline = EventStoreUtils.internalToolTipFormatterObject(data);
         return `<div class="inner-tooltip">
                   ${title.length > 0 ? title + '<br>' : ''}
-                  Start: ${start}
+                  Start (local time): ${start}
                   <br>
-                  ${ end ? 'End: ' + end + '<br>' : ''}
+                  ${ end ? 'End (local time): ' + end + '<br>' : ''}
                   <b>
                     Details
                   </b>

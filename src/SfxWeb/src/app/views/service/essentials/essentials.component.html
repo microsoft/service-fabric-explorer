@@ -10,6 +10,21 @@
     <app-state-info [stateful]="service.isStatefulService" [data]="service.description.raw"></app-state-info>
   </app-tile-wrapper>
 
+  <app-dashboard-text-scale-tile *ngIf="service?.description?.isInitialized" data-cy="placementconstraints">
+    <div class="placement-constraint-wrapper">
+      <div class="text-center ">
+        <h5 class="top-seperator">Placement Constraints</h5>
+        <div>
+          {{service.description.raw.PlacementConstraints || 'No placement constraints defined'}}
+        </div>
+      </div>
+      <div>
+        <a href="https://learn.microsoft.com/en-us/azure/service-fabric/service-fabric-cluster-resource-manager-configure-services#placement-constraints"
+          target="_blank"><span class="mif-info"></span> Learn More</a>
+      </div>
+    </div>
+  </app-dashboard-text-scale-tile>
+
   <app-dashboard-tile [data]="partitionsDashboard" *ngIf="partitionsDashboard"></app-dashboard-tile>
   <app-dashboard-tile [data]="replicasDashboard" *ngIf="replicasDashboard"></app-dashboard-tile>
 </div>

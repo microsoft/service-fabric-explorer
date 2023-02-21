@@ -1,8 +1,9 @@
-import { Component, Input, ChangeDetectionStrategy, AfterViewInit, ViewChild, ElementRef, OnChanges } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy, AfterViewInit, ViewChild, ElementRef, OnChanges, SecurityContext } from '@angular/core';
 import { UpgradeDomain } from 'src/app/Models/DataModels/Shared';
 import { Chart, Options, chart, PointOptionsObject } from 'highcharts';
 import { Counter } from 'src/app/Utils/Utils';
 import { BadgeConstants, UpgradeDomainStateNames } from 'src/app/Common/Constants';
+import { DomSanitizer } from '@angular/platform-browser';
 
 interface ITileCount {
   css: string;
@@ -26,6 +27,8 @@ export class UpgradeProgressComponent implements AfterViewInit, OnChanges {
 
   tiles: ITileCount[] = [];
   displayUd: UpgradeDomain[] = [];
+
+  constructor(private sanitizer: DomSanitizer) {}
 
   ngAfterViewInit() {
     if (this.showChart) {
@@ -68,7 +71,7 @@ export class UpgradeProgressComponent implements AfterViewInit, OnChanges {
         tooltip: {
           formatter: (() => { const bind = this; return function(data) {
             const ud = bind.upgradeDomains[this.point.index];
-            return `${this.key} <br> ${ud.stateName}`; };
+            return bind.sanitizer.sanitize(SecurityContext.HTML,`${this.key} <br> ${ud.stateName}`); };
           })()
         },
         series: [{
