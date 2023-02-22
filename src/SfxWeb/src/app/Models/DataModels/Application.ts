@@ -21,6 +21,7 @@ import isEmpty from 'lodash/isEmpty';
 import { ViewBackupComponent } from 'src/app/modules/backup-restore/view-backup/view-backup.component';
 import { RoutesService } from 'src/app/services/routes.service';
 import { ArmWarningComponent } from 'src/app/modules/action-dialog/arm-warning/arm-warning.component';
+import { ActionDialogTemplateComponent } from 'src/app/modules/action-dialog/action-dialog-template/action-dialog-template.component';
 // -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
@@ -131,7 +132,7 @@ export class Application extends DataModelBase<IRawApplication> {
             this.resourceId ? ArmWarningComponent : null,
             this.resourceId ? 
                 {resourceId: this.resourceId,
-                    message: `Delete application ${this.name} from cluster ${window.location.host}?`, confirmationKeyword: this.name}
+                    message: `Delete application ${this.name} from cluster ${window.location.host}?`, confirmationKeyword: this.name, template: ActionDialogTemplateComponent}
                      : null
             ));
     }

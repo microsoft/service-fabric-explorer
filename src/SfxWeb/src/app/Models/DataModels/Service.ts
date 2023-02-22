@@ -19,6 +19,8 @@ import { ActionWithConfirmationDialog, IsolatedAction } from '../Action';
 import { ScaleServiceComponent } from 'src/app/views/service/scale-service/scale-service.component';
 import { ViewBackupComponent } from 'src/app/modules/backup-restore/view-backup/view-backup.component';
 import { RoutesService } from 'src/app/services/routes.service';
+import { ArmWarningComponent } from 'src/app/modules/action-dialog/arm-warning/arm-warning.component';
+import { ActionDialogTemplateComponent } from 'src/app/modules/action-dialog/action-dialog-template/action-dialog-template.component';
 // -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
@@ -71,7 +73,8 @@ export class Service extends DataModelBase<IRawService> {
     }
 
     public get resourceId(): string {
-        return this.raw.ServiceMetadata?.ArmMetaData?.ArmResourceId;
+        // return this.raw.ServiceMetadata?.ArmMetaData?.ArmResourceId;
+        return "test";
     }
 
     public addHealthStateFiltersForChildren(clusterHealthChunkQueryDescription: IClusterHealthChunkQueryDescription): IServiceHealthStateFilter {
@@ -117,8 +120,14 @@ export class Service extends DataModelBase<IRawService> {
             () => true,
             'Confirm Service Deletion',
             `Delete service ${this.name} from cluster ${window.location.host}?`,
-            this.name
-        ));
+            this.name,
+            this.resourceId? true: false,
+            this.resourceId ? ArmWarningComponent : null,
+            this.resourceId ? 
+                {resourceId: this.resourceId,
+                    message: `Delete service ${this.name} from cluster ${window.location.host}?`, confirmationKeyword: this.name, template: ActionDialogTemplateComponent}
+                     : null
+            ));
 
         if (this.isStatelessService) {
             this.actions.add(new IsolatedAction(
