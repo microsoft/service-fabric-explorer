@@ -15,9 +15,15 @@ import { IModalData } from 'src/app/ViewModels/Modal';
 export class PowershellCommandsComponent implements IModalData, OnChanges{
 
   title: string = 'Acknowledge';
-  modalTitle: string = 'Warning';
-  modalMessage: string;
-  
+  modalTitle: {
+    title: 'Warning',
+    color: 'yellow'
+  }
+  modalBody: {
+    inputs: {
+      message: string
+    }
+  }  
   activeId:any = 1;
   safetyLevelEnum = CommandSafetyLevel;
   
@@ -40,12 +46,12 @@ export class PowershellCommandsComponent implements IModalData, OnChanges{
   onNavChange(e: NgbNavChangeEvent) {
     if (e.nextId == 2 && !this.settings.getSessionVariable<boolean>('unsafeCommandsWarned')) {
       e.preventDefault();
-      this.modalMessage = "The commands you are about to view are potentially unsafe, and executing them can result in undesirable results. Please ensure you understand their risks."
+      this.modalBody.inputs.message = "The commands you are about to view are potentially unsafe, and executing them can result in undesirable results. Please ensure you understand their risks."
       this.openWarningModal('unsafeCommandsWarned', e.nextId);
     }
     else if (e.nextId == 3 && !this.settings.getSessionVariable<boolean>('dangerCommandsWarned')) {
       e.preventDefault();
-      this.modalMessage = "The commands you are about to view are potentially very dangerous to the cluster, and executing them incorrectly can lead to dire consequences."
+      this.modalBody.inputs.message = "The commands you are about to view are potentially very dangerous to the cluster, and executing them incorrectly can lead to dire consequences."
       this.openWarningModal('dangerCommandsWarned', e.nextId);
     }
     

@@ -14,28 +14,37 @@ export class ActionDialogComponent implements AfterViewInit {
 
   @ViewChild(DialogBodyDirective) body: DialogBodyDirective;
   disableSubmit = false;
+  modalBody: DialogBodyComponent;
 
   constructor(public dialogRef: MatDialogRef<ActionDialogComponent>,
               @Inject(MAT_DIALOG_DATA) public data: IModalData) { }
 
   ngAfterViewInit() {
-    let modalBody: DialogBodyComponent;
-    if (!this.data.bodyTemplate) {
-      modalBody = this.body.viewContainerRef.createComponent(ActionDialogTemplateComponent).instance;
-      modalBody.inputs = { message: this.data.modalMessage, confirmationKeyword: this.data.confirmationKeyword }; 
+    if (!this.data.modalBody?.template) {
+      this.modalBody = this.body.viewContainerRef.createComponent(ActionDialogTemplateComponent).instance;
+      this.modalBody.inputs = this.data.modalBody.inputs;  
     }
     else {
-      modalBody = this.body.viewContainerRef.createComponent(this.data.bodyTemplate).instance;
-      modalBody.inputs = this.data.bodyInputs;    
+      this.modalBody = this.body.viewContainerRef.createComponent(this.data.modalBody.template).instance;
+      this.modalBody.inputs = this.data.modalBody.inputs;    
     }
 
-    if (modalBody.disableSubmit) {
-      modalBody.disableSubmit.subscribe((value) => this.setSumbitDisable(value));
+    if (this.modalBody.disableSubmit) {
+      this.modalBody.disableSubmit.subscribe((value) => this.setSumbitDisable(value));
     }
   }
 
-  ok(){
-    this.dialogRef.close(true);
+  ok() {
+    if (this.modalBody.ok) {
+      this.modalBody.ok().subscribe((value) => {
+        if (value) {
+          this.dialogRef.close(true);
+        }
+      });
+    }
+    else {
+      this.dialogRef.close(true);
+    }
   }
 
   cancel() {

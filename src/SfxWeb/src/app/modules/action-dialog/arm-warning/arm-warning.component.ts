@@ -1,4 +1,5 @@
 import { AfterViewInit, Component, EventEmitter, Input, Output, Type, ViewChild } from '@angular/core';
+import { Observable, of } from 'rxjs';
 import { DialogBodyDirective } from '../dialog-body.directive';
 import { DialogBodyComponent } from '../DialogBodyComponent';
 
@@ -10,16 +11,17 @@ import { DialogBodyComponent } from '../DialogBodyComponent';
 export class ArmWarningComponent implements AfterViewInit {
 
   @ViewChild(DialogBodyDirective) body: DialogBodyDirective;
-  @Input() inputs: { resourceId: string, message?: string, confirmationKeyword?: string , template?: Type<DialogBodyComponent>};
+  @Input() inputs: {resourceId: string, template?: Type<DialogBodyComponent>};
   @Output() disableSubmit = new EventEmitter<boolean>();
-  constructor() { }
+
+  instance: DialogBodyComponent;
 
   ngAfterViewInit(): void {
     if (this.inputs.template) {
-      let instance = this.body.viewContainerRef.createComponent(this.inputs.template).instance;
-      instance.inputs = this.inputs;    
-      if (instance.disableSubmit) {
-        instance.disableSubmit.subscribe((value) => this.emitEvent(value));
+      this.instance = this.body.viewContainerRef.createComponent(this.inputs.template).instance;
+      this.instance.inputs = this.inputs;    
+      if (this.instance.disableSubmit) {
+        this.instance.disableSubmit.subscribe((value) => this.emitEvent(value));
       }
     }  
   }
@@ -28,4 +30,12 @@ export class ArmWarningComponent implements AfterViewInit {
     this.disableSubmit.emit(value);
   }
 
+  ok(): Observable<boolean> {
+    if (this.instance.ok) {
+      return this.instance.ok();
+    }
+    else {
+      return of(true);
+    }
+  }
 }

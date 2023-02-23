@@ -3,7 +3,7 @@ import { mergeMap, finalize } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { ActionDialogComponent } from '../modules/action-dialog/action-dialog/action-dialog.component';
 import { ComponentType } from '@angular/cdk/portal';
-import { IModalData } from '../ViewModels/Modal';
+import { IModalBody, IModalData, IModalTitle } from '../ViewModels/Modal';
 import { Type } from '@angular/core';
 import { DialogBodyComponent } from '../modules/action-dialog/DialogBodyComponent';
 
@@ -92,7 +92,7 @@ export class ActionWithDialog extends Action {
     }
 }
 
-export class ActionWithConfirmationDialog extends ActionWithDialog implements IModalData{
+export class ActionWithConfirmationDialog extends ActionWithDialog implements IModalData {
     constructor(
         public dialog: MatDialog,
         public name: string,
@@ -100,18 +100,14 @@ export class ActionWithConfirmationDialog extends ActionWithDialog implements IM
         public runningTitle: string,
         public execute: (...params: any[]) => Observable<any>,
         public canRun: () => boolean,
-        public modalTitle?: string,
-        public modalMessage?: string,
-        public confirmationKeyword?: string,
-        public isWarning?: boolean,
-        public bodyTemplate?: Type<DialogBodyComponent>,
-        public bodyInputs?: any) {
-
+        public modalTitle : IModalTitle,
+        public modalBody?: IModalBody,
+    ) {
         super(dialog, name, title, runningTitle, execute, canRun);
     }
 }
 
-export class IsolatedAction extends Action {
+export class IsolatedAction extends Action implements IModalData{
     constructor(
         public dialog: MatDialog,
         public name: string,
@@ -120,7 +116,10 @@ export class IsolatedAction extends Action {
         public data: any,
         public template: ComponentType<any>,
         public canRun: () => boolean,
-        public beforeOpen?: () => Observable<any>) {
+        public beforeOpen?: () => Observable<any>,
+        public modalTitle?: IModalTitle,
+        public modalBody?: IModalBody,
+        ) {
 
         super(name, title, runningTitle, null, canRun);
     }

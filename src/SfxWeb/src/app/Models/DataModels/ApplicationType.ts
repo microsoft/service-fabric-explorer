@@ -58,9 +58,15 @@ export class ApplicationType extends DataModelBase<IRawApplicationType> {
             'Unprovisioning',
             () => this.unprovision(),
             () => true,
-            'Confirm Type Unprovision',
-            `Unprovision application type ${this.name}@${this.raw.Version} from cluster ${window.location.host}?`,
-            `${this.name}@${this.raw.Version}`
+            {
+                title: 'Confirm Type Unprovision'
+            },
+            {
+                inputs: {
+                    message: `Unprovision application type ${this.name}@${this.raw.Version} from cluster ${window.location.host}?`,
+                    confirmationKeyword: `${this.name}@${this.raw.Version}`
+                }
+            }
         ));
 
         this.actions.add(new IsolatedAction(
@@ -143,9 +149,15 @@ export class ApplicationTypeGroup extends DataModelBase<IRawApplicationType> {
             'Unprovisioning',
             () => this.unprovision(),
             () => true,
-            'Confirm Type Unprovision',
-            `Unprovision all versions of application type ${this.name} from cluster ${window.location.host}?`,
-            this.name
+            {
+                title: 'Confirm Type Unprovision'
+            },
+            {
+                inputs: {
+                    message: `Unprovision all versions of application type ${this.name} from cluster ${window.location.host}?`,
+                    confirmationKeyword: this.name
+                }
+            }
         ));
     }
 

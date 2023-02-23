@@ -21,6 +21,7 @@ import { ViewBackupComponent } from 'src/app/modules/backup-restore/view-backup/
 import { RoutesService } from 'src/app/services/routes.service';
 import { ArmWarningComponent } from 'src/app/modules/action-dialog/arm-warning/arm-warning.component';
 import { ActionDialogTemplateComponent } from 'src/app/modules/action-dialog/action-dialog-template/action-dialog-template.component';
+import { ActionDialogComponent } from 'src/app/modules/action-dialog/action-dialog/action-dialog.component';
 // -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
@@ -118,15 +119,19 @@ export class Service extends DataModelBase<IRawService> {
                 this.data.routes.navigate(() => this.parent.viewPath);
             })),
             () => true,
-            'Confirm Service Deletion',
-            `Delete service ${this.name} from cluster ${window.location.host}?`,
-            this.name,
-            this.resourceId? true: false,
-            this.resourceId ? ArmWarningComponent : null,
-            this.resourceId ? 
-                {resourceId: this.resourceId,
-                    message: `Delete service ${this.name} from cluster ${window.location.host}?`, confirmationKeyword: this.name, template: ActionDialogTemplateComponent}
-                     : null
+            {
+                title: 'Confirm Service Deletion',
+                color: this.resourceId ? 'yellow' : null
+            },
+            {
+                template: this.resourceId ? ArmWarningComponent : null,
+                inputs: {
+                    resourceId: this.resourceId,
+                    message: `Delete service ${this.name} from cluster ${window.location.host}?`,
+                    confirmationKeyword: this.name,
+                    template: ActionDialogTemplateComponent
+                }
+            }
             ));
 
         if (this.isStatelessService) {
@@ -136,8 +141,21 @@ export class Service extends DataModelBase<IRawService> {
                 'Scale Service',
                 'Scaling Service',
                 this,
-                ScaleServiceComponent,
-                () => this.isStatelessService
+                ActionDialogComponent,
+                () => this.isStatelessService,
+                null,
+                {
+                    title: "Scale Service",
+                    color: this.resourceId ? "yellow" : null
+                },
+                {
+                    template: ArmWarningComponent,
+                    inputs: {
+                        resourceId: this.resourceId,
+                        service: this,
+                        template: ScaleServiceComponent
+                    }
+                }
             ));
         }
 

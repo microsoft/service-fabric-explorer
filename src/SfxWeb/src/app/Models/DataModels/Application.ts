@@ -125,15 +125,19 @@ export class Application extends DataModelBase<IRawApplication> {
             'Deleting...',
             () => this.delete(),
             () => true,
-            'Confirm Application Deletion',
-            `Delete application ${this.name} from cluster ${window.location.host}?`,
-            this.name,
-            this.resourceId? true: false,
-            this.resourceId ? ArmWarningComponent : null,
-            this.resourceId ? 
-                {resourceId: this.resourceId,
-                    message: `Delete application ${this.name} from cluster ${window.location.host}?`, confirmationKeyword: this.name, template: ActionDialogTemplateComponent}
-                     : null
+            {
+                title: 'Confirm Application Deletion',
+                color: this.resourceId ? 'yellow' : null
+            },
+            {
+                template: this.resourceId ? ArmWarningComponent : null,
+                inputs: {
+                    message: `Delete application ${this.name} from cluster ${window.location.host}?`,
+                    confirmationKeyword: this.name,
+                    resourceId: this.resourceId,
+                    template: ActionDialogTemplateComponent
+                }
+            }
             ));
     }
 
