@@ -6,7 +6,9 @@ import padStart from 'lodash/padStart';
 import findIndex from 'lodash/findIndex';
 import { HtmlUtils } from 'src/app/Utils/HtmlUtils';
 import { RepairTask } from 'src/app/Models/DataModels/repairTask';
-import { EventType } from 'src/app/modules/event-store/event-store/event-store.component';
+import { getPeriodicEvent } from './rcaEngine';
+import { differConfigs } from './RelatedEventsConfigs';
+import { generateTimelineData } from './periodicEventParser';
 
 /*
     NOTES:
@@ -744,10 +746,23 @@ export class PartitionTimelineGenerator extends TimeLineGeneratorBase<PartitionE
             }
         });
 
+        const periodicEventResults = getPeriodicEvent(differConfigs, events);
+
         const groups = new DataSet<DataGroup>([
             {id: PartitionTimelineGenerator.swapPrimaryLabel, content: PartitionTimelineGenerator.swapPrimaryLabel},
         ]);
 
+
+        periodicEventResults.forEach(result => {
+          const timelineData = generateTimelineData(result.events, result.config, startOfRange, endOfRange);
+          timelineData.groups.forEach(group => {
+            groups.add(group)
+          })
+
+          timelineData.items.forEach(event => {
+            items.add(event);
+          })
+        })
         return {
             groups,
             items

@@ -47,7 +47,8 @@ export const generateTimelineData = (items: IRCAItem[], config: IDiffAnalysis, s
       kind: item.kind,
       group: 'change event',
       title: EventStoreUtils.tooltipFormat(item.eventProperties, item.timeStamp),
-      className: 'blue'
+      className: 'blue',
+      type: 'point'
     });
   })
 

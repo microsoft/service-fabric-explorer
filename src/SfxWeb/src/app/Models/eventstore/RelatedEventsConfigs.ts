@@ -291,8 +291,12 @@ export let RelatedEventsConfigs: IConcurrentEventsConfig[] = [
         eventType: "PartitionReconfigured",
         propertyMappings: [
           {
-            sourceProperty: "eventProperties.ActivityId",
-            targetProperty: "eventProperties.ActivityId"
+            source: {
+              property: "eventProperties.ActivityId",
+            },
+            target: {
+              property: "eventProperties.ActivityId"
+            }
           }
         ],
       }
@@ -318,46 +322,54 @@ export let RelatedEventsConfigs: IConcurrentEventsConfig[] = [
         eventType: "NodeClosed",
         propertyMappings: [
           {
-            sourceProperty: "eventProperties.Description",
-            targetProperty: "nodeName",
-            sourceTransform: [
-              {
-                type: "trimFront",
-                value: ":"
-              },
-              {
-                type: "trimFront",
-                value: ":"
-              },
-              {
-                type: "trimBack",
-                value: "("
-              },
-              {
-                type: "trimWhiteSpace"
-              },
-            ]
+            source: {
+              property: "eventProperties.Description",
+              transforms: [
+                {
+                  type: "trimFront",
+                  value: ":"
+                },
+                {
+                  type: "trimFront",
+                  value: ":"
+                },
+                {
+                  type: "trimBack",
+                  value: "("
+                },
+                {
+                  type: "trimWhiteSpace"
+                },
+              ]
+            },
+            target: {
+              property: "nodeName",
+            }
           },
           {
-            sourceProperty: "eventProperties.Description",
-            targetProperty: "raw.NodeId",
-            sourceTransform: [
-              {
-                type: "trimFront",
-                value: "("
-              },
-              {
-                type: "trimFront",
-                value: "("
-              },
-              {
-                type: "trimBack",
-                value: ")"
-              },
-              {
-                type: "trimWhiteSpace"
-              },
-            ]
+            source: {
+              property: "eventProperties.Description",
+              transforms: [
+                {
+                  type: "trimFront",
+                  value: "("
+                },
+                {
+                  type: "trimFront",
+                  value: "("
+                },
+                {
+                  type: "trimBack",
+                  value: ")"
+                },
+                {
+                  type: "trimWhiteSpace"
+                },
+              ]
+            },
+            target: {
+              property: "raw.NodeId",
+            }
           }
         ],
       },
@@ -388,12 +400,12 @@ export let RelatedEventsConfigs: IConcurrentEventsConfig[] = [
         eventType: "NodeDown",
         propertyMappings: [
           {
-            sourceProperty: "nodeName",
-            targetProperty: "nodeName"
+            source: { property: "nodeName" },
+            target: { property: "nodeName" },
           },
           {
-            sourceProperty: "raw.NodeInstance",
-            targetProperty: "raw.NodeInstance"
+            source: { property: "raw.NodeInstance" },
+            target: { property: "raw.NodeInstance" },
           }
         ],
       },
