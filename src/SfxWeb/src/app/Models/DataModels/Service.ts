@@ -22,7 +22,7 @@ import { ScaleServiceComponent } from 'src/app/views/service/scale-service/scale
 import { ViewBackupComponent } from 'src/app/modules/backup-restore/view-backup/view-backup.component';
 import { RoutesService } from 'src/app/services/routes.service';
 import { ArmWarningComponent } from 'src/app/modules/action-dialog/arm-warning/arm-warning.component';
-import { MessageWithConfirmation } from 'src/app/modules/action-dialog/message-with-confirmation/message-with-confirmation.component';
+import { MessageWithConfirmationComponent } from 'src/app/modules/action-dialog/message-with-confirmation/message-with-confirmation.component';
 import { ActionDialogComponent } from 'src/app/modules/action-dialog/action-dialog/action-dialog.component';
 // -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -131,7 +131,7 @@ export class Service extends DataModelBase<IRawService> {
                     resourceId: this.resourceId,
                     message: `Delete service ${this.name} from cluster ${window.location.host}?`,
                     confirmationKeyword: this.name,
-                    template: MessageWithConfirmation
+                    template: MessageWithConfirmationComponent
                 }
             }
             ));

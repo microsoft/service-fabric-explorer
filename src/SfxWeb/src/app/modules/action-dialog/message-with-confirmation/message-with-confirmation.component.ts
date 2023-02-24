@@ -6,7 +6,7 @@ import { DialogBodyComponent } from '../DialogBodyComponent';
   templateUrl: './message-with-confirmation.component.html',
   styleUrls: ['./message-with-confirmation.component.scss']
 })
-export class MessageWithConfirmation implements OnInit, DialogBodyComponent {
+export class MessageWithConfirmationComponent implements OnInit, DialogBodyComponent {
 
   @Input() inputs: {message?: string, confirmationKeyword?: string};
   @Output() disableSubmit = new EventEmitter<boolean>();
