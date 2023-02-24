@@ -1,6 +1,8 @@
 import { DataModelBase, IDecorators } from './Base';
-import { IRawService, IRawUpdateServiceDescription, IRawServiceHealth, IRawServiceDescription, IRawServiceType, IRawServiceManifest,
-         IRawCreateServiceDescription, IRawServiceBackupConfigurationInfo, IRawCreateServiceFromTemplateDescription } from '../RawDataTypes';
+import {
+    IRawService, IRawUpdateServiceDescription, IRawServiceHealth, IRawServiceDescription, IRawServiceType, IRawServiceManifest,
+    IRawCreateServiceDescription, IRawServiceBackupConfigurationInfo, IRawCreateServiceFromTemplateDescription
+} from '../RawDataTypes';
 import { PartitionCollection, ServiceBackupConfigurationInfoCollection } from './collections/Collections';
 import { DataService } from 'src/app/services/data.service';
 import { HealthStateFilterFlags, IClusterHealthChunkQueryDescription, IServiceHealthStateFilter } from '../HealthChunkRawDataTypes';
@@ -20,7 +22,7 @@ import { ScaleServiceComponent } from 'src/app/views/service/scale-service/scale
 import { ViewBackupComponent } from 'src/app/modules/backup-restore/view-backup/view-backup.component';
 import { RoutesService } from 'src/app/services/routes.service';
 import { ArmWarningComponent } from 'src/app/modules/action-dialog/arm-warning/arm-warning.component';
-import { ActionDialogTemplateComponent } from 'src/app/modules/action-dialog/action-dialog-template/action-dialog-template.component';
+import { MessageWithConfirmation } from 'src/app/modules/action-dialog/message-with-confirmation/message-with-confirmation.component';
 import { ActionDialogComponent } from 'src/app/modules/action-dialog/action-dialog/action-dialog.component';
 // -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -121,7 +123,7 @@ export class Service extends DataModelBase<IRawService> {
             () => true,
             {
                 title: 'Confirm Service Deletion',
-                color: this.resourceId ? 'yellow' : null
+                class: this.resourceId ? "warning" : null
             },
             {
                 template: this.resourceId ? ArmWarningComponent : null,
@@ -129,7 +131,7 @@ export class Service extends DataModelBase<IRawService> {
                     resourceId: this.resourceId,
                     message: `Delete service ${this.name} from cluster ${window.location.host}?`,
                     confirmationKeyword: this.name,
-                    template: ActionDialogTemplateComponent
+                    template: MessageWithConfirmation
                 }
             }
             ));
@@ -146,7 +148,7 @@ export class Service extends DataModelBase<IRawService> {
                 null,
                 {
                     title: "Scale Service",
-                    color: this.resourceId ? "yellow" : null
+                    class: this.resourceId ? "warning" : null
                 },
                 {
                     template: ArmWarningComponent,

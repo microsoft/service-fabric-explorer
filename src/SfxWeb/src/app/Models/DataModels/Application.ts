@@ -21,7 +21,7 @@ import isEmpty from 'lodash/isEmpty';
 import { ViewBackupComponent } from 'src/app/modules/backup-restore/view-backup/view-backup.component';
 import { RoutesService } from 'src/app/services/routes.service';
 import { ArmWarningComponent } from 'src/app/modules/action-dialog/arm-warning/arm-warning.component';
-import { ActionDialogTemplateComponent } from 'src/app/modules/action-dialog/action-dialog-template/action-dialog-template.component';
+import { MessageWithConfirmation } from 'src/app/modules/action-dialog/message-with-confirmation/message-with-confirmation.component';
 // -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
@@ -79,8 +79,7 @@ export class Application extends DataModelBase<IRawApplication> {
     }
 
     public get resourceId(): string {
-        // return this.raw.ApplicationMetadata?.ArmMetaData?.ArmResourceId;
-        return "test";
+        return this.raw.ApplicationMetadata?.ArmMetaData?.ArmResourceId;
     }
 
     public delete(): Observable<any> {
@@ -127,7 +126,7 @@ export class Application extends DataModelBase<IRawApplication> {
             () => true,
             {
                 title: 'Confirm Application Deletion',
-                color: this.resourceId ? 'yellow' : null
+                class: this.resourceId ? "warning" : null
             },
             {
                 template: this.resourceId ? ArmWarningComponent : null,
@@ -135,7 +134,7 @@ export class Application extends DataModelBase<IRawApplication> {
                     message: `Delete application ${this.name} from cluster ${window.location.host}?`,
                     confirmationKeyword: this.name,
                     resourceId: this.resourceId,
-                    template: ActionDialogTemplateComponent
+                    template: MessageWithConfirmation
                 }
             }
             ));

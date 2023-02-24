@@ -2,6 +2,7 @@ import { AfterViewInit, Component, EventEmitter, Input, Output, Type, ViewChild 
 import { Observable, of } from 'rxjs';
 import { DialogBodyDirective } from '../dialog-body.directive';
 import { DialogBodyComponent } from '../DialogBodyComponent';
+import { ActionDialogUtils } from '../utils';
 
 @Component({
   selector: 'app-arm-warning',
@@ -18,11 +19,7 @@ export class ArmWarningComponent implements AfterViewInit {
 
   ngAfterViewInit(): void {
     if (this.inputs.template) {
-      this.instance = this.body.viewContainerRef.createComponent(this.inputs.template).instance;
-      this.instance.inputs = this.inputs;    
-      if (this.instance.disableSubmit) {
-        this.instance.disableSubmit.subscribe((value) => this.emitEvent(value));
-      }
+      this.instance = ActionDialogUtils.createChildComponent(this.body, this.instance, this.inputs, this.inputs.template, (value) => { this.emitEvent(value) });
     }  
   }
 

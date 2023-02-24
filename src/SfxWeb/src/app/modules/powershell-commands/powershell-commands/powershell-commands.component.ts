@@ -4,7 +4,7 @@ import { NgbNav, NgbNavChangeEvent } from '@ng-bootstrap/ng-bootstrap';
 import { CommandSafetyLevel, PowershellCommand } from 'src/app/Models/PowershellCommand';
 import { SettingsService } from 'src/app/services/settings.service';
 import { ActionDialogComponent } from 'src/app/modules/action-dialog/action-dialog/action-dialog.component';
-import { IModalData } from 'src/app/ViewModels/Modal';
+import { IModalBody, IModalData, IModalTitle } from 'src/app/ViewModels/Modal';
 
 @Component({
   selector: 'app-powershell-commands',
@@ -15,15 +15,13 @@ import { IModalData } from 'src/app/ViewModels/Modal';
 export class PowershellCommandsComponent implements IModalData, OnChanges{
 
   title: string = 'Acknowledge';
-  modalTitle: {
+  
+  modalTitle: IModalTitle = {
     title: 'Warning',
-    color: 'yellow'
+    class: 'warning'
   }
-  modalBody: {
-    inputs: {
-      message: string
-    }
-  }  
+  modalBody: IModalBody = { inputs: {message: ''} };
+
   activeId:any = 1;
   safetyLevelEnum = CommandSafetyLevel;
   

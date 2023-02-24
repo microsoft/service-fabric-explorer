@@ -1,9 +1,10 @@
 import { Component, Inject, ViewChild, AfterViewInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { IModalData } from 'src/app/ViewModels/Modal';
-import { ActionDialogTemplateComponent } from '../action-dialog-template/action-dialog-template.component';
+import { MessageWithConfirmation } from '../message-with-confirmation/message-with-confirmation.component';
 import { DialogBodyDirective } from '../dialog-body.directive';
 import { DialogBodyComponent } from '../DialogBodyComponent';
+import { ActionDialogUtils } from '../utils';
 
 @Component({
   selector: 'app-action-dialog',
@@ -21,16 +22,10 @@ export class ActionDialogComponent implements AfterViewInit {
 
   ngAfterViewInit() {
     if (!this.data.modalBody?.template) {
-      this.modalBody = this.body.viewContainerRef.createComponent(ActionDialogTemplateComponent).instance;
-      this.modalBody.inputs = this.data.modalBody.inputs;  
+      this.modalBody = ActionDialogUtils.createChildComponent(this.body, this.modalBody, this.data.modalBody.inputs, MessageWithConfirmation, (value) => { this.setSumbitDisable(value) });
     }
     else {
-      this.modalBody = this.body.viewContainerRef.createComponent(this.data.modalBody.template).instance;
-      this.modalBody.inputs = this.data.modalBody.inputs;    
-    }
-
-    if (this.modalBody.disableSubmit) {
-      this.modalBody.disableSubmit.subscribe((value) => this.setSumbitDisable(value));
+      this.modalBody = ActionDialogUtils.createChildComponent(this.body, this.modalBody, this.data.modalBody.inputs, this.data.modalBody.template, (value) => { this.setSumbitDisable(value) });
     }
   }
 

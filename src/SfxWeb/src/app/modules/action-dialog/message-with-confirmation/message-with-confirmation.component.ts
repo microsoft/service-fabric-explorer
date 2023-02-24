@@ -2,11 +2,11 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { DialogBodyComponent } from '../DialogBodyComponent';
 
 @Component({
-  selector: 'app-action-dialog-template',
-  templateUrl: './action-dialog-template.component.html',
-  styleUrls: ['./action-dialog-template.component.scss']
+  selector: 'app-message-with-confirmation',
+  templateUrl: './message-with-confirmation.component.html',
+  styleUrls: ['./message-with-confirmation.component.scss']
 })
-export class ActionDialogTemplateComponent implements OnInit, DialogBodyComponent {
+export class MessageWithConfirmation implements OnInit, DialogBodyComponent {
 
   @Input() inputs: {message?: string, confirmationKeyword?: string};
   @Output() disableSubmit = new EventEmitter<boolean>();
@@ -20,7 +20,7 @@ export class ActionDialogTemplateComponent implements OnInit, DialogBodyComponen
   }
 
   userInputChange(value) {
-    if (this.inputs.confirmationKeyword !== value.trim()) {
+    if (this.inputs.confirmationKeyword && this.inputs.confirmationKeyword !== value.trim()) {
       this.disableSubmit.emit(true);
     }
     else {

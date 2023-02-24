@@ -1,13 +1,12 @@
 import { Component, OnInit, Inject, Input, EventEmitter } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { DataService } from 'src/app/services/data.service';
 import { IsolatedAction } from 'src/app/Models/Action';
 import { Service } from 'src/app/Models/DataModels/Service';
 import { IRawStatelessServiceDescription, IRawUpdateServiceDescription } from 'src/app/Models/RawDataTypes';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { DialogBodyComponent } from 'src/app/modules/action-dialog/DialogBodyComponent';
 import { Observable, of } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { catchError, defaultIfEmpty } from 'rxjs/operators';
 
 @Component({
   selector: 'app-scale-service',
@@ -49,9 +48,7 @@ export class ScaleServiceComponent implements OnInit, DialogBodyComponent {
       catchError((err) => {
         console.log(err)
         return of(false)
-    })).pipe(() => {
-      return of(true);
-    });
+    })).pipe(defaultIfEmpty(true));
   }
 
   checkFormValidity() {

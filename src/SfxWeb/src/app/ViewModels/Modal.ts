@@ -3,7 +3,7 @@ import { Type } from "@angular/core"
 
 export interface IModalTitle {
     title: string,
-    color?: string
+    class?: string
 }
 
 export interface IModalBody {
