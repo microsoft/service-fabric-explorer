@@ -79,7 +79,7 @@ export class Application extends DataModelBase<IRawApplication> {
     }
 
     public get resourceId(): string {
-        return this.raw.ApplicationMetadata?.ArmMetaData?.ArmResourceId;
+        return this.raw.ApplicationMetadata?.ArmMetadata?.ArmResourceId;
     }
 
     public delete(): Observable<any> {

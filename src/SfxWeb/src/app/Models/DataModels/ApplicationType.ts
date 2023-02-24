@@ -13,6 +13,9 @@ import { Utils } from 'src/app/Utils/Utils';
 import { ActionWithConfirmationDialog, IsolatedAction } from '../Action';
 import { CreateApplicationComponent } from 'src/app/views/application-type/create-application/create-application.component';
 import { RoutesService } from 'src/app/services/routes.service';
+import { ArmWarningComponent } from 'src/app/modules/action-dialog/arm-warning/arm-warning.component';
+import { MessageWithConfirmationComponent } from 'src/app/modules/action-dialog/message-with-confirmation/message-with-confirmation.component';
+import { ActionDialogComponent } from 'src/app/modules/action-dialog/action-dialog/action-dialog.component';
 
 // -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -41,6 +44,10 @@ export class ApplicationType extends DataModelBase<IRawApplicationType> {
         return RoutesService.getAppTypeViewPath(this.name);
     }
 
+    public get resourceId(): string {
+        return this.raw.ApplicationTypeMetadata?.ArmMetadata?.ArmResourceId;
+    }
+
     public unprovision(): Observable<any> {
         return this.data.restClient.unprovisionApplicationType(this.name, this.raw.Version);
     }
@@ -59,12 +66,16 @@ export class ApplicationType extends DataModelBase<IRawApplicationType> {
             () => this.unprovision(),
             () => true,
             {
-                title: 'Confirm Type Unprovision'
+                title: 'Confirm Type Unprovision',
+                class: this.resourceId ? "warning" : null
             },
             {
+                template: this.resourceId ? ArmWarningComponent : null,
                 inputs: {
                     message: `Unprovision application type ${this.name}@${this.raw.Version} from cluster ${window.location.host}?`,
-                    confirmationKeyword: `${this.name}@${this.raw.Version}`
+                    confirmationKeyword: `${this.name}@${this.raw.Version}`,
+                    resourceId: this.resourceId,
+                    template: MessageWithConfirmationComponent
                 }
             }
         ));
@@ -77,8 +88,21 @@ export class ApplicationType extends DataModelBase<IRawApplicationType> {
             {
                 appType: this,
             },
-            CreateApplicationComponent,
-            () => true)
+            ActionDialogComponent,
+            () => true,
+            null,
+            {
+                title: "Create app instance",
+                class: this.resourceId ? "warning" : null
+            },
+            {
+                template: ArmWarningComponent,
+                inputs: {
+                    resourceId: this.resourceId,
+                    appType: this,
+                    template: CreateApplicationComponent
+                }
+            })
             );
     }
 }
@@ -103,6 +127,10 @@ export class ApplicationTypeGroup extends DataModelBase<IRawApplicationType> {
 
     public get viewPath(): string {
         return RoutesService.getAppTypeViewPath(this.name);
+    }
+
+    public get isArmManaged(): boolean{
+        return this.appTypes.some(app => app.resourceId?.length);
     }
 
     // Whenever the data.apps get refreshed, it will call this method to
@@ -150,12 +178,15 @@ export class ApplicationTypeGroup extends DataModelBase<IRawApplicationType> {
             () => this.unprovision(),
             () => true,
             {
-                title: 'Confirm Type Unprovision'
+                title: 'Confirm Type Unprovision',
+                class: this.isArmManaged ? 'warning' : null
             },
             {
+                template: this.isArmManaged ? ArmWarningComponent : null,
                 inputs: {
                     message: `Unprovision all versions of application type ${this.name} from cluster ${window.location.host}?`,
-                    confirmationKeyword: this.name
+                    confirmationKeyword: this.name,
+                    template: MessageWithConfirmationComponent
                 }
             }
         ));

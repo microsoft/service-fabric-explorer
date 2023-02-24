@@ -198,7 +198,7 @@ context('service', () => {
         })
 
         cy.get('[formcontrolname=count').clear().type(2);
-        cy.get('[type=submit').click();
+        cy.get('[data-cy=submit]').click();
 
         cy.wait('@updateService')
 

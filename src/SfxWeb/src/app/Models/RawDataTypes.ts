@@ -22,7 +22,7 @@ export interface IRawApplication {
         Status: string;
         HealthState: string;
         ApplicationDefinitionKind: string;
-        ApplicationMetadata?: IRawApplicationMetaData
+        ApplicationMetadata?: IRawApplicationMetadata
     }
 export class IRawBackupEntity{
     EntityKind: BackupEntityKind;
@@ -132,6 +132,8 @@ export interface IRawApplicationType {
         Status: string;
         StatusDetails: string;
         DefaultParameterList: IRawParameter[];
+        ApplicationTypeMetadata?: IRawApplicationTypeMetadata
+
     }
 
 export interface IRawUpgradeDomain {
@@ -1149,14 +1151,19 @@ export interface IRawServiceNameInfo{
         Name: string;
 }
     
-export interface IRawApplicationMetaData{
-    ArmMetaData: IRawArmMetadata;
+export interface IRawApplicationMetadata{
+    ArmMetadata: IRawArmMetadata;
     HealthState: string;
     Id: string;
 }
 
+export interface IRawApplicationTypeMetadata{
+    ArmMetadata: IRawArmMetadata;
+    ApplicationTypeProvisionTimestamp: string;
+}
+
 export interface IRawServiceMetadata{
-    ArmMetaData: IRawArmMetadata;
+    ArmMetadata: IRawArmMetadata;
     ServiceStatus: string;
     TypeName: string;
 }
