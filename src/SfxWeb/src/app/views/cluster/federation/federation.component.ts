@@ -9,6 +9,7 @@ import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 import { Network} from "vis-network/standalone"
 import { DomSanitizer} from '@angular/platform-browser';
 import { IOnDateChange } from 'src/app/modules/time-picker/double-slider/double-slider.component';
+import { TimeUtils } from 'src/app/Utils/TimeUtils';
 
 // structure that has all the relevant info about particular node
 export interface NodeData {
@@ -21,6 +22,8 @@ export interface NodeData {
   FM: boolean;
   FMM: boolean;
   leaseStates: Map<string, string>;
+  ip: string;
+  badConnections: Map<string, string[]>;
 }
 
 @Component({
@@ -39,6 +42,7 @@ export class FederationComponent extends BaseControllerDirective implements OnIn
   // two hashmaps, since one group of events provides node names and other one node ids
   nodesMap = new Map<string, NodeData>();
   nameToIdMap = new Map<string, string>();
+  ipToNode = new Map<string, NodeData>();
   neighSize: number = 2;
   // graph representation structures and options
   nodes: any[] = [];
@@ -78,7 +82,7 @@ export class FederationComponent extends BaseControllerDirective implements OnIn
       hoverWidth: 10,
       color: {
         color: "rgba(10,141,16,0.3)",
-        hover: "rgba(10,141,16,1)"
+        hover: "rgba(10,141,16,1)",
       }
     },
     interaction: {
@@ -109,13 +113,66 @@ export class FederationComponent extends BaseControllerDirective implements OnIn
   @ViewChild("byId") byId: ElementRef;
   @ViewChild("noneAction") noneAction: ElementRef;
   @ViewChild("myNetwork") myNetwork: ElementRef;
+  @ViewChild("onlyTransp") onlyTransp: ElementRef;
   // data binding
   selectionArr: string[] = [];
-  lUpCnt: number;
-  lDownCnt: number;
-  lGrayCnt: number;
+  funcList: any[] = [
+    {
+      id: "noneAction",
+      text: "None"
+    },
+    {
+      id: "fmAction",
+      text: "FM nodes"
+    },
+    {
+      id: "fmmAction",
+      text: "FMM node"
+    },
+    {
+      id: "seedAction",
+      text: "Seed nodes"
+    },
+    {
+      id: "downAction",
+      text: "Down nodes"
+    },
+    {
+      id: "leaseAction",
+      text: "Lease failed nodes"
+    },
+    {
+      id: "openAction",
+      text: "Open failed nodes"
+    },
+    {
+      id: "grayAction",
+      text: "Gray nodes"
+    },
+    {
+      id: "badAction",
+      text: "Nodes with bad connections"
+    }
+  ]
+  labList: any[] = [
+    {
+      id: "labUp",
+      text: "Number of UP nodes:",
+      cnt: 0
+    },
+    {
+      id: "labDown",
+      text: "Number of DOWN nodes:",
+      cnt: 0
+    },
+    {
+      id: "labGray",
+      text: "Number of GRAY nodes:",
+      cnt: 0
+    },
+  ]
   // time-picker
-  public dateMin: Date;
+  public dateMin: Date = TimeUtils.AddDays(new Date(), -30);
   public startDate: Date;
   public endDate: Date;
 
@@ -137,11 +194,9 @@ export class FederationComponent extends BaseControllerDirective implements OnIn
     else {
       let currName: string = event.target.value;
       let id: string = this.nameToIdMap.get(currName);
-      console.log(currName);
-      console.log(id);
       node = this.nodesMap.get(id);
     }
-    if (node == undefined) {
+    if (node === undefined) {
       this.setup();
       return;
     }
@@ -164,16 +219,23 @@ export class FederationComponent extends BaseControllerDirective implements OnIn
         mapArray = mapArray.filter(elem => elem[1].isSeed);
         break;
       case "downAction":
-        mapArray = mapArray.filter(elem => elem[1].status == FederationComponent.CONST.STATUS_DOWN);
+        mapArray = mapArray.filter(elem => (
+          elem[1].status === FederationComponent.CONST.STATUS_DOWN ||
+          elem[1].status === FederationComponent.CONST.STATUS_LEASE_FAILED ||
+          elem[1].openFailed !== ""
+        ));
         break;
       case "leaseAction":
-        mapArray = mapArray.filter(elem => elem[1].status == FederationComponent.CONST.STATUS_LEASE_FAILED);
+        mapArray = mapArray.filter(elem => elem[1].status === FederationComponent.CONST.STATUS_LEASE_FAILED);
         break;
       case "openAction":
-        mapArray = mapArray.filter(elem => elem[1].openFailed != "");
+        mapArray = mapArray.filter(elem => elem[1].openFailed !== "");
         break;
       case "grayAction":
-        mapArray = mapArray.filter(elem => elem[1].status == FederationComponent.CONST.STATUS_GRAY);
+        mapArray = mapArray.filter(elem => elem[1].status === FederationComponent.CONST.STATUS_GRAY);
+        break;
+      case "badAction":
+        mapArray = mapArray.filter(elem => elem[1].badConnections.size !== 0);
         break;
       default:
         mapArray = [];
@@ -189,7 +251,7 @@ export class FederationComponent extends BaseControllerDirective implements OnIn
 
   // represent selected node's neighborhood
   onChangeCombo(event: any) {
-    if (this.selectionArr[0] == "Nodes")
+    if (this.selectionArr[0] === "Nodes")
       this.selectionArr.shift();
     this.byId.nativeElement.checked = true;
     this.inputNode.nativeElement.value = this.nameToIdMap.get(event.target.value);
@@ -219,12 +281,13 @@ export class FederationComponent extends BaseControllerDirective implements OnIn
       switch (elem.raw.kind) {
         case "NodePhaseChanged":
           id = elem.raw.eventProperties.NodeId;
+          this.neighSize = elem.raw.eventProperties.NeighborhoodSize;
           let phase = elem.raw.eventProperties.State;
           // if it's new node, add it to the hashmap with initial values
           // predefined values are not correct yet, going to be set through other events
           if (!this.nodesMap.has(id)) {
             // since this event could be propagated because is node getting removed from cluster
-            if (phase == "Shutdown") break;
+            if (phase === "Shutdown") break;
             node = {
               name: "",
               id: id,
@@ -235,13 +298,15 @@ export class FederationComponent extends BaseControllerDirective implements OnIn
               FM: false,
               FMM: false,
               leaseStates: new Map<string, string>(),
+              ip: "",
+              badConnections: new Map<string, string[]>()
             };
             this.nodesMap.set(id, node);
           }
           else {
             node = this.nodesMap.get(id);
             // in case of node being stuck or failed on open
-            if (node.phase != "Routing" && phase == "Shutdown")
+            if (node.phase !== "Routing" && phase === "Shutdown")
               node.openFailed = "Node didn't pass " + node.phase + " phase";
             node.phase = phase;
             node.FM = false;
@@ -258,7 +323,7 @@ export class FederationComponent extends BaseControllerDirective implements OnIn
           if (this.nodesMap.has(idLocal)) {
             let nodeLocal: NodeData = this.nodesMap.get(idLocal);
             let lease: string = elem.raw.eventProperties.LeaseState;
-            if (lease == "Established") nodeLocal.leaseStates.set(idRemote, "E");
+            if (lease === "Established") nodeLocal.leaseStates.set(idRemote, "E");
             else nodeLocal.leaseStates.delete(idRemote);
           }
           break;
@@ -278,6 +343,8 @@ export class FederationComponent extends BaseControllerDirective implements OnIn
           node = this.nodesMap.get(id);
           node.isSeed = elem.raw.eventProperties.IsSeedNode;
           node.openFailed = "";
+          node.ip = elem.raw.eventProperties.IpAddressOrFQDN;
+          this.ipToNode.set(node.ip, node);
           currName = elem.raw.nodeName;
           // node must be in nodesMap (since NodePhaseChanged must happened before)
           // but it could not be in nameToIdMap (since this is the first event that 
@@ -310,6 +377,8 @@ export class FederationComponent extends BaseControllerDirective implements OnIn
         case "NodeRemovedFromCluster":
           id = elem.raw.eventProperties.NodeId;
           currName = elem.raw.nodeName;
+          node = this.nodesMap.get(id);
+          this.ipToNode.delete(node.ip);
           this.nodesMap.delete(id);
           this.nameToIdMap.delete(currName);
           break;
@@ -323,7 +392,7 @@ export class FederationComponent extends BaseControllerDirective implements OnIn
           // when node goes up again, it will have its status set on "Down"
           // when we shutdown node, it is because we shutdowned it or some error happened
           // when node goes up again, its status is set on "Down" or "OnLeaseFailed"
-          if (node.status == FederationComponent.CONST.STATUS_DOWN || node.status == FederationComponent.CONST.STATUS_LEASE_FAILED) 
+          if (node.status === FederationComponent.CONST.STATUS_DOWN || node.status === FederationComponent.CONST.STATUS_LEASE_FAILED) 
             node.status = FederationComponent.CONST.STATUS_UP;
           node.FM = false;
           node.FMM = false;
@@ -334,7 +403,7 @@ export class FederationComponent extends BaseControllerDirective implements OnIn
             id = this.nameToIdMap.get(currName);
             node = this.nodesMap.get(id);
             // we do not to override this situation (since it is narrower)
-            if (node.status != FederationComponent.CONST.STATUS_LEASE_FAILED)
+            if (node.status !== FederationComponent.CONST.STATUS_LEASE_FAILED)
               node.status = FederationComponent.CONST.STATUS_DOWN;
             node.FM = false;
             node.FMM = false;
@@ -356,6 +425,23 @@ export class FederationComponent extends BaseControllerDirective implements OnIn
           // keep track of only last one
           FMMNodeId = elem.raw.eventProperties.NodeId;
           break;
+        case "TcpConnectionState":
+          let localIPs: string[] = elem.raw.eventProperties.LocalIP.split(" ");
+          let remoteIPs: string[] = elem.raw.eventProperties.RemoteIP.split(" ");
+          let latencies: string[] = elem.raw.eventProperties.Latency.split(" ");
+          let states: string[] = elem.raw.eventProperties.State.split(" ");
+          let n: number = localIPs.length;
+          for (let i = 0; i < n-1; ++i) {
+            let ind = localIPs[i].indexOf(":");
+            let ipAddr = localIPs[i].substring(0, ind);
+            let port = localIPs[i].substring(ind+1);
+            let node = this.ipToNode.get(ipAddr);
+            if (node === undefined) break;
+            if (states[i] === "ok") node.badConnections.delete(remoteIPs[i]);
+            else if (states[i] === "broken") node.badConnections.set(remoteIPs[i], [port, "-1"]);
+            else node.badConnections.set(remoteIPs[i], [port, latencies[i]]);
+          }
+          break;
       }
     }
     return FMMNodeId;
@@ -366,7 +452,7 @@ export class FederationComponent extends BaseControllerDirective implements OnIn
     let partitionToName = new Map<string, string>();
     for (let i = 0; i < this.eventStoreHandlerFM.eventsList.collection.length; ++i) {
       let fmElem = this.eventStoreHandlerFM.eventsList.collection[i];
-      if (fmElem.raw.kind == 'PartitionReconfigured' && fmElem.raw.eventProperties.ServiceType == 'FMServiceType')
+      if (fmElem.raw.kind === 'PartitionReconfigured' && fmElem.raw.eventProperties.ServiceType === 'FMServiceType')
         partitionToName.set(fmElem.raw.partitionId, fmElem.raw.raw.NodeName);
     }
     for (let elem of partitionToName) {
@@ -392,7 +478,7 @@ export class FederationComponent extends BaseControllerDirective implements OnIn
             let FMMNodeId = this.handleNodeEvents();
 
             // setting up the FMM info
-            if (FMMNodeId != "") {
+            if (FMMNodeId !== "") {
               let node = this.nodesMap.get(FMMNodeId);
               node.FMM = true;
             }
@@ -410,16 +496,41 @@ export class FederationComponent extends BaseControllerDirective implements OnIn
                 this.nodes = []; this.edges = [];
                 //let nodes: { id?: string; label?: string; title?: string; x?: number; y?: number; }[] = [];
                 //let edges: { id?: number; from?: string; to?: string; color?: string; }[] = [{ id: 1 }];
-                this.lUpCnt = 0, this.lDownCnt = 0, this.lGrayCnt = 0;
+                this.labList[0].cnt = 0;
+                this.labList[1].cnt = 0;
+                this.labList[2].cnt = 0;
                 for (let elem of mapArray) {
                   let title: string = this.formTitle(elem);
                   this.nodes.push({ id: elem[1].id, label: " " + elem[1].name + " ", title: title, color: this.getNodeColor(elem[1]) });
                   let neighborhood = [...elem[1].leaseStates];
-                  for (let nElem of neighborhood)
-                  this.edges.push({ from: elem[1].id, to: nElem[0] });
-                  if (elem[1].status == FederationComponent.CONST.STATUS_UP) ++this.lUpCnt;
-                  else if (elem[1].status == FederationComponent.CONST.STATUS_GRAY) ++this.lGrayCnt;
-                  else this.lDownCnt++;
+                  if (!this.onlyTransp.nativeElement.checked) {
+                    for (let nElem of neighborhood)
+                      this.edges.push({ from: elem[1].id, to: nElem[0] });
+                  }
+                  
+                  // representing current connections' state
+                  let badConnectionsMap = new Map<string, string>();
+                  let badConnectionsArray = [...elem[1].badConnections]
+                  for (let bElem of badConnectionsArray) {
+                    let ind = bElem[0].indexOf(":");
+                    let remote = bElem[0].substring(0, ind);
+                    let remoteNode = this.ipToNode.get(remote);
+                    // this should never happen
+                    if (remoteNode === undefined) continue;
+                    let port = bElem[0].substring(ind+1);
+                    let hoverInfo = `\n${elem[1].name}:${bElem[1][0]}, ${remoteNode.name}:${port}, `;
+                    if (bElem[1][1] === "-1") hoverInfo += "broken";
+                    else hoverInfo += `high latency (${bElem[1][1]})`;
+                    if (!badConnectionsMap.has(remote)) badConnectionsMap.set(remote, "Bad connections");
+                    badConnectionsMap.set(remote, badConnectionsMap.get(remote) + hoverInfo);
+                  }
+                  let badConnectionsFlat = [...badConnectionsMap];
+                  for (let bElem of badConnectionsFlat)
+                    this.edges.push({ from: elem[1].id, to: this.ipToNode.get(bElem[0]).id , title: bElem[1], color: { color: "RED", hover: "RED" }, hoverWidth: 1.2 });
+
+                  if (elem[1].status === FederationComponent.CONST.STATUS_UP) ++this.labList[0].cnt;
+                  else if (elem[1].status === FederationComponent.CONST.STATUS_GRAY) ++this.labList[2].cnt;
+                  else ++this.labList[1].cnt;
                 }
                 this.drawGraph("full");
               }
@@ -443,7 +554,7 @@ export class FederationComponent extends BaseControllerDirective implements OnIn
   }
 
   getNodeColor(node: NodeData): any {
-    if (node.status == FederationComponent.CONST.STATUS_UP) return {
+    if (node.status === FederationComponent.CONST.STATUS_UP) return {
       border: FederationComponent.CONST.COLOR_GREEN_BORDER,
       background: FederationComponent.CONST.COLOR_GREEN_PALE,
       highlight: {
@@ -455,7 +566,7 @@ export class FederationComponent extends BaseControllerDirective implements OnIn
         background: FederationComponent.CONST.COLOR_GREEN,
       }
     };
-    else if (node.status == FederationComponent.CONST.STATUS_GRAY) return {
+    else if (node.status === FederationComponent.CONST.STATUS_GRAY) return {
       border: FederationComponent.CONST.COLOR_GRAY_BORDER,
       background: FederationComponent.CONST.COLOR_GRAY_PALE,
       highlight: {
@@ -485,14 +596,16 @@ export class FederationComponent extends BaseControllerDirective implements OnIn
   drawGraph(mode: string) {
     this.nodes = this.nodes.map((node, index, arr) => {
       let angle: number;
-      if (mode == "full") {
+      if (mode === "full") {
         // make the nodes form the structure of ring
+        this.onlyTransp.nativeElement.disabled = false;
         angle = 2 * Math.PI * (index / arr.length + 0.75);
         node.x = 400 * Math.cos(angle);
         node.y = 400 * Math.sin(angle);
       }
       else {
         // make something that visually looks like neighborhood
+        this.onlyTransp.nativeElement.disabled = true;
         angle = 2 * Math.PI / 3 * (index / arr.length + 1.85);
         node.x = 1000 * Math.cos(angle);
         node.y = 700 + 1000 * Math.sin(angle);
@@ -514,7 +627,7 @@ export class FederationComponent extends BaseControllerDirective implements OnIn
     // this option gives us possibility of "sliding" through cluster
     // after finished with forming data, correspondingly update buttons and inputs
     this.network.on("click", (params) => {
-      if (params.nodes.length == 0) return;
+      if (params.nodes.length === 0) return;
       let node: NodeData = this.nodesMap.get(params.nodes[0]);
       this.formNeighborhood(node);
       this.noneAction.nativeElement.checked = false;
@@ -538,48 +651,50 @@ export class FederationComponent extends BaseControllerDirective implements OnIn
     // if the selected node is for example "down" one, it does not belong to federation
     // but is still present in cluster and we want to show it. hence, we are showing
     // the neighborhood of nearest healthy node (inside where "down" node is also going to be shown)
-    if (node.status != FederationComponent.CONST.STATUS_UP && node.status != FederationComponent.CONST.STATUS_GRAY) {
-      let index = mapArray.findIndex(elem => elem[0] == node.id) - 1;
+    if (node.status !== FederationComponent.CONST.STATUS_UP && node.status !== FederationComponent.CONST.STATUS_GRAY) {
+      let index = mapArray.findIndex(elem => elem[0] === node.id) - 1;
       let len = mapArray.length;
-      while (mapArray[(index)%len][1].status != FederationComponent.CONST.STATUS_UP 
-        && mapArray[(index)%len][1].status != FederationComponent.CONST.STATUS_GRAY) --index;
+      while (mapArray[(index)%len][1].status !== FederationComponent.CONST.STATUS_UP 
+        && mapArray[(index)%len][1].status !== FederationComponent.CONST.STATUS_GRAY) --index;
       node = mapArray[index%len][1];
     }
 
     this.nodes = []; this.edges = [];
     let neighborhd = [...node.leaseStates.keys()];
-    let localMapArray = mapArray.filter(elem => elem[0] == node.id || neighborhd.includes(elem[0]) 
-      || (elem[1].status != FederationComponent.CONST.STATUS_UP && elem[1].status != FederationComponent.CONST.STATUS_GRAY)
+    let localMapArray = mapArray.filter(
+      elem => elem[0] === node.id || 
+      neighborhd.includes(elem[0]) || 
+      (elem[1].status !== FederationComponent.CONST.STATUS_UP && elem[1].status !== FederationComponent.CONST.STATUS_GRAY)
     );
     
     // make the central node has the same amount of neighbors on each side if possible
     let lCnt = 0;
     for (let elem of localMapArray) {
-      if (elem[0] == node.id) break;
-      if (elem[1].status == FederationComponent.CONST.STATUS_UP || elem[1].status == FederationComponent.CONST.STATUS_GRAY) ++lCnt;
+      if (elem[0] === node.id) break;
+      if (elem[1].status === FederationComponent.CONST.STATUS_UP || elem[1].status === FederationComponent.CONST.STATUS_GRAY) ++lCnt;
     }
     let rCnt = neighborhd.length - lCnt;
     let remaining = neighborhd.length % 2;
     while (rCnt - lCnt - remaining > 0) {
       // to the right
       let elem = localMapArray.pop();
-      if (elem[1].status == FederationComponent.CONST.STATUS_UP || elem[1].status == FederationComponent.CONST.STATUS_GRAY) ++lCnt, --rCnt;
+      if (elem[1].status === FederationComponent.CONST.STATUS_UP || elem[1].status === FederationComponent.CONST.STATUS_GRAY) ++lCnt, --rCnt;
       localMapArray.unshift(elem);
     }
     while (lCnt - rCnt - remaining > 0) {
       // to the left
       let elem = localMapArray.shift();
-      if (elem[1].status == FederationComponent.CONST.STATUS_UP || elem[1].status == FederationComponent.CONST.STATUS_GRAY) --lCnt, ++rCnt;
+      if (elem[1].status === FederationComponent.CONST.STATUS_UP || elem[1].status === FederationComponent.CONST.STATUS_GRAY) --lCnt, ++rCnt;
       localMapArray.push(elem);
     }
 
     if (neighborhd.length >= 2 * this.neighSize) {
       let first, last;
       for (first = 0; first < localMapArray.length; ++first) 
-        if (localMapArray[first][1].status == FederationComponent.CONST.STATUS_UP || localMapArray[first][1].status == FederationComponent.CONST.STATUS_GRAY)
+        if (localMapArray[first][1].status === FederationComponent.CONST.STATUS_UP || localMapArray[first][1].status === FederationComponent.CONST.STATUS_GRAY)
           break;
       for (last = localMapArray.length-1; last >= 0; --last)
-        if (localMapArray[last][1].status == FederationComponent.CONST.STATUS_UP || localMapArray[last][1].status == FederationComponent.CONST.STATUS_GRAY)
+        if (localMapArray[last][1].status === FederationComponent.CONST.STATUS_UP || localMapArray[last][1].status === FederationComponent.CONST.STATUS_GRAY)
           break;
       localMapArray.splice(last+1, localMapArray.length-1-last);
       localMapArray.splice(0, first);
@@ -590,10 +705,29 @@ export class FederationComponent extends BaseControllerDirective implements OnIn
     if (ln > 0) {
       for (let i = 0; i < ln; ++i) {
         let elem = localMapArray[i];
-        let title: string = this.formTitle(elem);
+
+        // extract informations from the map and form bad connections data
+        // every node shown in current neighborhood will have this information
+        let infoToShow: string = "";
+        let badConnectionsArray = [...elem[1].badConnections].sort((a, b) => a[0].localeCompare(b[0]));
+        for (let bElem of badConnectionsArray) {
+          let ind = bElem[0].indexOf(":");
+          let remote = bElem[0].substring(0, ind);
+          let remoteNode = this.ipToNode.get(remote);
+          // this should never happen
+          if (remoteNode === undefined) continue;
+          let port = bElem[0].substring(ind+1);
+          let hoverInfo = `\nLocalPort:${bElem[1][0]}, ${remoteNode.name}:${port}, `;
+          if (bElem[1][1] === "-1") hoverInfo += "broken";
+          else hoverInfo += `high latency (${bElem[1][1]})`
+          if (infoToShow === "") infoToShow = "\n\nBad connections"
+          infoToShow += hoverInfo;
+        }
+
+        let title: string = this.formTitle(elem) + infoToShow;
         this.nodes.push({ id: elem[1].id, label: " " + elem[1].name + " ", title: title, color: this.getNodeColor(elem[1]) });
       }
-      let k = localMapArray.findIndex(elem => elem[0] == node.id);
+      let k = localMapArray.findIndex(elem => elem[0] === node.id);
       let neighborhood = [...localMapArray[k][1].leaseStates];
       for (let nElem of neighborhood)
       this.edges.push({ from: localMapArray[k][1].id, to: nElem[0] });
@@ -604,9 +738,12 @@ export class FederationComponent extends BaseControllerDirective implements OnIn
   // setting the bounds of selected time range
   public setDate(newDate: IOnDateChange) {
     this.endDate = newDate.endDate;
-    this.startDate = newDate.startDate;
-    this.noneAction.nativeElement.checked = true; 
-    this.noneAction.nativeElement.dispatchEvent(new Event('click'));
+    //this.startDate = newDate.startDate;
+    this.startDate = this.dateMin;
+    if (this.noneAction !== undefined) {
+      this.noneAction.nativeElement.checked = true; 
+      this.noneAction.nativeElement.dispatchEvent(new Event('click'));
+    }
   }
 
 }
