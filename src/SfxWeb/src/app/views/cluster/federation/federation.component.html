@@ -2,9 +2,9 @@
 <div id="myNetwork" #myNetwork></div><br/>
 
 <!-- Section for showing current cluster state (number of nodes in specific state) -->
-<label id="labUp" #labUp>Number of UP nodes: {{lUpCnt}}</label><br/>
-<label id="labDown" #labDown>Number of DOWN nodes: {{lDownCnt}}</label><br/>
-<label id="labGray" #labGray>Number of GRAY nodes: {{lGrayCnt}}</label><br/><br/>
+<ng-container *ngFor="let elem of labList">
+  <label [id]=elem.id #{{elem.id}}>{{elem.text}} {{elem.cnt}}</label><br/>
+</ng-container><br/>
 
 <!-- Input for getting neighborhood of specific node -->
 <!-- If input not properly given, Cluster/None is shown -->
@@ -13,33 +13,30 @@
 <label for="byId"> &nbsp; Id &nbsp; </label>
 <input type="radio" id="byName" name="ctc" #byName>
 <label for="byName"> &nbsp; Name &nbsp; &nbsp; </label>
-<input id="inputNode" size="68" (change)="onChangeInput($event)" #inputNode><br/><br/>
+<input id="inputNode" size="68" (change)="onChangeInput($event)" #inputNode> &nbsp; &nbsp;
+<input type="checkbox" id="onlyTransp" name="ctc" #onlyTransp>
+<label for="onlyTransp"> &nbsp; Show only bad connections (without neighborhood) &nbsp; </label><br/><br/>
 
 <!-- Section for listing and chosing nodes of interest -->
 <label id="labActions" for="actions"> Select action: </label><br>
-<input type="radio" id="noneAction" name="contact" (click)="onClickRadio($event)" #noneAction>
-<label for="noneAction"> &nbsp; None &nbsp; </label>
-<input type="radio" id="fmAction" name="contact" (click)="onClickRadio($event)">
-<label for="fmAction"> &nbsp; FM nodes &nbsp; </label>
-<input type="radio" id="fmmAction" name="contact" (click)="onClickRadio($event)">
-<label for="fmmAction"> &nbsp; FMM node &nbsp; </label>
-<input type="radio" id="seedAction" name="contact" (click)="onClickRadio($event)">
-<label for="seedAction"> &nbsp; Seed nodes &nbsp; </label>
-<input type="radio" id="downAction" name="contact" (click)="onClickRadio($event)">
-<label for="downAction"> &nbsp; Down nodes &nbsp; </label>
-<input type="radio" id="leaseAction" name="contact" (click)="onClickRadio($event)">
-<label for="leaseAction"> &nbsp; Lease failed nodes &nbsp; </label>
-<input type="radio" id="openAction" name="contact" (click)="onClickRadio($event)">
-<label for="openAction"> &nbsp; Open failed nodes &nbsp; </label>
-<input type="radio" id="grayAction" name="contact" (click)="onClickRadio($event)">
-<label for="grayAction"> &nbsp; Gray nodes &nbsp; </label>
-<select id="selectActions" name="list" (change)="onChangeCombo($event)" #selectActions>
-  <option *ngFor="let elem of selectionArr">{{elem}}</option>
-</select><br/>
+<ng-container *ngFor="let elem of funcList">
+  <input *ngIf="elem.id == 'noneAction'; else othr" type="radio" [id]=elem.id name="contact" (click)="onClickRadio($event)" #noneAction>
+  <ng-template #othr>
+    <input type="radio" [id]=elem.id name="contact" (click)="onClickRadio($event)">
+  </ng-template>
+  <label [for]=elem.id> &nbsp; {{elem.text}} &nbsp; </label>
+</ng-container>
 
-<!-- Textual info about current dates selected -->
-<br> Start date: {{ startDate }}
-<br> End date: {{ endDate }} <br><br>
+<select id="selectActions" name="list" (change)="onChangeCombo($event)" #selectActions>
+  <!-- This cannot be used since we would have inconsitent situation -->
+  <!-- <option *ngFor="let elem of selectionArr">{{elem}}</option> -->
+  <ng-container *ngFor="let elem of selectionArr">
+    <option *ngIf="elem == 'Nodes'; else worked" selected>{{elem}}</option>
+    <ng-template #worked>
+      <option>{{elem}}</option>
+    </ng-template>
+  </ng-container>
+</select><br/><br/>
 
 <!-- Timeline bar with double slider and date picker -->
 <div style="margin-bottom: 10px;">
