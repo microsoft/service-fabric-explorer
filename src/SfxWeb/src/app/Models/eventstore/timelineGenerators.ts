@@ -209,12 +209,12 @@ export class EventStoreUtils {
 }
 
 export abstract class TimeLineGeneratorBase<T> {
-    consume(events: T[], startOfRange: Date, endOfRange: Date): ITimelineData {
+    consume(events: T[], startOfRange: Date, endOfRange: Date, nestedGroupLabel?: string): ITimelineData {
          throw new Error('NotImplementedError');
     }
 
     generateTimeLineData(events: T[], startOfRange?: Date, endOfRange?: Date, nestedGroupLabel?: string): ITimelineData {
-        const data = this.consume(events, startOfRange, endOfRange);
+        const data = this.consume(events, startOfRange, endOfRange, nestedGroupLabel);
         EventStoreUtils.addSubGroups(data.groups);
         /*
             When we have more than one event type on the timeline we should group them by type to make it easier to visualize.
@@ -235,8 +235,9 @@ export abstract class TimeLineGeneratorBase<T> {
                     groupsAlreadyNested = groupsAlreadyNested.concat(group.nestedGroups);
                 }
             });
+          //TODO: safe to remove?
             // If the group is already nested, we remove it from the nested groups of the new one.
-            nestedElementGroup.nestedGroups = nestedElementGroup.nestedGroups.filter(group => !groupsAlreadyNested.includes(group));
+            // nestedElementGroup.nestedGroups = nestedElementGroup.nestedGroups.filter(group => !groupsAlreadyNested.includes(group));
 
             data.groups.add(nestedElementGroup);
         }
@@ -251,7 +252,7 @@ export class ClusterTimelineGenerator extends TimeLineGeneratorBase<ClusterEvent
     static readonly clusterUpgradeLabel = 'Cluster Upgrades';
     static readonly seedNodeStatus = 'Seed Node Warnings';
 
-    consume(events: ClusterEvent[], startOfRange: Date, endOfRange: Date): ITimelineData {
+    consume(events: ClusterEvent[], startOfRange: Date, endOfRange: Date, nestedGroupLabel: string): ITimelineData {
       const items = new DataSet<ITimelineItem>();
 
         // state necessary for some events
@@ -266,12 +267,12 @@ export class ClusterTimelineGenerator extends TimeLineGeneratorBase<ClusterEvent
             if ( (event.kind === 'ClusterUpgradeStarted' || event.kind === 'ClusterUpgradeRollbackStarted') && !previousClusterUpgrade ) {
                 upgradeClusterStarted = event;
             }else if (event.kind === 'ClusterUpgradeDomainCompleted') {
-                EventStoreUtils.parseUpgradeDomain(event, index, items, ClusterTimelineGenerator.upgradeDomainLabel, 'TargetClusterVersion');
+                EventStoreUtils.parseUpgradeDomain(event, index, items, `${nestedGroupLabel}---${ClusterTimelineGenerator.upgradeDomainLabel}`, 'TargetClusterVersion');
             }else if (event.kind === 'ClusterUpgradeCompleted') {
-                EventStoreUtils.parseUpgradeCompleted(event, index, items, ClusterTimelineGenerator.clusterUpgradeLabel, 'TargetClusterVersion');
+                EventStoreUtils.parseUpgradeCompleted(event, index, items, `${nestedGroupLabel}---${ClusterTimelineGenerator.clusterUpgradeLabel}`, 'TargetClusterVersion');
                 previousClusterUpgrade = event;
             }else if (event.kind === 'ClusterNewHealthReport') {
-                this.parseSeedNodeStatus(event, index, items, previousClusterHealthReport, endOfRange);
+                this.parseSeedNodeStatus(event, nestedGroupLabel, index, items, previousClusterHealthReport, endOfRange);
                 previousClusterHealthReport = event;
             }
 
@@ -299,9 +300,9 @@ export class ClusterTimelineGenerator extends TimeLineGeneratorBase<ClusterEvent
         }
 
         const groups = new DataSet<DataGroup>([
-            {id: ClusterTimelineGenerator.upgradeDomainLabel, content: ClusterTimelineGenerator.upgradeDomainLabel},
-            {id: ClusterTimelineGenerator.clusterUpgradeLabel, content: ClusterTimelineGenerator.clusterUpgradeLabel},
-            {id: ClusterTimelineGenerator.seedNodeStatus, content: ClusterTimelineGenerator.seedNodeStatus}
+            {id: `${nestedGroupLabel}---${ClusterTimelineGenerator.upgradeDomainLabel}`, content: ClusterTimelineGenerator.upgradeDomainLabel},
+            {id: `${nestedGroupLabel}---${ClusterTimelineGenerator.clusterUpgradeLabel}`, content: ClusterTimelineGenerator.clusterUpgradeLabel},
+            {id: `${nestedGroupLabel}---${ClusterTimelineGenerator.seedNodeStatus}`, content: ClusterTimelineGenerator.seedNodeStatus}
         ]);
 
         return {
@@ -310,19 +311,19 @@ export class ClusterTimelineGenerator extends TimeLineGeneratorBase<ClusterEvent
         };
     }
 
-    parseSeedNodeStatus(event: ClusterEvent, eventIndex: number, items: DataSet<ITimelineItem>, previousClusterHealthReport: ClusterEvent, endOfRange: Date): void {
+    parseSeedNodeStatus(event: ClusterEvent, nestedGroupLabel: string, eventIndex: number, items: DataSet<ITimelineItem>, previousClusterHealthReport: ClusterEvent, endOfRange: Date): void {
         if (event.eventProperties.HealthState === 'Warning') {
             // for end date if we dont have a previously seen health report(list iterates newest to oldest) then we know its still the ongoing state
             const end = previousClusterHealthReport ? previousClusterHealthReport.timeStamp : endOfRange.toISOString();
             const content = `${event.eventProperties.HealthState}`;
 
             items.add({
-                id: `${eventIndex}---${event.eventInstanceId}`,
+                id: `${nestedGroupLabel}---${eventIndex}---${event.eventInstanceId}`,
                 content,
                 start: event.timeStamp,
                 end,
                 kind: event.kind,
-                group: ClusterTimelineGenerator.seedNodeStatus,
+                group: `${nestedGroupLabel}---${ClusterTimelineGenerator.seedNodeStatus}`,
                 type: 'range',
                 title: EventStoreUtils.tooltipFormat(event.eventProperties, event.timeStamp, end),
                 className: 'orange'
