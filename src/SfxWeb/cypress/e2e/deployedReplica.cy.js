@@ -7,14 +7,18 @@ const appName = "VisualObjectsApplicationType";
 const serviceName = "VisualObjects.ActorServicePkg";
 const waitRequest = "@replicas";
 
+const setup = (prefix = "") => {
+  addDefaultFixtures(prefix);
+  cy.intercept(apiUrl(`/Nodes/${nodeName}/$/GetApplications?*`), { fixture: prefix + 'deployed-replica/deployed-apps.json' }).as('apps');
+  cy.intercept(apiUrl(`/Nodes/${nodeName}/$/GetApplications/${appName}/$/GetServicePackages?*`), { fixture: prefix + 'deployed-replica/service-packages.json' }).as('services');
+  cy.intercept(apiUrl(`/Nodes/${nodeName}/$/GetApplications/${appName}/$/GetCodePackages?*`), { fixture: prefix + 'deployed-replica/code-packages.json' }).as('codePackages');
+  cy.intercept(apiUrl(`/Nodes/${nodeName}/$/GetApplications/${appName}/$/GetReplicas?*`), { fixture: prefix + 'deployed-replica/replicas.json' }).as('replicas');
+
+}
+
 context('deployed replica', () => {
     beforeEach(() => {
-        addDefaultFixtures();
-
-        cy.intercept(apiUrl(`/Nodes/${nodeName}/$/GetApplications?*`), { fixture: 'deployed-replica/deployed-apps.json' }).as('apps');
-        cy.intercept(apiUrl(`/Nodes/${nodeName}/$/GetApplications/${appName}/$/GetServicePackages?*`), { fixture: 'deployed-replica/service-packages.json' }).as('services');
-        cy.intercept(apiUrl(`/Nodes/${nodeName}/$/GetApplications/${appName}/$/GetCodePackages?*`), { fixture: 'deployed-replica/code-packages.json' }).as('codePackages');
-        cy.intercept(apiUrl(`/Nodes/${nodeName}/$/GetApplications/${appName}/$/GetReplicas?*`), { fixture: 'deployed-replica/replicas.json' }).as('replicas');
+      setup();
     })
 
     describe("list page", () => {
@@ -69,9 +73,13 @@ context('deployed replica', () => {
 
         it('commands', () => {
             cy.wait(waitRequest);
-    
+
             checkCommand(1);
-    
+
+        })
+
+        it("xss", () => {
+          setup();
         })
     })
 

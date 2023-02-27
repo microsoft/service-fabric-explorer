@@ -88,7 +88,9 @@ context('deployed code package', () => {
       it.only("xss", () => {
         setup("xss/");
         visit();
-
+        cy.get('[data-cy=navtabs]').within(() => {
+          cy.contains('details').click();
+      })
       })
     })
 })
