@@ -302,7 +302,10 @@ export class ListColumnSettingForLink extends ListColumnSetting {
     public constructor(
         propertyPath: string,
         displayName: string,
-        public href: (item: any) => string) {
+        public href: (item: any) => string,
+        public linkName?: string,
+        public isExternal: boolean = false
+    ) {
         super(propertyPath, displayName, {
             enableFilter: false,
         });

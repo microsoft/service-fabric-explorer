@@ -216,13 +216,23 @@ export class SettingsService {
     true);
   }
 
-  public getNewOrExistingAppTypeListSettings(includeIsUsedColumn: boolean = false, includeActions: boolean = true) {
+  public getNewOrExistingAppTypeListSettings(includeIsUsedColumn: boolean = false, includeActions: boolean = true, includeArmLink: boolean = true) {
     let listKey = 'appTypeAppTypes';
     const settings = [
       new ListColumnSettingWithFilter('name', 'Name'),
       new ListColumnSetting('raw.Version', 'Version'),
       new ListColumnSettingWithFilter('raw.Status', 'Status'),
     ];
+      
+    if (includeArmLink) {
+        settings.push(new ListColumnSettingForLink(
+            'resourceId',
+            'Arm Managed',
+            (item) => item.resourceId ? `https://ms.portal.azure.com/#@microsoft.onmicrosoft.com/resource${item.resourceId}/overview` : null,
+            'To Manage',
+            true
+        ));
+    }
 
     if(includeActions) {
       settings.push(new ListColumnSettingForApplicationType())
