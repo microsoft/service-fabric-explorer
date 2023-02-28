@@ -871,74 +871,77 @@ export function parseEventsGenerically(events: FabricEvent[], textSearch: string
   const items = new DataSet<ITimelineItem>();
   const groupIds: any[] = [];
 
-    events.forEach( (event, index) => {
-       const groupId = parseAndAddGroupIdByString(event, groupIds,  textSearch);
-       let color = 'white';
-       if ('Status' in event.eventProperties) {
-            try {
-                const status = event.eventProperties.Status;
-                if (status === 'Ok') {
-                    color = 'green';
-                } else if (status === 'Warning') {
-                    color = 'orange';
-                } else if (status === 'Error') {
-                    color = 'red';
-                }
-            }catch (e) {}
-        }else {
-            if (HtmlUtils.eventTypesUtil.isResolved(event)) {
+  events.forEach((event) => {
+    if (items.getIds().some(id => id === event.eventInstanceId)) {
+      return;
+    }
+    const groupId = parseAndAddGroupIdByString(event, groupIds,  textSearch);
+    let color = 'white';
+    if ('Status' in event.eventProperties) {
+        try {
+            const status = event.eventProperties.Status;
+            if (status === 'Ok') {
                 color = 'green';
-            } else if (HtmlUtils.eventTypesUtil.isWarning(event)) {
+            } else if (status === 'Warning') {
                 color = 'orange';
-            } else if (HtmlUtils.eventTypesUtil.isError(event)) {
+            } else if (status === 'Error') {
                 color = 'red';
             }
+        }catch (e) {}
+    }else {
+        if (HtmlUtils.eventTypesUtil.isResolved(event)) {
+            color = 'green';
+        } else if (HtmlUtils.eventTypesUtil.isWarning(event)) {
+            color = 'orange';
+        } else if (HtmlUtils.eventTypesUtil.isError(event)) {
+            color = 'red';
+        }
+    }
+
+    const item: ITimelineItem = {
+        content: '',
+        id: event.eventInstanceId,
+        start: event.timeStamp,
+        kind: event.kind,
+        group: groupId,
+        type: 'point',
+        title: EventStoreUtils.tooltipFormat(event.raw, event.timeStamp),
+        className: `${color}-point`,
+        subgroup: 'noStack'
+    };
+
+    // optional event properties for higher degree of configuration
+    if ('Duration' in event.eventProperties) {
+        // only display a description for range based events
+        if ('Description' in event.eventProperties) {
+            try {
+                item.content = event.eventProperties.Description;
+            }catch (e) {}
         }
 
-       const item: ITimelineItem = {
-            content: '',
-            id: `${index}---${event.eventInstanceId}`,
-            start: event.timeStamp,
-            kind: event.kind,
-            group: groupId,
-            type: 'point',
-            title: EventStoreUtils.tooltipFormat(event.raw, event.timeStamp),
-            className: `${color}-point`,
-            subgroup: 'noStack'
-        };
+        try {
+            const duration = event.eventProperties.Duration;
+            const end = event.timeStamp;
+            const endDate = new Date(end);
+            const start = new Date(endDate.getTime() - duration).toISOString();
 
-        // optional event properties for higher degree of configuration
-       if ('Duration' in event.eventProperties) {
-            // only display a description for range based events
-            if ('Description' in event.eventProperties) {
-                try {
-                    item.content = event.eventProperties.Description;
-                }catch (e) {}
+            if (duration < 0) {
+                item.start = end;
+                item.end = start;
+                item.title = EventStoreUtils.tooltipFormat(event.raw, start, end, item.content);
+            }else {
+                item.start = start;
+                item.end = end;
+                item.title = EventStoreUtils.tooltipFormat(event.raw, end, start, item.content);
             }
 
-            try {
-                const duration = event.eventProperties.Duration;
-                const end = event.timeStamp;
-                const endDate = new Date(end);
-                const start = new Date(endDate.getTime() - duration).toISOString();
+            item.type = 'range';
+            item.className = color;
+            item.subgroup = 'stack';
+        }catch (e ) {}
+      }
 
-                if (duration < 0) {
-                    item.start = end;
-                    item.end = start;
-                    item.title = EventStoreUtils.tooltipFormat(event.raw, start, end, item.content);
-                }else {
-                    item.start = start;
-                    item.end = end;
-                    item.title = EventStoreUtils.tooltipFormat(event.raw, end, start, item.content);
-                }
-
-                item.type = 'range';
-                item.className = color;
-                item.subgroup = 'stack';
-            }catch (e ) {}
-        }
-
-       items.add(item);
+      items.add(item);
     });
 
     const groups = new DataSet<DataGroup>(groupIds);
