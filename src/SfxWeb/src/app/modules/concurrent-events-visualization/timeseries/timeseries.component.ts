@@ -169,6 +169,8 @@ export class TimeseriesComponent implements AfterViewInit, OnChanges, OnDestroy 
             events: {
               mouseOver: function (e) {
                 ref.currentItem = (this as any).itemData;
+                window.dispatchEvent(new Event('resize'));
+                console.log(ref.currentItem)
               }
             },
           }

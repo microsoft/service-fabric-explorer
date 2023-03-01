@@ -6,13 +6,14 @@ import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { IOnDateChange } from 'src/app/modules/time-picker/double-slider/double-slider.component';
 import { data } from './test';
 import { Utils } from 'src/app/Utils/Utils';
+import { Service } from 'src/app/Models/DataModels/Service';
 
 const rdata = data.map(item => {
   return {
     ...item,
     TimeStamp: new Date(item.TimeStamp)
   }
-})
+}).sort((a,b) => a.TimeStamp.getTime() - b.TimeStamp.getTime())
 
 const splitData = Utils.groupByFunc(rdata.filter(item => item.Kind === "NamingMetricsReported"), item => item.OperationName);
 console.log(splitData)
@@ -39,20 +40,7 @@ export class NamingViewerComponent implements OnInit {
         values: splitData[key]
       }
     }),
-    // [
-    //   {
-    //     x: 0,
-    //     y: 1
-    //   },
-    //   {
-    //     x: 2,
-    //     y: 2
-    //   },
-    //   {
-    //     x: 3,
-    //     y: 3
-    //   }
-    // ],
+
     series: [
       {
         name: 'Average Latency',
@@ -77,6 +65,8 @@ export class NamingViewerComponent implements OnInit {
     ]
   }
 
+  public namingService: Service;
+
   constructor(private dataService: DataService) { }
 
   ngOnInit(): void {
@@ -87,13 +77,14 @@ export class NamingViewerComponent implements OnInit {
     console.log(this.dataset)
     this.dataService.getService("System", "System/NamingService").subscribe(app => {
       const ess = [];
+      this.namingService = app;
       app.partitions.ensureInitialized().subscribe(_ => {
         forkJoin(app.partitions.collection.map(partition => {
           const es = this.dataService.getReplicaEventData(partition.id);
           ess.push(es);
           return es.eventsList.refresh();
         })).subscribe(() => {
-          console.log(ess.map(e => e.collection))
+          console.log(ess)
         })
       })
     })

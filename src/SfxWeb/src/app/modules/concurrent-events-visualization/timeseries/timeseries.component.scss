@@ -1,8 +1,18 @@
 .layout-container {
   display: flex;
-  // flex-direction: column;
-  flex-wrap: wrap;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0px;
 }
-.chart-container {
+
+.chart {
+  text-align: center;
+  flex: 1;
+  min-width: 0px;
   min-width: 300px;
+}
+
+.chart-container {
+  // min-width: 800px;
+  width: 100%;
 }

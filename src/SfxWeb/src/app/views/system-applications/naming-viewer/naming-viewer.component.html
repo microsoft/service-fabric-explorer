@@ -1,5 +1,27 @@
 <div class="essen-pane">
   <app-full-time-picker [startDate]="startDate" [endDate]="endDate" (datesChanged)="setNewDates($event)"
   [startDateMin]="startDateMin" [startDateMax]="startDateMax" ></app-full-time-picker>
+
+
+  <div ngbDropdown placement="bottom-right" #myDrop="ngbDropdown" >
+    <button class="flat-button" ngbDropdownToggle aria-label="settings drop down">
+      <span class="mif-tools"></span>
+    </button>
+    <div>
+      <div class="toggle-wrapper" *ngFor="let partition of namingService.partitions.collection">
+        {{partition.id}} ()
+      </div>
+    </div>
+
+    <!-- <div ngbDropdownMenu aria-labelledby="dropdownBasic1" class="dropdown-container" *ngIf="namingService">
+      <ul >
+
+        <li ngbDropdownItem *ngFor="let partition of namingService.partitions.collection">
+          {{partition.id}}
+        </li>
+      </ul>
+    </div> -->
+  </div>
+
   <app-timeseries [data]="dataset"></app-timeseries>
 </div>
