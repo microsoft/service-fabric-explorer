@@ -7,17 +7,19 @@ const appName = "VisualObjectsApplicationType";
 const serviceName = "VisualObjects.ActorServicePkg";
 const waitRequest = "@getinfo";
 
+const setup = (service, prefix = "") => {
+  addRoute("apps", prefix + "deployed-service/deployed-apps.json", apiUrl(`/Nodes/${nodeName}/$/GetApplications?*`));
+  addRoute("health", prefix + "deployed-service/health.json", apiUrl(`/Nodes/${nodeName}/$/GetApplications/${appName}/$/GetServicePackages/${service}/$/GetHealth?*`));
+  addRoute("info", prefix + "deployed-service/service-info.json", apiUrl(`/Nodes/${nodeName}/$/GetApplications/${appName}/$/GetServicePackages/${service}?*`));
+  addRoute("services", prefix + "deployed-service/services.json", apiUrl(`/Nodes/${nodeName}/$/GetApplications/${appName}/$/GetServicePackages?*`));
+  addRoute("manifest", prefix + "deployed-service/manifest.json", apiUrl(`/ApplicationTypes/${appName}/$/GetServiceManifest?*`));
+
+}
+
 context('deployed service package', () => {
     beforeEach(() => {
         addDefaultFixtures();
-
-
-        addRoute("apps", "deployed-service/deployed-apps.json", apiUrl(`/Nodes/${nodeName}/$/GetApplications?*`));
-        addRoute("health", "deployed-service/health.json", apiUrl(`/Nodes/${nodeName}/$/GetApplications/${appName}/$/GetServicePackages/${serviceName}/$/GetHealth?*`));
-        addRoute("info", "deployed-service/service-info.json", apiUrl(`/Nodes/${nodeName}/$/GetApplications/${appName}/$/GetServicePackages/${serviceName}?*`));
-        addRoute("services", "deployed-service/services.json", apiUrl(`/Nodes/${nodeName}/$/GetApplications/${appName}/$/GetServicePackages?*`));
-        addRoute("manifest", "deployed-service/manifest.json", apiUrl(`/ApplicationTypes/${appName}/$/GetServiceManifest?*`));
-
+        setup(serviceName);
         cy.visit(`/#/node/_nt_2/deployedapp/${appName}/deployedservice/${serviceName}`)
     })
 
@@ -63,5 +65,15 @@ context('deployed service package', () => {
             checkCommand(3, 1);
 
         })
+    })
+
+    describe("xss", () => {
+      it.only("xss - essentials/details", () => {
+        const xssName = "%253Cimg%2520src%253D'1'%2520onerror%253D'window.alert%28document.domain%29'%253E";
+
+        setup(xssName, "xss/")
+        cy.visit(`/#/node/_nt_2/deployedapp/${appName}/deployedservice/${xssName}`)
+
+      })
     })
 })

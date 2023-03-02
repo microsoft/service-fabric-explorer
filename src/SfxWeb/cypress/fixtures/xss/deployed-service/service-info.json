@@ -1,0 +1,9 @@
+[
+    {
+        "Name": "<img src='1' onerror='window.alert(document.domain)'>",
+        "Version": "3.0.0",
+        "Status": "Active",
+        "ServicePackageActivationId": "",
+        "HealthState": "Unknown"
+    }
+]

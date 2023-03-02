@@ -16,6 +16,7 @@ const setup = (prefix = "") => {
 
 }
 
+
 context('deployed replica', () => {
     beforeEach(() => {
       setup();
@@ -42,12 +43,16 @@ context('deployed replica', () => {
         const replica = "132431356665040624";
         const partition = "41fb6918-986b-4b6d-bff6-0495b114c720";
 
-        beforeEach(() => {
-            cy.intercept(apiUrl(`/Partitions/${partition}?*`), { fixture: 'deployed-replica/partition.json' }).as('partition');
-            //we call this route twice with different params
-            cy.intercept(apiUrl(`/Nodes/${nodeName}/$/GetApplications/${appName}/$/GetReplicas?**PartitionId=${partition}*`), { fixture: 'deployed-replica/view-replica.json' }).as('replica2')
-            cy.intercept(apiUrl(`/Nodes/${nodeName}/$/GetPartitions/${partition}/$/GetReplicas/${replica}/$/GetDetail?*`), { fixture: 'deployed-replica/replica-details.json' }).as('replica-details');
+        const setupIndividualPage = (prefix = "") => {
+          cy.intercept(apiUrl(`/Partitions/${partition}?*`), { fixture: prefix + 'deployed-replica/partition.json' }).as('partition');
+          //we call this route twice with different params
+          cy.intercept(apiUrl(`/Nodes/${nodeName}/$/GetApplications/${appName}/$/GetReplicas?**PartitionId=${partition}*`), { fixture: prefix + 'deployed-replica/view-replica.json' }).as('replica2')
+          cy.intercept(apiUrl(`/Nodes/${nodeName}/$/GetPartitions/${partition}/$/GetReplicas/${replica}/$/GetDetail?*`), { fixture: prefix + 'deployed-replica/replica-details.json' }).as('replica-details');
 
+        }
+
+        beforeEach(() => {
+          setupIndividualPage();
             cy.visit(`/#/node/_nt_2/deployedapp/${appName}/deployedservice/${serviceName}/partition/${partition}/replica/${replica}`);
 
         })
@@ -78,8 +83,11 @@ context('deployed replica', () => {
 
         })
 
-        it("xss", () => {
-          setup();
+        it.only("xss", () => {
+          setup("xss/");
+          setupIndividualPage("xss/");
+          cy.visit(`/#/node/_nt_2/deployedapp/${appName}/deployedservice/${serviceName}/partition/${partition}/replica/${replica}`);
+
         })
     })
 
