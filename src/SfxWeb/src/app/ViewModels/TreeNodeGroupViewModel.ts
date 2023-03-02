@@ -119,18 +119,12 @@ export class TreeNodeGroupViewModel implements ITreeNode {
         return !this.leafNode && this.hasChildren && !this.allChildrenInvisibleByBadge;
     }
 
-    public get displayHtml(): string {
-        const name = this.node.displayName();
-        if (this.tree && this.tree.searchTerm && this.tree.searchTerm.trim()) {
-            const searchTerm = this.tree.searchTerm;
-            const matchIndex = name.toLowerCase().indexOf(searchTerm.toLowerCase());
-
-            if (matchIndex !== -1) {
-                return name.substring(0, matchIndex) + '<span class=\'search-match\'>' + name.substr(matchIndex, searchTerm.length) + '</span>' + name.substring(matchIndex + searchTerm.length);
-            }
+    public get isHighlighted(): boolean {
+        let matchIndex = false;
+        if (this.tree && this.tree.searchTerm.trim()) {
+            matchIndex = this.node.displayName().toLowerCase().includes(this.tree.searchTerm.toLowerCase());
         }
-
-        return name;
+        return matchIndex;
     }
 
     private get hasExpandedAndLoadedChildren(): boolean {
