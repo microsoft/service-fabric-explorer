@@ -5,14 +5,15 @@ import { ApplicationEvent, NodeEvent } from './Events';
 describe('TimelineGenerators', () => {
     const nodeInstanceId = "132327707667996470";
     const startDate = new Date('2020-04-29T01:39:55Z');
-    const endDate  = new Date('2020-05-06T01:39:55Z');
+    const endDate = new Date('2020-05-06T01:39:55Z');
+    const nestedGroupLabel = 'example';
 
     const id = '---29dd383d-fdd4-4499-8e69-b7b40de04bd2';
     const id2 = "---29dd383d-fdd4-4499-8e69-b7b40de04bd3";
-    const groupId = 'Node Down';
+    const groupId = `${nestedGroupLabel}---Node Down`;
     describe('Node generator', () => {
         const generator = new NodeTimelineGenerator();
-        const nodeDownGroups = {id: NodeTimelineGenerator.NodesDownLabel, content: NodeTimelineGenerator.NodesDownLabel, subgroupStack: {stack: true}};
+        const nodeDownGroups = {id: `${nestedGroupLabel}---${NodeTimelineGenerator.NodesDownLabel}`, content: NodeTimelineGenerator.NodesDownLabel, subgroupStack: {stack: true}};
 
         const downEvent = new NodeEvent();
 
@@ -43,9 +44,9 @@ describe('TimelineGenerators', () => {
 
         fit('node started down and goes up', () => {
             const data = [upEvent];
-            const events = generator.consume(data, startDate, endDate);
+            const events = generator.consume(data, startDate, endDate, nestedGroupLabel);
 
-            const someId = '0' + id2;
+            const someId = `${nestedGroupLabel}---0${id2}`;
             expect(events.items.length).toBe(1);
             expect(events.items.get(someId)).toEqual({
                 id: someId,
@@ -53,7 +54,7 @@ describe('TimelineGenerators', () => {
                 start: '2020-05-01T01:39:55Z',
                 end: '2020-05-09T17:46:39.2458955Z',
                 kind: upEvent.kind,
-                group: NodeTimelineGenerator.NodesDownLabel,
+                group: `${nestedGroupLabel}---${NodeTimelineGenerator.NodesDownLabel}`,
                 type: 'range',
                 title: EventStoreUtils.tooltipFormat(upEvent.eventProperties, '2020-05-01T01:39:55Z', '2020-05-09T17:46:39.2458955Z', 'Node test_node down'),
                 className: 'red',
@@ -68,9 +69,9 @@ describe('TimelineGenerators', () => {
 
         fit('node started up and goes down', () => {
             const data = [downEvent];
-            const events = generator.consume(data, startDate, endDate);
+            const events = generator.consume(data, startDate, endDate,nestedGroupLabel);
 
-            const someId = '0' + id;
+            const someId = `${nestedGroupLabel}---0${id}`;
 
             expect(events.items.length).toBe(1);
             expect(events.items.get(someId)).toEqual({
@@ -79,7 +80,7 @@ describe('TimelineGenerators', () => {
                 start: downEvent.timeStamp,
                 end: endDate.toISOString(),
                 kind: downEvent.kind,
-                group: NodeTimelineGenerator.NodesDownLabel,
+                group: `${nestedGroupLabel}---${NodeTimelineGenerator.NodesDownLabel}`,
                 type: 'range',
                 title: EventStoreUtils.tooltipFormat(downEvent.eventProperties, downEvent.timeStamp, endDate.toISOString(), 'Node test_node down'),
                 className: 'red',
@@ -94,8 +95,8 @@ describe('TimelineGenerators', () => {
 
         fit('node goes down and up', () => {
             const data = [upEvent, downEvent];
-            const events = generator.consume(data, startDate, endDate);
-            const someId = '1' + id;
+            const events = generator.consume(data, startDate, endDate, nestedGroupLabel);
+            const someId = `${nestedGroupLabel}---1${id}`;;
 
             expect(events.items.length).toBe(1);
             expect(events.items.get(someId)).toEqual({
@@ -104,7 +105,7 @@ describe('TimelineGenerators', () => {
                 start: downEvent.timeStamp,
                 end: upEvent.timeStamp,
                 kind: downEvent.kind,
-                group: NodeTimelineGenerator.NodesDownLabel,
+                group: `${nestedGroupLabel}---${NodeTimelineGenerator.NodesDownLabel}`,
                 type: 'range',
                 title: EventStoreUtils.tooltipFormat(downEvent.eventProperties, downEvent.timeStamp, upEvent.timeStamp, 'Node test_node down'),
                 className: 'red',
@@ -129,7 +130,7 @@ describe('TimelineGenerators', () => {
             down4.fillFromJSON({...upEvent.raw, EventInstanceId: '4', NodeName: '4', NodeInstance: 4});
             const data = [downEvent, down1, down2, down3, down4];
 
-            const events = generator.consume(data, startDate, endDate);
+            const events = generator.consume(data, startDate, endDate, nestedGroupLabel);
             expect(events.items.length).toBe(5);
 
             expect(events.groups.length).toBe(1);
@@ -155,16 +156,17 @@ describe('TimelineGenerators', () => {
 
 
             const data = [upEvent, downEvent, secondUpEvent];
-            const events = generator.consume(data, startDate, endDate);
-
+            const events = generator.consume(data, startDate, endDate, nestedGroupLabel);
+            let someId = `${nestedGroupLabel}---2${id}`;;
+          
             expect(events.items.length).toBe(2);
-            expect(events.items.get('2' + id)).toEqual({
-                id: '2' + id,
+            expect(events.items.get(someId)).toEqual({
+                id: someId,
                 content: 'Node test_node down',
                 start: downEvent.timeStamp,
                 end: upEvent.timeStamp,
                 kind: downEvent.kind,
-                group: NodeTimelineGenerator.NodesDownLabel,
+                group: `${nestedGroupLabel}---${NodeTimelineGenerator.NodesDownLabel}`,
                 type: 'range',
                 title: EventStoreUtils.tooltipFormat(downEvent.eventProperties, downEvent.timeStamp, upEvent.timeStamp, 'Node test_node down'),
                 className: 'red',
@@ -172,7 +174,7 @@ describe('TimelineGenerators', () => {
             });
 
 
-            const someId = "2---test";
+            someId = `${nestedGroupLabel}---2---test`;
 
             expect(events.items.get(someId)).toEqual({
                 id: someId,
@@ -180,7 +182,7 @@ describe('TimelineGenerators', () => {
                 start: lastNodeUpAt2,
                 end: timeStamp,
                 kind: upEvent.kind,
-                group: NodeTimelineGenerator.NodesDownLabel,
+                group: `${nestedGroupLabel}---${NodeTimelineGenerator.NodesDownLabel}`,
                 type: 'range',
                 title: EventStoreUtils.tooltipFormat(secondUpEvent.eventProperties, lastNodeUpAt2, timeStamp, 'Node test_node down'),
                 className: 'red',
@@ -225,7 +227,7 @@ describe('TimelineGenerators', () => {
 
             const data = [deactivate, down];
 
-            const events = generator.consume(data, startDate, endDateRange);
+            const events = generator.consume(data, startDate, endDateRange, nestedGroupLabel);
             expect(events.items.length).toBe(1);
             expect(events.potentiallyMissingEvents).toBeFalse();
         });
@@ -254,7 +256,7 @@ describe('TimelineGenerators', () => {
 
           const data = [openFailed];
 
-          const events = generator.consume(data, startDate, endDateRange);
+          const events = generator.consume(data, startDate, endDateRange, nestedGroupLabel);
           expect(events.items.length).toBe(1);
           expect(events.groups.length).toBe(2);
         });
@@ -318,7 +320,7 @@ describe('TimelineGenerators', () => {
 
         const data = [addedToClusterEvent, nodeUpevent, nodeDownEvent, nodeUpevent2];
 
-        const events = generator.consume(data, startDate, endDateRange);
+        const events = generator.consume(data, startDate, endDateRange, nestedGroupLabel);
         expect(events.items.length).toBe(2);
         expect(events.groups.length).toBe(2);
       });
@@ -357,9 +359,9 @@ describe('TimelineGenerators', () => {
 
             const data = [nodeDownEvent, removed];
 
-            const events = generator.consume(data, startDate, endDateRange);
+            const events = generator.consume(data, startDate, endDateRange, nestedGroupLabel);
             const content = "Node test_node down and removed from the cluster";
-            const itemId = "1" + id2;
+            const itemId = `${nestedGroupLabel}---1${id2}`;
 
             expect(events.items.length).toBe(2);
             expect(events.groups.length).toBe(2);
@@ -369,7 +371,7 @@ describe('TimelineGenerators', () => {
               start: '2022-04-25T06:22:35.5813324Z',
               end: '2022-04-25T06:22:41.5813324Z',
               kind: downEvent.kind,
-              group: NodeTimelineGenerator.NodesDownLabel,
+              group: `${nestedGroupLabel}---${NodeTimelineGenerator.NodesDownLabel}`,
               type: 'range',
               title: EventStoreUtils.tooltipFormat(nodeDownEvent.eventProperties, '2022-04-25T06:22:35.5813324Z', '2022-04-25T06:22:41.5813324Z', content),
               className: 'darkorange',
@@ -409,7 +411,7 @@ describe('TimelineGenerators', () => {
         })
 
         const data = [containerExitEvent];
-        const events = generator.consume(data, startDate, endDateRange);
+        const events = generator.consume(data, startDate, endDateRange, nestedGroupLabel);
         expect(events.items.length).toBe(1);
         expect(events.potentiallyMissingEvents).toBeFalse();
     });
@@ -450,16 +452,17 @@ describe('TimelineGenerators', () => {
 
 
       const data = [end, startUpgrade];
-      const events = generator.consume(data, startDate, endDate);
+      const events = generator.consume(data, startDate, endDate, nestedGroupLabel);
       const content = "Upgrade rolling forward to 25.0.0";
+      const someId = `${nestedGroupLabel}---0---${EventInstanceId}`;
 
       expect(events.items.length).toBe(1);
-      expect(events.items.get('0---' + EventInstanceId)).toEqual({
-        "id":  '0---' + EventInstanceId,
+      expect(events.items.get(someId)).toEqual({
+        "id":  someId,
         content,
         "start": "2022-06-02T16:49:58.656Z",
         "end": "2022-06-02T16:51:55.6741761Z",
-        "group": "Application Upgrades",
+        "group": `${nestedGroupLabel}---Application Upgrades`,
         "kind": "ApplicationUpgradeCompleted",
         "type": "range",
         title: EventStoreUtils.tooltipFormat(end.eventProperties, startUpgrade.timeStamp, end.timeStamp),
