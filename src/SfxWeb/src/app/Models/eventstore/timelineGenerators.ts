@@ -291,12 +291,12 @@ export class ClusterTimelineGenerator extends TimeLineGeneratorBase<ClusterEvent
             const data = clusterRollBacks[eventInstanceId];
             // this.parseClusterUpgradeAndRollback(data.complete, data.start, items, startOfRange);
             EventStoreUtils.parseUpgradeAndRollback(data.complete, events.indexOf(data.complete), data.start, items, startOfRange,
-                                                            ClusterTimelineGenerator.clusterUpgradeLabel, 'TargetClusterVersion', nestedGroupLabel);
+                                                            `${nestedGroupLabel}---${ClusterTimelineGenerator.clusterUpgradeLabel}`, 'TargetClusterVersion', nestedGroupLabel);
         });
 
         // Display a pending upgrade
         if (upgradeClusterStarted) {
-            EventStoreUtils.parseUpgradeStarted(upgradeClusterStarted, events.indexOf(upgradeClusterStarted), items, endOfRange, ClusterTimelineGenerator.clusterUpgradeLabel, 'TargetClusterVersion', nestedGroupLabel);
+          EventStoreUtils.parseUpgradeStarted(upgradeClusterStarted, events.indexOf(upgradeClusterStarted), items, endOfRange, `${nestedGroupLabel}--- ${ClusterTimelineGenerator.clusterUpgradeLabel}`, 'TargetClusterVersion', nestedGroupLabel);
         }
 
         const groups = new DataSet<DataGroup>([
@@ -347,11 +347,11 @@ export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
   static readonly NodesRemovedFromClusterLabel = 'Nodes removed from cluster';
   static readonly transitions = [NodeUp, NodeDown, NodeDeactivateCompleted, NodeRemovedFromCluster, NodeAddedToCluster, NodeOpenFailed];
 
-  generateNodeOpenFailedEvent(event: NodeEvent, eventIndex: number) {
+  generateNodeOpenFailedEvent(event: NodeEvent, eventIndex: number, nestedGroupLabel: string) {
     const item = {
-      id: `${eventIndex}---${event.eventInstanceId}`,
+      id: `${nestedGroupLabel}---${eventIndex}---${event.eventInstanceId}`,
       start: event.timeStamp,
-      group: NodeTimelineGenerator.NodesFailedToOpenLabel,
+      group: `${nestedGroupLabel }--- ${NodeTimelineGenerator.NodesFailedToOpenLabel} `,
       type: 'point',
       kind: event.kind,
       title: EventStoreUtils.tooltipFormat(event.eventProperties, event.timeStamp, null, `${event.nodeName} failed to open with ${event.eventProperties['Error']}.`),
@@ -362,12 +362,12 @@ export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
     return item;
   }
 
-  generateAddOrRemovedNodeEvent(event: NodeEvent, eventIndex: number, added: boolean = true) {
+  generateAddOrRemovedNodeEvent(event: NodeEvent, eventIndex: number, nestedGroupLabel: string, added: boolean = true) {
     const label = `Node ${event.nodeName} ${added ? 'added to' : 'removed from'} cluster`;
     const item = {
-      id: `${eventIndex}---${event.eventInstanceId}`,
+      id: `${nestedGroupLabel}---${eventIndex}---${event.eventInstanceId}`,
       start: event.timeStamp,
-      group: added ? NodeTimelineGenerator.NodesAddedToClusterLabel : NodeTimelineGenerator.NodesRemovedFromClusterLabel,
+      group: added ? `${nestedGroupLabel}---${NodeTimelineGenerator.NodesAddedToClusterLabel}` : `${nestedGroupLabel}---${NodeTimelineGenerator.NodesRemovedFromClusterLabel}`,
       type: 'point',
       kind: event.kind,
       title: EventStoreUtils.tooltipFormat(event.eventProperties, event.timeStamp, null, label),
@@ -378,15 +378,15 @@ export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
     return item;
   };
 
-  generateDownNodeEvent(event: NodeEvent, eventIndex: number, start: string, end: string, additionalContext?: string) {
+  generateDownNodeEvent(event: NodeEvent, eventIndex: number, start: string, end: string, nestedGroupLabel: string, additionalContext?: string) {
     const label = `Node ${event.nodeName} down${additionalContext ? (" " + additionalContext) : ''}`;
     const item = {
-      id: `${eventIndex}---${event.eventInstanceId}`,
+      id: `${nestedGroupLabel}---${eventIndex}---${event.eventInstanceId}`,
       content: label,
       start,
       end,
       kind: event.kind,
-      group: NodeTimelineGenerator.NodesDownLabel,
+      group: `${nestedGroupLabel}---${NodeTimelineGenerator.NodesDownLabel}`,
       type: 'range',
       title: EventStoreUtils.tooltipFormat(event.eventProperties, start, end, label),
       className: additionalContext ? 'darkorange' : 'red',
@@ -395,17 +395,17 @@ export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
     return item;
   };
 
-  generateNodeDisablingEvent(event: NodeEvent, eventIndex: number) {
+  generateNodeDisablingEvent(event: NodeEvent, eventIndex: number, nestedGroupLabel: string) {
     const label = `Node ${event.nodeName} Disabling with intent ${event.eventProperties.EffectiveDeactivateIntent}`;
     const start = event.eventProperties.StartTime;
     const end = event.timeStamp;
     const item = {
-      id: `${eventIndex}---${event.eventInstanceId}`,
+      id: `${nestedGroupLabel}---${eventIndex}---${event.eventInstanceId}`,
       content: label,
       start,
       end,
       kind: event.kind,
-      group: NodeTimelineGenerator.NodesDownLabel,
+      group: `${nestedGroupLabel}---${NodeTimelineGenerator.NodesDownLabel}`,
       type: 'range',
       title: EventStoreUtils.tooltipFormat(event.eventProperties, start, end, label),
       className: 'yellow',
@@ -461,13 +461,13 @@ export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
           }).reverse().forEach((event, index) => {
             if (event.kind === NodeDown) {
                 if(lastRemoved) {
-                  items.add(this.generateDownNodeEvent(event, index, event.timeStamp, lastRemoved.timeStamp, 'and removed from the cluster'));
+                  items.add(this.generateDownNodeEvent(event, index, event.timeStamp, lastRemoved.timeStamp, nestedGroupLabel, 'and removed from the cluster'));
                   lastUpEvent = null;
                   lastDownEvent = null;
                   lastRemoved = null;
 
                 } else if (lastDownEvent) {
-                  items.add(this.generateDownNodeEvent(event, index, event.timeStamp, lastDownEvent.end));
+                  items.add(this.generateDownNodeEvent(event, index, event.timeStamp, lastDownEvent.end, nestedGroupLabel));
                   lastUpEvent = null;
                   lastDownEvent = null;
                 }else if (lastUpEvent) {
@@ -485,7 +485,7 @@ export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
 
             if(event.kind === 'NodeUp') {
               if(lastDownEvent) {
-                items.add(this.generateDownNodeEvent(lastDownEvent.event, index, lastDownEvent.event.timeStamp, lastDownEvent.end));
+                items.add(this.generateDownNodeEvent(lastDownEvent.event, index, lastDownEvent.event.timeStamp, lastDownEvent.end, nestedGroupLabel));
                 lastDownEvent = null;
               }
 
@@ -496,12 +496,12 @@ export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
             if(event.kind === NodeRemovedFromCluster) {
               removedFromCluster = true;
               lastRemoved = event;
-              items.add(this.generateAddOrRemovedNodeEvent(event, index, false));
+              items.add(this.generateAddOrRemovedNodeEvent(event, index, nestedGroupLabel, false));
             }
 
             if(event.kind === NodeAddedToCluster) {
               addedToCluster = true;
-              items.add(this.generateAddOrRemovedNodeEvent(event, index, true));
+              items.add(this.generateAddOrRemovedNodeEvent(event, index, nestedGroupLabel, true));
               if(lastDownEvent) {
                 lastDownEvent = null;
               }
@@ -512,33 +512,33 @@ export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
               //dont show node down if its expected
               if(event.eventProperties.EffectiveDeactivateIntent === 'RemoveNode') {
                 //TODO add a removed and down event?
-                items.add(this.generateNodeDisablingEvent(event, index));
+                items.add(this.generateNodeDisablingEvent(event, index, nestedGroupLabel));
 
                 lastDownEvent = null;
               }else {
                 if(lastDownEvent) {
-                  items.add(this.generateDownNodeEvent(lastDownEvent.event, events.indexOf(lastDownEvent.event), lastDownEvent.event.timeStamp, lastDownEvent.end, `with intent disabled ${event.eventProperties.EffectiveDeactivateIntent}`));
-                  items.add(this.generateNodeDisablingEvent(event, index));
+                  items.add(this.generateDownNodeEvent(lastDownEvent.event, events.indexOf(lastDownEvent.event), lastDownEvent.event.timeStamp, lastDownEvent.end, nestedGroupLabel, `with intent disabled ${event.eventProperties.EffectiveDeactivateIntent}`));
+                  items.add(this.generateNodeDisablingEvent(event, index, nestedGroupLabel));
                   lastDownEvent = null;
                   lastUpEvent = null;
                 }else{
-                  items.add(this.generateDownNodeEvent(event, index, event.eventProperties['StartTime'] as string, event.timeStamp as string, `with intent disabled ${event.eventProperties.EffectiveDeactivateIntent}`));
+                  items.add(this.generateDownNodeEvent(event, index, event.eventProperties['StartTime'] as string, event.timeStamp as string, nestedGroupLabel, `with intent disabled ${event.eventProperties.EffectiveDeactivateIntent}`));
                 }
               }
             }
 
             if(event.kind === NodeOpenFailed) {
-              items.add(this.generateNodeOpenFailedEvent(event, index));
+              items.add(this.generateNodeOpenFailedEvent(event, index, nestedGroupLabel));
               failedToOpen = true;
             }
           })
 
           if(lastDownEvent) {
-            items.add(this.generateDownNodeEvent(lastDownEvent.event, events.indexOf(lastDownEvent.event), lastDownEvent.event.timeStamp, lastDownEvent.end));
+            items.add(this.generateDownNodeEvent(lastDownEvent.event, events.indexOf(lastDownEvent.event), lastDownEvent.event.timeStamp, lastDownEvent.end, nestedGroupLabel));
           }
 
           if(lastUpEvent) {
-            items.add(this.generateDownNodeEvent(lastUpEvent, events.indexOf(lastUpEvent), lastUpEvent.eventProperties.LastNodeDownAt, lastUpEvent.timeStamp));
+            items.add(this.generateDownNodeEvent(lastUpEvent, events.indexOf(lastUpEvent), lastUpEvent.eventProperties.LastNodeDownAt, lastUpEvent.timeStamp, nestedGroupLabel));
           }
         })
 
@@ -605,15 +605,15 @@ export class ApplicationTimelineGenerator extends TimeLineGeneratorBase<Applicat
             if ( (event.kind === 'ApplicationUpgradeStarted' || event.kind === 'ApplicationUpgradeRollbackStarted') && !previousApplicationUpgrade ) {
                 upgradeApplicationStarted = event;
             }else if (event.kind === 'ApplicationUpgradeDomainCompleted') {
-                EventStoreUtils.parseUpgradeDomain(event, index, items, ApplicationTimelineGenerator.upgradeDomainLabel, 'ApplicationTypeVersion', nestedGroupLabel);
+                EventStoreUtils.parseUpgradeDomain(event, index, items, `${nestedGroupLabel}---${ApplicationTimelineGenerator.upgradeDomainLabel}`, 'ApplicationTypeVersion', nestedGroupLabel);
             }else if (event.kind === 'ApplicationUpgradeCompleted') {
-                EventStoreUtils.parseUpgradeCompleted(event, index, items, ApplicationTimelineGenerator.applicationUpgradeLabel, 'ApplicationTypeVersion', nestedGroupLabel);
+                EventStoreUtils.parseUpgradeCompleted(event, index, items, `${nestedGroupLabel}---${ApplicationTimelineGenerator.applicationUpgradeLabel}`, 'ApplicationTypeVersion', nestedGroupLabel);
                 upgradeApplicationStarted = null;
                 previousApplicationUpgrade = event;
             }else if (event.kind === 'ApplicationProcessExited') {
-                this.parseApplicationProcessExited(event, index, items, processExitedGroups);
+                this.parseApplicationProcessExited(event, index, items, processExitedGroups, nestedGroupLabel);
             }else if(event.kind === "ApplicationContainerInstanceExited") {
-              this.parseApplicationProcessExited(event, index, items, containerExitedGroups);
+              this.parseApplicationProcessExited(event, index, items, containerExitedGroups, nestedGroupLabel);
             }
 
             // handle roll backs alone
@@ -630,21 +630,21 @@ export class ApplicationTimelineGenerator extends TimeLineGeneratorBase<Applicat
         // we gather them up and add them at the end so we can get corresponding events
         Object.keys(applicationRollBacks).forEach(eventInstanceId => {
             const data = applicationRollBacks[eventInstanceId];
-            EventStoreUtils.parseUpgradeAndRollback(data.complete, events.indexOf(data.complete), data.start, items, startOfRange, ApplicationTimelineGenerator.applicationUpgradeLabel, 'ApplicationTypeVersion', nestedGroupLabel);
+            EventStoreUtils.parseUpgradeAndRollback(data.complete, events.indexOf(data.complete), data.start, items, startOfRange, `${nestedGroupLabel}---${ApplicationTimelineGenerator.applicationUpgradeLabel}`, 'ApplicationTypeVersion', nestedGroupLabel);
         });
 
         // Display a pending upgrade
         if (upgradeApplicationStarted) {
-            EventStoreUtils.parseUpgradeStarted(upgradeApplicationStarted, events.indexOf(upgradeApplicationStarted), items, endOfRange, ApplicationTimelineGenerator.applicationUpgradeLabel, 'ApplicationTypeVersion', nestedGroupLabel);
+            EventStoreUtils.parseUpgradeStarted(upgradeApplicationStarted, events.indexOf(upgradeApplicationStarted), items, endOfRange, `${nestedGroupLabel}---${ApplicationTimelineGenerator.applicationUpgradeLabel}`, 'ApplicationTypeVersion', nestedGroupLabel);
         }
 
         const groups = new DataSet<DataGroup>([
-            {id: ApplicationTimelineGenerator.upgradeDomainLabel, content: ApplicationTimelineGenerator.upgradeDomainLabel},
-            {id: ApplicationTimelineGenerator.applicationUpgradeLabel, content: ApplicationTimelineGenerator.applicationUpgradeLabel},
+            {id: `${nestedGroupLabel}---${ApplicationTimelineGenerator.upgradeDomainLabel}`, content: ApplicationTimelineGenerator.upgradeDomainLabel},
+            {id: `${nestedGroupLabel}---${ApplicationTimelineGenerator.applicationUpgradeLabel}`, content: ApplicationTimelineGenerator.applicationUpgradeLabel},
         ]);
 
         const nestedApplicationProcessExited: DataGroup = {
-            id: ApplicationTimelineGenerator.applicationPrcoessExitedLabel,
+            id: `${nestedGroupLabel}---${ApplicationTimelineGenerator.applicationPrcoessExitedLabel}`,
             nestedGroups: [],
             content: ApplicationTimelineGenerator.applicationPrcoessExitedLabel,
         };
@@ -656,7 +656,7 @@ export class ApplicationTimelineGenerator extends TimeLineGeneratorBase<Applicat
         groups.add(nestedApplicationProcessExited);
 
         const nestedContainerProcessExited: DataGroup = {
-            id: ApplicationTimelineGenerator.applicationContainerExitedLabel,
+            id: `${nestedGroupLabel}---${ApplicationTimelineGenerator.applicationContainerExitedLabel}`,
             nestedGroups: [],
             content: ApplicationTimelineGenerator.applicationContainerExitedLabel,
         };
@@ -676,15 +676,15 @@ export class ApplicationTimelineGenerator extends TimeLineGeneratorBase<Applicat
     }
 
 
-    parseApplicationProcessExited(event: FabricEventBase, eventIndex: number, items: DataSet<ITimelineItem>, processExitedGroups: Record<string, DataGroup>) {
-        const groupLabel = `${event.eventProperties.ServicePackageName}`;
+    parseApplicationProcessExited(event: FabricEventBase, eventIndex: number, items: DataSet<ITimelineItem>, processExitedGroups: Record<string, DataGroup>, nestedGroupLabel: string) {
+        const groupLabel = `${nestedGroupLabel}---${event.eventProperties.ServicePackageName}`;
         processExitedGroups[groupLabel] = {id: groupLabel, content: groupLabel};
 
         const start = event.timeStamp;
         const label = event.eventProperties.ExeName;
 
         items.add({
-            id: `${eventIndex}---${event.eventInstanceId}`,
+            id: `${nestedGroupLabel}---${eventIndex}---${event.eventInstanceId}`,
             content: '',
             start,
             kind: event.kind,
@@ -695,15 +695,15 @@ export class ApplicationTimelineGenerator extends TimeLineGeneratorBase<Applicat
         });
     }
 
-    parseContainerExited(event: FabricEventBase, eventIndex: number, items: DataSet<ITimelineItem>, processExitedGroups: Record<string, DataGroup>) {
-      const groupLabel = `${event.eventProperties.ServicePackageName}`;
+    parseContainerExited(event: FabricEventBase, eventIndex: number, items: DataSet<ITimelineItem>, processExitedGroups: Record<string, DataGroup>, nestedGroupLabel: string) {
+      const groupLabel = `${nestedGroupLabel}---${event.eventProperties.ServicePackageName}`;
       processExitedGroups[groupLabel] = {id: groupLabel, content: groupLabel};
 
       const start = event.timeStamp;
       const label = event.eventProperties.ExeName;
 
       items.add({
-          id: `${eventIndex}---${event.eventInstanceId}`,
+          id: `${nestedGroupLabel}---${eventIndex}---${event.eventInstanceId}`,
           content: '',
           start,
           kind: event.kind,
@@ -719,7 +719,7 @@ export class PartitionTimelineGenerator extends TimeLineGeneratorBase<PartitionE
     static readonly swapPrimaryLabel = 'Primary Swap';
     static readonly swapPrimaryDurations = 'Swap Primary phases';
 
-    consume(events: PartitionEvent[], startOfRange: Date, endOfRange: Date): ITimelineData {
+    consume(events: PartitionEvent[], startOfRange: Date, endOfRange: Date, nestedGroupLabel: string): ITimelineData {
       const items = new DataSet<ITimelineItem>();
 
       const partitionEventMap: Record<string, PartitionEvent[]> = {};
@@ -741,11 +741,11 @@ export class PartitionTimelineGenerator extends TimeLineGeneratorBase<PartitionE
 
                 items.add({
                     kind: 'primaryswap',
-                    id: `${index}---${event.eventInstanceId}`,
+                    id: `${nestedGroupLabel}---${index}---${event.eventInstanceId}`,
                     content: label,
                     start,
                     end,
-                    group: PartitionTimelineGenerator.swapPrimaryLabel,
+                    group: `${nestedGroupLabel}---${PartitionTimelineGenerator.swapPrimaryLabel}`,
                     type: 'range',
                     title: EventStoreUtils.tooltipFormat(event.eventProperties, start, end, 'Primary swap to ' + label),
                     className: 'green'
@@ -756,7 +756,7 @@ export class PartitionTimelineGenerator extends TimeLineGeneratorBase<PartitionE
       });
 
         const groups = new DataSet<DataGroup>([
-            {id: PartitionTimelineGenerator.swapPrimaryLabel, content: PartitionTimelineGenerator.swapPrimaryLabel},
+            {id: `${nestedGroupLabel}---${PartitionTimelineGenerator.swapPrimaryLabel}`, content: PartitionTimelineGenerator.swapPrimaryLabel},
         ]);
 
         return {
@@ -780,7 +780,7 @@ export class RepairTaskTimelineGenerator extends TimeLineGeneratorBase<RepairTas
                 end: task.inProgress ? new Date() : new Date(task.raw.History.CompletedUtcTimestamp),
                 type: 'range',
                 kind: "RepairJob",
-                group: 'job',
+                group: `${nestedGroupLabel}---job`,
                 subgroup: 'stack',
                 className: task.inProgress ? 'blue' : task.raw.ResultStatus === 'Succeeded' ? 'green' : 'red',
                 title: EventStoreUtils.tooltipFormat(task.raw, new Date(task.raw.History.ExecutingUtcTimestamp).toLocaleString(),
@@ -788,7 +788,7 @@ export class RepairTaskTimelineGenerator extends TimeLineGeneratorBase<RepairTas
             });
         });
         groups.add({
-            id: 'job',
+            id: `${nestedGroupLabel}---job`,
             content: 'Job History',
             subgroupStack: {stack: true}
         });
