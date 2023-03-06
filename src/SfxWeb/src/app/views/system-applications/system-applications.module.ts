@@ -11,6 +11,8 @@ import { ChartsModule } from 'src/app/modules/charts/charts.module';
 import { NamingViewerComponent } from './naming-viewer/naming-viewer.component';
 import { ConcurrentEventsVisualizationModule } from 'src/app/modules/concurrent-events-visualization/concurrent-events-visualization.module';
 import { TimePickerModule } from 'src/app/modules/time-picker/time-picker.module';
+import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
+import { FormsModule } from '@angular/forms';
 
 
 @NgModule({
@@ -23,7 +25,9 @@ import { TimePickerModule } from 'src/app/modules/time-picker/time-picker.module
     HealthStateModule,
     ChartsModule,
     ConcurrentEventsVisualizationModule,
-    TimePickerModule
+    TimePickerModule,
+    NgbDropdownModule,
+    FormsModule
   ]
 })
 export class SystemApplicationsModule { }

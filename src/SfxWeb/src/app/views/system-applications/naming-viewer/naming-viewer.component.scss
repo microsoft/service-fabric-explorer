@@ -1,0 +1,24 @@
+.partitions-container {
+  display: flex;
+  gap: 5px;
+  margin: 5px;
+  // overflow: auto;
+}
+
+.partition {
+  padding: 5px;
+  border-radius: 5px;
+  background-color: var(--accent-background-color);
+  box-shadow: var(--primary-box-shadow);
+}
+
+.operation-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.operation {
+  display: flex;
+}

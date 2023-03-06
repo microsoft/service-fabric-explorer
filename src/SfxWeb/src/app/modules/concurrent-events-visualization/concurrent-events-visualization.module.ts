@@ -23,7 +23,8 @@ import { DetailListTemplatesModule } from '../detail-list-templates/detail-list-
     CommonModule,
     SharedModule,
     NgbNavModule,
-    DetailListTemplatesModule
+    DetailListTemplatesModule,
+    NgbNavModule
   ],
   exports:[
     VisualizationToolComponent,

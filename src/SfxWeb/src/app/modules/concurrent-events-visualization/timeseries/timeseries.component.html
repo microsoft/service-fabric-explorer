@@ -1,19 +1,32 @@
 <div>
-
-  <div ngbNav #outernav="ngbNav" class="nav-wrapper">
+  <div ngbNav #outernav="ngbNav" class="nav-wrapper" [destroyOnHide]="false">
     <div ngbNavItem >
       <a ngbNavLink>Charts</a>
       <ng-template ngbNavContent>
         <div style="display: flex; ">
           <div class="layout-container">
+            <div>
+              Click to focus a point
+            </div>
             <div *ngFor="let dataSet of data.series; let i = index" class="chart">
               {{dataSet.name}}
 
               <div #container (mousemove)="interactionEvent($event, i)" class="chart-container"></div>
             </div>
           </div>
-          <div *ngIf="currentItem" style="white-space: pre; width: fit-content;">
-            {{currentItem | json}}
+          <div *ngIf="currentItems" class="selectedItems">
+            <div class="inner">
+              <div *ngFor="let currentItem of currentItems">
+                <app-collapse-container [collapsed]="true">
+                  <div collapse-header>
+                    {{currentItem.series.name}}
+                  </div>
+                  <div collapse-body>
+                    {{currentItem.item | json}}
+                  </div>
+                </app-collapse-container>
+              </div>
+            </div>
           </div>
         </div>
       </ng-template>
@@ -29,7 +42,8 @@
             </ng-template>
           </div>
         </div>
-        <div [ngbNavOutlet]="nav"></div>      </ng-template>
+        <div [ngbNavOutlet]="nav"></div>
+      </ng-template>
     </div>
   </div>
   <div [ngbNavOutlet]="outernav"></div>

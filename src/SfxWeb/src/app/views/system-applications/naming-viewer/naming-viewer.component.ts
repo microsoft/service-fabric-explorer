@@ -7,6 +7,9 @@ import { IOnDateChange } from 'src/app/modules/time-picker/double-slider/double-
 import { data } from './test';
 import { Utils } from 'src/app/Utils/Utils';
 import { Service } from 'src/app/Models/DataModels/Service';
+import { IEventStoreData } from 'src/app/modules/event-store/event-store/event-store.component';
+import { ReplicaEventList } from 'src/app/Models/DataModels/collections/Collections';
+import { ReplicaEvent } from 'src/app/Models/eventstore/Events';
 
 const rdata = data.map(item => {
   return {
@@ -17,10 +20,19 @@ const rdata = data.map(item => {
 
 const splitData = Utils.groupByFunc(rdata.filter(item => item.Kind === "NamingMetricsReported"), item => item.OperationName);
 console.log(splitData)
-// data.forEach(item => {
-//   // item.OperationName
-//   Utils.groupBy(data, 'OperationName')
-// })
+
+export interface INestedDataSetOption {
+  name: string;
+  toggled: boolean;
+  options?: INestedDataSetOption[];
+}
+
+export interface IOverviewPanel {
+  name: string;
+  displayContent: () => string;
+  toggled: boolean;
+  nestedOptions: INestedDataSetOption[];
+}
 
 @Component({
   selector: 'app-naming-viewer',
@@ -34,36 +46,32 @@ export class NamingViewerComponent implements OnInit {
   public startDateMax: Date;
 
   dataset: IParallelChartData = {
-    dataSets: Object.keys(splitData).map(key => {
-      return {
-        name: key,
-        values: splitData[key]
-      }
-    }),
-
+    dataSets: [],
     series: [
       {
         name: 'Average Latency',
-        xProperty: 'TimeStamp',
-        yProperty: 'AverageLatency',
+        xProperty: 'time',
+        yProperty: 'eventProperties.AverageLatency',
         yUnits: 'MS',
         yLabel: 'Latency'
       },
       {
         name: 'Average Response Size',
-        xProperty: 'TimeStamp',
-        yProperty: 'AverageResponseSize',
+        xProperty: 'time',
+        yProperty: 'eventProperties.AverageResponseSize',
         yUnits: 'Bytes',
         yLabel: 'Size'
       },
       {
         name: 'Request Volume',
-        xProperty: 'TimeStamp',
-        yProperty: 'RequestCount',
+        xProperty: 'time',
+        yProperty: 'eventProperties.RequestCount',
         yLabel: 'Count'
       }
     ]
   }
+
+  overviewPanels: IOverviewPanel[] = []
 
   public namingService: Service;
 
@@ -76,7 +84,7 @@ export class NamingViewerComponent implements OnInit {
     this.startDateMin = TimeUtils.AddDays(todaysDate, -30);
     console.log(this.dataset)
     this.dataService.getService("System", "System/NamingService").subscribe(app => {
-      const ess = [];
+      const ess: IEventStoreData<ReplicaEventList, ReplicaEvent>[] = [];
       this.namingService = app;
       app.partitions.ensureInitialized().subscribe(_ => {
         forkJoin(app.partitions.collection.map(partition => {
@@ -84,7 +92,37 @@ export class NamingViewerComponent implements OnInit {
           ess.push(es);
           return es.eventsList.refresh();
         })).subscribe(() => {
-          console.log(ess)
+          let dataSets = [];
+
+          this.overviewPanels = this.namingService.partitions.collection.map((partition, index) => {
+
+            const splitData = Utils.groupByFunc(ess[index].getEvents().filter(item => item.kind === "NamingMetricsReported"), item => item.eventProperties.OperationName);
+
+            dataSets = dataSets.concat(Object.keys(splitData).map(key => {
+              return {
+                name: partition.id +  key,
+                values: splitData[key]
+              }
+            }));
+
+            return {
+              name: partition.id,
+              displayContent: () => "Volume: 100",
+              toggled: true,
+              nestedOptions: Object.entries(splitData).map(d => {
+                return {
+                  toggled: true,
+                  name: d[0]
+                }
+              })
+            }
+          })
+          console.log(this.overviewPanels)
+          this.dataset = {
+            ...this.dataset,
+            dataSets
+          }
+          console.log(this.dataset)
         })
       })
     })

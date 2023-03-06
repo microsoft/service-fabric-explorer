@@ -1,26 +1,42 @@
 <div class="essen-pane">
   <app-full-time-picker [startDate]="startDate" [endDate]="endDate" (datesChanged)="setNewDates($event)"
-  [startDateMin]="startDateMin" [startDateMax]="startDateMax" ></app-full-time-picker>
+    [startDateMin]="startDateMin" [startDateMax]="startDateMax"></app-full-time-picker>
+
+  <!-- ngbDropdown placement="bottom-right" #myDrop="ngbDropdown"  -->
+  <div>
+
+    <div *ngIf="namingService?.partitions?.isInitialized" class="partitions-container">
+      <div *ngFor="let partition of overviewPanels" class="partition">
+        <div>
+          <div>
+            <label>
+              <app-toggle [(state)]="partition.toggled"></app-toggle>
+              {{partition.name}}
+            </label>
+          </div>
+          <div>
+            <div class="operation-container">
+              <div>{{partition.displayContent()}}</div>
+              <div ngbDropdown #myDrop="ngbDropdown">
+                <button class="flat-button" ngbDropdownToggle aria-label="settings drop down">
+                  toggle operations ({{partition.nestedOptions.length}} / {{partition.nestedOptions.length}})
+                </button>
+                <div ngbDropdownMenu aria-labelledby="dropdownBasic1" class="dropdown-container" *ngIf="namingService">
+                    <div ngbDropdownItem class="operation" *ngFor="let operation of partition.nestedOptions">
+                      <label class="operation-container">
+                        {{operation.name}}
+                        <input type="checkbox" [(ngModel)]="operation.toggled"/>
+                      </label>
 
 
-  <div ngbDropdown placement="bottom-right" #myDrop="ngbDropdown" >
-    <button class="flat-button" ngbDropdownToggle aria-label="settings drop down">
-      <span class="mif-tools"></span>
-    </button>
-    <div>
-      <div class="toggle-wrapper" *ngFor="let partition of namingService.partitions.collection">
-        {{partition.id}} ()
+                    </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-
-    <!-- <div ngbDropdownMenu aria-labelledby="dropdownBasic1" class="dropdown-container" *ngIf="namingService">
-      <ul >
-
-        <li ngbDropdownItem *ngFor="let partition of namingService.partitions.collection">
-          {{partition.id}}
-        </li>
-      </ul>
-    </div> -->
   </div>
 
   <app-timeseries [data]="dataset"></app-timeseries>
