@@ -63,6 +63,11 @@ context('node page', () => {
 
             cy.get('[data-cy=deactivated').should('not.exist');
             cy.get('[data-cy=repair-jobs').should('not.exist');
+
+            cy.get('[data-cy=placementconstraints]').within(() => {
+              cy.contains("NodeTypeName : nt")
+            })
+
         })
 
         it('down node', () => {

@@ -6,8 +6,12 @@
     </div>
 
     <div class="button-container">
-        <ng-content select="[buttons]"></ng-content>
+      <ng-content select="[buttons]"></ng-content>
 
+      <label class="toggle-wrapper" [attr.aria-label]="(isUTC ? 'Untoggle' : 'Toggle') + ' to use ' + (isUTC ? 'Local Time' : 'UTC time') ">
+        UTC time
+        <app-toggle [(state)]="isUTC" (stateChange)="flipTimeZone($event)" ></app-toggle>
+      </label>
 
         <button class="simple-button flip-button" (click)="flipShowControls();">
             <span class="mif-arrow-drop-up mif-2x" style="transition: .5s;"
@@ -45,12 +49,6 @@
             ngbTooltip="Move to the newest event in the time range.">
                 Move To Newest Event
             </button>
-
-            <div class="margined">
-              <label style="width: 105px; display: flex; gap: 10px; align-items: center;" [attr.aria-label]="(isUTC ? 'Untoggle' : 'Toggle') + ' to use ' + (isUTC ? 'Local Time' : 'UTC time') ">
-                <input type="checkbox" [(ngModel)]="isUTC" (ngModelChange)="flipTimeZone()">
-                Use UTC time</label>
-            </div>
         </ng-container>
     </div>
 </div>
