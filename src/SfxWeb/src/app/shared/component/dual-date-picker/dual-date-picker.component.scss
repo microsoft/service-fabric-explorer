@@ -30,4 +30,10 @@
   border-radius: 5px 0px 0px 5px;
   background-color: transparent;
   color: var(--font-primary-color);
+
+  &::-webkit-calendar-picker-indicator {
+    color-scheme: dark;
+    // filter: invert(100%);
+    // background: url;
+  }
 }
