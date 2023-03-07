@@ -102,13 +102,14 @@ html,body {
     display: block;
     margin-bottom: 15px;
 
-    h4, h2 {
+    h4, h2, .heading {
         color: var(--font-accent-color);
         margin-left: 0;
         font-size: var(--font-size-large);
         margin-top: 0;
         padding-top: 0px;
         margin-bottom: 0px;
+        font-weight: 500;
     }
 
     h4.no-uppercase {

@@ -20,7 +20,7 @@
   </div>
 
   <div class="detail-pane essen-pane" *ngIf="replica.health.isInitialized">
-    <h4>Health Evaluations</h4>
+    <h2>Health Evaluations</h2>
     <app-health-viewer [healthyEvaluations]="replica.health.healthEvents" [unhealthyEvaluations]="replica.health.unhealthyEvaluations" ></app-health-viewer>
   </div>
 </div>
