@@ -453,6 +453,9 @@ table.detail-list {
     &:focus, &:hover {
       box-shadow: var(--heavy-box-shadow);
     }
+    &::-webkit-input-placeholder{
+        color: var(--font-placeholder-color);
+    }
 }
 
 .input-flat.ng-valid[required], .input-flat.ng-valid.required  {
