@@ -1,6 +1,6 @@
 {
   "Name": "fabric:/<<img src='1' onerror='window.alert(document.domain)'>",
-  "TypeName": "<<img src='1' onerror='window.alert(document.domain)'>",
+  "TypeName": "VisualObjectsApplicationType",
   "TypeVersion": "16.0.0",
   "Status": "Ready",
   "Parameters": [

@@ -1,0 +1,10 @@
+{
+    "ServiceKind": "Stateful",
+    "ReplicaId": "132429154475414363",
+    "ReplicaRole": "Primary",
+    "ReplicaStatus": "Ready",
+    "HealthState": "Ok",
+    "Address": "{\"Endpoints\":{\"\":\"10.0.0.5:20001+<img src='1' onerror='window.alert(document.domain)'>-132429154475414363\"}}",
+    "NodeName": "_nt_1",
+    "LastInBuildDurationInSeconds": "8"
+}

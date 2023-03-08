@@ -13,6 +13,12 @@ Default to stateful service for the page
 const routeFormatter = (appName, serviceName) => `/Applications/${appName}/$/GetServices/${appName}%2F${serviceName}`;
 const urlFormatter = (appName, serviceName) => `/#/apptype/${appName}/app/${appName}/service/${appName}%252F${serviceName}`;
 
+const setupStatefulService = (app, service, prefix="") => {
+  addRoute("description", prefix + "service-page/service-description.json", apiUrl(`${routeFormatter(app, service)}/$/GetDescription?*`))
+  addRoute("serviceInfo", prefix + "service-page/service-info.json", apiUrl(`${routeFormatter(app, service)}?*`))
+  addRoute("partitions", prefix + "service-page/service-partitions.json", apiUrl(`${routeFormatter(app, service)}/$/GetPartitions?*`))
+  addRoute("health", prefix + "service-page/service-health.json", apiUrl(`${routeFormatter(app, service)}/$/GetHealth?*`))
+}
 
 context('service', () => {
     beforeEach(() => {
@@ -22,11 +28,12 @@ context('service', () => {
 
     describe("stateful", () => {
         beforeEach(() => {
-            addRoute("description", "service-page/service-description.json", apiUrl(`${routeFormatter(appName, serviceName)}/$/GetDescription?*`))
-            addRoute("serviceInfo", "service-page/service-info.json", apiUrl(`${routeFormatter(appName, "VisualObjects.ActorService")}?*`))
-            addRoute("partitions", "service-page/service-partitions.json", apiUrl(`${routeFormatter(appName, serviceName)}/$/GetPartitions?*`))
-            addRoute("health", "service-page/service-health.json", apiUrl(`${routeFormatter(appName, serviceName)}/$/GetHealth?*`))
-            cy.visit(urlFormatter(appName, serviceName))
+            // addRoute("description", "service-page/service-description.json", apiUrl(`${routeFormatter(appName, serviceName)}/$/GetDescription?*`))
+            // addRoute("serviceInfo", "service-page/service-info.json", apiUrl(`${routeFormatter(appName, "VisualObjects.ActorService")}?*`))
+            // addRoute("partitions", "service-page/service-partitions.json", apiUrl(`${routeFormatter(appName, serviceName)}/$/GetPartitions?*`))
+            // addRoute("health", "service-page/service-health.json", apiUrl(`${routeFormatter(appName, serviceName)}/$/GetHealth?*`))
+            setupStatefulService(appName, serviceName);
+            cy.visit(urlFormatter(appName, serviceName));
         })
 
         it('load essentials - no placement constraints', () => {
@@ -208,5 +215,14 @@ context('service', () => {
                 cy.contains('backup').should('not.exist');
             })
         })
+    })
+
+    describe("xss", () => {
+      it.only("essentials/details", () => {
+        const xssAppName = "<img src='1' onerror='window.alert(document.domain)'>";
+        addDefaultFixtures("xss/");
+        setupStatefulService(xssAppName, xssAppName, "xss/");
+        cy.visit("/#/apptype/%253C%253Cimg%2520src%253D'1'%2520onerror%253D'window.alert%28document.domain%29'%253E/app/%253C%253Cimg%2520src%253D'1'%2520onerror%253D'window.alert%28document.domain%29'%253E");
+      })
     })
 })

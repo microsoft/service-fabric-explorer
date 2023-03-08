@@ -42,7 +42,7 @@ context('Cluster page', () => {
       cy.get('[role="jobs"]').should('not.exist')
     })
 
-    it('certificate expiring banner', () => {
+    it.only('certificate expiring banner', () => {
       cy.intercept(nodes_route, { fixture: 'cluster-page/nodes-1-warning.json' })
       cy.intercept(apiUrl('/Nodes/_nt_0/$/GetHealth?*'), { fixture: 'cluster-page/node-health.json' }).as('getnodeHealth')
 

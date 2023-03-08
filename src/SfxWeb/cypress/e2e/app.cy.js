@@ -1,23 +1,22 @@
 /// <reference types="cypress" />
-
-import { decode } from 'punycode';
 import { addDefaultFixtures, apiUrl, FIXTURE_REF_MANIFEST, EMPTY_LIST_TEXT, addRoute, aad_route, checkCommand, xssPrefix, watchForAlert, unsanitizedXSS } from './util.cy';
 
 const appName = "VisualObjectsApplicationType";
 const waitRequest = "@getapp";
 
-const initializeRoutes = (app, prefix = "") => {
+const initializeRoutes = (app, appType, prefix = "") => {
   addDefaultFixtures(prefix);
   addRoute("upgradeProgress", prefix + "app-page/upgrade-progress.json", apiUrl(`/Applications/${app}/$/GetUpgradeProgress?*`))
   addRoute("services", prefix + "app-page/services.json", apiUrl(`/Applications/${app}/$/GetServices?*`))
   addRoute("apphealth", prefix + "app-page/app-health.json", apiUrl(`/Applications/${app}/$/GetHealth?*`))
   addRoute("app", prefix + "app-page/app-type.json", apiUrl(`/Applications/${app}/?a*`))
+  addRoute("serviceTypes", prefix + "app-page/service-types.json", apiUrl(`/ApplicationTypes/${appType}/$/GetServiceTypes?ApplicationTypeVersion=16.0.0*`))
 
 }
 
 context('app', () => {
     beforeEach(() => {
-      initializeRoutes(appName);
+      initializeRoutes(appName, appName);
       addRoute("appParams", "app-page/app-type-excluded-params.json", apiUrl(`/Applications/${appName}/?ExcludeApplicationParameters=true*`))
       addRoute("events", "app-page/app-events.json", apiUrl(`/EventsStore/Applications/${appName}/$/Events?*`))
 
@@ -60,15 +59,24 @@ context('app', () => {
         })
 
         it.only('xss', () => {
-          addDefaultFixtures(xssPrefix);
-          const xssName = "%253C%253Cimg%2520src%253D'1'%2520onerror%253D'window.alert%28document.domain%29'%253E";
+          initializeRoutes("*window.alert*", appName, xssPrefix);
+          const xssName = "%253Cimg%2520src%253D'1'%2520onerror%253D'window.alert%28document.domain%29'%253E";
 
           watchForAlert(() => {
             cy.visit(`/#/apptype/${appName}/app/${xssName}`)
+            cy.contains('16.0.0');
+            cy.contains("<<img src='1' onerror='window.alert(document.domain)'>");
+            cy.contains("VisualObjects.<img src='1' onerror='window.alert(document.domain)'>");
           })
 
           watchForAlert(() => {
-            cy.visit(`/#/apptype/${appName}/app/${xssName}/details`)
+            cy.visit(`/#/apptype/${appName}/app/${xssName}/details`);
+            cy.contains("VisualObjects.WebService_InstanceCount");
+          })
+
+          watchForAlert(() => {
+            cy.visit(`/#/apptype/${appName}/app/${xssName}/deployments`);
+            cy.contains("VisualObjects.WebService_InstanceCount");
           })
         });
 
