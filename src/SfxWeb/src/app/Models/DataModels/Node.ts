@@ -23,7 +23,7 @@ export class Node extends DataModelBase<IRawNode> {
         decorators: {
             NodeUpTimeInSeconds: {
                 displayName: (name) => 'Node Up Time',
-                displayValueInHtml: (value) => this.nodeUpTime
+                displayValue: (value) => this.nodeUpTime
             }
         }
     };
