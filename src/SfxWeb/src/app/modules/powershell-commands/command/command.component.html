@@ -9,7 +9,7 @@
             <app-health-badge *ngSwitchCase="safetyLevelEnum.dangerous"
             text="Dangerous Command" [showText]="false" [badgeClass]="BadgeConstants.BadgeError"></app-health-badge>
         </span>
-        <h5>{{command.adminOnly? command.name + ' - Admin Only' : command.name}}</h5>
+        <h2 class="command-title">{{command.adminOnly? command.name + ' - Admin Only' : command.name}}</h2>
         <button class="reference-link" *ngIf="command.referenceUrl" (click)="goToReference($event)" [attr.aria-label]="'learn about' + command.name">
             <span class="mif-info link"></span>
         </button>
@@ -18,7 +18,7 @@
     <div collapse-body>
         <form [formGroup]="inputForm">
             <ng-container formGroupName="requiredInputs" *ngIf="requiredParams.length">
-                <h6>Required Parameters</h6>
+                <h3 class="param-title">Required Parameters</h3>
                 <div class="input-group">
                     <div *ngFor="let commandParam of requiredParams">
                        <app-command-input [commandParam]="commandParam" [inputGroup]="requiredInputs" data-cy="requiredInput"></app-command-input>
@@ -28,7 +28,7 @@
             
             <ng-container formGroupName="optionalInputs" *ngIf="optionalParams.length">
                 <app-collapse-container sectionName="Optional Parameters"[collapsed]="true" >
-                    <h6 collapse-header >Optional Parameters</h6>
+                    <h3 class="param-title" collapse-header >Optional Parameters</h3>
                     <div collapse-body class="input-group" >
                         <div *ngFor="let commandParam of optionalParams">
                             <app-command-input [commandParam]="commandParam" [inputGroup]="optionalInputs" data-cy="optionalInput"></app-command-input>

@@ -1,8 +1,8 @@
 <div class="detail-pane essen-pane" *ngIf="node">
     <app-collapse-container sectionName="Node">
-        <h4 collapse-header>
+        <h2 collapse-header>
             Node
-        </h4>    
+        </h2>    
         <app-detail-view-part [data]="node.raw" [parent]="node" collapse-body></app-detail-view-part>
     </app-collapse-container>
 </div>

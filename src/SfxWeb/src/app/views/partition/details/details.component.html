@@ -4,7 +4,7 @@
     </div>
 
     <div class="detail-pane essen-pane" *ngIf="partition.loadInformation && partition.loadInformation.isValid">
-        <h4>Load Information</h4>
+        <h2>Load Information</h2>
         <app-detail-view-part [data]="partition.loadInformation.raw" [parent]="partition.loadInformation">
         </app-detail-view-part>
     </div>

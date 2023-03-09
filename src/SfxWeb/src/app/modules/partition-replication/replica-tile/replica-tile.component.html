@@ -22,11 +22,11 @@
       </div>
 
       <div *ngIf="showReplication" class="flex-min show-replication" [ngClass]="{'fullscreen' :  fullScreen}">
-        <h4 class="underline-title" style="margin: 5px 5px 0px;">LSN's Replicated Per Second
+        <h3 class="underline-title" style="margin: 5px 5px 0px;">LSN's Replicated Per Second
 
           <span class="link {{ fullScreen ? 'mif-shrink' : 'mif-enlarge' }}" style="float: right;"
             (click)="changeFullScreen()"></span>
-        </h4>
+        </h3>
         <div class="description-container">
           <div style="margin:auto">
             (This information is only recorded on this tab and is cleared when left)

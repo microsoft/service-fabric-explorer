@@ -52,7 +52,7 @@
                 </tr>
                 <tr *ngSwitchCase="'Object'">
                     <td colspan="2">
-                        <h4 class="sub-title" [title]="title" style="text-transform: none;" >{{item.key}} </h4>
+                        <div class="heading" [title]="title" style="text-transform: none;" >{{item.key}} </div>
                         <div class="nested-table-container">
                             <app-detail-view-part [data]="item.value" [noFixedLayout]="noFixedLayout"></app-detail-view-part>
                         </div>
@@ -61,7 +61,7 @@
 
                 <tr *ngSwitchCase="'Array'">
                     <th colspan="2">
-                        <h4 class="sub-title" [title]="title" style="text-transform: none;">{{item.key}} </h4>
+                        <div class="heading" [title]="title" style="text-transform: none;">{{item.key}} </div>
                         <div class="table-responsive">
                             <div class="nested-table-container">
                                 <!-- Set table-layout to be fixed only when they have only 1 or 2 properties -->
