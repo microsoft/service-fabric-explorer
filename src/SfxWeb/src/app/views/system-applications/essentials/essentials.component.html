@@ -9,7 +9,7 @@
   <div class="detail-pane essen-pane" *ngIf="systemApp.health.isInitialized">
     <app-collapse-container sectionName="Unhealthy Evaluations">
       <div collapse-header>
-        <h4>Health Evaluations</h4>
+        <h2>Health Evaluations</h2>
       </div>
       <div collapse-body>
         <app-health-viewer [healthyEvaluations]="systemApp.health.healthEvents"
@@ -21,7 +21,7 @@
   <div class="detail-pane essen-pane" *ngIf="systemApp.services">
     <app-collapse-container sectionName="System">
       <div collapse-header>
-        <h4>System</h4>
+        <h2>System</h2>
       </div>
       <div collapse-body>
         <app-detail-list [list]="systemApp.services.collection" [listSettings]="listSettings"></app-detail-list>

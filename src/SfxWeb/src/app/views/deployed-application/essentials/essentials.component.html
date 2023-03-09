@@ -14,7 +14,7 @@
 <div class="detail-pane essen-pane" data-cy="health">
   <app-collapse-container sectionName="Unhealthy Evaluations">
     <div collapse-header>
-      <h4>Unhealthy Evaluations</h4>
+      <h2>Unhealthy Evaluations</h2>
     </div>
     <div collapse-body>
       <app-health-viewer *ngIf="deployedApp && deployedApp.health" [healthyEvaluations]="deployedApp.health.healthEvents" [unhealthyEvaluations]="deployedApp.health.unhealthyEvaluations" ></app-health-viewer>
@@ -25,7 +25,7 @@
 <div class="detail-pane essen-pane" data-cy="services">
   <app-collapse-container sectionName="Deployed Service Packages">
     <div collapse-header>
-      <h4>Deployed Service Packages</h4>
+      <h2>Deployed Service Packages</h2>
     </div>
     <div collapse-body>
       <app-detail-list [list]="deployedApp.deployedServicePackages" [listSettings]="listSettings"

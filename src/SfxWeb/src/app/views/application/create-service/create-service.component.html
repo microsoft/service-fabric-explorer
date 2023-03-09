@@ -1,6 +1,6 @@
 <form name="createServiceForm" *ngIf="description" class="action-modal">
     <div class="modal-header">
-        <h4 class="modal-title">Create Service</h4>
+        <h1 class="modal-title">Create Service</h1>
     </div>
     <div class="modal-body" style="max-height: 550px;">
         <dl class="dl-horizontal">
@@ -49,7 +49,7 @@
         </dl>
 
         <app-collapse-container [collapsed]="description.isAdvancedOptionCollapsed" *ngIf="!description.createFromTemplate" >
-            <h4 collapse-header>{{description.isAdvancedOptionCollapsed ? "Show" : "Hide"}} Advanced Options</h4>
+            <h1 collapse-header>{{description.isAdvancedOptionCollapsed ? "Show" : "Hide"}} Advanced Options</h1>
             <div collapse-body>
                 <dl class="dl-horizontal" >
                     <dt>Service Dns Name</dt>
