@@ -453,8 +453,9 @@ table.detail-list {
     &:focus, &:hover {
       box-shadow: var(--heavy-box-shadow);
     }
-    &::-webkit-input-placeholder{
+    &::placeholder{
         color: var(--font-placeholder-color);
+        font-style: italic;
     }
 }
 

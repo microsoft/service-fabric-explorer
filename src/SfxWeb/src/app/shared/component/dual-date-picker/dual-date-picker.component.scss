@@ -32,8 +32,6 @@
   color: var(--font-primary-color);
 
   &::-webkit-calendar-picker-indicator {
-    color-scheme: dark;
-    // filter: invert(100%);
-    // background: url;
+    filter: invert(100%);
   }
 }
