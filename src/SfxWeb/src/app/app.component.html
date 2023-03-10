@@ -1,6 +1,6 @@
 
 <div>
-  <button class="skip-to-content-link" click="setMainFocus()" (keyup.enter)="setMainFocus()" role="button">
+  <button class="skip-to-content-link" (click)="setMainFocus()" role="button">
     Skip to content
   </button>
   <header class="header-bar">
@@ -74,12 +74,12 @@
     </div>
     <div [ngStyle]="{'left': smallScreenSize ? '0px' : rightOffset }" class="right-panel main-content" (click)="smallScreenSize ? resize(0): null" (focusin)="smallScreenSize ? resize(0): null">
       <main>
-        <div class="view-container" #main>
+        <div class="view-container">
           <div class="expander-container" *ngIf="!smallScreenSize">
             <span class=" expander-icon mif-vertical-align-bottom" [ngClass]="{'flip': treeWidth === '8px'}" placement="right"
                   [ngbTooltip]="(treeWidth === '8px' ? 'Expand' : 'Close') + ' tree view'"  tooltipClass="styled-tooltip" (click)="collapseSide()"></span>
           </div>
-          <router-outlet id="view-container" ></router-outlet>
+          <router-outlet id="view-container" (activate)="onRouteActivate($event)"></router-outlet>
         </div>
       </main>
     </div>

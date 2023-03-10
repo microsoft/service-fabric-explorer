@@ -10,6 +10,7 @@ import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { TelemetryService } from './services/telemetry.service';
 import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
 import { TelemetrySnackBarComponent } from './telemetry-snack-bar/telemetry-snack-bar.component';
+import { IBaseView } from './views/BaseView';
 
 @Component({
   selector: 'app-root',
@@ -18,8 +19,8 @@ import { TelemetrySnackBarComponent } from './telemetry-snack-bar/telemetry-snac
 })
 export class AppComponent implements OnInit{
 
-  @ViewChild('main') main: ElementRef;
 
+  main: IBaseView;
   smallScreenSize = false;
   smallScreenLeftPanelWidth = '0px';
 
@@ -114,6 +115,13 @@ export class AppComponent implements OnInit{
 
   setMainFocus() {
     this.tabIndex = -1;
-    setTimeout(() => {this.main.nativeElement.focus(); this.tabIndex = null; }, 0);
+    setTimeout(() => {
+    this.main.el.nativeElement.querySelector('[tabindex], button, input, object, a, area, frame, iframe, select, textarea, summary').focus();
+      this.tabIndex = null;
+    }, 0);
+  }
+
+  onRouteActivate(componentRef: IBaseView) {
+    this.main = componentRef;
   }
 }
