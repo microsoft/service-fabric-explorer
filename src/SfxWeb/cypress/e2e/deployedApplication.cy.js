@@ -6,7 +6,7 @@ const nodeName = "_nt_2"
 const applicationName = "VisualObjectsApplicationType";
 const waitRequest = "@appInfo";
 
-const setup = (appName, prefix = "") => {
+const setup = (appName, visit=true, prefix = "") => {
   addDefaultFixtures(prefix);
 
   cy.intercept(apiUrl(`/Nodes/${nodeName}/$/GetApplications?*`), { fixture: prefix + 'deployed-app-page/deployed-apps.json' }).as('apps');
@@ -14,7 +14,9 @@ const setup = (appName, prefix = "") => {
   cy.intercept(apiUrl(`/Nodes/${nodeName}/$/GetApplications/${appName}/$/GetHealth?*`), { fixture: prefix + 'deployed-app-page/health.json' }).as('health');
   cy.intercept(apiUrl(`/Nodes/${nodeName}/$/GetApplications/${appName}/$/GetServicePackages?*`), { fixture: prefix + 'deployed-app-page/service-packages.json' }).as('services');
 
-  cy.visit(`/#/node/${nodeName}/deployedapp/${appName}`)
+  if(visit) {
+    cy.visit(`/#/node/${nodeName}/deployedapp/${appName}`)
+  }
 }
 
 context('deployed app', () => {
@@ -63,12 +65,19 @@ context('deployed app', () => {
       it.only('essentials/details', () => {
         const xssName = "%253Cimg%2520src%253D'1'%2520onerror%253D'window.alert%28document.domain%29'%253E";
 
-        watchForAlert(() => {
-          setup(xssName, "xss/");
-        })
+        setup("*window.alert*", false ,"xss/");
 
         watchForAlert(() => {
           cy.visit(`/#/node/${nodeName}/deployedapp/${xssName}`)
+          cy.contains("D:\\SvcFab\\_App");
+          cy.get('[data-cy=services]').within(() => {
+            checkTableSize(2);
+          });
+        })
+
+        watchForAlert(() => {
+          cy.visit(`/#/node/${nodeName}/deployedapp/${xssName}/details`)
+          cy.contains(`D:\\SvcFab\\_App\\<img src='1' onerror='window.alert(document.domain)'>\\work`);
         })
       })
     })

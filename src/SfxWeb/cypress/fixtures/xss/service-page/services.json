@@ -1,0 +1,26 @@
+{
+    "ContinuationToken": "",
+    "Items": [
+        {
+            "ServiceKind": "Stateful",
+            "Name": "fabric:/<img src='1' onerror='window.alert(document.domain)'>",
+            "TypeName": "VisualObjects.ActorServiceType",
+            "ManifestVersion": "3.0.0",
+            "HasPersistedState": true,
+            "HealthState": "Ok",
+            "ServiceStatus": "Active",
+            "IsServiceGroup": false,
+            "Id": "VisualObjectsApplicationType/<img src='1' onerror='window.alert(document.domain)'>"
+        },
+        {
+            "ServiceKind": "Stateless",
+            "Name": "fabric:/VisualObjectsApplicationType/VisualObjects.WebService",
+            "TypeName": "VisualObjects.WebServiceType",
+            "ManifestVersion": "12.0.0",
+            "HealthState": "Ok",
+            "ServiceStatus": "Active",
+            "IsServiceGroup": false,
+            "Id": "VisualObjectsApplicationType/<img src='1' onerror='window.alert(document.domain)'>"
+        }
+    ]
+}

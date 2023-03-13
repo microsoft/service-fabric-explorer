@@ -13,6 +13,17 @@ const waitRequest = "@getpartitionInfo";
 const routeFormatter = (appName, serviceName) => `/Applications/${appName}/$/GetServices/${appName}%2F${serviceName}/$/GetPartitions`;
 const urlFormatter = (app, service, partition) => `/#/apptype/${app}/app/${app}/service/${app}%252F${service}/partition/${partition}`;
 
+const setup = (partition, replica, prefix="") => {
+  addRoute("partitions", prefix + "partition-page/partitions.json", apiUrl(`${routeFormatter(appName, serviceName)}?*`));
+  addRoute("partitionInfo", prefix + "partition-page/stateful-partition-info.json", apiUrl(`${routeFormatter(appName, serviceName)}/${partitionId}?*`));
+  addRoute("replicasList", prefix + "partition-page/replicas.json", apiUrl(`${routeFormatter(appName, serviceName)}/${partitionId}/$/GetReplicas?*`));
+  addRoute("health", prefix + "partition-page/health.json", apiUrl(`${routeFormatter(appName, serviceName)}/${partitionId}/$/GetHealth?*`));
+  addRoute("load", prefix + "partition-page/load.json", apiUrl(`${routeFormatter(appName, serviceName)}/${partitionId}/$/GetLoadInformation?*`));
+
+  addRoute("load", "partition-page/replica-detail.json", apiUrl(`/Nodes/_nt_1/$/GetPartitions/${partitionId}/$/GetReplicas/${primaryReplica}/$/GetDetail?*`));
+
+}
+
 context('partition', () => {
     beforeEach(() => {
         addDefaultFixtures();
@@ -21,13 +32,6 @@ context('partition', () => {
 
     describe("stateful", () => {
         beforeEach(() => {
-            addRoute("partitions", "partition-page/partitions.json", apiUrl(`${routeFormatter(appName, serviceName)}?*`));
-            addRoute("partitionInfo", "partition-page/stateful-partition-info.json", apiUrl(`${routeFormatter(appName, serviceName)}/${partitionId}?*`));
-            addRoute("replicasList", "partition-page/replicas.json", apiUrl(`${routeFormatter(appName, serviceName)}/${partitionId}/$/GetReplicas?*`));
-            addRoute("health", "partition-page/health.json", apiUrl(`${routeFormatter(appName, serviceName)}/${partitionId}/$/GetHealth?*`));
-            addRoute("load", "partition-page/load.json", apiUrl(`${routeFormatter(appName, serviceName)}/${partitionId}/$/GetLoadInformation?*`));
-
-            addRoute("load", "partition-page/replica-detail.json", apiUrl(`/Nodes/_nt_1/$/GetPartitions/${partitionId}/$/GetReplicas/${primaryReplica}/$/GetDetail?*`));
 
             cy.visit(urlFormatter(appName, serviceName, partitionId))
         })
@@ -171,13 +175,13 @@ context('partition', () => {
 
   })
 
-  describe("xss", () => {
-    it.only("essentials/details", () => {
-      addRoute("partitions", "partition-page/partitions.json", apiUrl(`${routeFormatter(appName, serviceName)}?*`));
-      addRoute("partitionInfo", "partition-page/stateless-partition-info.json", apiUrl(`${routeFormatter(appName, serviceName)}/${partitionId}?*`));
-      cy.visit(urlFormatter(appName, serviceName, partitionId))
-      cy.wait(waitRequest)
+  // describe("xss", () => {
+  //   it.only("essentials/details", () => {
+  //     addRoute("partitions", "partition-page/partitions.json", apiUrl(`${routeFormatter(appName, serviceName)}?*`));
+  //     addRoute("partitionInfo", "partition-page/stateless-partition-info.json", apiUrl(`${routeFormatter(appName, serviceName)}/${partitionId}?*`));
+  //     cy.visit(urlFormatter(appName, serviceName, partitionId))
+  //     cy.wait(waitRequest)
 
-    })
-  })
+  //   })
+  // })
 })

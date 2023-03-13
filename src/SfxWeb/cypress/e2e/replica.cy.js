@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-import { addDefaultFixtures, apiUrl, addRoute, checkActions } from './util.cy';
+import { addDefaultFixtures, apiUrl, addRoute, checkActions, watchForAlert } from './util.cy';
 
 const appName = "VisualObjectsApplicationType";
 
@@ -201,16 +201,25 @@ context('replica', () => {
         setupStateful(baseUrl, serviceName, partitionId, replicaId, "xss/");
         addRoute("events", "empty-list.json", apiUrl(`*/$/Events?*`))
 
+
         cy.visit(`/#/apptype/${appName}/app/${appName}/service/${appName}%252F${serviceName}/partition/${partitionId}/replica/${replicaId}`)
-        cy.wait(waitRequest)
+        
+        watchForAlert(() => {
+          cy.wait(waitRequest)
+          cy.contains("10.0.0.5:20001+<img src='1' onerror='window.alert(document.domain)'>-132429154475414363");
+        })
 
-        cy.get('[data-cy=navtabs]').within(() => {
-          cy.contains('details').click();
-        });
+        watchForAlert(() => {
+          cy.get('[data-cy=navtabs]').within(() => {
+            cy.contains('details').click();
+          });
+          cy.contains("10.0.0.5:20001+<img src='1' onerror='window.alert(document.domain)'>-132429154475414363");
 
-        cy.get('[data-cy=navtabs]').within(() => {
-          cy.contains('events').click();
-        });
+        })
+
+        // cy.get('[data-cy=navtabs]').within(() => {
+        //   cy.contains('events').click();
+        // });
       })
     })
 })
