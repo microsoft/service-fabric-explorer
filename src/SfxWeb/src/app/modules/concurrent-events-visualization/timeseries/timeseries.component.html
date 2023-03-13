@@ -22,7 +22,8 @@
                     {{currentItem.series.name}}
                   </div>
                   <div collapse-body>
-                    {{currentItem.item | json}}
+                    <!-- <app-full-description [(item)]="currentItem.item"></app-full-description> -->
+                    {{currentItem.item.raw | json}}
                   </div>
                 </app-collapse-container>
               </div>

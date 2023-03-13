@@ -100,13 +100,13 @@ export class NamingViewerComponent implements OnInit {
 
             dataSets = dataSets.concat(Object.keys(splitData).map(key => {
               return {
-                name: partition.id +  key,
+                name: partition.id.slice(-4) +  key,
                 values: splitData[key]
               }
             }));
 
             return {
-              name: partition.id,
+              name: partition.id.slice(-4),
               displayContent: () => "Volume: 100",
               toggled: true,
               nestedOptions: Object.entries(splitData).map(d => {
@@ -127,6 +127,8 @@ export class NamingViewerComponent implements OnInit {
       })
     })
   }
+
+
 
   setNewDates(dates: IOnDateChange) {
     this.startDate = dates.startDate;
