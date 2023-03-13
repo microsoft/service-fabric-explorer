@@ -19,8 +19,8 @@ import { IBaseView } from './views/BaseView';
 })
 export class AppComponent implements OnInit{
 
+  @ViewChild('main') main: ElementRef;
 
-  main: IBaseView;
   smallScreenSize = false;
   smallScreenLeftPanelWidth = '0px';
 
@@ -30,7 +30,6 @@ export class AppComponent implements OnInit{
   previousTreeWidth = this.treeWidth;
 
   rightOffset: string = this.treeWidth;
-  tabIndex = -1;
   hideAzure = false;
   hideSFXTest = false;
   hideSFXLogo = false;
@@ -114,14 +113,6 @@ export class AppComponent implements OnInit{
   }
 
   setMainFocus() {
-    this.tabIndex = -1;
-    setTimeout(() => {
-    this.main.el.nativeElement.querySelector('[tabindex], button, input, object, a, area, frame, iframe, select, textarea, summary').focus();
-      this.tabIndex = null;
-    }, 0);
-  }
-
-  onRouteActivate(componentRef: IBaseView) {
-    this.main = componentRef;
+    this.main.nativeElement.focus();
   }
 }
