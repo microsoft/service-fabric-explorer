@@ -77,6 +77,10 @@ $right-panel-min-width: 200px !default;
     right: 2px;
     top: 50px;
     bottom: 20px;
+    
+    main:focus-visible {
+      display: none;
+    }
 }
 
 @media (max-width: 500px) {

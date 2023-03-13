@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild, Type } from '@angular/core';
+import { Component, ElementRef, OnInit } from '@angular/core';
 import { ITab } from 'src/app/shared/component/navbar/navbar.component';
 import { TreeService } from 'src/app/services/tree.service';
 import { IdGenerator } from 'src/app/Utils/IdGenerator';
@@ -13,8 +13,6 @@ import { IBaseView } from '../../BaseView';
 })
 export class BaseComponent implements OnInit, IBaseView {
 
-
-  main: Type<any>;
   SFXClusterName = '';
 
   tabs: ITab[] = [{
