@@ -79,7 +79,7 @@ $right-panel-min-width: 200px !default;
     bottom: 20px;
     
     main:focus-visible {
-      display: none;
+      outline: 0;
     }
 }
 
