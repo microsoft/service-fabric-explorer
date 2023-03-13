@@ -41,7 +41,7 @@
                     <div style="font-size: larger;">
                         Phase <div style="float: right">Duration</div>
                     </div>
-                    <app-collapse-container *ngFor="let phase of item.historyPhases" [collapsed]="phase.startCollapsed" hideTooltip="true" (collapsedChange)="item.changePhaseCollapse(phase.name,$event)">
+                    <app-collapse-container *ngFor="let phase of item.historyPhases" [collapsed]="phase.startCollapsed" hideTooltip="true" (collapsedChange)="item.changePhaseCollapse(phase.name,$event)" [sectionName]="phase.name + ':' + phase.status">
                         <div collapse-header [ngClass]='phase.statusCss'>
                             {{phase.name}} : {{phase.status}} <span *ngIf="phase.durationMilliseconds > 0" style="float: right;">{{phase.duration}}</span>
                         </div>

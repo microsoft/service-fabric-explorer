@@ -48,7 +48,7 @@
             </dd>
         </dl>
 
-        <app-collapse-container [collapsed]="description.isAdvancedOptionCollapsed" *ngIf="!description.createFromTemplate" >
+        <app-collapse-container [collapsed]="description.isAdvancedOptionCollapsed" *ngIf="!description.createFromTemplate" sectionName="Advanced Options">
             <h1 collapse-header>{{description.isAdvancedOptionCollapsed ? "Show" : "Hide"}} Advanced Options</h1>
             <div collapse-body>
                 <dl class="dl-horizontal" >

@@ -16,7 +16,7 @@
   <app-dashboard-tile [data]="replicasDashboard" *ngIf="replicasDashboard"></app-dashboard-tile>
 </div>
 
-<app-collapse-container *ngIf="eventStoreHandler" class="essen-pane detail-pane">
+<app-collapse-container *ngIf="eventStoreHandler" class="essen-pane detail-pane" sectionName="Recent Application and Container Exit Event Reasons">
   <h2 collapse-header>Recent Application and Container Exit Event Reasons</h2>
   <div collapse-body>
     <div style="margin-left: 30px">
@@ -72,7 +72,7 @@
 </div>
 
 <div class="detail-pane essen-pane" *ngIf="app && app.health" data-cy="health">
-    <app-collapse-container sectionName="Unhealthy Evaluations">
+    <app-collapse-container sectionName="Health Evaluations">
         <div collapse-header>
             <h2>Health Evaluations</h2>
         </div>
