@@ -224,7 +224,7 @@ context('service', () => {
   })
 
   describe("xss", () => {
-    it.only("essentials/details", () => {
+    it("essentials/details", () => {
       const xssName = "%253Cimg%2520src%253D'1'%2520onerror%253D'window.alert%28document.domain%29'%253E";
 
       cy.intercept(apiUrl(`/Applications/${"*window.alert*"}/$/GetServices?*`), { fixture: "xss/service-page/services.json" }).as("services")

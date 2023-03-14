@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-import { apiUrl, addDefaultFixtures, checkTableSize, FIXTURE_REF_NODES, nodes_route, FIXTURE_NODES, addRoute, checkCommand, 
+import { apiUrl, addDefaultFixtures, checkTableSize, FIXTURE_REF_NODES, nodes_route, FIXTURE_NODES, addRoute, checkCommand,
          OPTION_PICKER, CLUSTER_TAB_NAME, SELECT_EVENT_TYPES, xssPrefix,  watchForAlert, xssEncoded } from './util.cy';
 
 const nodeName = "_nt_0"
@@ -167,7 +167,7 @@ context('node page', () => {
   })
 
 
-  describe.only("xss" , () => {
+  describe("xss" , () => {
     beforeEach(() => {
       setup(encodeURI("**"), xssPrefix)
     })

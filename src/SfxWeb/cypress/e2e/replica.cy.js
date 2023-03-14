@@ -192,7 +192,7 @@ context('replica', () => {
     })
 
     describe("xss", () => {
-      it.only("essentials/details", () => {
+      it("essentials/details", () => {
         const serviceName = "VisualObjects.ActorService";
         const partitionId = "28bfaf73-37b0-467d-9d47-d011b0aedbc0";
         const replicaId = "132429154475414363";
@@ -203,7 +203,7 @@ context('replica', () => {
 
 
         cy.visit(`/#/apptype/${appName}/app/${appName}/service/${appName}%252F${serviceName}/partition/${partitionId}/replica/${replicaId}`)
-        
+
         watchForAlert(() => {
           cy.wait(waitRequest)
           cy.contains(`10.0.0.5:20001+${plaintextXSS2}-132429154475414363`);

@@ -70,7 +70,7 @@ context('deployed service package', () => {
   })
 
   describe("xss", () => {
-    it.only("essentials/details", () => {
+    it("essentials/details", () => {
       addDefaultFixtures(xssPrefix);
 
       setup(`*${windowAlertText}*`, xssPrefix)
@@ -80,7 +80,7 @@ context('deployed service package', () => {
         cy.contains('3.0.0')
       })
 
-      
+
       watchForAlert(() => {
         cy.visit(`/#/node/_nt_2/deployedapp/${appName}/deployedservice/${xssEncoded}/details`);
         cy.contains('3.0.0')

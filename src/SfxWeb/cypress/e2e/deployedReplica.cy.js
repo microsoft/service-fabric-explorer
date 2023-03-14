@@ -85,20 +85,20 @@ context('deployed replica', () => {
   })
 
   describe("xss", () => {
-    it.only("essentials/details", () => {
+    it("essentials/details", () => {
       setup(xssPrefix);
       setupIndividualPage(xssPrefix);
 
       watchForAlert(() => {
         cy.visit(`/#/node/_nt_2/deployedapp/${appName}/deployedservice/${serviceName}/partition/${partition}/replica/${replica}`);
 
-        cy.contains(`fabric:/VisualObjectsApplicationType/${plaintextXSS2}`)        
+        cy.contains(`fabric:/VisualObjectsApplicationType/${plaintextXSS2}`)
       })
 
       watchForAlert(() => {
         cy.visit(`/#/node/_nt_2/deployedapp/${appName}/deployedservice/${serviceName}/partition/${partition}/replica/${replica}/details`);
 
-        cy.contains(`fabric:/VisualObjectsApplicationType/${plaintextXSS2}`)        
+        cy.contains(`fabric:/VisualObjectsApplicationType/${plaintextXSS2}`)
       })
     })
   })

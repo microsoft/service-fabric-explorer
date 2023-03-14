@@ -1,5 +1,5 @@
 /// <reference types="cypress" />
-import { addDefaultFixtures, apiUrl, FIXTURE_REF_MANIFEST, EMPTY_LIST_TEXT, addRoute, aad_route, 
+import { addDefaultFixtures, apiUrl, FIXTURE_REF_MANIFEST, EMPTY_LIST_TEXT, addRoute, aad_route,
         checkCommand, xssPrefix, watchForAlert, plaintextXSS2, plaintextXSS, xssEncoded, windowAlertText } from './util.cy';
 
 const appName = "VisualObjectsApplicationType";
@@ -59,7 +59,7 @@ context('app', () => {
             cy.contains("ApplicationProcessExited - 1 Events")
         })
 
-        it.only('xss', () => {
+        it('xss', () => {
           initializeRoutes(`*${windowAlertText}*`, appName, xssPrefix);
 
           watchForAlert(() => {

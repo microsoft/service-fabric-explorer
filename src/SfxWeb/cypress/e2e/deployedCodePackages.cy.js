@@ -85,7 +85,7 @@ context('deployed code package', () => {
     })
 
     describe("xss", () => {
-      it.only("xss", () => {
+      it("xss", () => {
         setup(xssPrefix);
         watchForAlert(() => {
           visit();

@@ -62,7 +62,7 @@ context('deployed app', () => {
     })
 
     describe('xss', () => {
-      it.only('essentials/details', () => {
+      it('essentials/details', () => {
 
         setup(`*${windowAlertText}*`, false , xssPrefix);
 

@@ -42,7 +42,7 @@ context('Cluster page', () => {
       cy.get('[role="jobs"]').should('not.exist')
     })
 
-    it.only('certificate expiring banner', () => {
+    it('certificate expiring banner', () => {
       cy.intercept(nodes_route, { fixture: 'cluster-page/nodes-1-warning.json' })
       cy.intercept(apiUrl('/Nodes/_nt_0/$/GetHealth?*'), { fixture: 'cluster-page/node-health.json' }).as('getnodeHealth')
 
@@ -71,7 +71,7 @@ context('Cluster page', () => {
 
     })
 
-    it.only('xss', () => {
+    it('xss', () => {
 
       addDefaultFixtures(xssPrefix);
 
@@ -123,7 +123,7 @@ context('Cluster page', () => {
 
     })
 
-    it.only('xss', () => {
+    it('xss', () => {
 
       addDefaultFixtures(xssPrefix);
 
@@ -320,7 +320,7 @@ context('Cluster page', () => {
       cy.visit(url)
       cy.wait('@get' + waitRef)
     }
-    it.only('load image store', () => {
+    it('load image store', () => {
       addRoute(waitRef, 'cluster-page/imagestore/base-directory.json', apiUrl('/ImageStore?*'))
       addRoute('nestedDictectory', 'cluster-page/imagestore/nested-directory.json', apiUrl('/ImageStore/StoreTest?*'))
       addRoute('loadSize', 'cluster-page/imagestore/load-size.json', apiUrl('/ImageStore/Store/VisualObjectsApplicationType/$/FolderSize?*'))
@@ -341,7 +341,7 @@ context('Cluster page', () => {
 
     })
 
-    it.only('xss', () => {
+    it('xss', () => {
       addDefaultFixtures(xssPrefix);
       addRoute(waitRef, xssPrefix + 'cluster-page/imagestore/base-directory.json', apiUrl('/ImageStore?*'))
 
@@ -366,7 +366,7 @@ context('Cluster page', () => {
       })
     })
 
-    it.only('xss', () => {
+    it('xss', () => {
       addDefaultFixtures(xssPrefix);
 
       watchForAlert(() => {
