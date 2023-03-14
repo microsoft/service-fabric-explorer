@@ -178,17 +178,19 @@ $right-panel-min-width: 200px !default;
   top: 0px;
   height: 20px;
   z-index: 11;
-  background-color: var(--accent-background-color);
 }
 
 .expander-icon {
-  transform: rotate(
-    90deg);
-        font-size: 27px;
-        position: absolute;
-        left: -21px;
-        cursor: pointer;
-        top: -7px;
+  transform: rotate(90deg);
+  font-size: 27px;
+  position: absolute;
+  left: -21px;
+  top: -7px;
+  background-color: var(--accent-background-color);
+  border: 0;
+  color: var(--font-primary-color);
+  padding: 0;
+
   &:hover {
     color: var(--accent-darkblue);
   }
