@@ -21,7 +21,7 @@
 
         <div style="margin: auto; margin-bottom: 10px;" *ngIf="text.length > 0">
             Copy to Clipboard
-            <app-clip-board [text]="copyText"></app-clip-board>
+            <app-clip-board [text]="copyText" name="raw csv content"></app-clip-board>
         </div>
 
         <div class="text-wrapper" contenteditable="true" *ngIf="text.length > 0">
