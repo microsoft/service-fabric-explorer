@@ -73,7 +73,7 @@ context('Cluster page', () => {
 
     it.only('xss', () => {
 
-      addDefaultFixtures('xss/');
+      addDefaultFixtures(xssPrefix);
 
       watchForAlert(() => {
         cy.visit('')
@@ -125,7 +125,7 @@ context('Cluster page', () => {
 
     it.only('xss', () => {
 
-      addDefaultFixtures('xss/');
+      addDefaultFixtures(xssPrefix);
 
       watchForAlert(() => {
         cy.visit('/#/details')
@@ -341,7 +341,7 @@ context('Cluster page', () => {
 
     })
 
-    it('xss', () => {
+    it.only('xss', () => {
       addDefaultFixtures(xssPrefix);
       addRoute(waitRef, xssPrefix + 'cluster-page/imagestore/base-directory.json', apiUrl('/ImageStore?*'))
 
@@ -366,7 +366,7 @@ context('Cluster page', () => {
       })
     })
 
-    it('xss', () => {
+    it.only('xss', () => {
       addDefaultFixtures(xssPrefix);
 
       watchForAlert(() => {

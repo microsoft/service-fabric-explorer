@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-import { addDefaultFixtures, apiUrl, checkCommand, checkTableSize, watchForAlert } from './util.cy';
+import { addDefaultFixtures, apiUrl, checkCommand, checkTableSize, watchForAlert, xssEncoded, xssPrefix, windowAlertText, plaintextXSS2, plaintextXSS } from './util.cy';
 
 const nodeName = "_nt_2"
 const applicationName = "VisualObjectsApplicationType";
@@ -63,12 +63,11 @@ context('deployed app', () => {
 
     describe('xss', () => {
       it.only('essentials/details', () => {
-        const xssName = "%253Cimg%2520src%253D'1'%2520onerror%253D'window.alert%28document.domain%29'%253E";
 
-        setup("*window.alert*", false ,"xss/");
+        setup(`*${windowAlertText}*`, false , xssPrefix);
 
         watchForAlert(() => {
-          cy.visit(`/#/node/${nodeName}/deployedapp/${xssName}`)
+          cy.visit(`/#/node/${nodeName}/deployedapp/${xssEncoded}`)
           cy.contains("D:\\SvcFab\\_App");
           cy.get('[data-cy=services]').within(() => {
             checkTableSize(2);
@@ -76,8 +75,8 @@ context('deployed app', () => {
         })
 
         watchForAlert(() => {
-          cy.visit(`/#/node/${nodeName}/deployedapp/${xssName}/details`)
-          cy.contains(`D:\\SvcFab\\_App\\<img src='1' onerror='window.alert(document.domain)'>\\work`);
+          cy.visit(`/#/node/${nodeName}/deployedapp/${xssEncoded}/details`)
+          cy.contains(`D:\\SvcFab\\_App\\${plaintextXSS2}\\work`);
         })
       })
     })

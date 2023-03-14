@@ -174,14 +174,4 @@ context('partition', () => {
     })
 
   })
-
-  // describe("xss", () => {
-  //   it.only("essentials/details", () => {
-  //     addRoute("partitions", "partition-page/partitions.json", apiUrl(`${routeFormatter(appName, serviceName)}?*`));
-  //     addRoute("partitionInfo", "partition-page/stateless-partition-info.json", apiUrl(`${routeFormatter(appName, serviceName)}/${partitionId}?*`));
-  //     cy.visit(urlFormatter(appName, serviceName, partitionId))
-  //     cy.wait(waitRequest)
-
-  //   })
-  // })
 })

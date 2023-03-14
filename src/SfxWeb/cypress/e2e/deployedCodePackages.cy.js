@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-import { addDefaultFixtures, apiUrl, checkTableSize, typeIntoInput, watchForAlert } from './util.cy';
+import { addDefaultFixtures, apiUrl, checkTableSize, typeIntoInput, watchForAlert, xssPrefix, plaintextXSS2 } from './util.cy';
 
 const nodeName = "_nt_2"
 const appName = "VisualObjectsApplicationType";
@@ -86,14 +86,14 @@ context('deployed code package', () => {
 
     describe("xss", () => {
       it.only("xss", () => {
-        setup("xss/");
+        setup(xssPrefix);
         watchForAlert(() => {
           visit();
           cy.get('[data-cy=navtabs]').within(() => {
             cy.contains('details').click();
           })
 
-          cy.contains(`D:\\SvcFab\\_App\\<img src='1' onerror='window.alert(document.domain)'>\\VisualObjects.ActorServicePkg.Code.3.0.0\\VisualObjects.ActorService.exe`)
+          cy.contains(`D:\\SvcFab\\_App\\${plaintextXSS2}\\VisualObjects.ActorServicePkg.Code.3.0.0\\VisualObjects.ActorService.exe`)
         })
 
 

@@ -13,6 +13,9 @@ Default to stateful service for the page
 const routeFormatter = (app, service) => `/Applications/${app}/$/GetServices/${app}%2F${service}`;
 const urlFormatter = (app, service) => `/#/apptype/${app}/app/${app}/service/${app}%252F${service}`;
 
+const urlFormatter2 = (apptype, app, service) => `/#/apptype/${apptype}/app/${app}/service/${app}%252F${service}`;
+
+
 const setupStatefulService = (app, service, prefix="") => {
   addRoute("description", prefix + "service-page/service-description.json", apiUrl(`${routeFormatter(app, service)}/$/GetDescription?*`))
   // addRoute("serviceInfo", prefix + "service-page/service-info.json", apiUrl(`${routeFormatter(app, service)}?*`))
@@ -231,7 +234,7 @@ context('service', () => {
       const test = "/Applications/%3Cimg%20src%3D'1'%20onerror%3D'window.alert(document.domain)'%3E/$/GetServices/VisualObjectsApplicationType%2F%3Cimg%20src%3D'1'%20onerror%3D'window.alert(document.domain)'%3E?api-version=3.0"
       addDefaultFixtures("xss/");
       setupStatefulService("*window.alert*", "*window.alert*", "xss/");
-      addRoute("serviceInfo", "xss/" + "service-page/service-info.json", apiUrl(test))
+      addRoute("serviceInfo", "xss/" + "service-page/service-info.json", apiUrl("/Applications/*window.alert*/$/GetServices/*window.alert*?api-version=3.0"))
       addRoute("serviceInfo", "xss/" + "service-page/service-info.json", apiUrl(test))
 
       // cy.visit(`/#/apptype/${appName}/app/${xssName}/service/${xssName}`);

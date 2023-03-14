@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-import { addDefaultFixtures, FIXTURE_REF_APPS, apiUrl, checkCommand, watchForAlert, checkTableSize } from './util.cy';
+import { addDefaultFixtures, FIXTURE_REF_APPS, apiUrl, checkCommand, watchForAlert, checkTableSize, xssPrefix } from './util.cy';
 
 const appTypeName = "VisualObjectsApplicationType";
 const appname = "fabric:/VisualObjectsApplicationType";
@@ -80,8 +80,8 @@ context('app type', () => {
   })
 
   describe("xss", () => {
-    it.only("essentials/detailst", () => {
-      addDefaultFixtures('xss/');
+    it.only("essentials", () => {
+      addDefaultFixtures(xssPrefix);
       watchForAlert(() => {
         const xssName = "%253C%253Cimg%2520src%253D'1'%2520onerror%253D'window.alert%28document.domain%29'%253E";
 

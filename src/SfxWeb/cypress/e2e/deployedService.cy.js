@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-import { addDefaultFixtures, apiUrl, addRoute, checkCommand, watchForAlert } from './util.cy';
+import { addDefaultFixtures, apiUrl, addRoute, checkCommand, watchForAlert, xssEncoded, xssPrefix, windowAlertText } from './util.cy';
 
 const nodeName = "_nt_2"
 const appName = "VisualObjectsApplicationType";
@@ -71,19 +71,18 @@ context('deployed service package', () => {
 
   describe("xss", () => {
     it.only("essentials/details", () => {
-      const xssName = "%253Cimg%2520src%253D'1'%2520onerror%253D'window.alert%28document.domain%29'%253E";
-      addDefaultFixtures("xss/");
+      addDefaultFixtures(xssPrefix);
 
-      setup("*window.alert*", "xss/")
+      setup(`*${windowAlertText}*`, xssPrefix)
 
       watchForAlert(() => {
-        cy.visit(`/#/node/_nt_2/deployedapp/${appName}/deployedservice/${xssName}`);
+        cy.visit(`/#/node/_nt_2/deployedapp/${appName}/deployedservice/${xssEncoded}`);
         cy.contains('3.0.0')
       })
 
       
       watchForAlert(() => {
-        cy.visit(`/#/node/_nt_2/deployedapp/${appName}/deployedservice/${xssName}/details`);
+        cy.visit(`/#/node/_nt_2/deployedapp/${appName}/deployedservice/${xssEncoded}/details`);
         cy.contains('3.0.0')
       })
     })

@@ -187,7 +187,11 @@ export const xssPrefix = "xss/"
 export const xssHtml = `xss%22%3C%3Cimg%20src%3D1%20onerror%3Dalert%28document.domain%29%3Exss`;
 export const partialXssDecoding = `xss%22%3C%3Cimg%20src%3D1%20onerror%3Dwindow.alert(document.domain)%3Exss`
 export const renderedSanitizedXSS = `xss"<<img src="1">xss`;
-export const unsanitizedXSS = "<<img src='1' onerror='window.alert(document.domain)'>";
+export const plaintextXSS = "<<img src='1' onerror='window.alert(document.domain)'>";
+
+export const plaintextXSS2 = "<img src='1' onerror='window.alert(document.domain)'>";
+export const xssEncoded = "%253Cimg%2520src%253D'1'%2520onerror%253D'window.alert%28document.domain%29'%253E";
+export const windowAlertText = "window.alert";
 
 // Tabs names
 export const OPTION_PICKER = '[data-cy=option-picker]'

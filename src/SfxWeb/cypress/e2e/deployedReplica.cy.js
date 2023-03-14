@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-import { addDefaultFixtures, apiUrl, checkCommand, checkTableSize, watchForAlert } from './util.cy';
+import { addDefaultFixtures, apiUrl, checkCommand, checkTableSize, watchForAlert, xssPrefix, plaintextXSS2 } from './util.cy';
 
 const nodeName = "_nt_2"
 const appName = "VisualObjectsApplicationType";
@@ -85,21 +85,20 @@ context('deployed replica', () => {
   })
 
   describe("xss", () => {
-
     it.only("essentials/details", () => {
-      setup("xss/");
-      setupIndividualPage("xss/");
+      setup(xssPrefix);
+      setupIndividualPage(xssPrefix);
 
       watchForAlert(() => {
         cy.visit(`/#/node/_nt_2/deployedapp/${appName}/deployedservice/${serviceName}/partition/${partition}/replica/${replica}`);
 
-        cy.contains(`fabric:/VisualObjectsApplicationType/<img src='1' onerror='window.alert(document.domain)'>`)        
+        cy.contains(`fabric:/VisualObjectsApplicationType/${plaintextXSS2}`)        
       })
 
       watchForAlert(() => {
         cy.visit(`/#/node/_nt_2/deployedapp/${appName}/deployedservice/${serviceName}/partition/${partition}/replica/${replica}/details`);
 
-        cy.contains(`fabric:/VisualObjectsApplicationType/<img src='1' onerror='window.alert(document.domain)'>`)        
+        cy.contains(`fabric:/VisualObjectsApplicationType/${plaintextXSS2}`)        
       })
     })
   })

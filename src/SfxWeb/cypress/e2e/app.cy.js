@@ -1,5 +1,6 @@
 /// <reference types="cypress" />
-import { addDefaultFixtures, apiUrl, FIXTURE_REF_MANIFEST, EMPTY_LIST_TEXT, addRoute, aad_route, checkCommand, xssPrefix, watchForAlert, unsanitizedXSS } from './util.cy';
+import { addDefaultFixtures, apiUrl, FIXTURE_REF_MANIFEST, EMPTY_LIST_TEXT, addRoute, aad_route, 
+        checkCommand, xssPrefix, watchForAlert, plaintextXSS2, plaintextXSS, xssEncoded, windowAlertText } from './util.cy';
 
 const appName = "VisualObjectsApplicationType";
 const waitRequest = "@getapp";
@@ -59,23 +60,22 @@ context('app', () => {
         })
 
         it.only('xss', () => {
-          initializeRoutes("*window.alert*", appName, xssPrefix);
-          const xssName = "%253Cimg%2520src%253D'1'%2520onerror%253D'window.alert%28document.domain%29'%253E";
+          initializeRoutes(`*${windowAlertText}*`, appName, xssPrefix);
 
           watchForAlert(() => {
-            cy.visit(`/#/apptype/${appName}/app/${xssName}`)
+            cy.visit(`/#/apptype/${appName}/app/${xssEncoded}`)
             cy.contains('16.0.0');
-            cy.contains("<<img src='1' onerror='window.alert(document.domain)'>");
-            cy.contains("VisualObjects.<img src='1' onerror='window.alert(document.domain)'>");
+            cy.contains(plaintextXSS);
+            cy.contains("VisualObjects." + plaintextXSS2);
           })
 
           watchForAlert(() => {
-            cy.visit(`/#/apptype/${appName}/app/${xssName}/details`);
+            cy.visit(`/#/apptype/${appName}/app/${xssEncoded}/details`);
             cy.contains("VisualObjects.WebService_InstanceCount");
           })
 
           watchForAlert(() => {
-            cy.visit(`/#/apptype/${appName}/app/${xssName}/deployments`);
+            cy.visit(`/#/apptype/${appName}/app/${xssEncoded}/deployments`);
             cy.contains("VisualObjects.WebService_InstanceCount");
           })
         });
@@ -117,16 +117,6 @@ context('app', () => {
 
             cy.contains(param).should('exist')
         })
-
-        // it.only('xss', () => {
-        //   // const xssName = "%253C%253Cimg%2520src%253D'1'%2520onerror%253D'window.alert%28document.domain%29'%253E";
-        //   // initializeRoutes("%3C%3Cimg%20src%3D'1'%20onerror%3D'window.alert(document.domain)'%3E", xssPrefix);
-        //   // initializeRoutes(xssName, xssPrefix);
-
-        //   watchForAlert(() => {
-        //     visit(xssName);
-        //   })
-        // });
 
       it('view details - no params', () => {
         cy.intercept('GET', aad_route,

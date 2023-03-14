@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-import { addDefaultFixtures, apiUrl, addRoute, checkActions, watchForAlert } from './util.cy';
+import { addDefaultFixtures, apiUrl, addRoute, checkActions, watchForAlert, plaintextXSS2, xssPrefix } from './util.cy';
 
 const appName = "VisualObjectsApplicationType";
 
@@ -198,7 +198,7 @@ context('replica', () => {
         const replicaId = "132429154475414363";
         const waitRequest = "@getreplicaInfo";
         const baseUrl = `/Applications/${appName}/$/GetServices/${appName}%2F${serviceName}/$/GetPartitions/${partitionId}`;
-        setupStateful(baseUrl, serviceName, partitionId, replicaId, "xss/");
+        setupStateful(baseUrl, serviceName, partitionId, replicaId, xssPrefix);
         addRoute("events", "empty-list.json", apiUrl(`*/$/Events?*`))
 
 
@@ -206,20 +206,15 @@ context('replica', () => {
         
         watchForAlert(() => {
           cy.wait(waitRequest)
-          cy.contains("10.0.0.5:20001+<img src='1' onerror='window.alert(document.domain)'>-132429154475414363");
+          cy.contains(`10.0.0.5:20001+${plaintextXSS2}-132429154475414363`);
         })
 
         watchForAlert(() => {
           cy.get('[data-cy=navtabs]').within(() => {
             cy.contains('details').click();
           });
-          cy.contains("10.0.0.5:20001+<img src='1' onerror='window.alert(document.domain)'>-132429154475414363");
-
+          cy.contains(`10.0.0.5:20001+${plaintextXSS2}-132429154475414363`);
         })
-
-        // cy.get('[data-cy=navtabs]').within(() => {
-        //   cy.contains('events').click();
-        // });
       })
     })
 })

@@ -1,6 +1,7 @@
 /// <reference types="cypress" />
 
-import { apiUrl, addDefaultFixtures, checkTableSize, FIXTURE_REF_NODES, nodes_route, FIXTURE_NODES, addRoute, checkCommand, xssHtml, partialXssDecoding, OPTION_PICKER, CLUSTER_TAB_NAME, SELECT_EVENT_TYPES, renderedSanitizedXSS, xssPrefix, watchForAlert, unsanitizedXSS } from './util.cy';
+import { apiUrl, addDefaultFixtures, checkTableSize, FIXTURE_REF_NODES, nodes_route, FIXTURE_NODES, addRoute, checkCommand, 
+         OPTION_PICKER, CLUSTER_TAB_NAME, SELECT_EVENT_TYPES, xssPrefix,  watchForAlert, xssEncoded } from './util.cy';
 
 const nodeName = "_nt_0"
 const nodeInfoRef = "@getnodeInfo"
@@ -167,10 +168,8 @@ context('node page', () => {
 
 
   describe.only("xss" , () => {
-    const xssName = "%253Cimg%2520src%253D'1'%2520onerror%253D'window.alert%28document.domain%29'%253E";
-
     beforeEach(() => {
-      setup(encodeURI("**"), "xss/")
+      setup(encodeURI("**"), xssPrefix)
     })
 
     it('essentials/details ', () => {
@@ -178,17 +177,16 @@ context('node page', () => {
 
 
       watchForAlert(() => {
-        cy.visit(`/#/node/${xssName}`);
+        cy.visit(`/#/node/${xssEncoded}`);
       })
 
       watchForAlert(() => {
-        cy.visit(`/#/node/${xssName}/details`);
+        cy.visit(`/#/node/${xssEncoded}/details`);
       })
 
     })
 
-    it('url payload', () => {
-
+    it('url', () => {
       addDefaultFixtures();
 
       addRoute('events', 'cluster-page/eventstore/cluster-events.json', apiUrl(`/EventsStore/Cluster/Events?*`))
