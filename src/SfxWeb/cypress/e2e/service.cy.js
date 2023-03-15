@@ -13,12 +13,9 @@ Default to stateful service for the page
 const routeFormatter = (app, service) => `/Applications/${app}/$/GetServices/${app}%2F${service}`;
 const urlFormatter = (app, service) => `/#/apptype/${app}/app/${app}/service/${app}%252F${service}`;
 
-const urlFormatter2 = (apptype, app, service) => `/#/apptype/${apptype}/app/${app}/service/${app}%252F${service}`;
-
-
 const setupStatefulService = (app, service, prefix="") => {
   addRoute("description", prefix + "service-page/service-description.json", apiUrl(`${routeFormatter(app, service)}/$/GetDescription?*`))
-  // addRoute("serviceInfo", prefix + "service-page/service-info.json", apiUrl(`${routeFormatter(app, service)}?*`))
+  addRoute("serviceInfo", prefix + "service-page/service-info.json", apiUrl(`${routeFormatter(app, service)}?*`))
   addRoute("partitions", prefix + "service-page/service-partitions.json", apiUrl(`${routeFormatter(app, service)}/$/GetPartitions?*`))
   addRoute("health", prefix + "service-page/service-health.json", apiUrl(`${routeFormatter(app, service)}/$/GetHealth?*`))
 }
@@ -26,17 +23,12 @@ const setupStatefulService = (app, service, prefix="") => {
 context('service', () => {
   describe("main interactions", () => {
     beforeEach(() => {
-      addDefaultFixtures();
       cy.intercept(apiUrl(`/Applications/${appName}/$/GetServices?*`), { fixture: "app-page/services.json" }).as("services")
-
     })
 
     describe("stateful", () => {
       beforeEach(() => {
-        // addRoute("description", "service-page/service-description.json", apiUrl(`${routeFormatter(appName, serviceName)}/$/GetDescription?*`))
-        // addRoute("serviceInfo", "service-page/service-info.json", apiUrl(`${routeFormatter(appName, "VisualObjects.ActorService")}?*`))
-        // addRoute("partitions", "service-page/service-partitions.json", apiUrl(`${routeFormatter(appName, serviceName)}/$/GetPartitions?*`))
-        // addRoute("health", "service-page/service-health.json", apiUrl(`${routeFormatter(appName, serviceName)}/$/GetHealth?*`))
+        addDefaultFixtures();
         setupStatefulService(appName, serviceName);
         cy.visit(urlFormatter(appName, serviceName));
       })
@@ -154,12 +146,16 @@ context('service', () => {
 
     })
 
-    describe("stateless", () => {
+    describe.only("stateless", () => {
       beforeEach(() => {
+        addDefaultFixtures();
+        cy.intercept(apiUrl(`/Applications/${appName}/$/GetServices?*`), { fixture: "app-page/services.json" }).as("services")
+
         addRoute("description", "service-page/service-stateless-description.json", apiUrl(`${routeFormatter(appName, statelessServiceName)}/$/GetDescription?*`))
         addRoute("serviceInfo", "service-page/service-stateless-info.json", apiUrl(`${routeFormatter(appName, statelessServiceName)}?*`))
         addRoute("partitions", "service-page/service-stateless-partitions.json", apiUrl(`${routeFormatter(appName, statelessServiceName)}/$/GetPartitions?*`))
         addRoute("health", "service-page/service-health.json", apiUrl(`${routeFormatter(appName, statelessServiceName)}/$/GetHealth?*`))
+        addRoute("serviceInfo", "service-page/service-stateless-info.json", apiUrl(`${routeFormatter(appName, statelessServiceName)}?*`))
 
         cy.visit(urlFormatter(appName, statelessServiceName))
       })

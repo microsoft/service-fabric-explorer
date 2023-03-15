@@ -192,7 +192,7 @@ context('node page', () => {
       addRoute('events', 'cluster-page/eventstore/cluster-events.json', apiUrl(`/EventsStore/Cluster/Events?*`))
       addRoute("events", "empty-list.json", apiUrl(`/EventsStore/Nodes/**/$/Events?**`));
 
-      cy.visit(`/#/node/${xssName}/events`);
+      cy.visit(`/#/node/${xssEncoded}/events`);
 
       cy.get(SELECT_EVENT_TYPES).click()
       cy.get(OPTION_PICKER).within(() => {

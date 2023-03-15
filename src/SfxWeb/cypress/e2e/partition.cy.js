@@ -27,6 +27,7 @@ const setup = (partition, replica, prefix="") => {
 context('partition', () => {
     beforeEach(() => {
         addDefaultFixtures();
+        setup(partitionId, primaryReplica)
         addRoute("services", "app-page/services.json", apiUrl(`/Applications/${appName}/$/GetServices?*`));
     })
 

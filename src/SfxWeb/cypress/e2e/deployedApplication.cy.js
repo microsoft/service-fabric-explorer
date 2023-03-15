@@ -55,9 +55,9 @@ context('deployed app', () => {
 
     describe("commands", () => {
         it('view commands', () => {
-            cy.wait(waitRequest);
-
-            checkCommand(4, 1);
+          setup(applicationName)
+          cy.wait(waitRequest);
+          checkCommand(4, 1);
         })
     })
 

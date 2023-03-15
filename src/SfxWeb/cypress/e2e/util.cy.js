@@ -111,7 +111,7 @@ Used to validate detail lists on the events page.
 */
 export const checkTableErrorMessage = (message) => {
     checkTableSize(1);
-    cy.get('tbody > tr').first().within(() => {
+    cy.get('tbody').first().within(() => {
        cy.contains(message)
     });
 }

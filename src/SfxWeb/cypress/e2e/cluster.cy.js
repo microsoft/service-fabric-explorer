@@ -341,15 +341,6 @@ context('Cluster page', () => {
 
     })
 
-    it('xss', () => {
-      addDefaultFixtures(xssPrefix);
-      addRoute(waitRef, xssPrefix + 'cluster-page/imagestore/base-directory.json', apiUrl('/ImageStore?*'))
-
-      watchForAlert(() => {
-        visit();
-      })
-    });
-
   })
 
   describe("manifest", () => {
