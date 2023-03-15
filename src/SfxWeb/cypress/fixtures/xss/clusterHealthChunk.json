@@ -26,8 +26,34 @@
         ]
     },
     "ApplicationHealthStateChunks": {
-        "TotalCount": 2,
+        "TotalCount": 3,
         "Items": [
+            {
+              "ApplicationName": "fabric:/System",
+              "ApplicationTypeName": "",
+              "HealthState": "Ok",
+              "ServiceHealthStateChunks": {
+                  "TotalCount": 0,
+                  "Items": []
+              },
+              "DeployedApplicationHealthStateChunks": {
+                  "TotalCount": 0,
+                  "Items": []
+              }
+          },
+          {
+            "ApplicationName": "fabric:/VisualObjectsApplicationType",
+            "ApplicationTypeName": "VisualObjectsApplicationType",
+            "HealthState": "Ok",
+            "ServiceHealthStateChunks": {
+                "TotalCount": 0,
+                "Items": []
+            },
+            "DeployedApplicationHealthStateChunks": {
+                "TotalCount": 0,
+                "Items": []
+            }
+        },
             {
                 "ApplicationName": "fabric:/<<img src='1' onerror='window.alert(document.domain)'>",
                 "ApplicationTypeName": "",
