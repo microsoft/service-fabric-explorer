@@ -146,7 +146,7 @@ context('service', () => {
 
     })
 
-    describe.only("stateless", () => {
+    describe("stateless", () => {
       beforeEach(() => {
         addDefaultFixtures();
         cy.intercept(apiUrl(`/Applications/${appName}/$/GetServices?*`), { fixture: "app-page/services.json" }).as("services")
