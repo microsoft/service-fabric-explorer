@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-import { addDefaultFixtures, apiUrl, FIXTURE_REF_MANIFEST, addRoute, checkCommand } from './util.cy';
+import { addDefaultFixtures, apiUrl, FIXTURE_REF_MANIFEST, addRoute, checkCommand, xssEncoded, windowAlertText, watchForAlert, plaintextXSS2 } from './util.cy';
 
 const appName = "VisualObjectsApplicationType";
 const serviceName = "VisualObjects.ActorService";
@@ -121,10 +121,14 @@ context('service', () => {
 
     describe("stateful - with auxiliary replicas", () => {
       beforeEach(() => {
+        addDefaultFixtures();
+        cy.intercept(apiUrl(`/Applications/${appName}/$/GetServices?*`), { fixture: "app-page/services.json" }).as("services")
+
         addRoute("descriptionWithAux", "service-page/service-description-with-aux", apiUrl(`${routeFormatter(appName, serviceName)}/$/GetDescription?*`));
         addRoute("serviceInfo", "service-page/service-info", apiUrl(`${routeFormatter(appName, serviceName)}?*`));
         addRoute("partitions", "service-page/service-partitions", apiUrl(`${routeFormatter(appName, serviceName)}/$/GetPartitions?*`));
         addRoute("health", "service-page/service-health", apiUrl(`${routeFormatter(appName, serviceName)}/$/GetHealth?*`));
+        addRoute("serviceInfo", "service-page/service-stateless-info.json", apiUrl(`${routeFormatter(appName, statelessServiceName)}?*`))
 
         cy.visit(urlFormatter(appName, serviceName))
       })
@@ -220,21 +224,21 @@ context('service', () => {
   })
 
   describe("xss", () => {
-    it("essentials/details", () => {
-      const xssName = "%253Cimg%2520src%253D'1'%2520onerror%253D'window.alert%28document.domain%29'%253E";
+    it.only("essentials/details", () => {
+      const alert = `*${windowAlertText}*`;
+      cy.intercept(apiUrl(`/Applications/${alert}/$/GetServices?*`), { fixture: "xss/service-page/services.json" }).as("services")
 
-      cy.intercept(apiUrl(`/Applications/${"*window.alert*"}/$/GetServices?*`), { fixture: "xss/service-page/services.json" }).as("services")
-      addRoute('test', "xss/" + 'visualObjectsApplicationType.json', apiUrl(`/Applications/${"*window.alert*"}/?*`))
-
-      // const xssName = "%253C%253Cimg%2520src%253D'1'%2520onerror%253D'window.alert%28document.domain%29'%253E"
-      const test = "/Applications/%3Cimg%20src%3D'1'%20onerror%3D'window.alert(document.domain)'%3E/$/GetServices/VisualObjectsApplicationType%2F%3Cimg%20src%3D'1'%20onerror%3D'window.alert(document.domain)'%3E?api-version=3.0"
       addDefaultFixtures("xss/");
-      setupStatefulService("*window.alert*", "*window.alert*", "xss/");
-      addRoute("serviceInfo", "xss/" + "service-page/service-info.json", apiUrl("/Applications/*window.alert*/$/GetServices/*window.alert*?api-version=3.0"))
-      addRoute("serviceInfo", "xss/" + "service-page/service-info.json", apiUrl(test))
+      setupStatefulService(alert, alert, "xss/");
+      addRoute("serviceInfo", "xss/" + "service-page/service-info.json", apiUrl(`/Applications/${alert}/$/GetServices/${alert}?api-version=3.0`))
 
-      // cy.visit(`/#/apptype/${appName}/app/${xssName}/service/${xssName}`);
-      cy.visit(`http://localhost:3000/#/apptype/VisualObjectsApplicationType/app/%253Cimg%2520src%253D'1'%2520onerror%253D'window.alert%28document.domain%29'%253E/service/VisualObjectsApplicationType%252F%253Cimg%2520src%253D'1'%2520onerror%253D'window.alert%28document.domain%29'%253E`)
+      cy.visit(`http://localhost:3000/#/apptype/VisualObjectsApplicationType/app/${xssEncoded}/service/VisualObjectsApplicationType%252F${xssEncoded}`)
+
+      watchForAlert(() => {
+        cy.get("[data-cy=placementconstraints]").within(() => {
+          cy.contains(plaintextXSS2)
+        })
+      })
     })
   })
 })

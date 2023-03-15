@@ -7,5 +7,5 @@
     "HealthState": "Ok",
     "ServiceStatus": "Active",
     "IsServiceGroup": false,
-    "Id": "VisualObjectsApplicationType/VisualObjects.ActorService"
-}
+    "Id": "<img src='1' onerror='window.alert(document.domain)'>/<img src='1' onerror='window.alert(document.domain)'>"
+  }
