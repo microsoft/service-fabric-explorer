@@ -60,14 +60,14 @@
     {
       "HealthEvaluation": {
         "Kind": "Event",
-        "Description": "'System.FM' reported Warning for property 'SeedNodeStatus'.",
+        "Description": "'System.FM' <<img src='1' onerror='window.alert(document.domain)'>Warning for property 'SeedNodeStatus'.",
         "AggregatedHealthState": "Warning",
         "UnhealthyEvent": {
-          "SourceId": "System.FM",
-          "Property": "SeedNodeStatus",
+          "SourceId": "<<img src='1' onerror='window.alert(document.domain)'>",
+          "Property": "<<img src='1' onerror='window.alert(document.domain)'>",
           "HealthState": "Warning",
           "TimeToLiveInMilliSeconds": "P10675199DT2H48M5.4775807S",
-          "Description": "Some seed nodes are unhealthy. Loss of a majority of seed nodes can cause cluster failure. \n1 out of 5 seed nodes are Down. Down seed nodes: \nNodeName(NodeId): _nt_4(16c24c9250e4bb878c26b5128f4deb05) Node Down At: 2020-08-19 21:18:36.942\nFor more information to fix this, see: http://aka.ms/sfhealth",
+          "Description": "Some <<img src='1' onerror='window.alert(document.domain)'> Loss of a majority of seed nodes can cause cluster failure. \n1 out of 5 seed nodes are Down. Down seed nodes: \nNodeName(NodeId): _nt_4(16c24c9250e4bb878c26b5128f4deb05) Node Down At: 2020-08-19 21:18:36.942\nFor more information to fix this, see: http://aka.ms/sfhealth",
           "SequenceNumber": "132423455171926088",
           "RemoveWhenExpired": true,
           "HealthReportId": "FM_7.0_1017",
