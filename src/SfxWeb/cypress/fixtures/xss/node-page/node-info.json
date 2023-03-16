@@ -1,7 +1,7 @@
 {
     "Name": "<img src='1' onerror='window.alert(document.domain)'>",
     "IpAddressOrFQDN": "10.0.0.8",
-    "Type": "<img src='1' onerror='window.alert(document.domain)'>",
+    "Type": "nt",
     "CodeVersion": "7.1.456.9590",
     "ConfigVersion": "10",
     "NodeStatus": "Up",

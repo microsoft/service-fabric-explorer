@@ -1,7 +1,7 @@
 /// <reference types="cypress" />
 
 import { apiUrl, addDefaultFixtures, checkTableSize, FIXTURE_REF_NODES, nodes_route, FIXTURE_NODES, addRoute, checkCommand,
-         OPTION_PICKER, CLUSTER_TAB_NAME, SELECT_EVENT_TYPES, xssPrefix,  watchForAlert, xssEncoded } from './util.cy';
+         OPTION_PICKER, CLUSTER_TAB_NAME, SELECT_EVENT_TYPES, xssPrefix,  watchForAlert, xssEncoded, FIXTURE_REF_MANIFEST } from './util.cy';
 
 const nodeName = "_nt_0"
 const nodeInfoRef = "@getnodeInfo"
@@ -147,7 +147,12 @@ context('node page', () => {
       it('view events', () => {
         addRoute("events", "empty-list.json", apiUrl(`/EventsStore/Nodes/${nodeName}/$/Events?*`));
 
-        cy.visit(`/#/node/${nodeName}/events`);
+        cy.visit(`/#/node/${nodeName}`);
+
+        cy.wait(FIXTURE_REF_MANIFEST);
+        cy.get('[data-cy=navtabs]').within(() => {
+          cy.contains('events').click();
+        });
 
         cy.wait("@getevents");
         cy.url().should('include', 'events');
