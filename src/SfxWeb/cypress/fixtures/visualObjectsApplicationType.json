@@ -1,5 +1,5 @@
 {
-    "Name": "<<img src='1' onerror='window.alert(document.domain)'>",
+    "Name": "fabric:/VisualObjectsApplicationType",
     "TypeName": "VisualObjectsApplicationType",
     "TypeVersion": "16.0.0",
     "Status": "Ready",
@@ -9,5 +9,5 @@
     "ManagedApplicationIdentity": {
         "ManagedIdentities": []
     },
-    "Id": "<<img src='1' onerror='window.alert(document.domain)'>"
+    "Id": "VisualObjectsApplicationType"
 }

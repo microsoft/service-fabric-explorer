@@ -10,7 +10,7 @@ const seedNodeQuoromRef = '[data-cy=seedNodeQuorom]';
 
 const setup = (node, prefix = "") => {
   addRoute(FIXTURE_NODES, prefix +"node-page/Ok-nodes-list.json", nodes_route);
-  addRoute("nodeInfo", prefix+ "node-page/node-info.json", apiUrl(`/Nodes/${node}/?api-version=3.0`));
+  addRoute("nodeInfo", prefix+ "node-page/node-info.json", apiUrl(`/Nodes/${node}/?api-version=3.0*`));
   addRoute("nodehealthInfo", prefix + "node-page/health.json", apiUrl(`/Nodes/${node}/$/GetHealth?*`));
   addRoute("apps", prefix + "node-page/apps.json", apiUrl(`/Nodes/${node}/$/GetApplications?*`));
   addRoute("nodeLoad", prefix + "node-load/get-node-load-information.json", apiUrl(`/Nodes/${node}/$/GetLoadInformation?*`));

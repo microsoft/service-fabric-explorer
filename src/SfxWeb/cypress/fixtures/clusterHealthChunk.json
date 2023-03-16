@@ -53,32 +53,6 @@
                     "TotalCount": 0,
                     "Items": []
                 }
-            },
-            {
-                "ApplicationName": "fabric:/<<img src='1' onerror='window.alert(document.domain)'>",
-                "ApplicationTypeName": "",
-                "HealthState": "Ok",
-                "ServiceHealthStateChunks": {
-                    "TotalCount": 0,
-                    "Items": []
-                },
-                "DeployedApplicationHealthStateChunks": {
-                    "TotalCount": 0,
-                    "Items": []
-                }
-            },
-            {
-                "ApplicationName": "fabric:/<<img src='1' onerror='window.alert(document.domain)'>",
-                "ApplicationTypeName": "<<img src='1' onerror='window.alert(document.domain)'>",
-                "HealthState": "Ok",
-                "ServiceHealthStateChunks": {
-                    "TotalCount": 0,
-                    "Items": []
-                },
-                "DeployedApplicationHealthStateChunks": {
-                    "TotalCount": 0,
-                    "Items": []
-                }
             }
         ]
     }
