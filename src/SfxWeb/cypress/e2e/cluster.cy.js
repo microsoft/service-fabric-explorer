@@ -659,6 +659,15 @@ context('Cluster page', () => {
       });
     })
 
+    it('view duration graph', () => {
+      setup('cluster-page/repair-jobs/simple.json')
+
+      cy.contains("Duration Graph").click();
+
+      cy.wait(1000)
+      cy.get('[class=highcharts-point]').should('have.length', 21)
+    })
+
     it('view in progress repair job - stuck in approving', () => {
       setup('cluster-page/repair-jobs/in-progress.json')
 
