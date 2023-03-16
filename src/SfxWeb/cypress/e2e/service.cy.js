@@ -226,11 +226,12 @@ context('service', () => {
   describe("xss", () => {
     it("essentials/details", () => {
       const alert = `*${windowAlertText}*`;
-      cy.intercept(apiUrl(`/Applications/${alert}/$/GetServices?*`), { fixture: "xss/service-page/services.json" }).as("services")
 
       addDefaultFixtures("xss/");
       setupStatefulService(alert, alert, "xss/");
-      addRoute("serviceInfo", "xss/" + "service-page/service-info.json", apiUrl(`/Applications/${alert}/$/GetServices/${alert}?api-version=3.0`))
+      addRoute("services", "xss/service-page/services.json", apiUrl(`/Applications/${alert}/$/GetServices?*`));
+      addRoute("serviceInfo", "xss/service-page/service-info.json", apiUrl(`/Applications/${alert}/$/GetServices/${alert}?api-version=3.0`))
+      addRoute("events", "empty-list.json", apiUrl(`*/$/Events?*`))
 
       cy.visit(`http://localhost:3000/#/apptype/VisualObjectsApplicationType/app/${xssEncoded}/service/VisualObjectsApplicationType%252F${xssEncoded}`)
 
@@ -238,6 +239,12 @@ context('service', () => {
         cy.get("[data-cy=placementconstraints]").within(() => {
           cy.contains(plaintextXSS2)
         })
+
+        cy.get('[data-cy=navtabs]').within(() => {
+          cy.contains('details').click();
+        })
+
+        cy.contains("3.0.0") //manifest version
       })
     })
   })
