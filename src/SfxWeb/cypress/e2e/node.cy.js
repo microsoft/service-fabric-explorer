@@ -150,6 +150,7 @@ context('node page', () => {
         cy.visit(`/#/node/${nodeName}`);
 
         cy.wait(FIXTURE_REF_MANIFEST);
+        cy.wait(1000)
         cy.get('[data-cy=navtabs]').within(() => {
           cy.contains('events').click();
         });
