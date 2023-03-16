@@ -231,20 +231,21 @@ context('service', () => {
       setupStatefulService(alert, alert, "xss/");
       addRoute("services", "xss/service-page/services.json", apiUrl(`/Applications/${alert}/$/GetServices?*`));
       addRoute("serviceInfo", "xss/service-page/service-info.json", apiUrl(`/Applications/${alert}/$/GetServices/${alert}?api-version=3.0`))
-      addRoute("events", "empty-list.json", apiUrl(`*/$/Events?*`))
-
-      cy.visit(`http://localhost:3000/#/apptype/VisualObjectsApplicationType/app/${xssEncoded}/service/VisualObjectsApplicationType%252F${xssEncoded}`)
+      addRoute("events", "empty-list.json", apiUrl(`**/$/Events?**`))
+      addRoute("app", "xss/service-page/app-info.json", apiUrl(`/Applications/*${windowAlertText}*/?*`));
+      const url = `/#/apptype/VisualObjectsApplicationType/app/${xssEncoded}/service/${xssEncoded}%252F${xssEncoded}`;
 
       watchForAlert(() => {
+        cy.visit(url)
+
         cy.get("[data-cy=placementconstraints]").within(() => {
           cy.contains(plaintextXSS2)
         })
 
-        cy.get('[data-cy=navtabs]').within(() => {
-          cy.contains('details').click();
+        watchForAlert(() => {
+          cy.visit(url + '/details')
+          cy.contains("3.0.0") //manifest version
         })
-
-        cy.contains("3.0.0") //manifest version
       })
     })
   })
