@@ -15,7 +15,7 @@ export class NodeDeactivationInfoComponent implements OnInit, OnChanges {
 
   public readonly seedNodeQuorumMessage = "This node deactivation is waiting on a Seed Node Quorom safety check. If this deactivation is going for an irregular amount of time, consider referring to the following TSG to potentially continue progress for this deactivation."
 
-  @Input() node: Node;
+  @Input() hasDescription: boolean = false;
   @Input() deactivationInfo: IRawNodeDeactivationInfo;
 
   public progress: IProgressStatus[] = [];
@@ -33,7 +33,11 @@ export class NodeDeactivationInfoComponent implements OnInit, OnChanges {
       new ListColumnSetting('NodeDeactivationIntent', 'Intent'),
       new ListColumnSetting('NodeDeactivationTaskId.Id', 'Id'),
       new ListColumnSetting('NodeDeactivationTaskId.NodeDeactivationTaskType', 'Task Type'),
-    ]);
+      ]);
+    
+    if (this.hasDescription && this.settings.columnSettings.length < 4) {
+      this.settings.columnSettings.push(new ListColumnSetting('NodeDeactivationDescription', 'Description', { cssClasses: "wrap-overflow" }));
+    }
   }
 
   ngOnChanges(): void {

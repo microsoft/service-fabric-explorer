@@ -75,7 +75,7 @@
         </div>
         <div collapse-body class="table-responsive" style="padding: 10px;">
           <a [routerLink]="node.viewPath">View Node</a>
-          <app-node-deactivation-info [deactivationInfo]="node.raw.NodeDeactivationInfo"></app-node-deactivation-info>
+          <app-node-deactivation-info [deactivationInfo]="node.raw.NodeDeactivationInfo" [hasDescription]="node.hasDeactivatingDescription"></app-node-deactivation-info>
         </div>
       </app-collapse-container>
     </div>
