@@ -12,7 +12,7 @@
   </div>
 
   <div *ngIf="deactivationInfo.NodeDeactivationTask.length > 0" style="flex-grow: 1;
-    margin-left: 15px; min-width: 400px;">
+    margin-left: 15px; min-width: 400px; max-width: 1120px">
     <h5 class="underline title" >Deactivation Tasks</h5>
     <app-detail-list [list]="deactivationInfo.NodeDeactivationTask" [listSettings]="settings" [showTopOptions]="false"></app-detail-list>
   </div>
