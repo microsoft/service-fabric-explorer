@@ -534,15 +534,15 @@ table.detail-list {
 }
 
 
-@media screen and (-ms-high-contrast: active) {
+@media screen and (forced-colors: active) {
   .highcharts-title {
-    color: black !important;
-    fill: black !important;
+    color: CanvasText !important;
+    fill: CanvasText !important;
   }
 
   .highcharts-subtitle {
-    color: black !important;
-    fill: black !important;
+    color: CanvasText !important;
+    fill: CanvasText !important;
   }
 
   .dropdown-item.disabled, .dropdown-item:disabled {
@@ -558,6 +558,20 @@ table.detail-list {
       border: 2px solid gray !important;
     }
   }
+  }
+  .radio-btns {
+    .checkbox-push{
+        input:checked  + label{
+            @-moz-document url-prefix() {
+                color: HighlightText !important;
+            }
+            color: Highlight !important;
+            & {
+                background-color: Highlight !important;
+            }
+        } 
+
+    }
   }
 }
 
