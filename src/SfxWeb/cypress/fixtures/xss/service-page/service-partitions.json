@@ -1,0 +1,185 @@
+{
+    "ContinuationToken": "",
+    "Items": [
+        {
+            "ServiceKind": "Stateful",
+            "PartitionInformation": {
+                "ServicePartitionKind": "Int64Range",
+                "Id": "c9a4c003-4ff2-418d-a011-b38fb4237adc",
+                "LowKey": "3689348814741910325",
+                "HighKey": "5534023222112865485"
+            },
+            "TargetReplicaSetSize": 3,
+            "MinReplicaSetSize": 2,
+            "HealthState": "Ok",
+            "PartitionStatus": "Ready",
+            "LastQuorumLossDurationInSeconds": "0",
+            "CurrentConfigurationEpoch": {
+                "ConfigurationVersion": "85899345920",
+                "DataLossVersion": "132399270145364138"
+            }
+        },
+        {
+            "ServiceKind": "Stateful",
+            "PartitionInformation": {
+                "ServicePartitionKind": "Int64Range",
+                "Id": "fe893a0e-6046-4067-8533-3ef56ba20f85",
+                "LowKey": "7378697629483820647",
+                "HighKey": "9223372036854775807"
+            },
+            "TargetReplicaSetSize": 3,
+            "MinReplicaSetSize": 2,
+            "HealthState": "Ok",
+            "PartitionStatus": "Ready",
+            "LastQuorumLossDurationInSeconds": "0",
+            "CurrentConfigurationEpoch": {
+                "ConfigurationVersion": "68719476736",
+                "DataLossVersion": "132399270145364138"
+            }
+        },
+        {
+            "ServiceKind": "Stateful",
+            "PartitionInformation": {
+                "ServicePartitionKind": "Int64Range",
+                "Id": "41fb6918-986b-4b6d-bff6-0495b114c720",
+                "LowKey": "2",
+                "HighKey": "1844674407370955163"
+            },
+            "TargetReplicaSetSize": 3,
+            "MinReplicaSetSize": 2,
+            "HealthState": "Ok",
+            "PartitionStatus": "Ready",
+            "LastQuorumLossDurationInSeconds": "0",
+            "CurrentConfigurationEpoch": {
+                "ConfigurationVersion": "90194313216",
+                "DataLossVersion": "132399270145364138"
+            }
+        },
+        {
+            "ServiceKind": "Stateful",
+            "PartitionInformation": {
+                "ServicePartitionKind": "Int64Range",
+                "Id": "4dc30f2a-63bf-4f01-9e49-d0aeac0b262a",
+                "LowKey": "-7378697629483820646",
+                "HighKey": "-5534023222112865485"
+            },
+            "TargetReplicaSetSize": 3,
+            "MinReplicaSetSize": 2,
+            "HealthState": "Ok",
+            "PartitionStatus": "Ready",
+            "LastQuorumLossDurationInSeconds": "0",
+            "CurrentConfigurationEpoch": {
+                "ConfigurationVersion": "98784247808",
+                "DataLossVersion": "132399270145364138"
+            }
+        },
+        {
+            "ServiceKind": "Stateful",
+            "PartitionInformation": {
+                "ServicePartitionKind": "Int64Range",
+                "Id": "28bfaf73-37b0-467d-9d47-d011b0aedbc0",
+                "LowKey": "-9223372036854775808",
+                "HighKey": "-7378697629483820647"
+            },
+            "TargetReplicaSetSize": 3,
+            "MinReplicaSetSize": 2,
+            "HealthState": "Ok",
+            "PartitionStatus": "Ready",
+            "LastQuorumLossDurationInSeconds": "0",
+            "CurrentConfigurationEpoch": {
+                "ConfigurationVersion": "85899345920",
+                "DataLossVersion": "132399270145364138"
+            }
+        },
+        {
+            "ServiceKind": "Stateful",
+            "PartitionInformation": {
+                "ServicePartitionKind": "Int64Range",
+                "Id": "558f717a-cc8d-4fb0-9562-1c53e9c6775d",
+                "LowKey": "-3689348814741910322",
+                "HighKey": "-1844674407370955161"
+            },
+            "TargetReplicaSetSize": 3,
+            "MinReplicaSetSize": 2,
+            "HealthState": "Ok",
+            "PartitionStatus": "Ready",
+            "LastQuorumLossDurationInSeconds": "0",
+            "CurrentConfigurationEpoch": {
+                "ConfigurationVersion": "120259084288",
+                "DataLossVersion": "132399270145364138"
+            }
+        },
+        {
+            "ServiceKind": "Stateful",
+            "PartitionInformation": {
+                "ServicePartitionKind": "Int64Range",
+                "Id": "951e48a1-8c14-4235-9f4d-26ddfab1012b",
+                "LowKey": "5534023222112865486",
+                "HighKey": "7378697629483820646"
+            },
+            "TargetReplicaSetSize": 3,
+            "MinReplicaSetSize": 2,
+            "HealthState": "Ok",
+            "PartitionStatus": "Ready",
+            "LastQuorumLossDurationInSeconds": "0",
+            "CurrentConfigurationEpoch": {
+                "ConfigurationVersion": "85899345920",
+                "DataLossVersion": "132399270145364138"
+            }
+        },
+        {
+            "ServiceKind": "Stateful",
+            "PartitionInformation": {
+                "ServicePartitionKind": "Int64Range",
+                "Id": "8319a2ad-b380-4871-b89f-dd1e5a32822f",
+                "LowKey": "-1844674407370955160",
+                "HighKey": "1"
+            },
+            "TargetReplicaSetSize": 3,
+            "MinReplicaSetSize": 2,
+            "HealthState": "Ok",
+            "PartitionStatus": "Ready",
+            "LastQuorumLossDurationInSeconds": "0",
+            "CurrentConfigurationEpoch": {
+                "ConfigurationVersion": "77309411328",
+                "DataLossVersion": "132399270145364138"
+            }
+        },
+        {
+            "ServiceKind": "Stateful",
+            "PartitionInformation": {
+                "ServicePartitionKind": "Int64Range",
+                "Id": "c8e13dbe-87b0-49c9-9ad8-de696446dab7",
+                "LowKey": "-5534023222112865484",
+                "HighKey": "-3689348814741910323"
+            },
+            "TargetReplicaSetSize": 3,
+            "MinReplicaSetSize": 2,
+            "HealthState": "Ok",
+            "PartitionStatus": "Ready",
+            "LastQuorumLossDurationInSeconds": "0",
+            "CurrentConfigurationEpoch": {
+                "ConfigurationVersion": "98784247808",
+                "DataLossVersion": "132399270145364138"
+            }
+        },
+        {
+            "ServiceKind": "Stateful",
+            "PartitionInformation": {
+                "ServicePartitionKind": "Int64Range",
+                "Id": "9c53d4c4-f9b7-4906-9b19-55d5d4c082d2",
+                "LowKey": "1844674407370955164",
+                "HighKey": "3689348814741910324"
+            },
+            "TargetReplicaSetSize": 3,
+            "MinReplicaSetSize": 2,
+            "HealthState": "Ok",
+            "PartitionStatus": "Ready",
+            "LastQuorumLossDurationInSeconds": "0",
+            "CurrentConfigurationEpoch": {
+                "ConfigurationVersion": "73014444032",
+                "DataLossVersion": "132399270145364138"
+            }
+        }
+    ]
+}

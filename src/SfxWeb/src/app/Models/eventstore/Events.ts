@@ -36,6 +36,10 @@ export abstract class FabricEventBase implements IFabricEventMetadata, IEventPro
                 this.eventProperties[property] = responseItem[property];
             }
         }
+
+        if(!this.category) {
+          this.category = "Operational";
+        }
     }
 
     protected extractField(name: string, value: any): boolean {
@@ -59,7 +63,6 @@ export abstract class FabricEventBase implements IFabricEventMetadata, IEventPro
             default:
                 break;
         }
-
         return false;
     }
 }

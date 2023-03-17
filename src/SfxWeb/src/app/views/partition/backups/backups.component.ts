@@ -41,7 +41,7 @@ export class BackupsComponent extends PartitionBaseControllerDirective {
     this.partitionBackupListSettings = this.settings.getNewOrExistingListSettings('partitionBackups', [null], [
       new ListColumnSetting('raw.BackupId', 'BackupId', {
         enableFilter: false,
-        getDisplayHtml: (item, property) =>  `<span class="link">${property}</span>`,
+        cssClasses: "link",
         clickEvent: item => item.action.run()
       }),
       new ListColumnSetting('raw.BackupType', 'BackupType'),

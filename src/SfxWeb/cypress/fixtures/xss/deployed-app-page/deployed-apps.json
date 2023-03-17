@@ -1,0 +1,12 @@
+[
+    {
+        "Id": "<img src='1' onerror='window.alert(document.domain)'>",
+        "Name": "fabric:/<img src='1' onerror='window.alert(document.domain)'>",
+        "TypeName": "<img src='1' onerror='window.alert(document.domain)'>",
+        "Status": "Active",
+        "WorkDirectory": "D:\\SvcFab\\_App\\<img src='1' onerror='window.alert(document.domain)'>\\work",
+        "LogDirectory": "D:\\SvcFab\\_App\\<img src='1' onerror='window.alert(document.domain)'>\\log",
+        "TempDirectory": "D:\\SvcFab\\_App\\<img src='1' onerror='window.alert(document.domain)'>\\temp",
+        "HealthState": "Unknown"
+    }
+]

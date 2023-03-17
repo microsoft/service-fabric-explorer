@@ -28,9 +28,7 @@ import { RoutesService } from 'src/app/services/routes.service';
 export class Application extends DataModelBase<IRawApplication> {
     public decorators: IDecorators = {
         decorators: {
-            TypeName: {
-                displayValueInHtml: (value) => HtmlUtils.getLinkHtml(value, this.appTypeViewPath)
-            }
+
         }
     };
 
@@ -253,11 +251,11 @@ export class ApplicationUpgradeProgress extends DataModelBase<IRawApplicationUpg
         decorators: {
             UpgradeDurationInMilliseconds: {
                 displayName: (name) => 'Upgrade Duration',
-                displayValueInHtml: (value) => TimeUtils.getDuration(value)
+                displayValue: (value) => TimeUtils.getDuration(value)
             },
             UpgradeDomainDurationInMilliseconds: {
                 displayName: (name) => 'Upgrade Domain Duration',
-                displayValueInHtml: (value) => TimeUtils.getDuration(value)
+                displayValue: (value) => TimeUtils.getDuration(value)
             }
         }
     };

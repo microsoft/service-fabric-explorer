@@ -1,20 +1,26 @@
 /// <reference types="cypress" />
 
-import { addDefaultFixtures, apiUrl, checkTableSize, typeIntoInput } from './util.cy';
+import { addDefaultFixtures, apiUrl, checkTableSize, typeIntoInput, watchForAlert, xssPrefix, plaintextXSS2 } from './util.cy';
 
 const nodeName = "_nt_2"
 const appName = "VisualObjectsApplicationType";
 const serviceName = "VisualObjects.ActorServicePkg";
 const waitRequest = "@codePackages";
 
+const setup = (prefix = "") => {
+  addDefaultFixtures(prefix);
+
+  cy.intercept(apiUrl(`/Nodes/${nodeName}/$/GetApplications?*`), { fixture: prefix + 'deployed-code-package/deployed-apps.json' }).as('apps');
+  cy.intercept(apiUrl(`/Nodes/${nodeName}/$/GetApplications/${appName}/$/GetServicePackages?*`), { fixture: prefix +  'deployed-code-package/service-packages.json' }).as('services');
+  cy.intercept(apiUrl(`/Nodes/${nodeName}/$/GetApplications/${appName}/$/GetCodePackages?*`), { fixture: prefix +  'deployed-code-package/code-packages.json' }).as('codePackages');
+  cy.intercept(apiUrl(`/Nodes/${nodeName}/$/GetApplications/${appName}/$/GetReplicas?*`), { fixture: prefix + 'deployed-code-package/replicas.json' }).as('replicas');
+
+}
+const visit = () => cy.visit(`/#/node/${nodeName}/deployedapp/${appName}/deployedservice/${serviceName}/codepackage/Code`);
+
 context('deployed code package', () => {
     beforeEach(() => {
-        addDefaultFixtures();
-
-        cy.intercept(apiUrl(`/Nodes/${nodeName}/$/GetApplications?*`), { fixture: 'deployed-code-package/deployed-apps.json' }).as('apps');
-        cy.intercept(apiUrl(`/Nodes/${nodeName}/$/GetApplications/${appName}/$/GetServicePackages?*`), { fixture: 'deployed-code-package/service-packages.json' }).as('services');
-        cy.intercept(apiUrl(`/Nodes/${nodeName}/$/GetApplications/${appName}/$/GetCodePackages?*`), { fixture: 'deployed-code-package/code-packages.json' }).as('codePackages');
-        cy.intercept(apiUrl(`/Nodes/${nodeName}/$/GetApplications/${appName}/$/GetReplicas?*`), { fixture: 'deployed-code-package/replicas.json' }).as('replicas');
+      setup();
     })
 
     describe("list page", () => {
@@ -34,7 +40,6 @@ context('deployed code package', () => {
     })
 
     describe("code package page", () => {
-      const visit = () => cy.visit(`/#/node/${nodeName}/deployedapp/${appName}/deployedservice/${serviceName}/codepackage/Code`);
 
         it('essentials', () => {
           visit();
@@ -76,6 +81,22 @@ context('deployed code package', () => {
           cy.wait(1000)
           cy.get('[data-cy=get-logs').click();
           cy.wait("@containerLogs").its("request.url").should("contain", "Tail=500")
+      })
+    })
+
+    describe("xss", () => {
+      it("xss", () => {
+        setup(xssPrefix);
+        watchForAlert(() => {
+          visit();
+          cy.get('[data-cy=navtabs]').within(() => {
+            cy.contains('details').click();
+          })
+
+          cy.contains(`D:\\SvcFab\\_App\\${plaintextXSS2}\\VisualObjects.ActorServicePkg.Code.3.0.0\\VisualObjects.ActorService.exe`)
+        })
+
+
       })
     })
 })
