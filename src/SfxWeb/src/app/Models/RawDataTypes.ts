@@ -448,7 +448,7 @@ export interface IRawNodeDeactivationInfo {
 export interface IRawNodeDeactivationTask {
         NodeDeactivationTaskId: IRawNodeDeactivationTaskId;
         NodeDeactivationIntent: string;
-        NodeDeactivationDescription: string;
+        NodeDeactivationDescription?: string;
     }
 export interface IRawSchedule {
         ScheduleKind: string;

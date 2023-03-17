@@ -83,7 +83,7 @@ export class Node extends DataModelBase<IRawNode> {
 
     public get hasDeactivatingDescription(): boolean {
         return this.isDeactivating && (
-            this.raw.NodeDeactivationInfo.NodeDeactivationTask.some(task => task.NodeDeactivationDescription.length)
+            this.raw.NodeDeactivationInfo.NodeDeactivationTask.some(task => task.NodeDeactivationDescription?.length)
         );
     }
     
