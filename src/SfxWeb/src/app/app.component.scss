@@ -38,14 +38,6 @@ $right-panel-min-width: 200px !default;
   flex-direction: column;
 }
 
-.main-view {
-  padding-right: 5px;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  min-height: 0px; /* for non-chrome browsers */
-}
-
 .header-bar {
     height: 50px;
     background-color: var(--primary-background-color);
