@@ -611,7 +611,7 @@ table.detail-list {
 
 .text-wrapper {
     position: relative;
-    overflow: scroll;
+    overflow: auto;
     flex: 1;
     .middle-text {
         transition: .5s;
