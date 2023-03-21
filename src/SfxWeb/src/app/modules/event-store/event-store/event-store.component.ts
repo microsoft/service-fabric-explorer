@@ -21,7 +21,8 @@ export type EventType =
   "Node" |
   'Application' |
   "Partition" |
-  "RepairTask"
+  "RepairTask" |
+  "Replica"
 
 export interface IEventStoreData<IVisPresentEvent, S> {
   eventsList: IVisPresentEvent;
@@ -33,7 +34,7 @@ export interface IEventStoreData<IVisPresentEvent, S> {
   objectResolver?(id: string): IDataModel<any>; //used to determine if the data contains a given event;
 }
 
-interface VisReference {
+export interface VisReference {
   name: string,
   component: Type<VisualizationComponent>
 }

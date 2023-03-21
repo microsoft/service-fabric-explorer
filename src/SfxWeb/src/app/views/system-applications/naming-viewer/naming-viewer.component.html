@@ -1,16 +1,11 @@
-<div class="essen-pane">
-  <app-full-time-picker [startDate]="startDate" [endDate]="endDate" (datesChanged)="setNewDates($event)"
-    [startDateMin]="startDateMin" [startDateMax]="startDateMax"></app-full-time-picker>
-
-  <!-- ngbDropdown placement="bottom-right" #myDrop="ngbDropdown"  -->
+<div>
   <div>
-
-    <div *ngIf="namingService?.partitions?.isInitialized" class="partitions-container">
+    <div class="partitions-container">
       <div *ngFor="let partition of overviewPanels" class="partition">
         <div>
           <div>
             <label>
-              <app-toggle [(state)]="partition.toggled"></app-toggle>
+              <app-toggle [(state)]="partition.toggled" (stateChange)="updateData()"></app-toggle>
               {{partition.name}}
             </label>
           </div>
@@ -19,16 +14,14 @@
               <div>{{partition.displayContent()}}</div>
               <div ngbDropdown #myDrop="ngbDropdown">
                 <button class="flat-button" ngbDropdownToggle aria-label="settings drop down">
-                  toggle operations ({{partition.nestedOptions.length}} / {{partition.nestedOptions.length}})
+                  toggle operations ({{getToggled(partition.nestedOptions)}} / {{partition.nestedOptions.length}})
                 </button>
-                <div ngbDropdownMenu aria-labelledby="dropdownBasic1" class="dropdown-container" *ngIf="namingService">
+                <div ngbDropdownMenu aria-labelledby="dropdownBasic1" class="dropdown-container">
                     <div ngbDropdownItem class="operation" *ngFor="let operation of partition.nestedOptions">
                       <label class="operation-container">
                         {{operation.name}}
-                        <input type="checkbox" [(ngModel)]="operation.toggled"/>
+                        <input type="checkbox" [(ngModel)]="operation.toggled" (ngModelChange)="updateData()"/>
                       </label>
-
-
                     </div>
                 </div>
               </div>

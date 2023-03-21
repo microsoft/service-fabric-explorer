@@ -1,25 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { IParallelChartData } from 'src/app/modules/concurrent-events-visualization/timeseries/timeseries.component';
-import { DataService } from 'src/app/services/data.service';
-import { Observable, forkJoin } from 'rxjs';
-import { TimeUtils } from 'src/app/Utils/TimeUtils';
-import { IOnDateChange } from 'src/app/modules/time-picker/double-slider/double-slider.component';
-import { data } from './test';
+import { IDataSet, IParallelChartData } from 'src/app/modules/concurrent-events-visualization/timeseries/timeseries.component';
 import { Utils } from 'src/app/Utils/Utils';
-import { Service } from 'src/app/Models/DataModels/Service';
-import { IEventStoreData } from 'src/app/modules/event-store/event-store/event-store.component';
-import { ReplicaEventList } from 'src/app/Models/DataModels/collections/Collections';
 import { ReplicaEvent } from 'src/app/Models/eventstore/Events';
-
-const rdata = data.map(item => {
-  return {
-    ...item,
-    TimeStamp: new Date(item.TimeStamp)
-  }
-}).sort((a,b) => a.TimeStamp.getTime() - b.TimeStamp.getTime())
-
-const splitData = Utils.groupByFunc(rdata.filter(item => item.Kind === "NamingMetricsReported"), item => item.OperationName);
-console.log(splitData)
+import { VisualizationComponent, VisUpdateData } from 'src/app/modules/event-store/visualizationComponents';
+import { SettingsService } from 'src/app/services/settings.service';
+import { ListColumnSetting, ListColumnSettingWithEventStoreFullDescription, ListColumnSettingWithUtcTime } from 'src/app/Models/ListSettings';
 
 export interface INestedDataSetOption {
   name: string;
@@ -39,7 +24,7 @@ export interface IOverviewPanel {
   templateUrl: './naming-viewer.component.html',
   styleUrls: ['./naming-viewer.component.scss']
 })
-export class NamingViewerComponent implements OnInit {
+export class NamingViewerComponent implements VisualizationComponent {
   public startDate: Date;
   public endDate: Date;
   public startDateMin: Date;
@@ -50,89 +35,115 @@ export class NamingViewerComponent implements OnInit {
     series: [
       {
         name: 'Average Latency',
-        xProperty: 'time',
-        yProperty: 'eventProperties.AverageLatency',
+        xProperty: 'raw.time',
+        yProperty: 'raw.eventProperties.AverageLatency',
         yUnits: 'MS',
         yLabel: 'Latency'
       },
       {
         name: 'Average Response Size',
-        xProperty: 'time',
-        yProperty: 'eventProperties.AverageResponseSize',
+        xProperty: 'raw.time',
+        yProperty: 'raw.eventProperties.AverageResponseSize',
         yUnits: 'Bytes',
         yLabel: 'Size'
       },
       {
         name: 'Request Volume',
-        xProperty: 'time',
-        yProperty: 'eventProperties.RequestCount',
+        xProperty: 'raw.time',
+        yProperty: 'raw.eventProperties.RequestCount',
         yLabel: 'Count'
       }
-    ]
+    ],
+    listSettings: null
   }
 
   overviewPanels: IOverviewPanel[] = []
 
-  public namingService: Service;
+  localData: VisUpdateData;
 
-  constructor(private dataService: DataService) { }
+  constructor(private settings: SettingsService) {}
 
-  ngOnInit(): void {
-    const todaysDate = new Date();
-    this.startDate = TimeUtils.AddDays(todaysDate, -7);
-    this.endDate = this.startDateMax = todaysDate;
-    this.startDateMin = TimeUtils.AddDays(todaysDate, -30);
-    console.log(this.dataset)
-    this.dataService.getService("System", "System/NamingService").subscribe(app => {
-      const ess: IEventStoreData<ReplicaEventList, ReplicaEvent>[] = [];
-      this.namingService = app;
-      app.partitions.ensureInitialized().subscribe(_ => {
-        forkJoin(app.partitions.collection.map(partition => {
-          const es = this.dataService.getReplicaEventData(partition.id);
-          ess.push(es);
-          return es.eventsList.refresh();
-        })).subscribe(() => {
-          let dataSets = [];
-
-          this.overviewPanels = this.namingService.partitions.collection.map((partition, index) => {
-
-            const splitData = Utils.groupByFunc(ess[index].getEvents().filter(item => item.kind === "NamingMetricsReported"), item => item.eventProperties.OperationName);
-
-            dataSets = dataSets.concat(Object.keys(splitData).map(key => {
-              return {
-                name: partition.id.slice(-4) +  key,
-                values: splitData[key]
-              }
-            }));
-
-            return {
-              name: partition.id.slice(-4),
-              displayContent: () => "Volume: 100",
-              toggled: true,
-              nestedOptions: Object.entries(splitData).map(d => {
-                return {
-                  toggled: true,
-                  name: d[0]
-                }
-              })
-            }
-          })
-          console.log(this.overviewPanels)
-          this.dataset = {
-            ...this.dataset,
-            dataSets
-          }
-          console.log(this.dataset)
+  generateOverviewPanel(data: VisUpdateData) {
+    this.overviewPanels = [];
+    data.listEventStoreData.forEach((partition, index) => {
+      const splitData = this.splitData(partition.eventsList.collection);
+      let volume = 0;
+      Object.entries(splitData).forEach(entry => {
+        entry[1].forEach(event => {
+          volume += event.raw.eventProperties.RequestCount;
         })
       })
+      if(Object.keys(splitData).length) {
+        this.overviewPanels.push({
+          name: partition.displayName.slice(32, 37),
+          displayContent: () => `Total Volume: ${volume}`,
+          toggled: true,
+          nestedOptions: Object.entries(splitData).map(d => {
+            return {
+              toggled: true,
+              name: d[0]
+            }
+          })
+        })
+      }
     })
   }
 
+  updateData() {
+    const listSettings = this.settings.getNewOrExistingListSettings("naming", ['raw.TimeStamp'],
+    [
+      new ListColumnSetting('raw.eventProperties.AverageLatency', 'Average Latency'),
+      new ListColumnSetting('raw.eventProperties.AverageResponseSize', 'Average Response Size'),
+      new ListColumnSetting('raw.eventProperties.RequestCount', 'Request Count'),
+      new ListColumnSetting('raw.eventProperties.AverageLatency', 'Average Latency'),
+      new ListColumnSettingWithUtcTime('raw.timeStamp', 'Time Stamp')
+    ],
+    [
+      new ListColumnSettingWithEventStoreFullDescription(),
+    ],
+    true);
+    let dataSets = []
+    this.overviewPanels.forEach((panel, index) => {
+      dataSets = dataSets.concat(this.sortAndFilterData(panel, this.localData.listEventStoreData[index].eventsList.collection));
+    })
 
+    this.dataset = {
+      ...this.dataset,
+      dataSets,
+      listSettings
+    }
+  }
 
-  setNewDates(dates: IOnDateChange) {
-    this.startDate = dates.startDate;
-    this.endDate = dates.endDate;
-    // this.setNewDateWindow();
+  splitData(events: ReplicaEvent[]) {
+    return Utils.groupByFunc(events.filter(item => item.raw.kind === "NamingMetricsReported"), item => item.raw.eventProperties.OperationName);
+  }
+
+  sortAndFilterData(overview: IOverviewPanel, events: ReplicaEvent[]): IDataSet[] {
+    const filteredEvents = [];
+    const splitData = this.splitData(events);
+
+    if (overview.toggled) {
+      overview.nestedOptions.forEach(option => {
+        if (option.toggled && option.name in splitData) {
+          filteredEvents.push({
+            name: overview.name + " " + option.name,
+            values: splitData[option.name]
+          })
+        }
+      })
+    }
+
+    return filteredEvents;
+  }
+
+  getToggled(options: INestedDataSetOption[]) {
+    return options.filter(option => option.toggled).length;
+  }
+
+  update(data: VisUpdateData) {
+    console.log(data, this);
+    this.generateOverviewPanel(data);
+    this.localData = data;
+    this.updateData();
   }
 }

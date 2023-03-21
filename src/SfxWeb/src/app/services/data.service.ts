@@ -413,9 +413,10 @@ export class DataService {
 
     public getReplicaEventData(partitionId: string, replicaId?: string): IEventStoreData<ReplicaEventList, ReplicaEvent> {
         const list = new ReplicaEventList(this, partitionId, replicaId);
-        const d = {
+        const d: IEventStoreData<ReplicaEventList, ReplicaEvent> = {
             eventsList : list,
-            displayName : replicaId
+            displayName : replicaId || partitionId + " replicas",
+            type: "Replica"
         };
 
         this.addFabricEventData<ReplicaEventList, ReplicaEvent>(d);

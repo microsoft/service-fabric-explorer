@@ -3,9 +3,9 @@
     <div ngbNavItem >
       <a ngbNavLink>Charts</a>
       <ng-template ngbNavContent>
-        <div style="display: flex; ">
+        <div style="display: flex; " #inner>
           <div class="layout-container">
-            <div>
+            <div class="helper-text">
               Click to focus a point
             </div>
             <div *ngFor="let dataSet of data.series; let i = index" class="chart">
@@ -14,21 +14,29 @@
               <div #container (mousemove)="interactionEvent($event, i)" class="chart-container"></div>
             </div>
           </div>
-          <div *ngIf="currentItems" class="selectedItems">
-            <div class="inner">
-              <div *ngFor="let currentItem of currentItems">
-                <app-collapse-container [collapsed]="true">
-                  <div collapse-header>
-                    {{currentItem.series.name}}
-                  </div>
-                  <div collapse-body>
-                    <!-- <app-full-description [(item)]="currentItem.item"></app-full-description> -->
-                    {{currentItem.item.raw | json}}
-                  </div>
-                </app-collapse-container>
+          <ng-container *ngIf="currentItems">
+            <div appDrag (dragFinish)="resize($event)" class="drag-bar"></div>
+            <div  class="selectedItems" [ngStyle]="{'width': currentItemsWidth + 'px'}">
+              <div class="inner">
+                <div class="header-text">
+                  <span>Closest Points near click</span>
+                  <button (click)="clearSelectedPoint()" class="flat-button">
+                    Close <span class="mif-cancel link"></span>
+                  </button>
+                </div>
+                <div *ngFor="let currentItem of currentItems">
+                  <app-collapse-container [collapsed]="true">
+                    <div collapse-header>
+                      {{currentItem.series.name}}
+                    </div>
+                    <div collapse-body>
+                      <app-full-description [(item)]="currentItem.item"></app-full-description>
+                    </div>
+                  </app-collapse-container>
+                </div>
               </div>
             </div>
-          </div>
+          </ng-container>
         </div>
       </ng-template>
     </div>
@@ -39,7 +47,7 @@
           <div ngbNavItem *ngFor="let dataset of data.dataSets">
             <a ngbNavLink>{{dataset.name}}</a>
             <ng-template ngbNavContent>
-              <app-detail-list [list]="dataset.values" [listSettings]="listSettings"></app-detail-list>
+              <app-detail-list [list]="dataset.values" [listSettings]="data.listSettings"></app-detail-list>
             </ng-template>
           </div>
         </div>

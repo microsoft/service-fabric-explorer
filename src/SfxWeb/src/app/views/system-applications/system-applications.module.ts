@@ -13,10 +13,12 @@ import { ConcurrentEventsVisualizationModule } from 'src/app/modules/concurrent-
 import { TimePickerModule } from 'src/app/modules/time-picker/time-picker.module';
 import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule } from '@angular/forms';
+import { NamingViewerPageComponent } from './naming-viewer-page/naming-viewer-page.component';
+import { EventStoreModule } from 'src/app/modules/event-store/event-store.module';
 
 
 @NgModule({
-  declarations: [EssentialsComponent, BaseComponent, NamingViewerComponent],
+  declarations: [EssentialsComponent, BaseComponent, NamingViewerComponent, NamingViewerPageComponent],
   imports: [
     CommonModule,
     SystemApplicationsRoutingModule,
@@ -27,7 +29,8 @@ import { FormsModule } from '@angular/forms';
     ConcurrentEventsVisualizationModule,
     TimePickerModule,
     NgbDropdownModule,
-    FormsModule
+    FormsModule,
+    EventStoreModule
   ]
 })
 export class SystemApplicationsModule { }
