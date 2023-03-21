@@ -545,19 +545,12 @@ table.detail-list {
     fill: CanvasText !important;
   }
 
-  .dropdown-item.disabled, .dropdown-item:disabled {
-    border: 1px solid black;
-  }
-
   .page-item {
     .page-link {
-    border: 1px solid gray !important;
-    box-sizing: border-box;
-
-    &:focus {
-      border: 2px solid gray !important;
+        &:hover {
+        border: 2px solid HighlightText !important;
+        }
     }
-  }
   }
   .radio-btns {
     .checkbox-push{
