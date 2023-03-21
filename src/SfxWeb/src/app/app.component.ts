@@ -22,7 +22,10 @@ export class AppComponent implements OnInit{
   @ViewChild('main') main: ElementRef;
 
   smallScreenSize = false;
-  smallScreenLeftPanelWidth = '0px';
+  smallScreenLeftPanelWidth = '0%';
+
+  treeDisplay = 'inherit';
+  smallScreenTreeDisplay = 'none';
 
   public assetBase = environment.assetBase;
   treeWidth = '450px';
@@ -80,10 +83,22 @@ export class AppComponent implements OnInit{
 
   resize($event: number): void {
     if (this.smallScreenSize) {
-      this.smallScreenLeftPanelWidth = `${$event}px`;
+      if ($event == 0) {
+        this.smallScreenTreeDisplay = 'none';
+      }
+      else {
+        this.smallScreenTreeDisplay = 'inherit';
+      }
+      this.smallScreenLeftPanelWidth = `${$event}%`;
       return;
     }
-
+    
+    if ($event == 0) {
+      this.treeDisplay = 'none';
+    }
+    else {
+      this.treeDisplay = 'inherit';
+    }
     this.previousTreeWidth = this.treeWidth;
     // have to subtract the offset
     const offsetWidth = $event + 8;
@@ -98,10 +113,6 @@ export class AppComponent implements OnInit{
     }else{
       this.resize(0);
     }
-  }
-
-  changeSmallScreenSizePanelState() {
-    this.smallScreenLeftPanelWidth = this.smallScreenLeftPanelWidth === '0px' ? '60%' : '0px';
   }
 
   attemptForceRefresh() {
