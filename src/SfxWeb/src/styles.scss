@@ -611,12 +611,10 @@ table.detail-list {
 
 .text-wrapper {
     position: relative;
-    overflow: hidden;
+    overflow: scroll;
     flex: 1;
     .middle-text {
         transition: .5s;
-        overflow: hidden;
-        text-overflow: ellipsis;
         max-width: 800px;
         text-align: right;
         flex: 1;
@@ -635,14 +633,17 @@ table.detail-list {
 .essential-list-item {
     display: flex; align-items: center;
     justify-content: space-between;
-    &:hover {
-        .middle-text {
-            min-width: fit-content;
-            white-space: normal;
-        }
 
-        .left-text {
-            overflow: hidden;
+    @media (min-width: 450px){
+        &:hover {
+            .middle-text {
+                min-width: fit-content;
+                white-space: normal;
+            }
+    
+            .left-text {
+                overflow: hidden;
+            }
         }
     }
 
