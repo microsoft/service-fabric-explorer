@@ -128,4 +128,8 @@ export class TimelineComponent implements VisualizationComponent {
 
     this.getTimelineData();
   }
+
+  public updateShowAllEvents(value: boolean) {
+    this.showAllEvents = value;
+  }
 }
