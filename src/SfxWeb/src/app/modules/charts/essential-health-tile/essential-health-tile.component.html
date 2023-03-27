@@ -7,7 +7,7 @@
                 </div>
                 <div class="right-side-wrapper">
                     <div class="essential-list-item highlight-hover" *ngFor="let item of internalList; let l = last" [ngClass]="l ? '': 'underline'">
-                        <div class="text-wrapper tile-item">
+                        <div class="text-wrapper tile-item" tabindex="0">
                             <div class="tile-list-entry left-text" *ngIf="item.descriptionName">
                                 {{item.descriptionName}}
                             </div>
