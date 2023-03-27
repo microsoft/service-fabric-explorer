@@ -60,7 +60,7 @@
   </header>
 
   <div>
-    <button *ngIf="smallScreenSize" class="material-icons sidenav-button"
+    <button *ngIf="smallScreenSize" class="simple-button sidenav-button"
             (click)="smallScreenLeftPanelWidth === '0%' ? resize(60): resize(0)" tabindex="0" [title]="smallScreenLeftPanelWidth === '0%' ? 'Open navigation tree panel' : 'Close navigation tree panel'">
       menu
     </button>
