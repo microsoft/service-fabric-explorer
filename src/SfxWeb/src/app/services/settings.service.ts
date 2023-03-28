@@ -229,8 +229,9 @@ export class SettingsService {
             'resourceId',
             'Arm Managed',
             (item) => item.resourceId ? `https://ms.portal.azure.com/#@microsoft.onmicrosoft.com/resource${item.resourceId}/overview` : null,
-            'To Manage',
-            true
+            'View',
+            true,
+            (item) => item.resourceId
         ));
     }
 
