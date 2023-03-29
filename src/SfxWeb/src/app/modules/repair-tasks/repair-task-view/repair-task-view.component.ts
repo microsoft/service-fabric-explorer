@@ -1,11 +1,12 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { DetailBaseComponent } from 'src/app/ViewModels/detail-table-base.component';
 import { ListColumnSetting } from 'src/app/Models/ListSettings';
-import { IRepairTaskPhase, RepairTask } from 'src/app/Models/DataModels/repairTask';
+import { RepairTask } from 'src/app/Models/DataModels/repairTask';
 import { DataService } from 'src/app/services/data.service';
 import { forkJoin, of, Subscription } from 'rxjs';
 import { RefreshService } from 'src/app/services/refresh.service';
 import { catchError, map } from 'rxjs/operators';
+import { IEssentialListItem } from '../../charts/essential-health-tile/essential-health-tile.component';
 
 @Component({
   selector: 'app-repair-task-view',
@@ -19,7 +20,8 @@ export class RepairTaskViewComponent implements OnInit, DetailBaseComponent, OnD
   copyText = '';
   nodes = [];
   subs: Subscription = new Subscription();
-  stuckJobText = "";
+
+  healthCheckConfigs: IEssentialListItem[] = [];
 
   constructor(public dataService: DataService, private refreshService: RefreshService) { }
 
@@ -28,23 +30,20 @@ export class RepairTaskViewComponent implements OnInit, DetailBaseComponent, OnD
 
     this.subs.add(this.updateNodesList().subscribe());
 
-    if(this.item.raw.State === "Restoring") {
-      this.checkLongRunning(this.item.raw.State)
-    }else if(this.item.raw.State === "Preparing") {
-      this.checkLongRunning(this.item.raw.State)
-    }
-
     this.subs.add(this.refreshService.refreshSubject.subscribe(() => this.updateNodesList().subscribe()));
-  }
 
-  checkLongRunning(state: string) {
-    const preparingPhase = this.item.getHistoryPhase(state);
-    const currentPhase = preparingPhase.phases[preparingPhase.currentPhase - 1];
-
-    if (currentPhase.name === `${state} Health Check Start` &&
-      currentPhase.durationMilliseconds > this.phaseTooLongDuration) {
-      this.stuckJobText = `This job appears to potentially be stuck in the cluster health check. This check will not pass until the overall cluster health is reporting as Healthy.`
-    }
+    this.healthCheckConfigs = [
+      {
+        descriptionName: "Perform Preparing Health Check",
+        displayText: this.item.raw.PerformPreparingHealthCheck ? "Yes": "No",
+        copyTextValue: this.item.raw.PerformPreparingHealthCheck ? "Yes": "No"
+      },
+      {
+        descriptionName: "Perform Restoring Health Check",
+        displayText: this.item.raw.PerformRestoringHealthCheck ? "Yes": "No",
+        copyTextValue: this.item.raw.PerformRestoringHealthCheck ? "Yes": "No"
+      }
+    ]
   }
 
   ngOnDestroy() {

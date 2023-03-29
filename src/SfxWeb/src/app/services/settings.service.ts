@@ -18,7 +18,7 @@ import { HtmlUtils } from '../Utils/HtmlUtils';
 export class SettingsService {
   private listSettings: Record<string, ListSettings>;
   private iPaginationLimit: number;
-  private iMetricsViewModel: MetricsViewModel;  
+  private iMetricsViewModel: MetricsViewModel;
   private sessionVariables: { [key: string]: any } = {};
 
   public get paginationLimit(): number {
@@ -166,7 +166,7 @@ export class SettingsService {
         new ListColumnSettingWithCustomComponent(QuestionToolTipComponent, 'raw.TaskId', 'Task Id'),
         new ListColumnSetting('raw.Action', 'Action', {enableFilter: true}),
         new ListColumnSettingWithShorten('raw.Target.NodeNames', 'Target', 2),
-        new ListColumnSetting('impactedNodes', 'Impact'),
+        new ListColumnSetting('impactedNodesWithImpact', 'Impact'),
         new ListColumnSetting('raw.State', 'State', {enableFilter: true}),
         new ListColumnSettingWithUtcTime('raw.History.CreatedUtcTimestamp', 'Created At'),
         new ListColumnSetting('displayDuration', 'Duration', {
@@ -193,7 +193,7 @@ export class SettingsService {
         new ListColumnSettingWithCustomComponent(QuestionToolTipComponent, 'raw.TaskId', 'Task Id'),
         new ListColumnSetting('raw.Action', 'Action', {enableFilter: true}),
         new ListColumnSettingWithShorten('raw.Target.NodeNames', 'Target', 2),
-        new ListColumnSetting('impactedNodes', 'Impact'),
+        new ListColumnSetting('impactedNodesWithImpact', 'Impact'),
         new ListColumnSetting('raw.ResultStatus', 'Result Status', {enableFilter: true}),
         new ListColumnSettingWithUtcTime('raw.History.CreatedUtcTimestamp', 'Created At'),
         new ListColumnSetting('displayDuration', 'Duration', {
