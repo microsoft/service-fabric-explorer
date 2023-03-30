@@ -9,27 +9,10 @@
     justify-content: center;
 }
 
-
-.tile-list-entry {
-    text-align: center;
-    display: flex;
-}
-
-.text-wrapper {
-    .middle-text {
-        float: left;
-    }
-
-}
-
 .right-side-wrapper {
     flex: 1;
     min-width: 0px;
     flex-direction: column;
     display: flex;
     height: 100%;
-}
-
-.spacer {
-    width: 10px; height: 1px;
 }

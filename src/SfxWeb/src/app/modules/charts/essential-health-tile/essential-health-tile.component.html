@@ -6,23 +6,9 @@
                     <app-health-badge [badgeClass]="healthState.badgeClass" size="75px"></app-health-badge>
                 </div>
                 <div class="right-side-wrapper">
-                    <div class="essential-list-item highlight-hover" *ngFor="let item of internalList; let l = last" [ngClass]="l ? '': 'underline'">
-                        <div class="text-wrapper tile-item" tabindex="0">
-                            <div class="tile-list-entry left-text" *ngIf="item.descriptionName">
-                                {{item.descriptionName}}
-                            </div>
-                            <div class="spacer"></div>
-                            <div class="middle-text">
-                                <span *ngIf="!item.displaySelector">
-                                    {{item.displayText}}
-                                </span>
-                                <span *ngIf="item.displaySelector && item.ref">
-                                    <ng-container *ngTemplateOutlet="item.ref"></ng-container>
-                                </span>
-                            </div>
-                        </div>
-                        <app-clip-board [text]="item.copyTextValue" [name]="item.descriptionName" *ngIf="item.copyTextValue"></app-clip-board>
-                    </div>
+                    <app-essential-item *ngFor="let item of internalList; let l = last" [ngClass]="l ? '': 'underline'" [item]="item">
+                        <ng-container *ngTemplateOutlet="item.ref"></ng-container>
+                    </app-essential-item>
                 </div>
             </div>
         </div>

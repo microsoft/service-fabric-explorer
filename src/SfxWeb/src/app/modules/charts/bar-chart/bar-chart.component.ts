@@ -62,7 +62,10 @@ export class BarChartComponent implements AfterViewInit, OnChanges, OnDestroy {
     colorAxis: [{
       gridLineColor: '#fff'
     }],
-    series: []
+    series: [],
+    credits: {
+      enabled: false
+    }
 
   };
   constructor() { }

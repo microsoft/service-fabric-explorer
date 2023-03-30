@@ -604,13 +604,14 @@ table.detail-list {
 
 .text-wrapper {
     position: relative;
-    overflow: auto;
+    overflow-x: auto;
     flex: 1;
     .middle-text {
         transition: .5s;
         max-width: 800px;
         text-align: right;
         flex: 1;
+        white-space: nowrap;
     }
 
     .left-text {
@@ -626,19 +627,6 @@ table.detail-list {
 .essential-list-item {
     display: flex; align-items: center;
     justify-content: space-between;
-
-    @media (min-width: 450px){
-        &:hover {
-            .middle-text {
-                min-width: fit-content;
-                white-space: normal;
-            }
-    
-            .left-text {
-                overflow: hidden;
-            }
-        }
-    }
 
 }
 
