@@ -63,8 +63,8 @@
                                     [attr.aria-expanded]="!item.isSecondRowCollapsed"
                                     [title]="item.isSecondRowCollapsed ? 'Expand the row' : 'Collapse the row'"></button>
 
-                                <span *ngIf="!columnSetting.template" [innerHtml]="columnSetting.getDisplayContentsInHtml(item)"
-                                    (click)="columnSetting.config.clickEvent(item);" style="cursor: auto;"></span>
+                                <span *ngIf="!columnSetting.template" class="{{columnSetting.config.cssClasses}}"
+                                    (click)="columnSetting.config.clickEvent(item);" style="cursor: auto;">{{columnSetting.getDisplayContentsInHtml(item)}}</span>
                                 <app-detail-table-resolver *ngIf="columnSetting.template" [template]="columnSetting.template" [item]="item"
                                     [setting]="columnSetting" [cache]="cache" [itemValue]="columnSetting.getValue(item)"></app-detail-table-resolver>
                             </div>
@@ -81,7 +81,9 @@
                                 [ngClass]="{'no-padding': listSettings.secondRowCollapsible && item.isSecondRowCollapsed}">
                                 <div
                                     [ngClass]="{'shift-expander-col': i === 0 && listSettings.secondRowCollapsible}">
-                                    <span *ngIf="!columnSetting.template" [innerHtml]="columnSetting.getDisplayContentsInHtml(item)" (click)="columnSetting.config.clickEvent(item);" style="cursor: auto;"></span>
+                                    <span *ngIf="!columnSetting.template" (click)="columnSetting.config.clickEvent(item);" style="cursor: auto;" class="{{columnSetting.config.cssClasses}}">
+                                    {{columnSetting.getDisplayContentsInHtml(item)}}
+                                    </span>
                                     <app-detail-table-resolver *ngIf="columnSetting.template" [template]="columnSetting.template" [item]="item" [setting]="columnSetting" [cache]="cache" [itemValue]="columnSetting.getValue(item)"></app-detail-table-resolver>
                                 </div>
                             </td>

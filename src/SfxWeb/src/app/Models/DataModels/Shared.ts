@@ -133,23 +133,23 @@ export class MonitoringPolicy extends DataModelBase<IRawMonitoringPolicy> {
         decorators: {
             HealthCheckWaitDurationInMilliseconds: {
                 displayName: (name) => 'Health Check Wait Duration',
-                displayValueInHtml: (value) => TimeUtils.getDuration(value)
+                displayValue: (value) => TimeUtils.getDuration(value)
             },
             HealthCheckStableDurationInMilliseconds: {
                 displayName: (name) => 'Health Check Stable Duration',
-                displayValueInHtml: (value) => TimeUtils.getDuration(value)
+                displayValue: (value) => TimeUtils.getDuration(value)
             },
             HealthCheckRetryTimeoutInMilliseconds: {
                 displayName: (name) => 'Health Check Retry Timeout',
-                displayValueInHtml: (value) => TimeUtils.getDuration(value)
+                displayValue: (value) => TimeUtils.getDuration(value)
             },
             UpgradeTimeoutInMilliseconds: {
                 displayName: (name) => 'Upgrade Timeout',
-                displayValueInHtml: (value) => TimeUtils.getDuration(value)
+                displayValue: (value) => TimeUtils.getDuration(value)
             },
             UpgradeDomainTimeoutInMilliseconds: {
                 displayName: (name) => 'Upgrade Domain Timeout',
-                displayValueInHtml: (value) => TimeUtils.getDuration(value)
+                displayValue: (value) => TimeUtils.getDuration(value)
             }
         }
     };

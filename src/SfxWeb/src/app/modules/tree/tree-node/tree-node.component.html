@@ -33,7 +33,9 @@
                 <app-health-badge [badgeClass]="child.badge()?.badgeClass" [text]="child.badge()?.text" [showText]="false"></app-health-badge>
             </span>
 
-            <div class="tree-label" [innerHTML]="child.displayHtml"  [title]="child.displayName()" ></div>
+            <div class="tree-label {{child.isHighlighted ? 'search-match' : ''}}"  [title]="child.displayName()" >
+              {{child.displayName()}}
+            </div>
 
             <div *ngIf="child.actions" class="hidden right-action">
                 <app-action-collection-drop-down *ngIf="child.actions.length > 0" [actionCollection]="child.actions"

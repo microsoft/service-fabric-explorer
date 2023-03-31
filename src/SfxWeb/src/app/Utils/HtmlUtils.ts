@@ -122,22 +122,6 @@ export class HtmlUtils {
     // Utility to mark warning/error/resolved events in the detail list
     public static eventTypesUtil = new EventTypesUtil();
 
-    public static isHtml(text: string): boolean {
-        return /<\/[a-zA-Z]+>/.test(text);
-    }
-
-    public static getSpanWithCustomClass(className: string, text: string): string {
-        return `<span class="${className}">${text}</span>`;
-    }
-
-    public static getSpanWithTitleHtml(text: string): string {
-        return `<span title="${text}">${text}</span>`;
-    }
-
-    public static getLinkHtml(text: string, url: string, targetBlank: boolean = false): string {
-        return `<a routerLink="${url}" ${targetBlank ? ` target="_blank"` : ''}>${text}</a>`;
-    }
-
     public static getLinkOutHtml(text: string, url: string, targetBlank: boolean = false): string {
         return `<a href="${url}" ${targetBlank ? ` target="_blank"` : ''}>${text}</a>`;
     }

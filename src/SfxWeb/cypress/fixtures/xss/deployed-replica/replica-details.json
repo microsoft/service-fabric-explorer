@@ -1,0 +1,92 @@
+{
+    "ServiceKind": "Stateful",
+    "ServiceName": "fabric:/VisualObjectsApplicationType/<img src='1' onerror='window.alert(document.domain)'>",
+    "PartitionId": "41fb6918-986b-4b6d-bff6-0495b114c720",
+    "CurrentServiceOperation": "None",
+    "CurrentServiceOperationStartTimeUtc": "2020-09-21T19:38:29.829Z",
+    "ReportedLoad": [],
+    "ReplicaId": "132431356665040624",
+    "CurrentReplicatorOperation": "None",
+    "ReadStatus": "Granted",
+    "WriteStatus": "Granted",
+    "ReplicatorStatus": {
+        "Kind": "Primary",
+        "ReplicationQueueStatus": {
+            "QueueUtilizationPercentage": 0,
+            "QueueMemorySize": "0",
+            "FirstSequenceNumber": "0",
+            "CompletedSequenceNumber": "215925323",
+            "CommittedSequenceNumber": "215925323",
+            "LastSequenceNumber": "215925323"
+        },
+        "RemoteReplicators": [
+            {
+                "ReplicaId": "132425867491663573",
+                "LastAcknowledgementProcessedTimeUtc": "2020-10-02T16:37:08.675Z",
+                "LastReceivedReplicationSequenceNumber": "215925323",
+                "LastAppliedReplicationSequenceNumber": "215925323",
+                "IsInBuild": false,
+                "LastReceivedCopySequenceNumber": "0",
+                "LastAppliedCopySequenceNumber": "0",
+                "RemoteReplicatorAcknowledgementStatus": {
+                    "ReplicationStreamAcknowledgementDetail": {
+                        "AverageReceiveDuration": "11",
+                        "AverageApplyDuration": "11",
+                        "NotReceivedCount": "0",
+                        "ReceivedAndNotAppliedCount": "0"
+                    },
+                    "CopyStreamAcknowledgementDetail": {
+                        "AverageReceiveDuration": "0",
+                        "AverageApplyDuration": "0",
+                        "NotReceivedCount": "0",
+                        "ReceivedAndNotAppliedCount": "0"
+                    }
+                }
+            },
+            {
+                "ReplicaId": "132458972489614224",
+                "LastAcknowledgementProcessedTimeUtc": "2020-10-02T16:37:08.675Z",
+                "LastReceivedReplicationSequenceNumber": "215925323",
+                "LastAppliedReplicationSequenceNumber": "215925323",
+                "IsInBuild": false,
+                "LastReceivedCopySequenceNumber": "0",
+                "LastAppliedCopySequenceNumber": "0",
+                "RemoteReplicatorAcknowledgementStatus": {
+                    "ReplicationStreamAcknowledgementDetail": {
+                        "AverageReceiveDuration": "7",
+                        "AverageApplyDuration": "9",
+                        "NotReceivedCount": "0",
+                        "ReceivedAndNotAppliedCount": "0"
+                    },
+                    "CopyStreamAcknowledgementDetail": {
+                        "AverageReceiveDuration": "0",
+                        "AverageApplyDuration": "0",
+                        "NotReceivedCount": "0",
+                        "ReceivedAndNotAppliedCount": "0"
+                    }
+                }
+            }
+        ]
+    },
+    "DeployedServiceReplica": {
+        "ServiceKind": "Stateful",
+        "ServiceName": "fabric:/VisualObjectsApplicationType/VisualObjects.ActorService",
+        "ServiceTypeName": "VisualObjects.ActorServiceType",
+        "ServiceManifestVersion": "",
+        "ServiceManifestName": "VisualObjects.ActorServicePkg",
+        "CodePackageName": "Code",
+        "PartitionId": "41fb6918-986b-4b6d-bff6-0495b114c720",
+        "ReplicaId": "132431356665040624",
+        "ReplicaRole": "Primary",
+        "ReplicaStatus": "Ready",
+        "Address": "{\"Endpoints\":{\"\":\"10.0.0.6:20000+41fb6918-986b-4b6d-bff6-0495b114c720-132431356665040624\"}}",
+        "ServicePackageActivationId": "",
+        "HostProcessId": "4120",
+        "ReconfigurationInformation": {
+            "PreviousConfigurationRole": "None",
+            "ReconfigurationPhase": "None",
+            "ReconfigurationType": "None",
+            "ReconfigurationStartTimeUtc": "0001-01-01T00:00:00.000Z"
+        }
+    }
+}
