@@ -132,6 +132,9 @@ export class TimeseriesComponent implements AfterViewInit, OnChanges, OnDestroy 
   }
 
   ngOnChanges() {
+    if(!this.charts) {
+      return;
+    }
     const ref = this;
     const colorMap = {};
     this.data.dataSets.forEach(dataset => {
@@ -222,12 +225,15 @@ export class TimeseriesComponent implements AfterViewInit, OnChanges, OnDestroy 
             series.update(dataSet.find(set => set.name === series.name));
           }
         });
-
-        dataSet.filter(s => s['data'].length > 1).forEach(item => {
+        dataSet.forEach(item => {
           if (chart.series.every(set => set.name !== item.name)) {
             chart.addSeries(item);
           }
         });
+      }else {
+        this.charts.push(new Chart(this.container.get(index).nativeElement, {
+          ...this.options, series: dataSet, yAxis,
+        }));
       }
     })
   }
@@ -255,93 +261,7 @@ export class TimeseriesComponent implements AfterViewInit, OnChanges, OnDestroy 
   }
 
   ngAfterViewInit() {
-    this.charts = [];
-    const ref = this;
-
-    const colorMap = {};
-    this.data.dataSets.forEach(dataset => {
-      colorMap[dataset.name] = Utils.randomColor();
-    })
-
-    this.data.series.forEach((chartData, index) => {
-      const dataSet: SeriesOptionsType[] = this.data.dataSets.map(dataset => {
-        const values: PointOptionsObject[] = dataset.values.map(item => {
-          const x = Utils.result(item, chartData.xProperty);
-          const y = Utils.result(item, chartData.yProperty);
-          return {
-            x,
-            y,
-            itemData: item,
-            events: {
-              click: function (e) {
-
-                const points = this.series.chart.series.map(series => {
-                  return (series as any).searchPoint(e, true)
-                }).filter(point => !!point).map(p => {
-                  return {
-                    item: p.itemData,
-                    series: p.series
-                  }
-                })
-
-                ref.currentItems = points;
-                ref.currentIndex = 0;
-                resize();
-              }
-            },
-          }
-        });
-
-        return {
-          name: dataset.name,
-          type: 'line',
-          data: values,
-          dataLabels: {
-            style: this.fontColor,
-          },
-          color: colorMap[dataset.name]
-        }
-      })
-
-      const yAxis: YAxisOptions = {
-        labels: {
-          style: this.fontColor,
-        },
-        title: {
-          style: this.fontColor,
-        }
-      }
-
-      if (chartData.yUnits) {
-        yAxis.labels.format = `{value} ${chartData.yUnits}`
-      }
-
-      if (chartData.yLabel) {
-        yAxis.title.text = chartData.yLabel
-      }
-
-      const xAxis: XAxisOptions = {
-        labels: {
-          style: this.fontColor,
-        },
-        title: {
-          style: this.fontColor,
-        },
-
-      }
-
-      if (chartData.xUnits) {
-        xAxis.labels.format = `{value} ${chartData.xUnits}`
-      }
-
-      if (chartData.xLabel) {
-        xAxis.title.text = chartData.xLabel
-      }
-
-      this.charts.push(chart(this.container.get(index).nativeElement, {
-        ...this.options, series: dataSet, yAxis,
-      }));
-    })
+    this.ngOnChanges();
   }
 
   ngOnDestroy() {

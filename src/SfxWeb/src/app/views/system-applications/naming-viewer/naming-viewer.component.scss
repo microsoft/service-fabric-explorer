@@ -2,7 +2,7 @@
   display: flex;
   gap: 5px;
   margin: 5px;
-  // overflow: auto;
+  flex-wrap: wrap;
 }
 
 .partition {
@@ -10,6 +10,15 @@
   border-radius: 5px;
   background-color: var(--accent-background-color);
   box-shadow: var(--primary-box-shadow);
+
+  .text-container {
+    padding: 0px 11px;
+
+    label {
+      display: flex;
+      justify-content: space-between;
+    }
+  }
 }
 
 .operation-container {
@@ -22,3 +31,4 @@
 .operation {
   display: flex;
 }
+

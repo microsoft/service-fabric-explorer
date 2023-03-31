@@ -2,27 +2,25 @@
   <div>
     <div class="partitions-container">
       <div *ngFor="let partition of overviewPanels" class="partition">
+        <div class="text-container">
+          <label>
+            <app-toggle [(state)]="partition.toggled" (stateChange)="updateData()"></app-toggle>
+            {{partition.name}}
+          </label>
+          <div>{{partition.displayContent()}}</div>
+        </div>
         <div>
-          <div>
-            <label>
-              <app-toggle [(state)]="partition.toggled" (stateChange)="updateData()"></app-toggle>
-              {{partition.name}}
-            </label>
-          </div>
-          <div>
-            <div class="operation-container">
-              <div>{{partition.displayContent()}}</div>
-              <div ngbDropdown #myDrop="ngbDropdown">
-                <button class="flat-button" ngbDropdownToggle aria-label="settings drop down">
-                  toggle operations ({{getToggled(partition.nestedOptions)}} / {{partition.nestedOptions.length}})
-                </button>
-                <div ngbDropdownMenu aria-labelledby="dropdownBasic1" class="dropdown-container">
-                    <div ngbDropdownItem class="operation" *ngFor="let operation of partition.nestedOptions">
-                      <label class="operation-container">
-                        {{operation.name}}
-                        <input type="checkbox" [(ngModel)]="operation.toggled" (ngModelChange)="updateData()"/>
-                      </label>
-                    </div>
+          <div class="operation-container">
+            <div ngbDropdown #myDrop="ngbDropdown">
+              <button class="flat-button" ngbDropdownToggle aria-label="settings drop down">
+                toggle operations ({{getToggled(partition.nestedOptions)}} / {{partition.nestedOptions.length}})
+              </button>
+              <div ngbDropdownMenu aria-labelledby="dropdownBasic1" class="dropdown-container">
+                <div ngbDropdownItem class="operation" *ngFor="let operation of partition.nestedOptions">
+                  <label class="operation-container">
+                    {{operation.name}}
+                    <input type="checkbox" [(ngModel)]="operation.toggled" (ngModelChange)="updateData()" />
+                  </label>
                 </div>
               </div>
             </div>

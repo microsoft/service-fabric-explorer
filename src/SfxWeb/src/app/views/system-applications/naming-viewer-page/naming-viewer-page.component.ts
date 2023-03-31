@@ -37,6 +37,8 @@ export class NamingViewerPageComponent implements OnInit {
       return app.partitions.ensureInitialized()
       })).subscribe(() => {
         this.listEventStoreData = this.namingService.partitions.collection.map(partition => this.data.getReplicaEventData(partition.id));
+        this.listEventStoreData.push(this.data.getClusterEventData());
+        this.listEventStoreData.push(this.data.getNodeEventData());
       })
   }
 }

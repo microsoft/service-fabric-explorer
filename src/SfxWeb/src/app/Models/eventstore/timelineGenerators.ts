@@ -1,6 +1,6 @@
 
 
-import { FabricEventBase, ClusterEvent, NodeEvent, ApplicationEvent, FabricEvent, PartitionEvent } from './Events';
+import { FabricEventBase, ClusterEvent, NodeEvent, ApplicationEvent, FabricEvent, PartitionEvent, ReplicaEvent } from './Events';
 import { DataGroup, DataItem, DataSet, IdType } from 'vis-timeline/standalone/esm';
 import padStart from 'lodash/padStart';
 import findIndex from 'lodash/findIndex';
@@ -746,6 +746,12 @@ export class PartitionTimelineGenerator extends TimeLineGeneratorBase<PartitionE
     }
 }
 
+export class ReplicaTimelineGenerator extends TimeLineGeneratorBase<ReplicaEvent> {
+  consume(events: ReplicaEvent[], startOfRange: Date, endOfRange: Date): ITimelineData {
+    return parseEventsGenerically(events, "Category,Kind");
+  }
+}
+
 export class RepairTaskTimelineGenerator extends TimeLineGeneratorBase<RepairTask>{
 
     consume(tasks: RepairTask[], startOfRange: Date, endOfRange: Date): ITimelineData{
@@ -791,11 +797,11 @@ export class RepairTaskTimelineGenerator extends TimeLineGeneratorBase<RepairTas
  *       Category2 - kind 1
  *       category2 - kind 2
  */
-function parseAndAddGroupIdByString(event: FabricEvent, groupIds: any, query: string): string {
+function parseAndAddGroupIdByString(event: FabricEvent, groupIds: any, query: string, prefixId: string): string {
     const properties = query.split(',');
 
     // the accumulated path of the events property values
-    let constructedPath = '';
+    let constructedPath = prefixId;
 
     for (let i = 0; i < properties.length; i++) {
         const prop = properties[i];
@@ -834,12 +840,13 @@ function parseAndAddGroupIdByString(event: FabricEvent, groupIds: any, query: st
     return constructedPath;
 }
 
-export function parseEventsGenerically(events: FabricEvent[], textSearch: string = ''): ITimelineData {
+export function parseEventsGenerically(events: FabricEvent[], textSearch: string, idPrefix: string = Math.random().toString()): ITimelineData {
+  console.log(events);
   const items = new DataSet<ITimelineItem>();
   const groupIds: any[] = [];
 
     events.forEach( (event, index) => {
-       const groupId = parseAndAddGroupIdByString(event, groupIds,  textSearch);
+       const groupId = parseAndAddGroupIdByString(event, groupIds, textSearch, idPrefix);
        let color = 'white';
        if ('Status' in event.eventProperties) {
             try {
@@ -908,6 +915,7 @@ export function parseEventsGenerically(events: FabricEvent[], textSearch: string
        items.add(item);
     });
 
+    console.log(groupIds)
     const groups = new DataSet<DataGroup>(groupIds);
     EventStoreUtils.addSubGroups(groups);
 

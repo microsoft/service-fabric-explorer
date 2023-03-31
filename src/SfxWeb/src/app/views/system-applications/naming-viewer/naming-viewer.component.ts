@@ -58,12 +58,12 @@ export class NamingViewerComponent implements VisualizationComponent {
   }
 
   overviewPanels: IOverviewPanel[] = []
-
   localData: VisUpdateData;
 
   constructor(private settings: SettingsService) {}
 
   generateOverviewPanel(data: VisUpdateData) {
+    const previousOverviewPanels = this.overviewPanels;
     this.overviewPanels = [];
     data.listEventStoreData.forEach((partition, index) => {
       const splitData = this.splitData(partition.eventsList.collection);
@@ -74,16 +74,33 @@ export class NamingViewerComponent implements VisualizationComponent {
         })
       })
       if(Object.keys(splitData).length) {
-        this.overviewPanels.push({
-          name: partition.displayName.slice(32, 37),
-          displayContent: () => `Total Volume: ${volume}`,
-          toggled: true,
-          nestedOptions: Object.entries(splitData).map(d => {
-            return {
-              toggled: true,
-              name: d[0]
+        const name = partition.displayName.slice(32, 37);
+        const previousPanelState = previousOverviewPanels.find(panel => panel.name === name);
+
+        let toggled = true;
+        const nestedOptions = Object.entries(splitData).map(d => {
+          return {
+            toggled: true,
+            name: d[0]
+          }
+        });
+
+        if(previousPanelState) {
+          console.log(previousPanelState)
+          toggled = previousPanelState.toggled;
+          nestedOptions.forEach(option => {
+            const previousNestedOption = previousPanelState.nestedOptions.find(nested => nested.name === option.name);
+            if(previousNestedOption) {
+              option.toggled = previousNestedOption.toggled;
             }
           })
+        }
+
+        this.overviewPanels.push({
+          name,
+          displayContent: () => `Total Volume: ${volume}`,
+          toggled,
+          nestedOptions
         })
       }
     })
@@ -104,6 +121,7 @@ export class NamingViewerComponent implements VisualizationComponent {
     true);
     let dataSets = []
     this.overviewPanels.forEach((panel, index) => {
+
       dataSets = dataSets.concat(this.sortAndFilterData(panel, this.localData.listEventStoreData[index].eventsList.collection));
     })
 
@@ -115,7 +133,7 @@ export class NamingViewerComponent implements VisualizationComponent {
   }
 
   splitData(events: ReplicaEvent[]) {
-    return Utils.groupByFunc(events.filter(item => item.raw.kind === "NamingMetricsReported"), item => item.raw.eventProperties.OperationName);
+    return Utils.groupByFunc(events.filter(item => item.raw.kind === "NamingMetricsReported").sort((a,b) => a.raw.time.getTime() - b.raw.time.getTime()), item => item.raw.eventProperties.OperationName);
   }
 
   sortAndFilterData(overview: IOverviewPanel, events: ReplicaEvent[]): IDataSet[] {
