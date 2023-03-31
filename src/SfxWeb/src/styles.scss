@@ -606,6 +606,8 @@ table.detail-list {
     position: relative;
     overflow-x: auto;
     flex: 1;
+    gap: 5px;
+
     .middle-text {
         transition: .5s;
         max-width: 800px;
