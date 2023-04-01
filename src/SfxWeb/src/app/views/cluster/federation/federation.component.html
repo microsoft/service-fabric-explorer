@@ -1,0 +1,44 @@
+<!-- Area reserved for showing Cluster/None or specific node's neighborhood -->
+<div id="myNetwork" #myNetwork></div><br/>
+
+<!-- Section for showing current cluster state (number of nodes in specific state) -->
+<ng-container *ngFor="let elem of labList">
+  <label [id]=elem.id #{{elem.id}}>{{elem.text}} {{elem.cnt}}</label><br/>
+</ng-container><br/>
+
+<!-- Input for getting neighborhood of specific node -->
+<!-- If input not properly given, Cluster/None is shown -->
+<label id="labInputNode" for="inputNode"> Search node by: &nbsp; &nbsp; </label>
+<input type="radio" id="byId" name="ctc" checked #byId>
+<label for="byId"> &nbsp; Id &nbsp; </label>
+<input type="radio" id="byName" name="ctc" #byName>
+<label for="byName"> &nbsp; Name &nbsp; &nbsp; </label>
+<input id="inputNode" size="68" (change)="onChangeInput($event)" #inputNode> &nbsp; &nbsp;
+<input type="checkbox" id="onlyTransp" name="ctc" #onlyTransp>
+<label for="onlyTransp"> &nbsp; Show only bad connections (without neighborhood) &nbsp; </label><br/><br/>
+
+<!-- Section for listing and chosing nodes of interest -->
+<label id="labActions" for="actions"> Select action: </label><br>
+<ng-container *ngFor="let elem of funcList">
+  <input *ngIf="elem.id === 'noneAction'; else othr" type="radio" [id]=elem.id name="contact" (click)="onClickRadio($event)" #noneAction>
+  <ng-template #othr>
+    <input type="radio" [id]=elem.id name="contact" (click)="onClickRadio($event)">
+  </ng-template>
+  <label [for]=elem.id> &nbsp; {{elem.text}} &nbsp; </label>
+</ng-container>
+
+<select id="selectActions" name="list" (change)="onChangeCombo($event)" #selectActions>
+  <!-- This cannot be used since we would have inconsitent situation -->
+  <!-- <option *ngFor="let elem of selectionArr">{{elem}}</option> -->
+  <ng-container *ngFor="let elem of selectionArr">
+    <option *ngIf="elem === 'Nodes'; else worked" selected>{{elem}}</option>
+    <ng-template #worked>
+      <option>{{elem}}</option>
+    </ng-template>
+  </ng-container>
+</select><br/><br/>
+
+<!-- Timeline bar with double slider and date picker -->
+<div style="margin-bottom: 10px;">
+    <app-time-picker [dateMin]="dateMin" (dateChange)="setDate($event)"></app-time-picker>
+</div>

@@ -41,6 +41,10 @@ export class BaseComponent implements OnInit {
     {
       name: 'commands',
       route: '/commands'
+    },
+    {
+      name: 'federation',
+      route: '/federation'
     }
   ];
   constructor(public tree: TreeService, public dataService: DataService) { }

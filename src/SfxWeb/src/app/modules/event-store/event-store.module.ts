@@ -13,6 +13,7 @@ import { TimelineComponent } from './timeline/timeline.component';
 import { TimePickerModule } from '../time-picker/time-picker.module';
 import { VisualizationDirective } from './visualization.directive';
 import { RcaVisualizationComponent } from './rca-visualization/rca-visualization.component';
+import { TimePickerComponent } from '../time-picker/time-picker/time-picker.component';
 
 @NgModule({
   declarations: [EventStoreComponent, FullDescriptionComponent, RowDisplayComponent, OptionPickerComponent, TimelineComponent, VisualizationDirective, RcaVisualizationComponent],
@@ -27,6 +28,6 @@ import { RcaVisualizationComponent } from './rca-visualization/rca-visualization
     ConcurrentEventsVisualizationModule,
     TimePickerModule
   ],
-  exports: [EventStoreComponent, FullDescriptionComponent, RowDisplayComponent, OptionPickerComponent, TimelineComponent],
+  exports: [EventStoreComponent, FullDescriptionComponent, RowDisplayComponent, OptionPickerComponent, TimelineComponent, TimePickerComponent],
 })
 export class EventStoreModule { }

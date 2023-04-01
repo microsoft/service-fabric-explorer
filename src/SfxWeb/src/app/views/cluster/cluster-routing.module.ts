@@ -12,6 +12,7 @@ import { BackupsComponent } from './backups/backups.component';
 import { RepairTasksComponent } from './repair-tasks/repair-tasks.component';
 import { InfrastructureViewComponent } from './infrastructure-view/infrastructure-view.component';
 import { CommandsComponent } from './commands/commands.component';
+import { FederationComponent } from './federation/federation.component';
 
 const routes: Routes = [{
   path: '', component: BaseComponent, children: [
@@ -26,6 +27,7 @@ const routes: Routes = [{
     { path: 'infrastructure', component: InfrastructureViewComponent },
     { path: 'commands', component: CommandsComponent },
     { path: '', component: EssentialsComponent },
+    { path: 'federation', component: FederationComponent}
   ]
   }
 ];
