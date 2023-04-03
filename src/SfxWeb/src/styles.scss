@@ -624,6 +624,25 @@ table.detail-list {
         font-size: 14px;
     }
 
+    &::-webkit-scrollbar {
+        width: 5px;
+        height: 5px;
+    }
+    &::-webkit-scrollbar-track {
+        border-radius: 10px;
+        background: transparent
+    }
+    &::-webkit-scrollbar-thumb{
+        border-radius: 10px;
+        background: var(--font-accent-color);
+    }
+    &::-webkit-scrollbar-thumb:hover{
+        background: var(--font-placeholder-color);
+    }
+    &::-webkit-scrollbar-thumb:active{
+        background: var(--font-placeholder-color);
+    }
+
 }
 
 .essential-list-item {
