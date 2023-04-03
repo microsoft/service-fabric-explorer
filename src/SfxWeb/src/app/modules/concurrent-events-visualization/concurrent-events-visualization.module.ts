@@ -14,7 +14,7 @@ import { RelationViewerComponent } from './relation-viewer/relation-viewer.compo
     VisualizationLogoComponent,
     RcaSummaryComponent,
     RcaOverviewComponent,
-    RelationViewerComponent,
+    RelationViewerComponent
   ],
   imports: [
     CommonModule,
@@ -23,7 +23,7 @@ import { RelationViewerComponent } from './relation-viewer/relation-viewer.compo
   ],
   exports:[
     VisualizationToolComponent,
-    RcaSummaryComponent,
+    RcaSummaryComponent
   ]
 })
 export class ConcurrentEventsVisualizationModule { }

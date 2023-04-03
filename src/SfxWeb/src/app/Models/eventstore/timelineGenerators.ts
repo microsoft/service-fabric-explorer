@@ -95,12 +95,8 @@ export class EventStoreUtils {
                 </div>`;
     }
 
-    public static singleItemStyleOverride = (color: string, radius: number) => {
-      return `border-color:${color};
-              background-color:${color};
-              border-width: 4px;
-              border-style: solid;
-              border-radius: ${radius}px;`
+    public static singleItemStyleOverride = (color: string) => {
+      return `background-color:${color};`
     }
 
     public static parseUpgradeAndRollback(rollbackCompleteEvent: FabricEventBase, eventIndex: number, rollbackStartedEvent: ClusterEvent, items: DataSet<ITimelineItem>,

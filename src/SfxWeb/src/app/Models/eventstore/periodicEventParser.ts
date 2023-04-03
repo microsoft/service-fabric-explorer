@@ -95,10 +95,8 @@ const generateItems = ( property: IDiffProperty, states: IRCAItem[], startDate: 
 
   states.slice(1).forEach(state => {
     const newValues = getValues(state, property);
-    console.log(newValues)
     if(Utils.isDefined(newValues)) {
       getRemoved(currentValues, newValues).forEach(removedValue => {
-        console.log(removedValue)
         items.add(generatePeriodicTimelineItem(removedValue, valuesLastChanged[removedValue].date, new Date(state.timeStamp), property))
         delete valuesLastChanged[removedValue]
       })
@@ -146,7 +144,7 @@ const generatePeriodicTimelineItem = (value: any, additionDate: Date, removalDat
     group: value.toString(),
     start: additionDate,
     end: removalDate,
-    style:  EventStoreUtils.singleItemStyleOverride(Utils.randomColor(), 5)
+    style:  EventStoreUtils.singleItemStyleOverride(Utils.randomColor())
   }
 }
 
