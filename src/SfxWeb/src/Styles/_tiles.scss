@@ -55,7 +55,7 @@ $tile-width: 240px;
   grid-column: span 2;
 }
 
-@media (max-width: 400px) {
+@media (max-width: 450px) {
   .long {
     grid-column: span 1;
     overflow: auto;
