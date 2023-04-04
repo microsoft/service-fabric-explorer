@@ -306,9 +306,10 @@ export class ListColumnSettingForLink extends ListColumnSetting {
         public linkName?: string,
         public isExternal: boolean = false,
         public toolTip?: (item: any) => string,
+        public isFilterable: boolean = false,
     ) {
         super(propertyPath, displayName, {
-            enableFilter: false,
+            enableFilter: isFilterable,
         });
     }
 }

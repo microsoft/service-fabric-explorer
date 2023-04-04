@@ -27,6 +27,10 @@ export class HyperLinkComponent implements OnInit, DetailBaseComponent {
     }
     
     this.link = this.listSetting.href(this.item);
+    if (this.link === null) {
+      this.value = "";
+    }
+
     this.toolTip = this.listSetting.toolTip ? this.listSetting.toolTip(this.item) : "";
   }
 

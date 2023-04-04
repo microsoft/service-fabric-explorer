@@ -231,7 +231,8 @@ export class SettingsService {
             (item) => item.resourceId ? `https://ms.portal.azure.com/#@microsoft.onmicrosoft.com/resource${item.resourceId}/overview` : null,
             'View',
             true,
-            (item) => item.resourceId
+            (item) => item.resourceId,
+            true
         ));
     }
 
