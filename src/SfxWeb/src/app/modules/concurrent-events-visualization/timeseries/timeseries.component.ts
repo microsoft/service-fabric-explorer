@@ -1,6 +1,6 @@
-import { Component, Input, OnChanges, OnDestroy, ViewChildren, ElementRef, AfterViewInit, QueryList, ViewChild } from '@angular/core';
-import { Chart, Options, chart, SeriesOptionsType, Pointer, Point, color, PointOptionsObject, YAxisLabelsOptions, YAxisOptions, XAxisOptions } from 'highcharts';
-import { debounce, debounceTime } from 'rxjs/operators';
+import { Component, Input, OnChanges, OnDestroy, ViewChildren, ElementRef, AfterViewInit, QueryList, ViewChild, OnInit } from '@angular/core';
+import { Chart, Options, chart, SeriesOptionsType, Pointer, PointOptionsObject, YAxisOptions, XAxisOptions } from 'highcharts';
+import { debounceTime } from 'rxjs/operators';
 import { ListSettings } from 'src/app/Models/ListSettings';
 import { SettingsService } from 'src/app/services/settings.service';
 import { Utils } from 'src/app/Utils/Utils';
@@ -42,7 +42,7 @@ export const resize = () => {
   templateUrl: './timeseries.component.html',
   styleUrls: ['./timeseries.component.scss']
 })
-export class TimeseriesComponent implements AfterViewInit, OnChanges, OnDestroy {
+export class TimeseriesComponent implements AfterViewInit, OnChanges, OnDestroy, OnInit {
 
   @Input() data: IParallelChartData;
   @ViewChildren('container') private container: QueryList<ElementRef>;
@@ -68,6 +68,14 @@ export class TimeseriesComponent implements AfterViewInit, OnChanges, OnDestroy 
     chart: {
       backgroundColor: null,
       height: 200,
+      zoomType: 'x',
+      resetZoomButton: {
+        position: {
+          align: 'left',
+          verticalAlign: 'top',
+          y: -15
+        }
+      }
     },
     title: {
       text: '',
@@ -131,25 +139,64 @@ export class TimeseriesComponent implements AfterViewInit, OnChanges, OnDestroy 
     }));
   }
 
+  ngAfterViewInit() {
+    this.generateCharts();
+  }
+
   ngOnChanges() {
-    if(!this.charts) {
-      return;
+    if(this.container) {
+      this.generateCharts();
     }
+  }
+
+  private generateCharts() {
+    const data = this.generateChartData();
+    console.log(data)
+    this.container.forEach((element, index) => {
+      const chart = this.charts[index];
+      const chartData = data[index];
+
+      if (chart) {
+        chart.series.forEach(series => {
+          if (chartData.series.every(set => set.name !== series.name)) {
+            series.remove();
+          } else {
+            series.update(chartData.series.find(set => set.name === series.name));
+          }
+        });
+        chartData.series.forEach(item => {
+          if (chart.series.every(set => set.name !== item.name)) {
+            chart.addSeries(item);
+          }
+        });
+      } else {
+        this.charts.push(new Chart(element.nativeElement, chartData));
+      }
+    })
+  }
+
+  private pickDataPoints(item: any, formatter: IdataFormatter) {
+    return {
+      x: Utils.result2(item, formatter.xProperty),
+      y: Utils.result2(item, formatter.yProperty)
+    }
+  }
+
+  private generateChartData() {
     const ref = this;
     const colorMap = {};
     this.data.dataSets.forEach(dataset => {
       colorMap[dataset.name] = Utils.randomColor();
     })
 
-    this.data.series.forEach((chartData, index) => {
+    return this.data.series.map((chartData, index) => {
       const dataSet: SeriesOptionsType[] = this.data.dataSets.map(dataset => {
         const values: PointOptionsObject[] = dataset.values.map(item => {
-          const x = Utils.result2(item, chartData.xProperty);
-          const y = Utils.result2(item, chartData.yProperty);
+          const point = this.pickDataPoints(item, chartData);
 
           return {
-            x,
-            y,
+            x: point.x,
+            y: point.y,
             itemData: item,
             events: {
               click: function (e) {
@@ -158,7 +205,14 @@ export class TimeseriesComponent implements AfterViewInit, OnChanges, OnDestroy 
                 }).filter(point => !!point).map(p => {
                   return {
                     item: p.itemData,
-                    series: p.series
+                    pointData: p,
+                    series: p.series,
+                    tags: ref.data.series.map(data =>  {
+                      return {
+                        ...ref.pickDataPoints(p.itemData, data),
+                        label: data.yLabel
+                      }
+                    })
                   }
                 })
                 ref.currentItems = points;
@@ -214,27 +268,9 @@ export class TimeseriesComponent implements AfterViewInit, OnChanges, OnDestroy 
       if (chartData.xLabel) {
         xAxis.title.text = chartData.xLabel
       }
-
-      const chart = this.charts[index];
-      if (chart) {
-        //TODO consider how to approach this?
-        chart.series.forEach(series => {
-          if (dataSet.every(set => set.name !== series.name)) {
-            series.remove();
-          } else {
-            series.update(dataSet.find(set => set.name === series.name));
-          }
-        });
-        dataSet.forEach(item => {
-          if (chart.series.every(set => set.name !== item.name)) {
-            chart.addSeries(item);
-          }
-        });
-      }else {
-        this.charts.push(new Chart(this.container.get(index).nativeElement, {
-          ...this.options, series: dataSet, yAxis,
-        }));
-      }
+      return {
+            ...this.options, series: dataSet, yAxis,
+        }
     })
   }
 
@@ -260,10 +296,6 @@ export class TimeseriesComponent implements AfterViewInit, OnChanges, OnDestroy 
     }
   }
 
-  ngAfterViewInit() {
-    this.ngOnChanges();
-  }
-
   ngOnDestroy() {
     this.charts.forEach(chart => {
       chart.destroy();
@@ -276,7 +308,7 @@ export class TimeseriesComponent implements AfterViewInit, OnChanges, OnDestroy 
     const originChart = this.charts[chartIndex];
     const event = originChart.pointer.normalize(e);
     const points = originChart.series.map(series => {
-      return (series as any).searchPoint(event, true)
+      return (series as any).searchPoint(event, false)
     }).filter(point => !!point);
 
     if (points.length > 0) {
@@ -313,5 +345,9 @@ export class TimeseriesComponent implements AfterViewInit, OnChanges, OnDestroy 
     const width = boundingBox.width - Math.max(20, value -  boundingBox.x );
     this.currentItemsWidth = width;
     this.resizer.next(width);
+  }
+
+  itemTrackBy(index, item) {
+    return item.series.name;
   }
 }

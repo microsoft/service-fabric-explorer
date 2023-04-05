@@ -68,6 +68,7 @@ export class NamingViewerComponent implements VisualizationComponent {
     data.listEventStoreData.forEach((partition, index) => {
       const splitData = this.splitData(partition.eventsList.collection);
       let volume = 0;
+
       Object.entries(splitData).forEach(entry => {
         entry[1].forEach(event => {
           volume += event.raw.eventProperties.RequestCount;
@@ -113,13 +114,17 @@ export class NamingViewerComponent implements VisualizationComponent {
       new ListColumnSetting('raw.eventProperties.AverageResponseSize', 'Average Response Size'),
       new ListColumnSetting('raw.eventProperties.RequestCount', 'Request Count'),
       new ListColumnSetting('raw.eventProperties.AverageLatency', 'Average Latency'),
-      new ListColumnSettingWithUtcTime('raw.timeStamp', 'Time Stamp')
+      new ListColumnSettingWithUtcTime('raw.timeStamp', 'Time Stamp'),
+      new ListColumnSetting('raw.eventProperties.NodeId1', 'Node 1'),
+      new ListColumnSetting('raw.eventProperties.NodeId2', 'Node 2'),
+      new ListColumnSetting('raw.eventProperties.NodeId3', 'Node 3'),
+
     ],
     [
       new ListColumnSettingWithEventStoreFullDescription(),
     ],
     true);
-    let dataSets = []
+    let dataSets: IDataSet[] = [];
     this.overviewPanels.forEach((panel, index) => {
 
       dataSets = dataSets.concat(this.sortAndFilterData(panel, this.localData.listEventStoreData[index].eventsList.collection));
@@ -132,12 +137,31 @@ export class NamingViewerComponent implements VisualizationComponent {
     }
   }
 
+  bulkToggleStateChange(panel: IOverviewPanel, state: boolean) {
+    panel.nestedOptions.forEach(option => {
+      option.toggled = state;
+    })
+
+    this.updateData();
+  }
+
   splitData(events: ReplicaEvent[]) {
-    return Utils.groupByFunc(events.filter(item => item.raw.kind === "NamingMetricsReported").sort((a,b) => a.raw.time.getTime() - b.raw.time.getTime()), item => item.raw.eventProperties.OperationName);
+    const data = Utils.groupByFunc(events.filter(item => item.raw.kind === "NamingMetricsReported").sort((a,b) => a.raw.time.getTime() - b.raw.time.getTime()), item => item.raw.eventProperties.OperationName);
+    Object.keys(data).forEach(dataset => {
+      const events = data[dataset];
+
+      if(events.length === 1) {
+        const middleEvent = events[0];
+        // const firstEvent = structuredClone(middleEvent);
+        // const lastEvent = structuredClone(middleEvent);
+        console.log(middleEvent)
+      }
+    })
+    return data;
   }
 
   sortAndFilterData(overview: IOverviewPanel, events: ReplicaEvent[]): IDataSet[] {
-    const filteredEvents = [];
+    const filteredEvents: IDataSet[] = [];
     const splitData = this.splitData(events);
 
     if (overview.toggled) {

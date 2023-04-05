@@ -748,7 +748,38 @@ export class PartitionTimelineGenerator extends TimeLineGeneratorBase<PartitionE
 
 export class ReplicaTimelineGenerator extends TimeLineGeneratorBase<ReplicaEvent> {
   consume(events: ReplicaEvent[], startOfRange: Date, endOfRange: Date): ITimelineData {
-    return parseEventsGenerically(events, "Category,Kind");
+    let sawNamingMetricsId = "";
+    const items = new DataSet<ITimelineItem>();
+
+    events.forEach( (event, index) => {
+        if (event.kind === 'NamingMetricsReported') {
+            sawNamingMetricsId = event.partitionId +  'namingMetric';
+            items.add({
+                kind: sawNamingMetricsId,
+                id: `${index}---${event.eventInstanceId}`,
+                content: 'naming metric',
+                start: event.timeStamp,
+                group: PartitionTimelineGenerator.swapPrimaryLabel,
+                type: 'point',
+                title: EventStoreUtils.tooltipFormat(event.eventProperties, event.timeStamp, null, 'naming metric'),
+                className: 'green'
+            });
+        }
+    });
+
+    const groups = new DataSet<DataGroup>();
+
+    if(sawNamingMetricsId.length > 0) {
+      groups.add({
+        id: sawNamingMetricsId,
+        content: "Naming Metric report"
+      })
+    }
+
+    return {
+      groups,
+      items
+    }
   }
 }
 
@@ -841,7 +872,6 @@ function parseAndAddGroupIdByString(event: FabricEvent, groupIds: any, query: st
 }
 
 export function parseEventsGenerically(events: FabricEvent[], textSearch: string, idPrefix: string = Math.random().toString()): ITimelineData {
-  console.log(events);
   const items = new DataSet<ITimelineItem>();
   const groupIds: any[] = [];
 
@@ -915,7 +945,6 @@ export function parseEventsGenerically(events: FabricEvent[], textSearch: string
        items.add(item);
     });
 
-    console.log(groupIds)
     const groups = new DataSet<DataGroup>(groupIds);
     EventStoreUtils.addSubGroups(groups);
 

@@ -1,12 +1,13 @@
 <div>
   <div ngbNav #outernav="ngbNav" class="nav-wrapper" [destroyOnHide]="false">
-    <div ngbNavItem >
+    <div ngbNavItem>
       <a ngbNavLink>Charts</a>
       <ng-template ngbNavContent>
         <div style="display: flex; " #inner>
           <div class="layout-container">
             <div class="helper-text">
-              Click to focus a point
+              <span class="mif-info link"></span>
+              Click to focus a point or click and drag to zoom
             </div>
             <div *ngFor="let dataSet of data.series; let i = index" class="chart">
               {{dataSet.name}}
@@ -16,23 +17,17 @@
           </div>
           <ng-container *ngIf="currentItems">
             <div appDrag (dragFinish)="resize($event)" class="drag-bar"></div>
-            <div  class="selectedItems" [ngStyle]="{'width': currentItemsWidth + 'px'}">
+            <div class="selectedItems" [ngStyle]="{'width': currentItemsWidth + 'px'}">
               <div class="inner">
                 <div class="header-text">
-                  <span>Closest Points near click</span>
+                  <span>Closest Points for each series</span>
                   <button (click)="clearSelectedPoint()" class="flat-button">
                     Close <span class="mif-cancel link"></span>
                   </button>
                 </div>
-                <div *ngFor="let currentItem of currentItems">
-                  <app-collapse-container [collapsed]="true">
-                    <div collapse-header>
-                      {{currentItem.series.name}}
-                    </div>
-                    <div collapse-body>
-                      <app-full-description [(item)]="currentItem.item"></app-full-description>
-                    </div>
-                  </app-collapse-container>
+                <div>
+                  <app-timeseries-item [item]="currentItem"
+                    *ngFor="let currentItem of currentItems; trackBy: itemTrackBy"></app-timeseries-item>
                 </div>
               </div>
             </div>
@@ -40,7 +35,7 @@
         </div>
       </ng-template>
     </div>
-    <div ngbNavItem >
+    <div ngbNavItem>
       <a ngbNavLink>Data</a>
       <ng-template ngbNavContent>
         <div ngbNav #nav="ngbNav" class="nav-wrapper">
@@ -57,4 +52,3 @@
   </div>
   <div [ngbNavOutlet]="outernav"></div>
 </div>
-

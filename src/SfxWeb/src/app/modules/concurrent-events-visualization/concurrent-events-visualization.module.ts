@@ -9,6 +9,7 @@ import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { RelationViewerComponent } from './relation-viewer/relation-viewer.component';
 import { TimeseriesComponent } from './timeseries/timeseries.component';
 import { DetailListTemplatesModule } from '../detail-list-templates/detail-list-templates.module';
+import { TimeseriesItemComponent } from './timeseries-item/timeseries-item.component';
 
 @NgModule({
   declarations: [
@@ -17,7 +18,8 @@ import { DetailListTemplatesModule } from '../detail-list-templates/detail-list-
     RcaSummaryComponent,
     RcaOverviewComponent,
     RelationViewerComponent,
-    TimeseriesComponent
+    TimeseriesComponent,
+    TimeseriesItemComponent
   ],
   imports: [
     CommonModule,

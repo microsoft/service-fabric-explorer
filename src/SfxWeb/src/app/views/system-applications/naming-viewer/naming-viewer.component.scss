@@ -1,11 +1,11 @@
-.partitions-container {
+.panel-container {
   display: flex;
   gap: 5px;
   margin: 5px;
   flex-wrap: wrap;
 }
 
-.partition {
+.panel {
   padding: 5px;
   border-radius: 5px;
   background-color: var(--accent-background-color);
@@ -32,3 +32,6 @@
   display: flex;
 }
 
+li {
+  font-size: var(--font-size-default);
+}

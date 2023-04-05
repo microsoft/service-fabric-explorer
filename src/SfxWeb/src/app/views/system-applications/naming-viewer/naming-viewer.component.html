@@ -1,28 +1,34 @@
 <div>
   <div>
-    <div class="partitions-container">
-      <div *ngFor="let partition of overviewPanels" class="partition">
+    <div class="panel-container">
+      <div *ngFor="let panel of overviewPanels" class="panel">
         <div class="text-container">
-          <label>
-            <app-toggle [(state)]="partition.toggled" (stateChange)="updateData()"></app-toggle>
-            {{partition.name}}
+          <label ngbTooltip="Set where the partition is visible in the charts below"  tooltipClass="styled-tooltip">
+            <app-toggle [(state)]="panel.toggled" (stateChange)="updateData()"></app-toggle>
+            {{panel.name}}
           </label>
-          <div>{{partition.displayContent()}}</div>
+          <div>{{panel.displayContent()}}</div>
         </div>
         <div>
           <div class="operation-container">
-            <div ngbDropdown #myDrop="ngbDropdown">
+            <div ngbDropdown #myDrop="ngbDropdown" [autoClose]="'outside'">
               <button class="flat-button" ngbDropdownToggle aria-label="settings drop down">
-                toggle operations ({{getToggled(partition.nestedOptions)}} / {{partition.nestedOptions.length}})
+                toggle operations ({{getToggled(panel.nestedOptions)}} / {{panel.nestedOptions.length}})
               </button>
-              <div ngbDropdownMenu aria-labelledby="dropdownBasic1" class="dropdown-container">
-                <div ngbDropdownItem class="operation" *ngFor="let operation of partition.nestedOptions">
-                  <label class="operation-container">
+              <ul ngbDropdownMenu aria-labelledby="dropdownBasic1" class="dropdown-container" >
+                <li role="menuitem" class="check-options item" >
+                  <button aria-label="Check all options" class="flat-button" (click)="bulkToggleStateChange(panel, true)">Check All</button>
+                </li>
+                <li role="menuitem" class="check-options item" >
+                  <button aria-label="unCheck all options" class="flat-button" (click)="bulkToggleStateChange(panel, false)">Uncheck All</button>
+                </li>
+                <li ngbDropdownItem  role="menuitem" class="operation" *ngFor="let operation of panel.nestedOptions">
+                  <label class="operation-container" >
                     {{operation.name}}
                     <input type="checkbox" [(ngModel)]="operation.toggled" (ngModelChange)="updateData()" />
                   </label>
-                </div>
-              </div>
+                </li>
+              </ul>
             </div>
           </div>
         </div>

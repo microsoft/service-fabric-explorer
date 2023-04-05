@@ -11,7 +11,7 @@ import { ChartsModule } from 'src/app/modules/charts/charts.module';
 import { NamingViewerComponent } from './naming-viewer/naming-viewer.component';
 import { ConcurrentEventsVisualizationModule } from 'src/app/modules/concurrent-events-visualization/concurrent-events-visualization.module';
 import { TimePickerModule } from 'src/app/modules/time-picker/time-picker.module';
-import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDropdownModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule } from '@angular/forms';
 import { NamingViewerPageComponent } from './naming-viewer-page/naming-viewer-page.component';
 import { EventStoreModule } from 'src/app/modules/event-store/event-store.module';
@@ -30,7 +30,8 @@ import { EventStoreModule } from 'src/app/modules/event-store/event-store.module
     TimePickerModule,
     NgbDropdownModule,
     FormsModule,
-    EventStoreModule
+    EventStoreModule,
+    NgbTooltipModule
   ]
 })
 export class SystemApplicationsModule { }
