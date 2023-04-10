@@ -18,8 +18,7 @@ import { ChartsModule } from 'src/app/modules/charts/charts.module';
     SharedModule,
     DetailListTemplatesModule,
     HealthStateModule,
-    ChartsModule,
-    EventStoreModule,
+    ChartsModule
   ]
 })
 export class SystemApplicationsModule { }

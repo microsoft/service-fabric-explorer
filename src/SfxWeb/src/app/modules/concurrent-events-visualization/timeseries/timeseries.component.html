@@ -9,7 +9,7 @@
               <span class="mif-info link"></span>
               Click to focus a point or click and drag to zoom
             </div>
-            <div *ngFor="let dataSet of data.series; let i = index" class="chart">
+            <div *ngFor="let dataSet of data.series; let i = index" class="chart" data-cy="metric">
               {{dataSet.name}}
 
               <div #container (mousemove)="interactionEvent($event, i)" class="chart-container"></div>
@@ -17,7 +17,7 @@
           </div>
           <ng-container *ngIf="currentItems">
             <div appDrag (dragFinish)="resize($event)" class="drag-bar"></div>
-            <div class="selectedItems" [ngStyle]="{'width': currentItemsWidth + 'px'}">
+            <div class="selectedItems" [ngStyle]="{'width': currentItemsWidth + 'px'}" data-cy="selecteditems">
               <div class="inner">
                 <div class="header-text">
                   <span>Closest Points for each series</span>

@@ -1,9 +1,9 @@
 <div>
   <div>
     <div class="panel-container">
-      <div *ngFor="let panel of overviewPanels" class="panel">
+      <div *ngFor="let panel of overviewPanels" class="panel" data-cy="overviewpanel">
         <div class="text-container">
-          <label ngbTooltip="Set where the partition is visible in the charts below"  tooltipClass="styled-tooltip">
+          <label ngbTooltip="Set where the partition is visible in the charts below" tooltipClass="styled-tooltip">
             <app-toggle [(state)]="panel.toggled" (stateChange)="updateData()"></app-toggle>
             {{panel.name}}
           </label>
