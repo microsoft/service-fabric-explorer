@@ -1,4 +1,4 @@
-import { Component, OnInit, Injector } from '@angular/core';
+import { Component, OnInit, Injector, ElementRef } from '@angular/core';
 import { DeployedCodePackageBaseControllerDirective } from '../DeployedCodePackageBase';
 import { ITab } from 'src/app/shared/component/navbar/navbar.component';
 import { DataService } from 'src/app/services/data.service';
@@ -7,13 +7,14 @@ import { IdGenerator } from 'src/app/Utils/IdGenerator';
 import { Constants } from 'src/app/Common/Constants';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Observable, of } from 'rxjs';
+import { IBaseView } from '../../BaseView';
 
 @Component({
   selector: 'app-base',
   templateUrl: './base.component.html',
   styleUrls: ['./base.component.scss']
 })
-export class BaseComponent extends DeployedCodePackageBaseControllerDirective {
+export class BaseComponent extends DeployedCodePackageBaseControllerDirective implements IBaseView {
 
   containerLogTabName = 'container logs';
 
@@ -27,7 +28,7 @@ export class BaseComponent extends DeployedCodePackageBaseControllerDirective {
     }
   ];
 
-  constructor(protected data: DataService, injector: Injector, private tree: TreeService) {
+  constructor(protected data: DataService, injector: Injector, private tree: TreeService, public el: ElementRef) {
     super(data, injector);
   }
 

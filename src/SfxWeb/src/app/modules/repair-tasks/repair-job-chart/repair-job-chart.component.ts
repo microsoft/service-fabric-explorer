@@ -109,7 +109,8 @@ export class RepairJobChartComponent implements OnInit, OnChanges {
           color: '#0075c9',
           data: []
         },
-      ]
+      ],
+      credits: {enabled: false}
     };
     this.chart = chart('repair-job-chart-container', options);
     this.setGraph(this.jobs);

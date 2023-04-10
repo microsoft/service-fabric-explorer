@@ -1,16 +1,17 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit } from '@angular/core';
 import { IdGenerator } from 'src/app/Utils/IdGenerator';
 import { TreeService } from 'src/app/services/tree.service';
 import { ITab } from 'src/app/shared/component/navbar/navbar.component';
 import { DataService } from 'src/app/services/data.service';
 import { Constants } from 'src/app/Common/Constants';
+import { IBaseView } from '../../BaseView';
 
 @Component({
   selector: 'app-base',
   templateUrl: './base.component.html',
   styleUrls: ['./base.component.scss']
 })
-export class BaseComponent implements OnInit {
+export class BaseComponent implements OnInit, IBaseView{
 
   tabs: ITab[] = [{
     name: 'all nodes',
@@ -21,7 +22,7 @@ export class BaseComponent implements OnInit {
      route: './commands' 
     }
   ];
-  constructor(public tree: TreeService, private data: DataService) { }
+  constructor(public tree: TreeService, private data: DataService, public el: ElementRef) { }
 
   ngOnInit() {
     this.data.clusterManifest.ensureInitialized().subscribe(() => {

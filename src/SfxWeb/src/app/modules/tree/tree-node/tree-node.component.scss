@@ -47,6 +47,12 @@ button {
     background-color: var(--accent-darkblue);
     box-shadow: var(--heavy-box-shadow);
   }
+
+  &:focus-visible {
+    border: 2px solid white;
+    border-radius: 3px;
+    outline: none;
+  }
 }
 
 .hide-nested {
