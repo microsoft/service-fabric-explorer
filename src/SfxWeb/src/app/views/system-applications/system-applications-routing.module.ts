@@ -2,12 +2,10 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { BaseComponent } from './base/base.component';
 import { EssentialsComponent } from './essentials/essentials.component';
-import { NamingViewerPageComponent } from './naming-viewer-page/naming-viewer-page.component';
 
 const routes: Routes = [{
   path: '', component: BaseComponent, children: [
     { path: '', component: EssentialsComponent },
-    { path: 'naming', component: NamingViewerPageComponent }
     ]
   }
 ];

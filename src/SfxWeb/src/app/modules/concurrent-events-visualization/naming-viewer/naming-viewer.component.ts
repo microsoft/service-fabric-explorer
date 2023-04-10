@@ -14,7 +14,7 @@ export interface INestedDataSetOption {
 
 export interface IOverviewPanel {
   name: string;
-  displayContent: () => string;
+  displayContent: string;
   toggled: boolean;
   nestedOptions: INestedDataSetOption[];
 }
@@ -87,7 +87,6 @@ export class NamingViewerComponent implements VisualizationComponent {
         });
 
         if(previousPanelState) {
-          console.log(previousPanelState)
           toggled = previousPanelState.toggled;
           nestedOptions.forEach(option => {
             const previousNestedOption = previousPanelState.nestedOptions.find(nested => nested.name === option.name);
@@ -99,7 +98,7 @@ export class NamingViewerComponent implements VisualizationComponent {
 
         this.overviewPanels.push({
           name,
-          displayContent: () => `Total Volume: ${volume}`,
+          displayContent: `Total Volume: ${volume}`,
           toggled,
           nestedOptions
         })
@@ -146,18 +145,7 @@ export class NamingViewerComponent implements VisualizationComponent {
   }
 
   splitData(events: ReplicaEvent[]) {
-    const data = Utils.groupByFunc(events.filter(item => item.raw.kind === "NamingMetricsReported").sort((a,b) => a.raw.time.getTime() - b.raw.time.getTime()), item => item.raw.eventProperties.OperationName);
-    Object.keys(data).forEach(dataset => {
-      const events = data[dataset];
-
-      if(events.length === 1) {
-        const middleEvent = events[0];
-        // const firstEvent = structuredClone(middleEvent);
-        // const lastEvent = structuredClone(middleEvent);
-        console.log(middleEvent)
-      }
-    })
-    return data;
+    return Utils.groupByFunc(events.filter(item => item.raw.kind === "NamingMetricsReported").sort((a,b) => a.raw.time.getTime() - b.raw.time.getTime()), item => item.raw.eventProperties.OperationName);
   }
 
   sortAndFilterData(overview: IOverviewPanel, events: ReplicaEvent[]): IDataSet[] {
@@ -183,7 +171,6 @@ export class NamingViewerComponent implements VisualizationComponent {
   }
 
   update(data: VisUpdateData) {
-    console.log(data, this);
     this.generateOverviewPanel(data);
     this.localData = data;
     this.updateData();

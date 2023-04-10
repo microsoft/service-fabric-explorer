@@ -4,8 +4,8 @@ import { IEventStoreData, VisReference } from 'src/app/modules/event-store/event
 import { IOptionConfig } from 'src/app/modules/event-store/option-picker/option-picker.component';
 import { Service } from 'src/app/Models/DataModels/Service';
 import { TimelineComponent } from 'src/app/modules/event-store/timeline/timeline.component';
-import { NamingViewerComponent } from '../naming-viewer/naming-viewer.component';
 import { mergeMap } from 'rxjs/operators';
+import { NamingViewerComponent } from 'src/app/modules/concurrent-events-visualization/naming-viewer/naming-viewer.component';
 
 @Component({
   selector: 'app-naming-viewer-page',

@@ -151,7 +151,7 @@ export class TimeseriesComponent implements AfterViewInit, OnChanges, OnDestroy,
 
   private generateCharts() {
     const data = this.generateChartData();
-    console.log(data)
+
     this.container.forEach((element, index) => {
       const chart = this.charts[index];
       const chartData = data[index];

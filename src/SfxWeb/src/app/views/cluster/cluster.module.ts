@@ -33,11 +33,13 @@ import { RepairTasksModule } from 'src/app/modules/repair-tasks/repair-tasks.mod
 import { CommandsComponent } from './commands/commands.component';
 import { PowershellCommandsModule } from 'src/app/modules/powershell-commands/powershell-commands.module';
 import { ConcurrentEventsVisualizationModule } from 'src/app/modules/concurrent-events-visualization/concurrent-events-visualization.module';
+import { NamingViewerPageComponent } from './naming-viewer-page/naming-viewer-page.component';
 
 @NgModule({
   declarations: [EssentialsComponent, DetailsComponent, BaseComponent, MetricsComponent, ClustermapComponent,
                  ImagestoreComponent, ManifestComponent, EventsComponent, ActionCreateBackupPolicyComponent,
-                 StatusWarningsComponent, BackupsComponent, RepairTasksComponent, MetricTileComponent, InfrastructureViewComponent, CommandsComponent],
+                 StatusWarningsComponent, BackupsComponent, RepairTasksComponent, MetricTileComponent,
+                 InfrastructureViewComponent, CommandsComponent, NamingViewerPageComponent],
   imports: [
     CommonModule,
     ClusterRoutingModule,
