@@ -60,7 +60,7 @@ export interface IDataModel<T> {
 // Used to decorate the properties in raw object to customize the display names and values.
 export interface IDecorator {
     displayName?: (name: string) => string;
-    displayValueInHtml?: (value: any) => string;
+    displayValue?: (value: any) => string;
 }
 
 export interface IDecorators {

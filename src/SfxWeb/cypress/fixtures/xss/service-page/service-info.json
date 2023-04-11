@@ -1,0 +1,11 @@
+{
+    "ServiceKind": "Stateful",
+    "Name": "fabric:/<img src='1' onerror='window.alert(document.domain)'>/<img src='1' onerror='window.alert(document.domain)'>",
+    "TypeName": "VisualObjects.ActorServiceType",
+    "ManifestVersion": "3.0.0",
+    "HasPersistedState": true,
+    "HealthState": "Ok",
+    "ServiceStatus": "Active",
+    "IsServiceGroup": false,
+    "Id": "<img src='1' onerror='window.alert(document.domain)'>/<img src='1' onerror='window.alert(document.domain)'>"
+  }

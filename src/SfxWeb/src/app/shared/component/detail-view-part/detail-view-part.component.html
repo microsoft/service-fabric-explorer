@@ -40,7 +40,9 @@
                     </th>
 
                     <!-- Render simple property value -->
-                    <td [innerHtml]="item.value"></td>
+                    <td>
+                      {{item.value}}
+                    </td>
                 </tr>
 
                 <!-- Render object property (two rows) -->
@@ -79,7 +81,6 @@
                                                 <!-- Render sub-array table body, assuming the properties are always simple properties rather than object -->
                                             <td *ngFor="let subItem of item | keyvalue : asIsOrder" [ngSwitch]="getResolvedPropertyType(subItem.value)">
                                                 <span *ngSwitchCase="'Value'" [title]="subItem.value">{{subItem.value}}</span>
-                                                <span *ngSwitchCase="'Html'" [innerHtml]="subItem.value"></span>
                                                 <app-detail-view-part *ngSwitchCase="'Array'" [data]="subItem.value"></app-detail-view-part>
                                                 <app-detail-view-part *ngSwitchCase="'Object'" [data]="subItem.value"></app-detail-view-part>
                                             </td>

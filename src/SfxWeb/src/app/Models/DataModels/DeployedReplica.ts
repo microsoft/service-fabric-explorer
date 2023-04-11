@@ -24,7 +24,7 @@ export class DeployedReplica extends DataModelBase<IRawDeployedReplica> {
         decorators: {
             LastInBuildDurationInSeconds: {
                 displayName: (name) => 'Last In Build Duration',
-                displayValueInHtml: (value) => this.lastInBuildDuration
+                displayValue: (value) => this.lastInBuildDuration
             }
         }
     };

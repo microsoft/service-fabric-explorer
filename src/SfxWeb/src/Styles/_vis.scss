@@ -143,7 +143,7 @@
   background-color: var(--primary-background-color) !important;;
   border-radius: var(--primary-border-radius) !important;;
   line-height: 1;
-
+  z-index: 100;
   table {
     word-break: break-all;
   }
@@ -220,7 +220,7 @@
 }
 //pregenerated css colors
 
-.vis-item, .vis-item-content {
+.vis-item, .vis-item-content, .rca-summary-key {
 
   &.color-FFB399 {
     background-color: #FFB399;

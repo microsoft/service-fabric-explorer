@@ -30,7 +30,7 @@ export class BackupComponent extends ApplicationBaseControllerDirective  {
     this.applicationBackupConfigurationInfoListSettings = this.settings.getNewOrExistingListSettings('backupConfigurationInfoCollection', ['raw.PolicyName'], [
       new ListColumnSetting('raw.PolicyName', 'Policy Name', {
         enableFilter: false,
-        getDisplayHtml: (item, property) =>  `<span class="link">${property}</span>`,
+        cssClasses: "link",
         clickEvent: item => item.action.run()
       }),
       new ListColumnSetting('raw.Kind', 'Kind'),

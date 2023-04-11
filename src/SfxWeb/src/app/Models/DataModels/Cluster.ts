@@ -81,7 +81,7 @@ export class ClusterHealth extends HealthBase<IRawClusterHealth> {
         const expiration = healthEvent.raw.Description.substring(expirationIndex + expirationSearchText.length).split(',')[0];
 
         this.data.warnings.addOrUpdateNotification({
-            message: `A cluster certificate is set to expire soon. Replace it as soon as possible to avoid catastrophic failure. <br> <b>Thumbprint</b> : ${thumbprint}  <b>Expiration</b>: ${expiration}`,
+            message: `A cluster certificate is set to expire soon. Replace it as soon as possible to avoid catastrophic failure. Thumbprint : ${thumbprint}  Expiration: ${expiration}`,
             level: StatusWarningLevel.Error,
             priority: 5,
             id: BannerWarningID.ExpiringClusterCert,
@@ -158,6 +158,39 @@ export class ClusterManifest extends DataModelBase<IRawClusterManifest> {
         }
     }
 
+  private getNodesProperty(manifest: Element) {
+    let nodeTypes: INodeTypeInfo[] = []
+    try {
+      let XMLnodeTypes = manifest.getElementsByTagName("NodeTypes")[0].getElementsByTagName("NodeType");
+
+      for (let nodeIndex = 0; nodeIndex < XMLnodeTypes.length; ++nodeIndex) {
+        const XMLnode = XMLnodeTypes[nodeIndex]
+        const nodeType = XMLnode.getAttribute("Name")
+        const placementProperties = XMLnode.getElementsByTagName("PlacementProperties")
+        let keyProperties: Record<string, string> = {}
+        for (let i = 0; i < placementProperties.length; ++i) {
+          const properties = placementProperties[i].getElementsByTagName("Property")
+
+          for (let j = 0; j < properties.length; j++) {
+            keyProperties[properties[j].getAttribute("Name")] = properties[j].getAttribute("Value")
+          }
+        }
+        nodeTypes.push({
+          placementProperties: keyProperties,
+          name: nodeType
+        });
+      }
+    } catch(e) {
+      console.log("unable to parse nodetypes", e)
+    }
+
+    return nodeTypes;
+  }
+
+    public getNodeProperties(nodeType: string) {
+      return this.nodeTypeProperties.find(properties => properties.name === nodeType);
+    }
+
     protected updateInternal(): Observable<any> | void {
         const parser = new DOMParser();
         const xml = parser.parseFromString(this.raw.Manifest, 'text/xml');
@@ -190,36 +223,7 @@ export class ClusterManifest extends DataModelBase<IRawClusterManifest> {
             }
         }
 
-        this.nodeTypeProperties = this.getNodesProperty();
-    }
-
-    private  getNodesProperty() {
-      const parser = new DOMParser();
-      const xml = parser.parseFromString(this.raw.Manifest, 'text/xml');
-      const manifest = xml.getElementsByTagName('ClusterManifest')[0];
-
-      let nodeTypes: INodeTypeInfo[] = []
-      let XMLnodeTypes = manifest.getElementsByTagName("NodeTypes")[0].getElementsByTagName("NodeType");
-
-      for(let nodeIndex = 0; nodeIndex < XMLnodeTypes.length; ++nodeIndex) {
-          const XMLnode = XMLnodeTypes[nodeIndex]
-          const nodeType =  XMLnode.getAttribute("Name")
-          const placementProperties = XMLnode.getElementsByTagName("PlacementProperties")
-          let keyProperties: Record<string, string> = {}
-          for(let i = 0;i < placementProperties.length; ++i) {
-              const properties = placementProperties[i].getElementsByTagName("Property")
-
-              for (let j = 0; j < properties.length; j++) {
-                  keyProperties[properties[j].getAttribute("Name")] = properties[j].getAttribute("Value")
-                }
-              }
-          nodeTypes.push({
-            placementProperties: keyProperties,
-            name: nodeType
-          });
-      }
-
-      return nodeTypes;
+        this.nodeTypeProperties = this.getNodesProperty(manifest);
     }
 }
 
@@ -232,11 +236,11 @@ export class ClusterUpgradeProgress extends DataModelBase<IRawClusterUpgradeProg
         decorators: {
             UpgradeDurationInMilliseconds: {
                 displayName: (name) => 'Upgrade Duration',
-                displayValueInHtml: (value) => TimeUtils.getDuration(value)
+                displayValue: (value) => TimeUtils.getDuration(value)
             },
             UpgradeDomainDurationInMilliseconds: {
                 displayName: (name) => 'Upgrade Domain Duration',
-                displayValueInHtml: (value) => TimeUtils.getDuration(value)
+                displayValue: (value) => TimeUtils.getDuration(value)
             }
         }
     };

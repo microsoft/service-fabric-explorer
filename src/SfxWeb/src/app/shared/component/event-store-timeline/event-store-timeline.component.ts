@@ -68,6 +68,8 @@ export class EventStoreTimelineComponent implements AfterViewInit, OnChanges, On
       this.itemClicked.emit(data.item)
     })
 
+    this.flipTimeZone(this.isUTC);
+
     this.updateList(this.events);
   }
 
@@ -80,9 +82,9 @@ export class EventStoreTimelineComponent implements AfterViewInit, OnChanges, On
     })
   }
 
-  public flipTimeZone() {
+  public flipTimeZone(utc: boolean) {
     this.timeline.setOptions({
-      moment: this.isUTC ? moment : moment.utc
+      moment: utc ? moment.utc : moment
     });
   }
 
@@ -162,6 +164,7 @@ export class EventStoreTimelineComponent implements AfterViewInit, OnChanges, On
           }
         },
         tooltip: {
+          followMouse: true,
           template: (itemData) => {
             let content = itemData.title;
 

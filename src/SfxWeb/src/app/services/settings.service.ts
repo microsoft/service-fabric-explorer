@@ -131,7 +131,7 @@ export class SettingsService {
       return this.getNewOrExistingListSettings(listKey, null, [
         new ListColumnSetting('raw.Name', 'Name', {
             enableFilter: false,
-            getDisplayHtml: (item, property) =>  `<span class="link">${property}</span>`,
+            cssClasses: "link",
             colspan: 1,
             clickEvent: item => item.action.run()
           }),
@@ -230,7 +230,7 @@ export class SettingsService {
       new ListColumnSetting('placeholder', 'placeholder', { enableFilter: false }), // Empty column
       new ListColumnSetting('raw.StatusDetails', 'Status Details', {
         enableFilter: false,
-        getDisplayHtml: (item) => HtmlUtils.getSpanWithCustomClass('preserve-whitespace-wrap', item.raw.StatusDetails),
+        cssClasses: "preserve-whitespace-wrap",
         colspan: 100
       })
     ];

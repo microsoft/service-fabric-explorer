@@ -4,8 +4,8 @@
     "Version": "16.0.0",
     "DefaultParameterList": [
       {
-        "Key": "VisualObjects.ActorService_MinReplicaSetSize",
-        "Value": "2"
+        "Key": "<<img src='1' onerror='window.alert(document.domain)'>",
+        "Value": "<<img src='1' onerror='window.alert(document.domain)'>"
       },
       {
         "Key": "VisualObjects.ActorService_PartitionCount",

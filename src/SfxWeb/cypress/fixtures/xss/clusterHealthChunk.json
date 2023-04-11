@@ -1,0 +1,85 @@
+{
+    "HealthState": "Warning",
+    "NodeHealthStateChunks": {
+        "TotalCount": 5,
+        "Items": [
+            {
+                "NodeName": "_nt_4",
+                "HealthState": "Ok"
+            },
+            {
+                "NodeName": "_nt_3",
+                "HealthState": "Warning"
+            },
+            {
+                "NodeName": "_nt_2",
+                "HealthState": "Ok"
+            },
+            {
+                "NodeName": "_nt_1",
+                "HealthState": "Ok"
+            },
+            {
+                "NodeName": "_nt_0",
+                "HealthState": "Ok"
+            }
+        ]
+    },
+    "ApplicationHealthStateChunks": {
+        "TotalCount": 3,
+        "Items": [
+            {
+              "ApplicationName": "fabric:/System",
+              "ApplicationTypeName": "",
+              "HealthState": "Ok",
+              "ServiceHealthStateChunks": {
+                  "TotalCount": 0,
+                  "Items": []
+              },
+              "DeployedApplicationHealthStateChunks": {
+                  "TotalCount": 0,
+                  "Items": []
+              }
+          },
+          {
+            "ApplicationName": "fabric:/VisualObjectsApplicationType",
+            "ApplicationTypeName": "VisualObjectsApplicationType",
+            "HealthState": "Ok",
+            "ServiceHealthStateChunks": {
+                "TotalCount": 0,
+                "Items": []
+            },
+            "DeployedApplicationHealthStateChunks": {
+                "TotalCount": 0,
+                "Items": []
+            }
+        },
+            {
+                "ApplicationName": "fabric:/<<img src='1' onerror='window.alert(document.domain)'>",
+                "ApplicationTypeName": "",
+                "HealthState": "Ok",
+                "ServiceHealthStateChunks": {
+                    "TotalCount": 0,
+                    "Items": []
+                },
+                "DeployedApplicationHealthStateChunks": {
+                    "TotalCount": 0,
+                    "Items": []
+                }
+            },
+            {
+                "ApplicationName": "fabric:/<<img src='1' onerror='window.alert(document.domain)'>",
+                "ApplicationTypeName": "<<img src='1' onerror='window.alert(document.domain)'>",
+                "HealthState": "Ok",
+                "ServiceHealthStateChunks": {
+                    "TotalCount": 0,
+                    "Items": []
+                },
+                "DeployedApplicationHealthStateChunks": {
+                    "TotalCount": 0,
+                    "Items": []
+                }
+            }
+        ]
+    }
+}
