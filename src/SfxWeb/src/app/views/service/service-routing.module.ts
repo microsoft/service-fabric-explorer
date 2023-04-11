@@ -16,7 +16,7 @@ const routes: Routes = [{
     { path: 'manifest', component: ManifestComponent },
     { path: 'events', component: EventsComponent },
     { path: 'backup', component: BackupComponent },
-    { path: 'commands', component: CommandsComponent}
+    { path: 'commands', component: CommandsComponent},
     { path : 'placement' , component: PlacementComponent}
   ]
 }];
