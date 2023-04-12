@@ -102,8 +102,6 @@ export class InfrastructureCollection extends DataModelCollectionBase<Infrastruc
           //ONLY if GUID skip check otherwise check incase name is Coordinated_notguid
           if(Utils.isGUID(potentialGUID)) {
             return false;
-          }else{
-            is = potentialGUID;
           }
         }
 

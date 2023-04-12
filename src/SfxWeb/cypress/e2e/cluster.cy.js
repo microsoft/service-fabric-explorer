@@ -777,15 +777,6 @@ context('Cluster page', () => {
 
           cy.contains(bannerText).should('not.exist')
         })
-
-        it('coordinated non guid', () => {
-          addRoute(FIXTURE_REF_SYSTEMAPPS, 'system-service/coordinated-non-guid.json', systemApps_route);
-          addRoute(FIXTURE_REF_NODES, 'system-service/cross-az-nodes-4.json', nodes_route);
-
-          cy.visit(`/#/infrastructure`)
-
-          cy.contains(bannerText).should('exist')
-        })
       })
 
       describe('cross AZ', () => {
