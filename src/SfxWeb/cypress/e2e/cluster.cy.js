@@ -763,7 +763,7 @@ context('Cluster page', () => {
 
     })
 
-    describe.only('banners infrastructure service', () => {
+    describe('banners infrastructure service', () => {
       const bannerText = "Nodetype worker is deployed with less than 5 VMs.";
 
       beforeEach(() => {
