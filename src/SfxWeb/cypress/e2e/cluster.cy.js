@@ -763,35 +763,61 @@ context('Cluster page', () => {
 
     })
 
-    describe('cross AZ infrastructure service', () => {
+    describe.only('banners infrastructure service', () => {
+      const bannerText = "Nodetype worker is deployed with less than 5 VMs.";
+
       beforeEach(() => {
         addRoute("infra-service-data", "empty-list.json", apiUrl(`/$/InvokeInfrastructureQuery?api-version=6.0&Command=GetJobs&ServiceId=System/InfrastructureService/**`))
-        addRoute(FIXTURE_REF_SYSTEMAPPS, 'system-service/cross-az-infra.json', systemApps_route)
       })
 
-      it('5 nodes of one nodetype', () => {
-        cy.intercept('GET', nodes_route, { fixture: 'system-service/cross-az-nodes.json' })
+      describe('Coordinated', () => {
+        it('coordinated guid', () => {
+          addRoute(FIXTURE_REF_SYSTEMAPPS, 'system-service/coordinated-infra-guid.json', systemApps_route)
+          cy.visit(`/#/infrastructure`)
 
-        cy.visit(`/#/infrastructure`)
-
-        cy.get('[data-cy=navtabs]').within(() => {
-          cy.contains('infrastructure jobs').click();
+          cy.contains(bannerText).should('not.exist')
         })
 
-        cy.contains('Nodetype worker is deployed with less than 5 VMs.').should('not.exist')
+        it('coordinated non guid', () => {
+          addRoute(FIXTURE_REF_SYSTEMAPPS, 'system-service/coordinated-non-guid.json', systemApps_route);
+          addRoute(FIXTURE_REF_NODES, 'system-service/cross-az-nodes-4.json', nodes_route);
+
+          cy.visit(`/#/infrastructure`)
+
+          cy.contains(bannerText).should('exist')
+        })
       })
 
-      it('< 5 nodes of one node type', () => {
-        cy.intercept('GET', nodes_route, { fixture: 'system-service/cross-az-nodes-4.json' })
-
-        cy.visit(`/#/infrastructure`)
-
-        cy.get('[data-cy=navtabs]').within(() => {
-          cy.contains('infrastructure jobs').click();
+      describe('cross AZ', () => {
+        beforeEach(() => {
+          addRoute(FIXTURE_REF_SYSTEMAPPS, 'system-service/cross-az-infra.json', systemApps_route)
         })
 
-        cy.contains('Nodetype worker is deployed with less than 5 VMs.')
+        it('5 nodes of one nodetype - ', () => {
+          cy.intercept('GET', nodes_route, { fixture: 'system-service/cross-az-nodes.json' })
+
+          cy.visit(`/#/infrastructure`)
+
+          cy.get('[data-cy=navtabs]').within(() => {
+            cy.contains('infrastructure jobs').click();
+          })
+
+          cy.contains(bannerText).should('not.exist')
+        })
+
+        it('< 5 nodes of one node type - cross AZ', () => {
+          cy.intercept('GET', nodes_route, { fixture: 'system-service/cross-az-nodes-4.json' })
+
+          cy.visit(`/#/infrastructure`)
+
+          cy.get('[data-cy=navtabs]').within(() => {
+            cy.contains('infrastructure jobs').click();
+          })
+
+          cy.contains(bannerText)
+        })
       })
+
     })
   })
 

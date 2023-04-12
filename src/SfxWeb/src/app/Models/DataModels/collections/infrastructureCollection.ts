@@ -38,7 +38,7 @@ export class InfrastructureCollectionItem extends DataModelBase<IInfrastructureC
 
 export class InfrastructureCollection extends DataModelCollectionBase<InfrastructureCollectionItem> {
   static readonly bannerThrottledJobs = 'throttled-banner';
-
+  static readonly CoordinatedPrefix = "Coordinated_";
   public throttledJobs: InfrastructureJob[];
 
   public constructor(data: DataService) {
@@ -94,14 +94,16 @@ export class InfrastructureCollection extends DataModelCollectionBase<Infrastruc
       this.collection.forEach(is => {
         condensedIS.add(InfrastructureCollection.stripPrefix(is.name).split("/")[0]);
       })
-      console.log(condensedIS, counter)
+
       const nodetypesWithoutEnoughNodes = Array.from(condensedIS).filter(is => {
         //if IS is Coordinated_{GUID}
-        if(is.startsWith("Coordinated_")) {
-          const potentialGUID = is.split("Coordinated_")[0];
+        if(is.startsWith(InfrastructureCollection.CoordinatedPrefix)) {
+          const potentialGUID = is.slice(InfrastructureCollection.CoordinatedPrefix.length);
           //ONLY if GUID skip check otherwise check incase name is Coordinated_notguid
           if(Utils.isGUID(potentialGUID)) {
             return false;
+          }else{
+            is = potentialGUID;
           }
         }
 
