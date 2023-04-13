@@ -54,6 +54,10 @@ export class BaseComponent implements OnInit, IBaseView {
     this.dataService.clusterManifest.ensureInitialized().subscribe(() => {
       if (this.dataService.clusterManifest.isEventStoreEnabled) {
         this.tabs = this.tabs.concat(Constants.EventsTab);
+        this.tabs = this.tabs.concat({
+          name: 'naming viewer',
+          route: './naming'
+          })
       }
       if (this.dataService.clusterManifest.isBackupRestoreEnabled) {
         this.tabs = this.tabs.concat({

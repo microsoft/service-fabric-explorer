@@ -1,0 +1,54 @@
+<div>
+  <div ngbNav #outernav="ngbNav" class="nav-wrapper" [destroyOnHide]="false">
+    <div ngbNavItem>
+      <a ngbNavLink>Charts</a>
+      <ng-template ngbNavContent>
+        <div style="display: flex; " #inner>
+          <div class="layout-container">
+            <div class="helper-text">
+              <span class="mif-info link"></span>
+              Click to focus a point or click and drag to zoom
+            </div>
+            <div *ngFor="let dataSet of data.series; let i = index" class="chart" data-cy="metric">
+              {{dataSet.name}}
+
+              <div #container (mousemove)="interactionEvent($event, i)" class="chart-container"></div>
+            </div>
+          </div>
+          <ng-container *ngIf="currentItems">
+            <div appDrag (dragFinish)="resize($event)" class="drag-bar"></div>
+            <div class="selectedItems" [ngStyle]="{'width': currentItemsWidth + 'px'}" data-cy="selecteditems">
+              <div class="inner">
+                <div class="header-text">
+                  <span>Closest Points for each series</span>
+                  <button (click)="clearSelectedPoint()" class="flat-button">
+                    Close <span class="mif-cancel link"></span>
+                  </button>
+                </div>
+                <div>
+                  <app-timeseries-item [item]="currentItem"
+                    *ngFor="let currentItem of currentItems; trackBy: itemTrackBy"></app-timeseries-item>
+                </div>
+              </div>
+            </div>
+          </ng-container>
+        </div>
+      </ng-template>
+    </div>
+    <div ngbNavItem>
+      <a ngbNavLink>Data</a>
+      <ng-template ngbNavContent>
+        <div ngbNav #nav="ngbNav" class="nav-wrapper">
+          <div ngbNavItem *ngFor="let dataset of data.dataSets">
+            <a ngbNavLink>{{dataset.name}}</a>
+            <ng-template ngbNavContent>
+              <app-detail-list [list]="dataset.values" [listSettings]="data.listSettings"></app-detail-list>
+            </ng-template>
+          </div>
+        </div>
+        <div [ngbNavOutlet]="nav"></div>
+      </ng-template>
+    </div>
+  </div>
+  <div [ngbNavOutlet]="outernav"></div>
+</div>

@@ -543,6 +543,32 @@ context('Cluster page', () => {
 
     it("loads properly", () => {
       addRoute('events', 'empty-list.json', apiUrl(`/EventsStore/Cluster/Events?*`))
+      addRoute('events', 'cluster-page/naming/naming-partitions.json', apiUrl(`/Applications/System/$/GetServices/System%2FNamingService/$/GetPartitions?*`))
+      addRoute('events', 'cluster-page/naming/naming-partition-1000.json', apiUrl(`/EventsStore/Partitions/00000000-0000-0000-0000-000000001000/$/Replicas/Events?*`))
+      cy.visit('/#/')
+
+      cy.get('[data-cy=navtabs]').within(() => {
+        cy.contains('naming').click();
+      })
+
+      cy.wait('@getevents');
+      cy.url().should('include', 'naming');
+
+      cy.get('[data-cy=metric]').should('have.length', 3);
+      cy.get("[class=highcharts-point]").should('have.length', 12);
+
+
+      cy.get('[data-cy=overviewpanel]').should('have.length', 1).first().within(() => {
+        cy.contains("Total Volume: 78887");
+        cy.contains("1000").click();
+      })
+
+      //toggle data set
+      cy.get("[class=highcharts-point]").should('have.length', 0);
+    })
+
+    it("loads properly", () => {
+      addRoute('events', 'empty-list.json', apiUrl(`/EventsStore/Cluster/Events?*`))
       cy.visit('/#/')
 
       cy.get('[data-cy=navtabs]').within(() => {

@@ -10,7 +10,7 @@ import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { TelemetryService } from './services/telemetry.service';
 import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
 import { TelemetrySnackBarComponent } from './telemetry-snack-bar/telemetry-snack-bar.component';
-import { IBaseView } from './views/BaseView';
+import { SettingsService } from './services/settings.service';
 
 @Component({
   selector: 'app-root',
@@ -43,7 +43,8 @@ export class AppComponent implements OnInit{
               public breakpointObserver: BreakpointObserver,
               public dataService: DataService,
               public liveAnnouncer: LiveAnnouncer,
-              private snackBar: MatSnackBar) {
+              private snackBar: MatSnackBar,
+              private settingsService: SettingsService) {
 
   }
 
@@ -55,6 +56,7 @@ export class AppComponent implements OnInit{
     this.refreshService.init();
 
     this.treeWidth = this.storageService.getValueString('treeWidth', '450px');
+    this.settingsService.treeWidth.next(this.treeWidth);
     this.rightOffset =  this.treeWidth;
 
     this.checkWidth(window.innerWidth);
@@ -92,7 +94,7 @@ export class AppComponent implements OnInit{
       this.smallScreenLeftPanelWidth = `${$event}%`;
       return;
     }
-    
+
     if ($event == 0) {
       this.treeDisplay = 'none';
     }
@@ -105,6 +107,7 @@ export class AppComponent implements OnInit{
     this.treeWidth = offsetWidth.toString() + 'px';
     this.rightOffset = this.treeWidth;
     this.storageService.setValue('treeWidth', this.treeWidth);
+    this.settingsService.treeWidth.next(this.treeWidth);
   }
 
   collapseSide()  {

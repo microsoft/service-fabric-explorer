@@ -1,0 +1,44 @@
+<div *ngIf="dataset.dataSets.length > 0; else noData">
+  <div class="panel-container">
+    <div *ngFor="let panel of overviewPanels" class="panel" data-cy="overviewpanel">
+      <div class="text-container">
+        <label ngbTooltip="Set where the partition is visible in the charts below" tooltipClass="styled-tooltip">
+          <app-toggle [(state)]="panel.toggled" (stateChange)="updateData()"></app-toggle>
+          {{panel.name}}
+        </label>
+        <div>{{panel.displayContent}}</div>
+      </div>
+      <div>
+        <div class="operation-container">
+          <div ngbDropdown #myDrop="ngbDropdown" [autoClose]="'outside'">
+            <button class="flat-button" ngbDropdownToggle aria-label="settings drop down">
+              toggle operations ({{getToggled(panel.nestedOptions)}} / {{panel.nestedOptions.length}})
+            </button>
+            <ul ngbDropdownMenu aria-labelledby="dropdownBasic1" class="dropdown-container">
+              <li role="menuitem" class="check-options item">
+                <button aria-label="Check all options" class="flat-button"
+                  (click)="bulkToggleStateChange(panel, true)">Check All</button>
+              </li>
+              <li role="menuitem" class="check-options item">
+                <button aria-label="unCheck all options" class="flat-button"
+                  (click)="bulkToggleStateChange(panel, false)">Uncheck All</button>
+              </li>
+              <li ngbDropdownItem role="menuitem" class="operation" *ngFor="let operation of panel.nestedOptions">
+                <label class="operation-container">
+                  {{operation.name}}
+                  <input type="checkbox" [(ngModel)]="operation.toggled" (ngModelChange)="updateData()" />
+                </label>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <app-timeseries [data]="dataset"></app-timeseries>
+</div>
+<ng-template #noData>
+  <div class="text-center">
+    No data to display. This is likely due to there being no naming metric reports for the time range chosen.
+  </div>
+</ng-template>

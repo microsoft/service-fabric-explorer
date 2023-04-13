@@ -1,22 +1,28 @@
 import { Component, Input, OnChanges, ViewChildren, QueryList, AfterViewInit, Type } from '@angular/core';
+import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { IOnDateChange } from '../../time-picker/double-slider/double-slider.component';
+import { Subject, Subscription, forkJoin } from 'rxjs';
 import { DataService } from 'src/app/services/data.service';
 import { ListSettings } from 'src/app/Models/ListSettings';
 import { IOptionConfig, IOptionData } from '../option-picker/option-picker.component';
-import { TimelineComponent } from '../timeline/timeline.component';
-import { forkJoin } from 'rxjs';
-import { VisualizationDirective } from '../visualization.directive';
-import { EventColumnUpdate, VisualizationComponent } from '../visualizationComponents';
-import { RcaVisualizationComponent } from '../rca-visualization/rca-visualization.component';
-import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { IDataModel } from 'src/app/Models/DataModels/Base';
+import { EventColumnUpdate, VisualizationComponent } from '../visualizationComponents';
+import { VisualizationDirective } from '../visualization.directive';
+import { TimelineComponent } from '../timeline/timeline.component';
+import { RcaVisualizationComponent } from '../rca-visualization/rca-visualization.component';
+
+export interface IQuickDates {
+  display: string;
+  hours: number;
+}
 
 export type EventType =
   "Cluster" |
   "Node" |
   'Application' |
   "Partition" |
-  "RepairTask"
+  "RepairTask" |
+  "Replica"
 
 export interface IEventStoreData<IVisPresentEvent, S> {
   eventsList: IVisPresentEvent;
@@ -28,7 +34,7 @@ export interface IEventStoreData<IVisPresentEvent, S> {
   objectResolver?(id: string): IDataModel<any>; //used to determine if the data contains a given event;
 }
 
-interface VisReference {
+export interface VisReference {
   name: string,
   component: Type<VisualizationComponent>
 }
