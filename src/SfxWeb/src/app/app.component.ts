@@ -22,7 +22,10 @@ export class AppComponent implements OnInit{
   @ViewChild('main') main: ElementRef;
 
   smallScreenSize = false;
-  smallScreenLeftPanelWidth = '0px';
+  smallScreenLeftPanelWidth = '0%';
+
+  treeDisplay = 'inherit';
+  smallScreenTreeDisplay = 'none';
 
   public assetBase = environment.assetBase;
   treeWidth = '450px';
@@ -30,7 +33,6 @@ export class AppComponent implements OnInit{
   previousTreeWidth = this.treeWidth;
 
   rightOffset: string = this.treeWidth;
-  tabIndex = -1;
   hideAzure = false;
   hideSFXTest = false;
   hideSFXLogo = false;
@@ -83,10 +85,22 @@ export class AppComponent implements OnInit{
 
   resize($event: number): void {
     if (this.smallScreenSize) {
-      this.smallScreenLeftPanelWidth = `${$event}px`;
+      if ($event == 0) {
+        this.smallScreenTreeDisplay = 'none';
+      }
+      else {
+        this.smallScreenTreeDisplay = 'inherit';
+      }
+      this.smallScreenLeftPanelWidth = `${$event}%`;
       return;
     }
 
+    if ($event == 0) {
+      this.treeDisplay = 'none';
+    }
+    else {
+      this.treeDisplay = 'inherit';
+    }
     this.previousTreeWidth = this.treeWidth;
     // have to subtract the offset
     const offsetWidth = $event + 8;
@@ -104,10 +118,6 @@ export class AppComponent implements OnInit{
     }
   }
 
-  changeSmallScreenSizePanelState() {
-    this.smallScreenLeftPanelWidth = this.smallScreenLeftPanelWidth === '0px' ? '60%' : '0px';
-  }
-
   attemptForceRefresh() {
     this.refreshService.refreshAll();
     this.liveAnnouncer.announce('Started refreshing data');
@@ -117,7 +127,6 @@ export class AppComponent implements OnInit{
   }
 
   setMainFocus() {
-    this.tabIndex = -1;
-    setTimeout(() => {this.main.nativeElement.focus(); this.tabIndex = null; }, 0);
+    this.main.nativeElement.focus();
   }
 }

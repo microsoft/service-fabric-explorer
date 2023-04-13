@@ -1,4 +1,4 @@
-import { Component, Injector } from '@angular/core';
+import { Component, ElementRef, Injector } from '@angular/core';
 import { DeployedReplicaBaseControllerDirective } from '../DeployedReplicaBase';
 import { DataService } from 'src/app/services/data.service';
 import { TreeService } from 'src/app/services/tree.service';
@@ -6,13 +6,14 @@ import { IdGenerator } from 'src/app/Utils/IdGenerator';
 import { of, Observable } from 'rxjs';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { ITab } from 'src/app/shared/component/navbar/navbar.component';
+import { IBaseView } from '../../BaseView';
 
 @Component({
   selector: 'app-base',
   templateUrl: './base.component.html',
   styleUrls: ['./base.component.scss']
 })
-export class BaseComponent extends DeployedReplicaBaseControllerDirective {
+export class BaseComponent extends DeployedReplicaBaseControllerDirective implements IBaseView {
 
   type = '';
 
@@ -30,7 +31,7 @@ export class BaseComponent extends DeployedReplicaBaseControllerDirective {
     }
   ];
 
-  constructor(protected data: DataService, injector: Injector, private tree: TreeService) {
+  constructor(protected data: DataService, injector: Injector, private tree: TreeService, public el: ElementRef) {
     super(data, injector);
   }
 

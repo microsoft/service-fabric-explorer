@@ -1,4 +1,4 @@
-import { Component, OnInit, Injector } from '@angular/core';
+import { Component, OnInit, Injector, ElementRef } from '@angular/core';
 import { ITab } from 'src/app/shared/component/navbar/navbar.component';
 import { TreeService } from 'src/app/services/tree.service';
 import { ServiceBaseControllerDirective } from '../ServiceBase';
@@ -8,13 +8,14 @@ import { Constants } from 'src/app/Common/Constants';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { IBaseView } from '../../BaseView';
 
 @Component({
   selector: 'app-base',
   templateUrl: './base.component.html',
   styleUrls: ['./base.component.scss']
 })
-export class BaseComponent extends ServiceBaseControllerDirective {
+export class BaseComponent extends ServiceBaseControllerDirective implements IBaseView {
 
   tabs: ITab[] = [{
     name: 'essentials',
@@ -29,7 +30,7 @@ export class BaseComponent extends ServiceBaseControllerDirective {
       route: './commands'
     }
   ];
-  constructor(protected dataService: DataService, injector: Injector, private tree: TreeService) {
+  constructor(protected dataService: DataService, injector: Injector, private tree: TreeService, public el: ElementRef) {
     super(dataService, injector);
   }
 

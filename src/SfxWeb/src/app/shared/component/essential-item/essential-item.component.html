@@ -1,9 +1,8 @@
 <div class="essential-list-item highlight-hover " [ngClass]="{'underline': !underline, 'allow-wrap' : item.allowWrap }">
-    <div class="text-wrapper tile-item">
+    <div class="text-wrapper tile-item" tabindex="0">
         <div class="tile-list-entry left-text" *ngIf="item.descriptionName">
             {{item.descriptionName}}
         </div>
-        <div class="spacer"></div>
         <div class="middle-text">
             <span *ngIf="!item.displaySelector">
                 {{item.displayText}}
@@ -13,5 +12,5 @@
             </span>
         </div>
     </div>
-    <app-clip-board [text]="item.copyTextValue" *ngIf="item.copyTextValue"></app-clip-board>
+    <app-clip-board [text]="item.copyTextValue" *ngIf="item.copyTextValue" [name]="item.descriptionName"></app-clip-board>
 </div>

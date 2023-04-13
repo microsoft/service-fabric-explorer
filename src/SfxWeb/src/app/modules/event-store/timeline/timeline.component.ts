@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { TelemetryEventNames } from 'src/app/Common/Constants';
+import { mergeTimelineData } from 'src/app/Models/eventstore/periodicEventParser';
 import { ITimelineData, ITimelineItem, parseEventsGenerically } from 'src/app/Models/eventstore/timelineGenerators';
 import { DataService } from 'src/app/services/data.service';
 import { TelemetryService } from 'src/app/services/telemetry.service';
@@ -53,16 +54,6 @@ export class TimelineComponent implements VisualizationComponent {
     }
   }
 
-  public mergeTimelineData(combinedData: ITimelineData, data: ITimelineData): void {
-    data.items.forEach(item => combinedData.items.add(item));
-
-    data.groups.forEach(group => combinedData.groups.add(group));
-
-    combinedData.potentiallyMissingEvents =
-      combinedData.potentiallyMissingEvents || data.potentiallyMissingEvents;
-  }
-
-
   private initializeTimelineData(): ITimelineData {
     return {
       start: this.startDate,
@@ -95,7 +86,7 @@ export class TimelineComponent implements VisualizationComponent {
             const timelineGenerator = this.timelineGeneratorFactoryService.getTimelineGenerator(data.type);
             const timelineData = timelineGenerator.generateTimeLineData(data.getEvents(), this.startDate, this.endDate, addNestedGroups ? data.displayName : null);
 
-            this.mergeTimelineData(combinedTimelineData, timelineData);
+            mergeTimelineData(combinedTimelineData, timelineData);
           }
         } catch (e) {
           console.error(e);
@@ -127,5 +118,9 @@ export class TimelineComponent implements VisualizationComponent {
     this.showCorrelatedBtn = !this.pshowAllEvents;
 
     this.getTimelineData();
+  }
+
+  public updateShowAllEvents(value: boolean) {
+    this.showAllEvents = value;
   }
 }
