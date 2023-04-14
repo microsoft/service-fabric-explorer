@@ -82,6 +82,10 @@ export class Application extends DataModelBase<IRawApplication> {
         return this.raw.ApplicationMetadata?.ArmMetadata?.ArmResourceId;
     }
 
+    public get isArmManaged(): boolean{
+        return this.resourceId?.length > 0;
+    }
+
     public delete(): Observable<any> {
         const compose = this.raw.ApplicationDefinitionKind === Constants.ComposeApplicationDefinitionKind;
         const action = compose ? this.data.restClient.deleteComposeApplication(this.id) : this.data.restClient.deleteApplication(this.id);

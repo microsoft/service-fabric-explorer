@@ -134,7 +134,7 @@ export class ApplicationTypeGroup extends DataModelBase<IRawApplicationType> {
     }
 
     public get isArmManaged(): boolean{
-        return this.appTypes.some(app => app.resourceId?.length);
+        return this.appTypes.some(app => app.isArmManaged);
     }
 
     // Whenever the data.apps get refreshed, it will call this method to

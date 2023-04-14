@@ -5,7 +5,7 @@ import { SettingsService } from 'src/app/services/settings.service';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Observable } from 'rxjs';
 import { ApplicationCollection } from 'src/app/Models/DataModels/collections/Collections';
-import { ListSettings, ListColumnSettingForLink, ListColumnSettingWithFilter, ListColumnSettingForBadge, ListColumnSetting } from 'src/app/Models/ListSettings';
+import { ListSettings, ListColumnSettingForLink, ListColumnSettingWithFilter, ListColumnSettingForBadge, ListColumnSetting, ListColumnSettingForArmManaged } from 'src/app/Models/ListSettings';
 import { map } from 'rxjs/operators';
 
 @Component({
@@ -28,7 +28,8 @@ export class AllComponent extends BaseControllerDirective {
       new ListColumnSettingWithFilter('raw.TypeName', 'Application Type'),
       new ListColumnSetting('raw.TypeVersion', 'Version'),
       new ListColumnSettingForBadge('healthState', 'Health State'),
-      new ListColumnSettingWithFilter('raw.Status', 'Status')
+      new ListColumnSettingWithFilter('raw.Status', 'Status'),
+      new ListColumnSettingForArmManaged()
     ]);
   }
 
