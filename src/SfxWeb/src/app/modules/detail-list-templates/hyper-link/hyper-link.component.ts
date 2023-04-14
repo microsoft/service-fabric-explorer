@@ -14,7 +14,6 @@ export class HyperLinkComponent implements OnInit, DetailBaseComponent {
 
   link: string;
   value: string;
-  toolTip: string;
 
   constructor() { }
 
@@ -31,7 +30,6 @@ export class HyperLinkComponent implements OnInit, DetailBaseComponent {
       this.value = "";
     }
 
-    this.toolTip = this.listSetting.toolTip ? this.listSetting.toolTip(this.item) : "";
   }
 
 }

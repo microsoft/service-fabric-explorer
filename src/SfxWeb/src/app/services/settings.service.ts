@@ -1,8 +1,11 @@
 import { Injectable } from '@angular/core';
-import { ListColumnSetting, ListSettings, ListColumnSettingForBadge, ListColumnSettingForLink,
-         ListColumnSettingWithCopyText, ListColumnSettingWithUtcTime, ListColumnSettingWithCustomComponent,
-         ListColumnSettingWithShorten,
-         ListColumnSettingWithFilter} from '../Models/ListSettings';
+import {
+    ListColumnSetting, ListSettings, ListColumnSettingForBadge, ListColumnSettingForLink,
+    ListColumnSettingWithCopyText, ListColumnSettingWithUtcTime, ListColumnSettingWithCustomComponent,
+    ListColumnSettingWithShorten,
+    ListColumnSettingWithFilter,
+    ListColumnSettingForArmManaged
+} from '../Models/ListSettings';
 import { NodeStatusConstants, Constants } from '../Common/Constants';
 import { ClusterLoadInformation } from '../Models/DataModels/Cluster';
 import { MetricsViewModel } from '../ViewModels/MetricsViewModel';
@@ -225,15 +228,7 @@ export class SettingsService {
     ];
       
     if (includeArmLink) {
-        settings.push(new ListColumnSettingForLink(
-            'resourceId',
-            'Arm Managed',
-            (item) => item.resourceId ? `https://ms.portal.azure.com/#@microsoft.onmicrosoft.com/resource${item.resourceId}/overview` : null,
-            'View',
-            true,
-            (item) => item.resourceId,
-            true
-        ));
+        settings.push(new ListColumnSettingForArmManaged());
     }
 
     if(includeActions) {

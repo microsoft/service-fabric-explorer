@@ -2,9 +2,9 @@ import { DataModelBase } from './Base';
 import { IRawApplicationType } from '../RawDataTypes';
 import { ServiceTypeCollection, ApplicationCollection } from './collections/Collections';
 import { DataService } from 'src/app/services/data.service';
-import { HealthStateConstants, Constants } from 'src/app/Common/Constants';
+import { HealthStateConstants } from 'src/app/Common/Constants';
 import { CollectionUtils } from 'src/app/Utils/CollectionUtils';
-import { Observable, forkJoin} from 'rxjs';
+import { Observable, forkJoin } from 'rxjs';
 import { Application } from './Application';
 import { ITextAndBadge, ValueResolver } from 'src/app/Utils/ValueResolver';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
@@ -46,6 +46,10 @@ export class ApplicationType extends DataModelBase<IRawApplicationType> {
 
     public get resourceId(): string {
         return this.raw.ApplicationTypeMetadata?.ArmMetadata?.ArmResourceId;
+    }
+
+    public get isArmManaged(): boolean{
+        return this.resourceId?.length > 0;
     }
 
     public unprovision(): Observable<any> {
