@@ -76,8 +76,13 @@ export class Service extends DataModelBase<IRawService> {
     }
 
     public get resourceId(): string {
+        //TODO turn back
         // return this.raw.ServiceMetadata?.ArmMetaData?.ArmResourceId;
         return "test";
+    }
+
+    public get isArmManaged(): boolean {
+        return this.resourceId?.length > 0;
     }
 
     public addHealthStateFiltersForChildren(clusterHealthChunkQueryDescription: IClusterHealthChunkQueryDescription): IServiceHealthStateFilter {

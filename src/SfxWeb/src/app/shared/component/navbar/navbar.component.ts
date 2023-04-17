@@ -17,6 +17,7 @@ export class NavbarComponent {
   @Input() showCopy = true;
   @Input() armManaged = false;
   @Input() armWarningText = "This is an ARM managed resource. ARM managed resources should only be modified during ARM deployments.";
+  @Input() resourceId: string;
 
   constructor(private router: Router) { }
 
