@@ -5,6 +5,9 @@ import { RepairTask } from 'src/app/Models/DataModels/repairTask';
 import { ISortOrdering } from 'src/app/modules/detail-list-templates/detail-list/detail-list.component';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { Utils } from 'src/app/Utils/Utils';
+import Highcharts from 'highcharts';
+import Accessibility from 'highcharts/modules/accessibility';
+Accessibility(Highcharts);
 
 @Component({
   selector: 'app-repair-job-chart',
@@ -70,6 +73,9 @@ export class RepairJobChartComponent implements OnInit, OnChanges {
         align: 'right',
         verticalAlign: 'middle',
         itemStyle: {
+          color: this.fontColor.color
+        },
+        itemHoverStyle: {
           color: this.fontColor.color
         }
     },

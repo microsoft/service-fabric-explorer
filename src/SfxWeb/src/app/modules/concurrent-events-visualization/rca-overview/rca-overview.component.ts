@@ -6,7 +6,9 @@ import { EventStoreUtils, ITimelineData, ITimelineItem } from 'src/app/Models/ev
 import { Utils } from 'src/app/Utils/Utils';
 import { DataGroup, DataSet } from 'vis-timeline/standalone/esm';
 import { IEssentialListItem } from '../../charts/essential-health-tile/essential-health-tile.component';
-
+import Highcharts from 'highcharts';
+import Accessibility from 'highcharts/modules/accessibility';
+Accessibility(Highcharts);
 interface ExtendedListItem extends IEssentialListItem {
   key: string;
 }

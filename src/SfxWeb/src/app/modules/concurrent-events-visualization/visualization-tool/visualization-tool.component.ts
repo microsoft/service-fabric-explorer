@@ -3,12 +3,14 @@ import * as Highcharts from 'highcharts';
 import { chart, Chart, Options, SeriesOptionsType, SeriesSankeyNodesOptionsObject } from 'highcharts';
 import HighchartsSankey from "highcharts/modules/sankey";
 import HighchartsOrganization from "highcharts/modules/organization";
+import Accessibility from 'highcharts/modules/accessibility';
 import { DetailBaseComponent } from 'src/app/ViewModels/detail-table-base.component';
 import { ListColumnSetting, ListColumnSettingWithEmbeddedVis } from 'src/app/Models/ListSettings';
 import { IConcurrentEvents, IRCAItem } from 'src/app/Models/eventstore/rcaEngine';
 
 HighchartsSankey(Highcharts);
 HighchartsOrganization(Highcharts);
+Accessibility(Highcharts);
 
 @Component({
   selector: 'app-visualization-tool',
