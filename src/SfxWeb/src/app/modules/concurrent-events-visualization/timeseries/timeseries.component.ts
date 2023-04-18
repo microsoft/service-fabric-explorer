@@ -5,9 +5,7 @@ import { ListSettings } from 'src/app/Models/ListSettings';
 import { SettingsService } from 'src/app/services/settings.service';
 import { Utils } from 'src/app/Utils/Utils';
 import { Subscription, Subject, merge } from 'rxjs';
-import Highcharts from 'highcharts';
-import Accessibility from 'highcharts/modules/accessibility';
-Accessibility(Highcharts);
+
 export interface IdataFormatter {
   name: string;
   xProperty: string;

@@ -1,8 +1,6 @@
 import { Component, OnInit, Input, OnChanges, OnDestroy, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { Chart, Options, chart, SeriesOptionsType, TooltipFormatterCallbackFunction } from 'highcharts';
-import Highcharts from 'highcharts';
-import Accessibility from 'highcharts/modules/accessibility';
-Accessibility(Highcharts);
+
 
 @Component({
   selector: 'app-bar-chart',

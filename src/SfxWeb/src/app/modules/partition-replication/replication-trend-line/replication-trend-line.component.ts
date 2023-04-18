@@ -4,9 +4,6 @@ import { interval, Subscription } from 'rxjs';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { ITimedReplication } from '../replica-status-container/replica-status-container.component';
 import { generateReplicationDeltas } from '../replication-utils';
-import Highcharts from 'highcharts';
-import Accessibility from 'highcharts/modules/accessibility';
-Accessibility(Highcharts);
 
 export interface IChartData {
   date: Date;

@@ -8,9 +8,6 @@ import { DetailBaseComponent } from 'src/app/ViewModels/detail-table-base.compon
 import { ListColumnSetting, ListColumnSettingWithEmbeddedVis } from 'src/app/Models/ListSettings';
 import { IConcurrentEvents, IRCAItem } from 'src/app/Models/eventstore/rcaEngine';
 
-HighchartsSankey(Highcharts);
-HighchartsOrganization(Highcharts);
-Accessibility(Highcharts);
 
 @Component({
   selector: 'app-visualization-tool',

@@ -4,9 +4,6 @@ import { Chart, Options, chart, PointOptionsObject } from 'highcharts';
 import { Counter } from 'src/app/Utils/Utils';
 import { BadgeConstants, UpgradeDomainStateNames } from 'src/app/Common/Constants';
 import { DomSanitizer } from '@angular/platform-browser';
-import Highcharts from 'highcharts';
-import Accessibility from 'highcharts/modules/accessibility';
-Accessibility(Highcharts);
 
 interface ITileCount {
   css: string;

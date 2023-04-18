@@ -1,5 +1,8 @@
 import { AdalService } from './services/adal.service';
 import { StandaloneIntegrationService } from './services/standalone-integration.service';
+import Highcharts from 'highcharts';
+import Accessibility from 'highcharts/modules/accessibility';
+Accessibility(Highcharts);
 
 export function initApp(aadService: AdalService, standaloneIntegrationService: StandaloneIntegrationService) {
   return async () => {

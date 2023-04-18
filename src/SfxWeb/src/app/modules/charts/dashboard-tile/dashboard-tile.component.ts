@@ -1,9 +1,6 @@
 import { Component, OnInit, ViewChild, ElementRef, Input, AfterViewInit, OnChanges } from '@angular/core';
 import { IDashboardViewModel } from 'src/app/ViewModels/DashboardViewModels';
 import { Chart, Options, chart, PointOptionsObject, SeriesPieOptions } from 'highcharts';
-import Highcharts from 'highcharts';
-import Accessibility from 'highcharts/modules/accessibility';
-Accessibility(Highcharts);
 
 @Component({
   selector: 'app-dashboard-tile',
