@@ -5,14 +5,14 @@ import { DialogBodyComponent } from '../DialogBodyComponent';
 import { ActionDialogUtils } from '../utils';
 
 @Component({
-  selector: 'app-arm-warning',
-  templateUrl: './arm-warning.component.html',
-  styleUrls: ['./arm-warning.component.scss']
+  selector: 'app-message-with-warning',
+  templateUrl: './message-with-warning.component.html',
+  styleUrls: ['./message-with-warning.component.scss']
 })
-export class ArmWarningComponent implements AfterViewInit {
+export class MessageWithWarningComponent implements AfterViewInit {
 
   @ViewChild(DialogBodyDirective) body: DialogBodyDirective;
-  @Input() inputs: {resourceId: string, template?: Type<DialogBodyComponent>};
+  @Input() inputs: {description: string, link: string, linkText: string, template?: Type<DialogBodyComponent>};
   @Output() disableSubmit = new EventEmitter<boolean>();
 
   instance: DialogBodyComponent;

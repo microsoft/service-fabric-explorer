@@ -13,7 +13,7 @@ import { Utils } from 'src/app/Utils/Utils';
 import { ActionWithConfirmationDialog, IsolatedAction } from '../Action';
 import { CreateApplicationComponent } from 'src/app/views/application-type/create-application/create-application.component';
 import { RoutesService } from 'src/app/services/routes.service';
-import { ArmWarningComponent } from 'src/app/modules/action-dialog/arm-warning/arm-warning.component';
+import { MessageWithWarningComponent } from 'src/app/modules/action-dialog/message-wth-warning/message-with-warning.component';
 import { MessageWithConfirmationComponent } from 'src/app/modules/action-dialog/message-with-confirmation/message-with-confirmation.component';
 import { ActionDialogComponent } from 'src/app/modules/action-dialog/action-dialog/action-dialog.component';
 
@@ -62,6 +62,10 @@ export class ApplicationType extends DataModelBase<IRawApplicationType> {
 
     private setUpActions() {
 
+        if (this.isArmManaged) {
+            return;
+        }
+
         this.actions.add(new ActionWithConfirmationDialog(
             this.data.dialog,
             'unprovisionAppType',
@@ -71,15 +75,11 @@ export class ApplicationType extends DataModelBase<IRawApplicationType> {
             () => true,
             {
                 title: 'Confirm Type Unprovision',
-                class: this.resourceId ? "warning" : null
             },
             {
-                template: this.resourceId ? ArmWarningComponent : null,
                 inputs: {
                     message: `Unprovision application type ${this.name}@${this.raw.Version} from cluster ${window.location.host}?`,
                     confirmationKeyword: `${this.name}@${this.raw.Version}`,
-                    resourceId: this.resourceId,
-                    template: MessageWithConfirmationComponent
                 }
             }
         ));
@@ -97,14 +97,11 @@ export class ApplicationType extends DataModelBase<IRawApplicationType> {
             null,
             {
                 title: "Create app instance",
-                class: this.resourceId ? "warning" : null
             },
             {
-                template: ArmWarningComponent,
+                template: CreateApplicationComponent,
                 inputs: {
-                    resourceId: this.resourceId,
                     appType: this,
-                    template: CreateApplicationComponent
                 }
             })
             );
@@ -186,10 +183,11 @@ export class ApplicationTypeGroup extends DataModelBase<IRawApplicationType> {
                 class: this.isArmManaged ? 'warning' : null
             },
             {
-                template: this.isArmManaged ? ArmWarningComponent : null,
+                template: this.isArmManaged ? MessageWithWarningComponent : null,
                 inputs: {
-                    message: `Unprovision all versions of application type ${this.name} from cluster ${window.location.host}?`,
+                    message: `Unprovision all ${this.isArmManaged ? " non-arm managed " : null} versions of application type ${this.name} from cluster ${window.location.host}?`,
                     confirmationKeyword: this.name,
+                    description: `Some versions of application type ${this.name} are ARM managed, this action will only not unprovision those versions.`,
                     template: MessageWithConfirmationComponent
                 }
             }
@@ -200,7 +198,9 @@ export class ApplicationTypeGroup extends DataModelBase<IRawApplicationType> {
         return this.data.getAppTypeGroup(this.name, true).pipe(mergeMap(appTypeGroup => {
             const unprovisonPromises = [];
             appTypeGroup.appTypes.forEach(applicationType => {
-                unprovisonPromises.push(applicationType.unprovision());
+                if (!applicationType.isArmManaged) {
+                    unprovisonPromises.push(applicationType.unprovision());
+                }
             });
             return forkJoin(unprovisonPromises);
         }));

@@ -1,5 +1,7 @@
-import { IRawApplication, IRawApplicationHealth, IRawApplicationManifest, IRawDeployedApplicationHealthState,
-         IRawApplicationUpgradeProgress, IRawApplicationBackupConfigurationInfo, IRawUpgradeDomainProgress } from '../RawDataTypes';
+import {
+    IRawApplication, IRawApplicationHealth, IRawApplicationManifest, IRawDeployedApplicationHealthState,
+    IRawApplicationUpgradeProgress, IRawApplicationBackupConfigurationInfo
+} from '../RawDataTypes';
 import { DataModelBase, IDecorators } from './Base';
 import { HtmlUtils } from 'src/app/Utils/HtmlUtils';
 import { ServiceTypeCollection, ApplicationBackupConfigurationInfoCollection } from './collections/Collections';
@@ -20,8 +22,6 @@ import { ActionWithConfirmationDialog, IsolatedAction } from '../Action';
 import isEmpty from 'lodash/isEmpty';
 import { ViewBackupComponent } from 'src/app/modules/backup-restore/view-backup/view-backup.component';
 import { RoutesService } from 'src/app/services/routes.service';
-import { ArmWarningComponent } from 'src/app/modules/action-dialog/arm-warning/arm-warning.component';
-import { MessageWithConfirmationComponent } from 'src/app/modules/action-dialog/message-with-confirmation/message-with-confirmation.component';
 // -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
@@ -121,6 +121,10 @@ export class Application extends DataModelBase<IRawApplication> {
             return;
         }
 
+        if (this.isArmManaged) {
+            return;
+        }
+
         this.actions.add(new ActionWithConfirmationDialog(
             this.data.dialog,
             'deleteApplication',
@@ -130,15 +134,11 @@ export class Application extends DataModelBase<IRawApplication> {
             () => true,
             {
                 title: 'Confirm Application Deletion',
-                class: this.resourceId ? "warning" : null
             },
             {
-                template: this.resourceId ? ArmWarningComponent : null,
                 inputs: {
                     message: `Delete application ${this.name} from cluster ${window.location.host}?`,
                     confirmationKeyword: this.name,
-                    resourceId: this.resourceId,
-                    template: MessageWithConfirmationComponent
                 }
             }
             ));

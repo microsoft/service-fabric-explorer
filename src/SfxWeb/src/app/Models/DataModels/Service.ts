@@ -21,8 +21,7 @@ import { ActionWithConfirmationDialog, IsolatedAction } from '../Action';
 import { ScaleServiceComponent } from 'src/app/views/service/scale-service/scale-service.component';
 import { ViewBackupComponent } from 'src/app/modules/backup-restore/view-backup/view-backup.component';
 import { RoutesService } from 'src/app/services/routes.service';
-import { ArmWarningComponent } from 'src/app/modules/action-dialog/arm-warning/arm-warning.component';
-import { MessageWithConfirmationComponent } from 'src/app/modules/action-dialog/message-with-confirmation/message-with-confirmation.component';
+import { MessageWithWarningComponent } from 'src/app/modules/action-dialog/message-wth-warning/message-with-warning.component';
 import { ActionDialogComponent } from 'src/app/modules/action-dialog/action-dialog/action-dialog.component';
 // -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -117,29 +116,27 @@ export class Service extends DataModelBase<IRawService> {
             return;
         }
 
-        this.actions.add(new ActionWithConfirmationDialog(
-            this.data.dialog,
-            'deleteService',
-            'Delete Service',
-            'Deleting',
-            () => this.delete().pipe(map( () => {
-                this.data.routes.navigate(() => this.parent.viewPath);
-            })),
-            () => true,
-            {
-                title: 'Confirm Service Deletion',
-                class: this.resourceId ? "warning" : null
-            },
-            {
-                template: this.resourceId ? ArmWarningComponent : null,
-                inputs: {
-                    resourceId: this.resourceId,
-                    message: `Delete service ${this.name} from cluster ${window.location.host}?`,
-                    confirmationKeyword: this.name,
-                    template: MessageWithConfirmationComponent
+        if (!this.isArmManaged) {
+            this.actions.add(new ActionWithConfirmationDialog(
+                this.data.dialog,
+                'deleteService',
+                'Delete Service',
+                'Deleting',
+                () => this.delete().pipe(map( () => {
+                    this.data.routes.navigate(() => this.parent.viewPath);
+                })),
+                () => true,
+                {
+                    title: 'Confirm Service Deletion',
+                },
+                {
+                    inputs: {
+                        message: `Delete service ${this.name} from cluster ${window.location.host}?`,
+                        confirmationKeyword: this.name,
+                    }
                 }
-            }
             ));
+        }
 
         if (this.isStatelessService) {
             this.actions.add(new IsolatedAction(
@@ -156,9 +153,11 @@ export class Service extends DataModelBase<IRawService> {
                     class: this.resourceId ? "warning" : null
                 },
                 {
-                    template: ArmWarningComponent,
+                    template: MessageWithWarningComponent,
                     inputs: {
-                        resourceId: this.resourceId,
+                        description: "This is an ARM managed resource. ARM managed resources should only be modified during ARM deployments.",
+                        link: `https://ms.portal.azure.com/#@microsoft.onmicrosoft.com/resource${this.resourceId}/overview`,
+                        linkText: 'Any modifications done here should be replicated using ARM deployments. Click here to visit this resource in the Azure portal.',
                         service: this,
                         template: ScaleServiceComponent
                     }
