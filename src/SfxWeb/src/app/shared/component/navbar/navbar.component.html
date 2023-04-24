@@ -12,7 +12,7 @@
       </div>
       <app-warning *ngIf="armManaged" [description]="armWarningText" iconSize="mif-2x"
         [link]="this.resourceId ? 'https://ms.portal.azure.com/#@microsoft.onmicrosoft.com/resource' + this.resourceId + '/overview' : null" 
-        [linkText]="this.resourceId ? 'Any modifications done here should be replicated using ARM deployments. Click here to visit this resource in the Azure portal.' : null"
+        [linkText]="this.resourceId ? 'Click here to visit this resource in the Azure portal.' : null"
       ></app-warning>
       <div class="detail-view-navbar nav-wrapper" role="tablist" [attr.aria-label]="name" data-cy="navtabs">
           <a  *ngFor="let tab of tabs; let i = index" #rla="routerLinkActive" [attr.aria-selected]="rla.isActive" [routerLink]="tab.route"

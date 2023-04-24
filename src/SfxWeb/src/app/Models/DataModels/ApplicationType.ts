@@ -187,7 +187,7 @@ export class ApplicationTypeGroup extends DataModelBase<IRawApplicationType> {
                 inputs: {
                     message: `Unprovision all ${this.isArmManaged ? " non-arm managed " : null} versions of application type ${this.name} from cluster ${window.location.host}?`,
                     confirmationKeyword: this.name,
-                    description: `Some versions of application type ${this.name} are ARM managed, this action will only not unprovision those versions.`,
+                    description: `Some versions of application type ${this.name} are ARM managed, this action will not unprovision those versions.`,
                     template: MessageWithConfirmationComponent
                 }
             }
