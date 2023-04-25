@@ -354,7 +354,7 @@ export class TreeNodeGroupViewModel implements ITreeNode {
         if (this.isCollapsed) {
             this.toggle();
         }
-        else if(this.hasExpandedAndLoadedChildren) {
+        else if(this.hasExpandedAndLoadedChildren) { //hasChildren is not set properly for leaf nodes, checking actual children length instead
             this.selectNext();
         }
     }
