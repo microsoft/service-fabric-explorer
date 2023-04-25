@@ -76,7 +76,7 @@ export class Service extends DataModelBase<IRawService> {
 
     public get resourceId(): string {
         //TODO turn back
-        // return this.raw.ServiceMetadata?.ArmMetaData?.ArmResourceId;
+        // return this.raw.ServiceMetadata?.ArmMetadata?.ArmResourceId;
         return "test";
     }
 
@@ -136,34 +136,29 @@ export class Service extends DataModelBase<IRawService> {
                     }
                 }
             ));
+            if (this.isStatelessService) {
+                this.actions.add(new IsolatedAction(
+                    this.data.dialog,
+                    'scaleService',
+                    'Scale Service',
+                    'Scaling Service',
+                    this,
+                    ActionDialogComponent,
+                    () => this.isStatelessService,
+                    null,
+                    {
+                        title: "Scale Service",
+                    },
+                    {
+                        template: ScaleServiceComponent,
+                        inputs: {
+                            service: this
+                        }
+                    }
+                ));
+            }
         }
 
-        if (this.isStatelessService) {
-            this.actions.add(new IsolatedAction(
-                this.data.dialog,
-                'scaleService',
-                'Scale Service',
-                'Scaling Service',
-                this,
-                ActionDialogComponent,
-                () => this.isStatelessService,
-                null,
-                {
-                    title: "Scale Service",
-                    class: this.resourceId ? "warning" : null
-                },
-                {
-                    template: MessageWithWarningComponent,
-                    inputs: {
-                        description: "This is an ARM managed resource. ARM managed resources should only be modified during ARM deployments.",
-                        link: `https://ms.portal.azure.com/#@microsoft.onmicrosoft.com/resource${this.resourceId}/overview`,
-                        linkText: 'Any modifications done here should be replicated using ARM deployments. Click here to visit this resource in the Azure portal.',
-                        service: this,
-                        template: ScaleServiceComponent
-                    }
-                }
-            ));
-        }
 
     }
 
