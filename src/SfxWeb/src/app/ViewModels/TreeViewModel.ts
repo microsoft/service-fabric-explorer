@@ -85,6 +85,11 @@ export class TreeViewModel {
             case 'ArrowLeft': // Left
                 this.selectedNode.collapseOrMoveToParent();
                 break;
+            case 'Home':
+                this.selectedNode.selectRoot();
+                break;
+            case 'End':
+                this.selectedNode.selectEnd();
         }
         if (selectedNode !== this.selectedNode) {
             // Prevents the key press from moving the scroll bar

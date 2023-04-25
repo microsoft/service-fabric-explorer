@@ -315,7 +315,7 @@ export class TreeNodeGroupViewModel implements ITreeNode {
         }
     }
 
-    public selectNext(actionDelay?: number) {
+    public selectNext() {
         if (this.hasExpandedAndLoadedChildren) {
             this.displayedChildren[0].select(this.keyboardSelectActionDelayInMilliseconds);
         } else {
@@ -323,31 +323,46 @@ export class TreeNodeGroupViewModel implements ITreeNode {
         }
     }
 
-    public selectPrevious(actionDelay?: number) {
+    public selectPrevious() {
         const parentsChildren = this.getParentsChildren();
         const myIndex = parentsChildren.indexOf(this);
 
-        if (myIndex === 0 && this.parent) {
+        if (myIndex === 0 && this.parent && this.parent.nodeId !== 'base') {
             this.parent.select(this.keyboardSelectActionDelayInMilliseconds);
         } else if (myIndex !== 0) {
             parentsChildren[myIndex - 1].selectLast();
         }
     }
 
+    private moveToRoot() {
+        if (this.parent && this.parent.nodeId !== 'base') {
+            return this.parent.moveToRoot();
+        }
+        return this;
+    }
+
+    public selectRoot() {
+        this.moveToRoot().select(this.keyboardSelectActionDelayInMilliseconds);
+        
+    }
+
+    public selectEnd() {
+        this.moveToRoot().selectLast();
+    }
+
     public expandOrMoveToChild() {
-        if (this.hasChildren) {
-            if (this.isCollapsed) {
-                this.toggle();
-            } else {
-                this.selectNext();
-            }
+        if (this.isCollapsed) {
+            this.toggle();
+        }
+        else if(this.hasExpandedAndLoadedChildren) {
+            this.selectNext();
         }
     }
 
     public collapseOrMoveToParent() {
         if (this.hasChildren && this.isExpanded) {
             this.toggle();
-        } else if (this.parent) {
+        } else if (this.parent && this.parent.nodeId !== 'base') {
             this.parent.select(this.keyboardSelectActionDelayInMilliseconds);
         }
     }
@@ -430,7 +445,7 @@ export class TreeNodeGroupViewModel implements ITreeNode {
         const parentsChildren = this.getParentsChildren();
         const myIndex = parentsChildren.indexOf(this);
 
-        if (myIndex === parentsChildren.length - 1 && this.parent) {
+        if (myIndex === parentsChildren.length - 1 && this.parent && this.parent.nodeId !== 'base') {
             this.parent.selectNextSibling();
         } else if (myIndex !== parentsChildren.length - 1) {
             parentsChildren[myIndex + 1].select(this.keyboardSelectActionDelayInMilliseconds);
