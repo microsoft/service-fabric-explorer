@@ -619,7 +619,7 @@ context('Cluster page', () => {
     })
   })
 
-  describe("repair tasks", () => {
+  describe.only("repair tasks", () => {
     const setup = (file) => {
       addRoute('repairs', file, apiUrl('/$/GetRepairTaskList?*'))
       cy.visit('/#/repairtasks')
