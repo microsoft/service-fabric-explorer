@@ -8,7 +8,9 @@
         <div class="inner-content">
           <div>
             <div>
-              <div [innerHTML]="alert.message"></div>
+              <div>
+                {{alert.message}}
+              </div>
 
               <div class="link-out" *ngIf="alert.link">
                 <a target="_blank" [href]="alert.link">{{alert.linkText ||

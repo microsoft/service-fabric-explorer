@@ -14,9 +14,9 @@
 
 
   <div class="detail-pane essen-pane" data-cy="health">
-    <app-collapse-container sectionName="Unhealthy Evaluations">
+    <app-collapse-container sectionName="Health Evaluations">
       <div collapse-header>
-        <h4>Health Evaluations</h4>
+        <h2>Health Evaluations</h2>
       </div>
       <div collapse-body>
         <app-health-viewer  [healthyEvaluations]="partition.health.healthEvents" [unhealthyEvaluations]="partition.health.unhealthyEvaluations" ></app-health-viewer>
@@ -24,10 +24,10 @@
     </app-collapse-container>
   </div>
 
-  <div *ngIf="partition.isStatefulService">
+  <div *ngIf="partition.isStatefulService" class="replicator-section">
     <app-collapse-container sectionName="Replicator Status" data-cy="replicator">
       <div collapse-header>
-        <h4>Replicator Status</h4>
+        <h2>Replicator Status</h2>
       </div>
       <div collapse-body>
         <div>
@@ -40,7 +40,7 @@
   <div class="detail-pane essen-pane" data-cy="replicas">
     <app-collapse-container [sectionName]="partition.isStatelessService ? 'Instances' : 'Replicas'">
       <div collapse-header>
-        <h4>{{partition.isStatelessService ? "Instances" : "Replicas"}}</h4>
+        <h2>{{partition.isStatelessService ? "Instances" : "Replicas"}}</h2>
       </div>
       <div collapse-body>
         <app-detail-list [list]="partition.replicas.collection" [listSettings]="listSettings"

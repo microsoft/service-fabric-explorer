@@ -9,56 +9,10 @@
     justify-content: center;
 }
 
-
-.tile-list-entry {
-    text-align: center;
-    display: flex;
-}
-
-.text-wrapper {
-    position: relative;
-    overflow: hidden;
-    flex: 1;
-    .middle-text {
-        transition: .5s;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        max-width: 800px;
-        float: left;
-    }
-
-    .left-text {
-        transition: .5s;
-        white-space: nowrap;
-        color: #c9c9c9;
-        font-weight: 500;
-        font-size: 14px;
-    }
-
-}
-
-.centering-row {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-}
-
-.tile-item {
-    @extend .centering-row;
-    height: 35px;
-    position: relative;
-}
-
-
-
 .right-side-wrapper {
     flex: 1;
     min-width: 0px;
     flex-direction: column;
     display: flex;
     height: 100%;
-}
-
-.spacer {
-    width: 10px; height: 1px;
 }

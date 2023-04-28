@@ -1,24 +1,27 @@
 /// <reference types="cypress" />
 
-import { addDefaultFixtures, apiUrl, addRoute, checkCommand } from './util.cy';
+import { addDefaultFixtures, apiUrl, addRoute, checkCommand, watchForAlert, xssEncoded, xssPrefix, windowAlertText } from './util.cy';
 
 const nodeName = "_nt_2"
 const appName = "VisualObjectsApplicationType";
 const serviceName = "VisualObjects.ActorServicePkg";
 const waitRequest = "@getinfo";
 
+const setup = (service, prefix = "") => {
+  addRoute("apps", prefix + "deployed-service/deployed-apps.json", apiUrl(`/Nodes/${nodeName}/$/GetApplications?*`));
+  addRoute("health", prefix + "deployed-service/health.json", apiUrl(`/Nodes/${nodeName}/$/GetApplications/${appName}/$/GetServicePackages/${service}/$/GetHealth?*`));
+  addRoute("info", prefix + "deployed-service/service-info.json", apiUrl(`/Nodes/${nodeName}/$/GetApplications/${appName}/$/GetServicePackages/${service}?*`));
+  addRoute("services", prefix + "deployed-service/services.json", apiUrl(`/Nodes/${nodeName}/$/GetApplications/${appName}/$/GetServicePackages?*`));
+  addRoute("manifest", prefix + "deployed-service/manifest.json", apiUrl(`/ApplicationTypes/${appName}/$/GetServiceManifest?*`));
+
+}
+
 context('deployed service package', () => {
+  describe("main interactions", () => {
     beforeEach(() => {
-        addDefaultFixtures();
-
-
-        addRoute("apps", "deployed-service/deployed-apps.json", apiUrl(`/Nodes/${nodeName}/$/GetApplications?*`));
-        addRoute("health", "deployed-service/health.json", apiUrl(`/Nodes/${nodeName}/$/GetApplications/${appName}/$/GetServicePackages/${serviceName}/$/GetHealth?*`));
-        addRoute("info", "deployed-service/service-info.json", apiUrl(`/Nodes/${nodeName}/$/GetApplications/${appName}/$/GetServicePackages/${serviceName}?*`));
-        addRoute("services", "deployed-service/services.json", apiUrl(`/Nodes/${nodeName}/$/GetApplications/${appName}/$/GetServicePackages?*`));
-        addRoute("manifest", "deployed-service/manifest.json", apiUrl(`/ApplicationTypes/${appName}/$/GetServiceManifest?*`));
-
-        cy.visit(`/#/node/_nt_2/deployedapp/${appName}/deployedservice/${serviceName}`)
+      addDefaultFixtures();
+      setup(serviceName);
+      cy.visit(`/#/node/_nt_2/deployedapp/${appName}/deployedservice/${serviceName}`)
     })
 
     describe("essentials", () => {
@@ -64,4 +67,24 @@ context('deployed service package', () => {
 
         })
     })
+  })
+
+  describe("xss", () => {
+    it("essentials/details", () => {
+      addDefaultFixtures(xssPrefix);
+
+      setup(`*${windowAlertText}*`, xssPrefix)
+
+      watchForAlert(() => {
+        cy.visit(`/#/node/_nt_2/deployedapp/${appName}/deployedservice/${xssEncoded}`);
+        cy.contains('3.0.0')
+      })
+
+
+      watchForAlert(() => {
+        cy.visit(`/#/node/_nt_2/deployedapp/${appName}/deployedservice/${xssEncoded}/details`);
+        cy.contains('3.0.0')
+      })
+    })
+  })
 })

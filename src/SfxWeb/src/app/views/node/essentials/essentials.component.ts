@@ -92,6 +92,11 @@ export class EssentialsComponent extends NodeBaseControllerDirective {
       {
         descriptionName: 'Seed Node',
         displayText: this.node.raw.IsSeedNode ? 'Yes' : 'No'
+      },
+      {
+        descriptionName: "Node Type",
+        displayText: this.node.raw.Type,
+        copyTextValue: this.node.raw.Type
       }
     ];
 

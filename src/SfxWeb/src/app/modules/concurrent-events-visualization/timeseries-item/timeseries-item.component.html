@@ -1,0 +1,15 @@
+<app-collapse-container [collapsed]="true">
+  <div collapse-header class="container">
+    <div class="first-line">
+      {{item.series.name}} <app-display-time [time]="item.pointData.x"></app-display-time>
+    </div>
+    <div class="second-line">
+      <div *ngFor="let tag of item.tags" class="toggle-wrapper">
+        <span>{{tag.label}}</span> : <span>{{tag.y}}</span>
+      </div>
+    </div>
+  </div>
+  <div collapse-body>
+    <app-full-description [(item)]="item.item"></app-full-description>
+  </div>
+</app-collapse-container>

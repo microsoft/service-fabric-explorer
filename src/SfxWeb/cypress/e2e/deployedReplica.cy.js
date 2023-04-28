@@ -1,20 +1,36 @@
 /// <reference types="cypress" />
 
-import { addDefaultFixtures, apiUrl, checkCommand, checkTableSize } from './util.cy';
+import { addDefaultFixtures, apiUrl, checkCommand, checkTableSize, watchForAlert, xssPrefix, plaintextXSS2 } from './util.cy';
 
 const nodeName = "_nt_2"
 const appName = "VisualObjectsApplicationType";
 const serviceName = "VisualObjects.ActorServicePkg";
+const replica = "132431356665040624";
+const partition = "41fb6918-986b-4b6d-bff6-0495b114c720";
+
 const waitRequest = "@replicas";
 
-context('deployed replica', () => {
-    beforeEach(() => {
-        addDefaultFixtures();
+const setup = (prefix = "") => {
+  addDefaultFixtures(prefix);
+  cy.intercept(apiUrl(`/Nodes/${nodeName}/$/GetApplications?*`), { fixture: prefix + 'deployed-replica/deployed-apps.json' }).as('apps');
+  cy.intercept(apiUrl(`/Nodes/${nodeName}/$/GetApplications/${appName}/$/GetServicePackages?*`), { fixture: prefix + 'deployed-replica/service-packages.json' }).as('services');
+  cy.intercept(apiUrl(`/Nodes/${nodeName}/$/GetApplications/${appName}/$/GetCodePackages?*`), { fixture: prefix + 'deployed-replica/code-packages.json' }).as('codePackages');
+  cy.intercept(apiUrl(`/Nodes/${nodeName}/$/GetApplications/${appName}/$/GetReplicas?*`), { fixture: prefix + 'deployed-replica/replicas.json' }).as('replicas');
+}
 
-        cy.intercept(apiUrl(`/Nodes/${nodeName}/$/GetApplications?*`), { fixture: 'deployed-replica/deployed-apps.json' }).as('apps');
-        cy.intercept(apiUrl(`/Nodes/${nodeName}/$/GetApplications/${appName}/$/GetServicePackages?*`), { fixture: 'deployed-replica/service-packages.json' }).as('services');
-        cy.intercept(apiUrl(`/Nodes/${nodeName}/$/GetApplications/${appName}/$/GetCodePackages?*`), { fixture: 'deployed-replica/code-packages.json' }).as('codePackages');
-        cy.intercept(apiUrl(`/Nodes/${nodeName}/$/GetApplications/${appName}/$/GetReplicas?*`), { fixture: 'deployed-replica/replicas.json' }).as('replicas');
+const setupIndividualPage = (prefix = "") => {
+  cy.intercept(apiUrl(`/Partitions/${partition}?*`), { fixture: prefix + 'deployed-replica/partition.json' }).as('partition');
+  //we call this route twice with different params
+  cy.intercept(apiUrl(`/Nodes/${nodeName}/$/GetApplications/${appName}/$/GetReplicas?**PartitionId=${partition}*`), { fixture: prefix + 'deployed-replica/view-replica.json' }).as('replica2')
+  cy.intercept(apiUrl(`/Nodes/${nodeName}/$/GetPartitions/${partition}/$/GetReplicas/${replica}/$/GetDetail?*`), { fixture: prefix + 'deployed-replica/replica-details.json' }).as('replica-details');
+}
+
+
+context('deployed replica', () => {
+
+  describe("main interactions", () => {
+    beforeEach(() => {
+      setup();
     })
 
     describe("list page", () => {
@@ -35,17 +51,9 @@ context('deployed replica', () => {
     })
 
     describe("deployed replica page", () => {
-        const replica = "132431356665040624";
-        const partition = "41fb6918-986b-4b6d-bff6-0495b114c720";
-
         beforeEach(() => {
-            cy.intercept(apiUrl(`/Partitions/${partition}?*`), { fixture: 'deployed-replica/partition.json' }).as('partition');
-            //we call this route twice with different params
-            cy.intercept(apiUrl(`/Nodes/${nodeName}/$/GetApplications/${appName}/$/GetReplicas?**PartitionId=${partition}*`), { fixture: 'deployed-replica/view-replica.json' }).as('replica2')
-            cy.intercept(apiUrl(`/Nodes/${nodeName}/$/GetPartitions/${partition}/$/GetReplicas/${replica}/$/GetDetail?*`), { fixture: 'deployed-replica/replica-details.json' }).as('replica-details');
-
+          setupIndividualPage();
             cy.visit(`/#/node/_nt_2/deployedapp/${appName}/deployedservice/${serviceName}/partition/${partition}/replica/${replica}`);
-
         })
 
         it('essentials', () => {
@@ -69,10 +77,30 @@ context('deployed replica', () => {
 
         it('commands', () => {
             cy.wait(waitRequest);
-    
+
             checkCommand(1);
-    
+
         })
     })
+  })
+
+  describe("xss", () => {
+    it("essentials/details", () => {
+      setup(xssPrefix);
+      setupIndividualPage(xssPrefix);
+
+      watchForAlert(() => {
+        cy.visit(`/#/node/_nt_2/deployedapp/${appName}/deployedservice/${serviceName}/partition/${partition}/replica/${replica}`);
+
+        cy.contains(`fabric:/VisualObjectsApplicationType/${plaintextXSS2}`)
+      })
+
+      watchForAlert(() => {
+        cy.visit(`/#/node/_nt_2/deployedapp/${appName}/deployedservice/${serviceName}/partition/${partition}/replica/${replica}/details`);
+
+        cy.contains(`fabric:/VisualObjectsApplicationType/${plaintextXSS2}`)
+      })
+    })
+  })
 
 })

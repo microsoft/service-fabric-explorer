@@ -11,15 +11,17 @@ import { QuestionToolTipComponent } from '../modules/detail-list-templates/quest
 import { RepairTaskViewComponent } from '../modules/repair-tasks/repair-task-view/repair-task-view.component';
 import { ListColumnSettingForApplicationType } from '../views/application-type/action-row/action-row.component';
 import { HtmlUtils } from '../Utils/HtmlUtils';
-
+import { ReplaySubject } from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
 export class SettingsService {
   private listSettings: Record<string, ListSettings>;
   private iPaginationLimit: number;
-  private iMetricsViewModel: MetricsViewModel;  
+  private iMetricsViewModel: MetricsViewModel;
   private sessionVariables: { [key: string]: any } = {};
+
+  public treeWidth: ReplaySubject<string> = new ReplaySubject(1);
 
   public get paginationLimit(): number {
       return this.iPaginationLimit;
@@ -42,7 +44,7 @@ export class SettingsService {
   public constructor(private storage: StorageService) {
       this.listSettings = {};
       this.iPaginationLimit = storage.getValueNumber(Constants.PaginationLimitStorageKey, Constants.DefaultPaginationLimit);
-  }
+    }
 
   public getNewOrExistingMetricsViewModel(clusterLoadInformation: ClusterLoadInformation): MetricsViewModel {
       if (!this.iMetricsViewModel) {
@@ -131,7 +133,7 @@ export class SettingsService {
       return this.getNewOrExistingListSettings(listKey, null, [
         new ListColumnSetting('raw.Name', 'Name', {
             enableFilter: false,
-            getDisplayHtml: (item, property) =>  `<span class="link">${property}</span>`,
+            cssClasses: "link",
             colspan: 1,
             clickEvent: item => item.action.run()
           }),
@@ -230,7 +232,7 @@ export class SettingsService {
       new ListColumnSetting('placeholder', 'placeholder', { enableFilter: false }), // Empty column
       new ListColumnSetting('raw.StatusDetails', 'Status Details', {
         enableFilter: false,
-        getDisplayHtml: (item) => HtmlUtils.getSpanWithCustomClass('preserve-whitespace-wrap', item.raw.StatusDetails),
+        cssClasses: "preserve-whitespace-wrap",
         colspan: 100
       })
     ];

@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, Input } from '@angular/core';
 import { DetailBaseComponent } from 'src/app/ViewModels/detail-table-base.component';
 import { ListColumnSetting } from 'src/app/Models/ListSettings';
 import { FabricEventBase } from 'src/app/Models/eventstore/Events';
@@ -12,7 +12,7 @@ import { FabricEventBase } from 'src/app/Models/eventstore/Events';
 export class FullDescriptionComponent implements DetailBaseComponent, OnInit {
 
   copyText = '';
-  item: FabricEventBase;
+  @Input() item: FabricEventBase;
   listSetting: ListColumnSetting;
 
   color =  'white';

@@ -1,17 +1,18 @@
-import { Component, Injector } from '@angular/core';
+import { Component, ElementRef, Injector } from '@angular/core';
 import { ITab } from 'src/app/shared/component/navbar/navbar.component';
 import { ReplicaBaseControllerDirective } from '../ReplicaBase';
 import { DataService } from 'src/app/services/data.service';
 import { TreeService } from 'src/app/services/tree.service';
 import { IdGenerator } from 'src/app/Utils/IdGenerator';
 import { Constants } from 'src/app/Common/Constants';
+import { IBaseView } from '../../BaseView';
 
 @Component({
   selector: 'app-base',
   templateUrl: './base.component.html',
   styleUrls: ['./base.component.scss']
 })
-export class BaseComponent extends ReplicaBaseControllerDirective {
+export class BaseComponent extends ReplicaBaseControllerDirective implements IBaseView {
 
   tabs: ITab[] = [{
     name: 'essentials',
@@ -27,7 +28,7 @@ export class BaseComponent extends ReplicaBaseControllerDirective {
     }
   ];
 
-  constructor(protected dataService: DataService, injector: Injector, private tree: TreeService) {
+  constructor(protected dataService: DataService, injector: Injector, private tree: TreeService, public el: ElementRef) {
     super(dataService, injector);
   }
 

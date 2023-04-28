@@ -5,15 +5,12 @@ import {
   upgradeProgress_route, FIXTURE_REF_UPGRADEPROGRESS, FIXTURE_REF_MANIFEST, addRoute,
   checkTableErrorMessage, EMPTY_LIST_TEXT, FAILED_TABLE_TEXT, FAILED_LOAD_TEXT,
   repairTask_route, manifest_route, CLUSTER_TAB_NAME, REPAIR_TASK_TAB_NAME,
-  FIXTURE_REF_NODES, FIXTURE_NODES, typeIntoInput, checkCheckBox, refresh,
-  FIXTURE_REF_SYSTEMAPPS, systemApps_route, checkCommand, FIXTURE_REF_APPTYPES
+  FIXTURE_REF_NODES, OPTION_PICKER, typeIntoInput, SELECT_EVENT_TYPES, refresh,
+  FIXTURE_REF_SYSTEMAPPS, systemApps_route, checkCommand, FIXTURE_REF_APPTYPES, watchForAlert, xssPrefix, FIXTURE_MANIFEST
 } from './util.cy';
 
 const LOAD_INFO = "getloadinfo"
 const EVENT_TABS = '[data-cy=eventtabs]'
-const OPTION_PICKER = '[data-cy=option-picker]'
-const SELECT_EVENT_TYPES = '[sectionName=select-event-types]'
-
 const serviceName = "VisualObjectsApplicationType~VisualObjects.ActorService";
 
 context('Cluster page', () => {
@@ -74,6 +71,14 @@ context('Cluster page', () => {
 
     })
 
+    it('xss', () => {
+
+      addDefaultFixtures(xssPrefix);
+
+      watchForAlert(() => {
+        cy.visit('')
+      })
+    });
   })
 
   describe("details", () => {
@@ -117,6 +122,15 @@ context('Cluster page', () => {
       })
 
     })
+
+    it('xss', () => {
+
+      addDefaultFixtures(xssPrefix);
+
+      watchForAlert(() => {
+        cy.visit('/#/details')
+      })
+    });
 
     it('upgrade in progress - manual mode', () => {
       cy.intercept('GET', upgradeProgress_route, { fixture: 'cluster-page/upgrade/manual-mode-upgrade.json' }).as("upgrade");
@@ -202,22 +216,39 @@ context('Cluster page', () => {
   })
 
   describe("metrics", () => {
+    const visit = () => {
+      const url = "/#/metrics";
+      const waitUrl = "@nodeLoad";
+      cy.visit(url)
+      cy.wait(waitUrl);
+    }
     it('load metrics', () => {
       cy.intercept('GET', nodes_route, { fixture: 'cluster-page/nodes-1-warning.json' })
       cy.intercept('GET', apiUrl('/Nodes/_nt_0/$/GetLoadInformation?*'), { fixture: 'node-load/get-node-load-information.json' }).as("nodeLoad")
       cy.intercept(apiUrl('/Nodes/_nt_0/$/GetHealth?EventsHealthStateFilter=0&api-version=3.0'), { fixture: 'cluster-page/node-health.json' }).as('getnodeHealth')
 
-      cy.visit('/#/metrics')
-      cy.wait("@nodeLoad");
+      visit();
 
       cy.get('app-metrics').within(() => {
         cy.contains("Reserved CpuCores");
       })
     })
 
+    it('xss', () => {
+      cy.intercept('GET', nodes_route, { fixture: 'cluster-page/nodes-1-warning.json' })
+      cy.intercept('GET', apiUrl('/Nodes/_nt_0/$/GetLoadInformation?*'), { fixture: 'node-load/get-node-load-information.json' }).as("nodeLoad")
+      cy.intercept(apiUrl('/Nodes/_nt_0/$/GetHealth?EventsHealthStateFilter=0&api-version=3.0'), { fixture: 'cluster-page/node-health.json' }).as('getnodeHealth')
+
+      addDefaultFixtures(xssPrefix);
+
+      watchForAlert(() => {
+        visit();
+      })
+    });
   })
 
   describe("clustermap", () => {
+    const url = '/#/clustermap';
     it('load clustermap', () => {
       const checkNodes = (ref, expectedCount) => {
 
@@ -239,7 +270,7 @@ context('Cluster page', () => {
 
       const down_node_ref = '[data-cy=down-nodes]';
 
-      cy.visit('/#/clustermap')
+      cy.visit(url)
 
       checkNodes(down_node_ref, 0);
 
@@ -271,22 +302,30 @@ context('Cluster page', () => {
       })
     })
 
+    it('xss', () => {
+      addDefaultFixtures(xssPrefix);
+
+      watchForAlert(() => {
+        cy.visit(url)
+      })
+    });
+
   })
 
   describe("image store", () => {
+    const waitRef = 'baseDirectory';
+    const url = '/#/imagestore';
+
+    const visit = () => {
+      cy.visit(url)
+      cy.wait('@get' + waitRef)
+    }
     it('load image store', () => {
-      addRoute('baseDirectory', 'cluster-page/imagestore/base-directory.json', apiUrl('/ImageStore?*'))
+      addRoute(waitRef, 'cluster-page/imagestore/base-directory.json', apiUrl('/ImageStore?*'))
       addRoute('nestedDictectory', 'cluster-page/imagestore/nested-directory.json', apiUrl('/ImageStore/StoreTest?*'))
       addRoute('loadSize', 'cluster-page/imagestore/load-size.json', apiUrl('/ImageStore/Store/VisualObjectsApplicationType/$/FolderSize?*'))
 
-      // cy.intercept('GET', apiUrl('/ImageStore?*'), 'fixture:cluster-page/imagestore/base-directory').as('getbaseDirectory')
-      // cy.intercept('GET', apiUrl('/ImageStore/StoreTest?*'), 'fixture:cluster-page/imagestore/nested-directory').as('getnestedDictectory')
-      // cy.intercept('GET', apiUrl('/ImageStore/Store/VisualObjectsApplicationType/$/FolderSize?*'),
-      // 'fixture:cluster-page/imagestore/load-size.json').as('getloadSize')
-
-      cy.visit('/#/imagestore')
-
-      cy.wait('@getbaseDirectory')
+      visit();
 
       cy.get('[data-cy=imagestore]').within(() => {
 
@@ -305,15 +344,26 @@ context('Cluster page', () => {
   })
 
   describe("manifest", () => {
+    const visit = () => {
+      cy.visit('/#/manifest');
+      cy.wait(FIXTURE_REF_MANIFEST);
+    }
     it('load manifest page', () => {
-      cy.visit('/#/manifest')
 
-      cy.wait(FIXTURE_REF_MANIFEST)
+      visit();
 
       cy.get('app-manifest-viewer').within(() => {
         cy.contains("WRP_Generated_ClusterManifest");
       })
     })
+
+    it('xss', () => {
+      addDefaultFixtures(xssPrefix);
+
+      watchForAlert(() => {
+        visit();
+      })
+    });
   })
 
   describe("back up restore", () => {
@@ -493,6 +543,32 @@ context('Cluster page', () => {
 
     it("loads properly", () => {
       addRoute('events', 'empty-list.json', apiUrl(`/EventsStore/Cluster/Events?*`))
+      addRoute('events', 'cluster-page/naming/naming-partitions.json', apiUrl(`/Applications/System/$/GetServices/System%2FNamingService/$/GetPartitions?*`))
+      addRoute('events', 'cluster-page/naming/naming-partition-1000.json', apiUrl(`/EventsStore/Partitions/00000000-0000-0000-0000-000000001000/$/Replicas/Events?*`))
+      cy.visit('/#/')
+
+      cy.get('[data-cy=navtabs]').within(() => {
+        cy.contains('naming').click();
+      })
+
+      cy.wait('@getevents');
+      cy.url().should('include', 'naming');
+
+      cy.get('[data-cy=metric]').should('have.length', 3);
+      cy.get("[class=highcharts-point]").should('have.length', 12);
+
+
+      cy.get('[data-cy=overviewpanel]').should('have.length', 1).first().within(() => {
+        cy.contains("Total Volume: 78887");
+        cy.contains("1000").click();
+      })
+
+      //toggle data set
+      cy.get("[class=highcharts-point]").should('have.length', 0);
+    })
+
+    it("loads properly", () => {
+      addRoute('events', 'empty-list.json', apiUrl(`/EventsStore/Cluster/Events?*`))
       cy.visit('/#/')
 
       cy.get('[data-cy=navtabs]').within(() => {
@@ -609,6 +685,15 @@ context('Cluster page', () => {
       });
     })
 
+    it('view duration graph', () => {
+      setup('cluster-page/repair-jobs/simple.json')
+
+      cy.contains("Duration Graph").click();
+
+      cy.wait(1000)
+      cy.get('[class=highcharts-point]').should('have.length', 21)
+    })
+
     it('view in progress repair job - stuck in approving', () => {
       setup('cluster-page/repair-jobs/in-progress.json')
 
@@ -713,35 +798,52 @@ context('Cluster page', () => {
 
     })
 
-    describe('cross AZ infrastructure service', () => {
+    describe('banners infrastructure service', () => {
+      const bannerText = "Nodetype worker is deployed with less than 5 VMs.";
+
       beforeEach(() => {
         addRoute("infra-service-data", "empty-list.json", apiUrl(`/$/InvokeInfrastructureQuery?api-version=6.0&Command=GetJobs&ServiceId=System/InfrastructureService/**`))
-        addRoute(FIXTURE_REF_SYSTEMAPPS, 'system-service/cross-az-infra.json', systemApps_route)
       })
 
-      it('5 nodes of one nodetype', () => {
-        cy.intercept('GET', nodes_route, { fixture: 'system-service/cross-az-nodes.json' })
+      describe('Coordinated', () => {
+        it('coordinated guid', () => {
+          addRoute(FIXTURE_REF_SYSTEMAPPS, 'system-service/coordinated-infra-guid.json', systemApps_route)
+          cy.visit(`/#/infrastructure`)
 
-        cy.visit(`/#/infrastructure`)
+          cy.contains(bannerText).should('not.exist')
+        })
+      })
 
-        cy.get('[data-cy=navtabs]').within(() => {
-          cy.contains('infrastructure jobs').click();
+      describe('cross AZ', () => {
+        beforeEach(() => {
+          addRoute(FIXTURE_REF_SYSTEMAPPS, 'system-service/cross-az-infra.json', systemApps_route)
         })
 
-        cy.contains('Nodetype worker is deployed with less than 5 VMs.').should('not.exist')
-      })
+        it('5 nodes of one nodetype - ', () => {
+          cy.intercept('GET', nodes_route, { fixture: 'system-service/cross-az-nodes.json' })
 
-      it('< 5 nodes of one node type', () => {
-        cy.intercept('GET', nodes_route, { fixture: 'system-service/cross-az-nodes-4.json' })
+          cy.visit(`/#/infrastructure`)
 
-        cy.visit(`/#/infrastructure`)
+          cy.get('[data-cy=navtabs]').within(() => {
+            cy.contains('infrastructure jobs').click();
+          })
 
-        cy.get('[data-cy=navtabs]').within(() => {
-          cy.contains('infrastructure jobs').click();
+          cy.contains(bannerText).should('not.exist')
         })
 
-        cy.contains('Nodetype worker is deployed with less than 5 VMs.')
+        it('< 5 nodes of one node type - cross AZ', () => {
+          cy.intercept('GET', nodes_route, { fixture: 'system-service/cross-az-nodes-4.json' })
+
+          cy.visit(`/#/infrastructure`)
+
+          cy.get('[data-cy=navtabs]').within(() => {
+            cy.contains('infrastructure jobs').click();
+          })
+
+          cy.contains(bannerText)
+        })
       })
+
     })
   })
 

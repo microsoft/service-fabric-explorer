@@ -1,0 +1,15 @@
+.container {
+  padding: 5px;
+
+  .first-line {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .second-line {
+    display: flex;
+    gap: 5px;
+    overflow: auto;
+  }
+}
+

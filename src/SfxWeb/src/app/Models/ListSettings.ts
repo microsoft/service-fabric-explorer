@@ -3,7 +3,7 @@ import { Utils } from '../Utils/Utils';
 import { HyperLinkComponent } from '../modules/detail-list-templates/hyper-link/hyper-link.component';
 import { CopyTextComponent } from '../modules/detail-list-templates/copy-text/copy-text.component';
 import { RowDisplayComponent } from '../modules/event-store/row-display/row-display.component';
-import { FullDescriptionComponent } from '../modules/event-store/full-description/full-description.component';
+import { FullDescriptionComponent } from '../modules/detail-list-templates/full-description/full-description.component';
 import { DetailBaseComponent } from '../ViewModels/detail-table-base.component';
 import { Type } from '@angular/core';
 import { UtcTimestampComponent } from '../modules/detail-list-templates/utc-timestamp/utc-timestamp.component';
@@ -139,7 +139,7 @@ export class FilterValue {
 /**
  * @param sortPropertyPaths The properties to sort against when user click the column header, instead of defaulting to property path
  * @param enableFilter Whether to enable filters for this column
- * @param getDisplayHtml Customize the HTML to render in this column giving a specific item
+ * @param cssClasses provide specific css classes to be applied on the cell
  * @param colspan The colspan for the extra line, does not affect the first line
  * @param clickEvent A callback that will be executed on click
  * @param canNotExport This column will not be selectable when exporting table
@@ -148,7 +148,7 @@ export class FilterValue {
 export interface IListColumnAdditionalSettings {
     sortPropertyPaths?: string[];
     enableFilter?: boolean;
-    getDisplayHtml?: (item, property) => string;
+    cssClasses?: string,
     colspan?: number;
     clickEvent?: (item) => void;
     canNotExport?: boolean;
@@ -205,6 +205,7 @@ export class ListColumnSetting {
             clickEvent: (item) => null,
             canNotExport: false,
             sortPropertyPaths: [propertyPath],
+            cssClasses: "",
             ...config
         };
 
@@ -238,9 +239,6 @@ export class ListColumnSetting {
 
     public getDisplayContentsInHtml(item: any): string {
         const property = this.getProperty(item);
-        if (this.config.getDisplayHtml) {
-            return this.config.getDisplayHtml(item, property);
-        }
 
         if (property === undefined || property === null) {
             return '';

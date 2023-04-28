@@ -42,7 +42,7 @@ describe('Tree Node', () => {
     fit('validate tree Node', () => {
         testNode = new TreeNodeGroupViewModel(treeViewModel, node, parent);
 
-        expect(testNode.displayHtml).toBe('node1');
+        expect(testNode.displayName()).toBe('node1');
         expect(testNode.isExpanded).toBeFalsy();
         expect(testNode.isCollapsed).toBeTruthy();
         expect(testNode.hasChildren).toBeTruthy();
@@ -140,7 +140,7 @@ describe('Tree Node', () => {
             testNode.toggle();
 
             expect(testNode.displayedChildren.length).toBe(1);
-            expect(testNode.displayedChildren[0].displayHtml).toBe('child1');
+            expect(testNode.displayedChildren[0].displayName()).toBe('child1');
 
             const child2 = {
                 displayName: () => 'child2',
@@ -150,7 +150,7 @@ describe('Tree Node', () => {
             childQuery = [child2];
             testNode.refreshExpandedChildrenRecursively().subscribe();
             expect(testNode.displayedChildren.length).toBe(1);
-            expect(testNode.displayedChildren[0].displayHtml).toBe('child2');
+            expect(testNode.displayedChildren[0].displayName()).toBe('child2');
         });
 
         fit('sort children', () => {

@@ -25,7 +25,7 @@ button {
     white-space: nowrap;
     cursor: pointer;
     position: relative;
-
+    min-height: 23px;
     width: calc(100% - 10px);
     min-width: fit-content;
     margin-left: 5px;
@@ -46,6 +46,12 @@ button {
   &.selected > .self {
     background-color: var(--accent-darkblue);
     box-shadow: var(--heavy-box-shadow);
+  }
+
+  &:focus-visible {
+    border: 2px solid white;
+    border-radius: 3px;
+    outline: none;
   }
 }
 

@@ -28,20 +28,20 @@
     "ApplicationHealthStateChunks": {
         "TotalCount": 2,
         "Items": [
-            {
-                "ApplicationName": "fabric:/System",
-                "ApplicationTypeName": "",
-                "HealthState": "Ok",
-                "ServiceHealthStateChunks": {
-                    "TotalCount": 0,
-                    "Items": []
-                },
-                "DeployedApplicationHealthStateChunks": {
-                    "TotalCount": 0,
-                    "Items": []
-                }
-            },
-            {
+                {
+                  "ApplicationName": "fabric:/System",
+                  "ApplicationTypeName": "",
+                  "HealthState": "Ok",
+                  "ServiceHealthStateChunks": {
+                      "TotalCount": 0,
+                      "Items": []
+                  },
+                  "DeployedApplicationHealthStateChunks": {
+                      "TotalCount": 0,
+                      "Items": []
+                  }
+              },
+              {
                 "ApplicationName": "fabric:/VisualObjectsApplicationType",
                 "ApplicationTypeName": "VisualObjectsApplicationType",
                 "HealthState": "Ok",
