@@ -4,6 +4,7 @@ import { ClusterUpgradeProgress } from 'src/app/Models/DataModels/Cluster';
 import { ListSettings } from 'src/app/Models/ListSettings';
 import { IEssentialListItem } from 'src/app/modules/charts/essential-health-tile/essential-health-tile.component';
 import { SettingsService } from 'src/app/services/settings.service';
+import { IProgressStatus } from 'src/app/shared/component/phase-diagram/phase-diagram.component';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 
 @Component({
@@ -35,6 +36,30 @@ export class UpgradeInfoComponent implements OnChanges, OnInit {
 
   failed: boolean = false;
   manual: boolean = false;
+
+  waitCheckComplete = {
+    descriptionName: 'Wait Check',
+    copyTextValue: "Complete",
+    displayText: "Complete",
+  }
+
+  currentCheck  = {
+    descriptionName: 'Minimum Time Left To Pass',
+    copyTextValue: "Wait",
+    displayText: "2:00 minutes",
+  };
+
+  healthPolicyProgress: IProgressStatus[] = [
+    {
+      name: "Wait Duration - 5:00 minutes"
+    },
+    {
+      name: "Stable Duration Check  - 5:00 minutes"
+    },
+    {
+      name: "Health Check Pass"
+    }
+  ]
 
   constructor(private settings: SettingsService) { }
 
