@@ -75,9 +75,7 @@ export class Service extends DataModelBase<IRawService> {
     }
 
     public get resourceId(): string {
-        //TODO turn back
-        // return this.raw.ServiceMetadata?.ArmMetadata?.ArmResourceId;
-        return "test";
+        return this.raw.ServiceMetadata?.ArmMetadata?.ArmResourceId;
     }
 
     public get isArmManaged(): boolean {
