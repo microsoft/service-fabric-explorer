@@ -1,4 +1,4 @@
-<ul *ngIf="node.isExpanded"  role="tree" [attr.aria-expanded]="node.isExpanded">
+<ul *ngIf="node.isExpanded"  role="tree" [attr.aria-expanded]="node.isExpanded" tabindex="-1">
     <li class="more-children"
         *ngIf="node.loadingChildren"
         [ngStyle]="{ 'paddingLeft': node.paddingLeftPx }">
@@ -14,17 +14,17 @@
             <div (click)="node.pageFirst()" style="padding-left: 10px;" class="expander icon mif-vertical-align-top link" [title]="'First ' + node.listSettings.limit + ' items'" aria-hidden="true"></div>
         </div>
     </li>
-    <li *ngFor="let child of node.displayedChildren; trackBy: trackById; let i = index" class="node" [ngClass]="{ 'selected': child.selected}" appScrollIntoView [selected]="child.selected" role="treeitem"
-    (click)="child.select(); $event.stopPropagation()" tabindex="0"  (keyup)="node.tree.onKeyDown($event)"  [attr.aria-level]="child.depth">
+    <li *ngFor="let child of node.displayedChildren; trackBy: trackById; let i = index" class="node" [ngClass]="{ 'selected': child.selected}" appScrollIntoView [selected]="child.selected" role="treeitem" 
+    (click)="child.select(); $event.stopPropagation()" [attr.aria-level]="child.depth">
         <div class="self hide-nested hover-row flex-center" [ngClass]="{ 'raised-z-index': i === higherZIndex}">
             <span  [ngStyle]="{ 'paddingLeft': child.paddingLeftPx }"></span>
             <div class="expander" *ngIf="!child.hasExpander"></div>
-            <button tabindex="0" class="expander icon mif-chevron-thin-right" aria-hidden="false" role="button"
+            <button tabindex="-1" class="expander icon mif-chevron-thin-right" aria-hidden="false" role="button"
                     (click)="child.toggle(); $event.stopPropagation()" *ngIf="child.hasExpander"
                     [ngClass]="{ 'rotated': child.isExpanded }"
                     style="display: inline-block;" [title]="child.isCollapsed ? 'Expand Children' : 'Collapse Children'">
             </button>
-            <button tabindex="0" class="icon" aria-hidden="false" *ngIf="child.node.canExpandAll && child.hasExpander"
+            <button tabindex="-1" class="icon" aria-hidden="false" *ngIf="child.node.canExpandAll && child.hasExpander"
             (click)="child.isExpanded? child.closeAll() : child.toggleAll(); $event.stopPropagation()"
             [ngClass]="{ 'mif-unfold-less': child.isCollapsed, 'mif-unfold-more': child.isExpanded }"
             [title]="child.isCollapsed ? 'Expand All' : 'Collapse All'" style="font-size: large; padding: 0px;"></button>

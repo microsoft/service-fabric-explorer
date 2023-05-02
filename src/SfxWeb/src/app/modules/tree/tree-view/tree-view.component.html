@@ -38,7 +38,7 @@
         <div class="tree-body" #tree >
             <div *ngIf="treeService.tree && !treeService.tree.isLoading && !treeService.tree.isEmpty"  class="tree-view">
                 <div class="tree" *ngIf="treeService.tree.childGroupViewModel" role="group">
-                    <app-tree-node [node]="treeService.tree.childGroupViewModel" ></app-tree-node>
+                    <app-tree-node [node]="treeService.tree.childGroupViewModel" tabindex="0" (keyup)="treeService.tree.onKeyDown($event)"></app-tree-node>
                 </div>
             </div>
         </div>

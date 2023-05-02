@@ -150,6 +150,7 @@ export class TreeNodeGroupViewModel implements ITreeNode {
     public parent: TreeNodeGroupViewModel;
     public sortBy: () => any[];
     public selected = false;
+    public selectedObservable: Subject<boolean> = new Subject<boolean>();
     public leafNode: boolean;
     public displayName: () => string;
     public listSettings: ListSettings;
@@ -164,7 +165,6 @@ export class TreeNodeGroupViewModel implements ITreeNode {
     public loadingChildren = false;
     public childrenLoaded = false;
 
-    private keyboardSelectActionDelayInMilliseconds = 200;
     private internalIsExpanded = false;
     private currentGetChildrenPromise: Subject<any>;
 
@@ -227,7 +227,9 @@ export class TreeNodeGroupViewModel implements ITreeNode {
                 }else {
                     if (this.tree.selectedNode && (child === this.tree.selectedNode || child.isParentOf(this.tree.selectedNode))) {
                         // Select the parent node instead
-                        child.parent.select();
+                        if(child.parent.select()){
+                            child.parent.navigateTo();
+                        }
                     }
                 }
             });
@@ -303,23 +305,23 @@ export class TreeNodeGroupViewModel implements ITreeNode {
         }
     }
 
-    public select(actionDelay?: number, skipSelectAction?: boolean) {
-        if (this.tree.selectNode(this)) {
-            if (this.node.selectAction && !skipSelectAction) {
-                setTimeout(() => {
-                    if (this.selected) {
-                        this.node.selectAction();
-                    }
-                }, actionDelay || 0);
+    public select() : boolean {
+        return this.tree.selectNode(this);
+    }
+
+    public navigateTo() {
+        if (this.node.selectAction) {
+            if (this.selected) {
+                this.node.selectAction();
             }
         }
     }
 
     public selectNext() {
         if (this.hasExpandedAndLoadedChildren) {
-            this.displayedChildren[0].select(this.keyboardSelectActionDelayInMilliseconds);
+            this.displayedChildren[0].select();
         } else {
-            this.selectNextSibling();
+            this.moveToNextSibling()?.select();
         }
     }
 
@@ -328,21 +330,18 @@ export class TreeNodeGroupViewModel implements ITreeNode {
         const myIndex = parentsChildren.indexOf(this);
 
         if (myIndex === 0 && this.parent && this.parent.nodeId !== 'base') {
-            this.parent.select(this.keyboardSelectActionDelayInMilliseconds);
+            this.parent.select();
         } else if (myIndex !== 0) {
             parentsChildren[myIndex - 1].selectLast();
         }
     }
 
     private moveToRoot() {
-        if (this.parent && this.parent.nodeId !== 'base') {
-            return this.parent.moveToRoot();
-        }
-        return this;
+        return this.tree.childGroupViewModel.displayedChildren[0];
     }
 
     public selectRoot() {
-        this.moveToRoot().select(this.keyboardSelectActionDelayInMilliseconds);
+        this.moveToRoot().select();
         
     }
 
@@ -363,7 +362,7 @@ export class TreeNodeGroupViewModel implements ITreeNode {
         if (this.hasChildren && this.isExpanded) {
             this.toggle();
         } else if (this.parent && this.parent.nodeId !== 'base') {
-            this.parent.select(this.keyboardSelectActionDelayInMilliseconds);
+            this.parent.select();
         }
     }
 
@@ -384,10 +383,60 @@ export class TreeNodeGroupViewModel implements ITreeNode {
             const lastChild: TreeNodeGroupViewModel = this.displayedChildren[this.displayedChildren.length - 1];
             lastChild.selectLast();
         } else {
-            this.select(this.keyboardSelectActionDelayInMilliseconds);
+            this.select();
         }
     }
 
+    private depthFirstSearch(letter: string, skipCurrent: boolean = false, stoppingNode?: TreeNodeGroupViewModel): TreeNodeGroupViewModel {
+
+        if(!skipCurrent){
+            if (this.displayName().toLowerCase().startsWith(letter.toLowerCase())) {
+                return this;
+            }
+        }
+
+        if (this.hasExpandedAndLoadedChildren) {
+            for (const child of this.displayedChildren) {
+                if(stoppingNode && child === stoppingNode) {
+                    return null;
+                }
+
+                const result = child.depthFirstSearch(letter);
+                if (result) {
+                    return result;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    public typeAheadSearch(letter: string, skipCurrent: boolean = true) {
+
+        let atEndOfTree = false;
+        let currNode: TreeNodeGroupViewModel = this;
+
+        while (!atEndOfTree) {
+            const result = currNode.depthFirstSearch(letter, skipCurrent);
+            if (result) {
+                result.select();
+                return;       
+            }
+            else {
+                const nextSibling = currNode.moveToNextSibling();
+                if(nextSibling) {
+                    currNode = nextSibling;
+                    skipCurrent = false;
+                }
+                else{
+                    atEndOfTree = true;
+                }
+                
+            }
+        }
+
+        this.moveToRoot().depthFirstSearch(letter, false, this)?.select();
+    }
 
     public update(node: ITreeNode) {
         this.node = node;
@@ -441,16 +490,16 @@ export class TreeNodeGroupViewModel implements ITreeNode {
         listSettings.currentPage = listSettings.pageCount;
     }
 
-    private selectNextSibling(): number {
+    private moveToNextSibling(): TreeNodeGroupViewModel {
         const parentsChildren = this.getParentsChildren();
         const myIndex = parentsChildren.indexOf(this);
 
         if (myIndex === parentsChildren.length - 1 && this.parent && this.parent.nodeId !== 'base') {
-            this.parent.selectNextSibling();
+            return this.parent.moveToNextSibling();
         } else if (myIndex !== parentsChildren.length - 1) {
-            parentsChildren[myIndex + 1].select(this.keyboardSelectActionDelayInMilliseconds);
+            return parentsChildren[myIndex + 1];
         }
-        return myIndex;
+        return null;
     }
 }
 

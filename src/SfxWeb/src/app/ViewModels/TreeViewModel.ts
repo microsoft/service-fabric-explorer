@@ -60,10 +60,12 @@ export class TreeViewModel {
 
         if (this.selectedNode) {
             this.selectedNode.selected = false;
+            this.selectedNode.selectedObservable.next(false);
         }
 
         if (node) {
             node.selected = true;
+            node.selectedObservable.next(true);
         }
 
         this.selectedNode = node;
@@ -90,6 +92,13 @@ export class TreeViewModel {
                 break;
             case 'End':
                 this.selectedNode.selectEnd();
+                break;
+            case 'Enter':
+                this.selectedNode.navigateTo();
+                break;
+            case /^[a-z]$/i.test(event.key) && event.key: // Alphanumeric
+                this.selectedNode.typeAheadSearch(event.key);
+                break;
         }
         if (selectedNode !== this.selectedNode) {
             // Prevents the key press from moving the scroll bar
@@ -146,7 +155,10 @@ export class TreeViewModel {
                 if (currIndex === path.length - 1) {
                     if (!node.selected) {
                         // Select the node
-                        node.select(0, skipSelectAction);
+                        node.select();
+                        if(!skipSelectAction){
+                            node.navigateTo();
+                        }
                     }
                 } else {
                     this.selectTreeNodeInternal(path, currIndex + 1, node, opId, skipSelectAction).subscribe();
