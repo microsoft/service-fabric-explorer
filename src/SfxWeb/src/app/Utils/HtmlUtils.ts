@@ -122,22 +122,12 @@ export class HtmlUtils {
     // Utility to mark warning/error/resolved events in the detail list
     public static eventTypesUtil = new EventTypesUtil();
 
-    public static getLinkOutHtml(text: string, url: string, targetBlank: boolean = false): string {
-        return `<a href="${url}" ${targetBlank ? ` target="_blank"` : ''}>${text}</a>`;
-    }
-
     public static parseReplicaAddress(address: string): any {
         if (!address) {
             return null;
         }
         return address.indexOf('{') === 0
-            ? JSON.parse(address, (key: any, value: any) => {
-                if (typeof value === 'string' && Utils.isSingleURL(value)) {
-                    return HtmlUtils.getLinkOutHtml(value, value, true);
-                }
-                return value;
-            })
-            : (Utils.isSingleURL(address) ? HtmlUtils.getLinkOutHtml(address, address) : address);
+              ? JSON.parse(address) : address;
     }
 
 }
