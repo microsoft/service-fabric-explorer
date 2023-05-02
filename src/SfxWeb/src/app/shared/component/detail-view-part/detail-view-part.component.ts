@@ -27,6 +27,7 @@ export class ResolvedObject {
 export class DetailViewPartComponent implements OnChanges {
 
   @Input() noFixedLayout = false;
+  @Input() useLink = false;
 
   resolvedData: any;
 
@@ -55,8 +56,10 @@ export class DetailViewPartComponent implements OnChanges {
         return 'Object';
     } else if (this.isArray(value)) {
         return 'Array';
-    } else if (this.isISODate(value)) {
+    }else if (this.isISODate(value)) {
         return 'Date';
+    }else if (this.useLink && Utils.isSingleURL(value)) {
+      return 'Link';
     }else{
       return 'Value'
     }

@@ -122,8 +122,12 @@ export class Utils {
         return textToReplace.replace(replaceText, `<a title=${title} ng-href="${url}" ">${replaceText}</a>`);
     }
 
-    public static isSingleURL(str: string): boolean {
+    public static isSingleURL(str: any): boolean {
+      if(typeof str === "string") {
         return Utils.SingleUrlRegExp.test(str.toLowerCase());
+      }else{
+        return false;
+      }
     }
 
     // Convert a hex string to a byte array

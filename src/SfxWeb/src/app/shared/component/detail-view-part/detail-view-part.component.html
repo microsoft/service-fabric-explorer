@@ -14,6 +14,13 @@
                     <td [title]="item.value">{{item.value}}</td>
                 </tr>
 
+                <tr *ngSwitchCase="'Link'" [title]="item.key">
+                  <th [title]="item.value">
+                    {{item.key}}
+                </th>
+                  <a [href]="item.value">{{item.value}}</a>
+                </tr>
+
                 <tr *ngSwitchCase="'Date'">
                     <th [title]="item.key">
                         {{item.key}}
@@ -56,7 +63,7 @@
                     <td colspan="2">
                         <div class="heading" [title]="title" style="text-transform: none;" >{{item.key}} </div>
                         <div class="nested-table-container">
-                            <app-detail-view-part [data]="item.value" [noFixedLayout]="noFixedLayout"></app-detail-view-part>
+                            <app-detail-view-part [data]="item.value" [noFixedLayout]="noFixedLayout" [useLink]="useLink"></app-detail-view-part>
                         </div>
                     </td>
                 </tr>
@@ -81,8 +88,8 @@
                                                 <!-- Render sub-array table body, assuming the properties are always simple properties rather than object -->
                                             <td *ngFor="let subItem of item | keyvalue : asIsOrder" [ngSwitch]="getResolvedPropertyType(subItem.value)">
                                                 <span *ngSwitchCase="'Value'" [title]="subItem.value">{{subItem.value}}</span>
-                                                <app-detail-view-part *ngSwitchCase="'Array'" [data]="subItem.value"></app-detail-view-part>
-                                                <app-detail-view-part *ngSwitchCase="'Object'" [data]="subItem.value"></app-detail-view-part>
+                                                <app-detail-view-part *ngSwitchCase="'Array'" [data]="subItem.value" [useLink]="useLink"></app-detail-view-part>
+                                                <app-detail-view-part *ngSwitchCase="'Object'" [data]="subItem.value" [useLink]="useLink"></app-detail-view-part>
                                             </td>
                                         </tr>
                                     </tbody>

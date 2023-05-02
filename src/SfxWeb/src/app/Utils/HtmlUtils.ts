@@ -126,8 +126,7 @@ export class HtmlUtils {
         if (!address) {
             return null;
         }
-        return address.indexOf('{') === 0
-              ? JSON.parse(address) : address;
+        return address.indexOf('{') === 0 ? JSON.parse(address) : address;
     }
 
 }
