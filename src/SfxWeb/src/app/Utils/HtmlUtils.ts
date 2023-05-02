@@ -126,7 +126,12 @@ export class HtmlUtils {
         if (!address) {
             return null;
         }
-        return address.indexOf('{') === 0 ? JSON.parse(address) : address;
+        try {
+          return address.indexOf('{') === 0 ? JSON.parse(address) : address;
+        } catch(e) {
+          console.log(e)
+          return address
+        }
     }
 
 }

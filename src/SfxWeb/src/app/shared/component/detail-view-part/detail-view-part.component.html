@@ -17,8 +17,10 @@
                 <tr *ngSwitchCase="'Link'" [title]="item.key">
                   <th [title]="item.value">
                     {{item.key}}
-                </th>
-                  <a [href]="item.value">{{item.value}}</a>
+                  </th>
+                  <td>
+                    <a [href]="item.value">{{item.value}}</a>
+                  </td>
                 </tr>
 
                 <tr *ngSwitchCase="'Date'">
