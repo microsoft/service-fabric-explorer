@@ -96,6 +96,9 @@ export class TreeViewModel {
             case 'Enter':
                 this.selectedNode.navigateTo();
                 break;
+            case '*':
+                this.selectedNode.expandAllSiblings();
+                break;
             case /^[a-z]$/i.test(event.key) && event.key: // Alphanumeric
                 this.selectedNode.typeAheadSearch(event.key);
                 break;

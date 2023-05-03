@@ -438,6 +438,12 @@ export class TreeNodeGroupViewModel implements ITreeNode {
         this.moveToRoot().depthFirstSearch(letter, false, this)?.select();
     }
 
+    public expandAllSiblings() {
+        for(const sibling of this.getParentsChildren()) {
+            sibling.expand();
+        }
+    }
+
     public update(node: ITreeNode) {
         this.node = node;
         this.displayName = this.node.displayName;
