@@ -4,8 +4,8 @@ import { StandaloneIntegrationService } from './services/standalone-integration.
 export function initApp(aadService: AdalService, standaloneIntegrationService: StandaloneIntegrationService) {
   return async () => {
     try {
-      if(window.location.search.includes("?")) {
-        standaloneIntegrationService.setConfiguration(window.location.search.split('?')[1]);
+      if("SFXintegrationConfiguration" in window) {
+        standaloneIntegrationService.setConfiguration((window as any).SFXintegrationConfiguration);
       }
       if(standaloneIntegrationService.isStandalone()) {
         return;

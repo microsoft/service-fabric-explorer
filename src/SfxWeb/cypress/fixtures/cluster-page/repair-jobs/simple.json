@@ -168,7 +168,7 @@
         },
         "PreparingHealthCheckState": "Skipped",
         "RestoringHealthCheckState": "Skipped",
-        "PerformPreparingHealthCheck": false,
+        "PerformPreparingHealthCheck": true,
         "PerformRestoringHealthCheck": false
     },
     {
