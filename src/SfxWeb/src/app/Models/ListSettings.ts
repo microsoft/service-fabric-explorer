@@ -3,7 +3,7 @@ import { Utils } from '../Utils/Utils';
 import { HyperLinkComponent } from '../modules/detail-list-templates/hyper-link/hyper-link.component';
 import { CopyTextComponent } from '../modules/detail-list-templates/copy-text/copy-text.component';
 import { RowDisplayComponent } from '../modules/event-store/row-display/row-display.component';
-import { FullDescriptionComponent } from '../modules/event-store/full-description/full-description.component';
+import { FullDescriptionComponent } from '../modules/detail-list-templates/full-description/full-description.component';
 import { DetailBaseComponent } from '../ViewModels/detail-table-base.component';
 import { Type } from '@angular/core';
 import { UtcTimestampComponent } from '../modules/detail-list-templates/utc-timestamp/utc-timestamp.component';

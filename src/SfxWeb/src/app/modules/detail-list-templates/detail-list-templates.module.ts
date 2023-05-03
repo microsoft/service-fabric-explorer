@@ -16,11 +16,12 @@ import { QuestionToolTipComponent } from './question-tool-tip/question-tool-tip.
 import { ShortenComponent } from './shorten/shorten.component';
 import { CustomTrackByPipe } from './custom-track-by.pipe';
 import { HealthbadgeComponent } from './healthbadge/healthbadge.component';
+import { FullDescriptionComponent } from './full-description/full-description.component';
 
 
 
 @NgModule({
-  declarations: [HyperLinkComponent, DetailTableResolverComponent, ResolverDirective, CopyTextComponent, ResolverDirective,
+  declarations: [HyperLinkComponent, DetailTableResolverComponent, ResolverDirective, CopyTextComponent, ResolverDirective, FullDescriptionComponent,
                  DetailListComponent, PagerComponent, UtcTimestampComponent, ExportModalComponent, QuestionToolTipComponent, ShortenComponent, CustomTrackByPipe, HealthbadgeComponent],
   imports: [
     CommonModule,
@@ -31,6 +32,6 @@ import { HealthbadgeComponent } from './healthbadge/healthbadge.component';
     NgbTooltipModule,
     FormsModule
   ],
-  exports: [DetailTableResolverComponent, HyperLinkComponent, CopyTextComponent, DetailListComponent, QuestionToolTipComponent, ShortenComponent, HealthbadgeComponent]
+  exports: [DetailTableResolverComponent, HyperLinkComponent, CopyTextComponent, DetailListComponent, QuestionToolTipComponent, ShortenComponent, HealthbadgeComponent, FullDescriptionComponent]
 })
 export class DetailListTemplatesModule { }

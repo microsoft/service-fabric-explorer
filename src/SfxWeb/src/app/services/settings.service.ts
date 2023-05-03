@@ -11,7 +11,7 @@ import { QuestionToolTipComponent } from '../modules/detail-list-templates/quest
 import { RepairTaskViewComponent } from '../modules/repair-tasks/repair-task-view/repair-task-view.component';
 import { ListColumnSettingForApplicationType } from '../views/application-type/action-row/action-row.component';
 import { HtmlUtils } from '../Utils/HtmlUtils';
-
+import { ReplaySubject } from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
@@ -20,6 +20,8 @@ export class SettingsService {
   private iPaginationLimit: number;
   private iMetricsViewModel: MetricsViewModel;
   private sessionVariables: { [key: string]: any } = {};
+
+  public treeWidth: ReplaySubject<string> = new ReplaySubject(1);
 
   public get paginationLimit(): number {
       return this.iPaginationLimit;
@@ -42,7 +44,7 @@ export class SettingsService {
   public constructor(private storage: StorageService) {
       this.listSettings = {};
       this.iPaginationLimit = storage.getValueNumber(Constants.PaginationLimitStorageKey, Constants.DefaultPaginationLimit);
-  }
+    }
 
   public getNewOrExistingMetricsViewModel(clusterLoadInformation: ClusterLoadInformation): MetricsViewModel {
       if (!this.iMetricsViewModel) {

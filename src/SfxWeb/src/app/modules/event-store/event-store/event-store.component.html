@@ -13,10 +13,10 @@
 </div>
 
 <div *ngFor="let ref of vizRefs">
-  <app-collapse-container class="essen-pane detail-pane">
-    <h5 collapse-header>
+  <app-collapse-container class="essen-pane detail-pane" [sectionName]="ref.name">
+    <h2 collapse-header>
       {{ref.name}}
-    </h5>
+    </h2>
     <div collapse-body>
       <ng-template appVisualization></ng-template>
     </div>
@@ -59,4 +59,4 @@
       </div>
     </div>
   </div>
-</div>  
+</div>

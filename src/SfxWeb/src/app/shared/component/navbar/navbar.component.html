@@ -2,11 +2,11 @@
   <div class="detail-view-title-bar">
     <div class="left-side-header">
       <h1 class="detail-view-title" *ngIf="type" style="line-height: initial;">
-        <span data-cy="header">
+        <span data-cy="header" [title]="type">
           <b>{{type}}</b>
           <span *ngIf="name"> {{name}} </span>
         </span>
-        <app-clip-board [text]="name" *ngIf="showCopy"></app-clip-board>
+        <app-clip-board [text]="name" *ngIf="showCopy" [name]="type + ' name '"></app-clip-board>
       </h1>
       <div class="detail-view-navbar nav-wrapper" role="tablist" [attr.aria-label]="name" data-cy="navtabs">
           <a  *ngFor="let tab of tabs; let i = index" #rla="routerLinkActive" [attr.aria-selected]="rla.isActive" [routerLink]="tab.route"

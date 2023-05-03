@@ -61,6 +61,8 @@ context('app', () => {
 
         it('xss', () => {
           initializeRoutes(`*${windowAlertText}*`, appName, xssPrefix);
+          addRoute("events", "xss/app-page/app-events.json", apiUrl(`/EventsStore/Applications/**window.alert**/$/Events?**`))
+          addRoute('events', 'empty-list.json', apiUrl(`/EventsStore/Cluster/Events?*`))
 
           watchForAlert(() => {
             cy.visit(`/#/apptype/${appName}/app/${xssEncoded}`)
@@ -77,6 +79,11 @@ context('app', () => {
           watchForAlert(() => {
             cy.visit(`/#/apptype/${appName}/app/${xssEncoded}/deployments`);
             cy.contains("VisualObjects.WebService_InstanceCount");
+          })
+
+          watchForAlert(() => {
+            cy.visit(`/#/apptype/${appName}/app/${xssEncoded}/events`);
+            cy.contains(`<img src="1">`);
           })
         });
 

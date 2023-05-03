@@ -19,7 +19,8 @@
     display: flex;
     align-items: baseline;
     gap: 5px;
-    h5 {
+    .command-title {
+        color: var(--font-color-primary);
         margin-right: auto;
     }
 }
@@ -62,4 +63,8 @@
 .reference-link {
     border: none;
     background-color: inherit;
+}
+
+.param-title {
+    font-size: var(--font-size-medium);
 }
