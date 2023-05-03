@@ -15,7 +15,7 @@
         </div>
     </li>
     <li *ngFor="let child of node.displayedChildren; trackBy: trackById; let i = index" class="node" [ngClass]="{ 'selected': child.selected}" appScrollIntoView [selected]="child.selected" role="treeitem" 
-    (click)="child.select(); $event.stopPropagation()" [attr.aria-level]="child.depth">
+    (click)="child.navigateTo(); $event.stopPropagation()" [attr.aria-level]="child.depth">
         <div class="self hide-nested hover-row flex-center" [ngClass]="{ 'raised-z-index': i === higherZIndex}">
             <span  [ngStyle]="{ 'paddingLeft': child.paddingLeftPx }"></span>
             <div class="expander" *ngIf="!child.hasExpander"></div>

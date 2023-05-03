@@ -310,10 +310,11 @@ export class TreeNodeGroupViewModel implements ITreeNode {
     }
 
     public navigateTo() {
+        if(!this.selected){
+            this.select();
+        }
         if (this.node.selectAction) {
-            if (this.selected) {
-                this.node.selectAction();
-            }
+            this.node.selectAction();
         }
     }
 
