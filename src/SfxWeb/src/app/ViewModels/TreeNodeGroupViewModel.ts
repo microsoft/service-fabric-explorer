@@ -387,6 +387,7 @@ export class TreeNodeGroupViewModel implements ITreeNode {
         }
     }
 
+    // helper function for typeAheadSearch; returns the first element that starts with the given letter
     private depthFirstSearch(letter: string, skipCurrent: boolean = false, stoppingNode?: TreeNodeGroupViewModel): TreeNodeGroupViewModel {
 
         if(!skipCurrent){
@@ -411,6 +412,7 @@ export class TreeNodeGroupViewModel implements ITreeNode {
         return null;
     }
 
+    //select next element that starts with the given letter
     public typeAheadSearch(letter: string, skipCurrent: boolean = true) {
 
         let atEndOfTree = false;
@@ -435,6 +437,7 @@ export class TreeNodeGroupViewModel implements ITreeNode {
             }
         }
 
+        // wrap around to the beginning
         this.moveToRoot().depthFirstSearch(letter, false, this)?.select();
     }
 

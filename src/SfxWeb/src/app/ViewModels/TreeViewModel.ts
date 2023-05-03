@@ -40,6 +40,8 @@ export class TreeViewModel {
     }
 
     public refreshChildren() {
+
+        // phantom node that doesn't actully get rendered
         const baseNode: ITreeNode = {childrenQuery: this.childrenQuery,
                                      displayName: () => '',
                                     nodeId: 'base'};
