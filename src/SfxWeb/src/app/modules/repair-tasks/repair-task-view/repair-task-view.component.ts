@@ -32,18 +32,22 @@ export class RepairTaskViewComponent implements OnInit, DetailBaseComponent, OnD
 
     this.subs.add(this.refreshService.refreshSubject.subscribe(() => this.updateNodesList().subscribe()));
 
-    this.healthCheckConfigs = [
-      {
-        descriptionName: "Perform Preparing Health Check",
-        displayText: this.item.raw.PerformPreparingHealthCheck ? "Yes": "No",
-        copyTextValue: this.item.raw.PerformPreparingHealthCheck ? "Yes": "No"
-      },
-      {
-        descriptionName: "Perform Restoring Health Check",
-        displayText: this.item.raw.PerformRestoringHealthCheck ? "Yes": "No",
-        copyTextValue: this.item.raw.PerformRestoringHealthCheck ? "Yes": "No"
-      }
-    ]
+    try {
+      this.healthCheckConfigs = [
+        {
+          descriptionName: "Perform Preparing Health Check",
+          displayText: this.item.raw.PerformPreparingHealthCheck ? "Yes": "No",
+          copyTextValue: this.item.raw.PerformPreparingHealthCheck ? "Yes": "No"
+        },
+        {
+          descriptionName: "Perform Restoring Health Check",
+          displayText: this.item.raw.PerformRestoringHealthCheck ? "Yes": "No",
+          copyTextValue: this.item.raw.PerformRestoringHealthCheck ? "Yes": "No"
+        }
+      ]
+    } catch(e) {
+      this.healthCheckConfigs = [];
+    }
   }
 
   ngOnDestroy() {
