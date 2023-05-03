@@ -42,7 +42,13 @@ context('replica', () => {
                 cy.contains("Replica");
             })
 
-            checkActions(['Restart Replica'])
+            checkActions(['Restart Replica']);
+
+            cy.get('[data-cy=address]').within(() => {
+              cy.contains('10.0.0.5:20001+28bfaf73-37b0-467d-9d47-d011b0aedbc0-132429154475414363');
+              cy.get("a").should('have.length', 0);
+          })
+
         })
 
         it('view details', () => {
@@ -160,6 +166,7 @@ context('replica', () => {
             cy.get('[data-cy=address]').within(() => {
                 cy.contains('http://10.0.0.7:8081/visualobjects/');
                 cy.contains('http://10.0.0.7:8081/visualobjects/data/');
+                cy.get("a").should('have.length', 2);
             })
         })
 
