@@ -96,12 +96,12 @@ export class TreeViewModel {
                 this.selectedNode.selectEnd();
                 break;
             case 'Enter':
-                this.selectedNode.navigateTo();
+                this.selectedNode.selectAndInteract();
                 break;
             case '*':
                 this.selectedNode.expandAllSiblings();
                 break;
-            case /^[a-z]$/i.test(event.key) && event.key: // Alphanumeric
+            case /^\w$/.test(event.key) && event.key: // Alphanumeric, this also includes *
                 this.selectedNode.typeAheadSearch(event.key);
                 break;
         }
@@ -162,7 +162,7 @@ export class TreeViewModel {
                         // Select the node
                         node.select();
                         if(!skipSelectAction){
-                            node.navigateTo();
+                            node.selectAndInteract();
                         }
                     }
                 } else {

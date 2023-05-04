@@ -11,6 +11,7 @@ import { TelemetryService } from './services/telemetry.service';
 import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
 import { TelemetrySnackBarComponent } from './telemetry-snack-bar/telemetry-snack-bar.component';
 import { SettingsService } from './services/settings.service';
+import { FocusService } from './services/focus.service';
 
 @Component({
   selector: 'app-root',
@@ -44,7 +45,8 @@ export class AppComponent implements OnInit{
               public dataService: DataService,
               public liveAnnouncer: LiveAnnouncer,
               private snackBar: MatSnackBar,
-              private settingsService: SettingsService) {
+              private settingsService: SettingsService,
+              private focusService: FocusService) {
 
   }
 
@@ -127,6 +129,6 @@ export class AppComponent implements OnInit{
   }
 
   setMainFocus() {
-    this.main.nativeElement.focus();
+    this.focusService.focus()
   }
 }

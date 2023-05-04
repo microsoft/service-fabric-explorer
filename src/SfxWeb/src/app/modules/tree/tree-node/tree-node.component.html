@@ -10,12 +10,12 @@
         [ngClass]="{'disabled': node.listSettings && node.listSettings.currentPage === 1}" >
         <div style="padding-left: 54px;">
             <span  [ngStyle]="{ 'paddingLeft': node.paddingLeftPx }"></span>
-            <div (click)="node.pageUp()" class=" expander icon mif-chevron-thin-up link" [title]="'Previous ' + node.listSettings.limit + ' items'" aria-hidden="true"></div>
-            <div (click)="node.pageFirst()" style="padding-left: 10px;" class="expander icon mif-vertical-align-top link" [title]="'First ' + node.listSettings.limit + ' items'" aria-hidden="true"></div>
+            <div (click)="node.pageUp()" class=" expander icon mif-chevron-thin-up link" [title]="'Previous ' + node.listSettings.limit + ' items'"></div>
+            <div (click)="node.pageFirst()" style="padding-left: 10px;" class="expander icon mif-vertical-align-top link" [title]="'First ' + node.listSettings.limit + ' items'"></div>
         </div>
     </li>
     <li *ngFor="let child of node.displayedChildren; trackBy: trackById; let i = index" class="node" [ngClass]="{ 'selected': child.selected}" appScrollIntoView [selected]="child.selected" role="treeitem" 
-    (click)="child.navigateTo(); $event.stopPropagation()" [attr.aria-level]="child.depth">
+    (click)="child.selectAndInteract(); $event.stopPropagation()" [attr.aria-level]="child.depth">
         <div class="self hide-nested hover-row flex-center" [ngClass]="{ 'raised-z-index': i === higherZIndex}">
             <span  [ngStyle]="{ 'paddingLeft': child.paddingLeftPx }"></span>
             <div class="expander" *ngIf="!child.hasExpander"></div>

@@ -12,6 +12,7 @@ import { of, Observable, forkJoin } from 'rxjs';
 import { mergeMap, map, finalize, catchError } from 'rxjs/operators';
 import { SettingsService } from './settings.service';
 import { RefreshService } from './refresh.service';
+import { FocusService } from './focus.service';
 
 @Injectable({
   providedIn: 'root'
@@ -29,7 +30,8 @@ export class TreeService {
             private data: DataService,
             private routes: RoutesService,
             private settings: SettingsService,
-            private refreshService: RefreshService) {
+            private refreshService: RefreshService,
+            private focusService: FocusService) {
         }
 
         // AuthenticationController will call this function to initialize the tree view once authentication is cleared
@@ -86,7 +88,7 @@ export class TreeService {
                         nodeId: IdGenerator.cluster(),
                         displayName: () => 'Cluster',
                         childrenQuery: () => this.getGroupNodes(),
-                        selectAction: () => this.routes.navigate(() => RoutesService.getClusterViewPath()),
+                        selectAction: () => this.routes.navigate(() => RoutesService.getClusterViewPath(), () => this.focusService.focus()),
                         badge: () => clusterHealth.healthState,
                         alwaysVisible: true,
                         startExpanded: true,
@@ -113,7 +115,7 @@ export class TreeService {
                     displayName: () => 'Applications',
                     childrenQuery: () => this.getApplicationTypes(),
                     badge: () => apps.healthState,
-                    selectAction: () => this.routes.navigate(() => apps.viewPath),
+                    selectAction: () => this.routes.navigate(() => apps.viewPath, () => this.focusService.focus()),
                     listSettings: this.settings.getNewOrExistingTreeNodeListSettings(apps.viewPath),
                     alwaysVisible: true
                 };
@@ -123,7 +125,7 @@ export class TreeService {
               return {
                     nodeId: IdGenerator.nodeGroup(),
                     displayName: () => 'Nodes',
-                    selectAction: () => this.routes.navigate(() => nodes.viewPath),
+                    selectAction: () => this.routes.navigate(() => nodes.viewPath, () => this.focusService.focus()),
                     childrenQuery: () => this.getNodes(),
                     badge: () => nodes.healthState,
                     listSettings: this.settings.getNewOrExistingTreeNodeListSettings(nodes.viewPath),
@@ -140,7 +142,7 @@ export class TreeService {
                 return {
                     nodeId: IdGenerator.systemAppGroup(),
                     displayName: () => Constants.SystemAppTypeName,
-                    selectAction: () => this.routes.navigate(() => systemApp.viewPath),
+                    selectAction: () => this.routes.navigate(() => systemApp.viewPath, () => this.focusService.focus()),
                     childrenQuery: () => this.getServices(Constants.SystemAppId),
                     badge: () => systemApp.healthState,
                     listSettings: this.settings.getNewOrExistingTreeNodeListSettings(systemApp.viewPath),
@@ -200,7 +202,7 @@ export class TreeService {
 
                             return node.name;
                         },
-                        selectAction: () => this.routes.navigate(() => node.viewPath),
+                        selectAction: () => this.routes.navigate(() => node.viewPath, () => this.focusService.focus()),
                         childrenQuery: () => this.getDeployedApplications(node.name),
                         badge: () => node.healthState,
                         sortBy: () => [node.name],
@@ -225,7 +227,7 @@ export class TreeService {
                     return {
                         nodeId: IdGenerator.appType(appTypeGroup.name),
                         displayName: () => appTypeGroup.name,
-                        selectAction: () => this.routes.navigate(() => appTypeGroup.viewPath),
+                        selectAction: () => this.routes.navigate(() => appTypeGroup.viewPath, () => this.focusService.focus()),
                         childrenQuery: () => this.getApplicationsForType(appTypeGroup.name),
                         badge: () => appTypeGroup.appsHealthState,
                         sortBy: () => [appTypeGroup.name],
@@ -242,7 +244,7 @@ export class TreeService {
                     return {
                         nodeId: IdGenerator.deployedApp(deployedApp.id),
                         displayName: () => deployedApp.name,
-                        selectAction: () => this.routes.navigate(() => deployedApp.viewPath),
+                        selectAction: () => this.routes.navigate(() => deployedApp.viewPath, () => this.focusService.focus()),
                         childrenQuery: () => this.getDeployedServicePackages(nodeName, deployedApp.id),
                         badge: () => deployedApp.health.healthState,
                         sortBy: () => [deployedApp.name],
@@ -265,7 +267,7 @@ export class TreeService {
                     return {
                         nodeId: IdGenerator.deployedServicePackage(deployedServicePackage.name, deployedServicePackage.servicePackageActivationId),
                         displayName: () => deployedServicePackage.uniqueId,
-                        selectAction: () => this.routes.navigate(() => deployedServicePackage.viewPath),
+                        selectAction: () => this.routes.navigate(() => deployedServicePackage.viewPath, () => this.focusService.focus()),
                         childrenQuery: () => this.getDeployedServiceChildrenGroupNodes(nodeName, applicationId, deployedServicePackage.name, deployedServicePackage.servicePackageActivationId),
                         badge: () => deployedServicePackage.health.healthState,
                         sortBy: () => [deployedServicePackage.uniqueId],
@@ -283,7 +285,7 @@ export class TreeService {
                     nodeId: IdGenerator.deployedCodePackageGroup(),
                     displayName: () => 'Code Packages',
                     childrenQuery: () => this.getDeployedCodePackages(codePkgs, nodeName, applicationId, servicePackageName, servicePackageActivationId),
-                    selectAction: () => this.routes.navigate(() => codePkgs.viewPath),
+                    selectAction: () => this.routes.navigate(() => codePkgs.viewPath, () => this.focusService.focus()),
                 };
             }));
 
@@ -294,7 +296,7 @@ export class TreeService {
                     nodeId: IdGenerator.deployedReplicaGroup(),
                     displayName: () => replicas.isStatelessService ? 'Instances' : 'Replicas',
                     childrenQuery: () => this.getDeployedReplicas(replicas, nodeName, applicationId, servicePackageName, servicePackageActivationId),
-                    selectAction: () => this.routes.navigate(() => replicas.viewPath),
+                    selectAction: () => this.routes.navigate(() => replicas.viewPath, () => this.focusService.focus()),
                     listSettings: this.settings.getNewOrExistingTreeNodeListSettings(replicas.viewPath),
                 };
             }));
@@ -310,7 +312,7 @@ export class TreeService {
                 return {
                     nodeId: IdGenerator.deployedCodePackage(codePackage.name),
                     displayName: () => codePackage.uniqueId,
-                    selectAction: () => this.routes.navigate(() => codePackage.viewPath),
+                    selectAction: () => this.routes.navigate(() => codePackage.viewPath, () => this.focusService.focus()),
                     sortBy: () => [codePackage.uniqueId],
                     actions: codePackage.actions
                 };
@@ -325,7 +327,7 @@ export class TreeService {
                     displayName: () => replica.isStatelessService
                         ? replica.id
                         : replica.id + ' (' + replica.role + ')',
-                    selectAction: () => this.routes.navigate(() => replica.viewPath),
+                    selectAction: () => this.routes.navigate(() => replica.viewPath, () => this.focusService.focus()),
                     sortBy: () => replica.isStatelessService
                         ? [replica.id]
                         : [replica.replicaRoleSortPriority, replica.id],
@@ -340,7 +342,7 @@ export class TreeService {
                     return {
                         nodeId: IdGenerator.app(app.id),
                         displayName: () => app.name,
-                        selectAction: () => this.routes.navigate(() => app.viewPath),
+                        selectAction: () => this.routes.navigate(() => app.viewPath, () => this.focusService.focus()),
                         childrenQuery: () => this.getServices(app.id),
                         badge: () => app.healthState,
                         sortBy: () => [app.name],
@@ -364,7 +366,7 @@ export class TreeService {
                     return {
                         nodeId: IdGenerator.service(service.id),
                         displayName: () => service.name,
-                        selectAction: () => this.routes.navigate(() => service.viewPath),
+                        selectAction: () => this.routes.navigate(() => service.viewPath, () => this.focusService.focus()),
                         childrenQuery: () => this.getPartitions(appId, service.id),
                         badge: () => service.healthState,
                         sortBy: () => [service.name],
@@ -390,7 +392,7 @@ export class TreeService {
                         displayName: () => partition.partitionInformation.isPartitionKindNamed
                             ? `${partition.partitionInformation.raw.Name} (${partition.id})`
                             : partition.id,
-                        selectAction: () => this.routes.navigate(() => partition.viewPath),
+                        selectAction: () => this.routes.navigate(() => partition.viewPath, () => this.focusService.focus()),
                         childrenQuery: () => this.getReplicas(appId, serviceId, partition.id),
                         badge: () => partition.healthState,
                         sortBy: () => [partition.name],
@@ -411,7 +413,7 @@ export class TreeService {
                         displayName: () => replica.isStatelessService
                             ? replica.raw.NodeName
                             : `${replica.role} (${replica.raw.NodeName})`,
-                        selectAction: () => this.routes.navigate(() => replica.viewPath),
+                        selectAction: () => this.routes.navigate(() => replica.viewPath, () => this.focusService.focus()),
                         badge: () => replica.healthState,
                         sortBy: () => replica.isStatelessService
                             ? [replica.raw.NodeName]

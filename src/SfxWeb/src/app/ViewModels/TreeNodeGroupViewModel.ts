@@ -228,7 +228,7 @@ export class TreeNodeGroupViewModel implements ITreeNode {
                     if (this.tree.selectedNode && (child === this.tree.selectedNode || child.isParentOf(this.tree.selectedNode))) {
                         // Select the parent node instead
                         if(child.parent.select()){
-                            child.parent.navigateTo();
+                            child.parent.selectAndInteract();
                         }
                     }
                 }
@@ -309,7 +309,7 @@ export class TreeNodeGroupViewModel implements ITreeNode {
         return this.tree.selectNode(this);
     }
 
-    public navigateTo() {
+    public selectAndInteract() {
         if(!this.selected){
             this.select();
         }
