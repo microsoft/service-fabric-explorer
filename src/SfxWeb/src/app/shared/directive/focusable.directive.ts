@@ -6,8 +6,8 @@ import { FocusService } from 'src/app/services/focus.service';
 })
 export class FocusableDirective {
 
-  constructor(focusService: FocusService, public elementRef: ElementRef) { 
-    focusService.setFocusElement(elementRef);
+  constructor(private focusService: FocusService, public elementRef: ElementRef) { 
+    this.focusService.setFocusElement(elementRef);
   }
 
 }
