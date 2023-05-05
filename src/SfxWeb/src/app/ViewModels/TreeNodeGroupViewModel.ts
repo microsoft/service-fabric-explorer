@@ -40,6 +40,12 @@ export class TreeNodeGroupViewModel implements ITreeNode {
                 return badgeState2 - badgeState1;
             });
         }
+
+        if(this.node && this.node.listSettings && this.node.listSettings.pageCount > 1){
+            
+            result = result.concat([this.nextPageNode, this.lastPageNode]);
+            result = [this.firstPageNode, this.prevPageNode].concat(result);
+        }
         return result;
     }
 
@@ -68,6 +74,38 @@ export class TreeNodeGroupViewModel implements ITreeNode {
         this.node = node;
         this.parent = parent;
         this.listSettings = node.listSettings;
+
+        if(this.listSettings){
+            const nextPage = {
+                displayName: () => 'Next ' + this.node.listSettings.limit + ' items',
+                nodeId: 'nextPage',
+                selectAction: () => this.pageDown()
+            };
+    
+            const prevPage = {
+                displayName: () => 'Previous ' + this.node.listSettings.limit + ' items',
+                nodeId: 'prevPage',
+                selectAction: () => this.pageUp()
+            };
+    
+            const firstPage = {
+                displayName: () => 'First ' + this.node.listSettings.limit + ' items',
+                nodeId: 'firstPage',
+                selectAction: () => this.pageFirst()
+            };
+    
+            const lastPage = {
+                displayName: () => 'Last ' + this.node.listSettings.limit + ' items',
+                nodeId: 'lastPage',
+                selectAction: () => this.pageLast()
+            };
+    
+            this.nextPageNode = new TreeNodeGroupViewModel(this.tree, nextPage, this);
+            this.prevPageNode = new TreeNodeGroupViewModel(this.tree, prevPage, this);
+            this.firstPageNode = new TreeNodeGroupViewModel(this.tree, firstPage, this);
+            this.lastPageNode = new TreeNodeGroupViewModel(this.tree, lastPage, this);
+        }
+
         if (node.displayName) {
             this.displayName = node.displayName;
         }else {
@@ -167,6 +205,10 @@ export class TreeNodeGroupViewModel implements ITreeNode {
 
     private internalIsExpanded = false;
     private currentGetChildrenPromise: Subject<any>;
+    private prevPageNode: TreeNodeGroupViewModel;
+    private nextPageNode: TreeNodeGroupViewModel;
+    private firstPageNode: TreeNodeGroupViewModel;
+    private lastPageNode: TreeNodeGroupViewModel;
 
     public toggle(): Observable<any> {
         this.internalIsExpanded = !this.internalIsExpanded;
