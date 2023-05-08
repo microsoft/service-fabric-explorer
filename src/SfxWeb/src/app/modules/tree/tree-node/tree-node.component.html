@@ -1,4 +1,4 @@
-<ul *ngIf="node.isExpanded"  role="tree" [attr.aria-expanded]="node.isExpanded" tabindex="-1">
+<ul *ngIf="node.isExpanded">
     <li class="more-children"
         *ngIf="node.loadingChildren"
         [ngStyle]="{ 'paddingLeft': node.paddingLeftPx }">
@@ -6,50 +6,53 @@
         <span class="mif-loop2 rotate" ></span>
         <span>Loading...</span>
     </li>
-    <li *ngFor="let child of node.displayedChildren; trackBy: trackById; let i = index" class="node" [ngClass]="{ 'selected': child.selected}" appScrollIntoView [selected]="child.selected" role="treeitem" 
-    (click)="child.selectAndInteract(); $event.stopPropagation()" [attr.aria-level]="child.depth">
-        <div class="self hover-row hide-nested hover-row flex-center" [ngClass]="{ 'raised-z-index': i === higherZIndex}" #normalNode>
-            <span  [ngStyle]="{ 'paddingLeft': child.paddingLeftPx }"></span>
-            <div [ngSwitch]="child.nodeId">
-                <div *ngSwitchCase="'prevPage'" class="link " [ngClass]="{'disabled': node.listSettings && node.listSettings.currentPage === 1}">
-                    <div class=" expander icon mif-chevron-thin-up " [title]="'Previous ' + node.listSettings.limit + ' items'"></div>
+    <li *ngFor="let child of node.displayedChildren; trackBy: trackById; let i = index" role="none">
+        <a class="node" [ngClass]="{ 'selected': child.selected}" appSelectedNode [selected]="child.selected" role="treeitem" (focus)="emitFocus(true)" (blur)="emitFocus(false)" [attr.aria-current]="treeService.currentNodeId === child.nodeId ? 'page' : null"
+        (click)="child.selectAndInteract(); $event.stopPropagation()" (keyup)="node.tree.onKeyDown($event);" [attr.aria-level]="child.depth" tabindex="-1" [attr.aria-expanded]="child.isExpanded">
+            <div class="self hover-row hide-nested hover-row flex-center" [ngClass]="{ 'raised-z-index': i === higherZIndex}">
+                <span  [ngStyle]="{ 'paddingLeft': child.paddingLeftPx }"></span>
+                <div [ngSwitch]="child.nodeId">
+                    <div *ngSwitchCase="'prevPage'" class="link " [ngClass]="{'disabled': node.listSettings && node.listSettings.currentPage === 1}">
+                        <div class=" expander icon mif-chevron-thin-up " [title]="'Previous ' + node.listSettings.limit + ' items'"></div>
+                    </div>
+                    <div *ngSwitchCase="'firstPage'" class="link " [ngClass]="{'disabled': node.listSettings && node.listSettings.currentPage === 1}">
+                        <div class=" expander icon mif-vertical-align-top" [title]="'First ' + node.listSettings.limit + ' items'"></div>
+                    </div>
+                    <div *ngSwitchCase="'nextPage'" class="link " [ngClass]="{'disabled': node.listSettings && node.listSettings.currentPage === node.listSettings.pageCount}">
+                        <div class=" expander icon mif-chevron-thin-down" [title]="'Next ' + node.listSettings.limit + ' items'"></div>
+                    </div>
+                    <div *ngSwitchCase="'lastPage'" class="link " [ngClass]="{'disabled': node.listSettings && node.listSettings.currentPage === node.listSettings.pageCount}">
+                        <div class=" expander icon mif-vertical-align-bottom " [title]="'Last ' + node.listSettings.limit + ' items'"></div>
+                    </div>            
+                    <div *ngSwitchDefault>
+                        <div class="expander" *ngIf="!child.hasExpander"></div>
+                        <button tabindex="-1" class="expander icon mif-chevron-thin-right" aria-hidden="false" role="button"
+                                (click)="child.toggle(); $event.stopPropagation()" *ngIf="child.hasExpander"
+                                [ngClass]="{ 'rotated': child.isExpanded }"
+                                style="display: inline-block;" [title]="child.isCollapsed ? 'Expand Children' : 'Collapse Children'">
+                        </button>
+                        <button tabindex="-1" class="icon" aria-hidden="false" *ngIf="child.node.canExpandAll && child.hasExpander"
+                        (click)="child.isExpanded? child.closeAll() : child.toggleAll(); $event.stopPropagation()"
+                        [ngClass]="{ 'mif-unfold-less': child.isCollapsed, 'mif-unfold-more': child.isExpanded }"
+                        [title]="child.isCollapsed ? 'Expand All' : 'Collapse All'" style="font-size: large; padding: 0px;"></button>
+                    </div>
+                </div>        
+                
+                <span *ngIf="child.badge && child.badge()?.badgeClass && child.badge()?.badgeClass !== 'badge-ok'" style="margin-right: 3px;">
+                    <app-health-badge [badgeClass]="child.badge()?.badgeClass" [text]="child.badge()?.text" [showText]="false"></app-health-badge>
+                </span>
+                
+                <div class=" {{child.isHighlighted ? 'search-match' : ''}}"  [title]="child.displayName()" >
+                {{child.displayName()}}
                 </div>
-                <div *ngSwitchCase="'firstPage'" class="link " [ngClass]="{'disabled': node.listSettings && node.listSettings.currentPage === 1}">
-                    <div class=" expander icon mif-vertical-align-top" [title]="'First ' + node.listSettings.limit + ' items'"></div>
+        
+                <div *ngIf="child.actions" class="hidden right-action">
+                    <app-action-collection-drop-down *ngIf="child.actions.length > 0" [actionCollection]="child.actions"
+                                                    [treeView]="true" (changedState)="changeZIndez(i, $event)"></app-action-collection-drop-down>
                 </div>
-                <div *ngSwitchCase="'nextPage'" class="link " [ngClass]="{'disabled': node.listSettings && node.listSettings.currentPage === node.listSettings.pageCount}">
-                    <div class=" expander icon mif-chevron-thin-down" [title]="'Next ' + node.listSettings.limit + ' items'"></div>
-                </div>
-                <div *ngSwitchCase="'lastPage'" class="link " [ngClass]="{'disabled': node.listSettings && node.listSettings.currentPage === node.listSettings.pageCount}">
-                    <div class=" expander icon mif-vertical-align-bottom " [title]="'Last ' + node.listSettings.limit + ' items'"></div>
-                </div>            
-                <div *ngSwitchDefault>
-                    <div class="expander" *ngIf="!child.hasExpander"></div>
-                    <button tabindex="-1" class="expander icon mif-chevron-thin-right" aria-hidden="false" role="button"
-                            (click)="child.toggle(); $event.stopPropagation()" *ngIf="child.hasExpander"
-                            [ngClass]="{ 'rotated': child.isExpanded }"
-                            style="display: inline-block;" [title]="child.isCollapsed ? 'Expand Children' : 'Collapse Children'">
-                    </button>
-                    <button tabindex="-1" class="icon" aria-hidden="false" *ngIf="child.node.canExpandAll && child.hasExpander"
-                    (click)="child.isExpanded? child.closeAll() : child.toggleAll(); $event.stopPropagation()"
-                    [ngClass]="{ 'mif-unfold-less': child.isCollapsed, 'mif-unfold-more': child.isExpanded }"
-                    [title]="child.isCollapsed ? 'Expand All' : 'Collapse All'" style="font-size: large; padding: 0px;"></button>
-                </div>
-            </div>        
-            
-            <span *ngIf="child.badge && child.badge()?.badgeClass && child.badge()?.badgeClass !== 'badge-ok'" style="margin-right: 3px;">
-                <app-health-badge [badgeClass]="child.badge()?.badgeClass" [text]="child.badge()?.text" [showText]="false"></app-health-badge>
-            </span>
-            
-            <div class=" {{child.isHighlighted ? 'search-match' : ''}}"  [title]="child.displayName()" >
-            {{child.displayName()}}
             </div>
 
-            <div *ngIf="child.actions" class="hidden right-action">
-                <app-action-collection-drop-down *ngIf="child.actions.length > 0" [actionCollection]="child.actions"
-                                                [treeView]="true" (changedState)="changeZIndez(i, $event)"></app-action-collection-drop-down>
-            </div>
-        </div>
-        <app-tree-node [node]="child" *ngIf="child.isVisibleByBadge"></app-tree-node>
+        </a>
+    <app-tree-node [node]="child" *ngIf="child.isVisibleByBadge" (focusEmitter)="emitFocus($event)"></app-tree-node>
     </li>
 </ul>

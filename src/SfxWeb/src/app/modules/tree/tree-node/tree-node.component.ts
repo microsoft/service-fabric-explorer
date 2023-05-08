@@ -1,6 +1,6 @@
-import { LiveAnnouncer } from '@angular/cdk/a11y';
-import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { TreeNodeGroupViewModel } from 'src/app/ViewModels/TreeNodeGroupViewModel';
+import { TreeService } from 'src/app/services/tree.service';
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -8,14 +8,15 @@ import { environment } from 'src/environments/environment';
   templateUrl: './tree-node.component.html',
   styleUrls: ['./tree-node.component.scss']
 })
-export class TreeNodeComponent implements OnInit{
+export class TreeNodeComponent {
   @Input() node: TreeNodeGroupViewModel;
+  @Output() focusEmitter = new EventEmitter<boolean>();
 
   public assetBase = environment.assetBase;
   higherZIndex = -1;
 
-  constructor(public liveAnnouncer: LiveAnnouncer) { }
-
+  constructor(public treeService: TreeService) { }
+  
   trackById(index: number, node: TreeNodeGroupViewModel) {
     return node.nodeId;
   }
@@ -28,11 +29,7 @@ export class TreeNodeComponent implements OnInit{
     }
   }
 
-  ngOnInit() {
-    this.node.selectedObservable.subscribe((selected) => {
-      if (selected) {
-        this.liveAnnouncer.announce(this.node.displayName());
-      }
-    });
+  public emitFocus(focusState: boolean) {
+    this.focusEmitter.emit(focusState);
   }
 }

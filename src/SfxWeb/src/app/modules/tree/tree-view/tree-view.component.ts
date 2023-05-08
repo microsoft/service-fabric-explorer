@@ -4,6 +4,7 @@ import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { RestClientService } from 'src/app/services/rest-client.service';
 import { TelemetryService } from 'src/app/services/telemetry.service';
 import { TelemetryEventNames } from 'src/app/Common/Constants';
+import { FocusService } from 'src/app/services/focus.service';
 
 @Component({
   selector: 'app-tree-view',
@@ -16,6 +17,7 @@ export class TreeViewComponent implements DoCheck, AfterViewInit {
   @Output() treeResize = new EventEmitter<number>();
 
   public canExpand = false;
+  public focused = false;
   @ViewChild('treeContainer') treeContainer: ElementRef;
   @ViewChild('tree') tree: ElementRef;
   constructor(public treeService: TreeService,
@@ -54,5 +56,9 @@ export class TreeViewComponent implements DoCheck, AfterViewInit {
   goToTroubleshootingGuides(): void {
     window.open('https://aka.ms/sfxtroubleshootingguides', '_blank');
     this.telemService.trackActionEvent(TelemetryEventNames.TroubleShootingGuides, null, TelemetryEventNames.TroubleShootingGuides);
+  }
+
+  setFocus(focusState: boolean) {
+    this.focused = focusState;
   }
 }

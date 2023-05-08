@@ -16,6 +16,7 @@ button {
 }
 
 .node {
+
   color: var(--font-primary-color);
   .more-children {
     margin-left: 46px;
@@ -46,12 +47,6 @@ button {
   &.selected > .self {
     background-color: var(--accent-darkblue);
     box-shadow: var(--heavy-box-shadow);
-  }
-
-  &:focus-visible {
-    border: 2px solid white;
-    border-radius: 3px;
-    outline: none;
   }
 }
 

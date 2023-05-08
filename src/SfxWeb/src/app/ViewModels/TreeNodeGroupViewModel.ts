@@ -188,7 +188,6 @@ export class TreeNodeGroupViewModel implements ITreeNode {
     public parent: TreeNodeGroupViewModel;
     public sortBy: () => any[];
     public selected = false;
-    public selectedObservable: Subject<boolean> = new Subject<boolean>();
     public leafNode: boolean;
     public displayName: () => string;
     public listSettings: ListSettings;
@@ -357,6 +356,7 @@ export class TreeNodeGroupViewModel implements ITreeNode {
         }
         if (this.node.selectAction) {
             this.node.selectAction();
+
         }
     }
 

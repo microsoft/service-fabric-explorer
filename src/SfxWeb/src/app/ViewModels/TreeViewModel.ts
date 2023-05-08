@@ -62,12 +62,10 @@ export class TreeViewModel {
 
         if (this.selectedNode) {
             this.selectedNode.selected = false;
-            this.selectedNode.selectedObservable.next(false);
         }
 
         if (node) {
             node.selected = true;
-            node.selectedObservable.next(true);
         }
 
         this.selectedNode = node;
