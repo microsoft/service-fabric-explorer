@@ -51,7 +51,7 @@
                 </div>
         
                 <div *ngIf="child.actions" class="hidden right-action">
-                <app-action-collection-drop-down *ngIf="child.actions.length > 0" [actionCollection]="child.actions" (onFocus)="emitFocus(true)" tabindex="-1" (onBlur)="emitFocus(false)"        
+                <app-action-collection-drop-down *ngIf="child.actions.length > 0" [actionCollection]="child.actions" (actionFocus)="emitFocus(true)" tabindex="-1" (actionBlur)="emitFocus(false)"        
                                                     [treeView]="true" (changedState)="changeZIndez(i, $event)"></app-action-collection-drop-down>
                 </div>
             </div>
