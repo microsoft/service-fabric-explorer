@@ -8,12 +8,15 @@ import { TreeService } from 'src/app/services/tree.service';
 export class SeletedNodeDirective implements OnChanges {
 
   @Input() selected: boolean;
+  @Input() focused: boolean;
   constructor(private elementRef: ElementRef, private treeService: TreeService, private focusService: FocusService) { }
 
   ngOnChanges() {
     if (this.selected) {
       this.elementRef.nativeElement.tabIndex = 0;
-      this.elementRef.nativeElement.focus();
+      if(this.focused) {
+        this.elementRef.nativeElement.focus();
+      }
       setTimeout(() => {
         try {
           if (Math.abs(this.elementRef.nativeElement.offsetTop - this.treeService.containerRef.nativeElement.scrollTop) > (this.treeService.containerRef.nativeElement.offsetHeight - 30)) {

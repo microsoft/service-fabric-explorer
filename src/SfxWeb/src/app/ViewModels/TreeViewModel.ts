@@ -106,6 +106,8 @@ export class TreeViewModel {
         if (selectedNode !== this.selectedNode) {
             // Prevents the key press from moving the scroll bar
             event.preventDefault();
+            this.selectedNode.focused = true;
+            selectedNode.focused = false;
         }
     }
 

@@ -188,6 +188,7 @@ export class TreeNodeGroupViewModel implements ITreeNode {
     public parent: TreeNodeGroupViewModel;
     public sortBy: () => any[];
     public selected = false;
+    public focused = false;
     public leafNode: boolean;
     public displayName: () => string;
     public listSettings: ListSettings;

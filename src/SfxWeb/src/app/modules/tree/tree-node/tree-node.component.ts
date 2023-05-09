@@ -32,4 +32,30 @@ export class TreeNodeComponent {
   public emitFocus(focusState: boolean) {
     this.focusEmitter.emit(focusState);
   }
+
+  public disablePaginationNode(node: TreeNodeGroupViewModel): boolean {
+
+    if(!node.listSettings){
+      return false;
+    }
+
+    switch(node.nodeId){
+      case 'prevPage':
+      case 'firstPage':
+        if(node.listSettings.currentPage === 1){
+          return true;
+        }
+        break;
+      case 'nextPage':
+      case 'lastPage':
+        if(node.listSettings.currentPage === node.listSettings.pageCount){
+          return true;
+        }
+        break;
+      default:
+        return false;
+    }
+
+    return false;
+  }
 }
