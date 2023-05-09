@@ -15,6 +15,13 @@ import { HealthUtils } from '../Utils/healthUtils';
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
 // -----------------------------------------------------------------------------
+
+export const PaginationId = {
+    prevPage: 'prevPage',
+    nextPage: 'nextPage',
+    firstPage: 'firstPage',
+    lastPage: 'lastPage'
+}
 export class TreeNodeGroupViewModel implements ITreeNode {
 
     public get depth(): number {
@@ -69,6 +76,33 @@ export class TreeNodeGroupViewModel implements ITreeNode {
         }
     }
 
+    public get disabled(): boolean {
+
+        if(! this.parent || this.parent.nodeId === 'base' || !this.parent.listSettings){
+            return false;
+        }
+      
+        switch(this.nodeId){
+            case PaginationId.prevPage:
+            case PaginationId.firstPage:
+                if(this.parent.listSettings.currentPage === 1){
+                    return true;
+                }
+                break;
+            case PaginationId.nextPage:
+            case PaginationId.lastPage:
+                if(this.parent.listSettings.currentPage === this.parent.listSettings.pageCount){
+                    return true;
+                }
+                break;
+            default:
+                break;
+        }
+    
+        return false;
+        
+    }
+
     constructor(tree: TreeViewModel, node: ITreeNode, parent: TreeNodeGroupViewModel) {
         this.tree = tree;
         this.node = node;
@@ -78,25 +112,25 @@ export class TreeNodeGroupViewModel implements ITreeNode {
         if(this.listSettings){
             const nextPage = {
                 displayName: () => 'Next ' + this.node.listSettings.limit + ' items',
-                nodeId: 'nextPage',
+                nodeId: PaginationId.nextPage,
                 selectAction: () => this.pageDown()
             };
     
             const prevPage = {
                 displayName: () => 'Previous ' + this.node.listSettings.limit + ' items',
-                nodeId: 'prevPage',
+                nodeId: PaginationId.prevPage,
                 selectAction: () => this.pageUp()
             };
     
             const firstPage = {
                 displayName: () => 'First ' + this.node.listSettings.limit + ' items',
-                nodeId: 'firstPage',
+                nodeId: PaginationId.firstPage,
                 selectAction: () => this.pageFirst()
             };
     
             const lastPage = {
                 displayName: () => 'Last ' + this.node.listSettings.limit + ' items',
-                nodeId: 'lastPage',
+                nodeId: PaginationId.lastPage,
                 selectAction: () => this.pageLast()
             };
     
@@ -435,7 +469,7 @@ export class TreeNodeGroupViewModel implements ITreeNode {
     private depthFirstSearch(letter: string, skipCurrent: boolean = false, stoppingNode?: TreeNodeGroupViewModel): TreeNodeGroupViewModel {
 
         if(!skipCurrent){
-            if (this.displayName().toLowerCase().startsWith(letter.toLowerCase())) {
+            if (this.displayName().toLowerCase().startsWith(letter.toLowerCase()) && !PaginationId[this.nodeId]) {
                 return this;
             }
         }

@@ -27,6 +27,10 @@ export class TreeService {
         private selectTreeNodeCalled = false;
         private cachedTreeSelection: {path: string[], skipSelectAction?: boolean};
 
+        public get cachedTreeNodeSelection(): string {
+            return this.cachedTreeSelection ? this.cachedTreeSelection.path.slice(-1).pop() : null;
+        }
+
         constructor(
             private data: DataService,
             private routes: RoutesService,

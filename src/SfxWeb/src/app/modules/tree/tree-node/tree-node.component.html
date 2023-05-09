@@ -8,22 +8,22 @@
     </li>
     <li *ngFor="let child of node.displayedChildren; trackBy: trackById; let i = index" role="none">
 
-        <a class="node" [ngClass]="{ 'selected': child.selected,'disabled': disablePaginationNode(child.node)}" appSelectedNode [selected]="child.selected" [focused]="child.focused" role="treeitem" (focus)="emitFocus(true)" (blur)="emitFocus(false)"
+        <a class="node" [ngClass]="{ 'selected': child.selected,'disabled': child.disabled}" appSelectedNode [selected]="child.selected" [focused]="child.focused" role="treeitem" (focus)="emitFocus(true)" (blur)="emitFocus(false)"
         (click)="child.selectAndInteract(); $event.stopPropagation()" (keyup)="node.tree.onKeyDown($event);" [attr.aria-level]="child.depth" tabindex="-1" 
-        [attr.aria-expanded]="child.isExpanded"  [attr.aria-current]="node.tree.selectedNode?.nodeId === child.nodeId ? 'page' : null">
+        [attr.aria-expanded]="child.isExpanded"  [attr.aria-current]="treeService.cachedTreeNodeSelection === child.nodeId ? 'page' : null" [attr.aria-disabled]="child.disabled">
             <div class="self hover-row hide-nested hover-row flex-center" [ngClass]="{ 'raised-z-index': i === higherZIndex}">
                 <span  [ngStyle]="{ 'paddingLeft': child.paddingLeftPx }"></span>
                 <div [ngSwitch]="child.nodeId">
-                    <div *ngSwitchCase="'prevPage'" class="link ">
+                    <div *ngSwitchCase="paginationId.prevPage" class="link" [ngClass]="{'disabled': child.disabled}">
                         <div class=" expander icon mif-chevron-thin-up " [title]="'Previous ' + node.listSettings.limit + ' items'"></div>
                     </div>
-                    <div *ngSwitchCase="'firstPage'" class="link ">
+                    <div *ngSwitchCase="paginationId.firstPage" class="link" [ngClass]="{'disabled': child.disabled}">
                         <div class=" expander icon mif-vertical-align-top" [title]="'First ' + node.listSettings.limit + ' items'"></div>
                     </div>
-                    <div *ngSwitchCase="'nextPage'" class="link ">
+                    <div *ngSwitchCase="paginationId.nextPage" class="link" [ngClass]="{'disabled': child.disabled}">
                         <div class=" expander icon mif-chevron-thin-down" [title]="'Next ' + node.listSettings.limit + ' items'"></div>
                     </div>
-                    <div *ngSwitchCase="'lastPage'" class="link ">
+                    <div *ngSwitchCase="paginationId.lastPage" class="link" [ngClass]="{'disabled': child.disabled}">
                         <div class=" expander icon mif-vertical-align-bottom " [title]="'Last ' + node.listSettings.limit + ' items'"></div>
                     </div>            
                     <div *ngSwitchDefault>
