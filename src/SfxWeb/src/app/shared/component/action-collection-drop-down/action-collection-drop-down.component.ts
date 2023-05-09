@@ -15,8 +15,8 @@ export class ActionCollectionDropDownComponent {
   @Input() displayText: string;
   @Input() tabindex = 0;
   @Output() changedState = new EventEmitter();
-  @Output() focus = new EventEmitter();
-  @Output() blur = new EventEmitter();
+  @Output() onFocus = new EventEmitter();
+  @Output() onBlur = new EventEmitter();
   constructor(public dataService: DataService, private liveAnnouncer: LiveAnnouncer) { }
 
   closeChange(state: boolean) {
@@ -28,10 +28,10 @@ export class ActionCollectionDropDownComponent {
   }
 
   emitFocus() {
-    this.focus.emit();
+    this.onFocus.emit();
   }
 
   emitBlur() {
-    this.blur.emit();
+    this.onBlur.emit();
   }
 }
