@@ -74,42 +74,18 @@
 
     </div>
 
-    <div class="node-list">
+    <div class="node-list" *ngIf="upgradeProgress.isUpgrading && upgradeProgress.isAtHealthCheckPhase">
       <h3>Health Check Progress</h3>
-
-      <div style="    display: flex;
-          gap: 10px;
-          align-items: center;">
-        <div>
-          <app-phase-diagram [items]="healthPolicyProgress" [currentIndex]="1" [failed]="false"></app-phase-diagram>
-
-          <div style="margin-left: 30px; margin-top: 5px;">
-            <a href="https://docs.microsoft.com/azure/service-fabric/service-fabric-diagnostics-code-package-errors"
-              target="_blank"><i class="mif-info"></i> If the health policy becomes unhealthy, the health check will move to
-              retry and potentially fail </a>
-          </div>
-        </div>
-
-        <div style="width: 350px;">
-          <app-essential-item [item]="currentCheck"></app-essential-item>
-
-          <app-display-duration topText="Wait Duration elapsed" [topInMilliseconds]="3000 * 60"
-            [colorMap]="{'0': 'var(--accent-darkblue)'}" bottomText="Wait Duration Left"
-            [bottomInMilliseconds]="5000 * 60"></app-display-duration>
-        </div>
-      </div>
-
-
-      <!-- <app-essential-item [item]="waitCheckComplete"></app-essential-item> -->
-
+      <app-health-policy-check [monitoringPolicy]="upgradeProgress.raw?.UpgradeDescription?.MonitoringPolicy"
+                               [healthCheck]="upgradeProgress.raw.CurrentUpgradeDomainProgress.HealthCheck" ></app-health-policy-check>
     </div>
 
-    <!-- <div *ngIf="upgradeProgress.isUpgrading && upgradeProgress.nodesInProgress?.NodeUpgradeProgressList.length > 0"
+    <div *ngIf="upgradeProgress.isUpgrading && upgradeProgress.nodesInProgress?.NodeUpgradeProgressList.length > 0"
       data-cy="currentud" class="node-list">
       <h3 style="text-align: center;">Nodes status</h3>
       <app-upgrade-domain-progress [upgradeDomain]="upgradeProgress.nodesInProgress">
       </app-upgrade-domain-progress>
-    </div> -->
+    </div>
   </div>
 
   <div class="detail-pane" *ngIf="upgradeProgress.unhealthyEvaluations.length > 0" data-cy="upgradeHealthEvents" style="margin-top: 10px;">

@@ -302,6 +302,10 @@ export class ClusterUpgradeProgress extends DataModelBase<IRawClusterUpgradeProg
       }
     }
 
+    public get isAtHealthCheckPhase() {
+      return this.raw.CurrentUpgradeDomainProgress?.HealthCheck?.Phase !== "Not started"
+    }
+
     protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<IRawClusterUpgradeProgress> {
         return this.data.restClient.getClusterUpgradeProgress(messageHandler).pipe(mergeMap( data => {
             if (data.CodeVersion === '0.0.0.0') {

@@ -827,9 +827,15 @@ export interface IRawServiceTypeDescription {
         UseImplicitHost: boolean;
     }
 
+export interface IRawUpgradeHealthCheckPhase {
+  Phase: "Not started" | "Wait" | "Stable" | "Retry";
+  TimeElapsedInMilliseconds: number;
+}
+
 export interface IRawUpgradeDomainProgress {
         DomainName: string;
         NodeUpgradeProgressList: IRawNodeUpgradeProgress[];
+        HealthCheck: IRawUpgradeHealthCheckPhase;
     }
 
 export interface IRawNodeUpgradeProgress {
