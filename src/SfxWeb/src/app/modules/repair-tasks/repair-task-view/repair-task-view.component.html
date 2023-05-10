@@ -35,7 +35,7 @@
         <ng-template ngbNavContent>
             <div style="display: flex;flex-direction: row; gap: 15px">
                 <div *ngIf="item.raw.History" style="min-width: 400px;" data-cy="history">
-                    <div class="section-title" style="border-bottom: 1px solid gray; padding-bottom: 5px">
+                    <div class="section-title">
                         History
                     </div>
                     <div style="font-size: larger;">
@@ -63,7 +63,14 @@
                   <div *ngIf="item.concerningJobInfo" style="margin-bottom: 15px;" data-cy="node-stuck-warning">
                     <app-warning [description]="item.concerningJobInfo.description" ></app-warning>
                   </div>
-                    <div *ngIf="item.couldParseExecutorData" data-cy="jobinfo">
+                  <div class="health-check-container center-text" data-cy="health-checks" *ngIf="healthCheckConfigs.length > 0">
+                    <h5>
+                      Health Checks
+                    </h5>
+                    <app-essential-item *ngFor="let item of healthCheckConfigs; let l = last; " [item]="item" [underline]="l">
+                    </app-essential-item>
+                  </div>
+                  <div *ngIf="item.couldParseExecutorData" data-cy="jobinfo">
                         <div class="section-title">
                             Job Info
                         </div>

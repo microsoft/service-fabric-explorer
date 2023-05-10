@@ -683,6 +683,11 @@ context('Cluster page', () => {
           cy.contains('Restoring : Done');
         })
       });
+
+      cy.get('[data-cy=health-checks').within(() => {
+        cy.contains(/Perform Preparing Health Check * Yes/);
+        cy.contains(/Perform Restoring Health Check * No/);
+      })
     })
 
     it('view duration graph', () => {
@@ -726,6 +731,8 @@ context('Cluster page', () => {
 
     it('view in progress repair job - stuck in health check', () => {
       setup('cluster-page/repair-jobs/stuck-in-health-check.json')
+
+      cy.contains("node_1:Restart");
 
       cy.get('[data-cy=pendingjobs]').within(() => {
         cy.get('tbody > tr').eq(1).within(() => {
