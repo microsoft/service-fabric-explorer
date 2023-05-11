@@ -2,7 +2,7 @@
 gap: 10px;
 align-items: center;">
   <div>
-    <app-phase-diagram [items]="healthPolicyProgress" [currentIndex]="1" [failed]="false"></app-phase-diagram>
+    <app-phase-diagram [items]="healthPolicyProgress" [currentIndex]="currentPhaseIndex" [failed]="false"></app-phase-diagram>
 
     <div style="margin-left: 30px; margin-top: 5px;">
       <a href="https://docs.microsoft.com/azure/service-fabric/service-fabric-diagnostics-code-package-errors"
@@ -13,8 +13,8 @@ align-items: center;">
   <div style="width: 350px;">
     <app-essential-item [item]="healthCheckTimeLeft"></app-essential-item>
 
-    <app-display-duration topText="displayTopText" [topInMilliseconds]="healthCheckDurationLeft"
-      [colorMap]="{'0': color}" bottomText="displayBottomText"
+    <app-display-duration [topText]="displayTopText" [topInMilliseconds]="healthCheckDurationLeft"
+      [colorMap]="{'0': color}" [bottomText]="displayBottomText"
       [bottomInMilliseconds]="HealthCheckDurationOverall"></app-display-duration>
   </div>
 </div>

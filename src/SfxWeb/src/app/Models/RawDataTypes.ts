@@ -270,6 +270,9 @@ export interface IRawApplicationUpgradeProgress {
         UpgradeUnits: IUpgradeUnitInfo[];
         CurrentUpgradeUnitsProgress: ICurrentUpgradeUnitsProgressInfo;
         IsNodeByNode: boolean;
+
+        HealthCheckPhase: "Not started" | "Wait" | "Stable" | "Retry";
+        HealthCheckElapsedTime: number;
     }
 
 export interface IRawClusterHealth extends IRawHealth {
@@ -310,6 +313,8 @@ export interface IRawClusterUpgradeProgress {
         UpgradeUnits: IUpgradeUnitInfo[];
         CurrentUpgradeUnitsProgress: ICurrentUpgradeUnitsProgressInfo;
         IsNodeByNode: boolean;
+        HealthCheckPhase: "Not started" | "Wait" | "Stable" | "Retry";
+        HealthCheckElapsedTime: number;
     }
 
 export interface IRawClusterLoadInformation {

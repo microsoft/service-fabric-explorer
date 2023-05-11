@@ -77,7 +77,7 @@
     <div class="node-list" *ngIf="upgradeProgress.isUpgrading && upgradeProgress.isAtHealthCheckPhase">
       <h3>Health Check Progress</h3>
       <app-health-policy-check [monitoringPolicy]="upgradeProgress.raw?.UpgradeDescription?.MonitoringPolicy"
-                               [healthCheck]="upgradeProgress.raw.CurrentUpgradeDomainProgress.HealthCheck" ></app-health-policy-check>
+                               [healthCheckPhase]="upgradeProgress.raw.HealthCheckPhase" [healthCheckPhaseDuration]="upgradeProgress.raw.HealthCheckElapsedTime" ></app-health-policy-check>
     </div>
 
     <div *ngIf="upgradeProgress.isUpgrading && upgradeProgress.nodesInProgress?.NodeUpgradeProgressList.length > 0"

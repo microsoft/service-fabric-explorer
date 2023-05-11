@@ -11,7 +11,8 @@ import { IEssentialListItem } from '../../charts/essential-health-tile/essential
 })
 export class HealthPolicyCheckComponent implements OnChanges {
 
-  @Input() healthCheck: IRawUpgradeHealthCheckPhase;
+  @Input() healthCheckPhase: string;
+  @Input() healthCheckPhaseDuration: string;
   @Input() monitoringPolicy: IRawMonitoringPolicy;
 
 
@@ -26,6 +27,7 @@ export class HealthPolicyCheckComponent implements OnChanges {
   displayTopText: string = "";
   displayBottomText: string = "";
   color: string = "";
+  currentPhaseIndex = 1;
 
   constructor() { }
 
@@ -38,34 +40,36 @@ export class HealthPolicyCheckComponent implements OnChanges {
     let middlePhase = `Stable Duration Check  - ${healthCheckStableDuration}`;
     this.healthCheckPhaseText = "Stable duration check will start after the wait duration completes.";
 
-    this.healthCheckDurationLeft = this.healthCheck.TimeElapsedInMilliseconds;
+    this.healthCheckDurationLeft = TimeUtils.getDurationMilliseconds(this.healthCheckPhaseDuration);
 
-    if (this.healthCheck.Phase === "Wait") {
-      let durationLeft = +this.monitoringPolicy.HealthCheckRetryTimeoutInMilliseconds - this.healthCheck.TimeElapsedInMilliseconds;
-      durationLeft += +this.monitoringPolicy.HealthCheckStableDurationInMilliseconds;
+    if (this.healthCheckPhase === "WaitDuration") {
+      let durationLeft = TimeUtils.getDurationMilliseconds(this.monitoringPolicy.HealthCheckWaitDurationInMilliseconds) - this.healthCheckDurationLeft;
+      durationLeft += TimeUtils.getDurationMilliseconds(this.monitoringPolicy.HealthCheckStableDurationInMilliseconds);
       minDurationLeft = TimeUtils.getDuration(durationLeft);
 
-      this.HealthCheckDurationOverall = +this.monitoringPolicy.HealthCheckWaitDurationInMilliseconds;
+      this.HealthCheckDurationOverall = TimeUtils.getDurationMilliseconds(this.monitoringPolicy.HealthCheckWaitDurationInMilliseconds);
       this.displayBottomText = "Wait Time Duration";
       this.displayTopText = "Wait Time Elapsed";
       this.color = 'var(--accent-darkblue)';
-    } else if (this.healthCheck.Phase === "Retry") {
-      minDurationLeft = TimeUtils.getDuration(+this.monitoringPolicy.HealthCheckStableDurationInMilliseconds) + " once stable";
+    } else if (this.healthCheckPhase === "Retry") {
+      this.currentPhaseIndex = 2;
+      minDurationLeft = TimeUtils.getDuration(this.monitoringPolicy.HealthCheckStableDurationInMilliseconds) + " once stable";
       middlePhase = `Retry Duration Check  - ${healthCheckRetryTimeout}`;
       this.healthCheckPhaseText = "If the health policy becomes healthy, the retry check will move to stable and move towards success";
 
-      this.HealthCheckDurationOverall = +this.monitoringPolicy.HealthCheckRetryTimeoutInMilliseconds;
+      this.HealthCheckDurationOverall = TimeUtils.getDurationMilliseconds(this.monitoringPolicy.HealthCheckRetryTimeoutInMilliseconds);
       this.displayBottomText = "Retry Time Duration";
       this.displayTopText = "Retry Time out Elapsed";
-      this.color = 'var(--accent-darkblue)';
-    } else if (this.healthCheck.Phase === "Stable") {
-      minDurationLeft = TimeUtils.getDuration(+this.monitoringPolicy.HealthCheckStableDurationInMilliseconds - this.healthCheck.TimeElapsedInMilliseconds);
+      this.color = 'var(--badge-error)';
+    } else if (this.healthCheckPhase === "StableDuration") {
+      this.currentPhaseIndex = 2;
+      minDurationLeft = TimeUtils.getDuration(TimeUtils.getDurationMilliseconds(this.monitoringPolicy.HealthCheckStableDurationInMilliseconds) - this.healthCheckDurationLeft);
       this.healthCheckPhaseText = "If the health policy becomes unhealthy, the stable check will move to retry and potentially fail";
 
-      this.HealthCheckDurationOverall = +this.monitoringPolicy.HealthCheckStableDurationInMilliseconds;
+      this.HealthCheckDurationOverall = TimeUtils.getDurationMilliseconds(this.monitoringPolicy.HealthCheckStableDurationInMilliseconds);
       this.displayBottomText = "Stable Time Duration";
       this.displayTopText = "Stable Time Elapsed";
-      this.color = 'var(--accent-darkblue)';
+      this.color = 'var(--badge-ok)';
     }
 
     this.healthPolicyProgress = [
