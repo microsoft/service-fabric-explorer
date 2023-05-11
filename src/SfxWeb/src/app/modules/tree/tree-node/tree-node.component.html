@@ -1,4 +1,4 @@
-<ul *ngIf="node.isExpanded">
+<ul *ngIf="node.isExpanded" role="group">
     <li class="more-children"
         *ngIf="node.loadingChildren"
         [ngStyle]="{ 'paddingLeft': node.paddingLeftPx }">
