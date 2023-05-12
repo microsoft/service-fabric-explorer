@@ -10,7 +10,7 @@
         </h1>
         <app-clip-board [text]="name" *ngIf="showCopy" [name]="type + ' name '"></app-clip-board>
       </div>
-      <app-warning *ngIf="armManaged" [description]="armWarningText" iconSize="mif-2x"
+      <app-warning *ngIf="armManaged" [description]="armWarningText" iconSize="mif-2x"  data-cy="armWarning"
         [link]="this.resourceId ? 'https://ms.portal.azure.com/#@microsoft.onmicrosoft.com/resource' + this.resourceId + '/overview' : null" 
         [linkText]="this.resourceId ? 'Click here to visit this resource in the Azure portal.' : null"
       ></app-warning>

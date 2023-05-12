@@ -2,18 +2,37 @@
   
     "ContinuationToken": "",
     "Items": [
-      {
-        "Name": "fabric:/VisualObjectsApplicationType",
-        "TypeName": "VisualObjectsApplicationType",
-        "TypeVersion": "16.0.0",
-        "Status": "Ready",
-        "Parameters": [],
-        "HealthState": "Ok",
-        "ApplicationDefinitionKind": "ServiceFabricApplicationDescription",
-        "ManagedApplicationIdentity": {
-            "ManagedIdentities": []
+        {
+            "Name": "fabric:/VisualObjectsApplicationType",
+            "TypeName": "VisualObjectsApplicationType",
+            "TypeVersion": "16.0.0",
+            "Status": "Ready",
+            "Parameters": [],
+            "HealthState": "Ok",
+            "ApplicationDefinitionKind": "ServiceFabricApplicationDescription",
+            "ManagedApplicationIdentity": {
+                "ManagedIdentities": []
+            },
+            "Id": "VisualObjectsApplicationType"
         },
-        "Id": "VisualObjectsApplicationType"
-    }
+        {
+            "Name": "fabric:/VisualObjectsApplicationType",
+            "TypeName": "VisualObjectsApplicationType",
+            "TypeVersion": "18.0.0",
+            "Status": "Ready",
+            "Parameters": [],
+            "HealthState": "Ok",
+            "ApplicationDefinitionKind": "ServiceFabricApplicationDescription",
+            "ManagedApplicationIdentity": {
+                "ManagedIdentities": []
+            },
+            "Id": "VisualObjectsApplicationType",
+            "ApplicationMetadata": {
+                "ArmMetadata": {
+                    "ArmResourceId": "\/subscriptions\/13ad2c84-84fa-4798-ad71-e70c07af873f\/resourcegroups\/sfmc\/providers\/Microsoft.ServiceFabric\/managedClusters\/luslevinsfmc10\/applicationTypes\/VotingType\/versions\/1.0.0"
+                }
+              }
+        }
     ]
+    
 }

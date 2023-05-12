@@ -21,7 +21,7 @@
       }
     ],
     "Status": "Available",
-    "ApplicationTypeDefi,nitionKind": "ServiceFabricApplicationPackage"
+    "ApplicationTypeDefinitionKind": "ServiceFabricApplicationPackage"
   },
   {
     "Name": "VisualObjectsApplicationType",
@@ -46,5 +46,35 @@
     ],
     "Status": "Available",
     "ApplicationTypeDefinitionKind": "ServiceFabricApplicationPackage"
+  },
+  {
+    "Name": "VisualObjectsApplicationType",
+    "Version": "18.0.0",
+    "DefaultParameterList": [
+      {
+        "Key": "VisualObjects.ActorService_MinReplicaSetSize",
+        "Value": "2"
+      },
+      {
+        "Key": "VisualObjects.ActorService_PartitionCount",
+        "Value": "10"
+      },
+      {
+        "Key": "VisualObjects.ActorService_TargetReplicaSetSize",
+        "Value": "3"
+      },
+      {
+        "Key": "VisualObjects.WebService_InstanceCount",
+        "Value": "1"
+      }
+    ],
+    "Status": "Available",
+    "ApplicationTypeDefinitionKind": "ServiceFabricApplicationPackage",
+    "ApplicationTypeMetadata": {
+      "ApplicationTypeProvisionTimestamp": "2023-02-24T21:04:26.636Z",
+      "ArmMetadata": {
+          "ArmResourceId": "\/subscriptions\/13ad2c84-84fa-4798-ad71-e70c07af873f\/resourcegroups\/sfmc\/providers\/Microsoft.ServiceFabric\/managedClusters\/luslevinsfmc10\/applicationTypes\/VotingType\/versions\/1.0.0"
+      }
+    }
   }
 ]

@@ -45,6 +45,18 @@ context('service', () => {
         })
       })
 
+      it('arm-managed', () => {
+
+        addRoute("services", "app-page/services-arm-managed.json", apiUrl(`/Applications/${appName}/$/GetServices?*`))
+        addRoute("serviceInfo", "service-page/service-arm-managed.json", apiUrl(`${routeFormatter(appName, "VisualObjects.ActorService")}?*`))
+        cy.visit(urlFormatter(appName, serviceName))
+        cy.wait(waitRequest);
+
+        cy.get('[data-cy=armWarning]').should('exist');
+        cy.get('[data-cy=actions]').should('not.exist');
+
+      })
+
       it('stateful information', () => {
         cy.wait(waitRequest);
 
@@ -177,8 +189,20 @@ context('service', () => {
         })
       })
 
-      it('actions', () => {
-        cy.wait(waitRequest);
+        it('arm-managed', () => {
+
+            addRoute("services", "app-page/services-arm-managed.json", apiUrl(`/Applications/${appName}/$/GetServices?*`))
+            addRoute("serviceInfo", "service-page/service-stateless-arm-managed.json",apiUrl(`${routeFormatter(appName, statelessServiceName)}?*`))
+            cy.visit(urlFormatter(appName, statelessServiceName))
+            cy.wait(waitRequest);
+
+            cy.get('[data-cy=armWarning]').should('exist');
+            cy.get('[data-cy=actions]').should('not.exist');
+
+        })
+
+        it('actions', () => {
+            cy.wait(waitRequest);
 
         cy.get('[data-cy=actions]').within(() => {
           cy.contains("Actions").click();
