@@ -1,31 +1,5 @@
-<div class="detail-pane essen-pane" *ngIf="appTypeGroup" data-cy="apptypeviewer">
-    <app-collapse-container sectionName="Application Type versions">
-        <h2 collapse-header>
-            Application Type versions
-        </h2>
-        <div collapse-body>
-            <div ngbNav #nav="ngbNav" class="nav-wrapper" >
-                <div ngbNavItem>
-                    <a ngbNavLink style="font-size: 12pt;">
-                      In Use <span tabindex="0" class="mif-info" ngbTooltip="Application Types which have at least 1 application instance."
-                        placement="bottom" tooltipClass="styled-tooltip" style="font-size: small;" container="body"></span>
-                    </a>
-                    <ng-template ngbNavContent>
-                        <app-detail-list [list]="activeAppTypes" [listSettings]="activeAppTypesListSettings" data-cy="appTypeVersions"></app-detail-list>
-                    </ng-template>
-                </div>
-                <div ngbNavItem>
-                    <a ngbNavLink style="font-size: 12pt;">
-                        All
-                    </a>
-                    <ng-template ngbNavContent>
-                        <app-detail-list [list]="appTypeGroup.appTypes" [listSettings]="appTypesListSettings"></app-detail-list>
-                    </ng-template>
-                </div>
-            </div>
-            <div [ngbNavOutlet]="nav"></div>
-        </div>
-    </app-collapse-container>
+<div class="detail-pane essen-pane" *ngIf="appTypeGroup">
+    <app-apptype-viewer [activeAppTypes]="appTypeGroup.activeAppTypes" [inactiveAppTypes]="appTypeGroup.inactiveAppTypes"></app-apptype-viewer>
 </div>
 
 <div class="detail-pane essen-pane" *ngIf="appTypeGroup">

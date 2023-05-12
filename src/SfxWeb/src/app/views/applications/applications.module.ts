@@ -15,6 +15,7 @@ import { ApptypesComponent } from './apptypes/apptypes.component';
 import { ApptypesViewerModule } from 'src/app/modules/apptypes-viewer/apptypes-viewer.module';
 import { CommandsComponent } from './commands/commands.component';
 import { PowershellCommandsModule } from 'src/app/modules/powershell-commands/powershell-commands.module';
+import { ChartsModule } from 'src/app/modules/charts/charts.module';
 
 
 @NgModule({
@@ -27,7 +28,8 @@ import { PowershellCommandsModule } from 'src/app/modules/powershell-commands/po
     EventStoreModule,
     UpgradeProgressModule,
     ApptypesViewerModule,
-    PowershellCommandsModule
+    PowershellCommandsModule,
+    ChartsModule
   ]
 })
 export class ApplicationsModule { }

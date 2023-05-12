@@ -88,7 +88,7 @@ export class ApplicationCollection extends DataModelCollectionBase<Application> 
 
 export interface IAppTypeUsage {
   activeAppTypes: ApplicationType[];
-  inactiveTypes: ApplicationType[];
+  inactiveAppTypes: ApplicationType[];
 }
 
 export class ApplicationTypeGroupCollection extends DataModelCollectionBase<ApplicationTypeGroup> {
@@ -114,18 +114,18 @@ export class ApplicationTypeGroupCollection extends DataModelCollectionBase<Appl
       return this.data.getApps(true).pipe(map(() => {
           // check on refresh which appTypes are being used by at least one application
           const activeAppTypes = [];
-          const inactiveTypes = [];
+          const inactiveAppTypes = [];
           this.collection.forEach(appTypeGroup => appTypeGroup.appTypes.forEach(appType => {
             if (appType.isInUse) {
               activeAppTypes.push(appType);
             }else{
-              inactiveTypes.push(appType);
+              inactiveAppTypes.push(appType);
             }
           }))
 
           return {
             activeAppTypes,
-            inactiveTypes
+            inactiveAppTypes
           }
       }))
     }
