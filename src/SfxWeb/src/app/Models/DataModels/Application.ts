@@ -330,7 +330,7 @@ export class ApplicationUpgradeProgress extends DataModelBase<IRawApplicationUpg
     }
 
     public get isAtHealthCheckPhase() {
-      return this.raw.HealthCheckPhase !== "Not started";
+      return this.raw.HealthCheckPhase !== "Invalid";
     }
 
     protected updateInternal(): Observable<any> | void {

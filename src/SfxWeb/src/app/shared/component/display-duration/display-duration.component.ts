@@ -24,7 +24,7 @@ export class DisplayDurationComponent implements OnChanges {
   @Input() colorMap: Record<number, string> = {
     .75 : 'red',
     .5 : 'yellow',
-    0 : 'blue'
+    0 : 'var(--accent-darkblue)'
   }
 
   timeLeft = 0;

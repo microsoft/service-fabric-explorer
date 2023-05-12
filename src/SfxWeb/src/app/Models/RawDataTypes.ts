@@ -271,7 +271,7 @@ export interface IRawApplicationUpgradeProgress {
         CurrentUpgradeUnitsProgress: ICurrentUpgradeUnitsProgressInfo;
         IsNodeByNode: boolean;
 
-        HealthCheckPhase: "Not started" | "Wait" | "Stable" | "Retry";
+        HealthCheckPhase: "Invalid" | "Wait" | "Stable" | "Retry";
         HealthCheckElapsedTime: number;
     }
 
@@ -313,7 +313,7 @@ export interface IRawClusterUpgradeProgress {
         UpgradeUnits: IUpgradeUnitInfo[];
         CurrentUpgradeUnitsProgress: ICurrentUpgradeUnitsProgressInfo;
         IsNodeByNode: boolean;
-        HealthCheckPhase: "Not started" | "Wait" | "Stable" | "Retry";
+        HealthCheckPhase: "Invalid" | "Wait" | "Stable" | "Retry";
         HealthCheckElapsedTime: number;
     }
 
