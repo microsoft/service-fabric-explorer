@@ -10,9 +10,17 @@ import { NodeCollection } from 'src/app/Models/DataModels/collections/NodeCollec
 import { IMetricsViewModel, MetricsViewModel } from 'src/app/ViewModels/MetricsViewModel';
 import { LoadMetricInformation } from 'src/app/Models/DataModels/Shared';
 
-interface IChartSeries {
+export interface IChartSeries {
   label: string;
   data: number[];
+  type: any;
+}
+
+export interface ITableData {
+  dataPoints: IChartSeries[];
+  categories: string[];
+  title: string;
+  tooltipFunction: Function;
 }
 
 @Component({
@@ -25,7 +33,7 @@ export class MetricsComponent extends BaseControllerDirective {
   clusterLoadInformation: ClusterLoadInformation;
   nodes: NodeCollection;
   metricsViewModel: MetricsViewModel;
-  tableData = {
+  tableData: ITableData = {
     dataPoints: [],
     categories: [],
     title: '',
@@ -61,7 +69,8 @@ export class MetricsComponent extends BaseControllerDirective {
     const chartMetricSeriesList: IChartSeries[] = this.metricsViewModel.selectedMetrics.map(metric => {
       return {
         label: metric.displayName,
-        data: []
+        data: [],
+        type: 'bar'
       };
     });
 

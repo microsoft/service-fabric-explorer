@@ -1,5 +1,6 @@
 import { Component, OnInit, Input, OnChanges, OnDestroy, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { Chart, Options, chart, SeriesOptionsType, TooltipFormatterCallbackFunction  } from 'highcharts';
+import { IChartSeries } from 'src/app/views/cluster/metrics/metrics.component';
 
 @Component({
   selector: 'app-bar-chart',
@@ -9,7 +10,7 @@ import { Chart, Options, chart, SeriesOptionsType, TooltipFormatterCallbackFunct
 export class BarChartComponent implements AfterViewInit, OnChanges, OnDestroy {
 
   @Input() xAxisCategories: string[];
-  @Input() dataSet: any[] = [];
+  @Input() dataSet: IChartSeries[] = [];
   @Input() title = '';
   @Input() subtitle = '';
   @Input() tooltip: TooltipFormatterCallbackFunction;

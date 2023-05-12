@@ -4,6 +4,8 @@ import { ReplicaOnPartition } from 'src/app/Models/DataModels/Replica';
 import { Utils } from 'src/app/Utils/Utils';
 import { Subscription } from 'rxjs';
 import { IEssentialListItem } from '../../charts/essential-health-tile/essential-health-tile.component';
+import { ITableData } from 'src/app/views/cluster/metrics/metrics.component';
+import { IProgressStatus, PhaseDiagramComponent } from 'src/app/shared/component/phase-diagram/phase-diagram.component';
 
 export interface ITimedReplication extends IRawRemoteReplicatorStatus {
   date: Date;
@@ -36,6 +38,27 @@ export class ReplicaStatusContainerComponent implements OnChanges, OnDestroy {
 
   sub: Subscription = new Subscription();
 
+  tableData: ITableData = {
+    dataPoints: [],
+    categories: [],
+    title: '',
+    tooltipFunction: null
+  };
+
+  phaseDiagram: IProgressStatus[] = [
+    {
+      name: 'copy state'
+    },
+    {
+      name: 'copy queue drain'
+    },
+    {
+      name: 'draining replication queue'
+    }
+  ]
+
+
+
   constructor() { }
 
   ngOnChanges(): void {
@@ -56,6 +79,19 @@ export class ReplicaStatusContainerComponent implements OnChanges, OnDestroy {
 
         this.replicaDict = replicatorData.RemoteReplicators.reduce(reduceReplicators, {});
 
+        this.tableData = {
+          dataPoints: [
+            {
+              label: "Received and not applied",
+              data: [],
+              type: 'bar'
+            }
+          ],
+          categories: [],
+          title: 'Applied and not Received',
+          tooltipFunction: null
+        }
+
         replicatorData.RemoteReplicators.forEach(replicator => {
           const cacheData = { ...replicator, date: new Date() };
 
@@ -69,12 +105,17 @@ export class ReplicaStatusContainerComponent implements OnChanges, OnDestroy {
           }
 
           this.cachedData[replicator.ReplicaId].push(cacheData);
+
+          this.tableData.dataPoints[0].data.push(+replicator.RemoteReplicatorAcknowledgementStatus.ReplicationStreamAcknowledgementDetail.ReceivedAndNotAppliedCount);
+          this.tableData.categories.push(replicator.ReplicaId);
         });
 
         this.sortedReplicas = this.replicas.sort((a, b) => a.replicaRoleSortPriority - b.replicaRoleSortPriority);
 
         // ref for shorter lines below
         const ref = this.primaryReplica.detail.replicatorStatus.raw.ReplicationQueueStatus;
+
+        console.log(this)
 
         this.overviewItems = [
           {
@@ -91,7 +132,7 @@ export class ReplicaStatusContainerComponent implements OnChanges, OnDestroy {
 
         this.replicationStatus = [
           {
-            descriptionName: 'Last Sequence Number(LSN) ',
+            descriptionName: 'Logical Sequence Number(LSN) ',
             copyTextValue: ref.LastSequenceNumber,
             displayText: ref.LastSequenceNumber,
           },

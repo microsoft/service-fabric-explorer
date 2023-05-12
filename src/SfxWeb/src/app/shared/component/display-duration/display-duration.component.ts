@@ -28,7 +28,7 @@ export class DisplayDurationComponent implements OnChanges {
     this.leftDuration = (this.topInMilliseconds / this.bottomInMilliseconds);
     this.rightDuration = 1 - this.leftDuration;
 
-    this.timeLeft = this.bottomInMilliseconds - this.topInMilliseconds;
+    this.timeLeft = this.bottomInMilliseconds;
     this.barColor = this.setColorCode(this.leftDuration);
   }
 
