@@ -25,7 +25,7 @@ const reduceReplicators = (data, replica) => {
 export class ReplicaStatusContainerComponent implements OnChanges, OnDestroy {
 
   @Input() replicas: ReplicaOnPartition[];
-  sortedReplicas = [];
+  sortedReplicas: ReplicaOnPartition[] = [];
 
   replicaDict = {};
   expandedDict = {};

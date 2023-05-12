@@ -28,7 +28,7 @@ export class BarChartComponent implements AfterViewInit, OnChanges, OnDestroy {
       inverted: false,
       polar: false,
       animation: true,
-      backgroundColor: '#191919',
+      backgroundColor: 'transparent',
     },
     title: {
       text: '',
