@@ -11,6 +11,10 @@ export interface ITimedReplication extends IRawRemoteReplicatorStatus {
   date: Date;
 }
 
+export interface IReplicationTimeLineData {
+  date: Date;
+  dataPoints: IRawRemoteReplicatorStatus[];
+}
 
 const reduceReplicators = (data, replica) => {
   data[replica.ReplicaId] = replica;
@@ -27,6 +31,7 @@ export class ReplicaStatusContainerComponent implements OnChanges, OnDestroy {
   @Input() replicas: ReplicaOnPartition[];
   sortedReplicas: ReplicaOnPartition[] = [];
 
+  chart: IReplicationTimeLineData[] = [];
   replicaDict = {};
   expandedDict = {};
   cachedData: Record<string, ITimedReplication[]> = {};
@@ -111,6 +116,15 @@ export class ReplicaStatusContainerComponent implements OnChanges, OnDestroy {
         });
 
         this.sortedReplicas = this.replicas.sort((a, b) => a.replicaRoleSortPriority - b.replicaRoleSortPriority);
+
+        this.chart = [...this.chart, {
+          date: new Date(),
+          dataPoints: replicatorData.RemoteReplicators
+        }]
+
+        if (this.chart.length > 20) {
+          this.chart.shift();
+        }
 
         // ref for shorter lines below
         const ref = this.primaryReplica.detail.replicatorStatus.raw.ReplicationQueueStatus;

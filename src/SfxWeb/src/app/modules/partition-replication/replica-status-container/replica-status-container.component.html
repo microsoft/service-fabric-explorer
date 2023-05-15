@@ -1,6 +1,9 @@
 <div *ngIf="primaryReplica && primaryReplica.detail.raw" class="overview-container">
   <div class="essen-pane" style="width: 330px;" data-cy="essentials">
     <h3 class="underline-title">Primary Replica Queue Status</h3>
+    <b><i class="mif-info link"></i>
+      Describe what the primary queue means
+    </b>
 
     <app-essential-item *ngFor="let item of overviewItems; let l = last; " [item]="item" [underline]="l">
     </app-essential-item>
@@ -8,6 +11,12 @@
     <app-display-duration [topInMilliseconds]="50" [bottomInMilliseconds]="100"></app-display-duration>
 
     <h3 class="underline-title" style="margin-top: 10px;">Secondary Replication Queue Status</h3>
+
+    <b><i class="mif-info link"></i>
+      Describe what the Secondary queue means
+    </b>
+
+    <app-warning description="The primary replication queue is full. This can cause availability issues, consider investigating the primary replica's machine or network conditions"></app-warning>
     <app-essential-item *ngFor="let item of overviewItems; let l = last; " [item]="item" [underline]="l">
     </app-essential-item>
 
@@ -39,8 +48,16 @@
     </div> -->
   </div>
 
-  <div style="width: 300px; height: 100%;" class="essen-pane">
+  <div style="width: 600px; height: 100%;" class="essen-pane">
+    <b><i class="mif-info link"></i>
+      How much work does each replica have left to copy and save.
+    </b>
     <app-bar-chart class="dynamic-bar-chart" [xAxisCategories]="tableData.categories"
     [dataSet]="tableData.dataPoints" [title]="tableData.title" [tooltip]="tableData.tooltipFunction"></app-bar-chart>
+
+    <app-warning description="Replica 123412341234 is significantly slower on writing data. This could be due to CPU or network conditions on the node."></app-warning>
+
   </div>
 </div>
+
+<app-replication-trend-line [data]="chart" *ngIf="chart.length > 0"></app-replication-trend-line>

@@ -2,7 +2,7 @@ import { AfterViewInit, Component, ElementRef, Input, OnChanges, OnDestroy, OnIn
 import { Chart, Options, chart } from 'highcharts';
 import { interval, Subscription } from 'rxjs';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
-import { ITimedReplication } from '../replica-status-container/replica-status-container.component';
+import { IReplicationTimeLineData, ITimedReplication } from '../replica-status-container/replica-status-container.component';
 import { generateReplicationDeltas } from '../replication-utils';
 
 export interface IChartData {
@@ -17,7 +17,7 @@ export interface IChartData {
 })
 export class ReplicationTrendLineComponent implements AfterViewInit, OnChanges, OnInit, OnDestroy {
 
-  @Input() data: ITimedReplication[];
+  @Input() data: IReplicationTimeLineData[];
   @Input() fullScreen: boolean;
   @Input() showUTC = false;
 
@@ -57,6 +57,7 @@ export class ReplicationTrendLineComponent implements AfterViewInit, OnChanges, 
         enabled: false
       },
       xAxis: {
+        type: 'datetime',
         title: {
           style: this.fontColor
         },
@@ -76,9 +77,9 @@ export class ReplicationTrendLineComponent implements AfterViewInit, OnChanges, 
         },
 
       },
-      legend: {
-        enabled: false
-      },
+      // legend: {
+      //   enabled: false
+      // },
       tooltip: {
         hideDelay: 0,
         outside: true,
@@ -129,21 +130,37 @@ export class ReplicationTrendLineComponent implements AfterViewInit, OnChanges, 
 
   setData() {
     if (this.data && this.data.length > 1) {
-      const chartData = generateReplicationDeltas(this.data);
-
+      const data = generateReplicationDeltas(this.data)
+      console.log(data);
       if (this.chart) {
-        this.chart.series[0].setData(chartData.map(item => item.delta));
-        const now = new Date();
-        now.setMilliseconds(0);
-        this.chart.xAxis[0].setCategories(chartData.map(item => {
-          if (this.showUTC) {
-            return item.date.toUTCString();
-          }else {
-            item.date.setMilliseconds(0);
-            const diff = now.getTime() - item.date.getTime();
-            return TimeUtils.getDuration(diff) + ' ago';
-          }
-        }));
+          this.chart.series.forEach(series => {
+            if (data.every(set => set.name !== series.name)) {
+              series.remove();
+            } else {
+              series.update(data.find(set => set.name === series.name));
+            }
+          });
+          data.forEach(item => {
+            if (this.chart.series.every(set => set.name !== item.name)) {
+              this.chart.addSeries(item);
+            }
+          });
+
+        // this.chart.update({
+        //   series: data
+        // })
+        // this.chart.series[0].setData(chartData.map(item => item.delta));
+        // const now = new Date();
+        // now.setMilliseconds(0);
+        // this.chart.xAxis[0].setCategories(chartData.map(item => {
+        //   if (this.showUTC) {
+        //     return item.date.toUTCString();
+        //   }else {
+        //     item.date.setMilliseconds(0);
+        //     const diff = now.getTime() - item.date.getTime();
+        //     return TimeUtils.getDuration(diff) + ' ago';
+        //   }
+        // }));
         window.dispatchEvent(new Event('resize'));
       }
     }
