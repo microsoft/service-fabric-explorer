@@ -47,7 +47,7 @@ export class Utils {
      * @param key key for value
      */
     public static groupBy<T>(list: T[], key: string): Record<string, T[]> {
-        return list.reduce( (previous, current) => { previous[key] = (previous[key] || []).push(current) ; return previous; }, {});
+        return list.reduce( (previous, current) => { const itemKey = Utils.result(current, key) ;previous[itemKey] = (previous[itemKey] || []).push(current) ; return previous; }, {});
     }
 
     /**
@@ -122,8 +122,12 @@ export class Utils {
         return textToReplace.replace(replaceText, `<a title=${title} ng-href="${url}" ">${replaceText}</a>`);
     }
 
-    public static isSingleURL(str: string): boolean {
+    public static isSingleURL(str: any): boolean {
+      if(typeof str === "string") {
         return Utils.SingleUrlRegExp.test(str.toLowerCase());
+      }else{
+        return false;
+      }
     }
 
     // Convert a hex string to a byte array
@@ -209,7 +213,7 @@ export class Utils {
     }
 
     public static isGUID(guid: string) {
-      return !!guid.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$/i)
+      return guid.match(/^[{]?[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}[}]?$/)
     }
 
 }

@@ -1,0 +1,23 @@
+{
+  "ContinuationToken": "",
+  "Items": [
+    {
+      "ServiceKind": "Stateful",
+      "PartitionInformation": {
+        "ServicePartitionKind": "Int64Range",
+        "Id": "00000000-0000-0000-0000-000000001000",
+        "LowKey": "0",
+        "HighKey": "0"
+      },
+      "TargetReplicaSetSize": 3,
+      "MinReplicaSetSize": 3,
+      "HealthState": "Ok",
+      "PartitionStatus": "Ready",
+      "LastQuorumLossDurationInSeconds": "0",
+      "CurrentConfigurationEpoch": {
+        "ConfigurationVersion": "8589934592",
+        "DataLossVersion": "133220979397776671"
+      }
+    }
+  ]
+}

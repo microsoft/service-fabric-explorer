@@ -1,0 +1,131 @@
+{
+  "ContinuationToken": "",
+  "Items": [
+    {
+      "ServiceKind": "Stateful",
+      "Name": "fabric:/System/ClusterManagerService",
+      "TypeName": "ClusterManagerServiceType",
+      "ManifestVersion": "9.1.1390.9590",
+      "HasPersistedState": true,
+      "HealthState": "Ok",
+      "ServiceStatus": "Active",
+      "IsServiceGroup": false,
+      "ServiceMetadata": {
+        "ArmMetadata": {}
+      },
+      "Id": "System/ClusterManagerService"
+    },
+    {
+      "ServiceKind": "Stateful",
+      "Name": "fabric:/System/EventStoreService",
+      "TypeName": "EventStoreServiceType",
+      "ManifestVersion": "9.1.1390.9590",
+      "HasPersistedState": true,
+      "HealthState": "Ok",
+      "ServiceStatus": "Active",
+      "IsServiceGroup": false,
+      "ServiceMetadata": {
+        "ArmMetadata": {}
+      },
+      "Id": "System/EventStoreService"
+    },
+    {
+      "ServiceKind": "Stateful",
+      "Name": "fabric:/System/FailoverManagerService",
+      "TypeName": "FMServiceType",
+      "ManifestVersion": "9.1.1390.9590",
+      "HasPersistedState": true,
+      "HealthState": "Ok",
+      "ServiceStatus": "Active",
+      "IsServiceGroup": false,
+      "ServiceMetadata": {
+        "ArmMetadata": {}
+      },
+      "Id": "System/FailoverManagerService"
+    },
+    {
+      "ServiceKind": "Stateful",
+      "Name": "fabric:/System/FaultAnalysisService",
+      "TypeName": "FaultAnalysisServiceType",
+      "ManifestVersion": "9.1.1390.9590",
+      "HasPersistedState": true,
+      "HealthState": "Ok",
+      "ServiceStatus": "Active",
+      "IsServiceGroup": false,
+      "ServiceMetadata": {
+        "ArmMetadata": {}
+      },
+      "Id": "System/FaultAnalysisService"
+    },
+    {
+      "ServiceKind": "Stateful",
+      "Name": "fabric:/System/ImageStoreService",
+      "TypeName": "FileStoreServiceType",
+      "ManifestVersion": "9.1.1390.9590",
+      "HasPersistedState": true,
+      "HealthState": "Ok",
+      "ServiceStatus": "Active",
+      "IsServiceGroup": false,
+      "ServiceMetadata": {
+        "ArmMetadata": {}
+      },
+      "Id": "System/ImageStoreService"
+    },
+    {
+      "ServiceKind": "Stateful",
+      "Name": "fabric:/System/InfrastructureService/Coordinated_43c17f19-8f43-4afc-56ca-38e81f6c844b",
+      "TypeName": "InfrastructureServiceType",
+      "ManifestVersion": "9.1.1583.9590",
+      "HasPersistedState": false,
+      "HealthState": "Ok",
+      "ServiceStatus": "Active",
+      "IsServiceGroup": false,
+      "ServiceMetadata": {
+        "ArmMetadata": {}
+      },
+      "Id": "System/InfrastructureService/Coordinated_43c17f19-8f43-4afc-56ca-38e81f6c844b"
+    },
+    {
+      "ServiceKind": "Stateful",
+      "Name": "fabric:/System/NamingService",
+      "TypeName": "NamingStoreService",
+      "ManifestVersion": "9.1.1390.9590",
+      "HasPersistedState": true,
+      "HealthState": "Ok",
+      "ServiceStatus": "Active",
+      "IsServiceGroup": false,
+      "ServiceMetadata": {
+        "ArmMetadata": {}
+      },
+      "Id": "System/NamingService"
+    },
+    {
+      "ServiceKind": "Stateful",
+      "Name": "fabric:/System/RepairManagerService",
+      "TypeName": "RepairManagerServiceType",
+      "ManifestVersion": "9.1.1390.9590",
+      "HasPersistedState": true,
+      "HealthState": "Ok",
+      "ServiceStatus": "Active",
+      "IsServiceGroup": false,
+      "ServiceMetadata": {
+        "ArmMetadata": {}
+      },
+      "Id": "System/RepairManagerService"
+    },
+    {
+      "ServiceKind": "Stateful",
+      "Name": "fabric:/System/UpgradeService",
+      "TypeName": "UpgradeServiceType",
+      "ManifestVersion": "9.1.1390.9590",
+      "HasPersistedState": true,
+      "HealthState": "Ok",
+      "ServiceStatus": "Active",
+      "IsServiceGroup": false,
+      "ServiceMetadata": {
+        "ArmMetadata": {}
+      },
+      "Id": "System/UpgradeService"
+    }
+  ]
+}

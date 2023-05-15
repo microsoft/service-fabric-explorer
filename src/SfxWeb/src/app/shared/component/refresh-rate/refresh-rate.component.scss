@@ -24,6 +24,7 @@ input[type=range]::-webkit-slider-runnable-track {
   background: var(--font-primary-color);
   height: $baseSize * 2;
   border-radius: 5px;
+  border: 1px solid var(--accent-underline);
 }
 
 input[type="range"]::-moz-range-track {
@@ -38,6 +39,7 @@ input[type="range"]::-webkit-slider-thumb {
   height: $baseSize * 4;
   width: $baseSize * 4;
   background: var(--accent-darkblue);
+  border: 1px solid var(--accent-underline);
   margin-top: -1 * $baseSize;
   border-radius: 50%;
 }

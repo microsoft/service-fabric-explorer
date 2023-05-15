@@ -5,12 +5,13 @@ $metric-container-padding: 8px;
   margin-bottom: $metric-container-margin;
   padding: $metric-container-padding;
   background-color: var(--primary-background-color);
-  cursor: pointer;
   position: relative;
   border-color: transparent;
   border-width: 1px;
   border-style: solid;
   border-radius: var(--primary-border-radius);
+  color: var(--font-primary-color);
+  width: 100%;
 
   &.selected {
     border-color: var(--accent-darkblue);

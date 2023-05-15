@@ -112,7 +112,7 @@ describe('Http interceptors', () => {
     });
 
     fit('standalone interceptor does not fire', () => {
-      standaloneService.setConfiguration("?");
+      standaloneService.setConfiguration(null);
 
       spyOn(standaloneService, 'getIntegrationCaller');
 
@@ -123,7 +123,7 @@ describe('Http interceptors', () => {
   });
 
   fit('standalone interceptor does fire', (done: DoneFn) => {
-    standaloneService.setConfiguration("integrationConfig={%20%20%22preloadFunction%22:%20%22CefSharp.BindObjectAsync%22,%20%20%22windowPath%22:%20%22CefSharp.PostMessage%22,%20%20%22passObjectAsString%22:%20true,%20%20%22handleAsCallBack%22:%20true}&=Onebox/Local%20cluster%20-%20http://localhost:19080#/");
+    standaloneService.setConfiguration({passObjectAsString : true, handleAsCallBack : true, windowPath: "path"});
 
     spyOn(standaloneService, 'getIntegrationCaller').and.returnValue(
       (integrationData) => {

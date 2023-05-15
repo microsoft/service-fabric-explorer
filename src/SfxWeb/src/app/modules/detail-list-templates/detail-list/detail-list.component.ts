@@ -228,12 +228,6 @@ export class DetailListComponent implements OnInit, OnDestroy {
     this.debounceHandler.next(this.sortedFilteredList);
   }
 
-  closeDropDown() {
-    this.dropdowns.toArray().forEach(el => {
-      el.close();
-  });
-  }
-
 }
 
 // TODO verify this works
