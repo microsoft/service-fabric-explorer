@@ -1,5 +1,5 @@
 import { Component, OnChanges, Input } from '@angular/core';
-import { IRawMonitoringPolicy, IRawUpgradeHealthCheckPhase } from 'src/app/Models/RawDataTypes';
+import { IRawMonitoringPolicy } from 'src/app/Models/RawDataTypes';
 import { IProgressStatus } from 'src/app/shared/component/phase-diagram/phase-diagram.component';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { IEssentialListItem } from '../../charts/essential-health-tile/essential-health-tile.component';
@@ -39,9 +39,9 @@ export class HealthPolicyCheckComponent implements OnChanges {
 
     let minDurationLeft: string = "";
     let middlePhase = `Stable Duration Check  - ${healthCheckStableDuration}`;
+    let middleTooltip = ""
     this.healthCheckPhaseText = "Stable duration check will start after the wait duration completes.";
 
-    console.log(TimeUtils.getDurationMilliseconds(this.healthCheckPhaseDuration))
     this.healthCheckDurationLeft = TimeUtils.getDurationMilliseconds(this.healthCheckPhaseDuration);
     this.failed = false;
 
@@ -57,8 +57,6 @@ export class HealthPolicyCheckComponent implements OnChanges {
       this.currentPhaseIndex = 1;
 
     } else if (this.healthCheckPhase === "Retry") {
-      //temp
-      this.healthCheckDurationLeft -= TimeUtils.getDurationMilliseconds(this.monitoringPolicy.HealthCheckWaitDurationInMilliseconds);
       this.currentPhaseIndex = 2;
       minDurationLeft = TimeUtils.getDuration(this.monitoringPolicy.HealthCheckStableDurationInMilliseconds) + " once stable";
       middlePhase = `Retry Duration Check  - ${healthCheckRetryTimeout}`;
@@ -70,8 +68,6 @@ export class HealthPolicyCheckComponent implements OnChanges {
       this.color = 'var(--badge-error)';
       this.failed = true;
     } else if (this.healthCheckPhase === "StableDuration") {
-      //temp
-      this.healthCheckDurationLeft -= TimeUtils.getDurationMilliseconds(this.monitoringPolicy.HealthCheckWaitDurationInMilliseconds);
       this.currentPhaseIndex = 2;
       minDurationLeft = TimeUtils.getDuration(TimeUtils.getDurationMilliseconds(this.monitoringPolicy.HealthCheckStableDurationInMilliseconds) - this.healthCheckDurationLeft);
       this.healthCheckPhaseText = "If the health policy becomes unhealthy, the stable check will move to retry and potentially fail";
@@ -84,7 +80,8 @@ export class HealthPolicyCheckComponent implements OnChanges {
 
     this.healthPolicyProgress = [
       {
-        name: `Wait Duration - ${healthCheckWaitDuration}`
+        name: `Wait Duration - ${healthCheckWaitDuration}`,
+        tooltip: "The amount of time to wait after completing an upgrade domain before applying health policies"
       },
       {
         name: middlePhase
