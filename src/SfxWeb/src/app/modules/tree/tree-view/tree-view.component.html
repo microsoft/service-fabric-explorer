@@ -29,7 +29,7 @@
             <app-input (changed)="setSearchText($event)"></app-input>
         </div>
     </div>
-    <div class="tree-list" #treeContainer [ngClass]="{'focused':focused}">
+    <div class="tree-list" #treeContainer [ngClass]="{'focused':focused}" data-cy="tree-panel">
         <span class="expand-panel-wrapper" *ngIf="canExpand && !smallWindowSize">
             <button class="expand-panel-button" (click)="setWidth()" title="Expand view to match width of tree">
                 <span class=" mif-chevron-right mif-3x"></span>
@@ -37,7 +37,7 @@
         </span>
         <div class="tree-body" #tree >
             <div *ngIf="treeService.tree && !treeService.tree.isLoading && !treeService.tree.isEmpty"  class="tree-view">
-                <div class="tree" *ngIf="treeService.tree.childGroupViewModel" role="tree">
+                <div class="tree" *ngIf="treeService.tree.childGroupViewModel" role="tree" data-cy="tree">
                     <app-tree-node [node]="treeService.tree.childGroupViewModel" (focusEmitter)="focusSubject.next($event)" #baseNode></app-tree-node>
                 </div>
             </div>
