@@ -1,5 +1,18 @@
 import { addDefaultFixtures } from "./util.cy";
 
+const evalExpanderRotation = (rotated, selector) => {
+
+    (selector === "focused"? cy.focused() : cy.contains(selector)).within(() => {
+        cy.get("button[class*='expander']").should(rotated ? "have.class" : "not.have.class", "rotated");
+    })
+
+}
+
+const evalTreePanelFocus = (focused) => {
+    cy.get("[data-cy=tree-panel]").should(focused ? "have.class" : "not.have.class", "focused")
+        .and(focused ? "have.css" : "not.have.css", "border", "2px solid rgb(255, 255, 255)");
+}
+
 context('tree', () => {
     describe("accessibility", () => {
         it("keyboard navigation", () => {
@@ -8,8 +21,8 @@ context('tree', () => {
 
             //focused highlights tree
             cy.get(".selected").focus();;
-            cy.get("[data-cy=tree-panel]").should("have.class", "focused").and("have.css", "border", "2px solid rgb(255, 255, 255)");
-            
+            evalTreePanelFocus(true);
+
             //down arrow
             cy.focused().type("{downarrow}");
             cy.focused().contains("Applications")
@@ -21,38 +34,26 @@ context('tree', () => {
             //* expands all
             cy.focused().type("*");
             cy.get("[data-cy=tree]").within(() => {
-                cy.contains("Applications").within(() => {
-                    cy.get("button[class*='expander']").should("have.class", "rotated");
-                })
-
-                cy.contains("Nodes").within(() => {
-                    cy.get("button[class*='expander']").should("have.class", "rotated");
-                })
-
-                cy.contains("System").within(() => {
-                    cy.get("button[class*='expander']").should("have.class", "rotated");
-                })
+                evalExpanderRotation(true, "Applications");
+                evalExpanderRotation(true, "Nodes");
+                evalExpanderRotation(true, "System");
             })
 
             //right arrow
             cy.focused().type("{rightarrow}");
             cy.focused().contains("VisualObjectsApplicationType")
-            cy.focused().within(() => {
-                cy.get("button[class*='expander']").should("not.have.class", "rotated");
-            })
+            evalExpanderRotation(false, "focused");
 
             cy.focused().type("{rightarrow}");
             cy.focused().contains("VisualObjectsApplicationType")
-            cy.focused().within(() => {
-                cy.get("button[class*='expander']").should("have.class", "rotated");
-            })
+            evalExpanderRotation(true, "focused");
+
 
             //left arrow
             cy.focused().type("{leftarrow}");
             cy.focused().contains("VisualObjectsApplicationType")
-            cy.focused().within(() => {
-                cy.get("button[class*='expander']").should("not.have.class", "rotated");
-            })
+            evalExpanderRotation(false, "focused");
+
 
             cy.focused().type("{leftarrow}");
             cy.focused().contains("Applications");
@@ -67,10 +68,9 @@ context('tree', () => {
             cy.focused().type("{leftarrow}");
             cy.focused().contains("Cluster");
             
-            cy.focused().within(() => {
-                cy.get("button[class*='expander']").should("not.have.class", "rotated");
-            })
-            cy.get("[data-cy=tree-panel]").should("have.class", "focused").and("have.css", "border", "2px solid rgb(255, 255, 255)");
+            evalExpanderRotation(false, "focused");
+
+            evalTreePanelFocus(true);
             
             cy.focused().type("{rightarrow}");
 
@@ -99,7 +99,7 @@ context('tree', () => {
             cy.wait(500);
             cy.focused().contains("Node _nt_1");
             cy.url().should("include", "node/_nt_1");
-            cy.get("[data-cy=tree-panel]").should("not.have.class", "focused").and("not.have.css", "border", "2px solid rgb(255, 255, 255)");
+            evalTreePanelFocus(false);
 
             cy.get("[data-cy=tree]").within(() => {
                 cy.contains("_nt_1").should("have.class", "selected").and("have.attr", "aria-current", "page")
