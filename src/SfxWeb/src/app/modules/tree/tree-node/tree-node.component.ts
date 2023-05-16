@@ -1,5 +1,6 @@
-import { Component, Input } from '@angular/core';
-import { TreeNodeGroupViewModel } from 'src/app/ViewModels/TreeNodeGroupViewModel';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { PaginationId, TreeNodeGroupViewModel } from 'src/app/ViewModels/TreeNodeGroupViewModel';
+import { TreeService } from 'src/app/services/tree.service';
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -9,12 +10,15 @@ import { environment } from 'src/environments/environment';
 })
 export class TreeNodeComponent {
   @Input() node: TreeNodeGroupViewModel;
+  @Output() focusEmitter = new EventEmitter<boolean>();
+
+  paginationId = PaginationId;
 
   public assetBase = environment.assetBase;
   higherZIndex = -1;
 
-  constructor() { }
-
+  constructor(public treeService: TreeService) { }
+  
   trackById(index: number, node: TreeNodeGroupViewModel) {
     return node.nodeId;
   }
@@ -26,4 +30,9 @@ export class TreeNodeComponent {
       this.higherZIndex = -1;
     }
   }
+
+  public emitFocus(focusState: boolean) {
+    this.focusEmitter.emit(focusState);
+  }
+
 }

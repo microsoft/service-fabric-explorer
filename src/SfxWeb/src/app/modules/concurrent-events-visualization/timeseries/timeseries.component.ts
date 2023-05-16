@@ -4,7 +4,7 @@ import { debounceTime } from 'rxjs/operators';
 import { ListSettings } from 'src/app/Models/ListSettings';
 import { SettingsService } from 'src/app/services/settings.service';
 import { Utils } from 'src/app/Utils/Utils';
-import { Subscription, Subject, merge  } from 'rxjs';
+import { Subscription, Subject, merge } from 'rxjs';
 
 export interface IdataFormatter {
   name: string;
@@ -89,6 +89,9 @@ export class TimeseriesComponent implements AfterViewInit, OnChanges, OnDestroy,
     legend: {
       enabled: true,
       itemStyle: {
+        color: '#fff'
+      },
+      itemHoverStyle: {
         color: '#fff'
       }
     },

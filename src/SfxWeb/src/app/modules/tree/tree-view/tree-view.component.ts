@@ -1,9 +1,11 @@
-import { Component, ViewChild, ElementRef, Output, EventEmitter, DoCheck, Input, AfterViewInit} from '@angular/core';
+import { Component, ViewChild, ElementRef, Output, EventEmitter, DoCheck, Input, AfterViewInit } from '@angular/core';
 import { TreeService } from 'src/app/services/tree.service';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { RestClientService } from 'src/app/services/rest-client.service';
 import { TelemetryService } from 'src/app/services/telemetry.service';
 import { TelemetryEventNames } from 'src/app/Common/Constants';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 @Component({
   selector: 'app-tree-view',
@@ -16,15 +18,25 @@ export class TreeViewComponent implements DoCheck, AfterViewInit {
   @Output() treeResize = new EventEmitter<number>();
 
   public canExpand = false;
+  public focused = false;
   @ViewChild('treeContainer') treeContainer: ElementRef;
   @ViewChild('tree') tree: ElementRef;
+  
+  focusSubject = new Subject<boolean>();
+  
   constructor(public treeService: TreeService,
               private liveAnnouncer: LiveAnnouncer,
               public restClientService: RestClientService,
-              private telemService: TelemetryService) { }
-
+              private telemService: TelemetryService) {}
+              
   ngAfterViewInit() {
     this.treeService.containerRef = this.treeContainer;
+    this.focusSubject.pipe(debounceTime(300), distinctUntilChanged()).subscribe((focusState) => {
+      this.focused = focusState;
+      if(!this.focused){
+        this.treeService.selectTree();
+      }
+    });
   }
 
   ngDoCheck(): void {
@@ -55,4 +67,5 @@ export class TreeViewComponent implements DoCheck, AfterViewInit {
     window.open('https://aka.ms/sfxtroubleshootingguides', '_blank');
     this.telemService.trackActionEvent(TelemetryEventNames.TroubleShootingGuides, null, TelemetryEventNames.TroubleShootingGuides);
   }
+
 }

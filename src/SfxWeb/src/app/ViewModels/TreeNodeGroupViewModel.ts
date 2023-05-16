@@ -15,6 +15,13 @@ import { HealthUtils } from '../Utils/healthUtils';
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
 // -----------------------------------------------------------------------------
+
+export const PaginationId = {
+    prevPage: 'prevPage',
+    nextPage: 'nextPage',
+    firstPage: 'firstPage',
+    lastPage: 'lastPage'
+}
 export class TreeNodeGroupViewModel implements ITreeNode {
 
     public get depth(): number {
@@ -40,6 +47,12 @@ export class TreeNodeGroupViewModel implements ITreeNode {
                 return badgeState2 - badgeState1;
             });
         }
+
+        if(this.node && this.node.listSettings && this.node.listSettings.pageCount > 1){
+            
+            result = result.concat([this.nextPageNode, this.lastPageNode]);
+            result = [this.firstPageNode, this.prevPageNode].concat(result);
+        }
         return result;
     }
 
@@ -63,11 +76,71 @@ export class TreeNodeGroupViewModel implements ITreeNode {
         }
     }
 
+    public get disabled(): boolean {
+
+        //if is phantom node, is root node, or has no pagination
+        if(!this.parent || this.parent.nodeId === 'base' || this.parent.listSettings?.pageCount <= 1){
+            return false;
+        }
+      
+        switch(this.nodeId){
+            case PaginationId.prevPage:
+            case PaginationId.firstPage:
+                if(this.parent.listSettings.currentPage === 1){
+                    return true;
+                }
+                break;
+            case PaginationId.nextPage:
+            case PaginationId.lastPage:
+                if(this.parent.listSettings.currentPage === this.parent.listSettings.pageCount){
+                    return true;
+                }
+                break;
+            default:
+                break;
+        }
+    
+        return false;
+        
+    }
+
     constructor(tree: TreeViewModel, node: ITreeNode, parent: TreeNodeGroupViewModel) {
         this.tree = tree;
         this.node = node;
         this.parent = parent;
         this.listSettings = node.listSettings;
+
+        if(this.listSettings){
+            const nextPage = {
+                displayName: () => 'Next ' + this.node.listSettings.limit + ' items',
+                nodeId: PaginationId.nextPage,
+                selectAction: () => this.pageDown()
+            };
+    
+            const prevPage = {
+                displayName: () => 'Previous ' + this.node.listSettings.limit + ' items',
+                nodeId: PaginationId.prevPage,
+                selectAction: () => this.pageUp()
+            };
+    
+            const firstPage = {
+                displayName: () => 'First ' + this.node.listSettings.limit + ' items',
+                nodeId: PaginationId.firstPage,
+                selectAction: () => this.pageFirst()
+            };
+    
+            const lastPage = {
+                displayName: () => 'Last ' + this.node.listSettings.limit + ' items',
+                nodeId: PaginationId.lastPage,
+                selectAction: () => this.pageLast()
+            };
+    
+            this.nextPageNode = new TreeNodeGroupViewModel(this.tree, nextPage, this);
+            this.prevPageNode = new TreeNodeGroupViewModel(this.tree, prevPage, this);
+            this.firstPageNode = new TreeNodeGroupViewModel(this.tree, firstPage, this);
+            this.lastPageNode = new TreeNodeGroupViewModel(this.tree, lastPage, this);
+        }
+
         if (node.displayName) {
             this.displayName = node.displayName;
         }else {
@@ -150,6 +223,7 @@ export class TreeNodeGroupViewModel implements ITreeNode {
     public parent: TreeNodeGroupViewModel;
     public sortBy: () => any[];
     public selected = false;
+    public focused = false;
     public leafNode: boolean;
     public displayName: () => string;
     public listSettings: ListSettings;
@@ -164,9 +238,12 @@ export class TreeNodeGroupViewModel implements ITreeNode {
     public loadingChildren = false;
     public childrenLoaded = false;
 
-    private keyboardSelectActionDelayInMilliseconds = 200;
     private internalIsExpanded = false;
     private currentGetChildrenPromise: Subject<any>;
+    private prevPageNode: TreeNodeGroupViewModel;
+    private nextPageNode: TreeNodeGroupViewModel;
+    private firstPageNode: TreeNodeGroupViewModel;
+    private lastPageNode: TreeNodeGroupViewModel;
 
     public toggle(): Observable<any> {
         this.internalIsExpanded = !this.internalIsExpanded;
@@ -227,7 +304,9 @@ export class TreeNodeGroupViewModel implements ITreeNode {
                 }else {
                     if (this.tree.selectedNode && (child === this.tree.selectedNode || child.isParentOf(this.tree.selectedNode))) {
                         // Select the parent node instead
-                        child.parent.select();
+                        if(child.parent.select()){
+                            child.parent.selectAndInteract();
+                        }
                     }
                 }
             });
@@ -249,6 +328,7 @@ export class TreeNodeGroupViewModel implements ITreeNode {
 
     private getChildren(): Observable<any> {
         if (!this.node.childrenQuery || this.childrenLoaded) {
+            this.childrenLoaded = true;
             return of(true);
         }
 
@@ -303,52 +383,66 @@ export class TreeNodeGroupViewModel implements ITreeNode {
         }
     }
 
-    public select(actionDelay?: number, skipSelectAction?: boolean) {
-        if (this.tree.selectNode(this)) {
-            if (this.node.selectAction && !skipSelectAction) {
-                setTimeout(() => {
-                    if (this.selected) {
-                        this.node.selectAction();
-                    }
-                }, actionDelay || 0);
-            }
+    public select() : boolean {
+        return this.tree.selectNode(this);
+    }
+
+    public selectAndInteract() {
+        if(!this.selected){
+            this.select();
+        }
+        if (this.node.selectAction) {
+            this.node.selectAction();
+
         }
     }
 
-    public selectNext(actionDelay?: number) {
+    public selectNext() {
         if (this.hasExpandedAndLoadedChildren) {
-            this.displayedChildren[0].select(this.keyboardSelectActionDelayInMilliseconds);
+            this.displayedChildren[0].select();
         } else {
-            this.selectNextSibling();
+            this.moveToNextSibling()?.select();
         }
     }
 
-    public selectPrevious(actionDelay?: number) {
+    public selectPrevious() {
         const parentsChildren = this.getParentsChildren();
         const myIndex = parentsChildren.indexOf(this);
 
-        if (myIndex === 0 && this.parent) {
-            this.parent.select(this.keyboardSelectActionDelayInMilliseconds);
+        if (myIndex === 0 && this.parent && this.parent.nodeId !== 'base') {
+            this.parent.select();
         } else if (myIndex !== 0) {
             parentsChildren[myIndex - 1].selectLast();
         }
     }
 
+    private moveToRoot() {
+        return this.tree.childGroupViewModel.displayedChildren[0];
+    }
+
+    public selectRoot() {
+        this.moveToRoot().select();
+        
+    }
+
+    public selectEnd() {
+        this.moveToRoot().selectLast();
+    }
+
     public expandOrMoveToChild() {
-        if (this.hasChildren) {
-            if (this.isCollapsed) {
-                this.toggle();
-            } else {
-                this.selectNext();
-            }
+        if (this.isCollapsed) {
+            this.toggle();
+        }
+        else if(this.hasExpandedAndLoadedChildren) {
+            this.selectNext();
         }
     }
 
     public collapseOrMoveToParent() {
         if (this.hasChildren && this.isExpanded) {
             this.toggle();
-        } else if (this.parent) {
-            this.parent.select(this.keyboardSelectActionDelayInMilliseconds);
+        } else if (this.parent && this.parent.nodeId !== 'base') {
+            this.parent.select();
         }
     }
 
@@ -369,10 +463,69 @@ export class TreeNodeGroupViewModel implements ITreeNode {
             const lastChild: TreeNodeGroupViewModel = this.displayedChildren[this.displayedChildren.length - 1];
             lastChild.selectLast();
         } else {
-            this.select(this.keyboardSelectActionDelayInMilliseconds);
+            this.select();
         }
     }
 
+    // helper function for typeAheadSearch; returns the first element that starts with the given letter
+    private depthFirstSearch(letter: string, skipCurrent: boolean = false, stoppingNode?: TreeNodeGroupViewModel): TreeNodeGroupViewModel {
+
+        if(!skipCurrent){
+            if (this.displayName().toLowerCase().startsWith(letter.toLowerCase()) && !PaginationId[this.nodeId]) {
+                return this;
+            }
+        }
+
+        if (this.hasExpandedAndLoadedChildren) {
+            for (const child of this.displayedChildren) {
+                if(stoppingNode && child === stoppingNode) {
+                    return null;
+                }
+
+                const result = child.depthFirstSearch(letter);
+                if (result) {
+                    return result;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    //select next element that starts with the given letter
+    public typeAheadSearch(letter: string, skipCurrent: boolean = true) {
+
+        let atEndOfTree = false;
+        let currNode: TreeNodeGroupViewModel = this;
+
+        while (!atEndOfTree) {
+            const result = currNode.depthFirstSearch(letter, skipCurrent);
+            if (result) {
+                result.select();
+                return;       
+            }
+            else {
+                const nextSibling = currNode.moveToNextSibling();
+                if(nextSibling) {
+                    currNode = nextSibling;
+                    skipCurrent = false;
+                }
+                else{
+                    atEndOfTree = true;
+                }
+                
+            }
+        }
+
+        // wrap around to the beginning
+        this.moveToRoot().depthFirstSearch(letter, false, this)?.select();
+    }
+
+    public expandAllSiblings() {
+        for(const sibling of this.getParentsChildren()) {
+            sibling.expand();
+        }
+    }
 
     public update(node: ITreeNode) {
         this.node = node;
@@ -426,16 +579,16 @@ export class TreeNodeGroupViewModel implements ITreeNode {
         listSettings.currentPage = listSettings.pageCount;
     }
 
-    private selectNextSibling(): number {
+    private moveToNextSibling(): TreeNodeGroupViewModel {
         const parentsChildren = this.getParentsChildren();
         const myIndex = parentsChildren.indexOf(this);
 
-        if (myIndex === parentsChildren.length - 1 && this.parent) {
-            this.parent.selectNextSibling();
+        if (myIndex === parentsChildren.length - 1 && this.parent && this.parent.nodeId !== 'base') {
+            return this.parent.moveToNextSibling();
         } else if (myIndex !== parentsChildren.length - 1) {
-            parentsChildren[myIndex + 1].select(this.keyboardSelectActionDelayInMilliseconds);
+            return parentsChildren[myIndex + 1];
         }
-        return myIndex;
+        return null;
     }
 }
 

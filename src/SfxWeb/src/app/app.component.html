@@ -79,7 +79,7 @@
             <button class="expander-icon mif-vertical-align-bottom" [ngClass]="{'flip': treeWidth === '8px'}" placement="right"
                   [ngbTooltip]="(treeWidth === '8px' ? 'Expand' : 'Close') + ' tree view'"  tooltipClass="styled-tooltip" (click)="collapseSide()"></button>
           </div>
-          <router-outlet id="view-container" tabindex="-1" #main></router-outlet>
+          <router-outlet id="view-container"></router-outlet>
         </div>
       </main>
     </div>

@@ -69,10 +69,6 @@ $right-panel-min-width: 200px !default;
     right: 2px;
     top: 50px;
     bottom: 20px;
-    
-    main:focus-visible {
-      outline: 0;
-    }
 }
 
 @media (max-width: 500px) {
@@ -169,6 +165,7 @@ $right-panel-min-width: 200px !default;
   top: 0px;
   height: 20px;
   z-index: 11;
+  background-color: var(--accent-background-color);
 }
 
 .expander-icon {

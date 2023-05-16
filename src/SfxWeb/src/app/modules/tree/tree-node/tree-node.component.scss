@@ -16,6 +16,11 @@ button {
 }
 
 .node {
+
+  &:hover {
+    color: var(--font-primary-color);
+  }
+
   color: var(--font-primary-color);
   .more-children {
     margin-left: 46px;
@@ -47,12 +52,6 @@ button {
     background-color: var(--accent-darkblue);
     box-shadow: var(--heavy-box-shadow);
   }
-
-  &:focus-visible {
-    border: 2px solid white;
-    border-radius: 3px;
-    outline: none;
-  }
 }
 
 .hide-nested {
@@ -79,10 +78,8 @@ button {
 }
 
 .disabled {
-  .icon {
-    cursor: auto;
-    color: gray;
-  }
+  cursor: auto;
+  color: gray;
 }
 
 ul {
