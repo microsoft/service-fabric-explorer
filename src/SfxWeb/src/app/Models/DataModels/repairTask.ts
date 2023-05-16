@@ -111,8 +111,8 @@ export class RepairTask extends DataModelBase<IRawRepairTask> implements IRCAIte
 
     private parseHistory() {
         let history = [
-            { timestamp: this.raw.History.ClaimedUtcTimestamp, phase: 'Claimed' },
             { timestamp: this.raw.History.CreatedUtcTimestamp, phase: 'Created' },
+            { timestamp: this.raw.History.ClaimedUtcTimestamp, phase: 'Claimed' },
             { timestamp: this.raw.History.PreparingUtcTimestamp, phase: 'Preparing' },
             { timestamp: this.raw.History.PreparingHealthCheckStartUtcTimestamp, phase: 'Preparing Health Check Start' },
             { timestamp: this.raw.History.PreparingHealthCheckEndUtcTimestamp, phase: 'Preparing Health Check End' },
