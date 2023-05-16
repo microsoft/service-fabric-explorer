@@ -79,7 +79,7 @@ export class TreeNodeGroupViewModel implements ITreeNode {
     public get disabled(): boolean {
 
         //if is phantom node, is root node, or has no pagination
-        if(!this.parent || this.parent.nodeId === 'base' || !this.parent.listSettings){
+        if(!this.parent || this.parent.nodeId === 'base' || this.parent.listSettings?.pageCount <= 1){
             return false;
         }
       
