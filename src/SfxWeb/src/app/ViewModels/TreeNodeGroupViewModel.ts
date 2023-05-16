@@ -78,7 +78,8 @@ export class TreeNodeGroupViewModel implements ITreeNode {
 
     public get disabled(): boolean {
 
-        if(! this.parent || this.parent.nodeId === 'base' || !this.parent.listSettings){
+        //if is phantom node, is root node, or has no pagination
+        if(!this.parent || this.parent.nodeId === 'base' || !this.parent.listSettings){
             return false;
         }
       
@@ -327,6 +328,7 @@ export class TreeNodeGroupViewModel implements ITreeNode {
 
     private getChildren(): Observable<any> {
         if (!this.node.childrenQuery || this.childrenLoaded) {
+            this.childrenLoaded = true;
             return of(true);
         }
 
@@ -431,7 +433,7 @@ export class TreeNodeGroupViewModel implements ITreeNode {
         if (this.isCollapsed) {
             this.toggle();
         }
-        else if(this.hasExpandedAndLoadedChildren) { //hasChildren is not set properly for leaf nodes, checking actual children length instead
+        else if(this.hasExpandedAndLoadedChildren) {
             this.selectNext();
         }
     }
