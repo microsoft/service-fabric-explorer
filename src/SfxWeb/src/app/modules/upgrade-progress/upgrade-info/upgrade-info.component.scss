@@ -23,8 +23,6 @@ h3 {
   flex: 1;
   min-width: 350px;
   max-width: 400px;
-  margin-right: 10px;
-  margin-left: 10px;
 }
 
 
@@ -33,6 +31,7 @@ h3 {
   width: 100%;
   flex-wrap: wrap;
   justify-content: space-around;
+  gap: 10px;
 
   &.failed {
     border: 2px solid var(--badge-error);

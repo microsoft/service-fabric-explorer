@@ -1,0 +1,21 @@
+.layout-container {
+  display: inline-flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  align-items: center;
+  width: 100%;
+}
+
+.reference-link {
+  margin-left: 30px;
+  margin-top: 5px;
+  gap: 5px;
+}
+
+
+.help-text {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+}

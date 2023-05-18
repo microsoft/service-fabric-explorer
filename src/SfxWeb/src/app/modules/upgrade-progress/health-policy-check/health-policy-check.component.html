@@ -1,12 +1,10 @@
-<div style="    display: flex;
-gap: 10px;
-align-items: center;">
+<div class="layout-container">
   <div>
     <app-phase-diagram [items]="healthPolicyProgress" [currentIndex]="currentPhaseIndex" [failed]="failed"></app-phase-diagram>
 
-    <div style="margin-left: 30px; margin-top: 5px; gap: 5px;">
+    <div class="reference-link">
       <a href="https://docs.microsoft.com/azure/service-fabric/service-fabric-diagnostics-code-package-errors"
-        target="_blank" style="display: flex; gap: 5px;"><i class="mif-info"></i>{{healthCheckPhaseText}} </a>
+        target="_blank" class="help-text"><i class="mif-info"></i><span>{{healthCheckPhaseText}}</span> </a>
     </div>
   </div>
 
