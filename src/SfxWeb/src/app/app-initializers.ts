@@ -18,6 +18,8 @@ export function initApp(aadService: AdalService, standaloneIntegrationService: S
       if (aadService.aadEnabled) {
         if(!aadService.isAuthenticated) {
           await aadService.login()
+        }else{
+          aadService.loggedIn.next(true);
         }
       }
     } catch (e) {

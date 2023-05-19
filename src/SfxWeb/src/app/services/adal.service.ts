@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { RestClientService } from './rest-client.service';
-import { Observable, Subscriber, of } from 'rxjs';
-import { retry, map } from 'rxjs/operators';
+import { Observable, ReplaySubject, Subscriber, from, of } from 'rxjs';
+import { retry, map, mergeMap } from 'rxjs/operators';
 import { AadMetadata } from '../Models/DataModels/Aad';
 import { UserAgentApplication, Configuration, AuthenticationParameters, AuthResponse } from "msal";
 
@@ -16,9 +16,11 @@ export class AdalService {
   private authority: string;
   private scopes: string[] = [];
 
-  private pending: Promise<AuthResponse>;
+  public loggedIn = new ReplaySubject();
 
-  constructor(private http: RestClientService) { }
+  constructor(private http: RestClientService) {
+
+  }
 
   load(): Observable<UserAgentApplication> {
     if (!!this.context) {
@@ -34,6 +36,9 @@ export class AdalService {
             auth: {
               clientId: data.raw.metadata.cluster,
               authority: this.authority,
+              redirectUri: window.location.origin,
+              // navigateToLoginRequestUrl: false,
+
             },
             cache: {
               cacheLocation: 'localStorage'
@@ -41,6 +46,9 @@ export class AdalService {
           };
 
           this.context = new UserAgentApplication(config);
+          this.context.handleRedirectCallback((data) => {
+            this.loggedIn.next(true);
+          })
           this.aadEnabled = true;
           return this.context;
         }
@@ -49,7 +57,7 @@ export class AdalService {
   }
 
   async login() {
-    return await this.context.loginPopup({
+    this.context.loginRedirect({
       authority: this.authority,
       scopes: this.scopes,
     });
@@ -86,21 +94,15 @@ export class AdalService {
     }
 
     if (attemptPopup) {
-      const token = await this.context.acquireTokenPopup(authParams);
-      return token;
+      await this.context.acquireTokenRedirect(authParams);
     }
   }
 
   public acquireTokenResilient(): Observable<string> {
-    return new Observable<any>((subscriber: Subscriber<string>) => {
-        this.acquireToken().then(auth => {
-          subscriber.next(auth.idToken.rawIdToken);
-          subscriber.complete();
-        }).catch(err => {
-          console.log(err)
-          subscriber.error(err);
-          subscriber.complete();
-        })
-    }).pipe(retry(3));
+    return this.loggedIn.pipe(mergeMap(() => {
+      return from(this.acquireToken())
+    }), map(auth => {
+      return auth.idToken.rawIdToken
+    }), retry(3))
   }
 }
