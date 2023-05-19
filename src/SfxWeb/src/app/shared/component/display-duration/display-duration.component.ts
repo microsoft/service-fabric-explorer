@@ -54,15 +54,12 @@ export class DisplayDurationComponent implements OnChanges {
         color: "grey"
       }
     ]
-    console.log(this.sections)
   }
 
   setColorCode(percent): string {
     const direction = Object.entries(this.colorMap).sort((a,b) => {
       return +b[0] - +a[0];
     });
-
-    console.log(direction)
 
     for(let i = 0; i < direction.length; i ++) {
       if(+direction[i][0] < percent) {

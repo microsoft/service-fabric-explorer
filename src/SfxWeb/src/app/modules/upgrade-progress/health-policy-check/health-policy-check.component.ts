@@ -27,6 +27,8 @@ export class HealthPolicyCheckComponent implements OnChanges {
   displayTopText: string = "";
   displayBottomText: string = "";
   color: string = "";
+
+  //phase diagram
   currentPhaseIndex = 1;
   failed = false;
 

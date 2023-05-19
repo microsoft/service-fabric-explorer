@@ -3,7 +3,7 @@
   <ng-container  *ngFor="let phase of progress; let l = last;">
     <div class="progress-item hover-row" [ngClass]="cssClass[phase.state]" [attr.data-cy]="cssClass[phase.state] + 'phase'"
           [disableTooltip]="!phase.tooltip" [ngbTooltip]="phase.tooltip" tooltipClass="styled-tooltip" container="body" >
-      <div class="text-description" >{{phase.name}}
+      <div class="text-description" > <i *ngIf="phase.tooltip" class="mif-info link"></i> {{phase.name}}
       </div>
       <div>
         <span style="margin-right: 5px ;">{{phase.textRight}}</span>

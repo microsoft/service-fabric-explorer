@@ -303,7 +303,7 @@ export class ClusterUpgradeProgress extends DataModelBase<IRawClusterUpgradeProg
     }
 
     public get isAtHealthCheckPhase() {
-      return this.raw.HealthCheckPhase !== "Invalid";
+      return this.raw?.HealthCheckPhase !== "Invalid";
     }
 
     protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<IRawClusterUpgradeProgress> {

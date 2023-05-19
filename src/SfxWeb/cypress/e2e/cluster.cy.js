@@ -88,6 +88,53 @@ context('Cluster page', () => {
       cy.intercept('GET', apiUrl('/Services/VisualObjectsApplicationType~VisualObjects.ActorService/$/GetApplicationName?*'), { fixture: 'cluster-page/upgrade/get-application-info.json' }).as('appinfo');
     })
 
+    describe.only('health check', () => {
+      const donePhaseRef = '[data-cy=donephase]';
+
+      const checkPhase = (currentPhase, phasetimeLeft, elapsedTime, durationLeft, checkFailed = false) => {
+        cy.get(`[data-cy=${checkFailed ? 'failed' : 'in-progress'}phase]`).within(() => {
+          cy.contains(currentPhase)
+        });
+
+        cy.get('[data-cy=timeleft]').within(() => {
+          cy.contains(phasetimeLeft)
+        })
+
+        cy.get('[data-cy=duration]').within(() => {
+          cy.contains(elapsedTime);
+          cy.contains(durationLeft);
+        })
+      }
+
+      it('wait duration', () => {
+        //Wait Duration
+        cy.intercept('GET', upgradeProgress_route, { fixture: 'cluster-page/upgrade/health-checks/wait-duration.json' }).as("inprogres");
+        cy.visit('/#/details')
+
+        checkPhase("Wait Duration - 10 seconds", "10 seconds", 'Wait Time Elapsed : 5 seconds', 'Wait Time Duration Left : 5 seconds' );
+
+        //Stable duration
+        cy.intercept('GET', upgradeProgress_route, { fixture: 'cluster-page/upgrade/health-checks/stable-duration.json' }).as("stable");
+        refresh();
+        cy.wait('@stable');
+
+        cy.get(donePhaseRef).within(() => {
+          cy.contains("Wait Duration - 10 seconds")
+        });
+        checkPhase("Stable Duration Check - 5 seconds", "2 seconds", 'Stable Time Elapsed : 3 seconds', 'Stable Time Duration Left : 2 seconds' );
+
+        //Retry duration
+        cy.intercept('GET', upgradeProgress_route, { fixture: 'cluster-page/upgrade/health-checks/retry-duration.json' }).as("retry");
+        refresh();
+        cy.wait('@retry');
+        checkPhase("Retry Duration Check - 5:00 minutes",
+                   "5 seconds once stable",
+                   'Retry Time out Elapsed : 6 seconds',
+                   'Retry Time Duration Left : 4:54 minutes',
+                   true );
+      })
+    })
+
     it('upgrade in progress', () => {
       cy.intercept('GET', upgradeProgress_route, { fixture: 'upgrade-in-progress.json' }).as("inprogres");
 

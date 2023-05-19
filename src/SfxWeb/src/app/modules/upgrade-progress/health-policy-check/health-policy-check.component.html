@@ -1,5 +1,5 @@
 <div class="layout-container">
-  <div>
+  <div data-cy="monitoring-diagram">
     <app-phase-diagram [items]="healthPolicyProgress" [currentIndex]="currentPhaseIndex" [failed]="failed"></app-phase-diagram>
 
     <div class="reference-link">
@@ -8,11 +8,11 @@
     </div>
   </div>
 
-  <div style="width: 350px;">
-    <app-essential-item [item]="healthCheckTimeLeft"></app-essential-item>
+  <div style="width: 350px;" data-cy="monitoring-duration">
+    <app-essential-item [item]="healthCheckTimeLeft" data-cy="timeleft"></app-essential-item>
 
     <app-display-duration [topText]="displayTopText" [topInMilliseconds]="healthCheckDurationLeft"
-      [colorMap]="{'0': color}" [bottomText]="displayBottomText"
+      [colorMap]="{'0': color}" [bottomText]="displayBottomText" data-cy="duration"
       [bottomInMilliseconds]="HealthCheckDurationOverall"></app-display-duration>
   </div>
 </div>
