@@ -88,7 +88,7 @@ context('Cluster page', () => {
       cy.intercept('GET', apiUrl('/Services/VisualObjectsApplicationType~VisualObjects.ActorService/$/GetApplicationName?*'), { fixture: 'cluster-page/upgrade/get-application-info.json' }).as('appinfo');
     })
 
-    describe.only('health check', () => {
+    describe('health check', () => {
       const donePhaseRef = '[data-cy=donephase]';
 
       const checkPhase = (currentPhase, phasetimeLeft, elapsedTime, durationLeft, checkFailed = false) => {
@@ -168,6 +168,7 @@ context('Cluster page', () => {
         checkTableSize(4);
       })
 
+      cy.get('[data-cy=healthmonitoring]').should('not.exist');
     })
 
     it('xss', () => {
@@ -206,6 +207,7 @@ context('Cluster page', () => {
       cy.get('[data-cy=upgrade-bar]').should('not.exist')
 
       cy.get('[data-cy=upgrade-bar-domain]').should('not.exist');
+      cy.get('[data-cy=healthmonitoring]').should('not.exist');
     })
 
     it('upgrade in progress - no auto load safety checks', () => {
@@ -250,6 +252,8 @@ context('Cluster page', () => {
           cy.get('[data-cy=failedphase]')
         })
       })
+      cy.get('[data-cy=healthmonitoring]').should('not.exist');
+
     })
 
     it('upgrade completed', () => {
