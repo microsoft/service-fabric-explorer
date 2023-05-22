@@ -71,6 +71,7 @@ export class RepairTask extends DataModelBase<IRawRepairTask> implements IRCAIte
     public kind = "RepairTask";
 
     public impactedNodes: string[] = [];
+    public impactedNodesWithImpact: string[] = [];
     public history: IRepairTaskHistoryPhase[] = [];
     private timeStampsCollapses: Record<string, boolean> = {};
 
@@ -110,8 +111,8 @@ export class RepairTask extends DataModelBase<IRawRepairTask> implements IRCAIte
 
     private parseHistory() {
         let history = [
-            { timestamp: this.raw.History.ClaimedUtcTimestamp, phase: 'Claimed' },
             { timestamp: this.raw.History.CreatedUtcTimestamp, phase: 'Created' },
+            { timestamp: this.raw.History.ClaimedUtcTimestamp, phase: 'Claimed' },
             { timestamp: this.raw.History.PreparingUtcTimestamp, phase: 'Preparing' },
             { timestamp: this.raw.History.PreparingHealthCheckStartUtcTimestamp, phase: 'Preparing Health Check Start' },
             { timestamp: this.raw.History.PreparingHealthCheckEndUtcTimestamp, phase: 'Preparing Health Check End' },
@@ -291,6 +292,13 @@ export class RepairTask extends DataModelBase<IRawRepairTask> implements IRCAIte
     updateInternal(): Observable<any> {
         if (this.raw.Impact) {
             this.impactedNodes = this.raw.Impact.NodeImpactList.map(node => node.NodeName);
+            this.impactedNodesWithImpact = this.raw.Impact.NodeImpactList.map(node => {
+              let name = node.NodeName;
+              if(node.ImpactLevel) {
+                name += ":" + node.ImpactLevel
+              }
+              return name;
+            })
         }
         this.timeStamp = new Date(this.raw.History.CreatedUtcTimestamp).toISOString();
         this.inProgress = this.raw.State !== 'Completed';

@@ -5,7 +5,7 @@ import { EssentialsComponent } from './essentials/essentials.component';
 
 const routes: Routes = [{
   path: '', component: BaseComponent, children: [
-    { path: '', component: EssentialsComponent }
+    { path: '', component: EssentialsComponent },
     ]
   }
 ];

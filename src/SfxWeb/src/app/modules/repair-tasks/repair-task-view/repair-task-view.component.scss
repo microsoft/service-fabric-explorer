@@ -49,3 +49,13 @@ table.detail-list {
   margin-left: 11px;
   border-left: var(--accent-underline) 2px solid;
 }
+
+.health-check-container {
+  max-width: 275px;
+}
+
+.section-title {
+    font-size: var(--font-size-large);
+    font-weight: 500;
+    line-height: 1.2;
+}

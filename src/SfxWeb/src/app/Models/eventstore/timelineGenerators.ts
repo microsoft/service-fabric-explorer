@@ -1,12 +1,14 @@
 
 
-import { FabricEventBase, ClusterEvent, NodeEvent, ApplicationEvent, FabricEvent, PartitionEvent } from './Events';
+import { FabricEventBase, ClusterEvent, NodeEvent, ApplicationEvent, FabricEvent, PartitionEvent, ReplicaEvent } from './Events';
 import { DataGroup, DataItem, DataSet, IdType } from 'vis-timeline/standalone/esm';
 import padStart from 'lodash/padStart';
 import findIndex from 'lodash/findIndex';
 import { HtmlUtils } from 'src/app/Utils/HtmlUtils';
 import { RepairTask } from 'src/app/Models/DataModels/repairTask';
-import { EventType } from 'src/app/modules/event-store/event-store/event-store.component';
+import { getPeriodicEvent } from './rcaEngine';
+import { differConfigs } from './RelatedEventsConfigs';
+import { generateTimelineData } from './periodicEventParser';
 
 /*
     NOTES:
@@ -37,6 +39,7 @@ export interface ITimelineData {
 
 export interface ITimelineItem extends DataItem {
     kind: string
+    color?: string;
     groupingClass?: string;
 }
 
@@ -90,6 +93,10 @@ export class EventStoreUtils {
                   <br>
                   ${outline}
                 </div>`;
+    }
+
+    public static singleItemStyleOverride = (color: string) => {
+      return `background-color:${color};`
     }
 
     public static parseUpgradeAndRollback(rollbackCompleteEvent: FabricEventBase, eventIndex: number, rollbackStartedEvent: ClusterEvent, items: DataSet<ITimelineItem>,
@@ -735,15 +742,65 @@ export class PartitionTimelineGenerator extends TimeLineGeneratorBase<PartitionE
             }
         });
 
+        const periodicEventResults = getPeriodicEvent(differConfigs, events);
+
         const groups = new DataSet<DataGroup>([
             {id: PartitionTimelineGenerator.swapPrimaryLabel, content: PartitionTimelineGenerator.swapPrimaryLabel},
         ]);
 
+
+        periodicEventResults.forEach(result => {
+          const timelineData = generateTimelineData(result.events, result.config, startOfRange, endOfRange);
+          timelineData.groups.forEach(group => {
+            groups.add(group)
+          })
+
+          timelineData.items.forEach(event => {
+            items.add(event);
+          })
+        })
         return {
             groups,
             items
         };
     }
+}
+
+export class ReplicaTimelineGenerator extends TimeLineGeneratorBase<ReplicaEvent> {
+  consume(events: ReplicaEvent[], startOfRange: Date, endOfRange: Date): ITimelineData {
+    let sawNamingMetricsId = "";
+    const items = new DataSet<ITimelineItem>();
+
+    events.forEach( (event, index) => {
+        if (event.kind === 'NamingMetricsReported') {
+            sawNamingMetricsId = event.partitionId +  'namingMetric';
+            items.add({
+                kind: sawNamingMetricsId,
+                id: `${index}---${event.eventInstanceId}`,
+                content: 'naming metric',
+                start: event.timeStamp,
+                group: PartitionTimelineGenerator.swapPrimaryLabel,
+                type: 'point',
+                title: EventStoreUtils.tooltipFormat(event.eventProperties, event.timeStamp, null, 'naming metric'),
+                className: 'green'
+            });
+        }
+    });
+
+    const groups = new DataSet<DataGroup>();
+
+    if(sawNamingMetricsId.length > 0) {
+      groups.add({
+        id: sawNamingMetricsId,
+        content: "Naming Metric report"
+      })
+    }
+
+    return {
+      groups,
+      items
+    }
+  }
 }
 
 export class RepairTaskTimelineGenerator extends TimeLineGeneratorBase<RepairTask>{
@@ -791,11 +848,11 @@ export class RepairTaskTimelineGenerator extends TimeLineGeneratorBase<RepairTas
  *       Category2 - kind 1
  *       category2 - kind 2
  */
-function parseAndAddGroupIdByString(event: FabricEvent, groupIds: any, query: string): string {
+function parseAndAddGroupIdByString(event: FabricEvent, groupIds: any, query: string, prefixId: string): string {
     const properties = query.split(',');
 
     // the accumulated path of the events property values
-    let constructedPath = '';
+    let constructedPath = prefixId;
 
     for (let i = 0; i < properties.length; i++) {
         const prop = properties[i];
@@ -834,12 +891,12 @@ function parseAndAddGroupIdByString(event: FabricEvent, groupIds: any, query: st
     return constructedPath;
 }
 
-export function parseEventsGenerically(events: FabricEvent[], textSearch: string = ''): ITimelineData {
+export function parseEventsGenerically(events: FabricEvent[], textSearch: string, idPrefix: string = Math.random().toString()): ITimelineData {
   const items = new DataSet<ITimelineItem>();
   const groupIds: any[] = [];
 
     events.forEach( (event, index) => {
-       const groupId = parseAndAddGroupIdByString(event, groupIds,  textSearch);
+       const groupId = parseAndAddGroupIdByString(event, groupIds, textSearch, idPrefix);
        let color = 'white';
        if ('Status' in event.eventProperties) {
             try {

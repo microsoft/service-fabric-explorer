@@ -14,6 +14,15 @@
                     <td [title]="item.value">{{item.value}}</td>
                 </tr>
 
+                <tr *ngSwitchCase="'Link'" [title]="item.key">
+                  <th [title]="item.value">
+                    {{item.key}}
+                  </th>
+                  <td>
+                    <a [href]="item.value" target="_blank">{{item.value}}</a>
+                  </td>
+                </tr>
+
                 <tr *ngSwitchCase="'Date'">
                     <th [title]="item.key">
                         {{item.key}}
@@ -54,16 +63,16 @@
                 </tr>
                 <tr *ngSwitchCase="'Object'">
                     <td colspan="2">
-                        <h4 class="sub-title" [title]="title" style="text-transform: none;" >{{item.key}} </h4>
+                        <div class="heading" [title]="title" style="text-transform: none;" >{{item.key}} </div>
                         <div class="nested-table-container">
-                            <app-detail-view-part [data]="item.value" [noFixedLayout]="noFixedLayout"></app-detail-view-part>
+                            <app-detail-view-part [data]="item.value" [noFixedLayout]="noFixedLayout" [useLink]="useLink"></app-detail-view-part>
                         </div>
                     </td>
                 </tr>
 
                 <tr *ngSwitchCase="'Array'">
                     <th colspan="2">
-                        <h4 class="sub-title" [title]="title" style="text-transform: none;">{{item.key}} </h4>
+                        <div class="heading" [title]="title" style="text-transform: none;">{{item.key}} </div>
                         <div class="table-responsive">
                             <div class="nested-table-container">
                                 <!-- Set table-layout to be fixed only when they have only 1 or 2 properties -->
@@ -81,8 +90,8 @@
                                                 <!-- Render sub-array table body, assuming the properties are always simple properties rather than object -->
                                             <td *ngFor="let subItem of item | keyvalue : asIsOrder" [ngSwitch]="getResolvedPropertyType(subItem.value)">
                                                 <span *ngSwitchCase="'Value'" [title]="subItem.value">{{subItem.value}}</span>
-                                                <app-detail-view-part *ngSwitchCase="'Array'" [data]="subItem.value"></app-detail-view-part>
-                                                <app-detail-view-part *ngSwitchCase="'Object'" [data]="subItem.value"></app-detail-view-part>
+                                                <app-detail-view-part *ngSwitchCase="'Array'" [data]="subItem.value" [useLink]="useLink"></app-detail-view-part>
+                                                <app-detail-view-part *ngSwitchCase="'Object'" [data]="subItem.value" [useLink]="useLink"></app-detail-view-part>
                                             </td>
                                         </tr>
                                     </tbody>

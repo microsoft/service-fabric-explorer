@@ -40,6 +40,8 @@ export class TreeViewModel {
     }
 
     public refreshChildren() {
+
+        // phantom node that doesn't actully get rendered
         const baseNode: ITreeNode = {childrenQuery: this.childrenQuery,
                                      displayName: () => '',
                                     nodeId: 'base'};
@@ -85,10 +87,27 @@ export class TreeViewModel {
             case 'ArrowLeft': // Left
                 this.selectedNode.collapseOrMoveToParent();
                 break;
+            case 'Home':
+                this.selectedNode.selectRoot();
+                break;
+            case 'End':
+                this.selectedNode.selectEnd();
+                break;
+            case 'Enter':
+                this.selectedNode.selectAndInteract();
+                break;
+            case '*':
+                this.selectedNode.expandAllSiblings();
+                break;
+            case /^\w$/.test(event.key) && event.key: // Alphanumeric, this also includes *
+                this.selectedNode.typeAheadSearch(event.key);
+                break;
         }
         if (selectedNode !== this.selectedNode) {
             // Prevents the key press from moving the scroll bar
             event.preventDefault();
+            this.selectedNode.focused = true;
+            selectedNode.focused = false;
         }
     }
 
@@ -141,7 +160,10 @@ export class TreeViewModel {
                 if (currIndex === path.length - 1) {
                     if (!node.selected) {
                         // Select the node
-                        node.select(0, skipSelectAction);
+                        node.select();
+                        if(!skipSelectAction){
+                            node.selectAndInteract();
+                        }
                     }
                 } else {
                     this.selectTreeNodeInternal(path, currIndex + 1, node, opId, skipSelectAction).subscribe();

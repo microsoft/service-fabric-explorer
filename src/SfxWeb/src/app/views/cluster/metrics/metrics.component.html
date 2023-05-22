@@ -4,7 +4,7 @@
       <div>
         <button (click)="toggleSide()" class="simple-button">Hide </button>
       </div>
-      <div class="options-panel" [ngStyle]="{'max-width': (showOptions ? '100%' : '0')}">
+      <div class="options-panel" [ngStyle]="{'max-width': (showOptions ? '100%' : '0'), 'visibility': (showOptions ? 'inherit' : 'collapse') }" [attr.aria-hidden]="!showOptions">
         <div class="essen-pane filter-container">
           <app-node-filter [nodes]="nodes.collection" (filteredNodes)="setNodes($event)" [showGroupByNodeType]="false" ></app-node-filter>
         </div>

@@ -1,12 +1,17 @@
 import { Transforms } from "src/app/Utils/Transforms";
 import { Utils } from "src/app/Utils/Utils";
 import { IEventPropertiesCollection } from "./Events";
+import { IAnalysisResultDiff, IDiffAnalysis } from "./rcaEngineConfigurations";
+
+export interface IPropertyMapper {
+  staticValue?: any;
+  property?: any;
+  transforms?: ITransform[]; //used to describe source transformations that we want to make
+}
 
 export interface IPropertyMapping {
-  sourceProperty: any;
-  targetProperty: any;
-  sourceTransform?: ITransform[]; //used to describe source transformations that we want to make
-  targetTransform?: ITransform[]; //used to describe target transformations that we want to make
+  source: IPropertyMapper;
+  target: IPropertyMapper;
 }
 
 export interface ITransform {
@@ -19,7 +24,6 @@ export interface IRelevantEventsConfig {
   propertyMappings: IPropertyMapping[];
   selfTransform?: ITransform[]; //used to describe self transformations that we want to make to strings
   result?: string;
-
 }
 
 export interface IConcurrentEventsConfig {
@@ -40,6 +44,32 @@ export interface IRCAItem extends IEventPropertiesCollection {
   name?: string;
   eventInstanceId: string;
   timeStamp: string;
+}
+
+export const getAndTransform = (event: IRCAItem, config: IPropertyMapper) => {
+  let sourceVal = Utils.isDefined(config.staticValue) ? config.staticValue : Utils.result(event, config.property);
+  if (config.transforms) {
+    sourceVal = Transforms.getTransformations(config.transforms || [], sourceVal);
+  }
+
+  return sourceVal;
+}
+/***
+ * Check if two events match using the mappings config
+  ***/
+export const validMappings = (sourceEvent: IRCAItem, targetEvent: IRCAItem, config: IRelevantEventsConfig): boolean => {
+  let valid = true;
+  let mappings = config.propertyMappings;
+  mappings.forEach(mapping => {
+    let sourceVal = getAndTransform(sourceEvent, mapping.source);
+    let targetVal = getAndTransform(targetEvent, mapping.target);
+
+    if (!Utils.isDefined(sourceVal) || !Utils.isDefined(targetVal) || sourceVal !== targetVal) {
+      valid = false;
+    }
+  });
+
+  return valid;
 }
 
 export const getSimultaneousEventsForEvent = (configs: IConcurrentEventsConfig[], inputEvents: IRCAItem[], events: IRCAItem[], existingEvents?: IConcurrentEvents[]): IConcurrentEvents[] => {
@@ -79,22 +109,7 @@ export const getSimultaneousEventsForEvent = (configs: IConcurrentEventsConfig[]
         reasonForEvent = action;
         config.relevantEventsType.forEach(relevantEventType => {
           if (relevantEventType.eventType == "self") {
-            let propMaps = true;
-            let mappings = relevantEventType.propertyMappings;
-            mappings.forEach(mapping => {
-              let sourceVal = Utils.result(inputEvent, mapping.sourceProperty);
-              let targetVal = mapping.targetProperty;
-
-              if (mapping.sourceTransform) {
-                sourceVal = Transforms.getTransformations(mapping.sourceTransform, sourceVal);
-              }
-
-              if (!Utils.isDefined(sourceVal) || !Utils.isDefined(targetVal) || sourceVal !== targetVal) {
-                propMaps = false;
-              } else {
-              }
-            });
-            if (propMaps) {
+            if (validMappings(inputEvent, inputEvent, relevantEventType)) {
               if (relevantEventType.selfTransform) {
                 parsed = Transforms.getTransformations(relevantEventType.selfTransform, parsed);
               }
@@ -114,40 +129,22 @@ export const getSimultaneousEventsForEvent = (configs: IConcurrentEventsConfig[]
               reasonForEvent = action;
             }
           }
-          events.forEach(iterEvent => {
-            if (relevantEventType.eventType == iterEvent.kind) {
+          events.forEach(targetEvent => {
+            if (relevantEventType.eventType == targetEvent.kind) {
               // see if each property mapping holds true
-              let valid = true;
-              let mappings = relevantEventType.propertyMappings;
-              mappings.forEach(mapping => {
-                let sourceVal = Utils.result(inputEvent, mapping.sourceProperty);
-                if (mapping.sourceTransform) {
-                  sourceVal = Transforms.getTransformations(mapping.sourceTransform, sourceVal);
-                }
-
-                let targetVal = Utils.result(iterEvent, mapping.targetProperty);
-                if (mapping.targetTransform) {
-                  targetVal = Transforms.getTransformations(mapping.targetTransform, targetVal);
-                }
-
-                if (!Utils.isDefined(sourceVal) || !Utils.isDefined(targetVal) || sourceVal !== targetVal) {
-                  valid = false;
-                }
-              });
-
-              if (valid) {
-                const existingEvent = findEvent(simulEvents, iterEvent);
-                if(existingEvent) {
+              if (validMappings(inputEvent, targetEvent, relevantEventType)) {
+                const existingEvent = findEvent(simulEvents, targetEvent);
+                if (existingEvent) {
                   reason = existingEvent;
-                }else{
+                } else {
                   //generate events needed to build chain
-                  const reasons = getSimultaneousEventsForEvent(configs, [iterEvent], events, simulEvents);
+                  const reasons = getSimultaneousEventsForEvent(configs, [targetEvent], events, simulEvents);
                   reasons.forEach(event => {
-                    if(!findEvent(simulEvents, event)) {
+                    if (!findEvent(simulEvents, event)) {
                       simulEvents.push(event)
                     }
                   })
-                  reason = reasons.find(e => e.eventInstanceId === iterEvent.eventInstanceId);
+                  reason = reasons.find(e => e.eventInstanceId === targetEvent.eventInstanceId);
                 }
               }
             }
@@ -169,4 +166,23 @@ export const getSimultaneousEventsForEvent = (configs: IConcurrentEventsConfig[]
   });
 
   return simulEvents;
+}
+
+export const getPeriodicEvent = (configs: IDiffAnalysis[], inputEvents: IRCAItem[]): IAnalysisResultDiff[] => {
+  const results = configs.map(config => {
+    return {
+      config,
+      events: []
+    }
+  })
+
+  inputEvents.forEach(event => {
+    results.forEach(config => {
+      if(config.config.eventType === event.kind && validMappings(event, event, config.config)) {
+        config.events.push(event);
+      }
+    })
+  })
+
+  return results;
 }

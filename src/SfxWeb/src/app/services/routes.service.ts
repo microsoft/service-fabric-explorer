@@ -189,7 +189,7 @@ export class RoutesService {
     return data;
    }
 
-  public navigate(pathGetter: () => string): void {
+  public navigate(pathGetter: () => string, postNavigateAction?: () => void): void {
       let path: string;
 
       try {
@@ -197,6 +197,6 @@ export class RoutesService {
           path = pathGetter();
       } finally {
       }
-      this.routing.navigate([path]);
+      this.routing.navigate([path]).then(postNavigateAction);
   }
 }

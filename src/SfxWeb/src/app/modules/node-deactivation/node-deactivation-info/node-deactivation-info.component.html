@@ -5,21 +5,21 @@
   </div>
 
   <div style="width: 200px;">
-    <h5 class="underline title">
+    <h3 class="underline title">
       Deactivation Status
-  </h5>
+  </h3>
     <app-phase-diagram [items]="progress" [currentIndex]="index" [vertical]="true"></app-phase-diagram>
   </div>
 
   <div *ngIf="deactivationInfo.NodeDeactivationTask.length > 0" style="flex-grow: 1;
     margin-left: 15px; min-width: 400px; max-width: 1120px">
-    <h5 class="underline title" >Deactivation Tasks</h5>
+    <h3 class="underline title" >Deactivation Tasks</h3>
     <app-detail-list [list]="deactivationInfo.NodeDeactivationTask" [listSettings]="settings" [showTopOptions]="false"></app-detail-list>
   </div>
 </div>
 
 
 <div *ngIf="deactivationInfo.PendingSafetyChecks.length > 0">
-  <h5 style="font-size: 16px;">Safety Checks</h5>
+  <h3 style="font-size: 16px;">Safety Checks</h3>
   <app-safety-checks [safetyChecks]="deactivationInfo.PendingSafetyChecks"></app-safety-checks>
 </div>

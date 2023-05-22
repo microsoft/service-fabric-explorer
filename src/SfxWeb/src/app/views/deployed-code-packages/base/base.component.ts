@@ -1,4 +1,4 @@
-import { Component, OnInit, Injector } from '@angular/core';
+import { Component, OnInit, Injector, ElementRef } from '@angular/core';
 import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 import { ActivatedRouteSnapshot } from '@angular/router';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
@@ -11,13 +11,14 @@ import { IdGenerator } from 'src/app/Utils/IdGenerator';
 import { IdUtils } from 'src/app/Utils/IdUtils';
 import { map } from 'rxjs/operators';
 import { SettingsService } from 'src/app/services/settings.service';
+import { IBaseView } from '../../BaseView';
 
 @Component({
   selector: 'app-base',
   templateUrl: './base.component.html',
   styleUrls: ['./base.component.scss']
 })
-export class BaseComponent extends BaseControllerDirective {
+export class BaseComponent extends BaseControllerDirective implements IBaseView {
   public nodeName: string;
   public appId: string;
   public serviceId: string;
@@ -26,7 +27,7 @@ export class BaseComponent extends BaseControllerDirective {
   codePackages: DeployedCodePackageCollection;
   listSettings: ListSettings;
 
-  constructor(protected data: DataService, injector: Injector, private tree: TreeService, private settings: SettingsService) {
+  constructor(protected data: DataService, injector: Injector, private tree: TreeService, private settings: SettingsService, public el: ElementRef) {
     super(injector);
   }
 

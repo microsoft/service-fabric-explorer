@@ -53,6 +53,7 @@ context('node page', () => {
           cy.contains('3');
           cy.contains('fd:/0');
           cy.contains('Yes');
+          cy.contains('nt')
         })
 
         cy.get('[data-cy=appsList]').within(() => {

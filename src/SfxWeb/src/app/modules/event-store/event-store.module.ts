@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { EventStoreComponent } from './event-store/event-store.component';
 import { DetailListTemplatesModule } from '../detail-list-templates/detail-list-templates.module';
-import { FullDescriptionComponent } from './full-description/full-description.component';
 import { RowDisplayComponent } from './row-display/row-display.component';
 import { FormsModule } from '@angular/forms';
 import { NgbDropdownModule, NgbModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
@@ -15,7 +14,7 @@ import { VisualizationDirective } from './visualization.directive';
 import { RcaVisualizationComponent } from './rca-visualization/rca-visualization.component';
 
 @NgModule({
-  declarations: [EventStoreComponent, FullDescriptionComponent, RowDisplayComponent, OptionPickerComponent, TimelineComponent, VisualizationDirective, RcaVisualizationComponent],
+  declarations: [EventStoreComponent, RowDisplayComponent, OptionPickerComponent, TimelineComponent, VisualizationDirective, RcaVisualizationComponent],
   imports: [
     CommonModule,
     DetailListTemplatesModule,
@@ -27,6 +26,6 @@ import { RcaVisualizationComponent } from './rca-visualization/rca-visualization
     ConcurrentEventsVisualizationModule,
     TimePickerModule
   ],
-  exports: [EventStoreComponent, FullDescriptionComponent, RowDisplayComponent, OptionPickerComponent, TimelineComponent],
+  exports: [EventStoreComponent, RowDisplayComponent, OptionPickerComponent, TimelineComponent],
 })
 export class EventStoreModule { }

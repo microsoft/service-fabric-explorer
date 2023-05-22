@@ -11,7 +11,7 @@
 
     <app-dashboard-text-scale-tile *ngIf="placementProperties" data-cy="placementconstraints">
       <div class="placement-constraint-wrapper text-center">
-        <h5 class="top-seperator">Placement Properties</h5>
+        <div class="top-seperator title">Placement Properties</div>
         <div class="inner-list" *ngFor="let property of placementProperties.placementProperties | keyvalue">
           <div>{{property.key}} : {{property.value}}</div>
         </div>
@@ -37,7 +37,7 @@
   <div class="detail-pane essen-pane" *ngIf="node && node.isDeactivating" data-cy="deactivated">
     <app-collapse-container sectionName="Deactivation Info">
       <div collapse-header>
-        <h4>Deactivation Info</h4>
+        <h2>Deactivation Info</h2>
       </div>
       <div collapse-body>
         <app-node-deactivation-info [deactivationInfo]="node.raw.NodeDeactivationInfo" [hasDescription]="node.hasDeactivatingDescription"></app-node-deactivation-info>
@@ -48,7 +48,7 @@
   <div class="detail-pane essen-pane" *ngIf="repairJobs.length > 0" data-cy="repair-jobs">
     <app-collapse-container sectionName="Repair Jobs">
       <div collapse-header>
-        <h4>Repair jobs</h4>
+        <h2>Repair jobs</h2>
       </div>
       <div collapse-body>
         <app-detail-list *ngIf="node" [list]="repairJobs"
@@ -58,9 +58,9 @@
   </div>
 
   <div class="detail-pane essen-pane">
-    <app-collapse-container sectionName="Unhealthy Evaluations">
+    <app-collapse-container sectionName="Health Evaluations">
       <div collapse-header>
-        <h4>Health Evaluations</h4>
+        <h2>Health Evaluations</h2>
       </div>
       <div collapse-body>
           <app-health-viewer *ngIf="node" [healthyEvaluations]="node.health.healthEvents" [unhealthyEvaluations]="node.health.unhealthyEvaluations" ></app-health-viewer>
@@ -71,7 +71,7 @@
   <div class="detail-pane essen-pane" *ngIf="deployedApps">
     <app-collapse-container sectionName="Deployed Applications">
       <div collapse-header>
-        <h4>Deployed Applications</h4>
+        <h2>Deployed Applications</h2>
       </div>
       <div collapse-body>
         <app-detail-list [list]="deployedApps.collection" [listSettings]="listSettings" data-cy="appsList">

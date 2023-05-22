@@ -71,6 +71,9 @@ export class RepairJobChartComponent implements OnInit, OnChanges {
         verticalAlign: 'middle',
         itemStyle: {
           color: this.fontColor.color
+        },
+        itemHoverStyle: {
+          color: this.fontColor.color
         }
     },
     tooltip: {
@@ -109,7 +112,8 @@ export class RepairJobChartComponent implements OnInit, OnChanges {
           color: '#0075c9',
           data: []
         },
-      ]
+      ],
+      credits: {enabled: false}
     };
     this.chart = chart('repair-job-chart-container', options);
     this.setGraph(this.jobs);

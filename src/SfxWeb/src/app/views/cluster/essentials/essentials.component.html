@@ -26,13 +26,13 @@
 <div *ngIf="repairtaskCollection.isInitialized && repairtaskCollection?.jobsOfInterest?.length > 0 || infraCollection.isInitialized && infraCollection?.throttledJobs?.length > 0" class="essen-pane detail-pane" style="border: 2px solid var(--badge-warning);">
   <app-collapse-container sectionName="Potentially Stuck Repair Jobs" collapsed="false" data-cy="jobs">
     <div collapse-header>
-            <h4>Potentially Stuck Repair Jobs and Throttled Infrastructure Jobs</h4>
+            <h2>Potentially Stuck Repair Jobs and Throttled Infrastructure Jobs</h2>
     </div>
     <div collapse-body>
-      <h4 class="nested-header">Repair Jobs</h4>
+      <h3 class="nested-header heading">Repair Jobs</h3>
       <app-detail-list [list]="repairtaskCollection.jobsOfInterest" [listSettings]="repairTaskListSettings" [showTopOptions]="false"></app-detail-list>
 
-      <h4 class="nested-header">Throttled Infrastructure Jobs</h4>
+      <h3 class="nested-header heading">Throttled Infrastructure Jobs</h3>
       <app-detail-list [list]="infraCollection.throttledJobs" [listSettings]="infraSettings" [showTopOptions]="false"></app-detail-list>
 
     </div>
@@ -44,7 +44,7 @@
   <div data-cy="upgradeDetails" class="essen-pane" style="flex: 1; min-width: 600px;">
     <app-collapse-container sectionName="Upgrade Status" collapsed="true">
         <div collapse-header>
-                <h4>Cluster Upgrade In Progress</h4>
+          <h2>Cluster Upgrade In Progress</h2>
         </div>
         <div collapse-body>
           <app-upgrade-info [upgradeProgress]="clusterUpgradeProgress"></app-upgrade-info>
@@ -53,39 +53,39 @@
           <app-upgrade-progress [upgradeDomains]="clusterUpgradeProgress.upgradeDomains"></app-upgrade-progress>
         </div>
       </app-collapse-container>
-</div>
+  </div>
 
-<div class="essen-pane" *ngIf="nodes.isInitialized && nodes.disabledAndDisablingNodes.length > 0"  style="flex: 1; min-width: 600px;">
-  <app-collapse-container [sectionName]="'Nodes Deactivation'" collapsed="true">
-  <div collapse-header>
-    <h4>
-      Deactivation Nodes Info ({{nodes.disabledAndDisablingNodes.length}})
-    </h4>
-  </div>
-  <div collapse-body class="disabled-node-list">
-    <div *ngFor="let node of nodes.disabledAndDisablingNodes" class="disabled-node-item">
-      <app-collapse-container collapsed="true" [sectionName]="node.name">
-        <div collapse-header>
-          <div style="font-size: 15px; margin-bottom: 5px;" class="flex-center">{{node.name}} - {{node.raw.NodeStatus}}
-            <span *ngIf="node.raw.IsSeedNode" class="flex-center">
-              <span class="mif-checkmark seed-node"></span>
-              Seed Node
-            </span>
-          </div>
+  <div class="essen-pane" *ngIf="nodes.isInitialized && nodes.disabledAndDisablingNodes.length > 0"  style="flex: 1; min-width: 600px;">
+    <app-collapse-container [sectionName]="'Nodes Deactivation'" collapsed="true">
+      <div collapse-header>
+        <h2>
+          Deactivation Nodes Info ({{nodes.disabledAndDisablingNodes.length}})
+        </h2>
+      </div>
+      <div collapse-body class="disabled-node-list">
+        <div *ngFor="let node of nodes.disabledAndDisablingNodes" class="disabled-node-item">
+          <app-collapse-container collapsed="true" [sectionName]="node.name">
+            <div collapse-header>
+              <div style="font-size: 15px; margin-bottom: 5px;" class="flex-center">{{node.name}} - {{node.raw.NodeStatus}}
+                <span *ngIf="node.raw.IsSeedNode" class="flex-center">
+                  <span class="mif-checkmark seed-node"></span>
+                  Seed Node
+                </span>
+              </div>
+            </div>
+            <div collapse-body class="table-responsive" style="padding: 10px;">
+              <a [routerLink]="node.viewPath">View Node</a>
+              <app-node-deactivation-info [deactivationInfo]="node.raw.NodeDeactivationInfo" [hasDescription]="node.hasDeactivatingDescription"></app-node-deactivation-info>
+            </div>
+          </app-collapse-container>
         </div>
-        <div collapse-body class="table-responsive" style="padding: 10px;">
-          <a [routerLink]="node.viewPath">View Node</a>
-          <app-node-deactivation-info [deactivationInfo]="node.raw.NodeDeactivationInfo" [hasDescription]="node.hasDeactivatingDescription"></app-node-deactivation-info>
-        </div>
-      </app-collapse-container>
-    </div>
+      </div>
+    </app-collapse-container>
   </div>
-</app-collapse-container>
-</div>
 </div>
 
 <div class="detail-pane essen-pane" data-cy="health" style="position: relative;">
-  <h4>Health Evaluations</h4>
+  <h2>Health Evaluations</h2>
   <app-health-viewer [healthyEvaluations]="clusterHealth.healthEvents" [unhealthyEvaluations]="clusterHealth.unhealthyEvaluations" ></app-health-viewer>
 </div>
 

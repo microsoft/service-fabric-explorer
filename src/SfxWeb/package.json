@@ -6,7 +6,7 @@
     "start": "ng serve --proxy-config=proxy.conf.json --port 3000",
     "build": "ng build",
     "build:prod": "ng build --configuration production  --output-hashing=none --named-chunks",
-    "build:accesstesting": "ng build --configuration production --outputPath=../Sfx-Proxy/wwwroot --configuration=accesstesting --output-hashing=none",
+    "build:accesstesting": "ng build --configuration production --output-path=../Sfx-Proxy/wwwroot --configuration=accesstesting --output-hashing=none",
     "test": "ng test",
     "cypress:local": "cypress open --env API_PREFIX=api",
     "ci:start-server": "angular-http-server --path ./dist -p 3000 --silent",
@@ -53,7 +53,7 @@
     "vis-data": "^6.4.1",
     "vis-timeline": "^7.1.3",
     "vis-uuid": "^1.1.4",
-    "xml2js": "^0.4.22",
+    "xml2js": "^0.5.0",
     "zone.js": "~0.11.4"
   },
   "devDependencies": {
