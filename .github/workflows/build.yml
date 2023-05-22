@@ -1,11 +1,9 @@
 
 name: Build
 on:
-  pull_request_review:
-    types: [submitted]
-    jobs:
-    build:
-    if: github.event.review.state == 'approved'
+  push:
+    tags:
+    - 'ci-run'
   schedule:
     - cron: 0 0 * * * # daily
 
