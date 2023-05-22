@@ -28,16 +28,16 @@ export class NodeDeactivationInfoComponent implements OnInit, OnChanges {
   constructor(public settingsService: SettingsService) { }
 
   ngOnInit(): void {
-    this.settings = this.settingsService.getNewOrExistingListSettings('tasks', null,
-    [
+
+    let columnSettings = [
       new ListColumnSetting('NodeDeactivationIntent', 'Intent'),
       new ListColumnSetting('NodeDeactivationTaskId.Id', 'Id'),
       new ListColumnSetting('NodeDeactivationTaskId.NodeDeactivationTaskType', 'Task Type'),
-      ]);
-    
-    if (this.hasDescription && this.settings.columnSettings.length < 4) {
-      this.settings.columnSettings.push(new ListColumnSetting('NodeDeactivationDescription', 'Description', { cssClasses: "wrap-overflow" }));
+    ]
+    if (this.hasDescription) {
+      columnSettings.push(new ListColumnSetting('NodeDeactivationDescription', 'Description', { cssClasses: "wrap-overflow" }));
     }
+    this.settings = this.settingsService.getNewOrExistingListSettings('tasks', null, columnSettings);
   }
 
   ngOnChanges(): void {

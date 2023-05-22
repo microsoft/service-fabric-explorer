@@ -96,10 +96,24 @@ context('node page', () => {
 
         cy.get('[data-cy=deactivated]').within(() => {
           cy.contains("86fa6852ad467a903afbbc67edc16b66");
+          cy.contains("This is a description").should('have.length', 1);
           cy.get(seedNodeQuoromRef).should('not.exist');
         })
       })
 
+      it('deactivated - no description', () => {
+        addRoute("deactivatedNode", "node-page/deactivated-node-seed-node-quorom.json", apiUrl(`/Nodes/${nodeName}/?*`));
+        addRoute(FIXTURE_NODES, "node-page/node-list-seed-node-quorom.json", nodes_route);
+
+        cy.visit(`/#/node/${nodeName}`);
+
+        cy.wait("@getdeactivatedNode");
+
+        cy.get('[data-cy=deactivated]').within(() => {
+          cy.contains("This is a description").should('not.exist');
+        })
+      })
+      
       it('deactivated - show seed node quorom warning', () => {
         addRoute("deactivatedNode", "node-page/deactivated-node-seed-node-quorom.json", apiUrl(`/Nodes/${nodeName}/?*`));
         addRoute(FIXTURE_NODES, "node-page/node-list-seed-node-quorom.json", nodes_route);
