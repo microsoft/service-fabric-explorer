@@ -40,7 +40,32 @@ export class CommandsComponent extends BaseControllerDirective {
 
     const healthReport = CommandFactory.GenSendHealthReport("Cluster");
     this.commands.push(healthReport);
+
+    const connectionEndpoint = new PowershellCommandParameter("ConnectionEndpoint", CommandParamTypes.string, { required: true, defaultValue: document.location.hostname + ":19000"});
+    const serverThumbprint = new PowershellCommandParameter("ServerThumbprint", CommandParamTypes.string, { required: true });
+    const serverCommonName = new PowershellCommandParameter("ServerCommonName", CommandParamTypes.string, { required: true });
+    const findValueThumbprint = new PowershellCommandParameter("FindValue", CommandParamTypes.string, { required: true, description: "Enter cluster or client thumbprint." });
+    const findValueCommonName = new PowershellCommandParameter("FindValue", CommandParamTypes.string, { required: true, description: "Enter certificate subject name / common name." });
+    const storeLocation = new PowershellCommandParameter("StoreLocation", CommandParamTypes.enum, { required: true, defaultValue: "CurrentUser", options: ["CurrentUser", "LocalMachine"]})
+
+    const connectClusterThumbprint = new PowershellCommand(
+      'Creates a connection to a Service Fabric cluster using certificate thumbprint.',
+      'https://docs.microsoft.com/powershell/module/servicefabric/connect-servicefabriccluster',
+      CommandSafetyLevel.safe,
+      `Connect-ServiceFabricCluster -X509Credential -StoreName My -FindType FindByThumbprint`,
+      [connectionEndpoint, storeLocation, serverThumbprint, findValueThumbprint, CommandFactory.GenTimeoutSecParam()]
+    );
+    this.commands.push(connectClusterThumbprint);
     
+    const connectClusterCommon = new PowershellCommand(
+      'Creates a connection to a Service Fabric cluster using certificate common name.',
+      'https://docs.microsoft.com/powershell/module/servicefabric/connect-servicefabriccluster',
+      CommandSafetyLevel.safe,
+      `Connect-ServiceFabricCluster -X509Credential -StoreName My -FindType FindBySubjectName`,
+      [connectionEndpoint, storeLocation, serverCommonName, findValueCommonName, CommandFactory.GenTimeoutSecParam()]
+    );
+    this.commands.push(connectClusterCommon);
+
     const getUpgrade = new PowershellCommand(
       'Get Cluster Upgrade',
       'https://docs.microsoft.com/powershell/module/servicefabric/get-servicefabricclusterupgrade',
