@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 import { PowershellCommand, CommandSafetyLevel, PowershellCommandParameter } from 'src/app/Models/PowershellCommand';
 import { BadgeConstants } from 'src/app/Common/Constants';
 import { UntypedFormGroup } from '@angular/forms';
@@ -21,6 +21,7 @@ export class CommandComponent implements OnInit{
   requiredParams: PowershellCommandParameter[];
   optionalParams: PowershellCommandParameter[];
 
+  constructor(private cdr: ChangeDetectorRef) { }
   ngOnInit() {
  
     this.requiredParams = this.command.parameters.filter(p => p.required);
@@ -49,5 +50,6 @@ export class CommandComponent implements OnInit{
         invalids.push(name);
     }
     this.invalidInputs = invalids.join(', ');
+    this.cdr.detectChanges();
   }
 }
