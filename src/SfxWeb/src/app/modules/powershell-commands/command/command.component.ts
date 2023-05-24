@@ -27,7 +27,7 @@ export class CommandComponent implements OnInit{
     this.requiredParams = this.command.parameters.filter(p => p.required);
     this.optionalParams = this.command.parameters.filter(p => !p.required);
 
-    this.inputForm.valueChanges.subscribe(_ => { this.updateInvalidInputText(); });
+    this.inputForm.valueChanges.subscribe(_ => { this.updateInputs(); });
   }
 
   goToReference(e: any) {
@@ -43,13 +43,20 @@ export class CommandComponent implements OnInit{
     return this.inputForm.controls['optionalInputs'] as UntypedFormGroup;
   }
 
-  updateInvalidInputText() {
+  updateInputs() {
     let invalids = [];
     for (let name in this.requiredInputs?.controls) {
-      if (!this.requiredInputs.controls[name]?.valid)
+      this.command.getParam(name).value = this.requiredInputs.controls[name].value;
+      if (!this.requiredInputs.controls[name]?.valid){
         invalids.push(name);
+      }
     }
     this.invalidInputs = invalids.join(', ');
+
+    for (let name in this.optionalInputs?.controls) {
+      this.command.getParam(name).value = this.optionalInputs.controls[name].value;
+    }
+
     this.cdr.detectChanges();
   }
 }
