@@ -1,4 +1,5 @@
 import { Component, Injector } from '@angular/core';
+import { cli } from 'cypress';
 import { Command } from 'protractor';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -41,30 +42,76 @@ export class CommandsComponent extends BaseControllerDirective {
     const healthReport = CommandFactory.GenSendHealthReport("Cluster");
     this.commands.push(healthReport);
 
+    const connectHelp = 'https://docs.microsoft.com/powershell/module/servicefabric/connect-servicefabriccluster';
     const connectionEndpoint = new PowershellCommandParameter("ConnectionEndpoint", CommandParamTypes.string, { required: true, defaultValue: document.location.hostname + ":19000"});
-    const serverThumbprint = new PowershellCommandParameter("ServerThumbprint", CommandParamTypes.string, { required: true });
-    const serverCommonName = new PowershellCommandParameter("ServerCommonName", CommandParamTypes.string, { required: true });
-    const findValueThumbprint = new PowershellCommandParameter("FindValue", CommandParamTypes.string, { required: true, description: "Enter cluster or client thumbprint." });
-    const findValueCommonName = new PowershellCommandParameter("FindValue", CommandParamTypes.string, { required: true, description: "Enter certificate subject name / common name." });
-    const storeLocation = new PowershellCommandParameter("StoreLocation", CommandParamTypes.enum, { required: true, defaultValue: "CurrentUser", options: ["CurrentUser", "LocalMachine"]})
-
-    const connectClusterThumbprint = new PowershellCommand(
-      'Creates a connection to a Service Fabric cluster using certificate thumbprint.',
-      'https://docs.microsoft.com/powershell/module/servicefabric/connect-servicefabriccluster',
-      CommandSafetyLevel.safe,
-      `Connect-ServiceFabricCluster -X509Credential -StoreName My -FindType FindByThumbprint`,
-      [connectionEndpoint, storeLocation, serverThumbprint, findValueThumbprint, CommandFactory.GenTimeoutSecParam()]
-    );
-    this.commands.push(connectClusterThumbprint);
+    const storeLocation = new PowershellCommandParameter("StoreLocation", CommandParamTypes.enum, { required: true, defaultValue: "CurrentUser", options: ["CurrentUser", "LocalMachine"]});
+    let authType = "-X509Credential ";
     
-    const connectClusterCommon = new PowershellCommand(
-      'Creates a connection to a Service Fabric cluster using certificate common name.',
-      'https://docs.microsoft.com/powershell/module/servicefabric/connect-servicefabriccluster',
-      CommandSafetyLevel.safe,
-      `Connect-ServiceFabricCluster -X509Credential -StoreName My -FindType FindBySubjectName`,
-      [connectionEndpoint, storeLocation, serverCommonName, findValueCommonName, CommandFactory.GenTimeoutSecParam()]
-    );
-    this.commands.push(connectClusterCommon);
+    let certificateProperties = this.data.clusterManifest.certificatesInfo;
+    let clientThumbprints = certificateProperties
+      .filter(x => x.name === "ClientCertificate" && x.x509FindType !== "FindBySubjectName")
+      .map(x => { return x.x509FindValue });
+    let clientCommonNames = certificateProperties
+      .filter(x => x.name === "ClientCertificate" && x.x509FindType === "FindBySubjectName")
+      .map(x => { return x.x509FindValue });
+    let serverThumbprints = certificateProperties
+      .filter(x => x.name === "ServerCertificate" && x.x509FindType !== "FindBySubjectName")
+      .map(x => { return x.x509FindValue });
+    let serverCommonNames = certificateProperties
+      .filter(x => x.name === "ServerCertificate" && x.x509FindType === "FindBySubjectName")
+      .map(x => { return x.x509FindValue });
+
+    const serverThumbprint = new PowershellCommandParameter("ServerCertThumbprint", CommandParamTypes.enum, { 
+      required: true,
+      options: [...new Set(serverThumbprints)],
+      defaultValue: serverThumbprints[0],
+    });
+    const findValueThumbprint = new PowershellCommandParameter("FindValue", CommandParamTypes.enum, { 
+      required: true,
+      options: [...new Set(clientThumbprints.concat(serverThumbprints))],
+      defaultValue: clientThumbprints[0],
+      description: "Enter cluster or client thumbprint."
+    });
+
+    const serverCommonName = new PowershellCommandParameter("ServerCommonName", CommandParamTypes.enum, { 
+      required: true,       
+      options: [...new Set(serverCommonNames)],
+      defaultValue: serverCommonNames[0],
+    });
+    const findValueCommonName = new PowershellCommandParameter("FindValue", CommandParamTypes.enum, { 
+      required: true,
+      options: [...new Set(clientCommonNames.concat(serverCommonNames))],
+      defaultValue: clientCommonNames[0],
+      description: "Enter cluster or client common name."
+    });
+
+
+    if (this.data.clusterManifest.isAADEnabled) {
+      authType = "-AzureActiveDirectory ";
+    }
+    
+    if (clientCommonNames.length > 0 || serverCommonNames.length > 0) {
+      const connectClusterCommon = new PowershellCommand(
+        'Creates a connection to a Service Fabric cluster using certificate common name.',
+        connectHelp,
+        CommandSafetyLevel.safe,
+        `Connect-ServiceFabricCluster ${authType}-StoreName My -FindType FindBySubjectName`,
+        [connectionEndpoint, storeLocation, serverCommonName, findValueCommonName, CommandFactory.GenTimeoutSecParam()]
+      );
+      this.commands.push(connectClusterCommon);
+    }
+    
+    if (clientThumbprints.length > 0 || serverThumbprints.length > 0) {
+      const connectClusterThumbprint = new PowershellCommand(
+        'Creates a connection to a Service Fabric cluster using certificate thumbprint.',
+        connectHelp,
+        CommandSafetyLevel.safe,
+        `Connect-ServiceFabricCluster ${authType}-StoreName My -FindType FindByThumbprint`,
+        [connectionEndpoint, storeLocation, serverThumbprint, findValueThumbprint, CommandFactory.GenTimeoutSecParam()]
+      );
+      this.commands.push(connectClusterThumbprint);
+    }
+
 
     const getUpgrade = new PowershellCommand(
       'Get Cluster Upgrade',

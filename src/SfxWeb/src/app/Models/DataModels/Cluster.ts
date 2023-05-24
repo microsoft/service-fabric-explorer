@@ -27,20 +27,20 @@ export class ClusterHealth extends HealthBase<IRawClusterHealth> {
     private static certExpirationChecked = false;
 
     public constructor(data: DataService,
-                       protected eventsHealthStateFilter: HealthStateFilterFlags,
-                       protected nodesHealthStateFilter: HealthStateFilterFlags,
-                       protected applicationsHealthStateFilter: HealthStateFilterFlags) {
+        protected eventsHealthStateFilter: HealthStateFilterFlags,
+        protected nodesHealthStateFilter: HealthStateFilterFlags,
+        protected applicationsHealthStateFilter: HealthStateFilterFlags) {
         super(data);
     }
 
     public checkExpiredCertStatus() {
         try {
             if (!ClusterHealth.certExpirationChecked) {
-            // Check cluster health
-            // if healthy then no cert issue
-            // if warning/Error
+                // Check cluster health
+                // if healthy then no cert issue
+                // if warning/Error
                 // starting walking and query all seed nodes in warning state for cluster cert issues
-                this.ensureInitialized().subscribe( (clusterHealth: ClusterHealth) => {
+                this.ensureInitialized().subscribe((clusterHealth: ClusterHealth) => {
                     clusterHealth = this;
 
                     if (clusterHealth.healthState.text === HealthStateConstants.Warning || clusterHealth.healthState.text === HealthStateConstants.Error) {
@@ -51,7 +51,7 @@ export class ClusterHealth extends HealthBase<IRawClusterHealth> {
                     }
                 });
             }
-        }catch (e) {
+        } catch (e) {
             console.log(e);
         }
     }
@@ -74,7 +74,7 @@ export class ClusterHealth extends HealthBase<IRawClusterHealth> {
 
         const thumbprintSearchText = 'thumbprint = ';
         const thumbprintIndex = healthEvent.raw.Description.indexOf(thumbprintSearchText);
-        const thumbprint =  healthEvent.raw.Description.substr(thumbprintIndex + thumbprintSearchText.length).split(',')[0];
+        const thumbprint = healthEvent.raw.Description.substr(thumbprintIndex + thumbprintSearchText.length).split(',')[0];
 
         const expirationSearchText = 'expiration = ';
         const expirationIndex = healthEvent.raw.Description.indexOf('expiration = ');
@@ -93,26 +93,26 @@ export class ClusterHealth extends HealthBase<IRawClusterHealth> {
 
     private containsCertExpiringHealthEvent(unhealthyEvaluations: HealthEvent[]): HealthEvent[] {
         return unhealthyEvaluations.filter(event => event.raw.Description.indexOf('Certificate expiration') === 0 &&
-                                            event.raw.Property === CertExpiraryHealthEventProperty.Cluster &&
-                                            (event.raw.HealthState === HealthStateConstants.Warning || event.raw.HealthState === HealthStateConstants.Error));
+            event.raw.Property === CertExpiraryHealthEventProperty.Cluster &&
+            (event.raw.HealthState === HealthStateConstants.Warning || event.raw.HealthState === HealthStateConstants.Error));
     }
 
     private checkNodesContinually(index: number, nodes: Node[]) {
         if (index < nodes.length) {
             const node = nodes[index];
             if (node.healthState.text === HealthStateConstants.Error || node.healthState.text === HealthStateConstants.Warning) {
-                node.health.ensureInitialized(true).subscribe( () => {
+                node.health.ensureInitialized(true).subscribe(() => {
                     const certExpiringEvents = this.containsCertExpiringHealthEvent(node.health.healthEvents);
                     if (certExpiringEvents.length === 0) {
                         this.checkNodesContinually(index + 1, nodes);
-                    }else {
+                    } else {
                         this.setMessage(certExpiringEvents[0]);
                     }
                 });
-            }else {
+            } else {
                 this.checkNodesContinually(index + 1, nodes);
             }
-        }else {
+        } else {
             ClusterHealth.certExpirationChecked = true;
         }
     }
@@ -121,9 +121,15 @@ export class ClusterHealth extends HealthBase<IRawClusterHealth> {
 // a dictionary of node type names to property key,value pairs
 export type NodeTypeProperties = Record<string, Record<string, string>>;
 
+export interface ICertificateInfo {
+    name: string;
+    x509FindValue: string;
+    x509FindType: string;
+}
+
 export interface INodeTypeInfo {
-  name: string;
-  placementProperties: Record<string, string>;
+    name: string;
+    placementProperties: Record<string, string>;
 }
 
 export class ClusterManifest extends DataModelBase<IRawClusterManifest> {
@@ -132,12 +138,14 @@ export class ClusterManifest extends DataModelBase<IRawClusterManifest> {
     public isSfrpCluster = false;
 
     public imageStoreConnectionString = '';
+    public isAADEnabled = false;
     public isNetworkInventoryManagerEnabled = false;
     public isBackupRestoreEnabled = false;
     public isRepairManagerEnabled = false;
     public isEventStoreEnabled = false;
     public eventStoreTimeRange = 30;
     public nodeTypeProperties: INodeTypeInfo[];
+    public certificatesInfo: ICertificateInfo[] = [];
 
     public constructor(data: DataService) {
         super(data);
@@ -149,46 +157,66 @@ export class ClusterManifest extends DataModelBase<IRawClusterManifest> {
 
     private getImageStoreConnectionString(element: Element) {
         const params = element.getElementsByTagName('Parameter');
-        for (let i = 0; i < params.length; i ++) {
+        for (let i = 0; i < params.length; i++) {
             const item = params.item(i);
-            if (item.getAttribute('Name') === 'ImageStoreConnectionString'){
+            if (item.getAttribute('Name') === 'ImageStoreConnectionString') {
                 this.imageStoreConnectionString = item.getAttribute('Value');
                 break;
             }
         }
     }
 
-  private getNodesProperty(manifest: Element) {
-    let nodeTypes: INodeTypeInfo[] = []
-    try {
-      let XMLnodeTypes = manifest.getElementsByTagName("NodeTypes")[0].getElementsByTagName("NodeType");
-
-      for (let nodeIndex = 0; nodeIndex < XMLnodeTypes.length; ++nodeIndex) {
-        const XMLnode = XMLnodeTypes[nodeIndex]
-        const nodeType = XMLnode.getAttribute("Name")
-        const placementProperties = XMLnode.getElementsByTagName("PlacementProperties")
-        let keyProperties: Record<string, string> = {}
-        for (let i = 0; i < placementProperties.length; ++i) {
-          const properties = placementProperties[i].getElementsByTagName("Property")
-
-          for (let j = 0; j < properties.length; j++) {
-            keyProperties[properties[j].getAttribute("Name")] = properties[j].getAttribute("Value")
-          }
+    private getNodeCertificatesProperty(xmlNode: Element) {
+        try {
+            this.certificatesInfo = [];
+            let certificates = xmlNode.getElementsByTagName("Certificates")[0];
+            for (let i = 0; i < certificates.children.length; i++) {
+                let node = <Element>certificates.children.item(i);
+                this.certificatesInfo.push({
+                    x509FindType: node.getAttribute("X509FindType") ?? "FindByThumbprint",
+                    x509FindValue: node.getAttribute("X509FindValue"),
+                    name: node.tagName
+                });
+            }
         }
-        nodeTypes.push({
-          placementProperties: keyProperties,
-          name: nodeType
-        });
-      }
-    } catch(e) {
-      console.log("unable to parse nodetypes", e)
+        catch (e) {
+            console.log("unable to parse certificates", e)
+        }
     }
 
-    return nodeTypes;
-  }
+    private getNodesProperty(manifest: Element) {
+        let nodeTypes: INodeTypeInfo[] = []
+        try {
+            let xmlNodeTypes = manifest.getElementsByTagName("NodeTypes")[0].getElementsByTagName("NodeType");
+
+            for (let nodeIndex = 0; nodeIndex < xmlNodeTypes.length; ++nodeIndex) {
+                const xmlNode = xmlNodeTypes[nodeIndex];
+                const nodeType = xmlNode.getAttribute("Name");
+                const placementProperties = xmlNode.getElementsByTagName("PlacementProperties");
+                let keyProperties: Record<string, string> = {};
+                for (let i = 0; i < placementProperties.length; ++i) {
+                    const properties = placementProperties[i].getElementsByTagName("Property");
+
+                    for (let j = 0; j < properties.length; j++) {
+                        keyProperties[properties[j].getAttribute("Name")] = properties[j].getAttribute("Value")
+                    }
+                }
+
+                this.getNodeCertificatesProperty(xmlNode);
+                nodeTypes.push({
+                    placementProperties: keyProperties,
+                    name: nodeType
+                });
+            }
+        } catch (e) {
+            console.log("unable to parse nodetypes", e)
+        }
+
+        return nodeTypes;
+    }
 
     public getNodeProperties(nodeType: string) {
-      return this.nodeTypeProperties.find(properties => properties.name === nodeType);
+        return this.nodeTypeProperties.find(properties => properties.name === nodeType);
     }
 
     protected updateInternal(): Observable<any> | void {
@@ -202,29 +230,36 @@ export class ClusterManifest extends DataModelBase<IRawClusterManifest> {
         const FabricSettings = manifest.getElementsByTagName('FabricSettings')[0];
         const management = FabricSettings.getElementsByTagName('Section');
 
-        for (let i = 0; i < management.length; i ++) {
+        for (let i = 0; i < management.length; i++) {
             const item = management.item(i);
-            if (item.getAttribute('Name') === 'Management'){
+            if (item.getAttribute('Name') === 'Management') {
                 this.getImageStoreConnectionString(item);
-            }else if (item.getAttribute('Name') === 'BackupRestoreService'){
+            } else if (item.getAttribute('Name') === 'BackupRestoreService') {
                 this.isBackupRestoreEnabled = true;
-            }else if (item.getAttribute('Name') === 'UpgradeService'){
+            } else if (item.getAttribute('Name') === 'UpgradeService') {
                 this.isSfrpCluster = true;
-            }else if (item.getAttribute('Name') === 'RepairManager'){
+            } else if (item.getAttribute('Name') === 'RepairManager') {
                 this.isRepairManagerEnabled = true;
-            }else if (item.getAttribute('Name') === 'EventStoreService'){
+            } else if (item.getAttribute('Name') === 'EventStoreService') {
                 this.isEventStoreEnabled = true;
             } else if (item.getAttribute('Name') === 'AzureBlobServiceFabricEtw') {
                 const params = item.getElementsByTagName('Parameter');
-                for (let j = 0; j < params.length; j++){
+                for (let j = 0; j < params.length; j++) {
                     if (params.item(j).getAttribute('Name') === 'DataDeletionAgeInDays') {
-                        this.eventStoreTimeRange = +params.item(j).getAttribute('Value')
+                        this.eventStoreTimeRange = +params.item(j).getAttribute('Value');
+                    }
+                }
+            } else if (item.getAttribute('Name') === 'Security') {
+                const params = item.getElementsByTagName('Parameter');
+                for (let j = 0; j < params.length; j++) {
+                    if (params.item(j).getAttribute('Name') === 'AADClientApplication') {
+                        this.isAADEnabled = true;
                     }
                 }
             }
-        }
 
-        this.nodeTypeProperties = this.getNodesProperty(manifest);
+            this.nodeTypeProperties = this.getNodesProperty(manifest);
+        }
     }
 }
 
@@ -291,25 +326,25 @@ export class ClusterUpgradeProgress extends DataModelBase<IRawClusterUpgradeProg
     }
 
     public get isUDUpgrade(): boolean {
-      return !this.raw.IsNodeByNode;
+        return !this.raw.IsNodeByNode;
     }
 
     public get nodesInProgress() {
-      if (this.isUDUpgrade) {
-        return this.raw.CurrentUpgradeDomainProgress;
-      }else{
-        return this.raw.CurrentUpgradeUnitsProgress;
-      }
+        if (this.isUDUpgrade) {
+            return this.raw.CurrentUpgradeDomainProgress;
+        } else {
+            return this.raw.CurrentUpgradeUnitsProgress;
+        }
     }
 
     protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<IRawClusterUpgradeProgress> {
-        return this.data.restClient.getClusterUpgradeProgress(messageHandler).pipe(mergeMap( data => {
+        return this.data.restClient.getClusterUpgradeProgress(messageHandler).pipe(mergeMap(data => {
             if (data.CodeVersion === '0.0.0.0') {
                 return this.data.restClient.getClusterVersion().pipe(map(resp => {
                     data.CodeVersion = resp.Version;
                     return data;
                 }));
-            }else {
+            } else {
                 return of(data);
             }
         }));
@@ -379,7 +414,7 @@ export class BackupPolicy extends DataModelBase<IRawBackupPolicy> {
             },
             ViewBackupComponent,
             () => true,
-            );
+        );
     }
 
     protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<IRawBackupPolicy> {
