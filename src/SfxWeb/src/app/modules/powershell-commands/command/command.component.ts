@@ -45,15 +45,15 @@ export class CommandComponent implements OnInit{
 
   updateInputs() {
     let invalids = [];
-    for (let name in this.requiredInputs?.controls) {
+    for (let name in this.requiredInputs.controls) {
       this.command.getParam(name).value = this.requiredInputs.controls[name].value;
-      if (!this.requiredInputs.controls[name]?.valid){
+      if (!this.requiredInputs.controls[name].valid){
         invalids.push(name);
       }
     }
     this.invalidInputs = invalids.join(', ');
 
-    for (let name in this.optionalInputs?.controls) {
+    for (let name in this.optionalInputs.controls) {
       this.command.getParam(name).value = this.optionalInputs.controls[name].value;
     }
 
