@@ -1,4 +1,4 @@
-import { IRawNode, IRawNodeLoadInformation, IRawNodeLoadMetricInformation, IRawNodeHealth, NodeStatus } from '../RawDataTypes';
+import { IRawNode, IRawNodeLoadInformation, IRawNodeLoadMetricInformation, IRawNodeHealth, NodeStatus, IRawNodeDeactivationTask } from '../RawDataTypes';
 import { IDecorators, DataModelBase } from './Base';
 import { DataService } from 'src/app/services/data.service';
 import { HealthStateFilterFlags, IClusterHealthChunkQueryDescription, IHealthStateFilter } from '../HealthChunkRawDataTypes';
@@ -81,6 +81,12 @@ export class Node extends DataModelBase<IRawNode> {
         return this.raw.NodeDeactivationInfo.NodeDeactivationStatus !== 'None';
     }
 
+    public get hasDeactivatingDescription(): boolean {
+        return this.isDeactivating && (
+            this.raw.NodeDeactivationInfo.NodeDeactivationTask.some(task => task.NodeDeactivationDescription?.length)
+        );
+    }
+    
     public addHealthStateFiltersForChildren(clusterHealthChunkQueryDescription: IClusterHealthChunkQueryDescription): IHealthStateFilter {
         // To get all deployed applications on this node, we need to add deployed application filters in all existing application filters.
         // (There will be at least one application filter there by default which is returned by DataService.getInitialClusterHealthChunkQueryDescription)

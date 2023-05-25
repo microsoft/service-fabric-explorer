@@ -11,8 +11,7 @@
     <app-phase-diagram [items]="progress" [currentIndex]="index" [vertical]="true"></app-phase-diagram>
   </div>
 
-  <div *ngIf="deactivationInfo.NodeDeactivationTask.length > 0" style="flex-grow: 1;
-    margin-left: 15px; min-width: 400px;">
+  <div *ngIf="deactivationInfo.NodeDeactivationTask.length > 0" class="deactivation-info">
     <h3 class="underline title" >Deactivation Tasks</h3>
     <app-detail-list [list]="deactivationInfo.NodeDeactivationTask" [listSettings]="settings" [showTopOptions]="false"></app-detail-list>
   </div>

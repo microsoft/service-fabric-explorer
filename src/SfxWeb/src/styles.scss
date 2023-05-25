@@ -757,8 +757,11 @@ table.detail-list {
 
 }
 
+.wrap-overflow {
+    overflow-wrap: break-word;
+}
 
 .main-view {
     padding-top: 18px;
     padding-right: 5px;
-  }
+}

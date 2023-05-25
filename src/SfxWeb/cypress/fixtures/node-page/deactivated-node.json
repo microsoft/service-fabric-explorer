@@ -23,7 +23,8 @@
                     "Id": "86fa6852ad467a903afbbc67edc16b66",
                     "NodeDeactivationTaskType": "Client"
                 },
-                "NodeDeactivationIntent": "Pause"
+                "NodeDeactivationIntent": "Pause",
+                "NodeDeactivationDescription": "This is a description"
             }
         ],
         "PendingSafetyChecks": []
