@@ -28,6 +28,9 @@
   margin-top: 10px;
   color: var(--font-list-item-color);
   font-weight: 500;
-  font-size: var(--font-size-large);
+
+  .flip-count {
+    font-size: var(--font-size-large);
+  }
 }
 
