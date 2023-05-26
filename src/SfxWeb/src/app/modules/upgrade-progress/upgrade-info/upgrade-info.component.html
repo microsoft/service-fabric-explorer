@@ -77,7 +77,7 @@
     <div class="node-list" style="flex: 1;" data-cy="healthmonitoring"
         *ngIf="upgradeProgress.isUpgrading && upgradeProgress.isAtHealthCheckPhase && upgradeProgress.nodesInProgress?.NodeUpgradeProgressList.length === 0">
       <h3>Health Check Progress</h3>
-      <app-health-policy-check [monitoringPolicy]="upgradeProgress.raw?.UpgradeDescription?.MonitoringPolicy"
+      <app-health-policy-check [monitoringPolicy]="upgradeProgress.raw?.UpgradeDescription?.MonitoringPolicy" [healthCheckRetryFlips]="upgradeProgress.raw.HealthCheckRetryFlips"
                                [healthCheckPhase]="upgradeProgress.raw.HealthCheckPhase" [healthCheckPhaseDuration]="upgradeProgress.raw.HealthCheckElapsedTime" ></app-health-policy-check>
     </div>
 

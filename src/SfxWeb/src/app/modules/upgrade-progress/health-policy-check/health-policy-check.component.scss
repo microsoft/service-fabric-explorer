@@ -19,3 +19,15 @@
   gap: 5px;
   align-items: center;
 }
+
+.retry-counter-container {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  margin-top: 10px;
+  color: var(--font-list-item-color);
+  font-weight: 500;
+  font-size: var(--font-size-large);
+}
+

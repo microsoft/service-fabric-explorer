@@ -13,6 +13,7 @@ export class HealthPolicyCheckComponent implements OnChanges {
 
   @Input() healthCheckPhase: string;
   @Input() healthCheckPhaseDuration: string;
+  @Input() healthCheckRetryFlips: number = 0;
   @Input() monitoringPolicy: IRawMonitoringPolicy;
 
 

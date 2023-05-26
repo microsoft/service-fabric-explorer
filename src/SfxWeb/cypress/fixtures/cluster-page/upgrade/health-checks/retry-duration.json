@@ -86,5 +86,6 @@
   },
   "IsNodeByNode": false,
   "HealthCheckElapsedTime": "PT0H0M06.0001S",
-  "HealthCheckPhase": "Retry"
+  "HealthCheckPhase": "Retry",
+  "HealthCheckRetryFlips": 1
 }

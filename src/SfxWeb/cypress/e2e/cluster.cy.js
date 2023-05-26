@@ -106,7 +106,7 @@ context('Cluster page', () => {
         })
       }
 
-      it('wait duration', () => {
+      it('health policy', () => {
         //Wait Duration
         cy.intercept('GET', upgradeProgress_route, { fixture: 'cluster-page/upgrade/health-checks/wait-duration.json' }).as("inprogres");
         cy.visit('/#/details')
@@ -122,6 +122,7 @@ context('Cluster page', () => {
           cy.contains("Wait Duration - 10 seconds")
         });
         checkPhase("Stable Duration Check - 5 seconds", "2 seconds", 'Stable Time Elapsed : 3 seconds', 'Stable Time Duration Left : 2 seconds' );
+        cy.get('[data-cy=flips]').should('not.exist')
 
         //Retry duration
         cy.intercept('GET', upgradeProgress_route, { fixture: 'cluster-page/upgrade/health-checks/retry-duration.json' }).as("retry");
@@ -132,6 +133,10 @@ context('Cluster page', () => {
                    'Retry Time out Elapsed : 6 seconds',
                    'Retry Time Duration Left : 4:54 minutes',
                    true );
+
+        cy.get('[data-cy=flips]').within(() => {
+          cy.contains("1");
+        })
       })
     })
 

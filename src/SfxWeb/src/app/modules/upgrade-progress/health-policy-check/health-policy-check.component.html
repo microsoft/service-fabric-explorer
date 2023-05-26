@@ -1,10 +1,20 @@
 <div class="layout-container">
   <div data-cy="monitoring-diagram">
-    <app-phase-diagram [items]="healthPolicyProgress" [currentIndex]="currentPhaseIndex" [failed]="failed"></app-phase-diagram>
+    <app-phase-diagram [items]="healthPolicyProgress" [currentIndex]="currentPhaseIndex"
+      [failed]="failed"></app-phase-diagram>
 
     <div class="reference-link">
       <a href="https://docs.microsoft.com/azure/service-fabric/service-fabric-diagnostics-code-package-errors"
         target="_blank" class="help-text"><i class="mif-info"></i><span>{{healthCheckPhaseText}}</span> </a>
+    </div>
+    <div *ngIf="healthCheckRetryFlips" class="retry-counter-container" data-cy="flips">
+      <div
+        ngbTooltip="How many the times the stable duration timer moved to retry. Every time this happens the stable timer restarts. The higher the number the more often the stable duration had to restart."
+        tooltipClass="styled-tooltip" container="body">
+        <i class="mif-info link"></i>
+        Health Check Retry Count :
+      </div>
+      <div>{{healthCheckRetryFlips}}</div>
     </div>
   </div>
 
