@@ -57,7 +57,6 @@ export class PowershellCommandParameter{
     options: string[] = [];
     required: boolean = false;
     allowCustomValAndOptions: boolean = false; //have some predefined options, but user can also enter their own value
-    defaultValue?: string | boolean | number;
 
     constructor(
         public name: string,
@@ -74,7 +73,7 @@ export class PowershellCommandParameter{
             this.allowCustomValAndOptions = optionalParams.allowCustomValAndOptions;
         }
         if (optionalParams?.defaultValue) {
-            this.defaultValue = optionalParams.defaultValue;
+            this.value = optionalParams.defaultValue;
         }
     }
 }

@@ -35,7 +35,6 @@ export class CommandsComponent extends BaseControllerDirective {
     this.setUpCommands();
   }
 
-
   protected setUpCommands(): void {
 
     const healthReport = CommandFactory.GenSendHealthReport("Cluster");
@@ -73,23 +72,23 @@ export class CommandsComponent extends BaseControllerDirective {
     const serverThumbprint = new PowershellCommandParameter("ServerCertThumbprint", CommandParamTypes.enum, {
       required: true,
       options: [...new Set(serverThumbprints)],
-      defaultValue: serverThumbprints[0],
+      defaultValue: serverThumbprints[0]
     });
     const findValueThumbprint = new PowershellCommandParameter("FindValue", CommandParamTypes.enum, {
       required: true,
       options: [...new Set(clientThumbprints.concat(clusterThumbprints))],
-      defaultValue: clientThumbprints[0]
+      defaultValue: clientThumbprints[0] ?? clusterThumbprints[0]
     });
 
     const serverCommonName = new PowershellCommandParameter("ServerCommonName", CommandParamTypes.enum, {
-      required: true,       
+      required: true,
       options: [...new Set(serverCommonNames)],
-      defaultValue: serverCommonNames[0],
+      defaultValue: serverCommonNames[0]
     });
     const findValueCommonName = new PowershellCommandParameter("FindValue", CommandParamTypes.enum, {
       required: true,
       options: [...new Set(clientCommonNames.concat(clusterCommonNames))],
-      defaultValue: clientCommonNames[0]
+      defaultValue: clientCommonNames[0] ?? clusterCommonNames[0]
     });
 
     if (clientCommonNames.length > 0 || serverCommonNames.length > 0) {
@@ -114,7 +113,6 @@ export class CommandsComponent extends BaseControllerDirective {
       this.commands.push(connectClusterThumbprint);
     }
 
-
     const getUpgrade = new PowershellCommand(
       'Get Cluster Upgrade',
       'https://docs.microsoft.com/powershell/module/servicefabric/get-servicefabricclusterupgrade',
@@ -124,7 +122,6 @@ export class CommandsComponent extends BaseControllerDirective {
     );
     this.commands.push(getUpgrade);
 
-    
     const appsFilter = CommandFactory.GenHealthFilterParam('Applications');
     const considerWarnAsErr = new PowershellCommandParameter("ConsiderWarningAsError", CommandParamTypes.bool);
     const eventsFilter = CommandFactory.GenHealthFilterParam('Events');
@@ -146,7 +143,7 @@ export class CommandsComponent extends BaseControllerDirective {
       { options: ['Default', 'Created', 'Claimed', 'Preparing', 'Approved', 'Executing', 'ReadyToExecute', 'Restoring', 'Active', 'Completed', 'All'], allowCustomValAndOptions: true }
     );
     const taskId = new PowershellCommandParameter('TaskId', CommandParamTypes.enum, { options: this.data.repairCollection.collection.map(task => task.id)});
-    
+
     if (this.hasRepairTask) {
       const getRepairTasks = new PowershellCommand(
         "Get Repair Task",
@@ -161,5 +158,4 @@ export class CommandsComponent extends BaseControllerDirective {
     
     this.commands = [...this.commands];
   }
-
 }

@@ -20,10 +20,7 @@ export class CommandInputComponent implements OnInit{
 
   ngOnInit() {
     this.inputGroup.addControl(this.commandParam.name, this.value);
-    if (this.commandParam.defaultValue) {
-      this.value.setValue(this.commandParam.defaultValue);
-      this.commandParam.value = this.commandParam.defaultValue;
-    }
+    this.value.setValue(this.commandParam.value);
   }
 
   setDropdownValue(event: any) {
