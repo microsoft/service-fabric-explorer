@@ -862,7 +862,7 @@ context('Cluster page', () => {
     })
 
     it('view commands', () => {
-      checkCommand(5, 1);
+      checkCommand(4, 1);
     })
 
     it('check command input', () => {
