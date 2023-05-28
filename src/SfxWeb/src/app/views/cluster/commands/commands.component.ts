@@ -1,5 +1,4 @@
 import { Component, Injector } from '@angular/core';
-import { cli } from 'cypress';
 import { Command } from 'protractor';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -45,14 +44,24 @@ export class CommandsComponent extends BaseControllerDirective {
     const connectHelp = 'https://docs.microsoft.com/powershell/module/servicefabric/connect-servicefabriccluster';
     const connectionEndpoint = new PowershellCommandParameter("ConnectionEndpoint", CommandParamTypes.string, { required: true, defaultValue: document.location.hostname + ":19000"});
     const storeLocation = new PowershellCommandParameter("StoreLocation", CommandParamTypes.enum, { required: true, defaultValue: "CurrentUser", options: ["CurrentUser", "LocalMachine"]});
+
     let authType = "-X509Credential ";
-    
+    if (this.data.clusterManifest.isAADEnabled) {
+      authType = "-AzureActiveDirectory ";
+    }
+
     let certificateProperties = this.data.clusterManifest.certificatesInfo;
     let clientThumbprints = certificateProperties
       .filter(x => x.name === "ClientCertificate" && x.x509FindType !== "FindBySubjectName")
       .map(x => { return x.x509FindValue });
     let clientCommonNames = certificateProperties
       .filter(x => x.name === "ClientCertificate" && x.x509FindType === "FindBySubjectName")
+      .map(x => { return x.x509FindValue });
+    let clusterThumbprints = certificateProperties
+      .filter(x => x.name === "ClusterCertificate" && x.x509FindType !== "FindBySubjectName")
+      .map(x => { return x.x509FindValue });
+    let clusterCommonNames = certificateProperties
+      .filter(x => x.name === "ClusterCertificate" && x.x509FindType === "FindBySubjectName")
       .map(x => { return x.x509FindValue });
     let serverThumbprints = certificateProperties
       .filter(x => x.name === "ServerCertificate" && x.x509FindType !== "FindBySubjectName")
@@ -61,35 +70,28 @@ export class CommandsComponent extends BaseControllerDirective {
       .filter(x => x.name === "ServerCertificate" && x.x509FindType === "FindBySubjectName")
       .map(x => { return x.x509FindValue });
 
-    const serverThumbprint = new PowershellCommandParameter("ServerCertThumbprint", CommandParamTypes.enum, { 
+    const serverThumbprint = new PowershellCommandParameter("ServerCertThumbprint", CommandParamTypes.enum, {
       required: true,
       options: [...new Set(serverThumbprints)],
       defaultValue: serverThumbprints[0],
     });
-    const findValueThumbprint = new PowershellCommandParameter("FindValue", CommandParamTypes.enum, { 
+    const findValueThumbprint = new PowershellCommandParameter("FindValue", CommandParamTypes.enum, {
       required: true,
-      options: [...new Set(clientThumbprints.concat(serverThumbprints))],
-      defaultValue: clientThumbprints[0],
-      description: "Enter cluster or client thumbprint."
+      options: [...new Set(clientThumbprints.concat(clusterThumbprints))],
+      defaultValue: clientThumbprints[0]
     });
 
-    const serverCommonName = new PowershellCommandParameter("ServerCommonName", CommandParamTypes.enum, { 
+    const serverCommonName = new PowershellCommandParameter("ServerCommonName", CommandParamTypes.enum, {
       required: true,       
       options: [...new Set(serverCommonNames)],
       defaultValue: serverCommonNames[0],
     });
-    const findValueCommonName = new PowershellCommandParameter("FindValue", CommandParamTypes.enum, { 
+    const findValueCommonName = new PowershellCommandParameter("FindValue", CommandParamTypes.enum, {
       required: true,
-      options: [...new Set(clientCommonNames.concat(serverCommonNames))],
-      defaultValue: clientCommonNames[0],
-      description: "Enter cluster or client common name."
+      options: [...new Set(clientCommonNames.concat(clusterCommonNames))],
+      defaultValue: clientCommonNames[0]
     });
 
-
-    if (this.data.clusterManifest.isAADEnabled) {
-      authType = "-AzureActiveDirectory ";
-    }
-    
     if (clientCommonNames.length > 0 || serverCommonNames.length > 0) {
       const connectClusterCommon = new PowershellCommand(
         'Creates a connection to a Service Fabric cluster using certificate common name.',
@@ -100,7 +102,7 @@ export class CommandsComponent extends BaseControllerDirective {
       );
       this.commands.push(connectClusterCommon);
     }
-    
+
     if (clientThumbprints.length > 0 || serverThumbprints.length > 0) {
       const connectClusterThumbprint = new PowershellCommand(
         'Creates a connection to a Service Fabric cluster using certificate thumbprint.',

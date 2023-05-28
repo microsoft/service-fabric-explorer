@@ -22,8 +22,6 @@
                 <div class="input-group">
                     <div *ngFor="let commandParam of requiredParams">
                         <app-command-input [commandParam]="commandParam" [inputGroup]="requiredInputs" data-cy="requiredInput"></app-command-input>
-                        <app-warning data-cy="warning" *ngIf="!commandParam.value && commandParam.description" description={{commandParam.description}} iconSize="mif-lg">
-                        </app-warning>
                     </div>
                 </div>
             </ng-container>
