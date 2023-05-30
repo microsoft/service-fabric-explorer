@@ -78,7 +78,7 @@ export class HealthPolicyCheckComponent implements OnChanges {
       this.HealthCheckDurationOverall = TimeUtils.getDurationMilliseconds(this.monitoringPolicy.HealthCheckStableDurationInMilliseconds);
       this.displayBottomText = "Stable Time Duration Left";
       this.displayTopText = "Stable Time Elapsed";
-      this.color = 'var(--badge-ok)';
+      this.color = 'green';
     }
 
     this.healthPolicyProgress = [
