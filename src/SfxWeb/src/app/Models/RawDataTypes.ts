@@ -314,8 +314,8 @@ export interface IRawClusterUpgradeProgress {
         UpgradeUnits: IUpgradeUnitInfo[];
         CurrentUpgradeUnitsProgress: ICurrentUpgradeUnitsProgressInfo;
         IsNodeByNode: boolean;
-        HealthCheckPhase: "Invalid" | "WaitDuration" | "StableDuration" | "Retry";
-        HealthCheckElapsedTime: number;
+        HealthCheckPhase?: "Invalid" | "WaitDuration" | "StableDuration" | "Retry";
+        HealthCheckElapsedTime?: number;
         HealthCheckRetryFlips?: number;
     }
 
