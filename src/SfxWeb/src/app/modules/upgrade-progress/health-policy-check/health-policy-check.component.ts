@@ -63,7 +63,7 @@ export class HealthPolicyCheckComponent implements OnChanges {
       this.currentPhaseIndex = 2;
       minDurationLeft = TimeUtils.getDuration(this.monitoringPolicy.HealthCheckStableDurationInMilliseconds) + " once stable";
       middlePhase = `Retry Duration Check  - ${healthCheckRetryTimeout}`;
-      this.healthCheckPhaseText = "If the health policy becomes healthy, the retry check will move to stable and move towards success.";
+      this.healthCheckPhaseText = "If the health policy becomes healthy, the retry check will move to stable and move towards completing.";
       middleTooltip = `The upgrade has ${healthCheckRetryTimeout} to become healthy as defined by the monitoring policies or the upgrade domain will fail. Adjust your cluster health policy if required.`
 
       this.HealthCheckDurationOverall = TimeUtils.getDurationMilliseconds(this.monitoringPolicy.HealthCheckRetryTimeoutInMilliseconds);
