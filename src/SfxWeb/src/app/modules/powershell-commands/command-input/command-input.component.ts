@@ -22,13 +22,9 @@ export class CommandInputComponent implements OnInit{
     this.inputGroup.addControl(this.commandParam.name, this.value);
   }
 
-  setDropdownValue(event: any) {
-    this.value.setValue(event.target.value);
-    this.setParamValue(event);
+  setFormValue(value: any) {
+    this.value.setValue(value);
   }
 
-  setParamValue(event: any) {
-    this.commandParam.value = event.target.value;
-  }
 
 }

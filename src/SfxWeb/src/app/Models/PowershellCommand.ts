@@ -31,6 +31,10 @@ export class PowershellCommand{
         })
     }
     
+    getParam(name: string): PowershellCommandParameter {
+        return this.parameters.find(param => param.name === name);
+    }
+
     getScript(): string {
 
         let script = '';
