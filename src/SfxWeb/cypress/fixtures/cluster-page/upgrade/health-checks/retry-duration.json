@@ -85,6 +85,7 @@
     "NodeUpgradeProgressList": []
   },
   "IsNodeByNode": false,
-  "HealthCheckElapsedTime": "PT0H0M10.0001S",
-  "HealthCheckPhase": "Retry"
+  "HealthCheckElapsedTime": "PT0H0M06.0001S",
+  "HealthCheckPhase": "Retry",
+  "HealthCheckRetryFlips": 1
 }

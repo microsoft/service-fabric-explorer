@@ -329,6 +329,11 @@ export class ApplicationUpgradeProgress extends DataModelBase<IRawApplicationUpg
       }
     }
 
+    public get isAtHealthCheckPhase() {
+      return Utils.isDefined(this.raw.HealthCheckPhase) &&
+             this.raw?.HealthCheckPhase !== "Invalid";
+    }
+
     protected updateInternal(): Observable<any> | void {
                                                                                                 // set depth to 0 and parent ref to null
         this.unhealthyEvaluations = HealthUtils.getParsedHealthEvaluations(this.raw.UnhealthyEvaluations, 0, null, this.data);

@@ -9,9 +9,10 @@ import { NodeProgressComponent } from './node-progress/node-progress.component';
 import { DetailListTemplatesModule } from '../detail-list-templates/detail-list-templates.module';
 import { LoadCellComponent } from './load-cell/load-cell.component';
 import { UpgradeInfoComponent } from './upgrade-info/upgrade-info.component';
+import { HealthPolicyCheckComponent } from './health-policy-check/health-policy-check.component';
 
 @NgModule({
-  declarations: [UpgradeDomainProgressComponent, UpgradeProgressComponent, SafetyChecksComponent, NodeProgressComponent, LoadCellComponent, UpgradeInfoComponent],
+  declarations: [UpgradeDomainProgressComponent, UpgradeProgressComponent, SafetyChecksComponent, NodeProgressComponent, LoadCellComponent, UpgradeInfoComponent, HealthPolicyCheckComponent],
   imports: [
     CommonModule,
     SharedModule,

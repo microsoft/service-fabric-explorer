@@ -63,6 +63,7 @@
             [bottomInMilliseconds]="upgradeProgress.getUpgradeDomainTimeout()">
           </app-display-duration>
         </div>
+
       </div>
     </div>
 
@@ -70,6 +71,14 @@
       <h3>Monitoring And Health Policies</h3>
       <app-essential-item *ngFor="let item of healthPolicy; let l = last" [item]="item" [underline]="false">
       </app-essential-item>
+
+    </div>
+
+    <div class="node-list" style="flex: 1;" data-cy="healthmonitoring"
+        *ngIf="upgradeProgress.isUpgrading && upgradeProgress.isAtHealthCheckPhase && upgradeProgress.nodesInProgress?.NodeUpgradeProgressList.length === 0">
+      <h3>Health Check Progress</h3>
+      <app-health-policy-check [monitoringPolicy]="upgradeProgress.raw?.UpgradeDescription?.MonitoringPolicy" [healthCheckRetryFlips]="upgradeProgress.raw.HealthCheckRetryFlips"
+                               [healthCheckPhase]="upgradeProgress.raw.HealthCheckPhase" [healthCheckPhaseDuration]="upgradeProgress.raw.HealthCheckElapsedTime" ></app-health-policy-check>
     </div>
 
     <div *ngIf="upgradeProgress.isUpgrading && upgradeProgress.nodesInProgress?.NodeUpgradeProgressList.length > 0"

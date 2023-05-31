@@ -103,6 +103,8 @@ context('app', () => {
                 cy.contains('81 milliseconds')
               })
           })
+          cy.get('[data-cy=flips]').should('not.exist')
+
       })
 
     })

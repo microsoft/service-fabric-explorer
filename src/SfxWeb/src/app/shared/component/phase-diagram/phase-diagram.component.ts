@@ -64,6 +64,7 @@ export class PhaseDiagramComponent implements OnChanges {
 export interface IProgressStatus {
   name: string;
   textRight?: string;
+  tooltip?: string;
 }
 
 interface IProgressStatusWithIndex extends IProgressStatus {

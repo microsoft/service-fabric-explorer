@@ -14,6 +14,7 @@ import { CollectionUtils } from 'src/app/Utils/CollectionUtils';
 import { HealthUtils } from 'src/app/Utils/healthUtils';
 import { IsolatedAction } from '../Action';
 import { ViewBackupComponent } from 'src/app/modules/backup-restore/view-backup/view-backup.component';
+import { Utils } from 'src/app/Utils/Utils';
 
 // -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -300,6 +301,11 @@ export class ClusterUpgradeProgress extends DataModelBase<IRawClusterUpgradeProg
       }else{
         return this.raw.CurrentUpgradeUnitsProgress;
       }
+    }
+
+    public get isAtHealthCheckPhase() {
+      return Utils.isDefined(this.raw.HealthCheckPhase) &&
+             this.raw?.HealthCheckPhase !== "Invalid";
     }
 
     protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<IRawClusterUpgradeProgress> {
