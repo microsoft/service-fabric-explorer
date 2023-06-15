@@ -43,6 +43,8 @@ export class HealthPolicyCheckComponent implements OnChanges {
     let minDurationLeft: string = "";
     let middlePhase = `Stable Duration Check  - ${healthCheckStableDuration}`;
     let middleTooltip = `The upgrade must be healthy as defined by the monitoring policies for ${healthCheckStableDuration} before completing the health policy check.`
+    let rightPhase = "Health Check Pass";
+    let rightTooltip = "The upgrade has passed the health policy check and will complete the upgrade domain.";
     this.healthCheckPhaseText = "Stable duration check will start after the wait duration completes.";
 
     this.healthCheckDurationLeft = TimeUtils.getDurationMilliseconds(this.healthCheckPhaseDuration);
@@ -64,7 +66,10 @@ export class HealthPolicyCheckComponent implements OnChanges {
       minDurationLeft = TimeUtils.getDuration(this.monitoringPolicy.HealthCheckStableDurationInMilliseconds) + " once stable";
       middlePhase = `Retry Duration Check  - ${healthCheckRetryTimeout}`;
       this.healthCheckPhaseText = "If the health policy becomes healthy, the retry check will move to stable and move towards completing.";
-      middleTooltip = `The upgrade has ${healthCheckRetryTimeout} to become healthy as defined by the monitoring policies or the upgrade domain will fail. Adjust your cluster health policy if required.`
+      middleTooltip = `The upgrade has ${healthCheckRetryTimeout} to become healthy as defined by the monitoring policies or the upgrade domain will fail. Adjust your cluster health policy if required.`;
+
+      rightPhase = "Health Check Fail";
+      rightTooltip = "The upgrade has failed the health policy check and will fail the upgrade domain.";
 
       this.HealthCheckDurationOverall = TimeUtils.getDurationMilliseconds(this.monitoringPolicy.HealthCheckRetryTimeoutInMilliseconds);
       this.displayBottomText = "Retry Time Duration Left";
@@ -91,8 +96,8 @@ export class HealthPolicyCheckComponent implements OnChanges {
         tooltip: middleTooltip
       },
       {
-        name: "Health Check Pass",
-        tooltip: "Once health check passes the upgrade will complete the current upgrade domain."
+        name: rightPhase,
+        tooltip: rightTooltip
       }
     ]
 
