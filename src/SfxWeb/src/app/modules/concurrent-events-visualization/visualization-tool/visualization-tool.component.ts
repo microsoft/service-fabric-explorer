@@ -1,9 +1,5 @@
 import { Component, OnChanges, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
-import * as Highcharts from 'highcharts';
 import { chart, Chart, Options, SeriesOptionsType, SeriesSankeyNodesOptionsObject } from 'highcharts';
-import HighchartsSankey from "highcharts/modules/sankey";
-import HighchartsOrganization from "highcharts/modules/organization";
-import Accessibility from 'highcharts/modules/accessibility';
 import { DetailBaseComponent } from 'src/app/ViewModels/detail-table-base.component';
 import { ListColumnSetting, ListColumnSettingWithEmbeddedVis } from 'src/app/Models/ListSettings';
 import { IConcurrentEvents, IRCAItem } from 'src/app/Models/eventstore/rcaEngine';
@@ -64,7 +60,7 @@ export class VisualizationToolComponent implements OnChanges, AfterViewInit, Det
   }
 
   ngAfterViewInit(): void {
-   
+
     this.options.series = [this.traverse()];
     const data = this.traverse();
     this.options.chart.height = data.levels.length * 110 || 1;

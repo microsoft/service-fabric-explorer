@@ -222,6 +222,8 @@ context('Cluster page', () => {
 
       cy.wait("@inprogres")
 
+      cy.contains("2020-08-25T18:09:10.960Z");
+
       cy.get('[data-cy=currentud]').within(() => {
         cy.contains('Node : 1').click();
 
@@ -781,8 +783,10 @@ context('Cluster page', () => {
           cy.contains('Preparing : Done');
           cy.contains('Executing : In Progress');
           cy.contains('Restoring : Not Started');
+          cy.contains('2020-06-10T00:13:55.675Z');
         })
       });
+
     })
 
     it('view in progress repair job - stuck in health check', () => {
