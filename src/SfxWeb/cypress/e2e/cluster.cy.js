@@ -599,7 +599,7 @@ context('Cluster page', () => {
       cy.wait(['@getevents', '@getrepairs'])
     };
 
-    it.only("loads properly", () => {
+    it("loads properly", () => {
       addRoute('events', 'empty-list.json', apiUrl(`/EventsStore/Cluster/Events?*`))
       addRoute('events', 'cluster-page/naming/naming-partitions.json', apiUrl(`/Applications/System/$/GetServices/System%2FNamingService/$/GetPartitions?*`))
       addRoute('events', 'cluster-page/naming/naming-partition-1000.json', apiUrl(`/EventsStore/Partitions/00000000-0000-0000-0000-000000001000/$/Replicas/Events?*`))
