@@ -24,8 +24,6 @@ export class DisplayTimeComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnChanges(): void {
-    const temp = new Date(this.time);
-    this.time = new Date(temp.getFullYear(), temp.getMonth(), temp.getUTCDate(), temp.getHours(), temp.getMinutes(), temp.getSeconds(), temp.getMilliseconds()).toISOString();
     this.localTime = new Date(this.time).toISOString();
   }
 
