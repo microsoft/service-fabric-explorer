@@ -1,7 +1,7 @@
 
 .detail-pane {
     border-left: 5px solid;
-    
+
     &.safe {
         border-color: var(--badge-ok);
     }
@@ -27,9 +27,10 @@
 
 .card {
     background-color: var(--accent-background-color);
-    
+
     .card-body {
         padding: 10px;
+        color: var(--font-primary-color);
     }
 }
 

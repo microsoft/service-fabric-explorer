@@ -1,6 +1,6 @@
 <div class="table-responsive">
     <div *ngIf="resolvedData">
-        <table class="table detail-table detail-list" [ngClass]="{ 'table-layout-fixed': !noFixedLayout }">
+        <table class="default-table detail-table detail-list" [ngClass]="{ 'table-layout-fixed': !noFixedLayout }">
             <tbody *ngFor="let item of resolvedData | keyvalue : asIsOrder"
                 [ngSwitch]="getResolvedPropertyType(item.value)" style="border-top: 0px solid;">
                 <!-- Render simple property (one row) -->
@@ -76,7 +76,7 @@
                         <div class="table-responsive">
                             <div class="nested-table-container">
                                 <!-- Set table-layout to be fixed only when they have only 1 or 2 properties -->
-                                <table class="table detail-table nested-table-border" [ngClass]="{ 'table-layout-fixed': !noFixedLayout && getResolvedObjectSize(item.value[0]) <= 3 }">
+                                <table class="default-table detail-table nested-table-border" [ngClass]="{ 'table-layout-fixed': !noFixedLayout && getResolvedObjectSize(item.value[0]) <= 3 }">
                                     <thead>
                                         <tr class="nested-table-border">
                                             <!-- Render sub-array table header -->
