@@ -8,7 +8,7 @@
     </div>
         <label aria-live="off" aria-atomic="true" class="sr-only">There are {{sortedFilteredList.length}} items in the search result    </label>
         <div class="table-responsive">
-            <table class="table detail-list" [attr.aria-label]="listSettings.tableName">
+            <table class="detail-list" [attr.aria-label]="listSettings.tableName">
                 <thead aria-live="polite">
                     <tr>
                     <th class="sort-filter-th hover-row" *ngFor="let columnSetting of listSettings.columnSettings; let i = index"
