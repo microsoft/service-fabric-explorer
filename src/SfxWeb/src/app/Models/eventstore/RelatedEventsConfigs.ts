@@ -1,4 +1,5 @@
 import { IConcurrentEventsConfig, IRelevantEventsConfig } from "./rcaEngine";
+import { IDiffAnalysis } from "./rcaEngineConfigurations";
 
 const APEmap = {
   "Deactivating application as application contents have changed.": "Stopping code package as application manifest contents have changes due to an app upgrade.",
@@ -19,23 +20,27 @@ const generateConfig = (text: string, intendedDescription: string, expectedPrefi
     eventType: "self",
     propertyMappings: [
       {
-        sourceProperty: "raw.ExitReason",
-        targetProperty: text,
-        sourceTransform: [{
-          type: "trimFront",
-          value: ". "
+        source: {
+          property: "raw.ExitReason",
+          transforms: [{
+            type: "trimFront",
+            value: ". "
+          },
+          {
+            type: "trimBack",
+            value: "For information"
+          },
+          {
+            type: 'trimBack',
+            value: " ContainerName"
+          },
+          {
+            type: 'trimWhiteSpace'
+          }]
         },
-        {
-          type: "trimBack",
-          value: "For information"
+        target: {
+          staticValue: text
         },
-        {
-          type: 'trimBack',
-          value: " ContainerName"
-        },
-        {
-          type: 'trimWhiteSpace'
-        }]
       }
     ],
     result: `Expected Termination ${expectedPrefix}- ${intendedDescription}`,
@@ -47,12 +52,20 @@ const APE: IRelevantEventsConfig[] = [
     eventType: "NodeDown",
     propertyMappings: [
       {
-        sourceProperty: "raw.NodeName",
-        targetProperty: "nodeName"
+        source: {
+          property: "raw.NodeName"
+        },
+        target: {
+          property: "nodeName"
+        }
       },
       {
-        sourceProperty: "raw.NodeInstance",
-        targetProperty: "raw.NodeInstance"
+        source: {
+          property: "raw.NodeInstance"
+        },
+        target: {
+          property: "raw.NodeInstance"
+        }
       }
     ],
   },
@@ -60,26 +73,35 @@ const APE: IRelevantEventsConfig[] = [
     eventType: "self",
     propertyMappings: [
       {
-        sourceProperty: "raw.ExitCode",
-        targetProperty: 7147
+        source: {
+          property: "raw.ExitCode"
+        },
+        target: {
+          staticValue: 7147
+        }
       },
+
       {
-        sourceProperty: "raw.ExitReason",
-        targetProperty: " Restarting the container because HEALTHCHECK for Docker container",
-        sourceTransform: [{
-          type: "trimFront",
-          value: ". "
+        source: {
+          property: "raw.ExitReason",
+          transforms: [{
+            type: "trimFront",
+            value: ". "
+          },
+          {
+            type: "trimBack",
+            value: "For information"
+          },
+          {
+            type: 'trimBack',
+            value: " ContainerName"
+          },
+          ]
         },
-        {
-          type: "trimBack",
-          value: "For information"
-        },
-        {
-          type: 'trimBack',
-          value: " ContainerName"
-        },
-        ]
-      }
+        target: {
+          staticValue: " Restarting the container because HEALTHCHECK for Docker container"
+        }
+      },
     ],
     result: 'Expected Termination - restart due to configured container healthcheck failure.',
   },
@@ -87,8 +109,12 @@ const APE: IRelevantEventsConfig[] = [
     eventType: "self",
     propertyMappings: [
       {
-        sourceProperty: "raw.ExitCode",
-        targetProperty: 7147
+        source: {
+          property: "raw.ExitCode",
+        },
+        target: {
+          staticValue: 7147
+        }
       }
     ],
     selfTransform: [
@@ -110,8 +136,12 @@ const APE: IRelevantEventsConfig[] = [
     eventType: "self",
     propertyMappings: [
       {
-        sourceProperty: "raw.ExitCode",
-        targetProperty: 3221225786
+        source: {
+          property: "raw.ExitCode",
+        },
+        target: {
+          staticValue: 3221225786
+        }
       }
     ],
     selfTransform: [
@@ -129,8 +159,12 @@ const APE: IRelevantEventsConfig[] = [
     eventType: "self",
     propertyMappings: [
       {
-        sourceProperty: "raw.ExitCode",
-        targetProperty: 7148
+        source: {
+          property: "raw.ExitCode"
+        },
+        target: {
+          staticValue: 7148
+        }
       }
     ],
     selfTransform: [
@@ -148,8 +182,12 @@ const APE: IRelevantEventsConfig[] = [
     eventType: "self",
     propertyMappings: [
       {
-        sourceProperty: "raw.UnexpectedTermination",
-        targetProperty: true
+        source: {
+          property: "raw.UnexpectedTermination"
+        },
+        target: {
+          staticValue: true
+        }
       }
     ],
     selfTransform: [
@@ -195,13 +233,21 @@ export let RelatedEventsConfigs: IConcurrentEventsConfig[] = [
         eventType: "NodeDeactivateStarted",
         propertyMappings: [
           {
-            sourceProperty: "nodeName",
-            targetProperty: "nodeName"
+            source: {
+              property: "nodeName"
+            },
+            target: {
+              property: "nodeName"
+            }
           },
           {
-            sourceProperty: "raw.NodeInstance",
-            targetProperty: "raw.NodeInstance"
-          }
+            source: {
+              property: "raw.NodeInstance"
+            },
+            target: {
+              property: "raw.NodeInstance"
+            }
+          },
         ],
       }
     ],
@@ -214,14 +260,18 @@ export let RelatedEventsConfigs: IConcurrentEventsConfig[] = [
         eventType: "RepairTask",
         propertyMappings: [
           {
-            sourceProperty: "raw.BatchId",
-            targetProperty: "raw.TaskId",
-            sourceTransform: [
-              {
-                type: "trimFront",
-                value: "/"
-              }
-            ]
+            source: {
+              property: "raw.BatchId",
+              transforms: [
+                {
+                  type: "trimFront",
+                  value: "/"
+                }
+              ]
+            },
+            target: {
+              property: "raw.TaskId"
+            }
           }
         ],
       }
@@ -234,4 +284,222 @@ export let RelatedEventsConfigs: IConcurrentEventsConfig[] = [
     ],
     "result": "raw.Action"
   },
+  {
+    "eventType": "PartitionReconfigurationStarted",
+    "relevantEventsType": [
+      {
+        eventType: "PartitionReconfigured",
+        propertyMappings: [
+          {
+            source: {
+              property: "eventProperties.ActivityId",
+            },
+            target: {
+              property: "eventProperties.ActivityId"
+            }
+          }
+        ],
+      }
+    ],
+    "result": "eventProperties.NewPrimaryNodeName",
+    "resultTransform": [
+      {
+        type: "prefix",
+        value: "New Primary Node Name is "
+      }
+    ]
+  },
+  {
+    "eventType": "PartitionReconfigured",
+    "relevantEventsType": [
+    ],
+    "result": "eventProperties.ReconfigType"
+  },
+  {
+    "eventType": "ClusterNewHealthReport",
+    "relevantEventsType": [
+      {
+        eventType: "NodeClosed",
+        propertyMappings: [
+          {
+            source: {
+              property: "eventProperties.Description",
+              transforms: [
+                {
+                  type: "trimFront",
+                  value: ":"
+                },
+                {
+                  type: "trimFront",
+                  value: ":"
+                },
+                {
+                  type: "trimBack",
+                  value: "("
+                },
+                {
+                  type: "trimWhiteSpace"
+                },
+              ]
+            },
+            target: {
+              property: "nodeName",
+            }
+          },
+          {
+            source: {
+              property: "eventProperties.Description",
+              transforms: [
+                {
+                  type: "trimFront",
+                  value: "("
+                },
+                {
+                  type: "trimFront",
+                  value: "("
+                },
+                {
+                  type: "trimBack",
+                  value: ")"
+                },
+                {
+                  type: "trimWhiteSpace"
+                },
+              ]
+            },
+            target: {
+              property: "raw.NodeId",
+            }
+          }
+        ],
+      },
+    ],
+    result: "eventProperties.Description",
+    resultTransform: [
+      {
+        type: "trimFront",
+        value: ":"
+      },
+      {
+        type: "trimFront",
+        value: ":"
+      },
+      {
+        type: "trimBack",
+        value: "("
+      },
+      {
+        type: "trimWhiteSpace"
+      },
+    ]
+  },
+  {
+    "eventType": "NodeClosed",
+    "relevantEventsType": [
+      {
+        eventType: "NodeDown",
+        propertyMappings: [
+          {
+            source: { property: "nodeName" },
+            target: { property: "nodeName" },
+          },
+          {
+            source: { property: "raw.NodeInstance" },
+            target: { property: "raw.NodeInstance" },
+          }
+        ],
+      },
+    ],
+    result: ""
+  }
 ];
+
+
+export const differConfigs: IDiffAnalysis[] = [
+  {
+    type: 'diff',
+    name: 'replication',
+    group: 'Replica placement',
+    eventType: 'PartitionReconfigurationStarted',
+    properties: [
+      {
+        delimiter: ' ',
+        property: 'raw.NewPrimaryNodeName',
+        name: 'primary',
+        extendToEnd: true,
+        displayTransforms: [
+          {
+            type: "prefix",
+            value: "primary"
+          },
+        ],
+        transforms: [
+          {
+            type: "trimWhiteSpace"
+          },
+        ]
+      },
+      {
+        delimiter: ' ',
+        property: 'raw.NewSecondaryNodeNames',
+        name: 'secondary',
+        extendToEnd: true,
+        displayTransforms: [
+          {
+            type: "prefix",
+            value: "secondary"
+          },
+        ],
+        transforms: [
+          {
+            type: "trimWhiteSpace"
+          },
+          {
+            type: "nullIfEmptyString"
+          },
+        ]
+      },
+
+      {
+        delimiter: ' ',
+        property: 'raw.OldPrimaryNodeName',
+        name: 'primary',
+        extendFromStart: true,
+        firstOnlyEvent: true,
+        displayTransforms: [
+          {
+            type: "prefix",
+            value: "primary"
+          },
+        ],
+        transforms: [
+          {
+            type: "trimWhiteSpace"
+          },
+        ]
+      },
+      {
+        delimiter: ' ',
+        property: 'raw.OldSecondaryNodeNames',
+        name: 'secondary',
+        extendFromStart: true,
+        firstOnlyEvent: true,
+        displayTransforms: [
+          {
+            type: "prefix",
+            value: "secondary"
+          },
+        ],
+        transforms: [
+          {
+            type: "trimWhiteSpace"
+          },
+          {
+            type: "nullIfEmptyString"
+          },
+        ]
+      }
+    ],
+    propertyMappings: []
+  }
+]

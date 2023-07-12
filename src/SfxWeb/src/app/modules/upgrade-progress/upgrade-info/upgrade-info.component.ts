@@ -4,6 +4,7 @@ import { ClusterUpgradeProgress } from 'src/app/Models/DataModels/Cluster';
 import { ListSettings } from 'src/app/Models/ListSettings';
 import { IEssentialListItem } from 'src/app/modules/charts/essential-health-tile/essential-health-tile.component';
 import { SettingsService } from 'src/app/services/settings.service';
+import { IProgressStatus } from 'src/app/shared/component/phase-diagram/phase-diagram.component';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 
 @Component({

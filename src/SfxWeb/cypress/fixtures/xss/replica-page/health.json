@@ -1,0 +1,36 @@
+{
+    "HealthEvents": [
+        {
+            "SourceId": "System.FM",
+            "Property": "State",
+            "HealthState": "Ok",
+            "TimeToLiveInMilliSeconds": "P10675199DT2H48M5.4775807S",
+            "Description": "<img src='1' onerror='window.alert(document.domain)'>",
+            "SequenceNumber": "2413",
+            "RemoveWhenExpired": false,
+            "HealthReportId": "<img src='1' onerror='window.alert(document.domain)'>",
+            "SourceUtcTimestamp": "2020-08-29T00:47:59.386Z",
+            "LastModifiedUtcTimestamp": "2020-08-29T00:48:18.110Z",
+            "IsExpired": false,
+            "LastOkTransitionAt": "2020-08-29T00:48:18.110Z",
+            "LastWarningTransitionAt": "2020-08-29T00:48:18.110Z",
+            "LastErrorTransitionAt": "0001-01-01T00:00:00.000Z"
+        }
+    ],
+    "AggregatedHealthState": "Ok",
+    "UnhealthyEvaluations": [],
+    "HealthStatistics": {
+        "HealthStateCountList": [
+            {
+                "EntityKind": "Replica",
+                "HealthStateCount": {
+                    "OkCount": 3,
+                    "ErrorCount": 0,
+                    "WarningCount": 0
+                }
+            }
+        ]
+    },
+    "PartitionId": "28bfaf73-37b0-467d-9d47-d011b0aedbc0",
+    "ReplicaHealthStates": []
+}

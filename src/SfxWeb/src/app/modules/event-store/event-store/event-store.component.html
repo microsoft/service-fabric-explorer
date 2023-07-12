@@ -1,71 +1,27 @@
 <div class="essen-pane detail-pane">
-  <div class="flex-container" style="margin-bottom: 10px; flex-wrap: wrap; gap: 10px;">
-    <div class="flex-container wrap">
-        <app-dual-date-picker [minDate]="startDateMin" [maxDate]="startDateMax" (dateChanged)="setNewDates($event)"
-              [currentStartDate]="startDate" [currentEndDate]="endDate"></app-dual-date-picker>
-      <div ngbDropdown style="margin-right: 10px;">
-        <button class="simple-button" ngbDropdownToggle>Quick Dates </button>
-        <div ngbDropdownMenu>
-          <button *ngFor="let date of quickDates" ngbDropdownItem (click)="setDate(date)">
-            {{date.display}}
-          </button>
-        </div>
-      </div>
-      <div class="slider-wrapper">
-        <app-double-slider [startDate]="startDate" [endDate]="endDate" (dateChanged)="setNewDates($event)">
-        </app-double-slider>
-      </div>
-    </div>
-    <div>
-      <p *ngIf="timeLineEventsData?.potentiallyMissingEvents" style="display: inline-block; margin-left: 10px;">
-        <app-health-badge badgeClass="badge-warning"></app-health-badge>
-        Potentially missing or misleading events!
-      </p>
+  <div style="margin-bottom: 10px;" *ngIf="dateMin">
+    <app-time-picker [dateMin]="dateMin" (dateChange)="setDate($event)"></app-time-picker>
+  </div>
+  <div ngbDropdown style="margin-left: 10px;"  *ngIf="optionsConfig">
+    <button class="simple-button" ngbDropdownToggle sectionName="select-event-types">Event Types </button>
+    <div ngbDropdownMenu>
+      <app-option-picker [optionsConfig]="optionsConfig" (selectedOption)="processData($event)" [listEventStoreData]="listEventStoreData"></app-option-picker>
     </div>
   </div>
-  <div *ngIf="timeLineEventsData">
-    <app-event-store-timeline [events]="timeLineEventsData" (itemClicked)="setSearch($event)">
-      <div buttons class="flex-center">
-        <span class="mif-info mif-lg correlated-icon" placement="right"  tooltipClass="styled-tooltip"
-          ngbTooltip="Correlated: Only certain high value scenarios are plotted, created from multiple events.&#010;All: Every event listed is plotted."></span>
+  <br>
 
-        <div class="btn-group btn-group-toggle" ngbRadioGroup [(ngModel)]="showAllEvents" name="radioBasic"
-          style="margin-right: 5px;">
-          <label class="flat-button checkbox-push solid-grey" ngbButtonLabel *ngIf="showCorrelatedBtn">
-            <input ngbButton type="radio" [value]="false"> Correlated
-          </label>
-          <label class="flat-button checkbox-push solid-grey" ngbButtonLabel>
-            <input ngbButton type="radio" [value]="true"> All
-          </label>
-        </div>
-
-        <div ngbDropdown style="margin-left: 10px;"  *ngIf="optionsConfig">
-          <button class="simple-button" ngbDropdownToggle sectionName="select-event-types">Event Types </button>
-          <div ngbDropdownMenu>
-            <app-option-picker [optionsConfig]="optionsConfig" (selectedOption)="processData($event)" [listEventStoreData]="listEventStoreData"></app-option-picker>
-          </div>
-        </div>
-
-        <span *ngIf="dataService.isAdvancedModeEnabled() && showAllEvents" class="flex-center">
-          <app-input placeholder="query string" [(model)]="transformText">
-          </app-input>
-          <button class="simple-button" (click)="setTimelineData()">filter</button>
-        </span>
-
-      </div>
-    </app-event-store-timeline><br>
-
-  </div>
 </div>
 
-<app-collapse-container *ngIf="simulEvents.length > 0" class="essen-pane detail-pane">
-  <div collapse-header>
-    <h5>Summary</h5>
-  </div>
-  <div collapse-body>
-    <app-rca-summary [events]="simulEvents"></app-rca-summary>
-  </div>
-</app-collapse-container>
+<div *ngFor="let ref of vizRefs">
+  <app-collapse-container class="essen-pane detail-pane" [sectionName]="ref.name">
+    <h2 collapse-header>
+      {{ref.name}}
+    </h2>
+    <div collapse-body>
+      <ng-template appVisualization></ng-template>
+    </div>
+  </app-collapse-container>
+</div>
 
 <div class="essen-pane">
   <div style="height: 20px;">

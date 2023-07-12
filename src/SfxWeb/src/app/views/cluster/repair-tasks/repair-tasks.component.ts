@@ -13,6 +13,8 @@ import { Counter, ICounterMostCommonEntry } from 'src/app/Utils/Utils';
 import { ISortOrdering } from 'src/app/modules/detail-list-templates/detail-list/detail-list.component';
 import { TelemetryService } from 'src/app/services/telemetry.service';
 import { TelemetryEventNames } from 'src/app/Common/Constants';
+import { EventType } from 'src/app/modules/event-store/event-store/event-store.component';
+import { TimelineGeneratorFactoryService } from 'src/app/services/timeline-generator-factory.service';
 
 interface ITileListItem {
   primaryText: string;
@@ -46,13 +48,13 @@ export class RepairTasksComponent extends BaseControllerDirective {
   // will be initially set by detail list component.
   ordering: ISortOrdering;
 
-  constructor(private data: DataService, injector: Injector, private settings: SettingsService, private telemService: TelemetryService) {
+  constructor(private data: DataService, injector: Injector, private settings: SettingsService, private telemService: TelemetryService, private timelineGeneratorFactoryService: TimelineGeneratorFactoryService) {
     super(injector);
   }
 
   setup() {
     this.repairTaskCollection = this.data.repairCollection;
-    this.timelineGenerator = new RepairTaskTimelineGenerator();
+    this.timelineGenerator = this.timelineGeneratorFactoryService.getTimelineGenerator("RepairTask");
     this.repairTaskListSettings = this.settings.getNewOrExistingPendingRepairTaskListSettings();
     this.completedRepairTaskListSettings = this.settings.getNewOrExistingCompletedRepairTaskListSettings();
   }

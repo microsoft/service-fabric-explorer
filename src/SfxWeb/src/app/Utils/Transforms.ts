@@ -6,6 +6,7 @@ export class Transforms {
     trimBack: Transforms.trimBack,
     prefix: Transforms.prefix,
     trimWhiteSpace: Transforms.trimWhiteSpace,
+    nullIfEmptyString: Transforms.nullIfEmptyString
   };
 
   public static trimFront(parsed: string, value: string): string {
@@ -30,6 +31,14 @@ export class Transforms {
 
   public static prefix(parsed: string, value: string): string {
     return value + parsed;
+  }
+
+  public static nullIfEmptyString(parsed: string): string {
+    if(parsed === "") {
+      return null
+    }else {
+      return parsed;
+    }
   }
 
   public static getTransformations(transformations: ITransform[], parsed: any) {

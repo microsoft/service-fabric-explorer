@@ -1,0 +1,44 @@
+{
+    "HealthEvents": [
+        {
+            "SourceId": "System.FM",
+            "Property": "State",
+            "HealthState": "Ok",
+            "TimeToLiveInMilliSeconds": "P10675199DT2H48M5.4775807S",
+            "Description": "<img src='1' onerror='window.alert(document.domain)'>",
+            "SequenceNumber": "82",
+            "RemoveWhenExpired": false,
+            "HealthReportId": "<img src='1' onerror='window.alert(document.domain)'>",
+            "SourceUtcTimestamp": "2020-07-22T21:30:14.583Z",
+            "LastModifiedUtcTimestamp": "2020-08-26T16:45:20.864Z",
+            "IsExpired": false,
+            "LastOkTransitionAt": "2020-07-22T21:30:19.579Z",
+            "LastWarningTransitionAt": "0001-01-01T00:00:00.000Z",
+            "LastErrorTransitionAt": "0001-01-01T00:00:00.000Z"
+        }
+    ],
+    "AggregatedHealthState": "Ok",
+    "UnhealthyEvaluations": [],
+    "HealthStatistics": {
+        "HealthStateCountList": [
+            {
+                "EntityKind": "Replica",
+                "HealthStateCount": {
+                    "OkCount": 30,
+                    "ErrorCount": 0,
+                    "WarningCount": 0
+                }
+            },
+            {
+                "EntityKind": "Partition",
+                "HealthStateCount": {
+                    "OkCount": 10,
+                    "ErrorCount": 0,
+                    "WarningCount": 0
+                }
+            }
+        ]
+    },
+    "Name": "fabric:/VisualObjectsApplicationType/VisualObjects.ActorService",
+    "PartitionHealthStates": []
+}

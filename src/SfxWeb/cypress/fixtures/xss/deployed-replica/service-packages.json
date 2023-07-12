@@ -1,0 +1,16 @@
+[
+  {
+      "Name": "VisualObjects.ActorServicePkg",
+      "Version": "3.0.0",
+      "Status": "Active",
+      "ServicePackageActivationId": "",
+      "HealthState": "Unknown"
+  },
+  {
+      "Name": "VisualObjects.WebServicePkg",
+      "Version": "12.0.0",
+      "Status": "Active",
+      "ServicePackageActivationId": "",
+      "HealthState": "Unknown"
+  }
+]

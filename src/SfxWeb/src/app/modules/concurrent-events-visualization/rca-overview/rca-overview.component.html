@@ -4,7 +4,7 @@
       <div #chart></div>
     </div>
     <div style="align-self: flex-start;">
-      <h5>{{type}} - {{events.length}} Events</h5>
+      <h3>{{type}} - {{events.length}} Events</h3>
       <b><i class="mif-info link"></i> Analysis performed is a best effort attempt and might not be the exact cause. "Unknown" means that the reason is not currently a scenario that Service Fabric Explorer is testing for.</b>
       <div style="min-width: 75%; width: fit-content">
         <app-essential-item *ngFor="let item of reasons; let l = last" [item]="item" [underline]="false">
@@ -13,13 +13,13 @@
               <app-relation-viewer [key]="item.key"></app-relation-viewer>
             </div>
             {{item.displayText}}
-            <div class="legend" [ngStyle]="{'background-color': colorKey[item.key]}"></div>
+            <div class="legend" [ngStyle]="{'background-color': colorKey[item.key].hex}"></div>
           </div>
         </app-essential-item>
       </div>
     </div>
   </div>
   <div *ngIf="timelineData">
-    <app-event-store-timeline [events]="timelineData"></app-event-store-timeline>
+    <app-event-store-timeline [events]="timelineData" [additionalWhiteListClasses]="whiteLists"></app-event-store-timeline>
   </div>
 </div>

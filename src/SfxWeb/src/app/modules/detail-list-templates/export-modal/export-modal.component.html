@@ -1,6 +1,6 @@
 <div class="action-modal" data-cy="modal">
     <div class="modal-header">
-        <h4 class="modal-title">Export Table</h4>
+        <h1 class="modal-title">Export Table</h1>
     </div>
     <div class="modal-body" style="display: flex; flex-direction: column;">
         Export the table to CSV by selecting which columns to include.
@@ -21,7 +21,7 @@
 
         <div style="margin: auto; margin-bottom: 10px;" *ngIf="text.length > 0">
             Copy to Clipboard
-            <app-clip-board [text]="copyText"></app-clip-board>
+            <app-clip-board [text]="copyText" name="raw csv content"></app-clip-board>
         </div>
 
         <div class="text-wrapper" contenteditable="true" *ngIf="text.length > 0">

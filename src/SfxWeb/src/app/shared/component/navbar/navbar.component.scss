@@ -9,20 +9,23 @@
     }
 
     .detail-view-title-bar {
-      padding-bottom: 18px;
       position: relative;
       display: flex;
       justify-content: space-between;
       flex-wrap: wrap;
 
-        .detail-view-title {
+    }
+    .detail-view-title {
+        h1{
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
-            font-size: var(--font-size-large-title);
             color: var(--font-primary-color);
-            font-weight: 300;
+            padding-right: 5px;
         }
+        display: flex;
+        font-size: var(--font-size-large-title);
+        font-weight: 300;
     }
 
     .detail-view-navbar {
@@ -90,15 +93,16 @@
     position: initial;
 
     .detail-view-title-bar {
-        margin-bottom: 0px;
 
         .detail-view-title {
-            padding-left: 15px;
-            margin-bottom: 0px;
-            line-break: anywhere;
-            text-overflow: initial;
-            overflow: initial;
-            white-space: initial;
+            h1 {
+                padding-left: 15px;
+                margin-bottom: 0px;
+                line-break: anywhere;
+                text-overflow: initial;
+                overflow: initial;
+                white-space: initial;
+            }
           }
     }
 

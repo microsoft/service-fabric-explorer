@@ -1,8 +1,8 @@
 <div data-cy="upgradeDetails" *ngIf="clusterUpgradeProgress.isInitialized" class="detail-pane essen-pane">
     <app-collapse-container sectionName="Upgrade Status">
         <div collapse-header>
-                <h4 *ngIf="clusterUpgradeProgress.isUpgrading">Cluster Upgrade In Progress</h4>
-                <h4 *ngIf="!clusterUpgradeProgress.isUpgrading">Latest Cluster Upgrade</h4>
+                <h2 *ngIf="clusterUpgradeProgress.isUpgrading">Cluster Upgrade In Progress</h2>
+                <h2 *ngIf="!clusterUpgradeProgress.isUpgrading">Latest Cluster Upgrade</h2>
         </div>
         <div collapse-body>
             <app-upgrade-info [upgradeProgress]="clusterUpgradeProgress"></app-upgrade-info>
@@ -12,7 +12,7 @@
 
 <div class="detail-pane essen-pane" *ngIf="clusterUpgradeProgress">
     <app-collapse-container sectionName="Upgrade Description" collapsed="true">
-        <h4 collapse-header>Upgrade Description</h4>
+        <h2 collapse-header>Upgrade Description</h2>
         <div class="detail-pane" *ngIf="clusterUpgradeProgress.upgradeDescription" collapse-body>
             <app-detail-view-part [data]="clusterUpgradeProgress.upgradeDescription"></app-detail-view-part>
         </div>
@@ -21,14 +21,14 @@
 
 <div *ngIf="nodesStatuses" class="detail-pane essen-pane">
     <app-collapse-container sectionName="Node States">
-        <h4 collapse-header>Node States</h4>
+        <h2 collapse-header>Node States</h2>
         <app-detail-list [list]="nodesStatuses" [listSettings]="nodeStatusListSettings" collapse-body></app-detail-list>
     </app-collapse-container>
 </div>
 
 <div class="detail-pane essen-pane" *ngIf="clusterLoadInformation && clusterLoadInformation.isInitialized">
     <app-collapse-container sectionName="Load Information">
-        <h4 collapse-header>Load Information</h4>
+        <h2 collapse-header>Load Information</h2>
         <app-detail-view-part [data]="clusterLoadInformation.raw" [parent]="clusterLoadInformation" collapse-body></app-detail-view-part>
     </app-collapse-container>
 </div>

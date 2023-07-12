@@ -1,0 +1,74 @@
+[
+  {
+    "Name": "<<img src='1' onerror='window.alert(document.domain)'>",
+    "Version": "16.0.0",
+    "DefaultParameterList": [
+      {
+        "Key": "<<img src='1' onerror='window.alert(document.domain)'>",
+        "Value": "<<img src='1' onerror='window.alert(document.domain)'>"
+      },
+      {
+        "Key": "VisualObjects.ActorService_PartitionCount",
+        "Value": "10"
+      },
+      {
+        "Key": "VisualObjects.ActorService_TargetReplicaSetSize",
+        "Value": "3"
+      },
+      {
+        "Key": "VisualObjects.WebService_InstanceCount",
+        "Value": "1"
+      }
+    ],
+    "Status": "Available",
+    "ApplicationTypeDefi,nitionKind": "ServiceFabricApplicationPackage"
+  },
+  {
+    "Name": "VisualObjectsApplicationType",
+    "Version": "17.0.0",
+    "DefaultParameterList": [
+      {
+        "Key": "VisualObjects.ActorService_MinReplicaSetSize",
+        "Value": "2"
+      },
+      {
+        "Key": "VisualObjects.ActorService_PartitionCount",
+        "Value": "10"
+      },
+      {
+        "Key": "VisualObjects.ActorService_TargetReplicaSetSize",
+        "Value": "3"
+      },
+      {
+        "Key": "VisualObjects.WebService_InstanceCount",
+        "Value": "1"
+      }
+    ],
+    "Status": "Available",
+    "ApplicationTypeDefinitionKind": "ServiceFabricApplicationPackage"
+  },
+  {
+    "Name": "<img src='1' onerror='window.alert(document.domain)'>",
+    "Version": "16.0.0",
+    "DefaultParameterList": [
+      {
+        "Key": "<<img src='1' onerror='window.alert(document.domain)'>",
+        "Value": "<<img src='1' onerror='window.alert(document.domain)'>"
+      },
+      {
+        "Key": "VisualObjects.ActorService_PartitionCount",
+        "Value": "10"
+      },
+      {
+        "Key": "VisualObjects.ActorService_TargetReplicaSetSize",
+        "Value": "3"
+      },
+      {
+        "Key": "VisualObjects.WebService_InstanceCount",
+        "Value": "1"
+      }
+    ],
+    "Status": "Available",
+    "ApplicationTypeDefi,nitionKind": "ServiceFabricApplicationPackage"
+  }
+]

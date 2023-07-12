@@ -1,0 +1,125 @@
+{
+  "ContinuationToken": "",
+  "Items": [
+      {
+          "Name": "_worker_3",
+          "IpAddressOrFQDN": "10.144.1.12",
+          "Type": "worker",
+          "CodeVersion": "9.1.1390.9590",
+          "ConfigVersion": "69",
+          "NodeStatus": "Up",
+          "NodeUpTimeInSeconds": "1053030",
+          "HealthState": "Ok",
+          "IsSeedNode": false,
+          "UpgradeDomain": "0",
+          "FaultDomain": "fd:/zone3/0",
+          "Id": {
+              "Id": "a1c5c47f38d9bfdf5a1aad818eff159f"
+          },
+          "InstanceId": "133106483630473070",
+          "NodeDeactivationInfo": {
+              "NodeDeactivationIntent": "Invalid",
+              "NodeDeactivationStatus": "None",
+              "NodeDeactivationTask": [],
+              "PendingSafetyChecks": []
+          },
+          "IsStopped": false,
+          "NodeDownTimeInSeconds": "0",
+          "NodeUpAt": "2022-10-19T10:20:17.031Z",
+          "NodeDownAt": "2022-10-19T10:18:03.249Z",
+          "InfrastructurePlacementID": "123412341234",
+          "NodeTags": [],
+          "IsNodeByNodeUpgradeInProgress": false
+      },
+      {
+          "Name": "_worker_2",
+          "IpAddressOrFQDN": "10.144.1.11",
+          "Type": "worker",
+          "CodeVersion": "9.1.1390.9590",
+          "ConfigVersion": "69",
+          "NodeStatus": "Up",
+          "NodeUpTimeInSeconds": "1099448",
+          "HealthState": "Ok",
+          "IsSeedNode": false,
+          "UpgradeDomain": "1",
+          "FaultDomain": "fd:/zone2/1",
+          "Id": {
+              "Id": "bdd3cb8ca2b026dbdc577c5f01904b1c"
+          },
+          "InstanceId": "133106019653883196",
+          "NodeDeactivationInfo": {
+              "NodeDeactivationIntent": "Invalid",
+              "NodeDeactivationStatus": "None",
+              "NodeDeactivationTask": [],
+              "PendingSafetyChecks": []
+          },
+          "IsStopped": false,
+          "NodeDownTimeInSeconds": "0",
+          "NodeUpAt": "2022-10-18T21:26:38.906Z",
+          "NodeDownAt": "2022-10-18T21:25:08.724Z",
+          "InfrastructurePlacementID": "123412341234",
+          "NodeTags": [],
+          "IsNodeByNodeUpgradeInProgress": false
+      },
+      {
+          "Name": "_worker_1",
+          "IpAddressOrFQDN": "10.144.1.5",
+          "Type": "worker",
+          "CodeVersion": "9.1.1390.9590",
+          "ConfigVersion": "69",
+          "NodeStatus": "Up",
+          "NodeUpTimeInSeconds": "1102477",
+          "HealthState": "Ok",
+          "IsSeedNode": false,
+          "UpgradeDomain": "0",
+          "FaultDomain": "fd:/zone2/0",
+          "Id": {
+              "Id": "d9e1d28f9d795d7161fa0fe2b67ad443"
+          },
+          "InstanceId": "133105989411057283",
+          "NodeDeactivationInfo": {
+              "NodeDeactivationIntent": "Invalid",
+              "NodeDeactivationStatus": "None",
+              "NodeDeactivationTask": [],
+              "PendingSafetyChecks": []
+          },
+          "IsStopped": false,
+          "NodeDownTimeInSeconds": "0",
+          "NodeUpAt": "2022-10-18T20:36:10.471Z",
+          "NodeDownAt": "2022-10-18T20:34:48.876Z",
+          "InfrastructurePlacementID": "123412341234",
+          "NodeTags": [],
+          "IsNodeByNodeUpgradeInProgress": false
+      },
+      {
+          "Name": "_worker_0",
+          "IpAddressOrFQDN": "10.144.1.4",
+          "Type": "worker",
+          "CodeVersion": "9.1.1390.9590",
+          "ConfigVersion": "69",
+          "NodeStatus": "Up",
+          "NodeUpTimeInSeconds": "1080860",
+          "HealthState": "Ok",
+          "IsSeedNode": false,
+          "UpgradeDomain": "0",
+          "FaultDomain": "fd:/zone1/0",
+          "Id": {
+              "Id": "f5efd9be82e1fc292aef00b7777e6c94"
+          },
+          "InstanceId": "133106205506476027",
+          "NodeDeactivationInfo": {
+              "NodeDeactivationIntent": "Invalid",
+              "NodeDeactivationStatus": "None",
+              "NodeDeactivationTask": [],
+              "PendingSafetyChecks": []
+          },
+          "IsStopped": false,
+          "NodeDownTimeInSeconds": "0",
+          "NodeUpAt": "2022-10-19T02:36:26.731Z",
+          "NodeDownAt": "2022-10-19T02:34:42.459Z",
+          "InfrastructurePlacementID": "123412341234",
+          "NodeTags": [],
+          "IsNodeByNodeUpgradeInProgress": false
+      }
+    ]
+}

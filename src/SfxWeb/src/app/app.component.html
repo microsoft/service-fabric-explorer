@@ -1,6 +1,6 @@
 
 <div>
-  <button class="skip-to-content-link" click="setMainFocus()" (keyup.enter)="setMainFocus()" role="button">
+  <button class="skip-to-content-link" (click)="setMainFocus()" role="button">
     Skip to content
   </button>
   <header class="header-bar">
@@ -65,13 +65,13 @@
   </header>
 
   <div>
-    <button *ngIf="smallScreenSize" class="material-icons sidenav-button"
-            (click)="changeSmallScreenSizePanelState()" tabindex="0" [title]="smallScreenLeftPanelWidth === '0px' ? 'Open navigation tree panel' : 'Close navigation tree panel'">
+    <button *ngIf="smallScreenSize" class="simple-button sidenav-button"
+            (click)="smallScreenLeftPanelWidth === '0%' ? resize(60): resize(0)" tabindex="0" [title]="smallScreenLeftPanelWidth === '0%' ? 'Open navigation tree panel' : 'Close navigation tree panel'">
       menu
     </button>
-      <div class="left-panel left-bar"  [ngStyle]="{'width': smallScreenSize ? smallScreenLeftPanelWidth : treeWidth }">
-          <nav class="tree-container" [attr.aria-hidden]="smallScreenSize ? smallScreenLeftPanelWidth === '0px' : false" role="navigation">
-            <app-tree-view (treeResize)="resize($event)" [smallWindowSize]="smallScreenSize" *ngIf="treeService.tree" ></app-tree-view>
+      <div class="left-panel left-bar"  [ngStyle]="{'width': smallScreenSize ? smallScreenLeftPanelWidth : treeWidth, 'display' : smallScreenSize ?  smallScreenTreeDisplay : treeDisplay }">
+          <nav class="tree-container" [attr.aria-hidden]="smallScreenSize ? smallScreenLeftPanelWidth === '0%' : false" role="navigation">
+            <app-tree-view (treeResize)="resize($event)" [smallWindowSize]="smallScreenSize"  ></app-tree-view>
           </nav>
           <div class="slider-bar" appDrag (dragFinish)="resize($event)" *ngIf="!smallScreenSize">
         </div>
@@ -79,10 +79,10 @@
     </div>
     <div [ngStyle]="{'left': smallScreenSize ? '0px' : rightOffset }" class="right-panel main-content" (click)="smallScreenSize ? resize(0): null" (focusin)="smallScreenSize ? resize(0): null">
       <main>
-        <div class="view-container" #main>
+        <div class="view-container">
           <div class="expander-container" *ngIf="!smallScreenSize">
-            <span class=" expander-icon mif-vertical-align-bottom" [ngClass]="{'flip': treeWidth === '8px'}" placement="right"
-                  [ngbTooltip]="(treeWidth === '8px' ? 'Expand' : 'Close') + ' tree view'"  tooltipClass="styled-tooltip" (click)="collapseSide()"></span>
+            <button class="expander-icon mif-vertical-align-bottom" [ngClass]="{'flip': treeWidth === '8px'}" placement="right"
+                  [ngbTooltip]="(treeWidth === '8px' ? 'Expand' : 'Close') + ' tree view'"  tooltipClass="styled-tooltip" (click)="collapseSide()"></button>
           </div>
           <router-outlet id="view-container" *ngIf="!isIframe && loadRouter" ></router-outlet>
         </div>

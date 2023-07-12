@@ -1,7 +1,7 @@
 <div *ngIf="groupByNodeType">
   <div class="underline" *ngFor="let item of nodeTypes | keyvalue; let l = last; trackBy: trackByFn"
     style="width: 100%;">
-    <app-collapse-container [collapsed]="true" data-cy="nodetype-group">
+    <app-collapse-container [collapsed]="true" data-cy="nodetype-group" [sectionName]="item.value.nodeType">
       <div collapse-header>
         <div style="display: flex; justify-content: space-between;">
           <div>{{item.value.nodeType}}</div>

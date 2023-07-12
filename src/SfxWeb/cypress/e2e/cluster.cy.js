@@ -5,15 +5,12 @@ import {
   upgradeProgress_route, FIXTURE_REF_UPGRADEPROGRESS, FIXTURE_REF_MANIFEST, addRoute,
   checkTableErrorMessage, EMPTY_LIST_TEXT, FAILED_TABLE_TEXT, FAILED_LOAD_TEXT,
   repairTask_route, manifest_route, CLUSTER_TAB_NAME, REPAIR_TASK_TAB_NAME,
-  FIXTURE_REF_NODES, FIXTURE_NODES, typeIntoInput, checkCheckBox, refresh,
-  FIXTURE_REF_SYSTEMAPPS, systemApps_route
+  FIXTURE_REF_NODES, OPTION_PICKER, typeIntoInput, SELECT_EVENT_TYPES, refresh,
+  FIXTURE_REF_SYSTEMAPPS, systemApps_route, checkCommand, FIXTURE_REF_APPTYPES, watchForAlert, xssPrefix, FIXTURE_MANIFEST
 } from './util.cy';
 
 const LOAD_INFO = "getloadinfo"
-const EVENT_TABS='[data-cy=eventtabs]'
-const OPTION_PICKER='[data-cy=option-picker]'
-const SELECT_EVENT_TYPES='[sectionName=select-event-types]'
-
+const EVENT_TABS = '[data-cy=eventtabs]'
 const serviceName = "VisualObjectsApplicationType~VisualObjects.ActorService";
 
 context('Cluster page', () => {
@@ -74,6 +71,14 @@ context('Cluster page', () => {
 
     })
 
+    it('xss', () => {
+
+      addDefaultFixtures(xssPrefix);
+
+      watchForAlert(() => {
+        cy.visit('')
+      })
+    });
   })
 
   describe("details", () => {
@@ -81,6 +86,58 @@ context('Cluster page', () => {
       cy.intercept('GET', apiUrl('/Partitions/guidID?*'), { fixture: 'cluster-page/upgrade/get-partition-info.json' });
       cy.intercept('GET', apiUrl('/Partitions/guidID/$/GetServiceName?*'), { fixture: 'cluster-page/upgrade/get-service-name.json' });
       cy.intercept('GET', apiUrl('/Services/VisualObjectsApplicationType~VisualObjects.ActorService/$/GetApplicationName?*'), { fixture: 'cluster-page/upgrade/get-application-info.json' }).as('appinfo');
+    })
+
+    describe('health check', () => {
+      const donePhaseRef = '[data-cy=donephase]';
+
+      const checkPhase = (currentPhase, phasetimeLeft, elapsedTime, durationLeft, checkFailed = false) => {
+        cy.get(`[data-cy=${checkFailed ? 'failed' : 'in-progress'}phase]`).within(() => {
+          cy.contains(currentPhase)
+        });
+
+        cy.get('[data-cy=timeleft]').within(() => {
+          cy.contains(phasetimeLeft)
+        })
+
+        cy.get('[data-cy=duration]').within(() => {
+          cy.contains(elapsedTime);
+          cy.contains(durationLeft);
+        })
+      }
+
+      it('health policy', () => {
+        //Wait Duration
+        cy.intercept('GET', upgradeProgress_route, { fixture: 'cluster-page/upgrade/health-checks/wait-duration.json' }).as("inprogres");
+        cy.visit('/#/details')
+
+        checkPhase("Wait Duration - 10 seconds", "10 seconds", 'Wait Time Elapsed : 5 seconds', 'Wait Time Duration Left : 5 seconds' );
+
+        //Stable duration
+        cy.intercept('GET', upgradeProgress_route, { fixture: 'cluster-page/upgrade/health-checks/stable-duration.json' }).as("stable");
+        refresh();
+        cy.wait('@stable');
+
+        cy.get(donePhaseRef).within(() => {
+          cy.contains("Wait Duration - 10 seconds")
+        });
+        checkPhase("Stable Duration Check - 5 seconds", "2 seconds", 'Stable Time Elapsed : 3 seconds', 'Stable Time Duration Left : 2 seconds' );
+        cy.get('[data-cy=flips]').should('not.exist')
+
+        //Retry duration
+        cy.intercept('GET', upgradeProgress_route, { fixture: 'cluster-page/upgrade/health-checks/retry-duration.json' }).as("retry");
+        refresh();
+        cy.wait('@retry');
+        checkPhase("Retry Duration Check - 5:00 minutes",
+                   "5 seconds once stable",
+                   'Retry Time out Elapsed : 6 seconds',
+                   'Retry Time Duration Left : 4:54 minutes',
+                   true );
+
+        cy.get('[data-cy=flips]').within(() => {
+          cy.contains("1");
+        })
+      })
     })
 
     it('upgrade in progress', () => {
@@ -116,7 +173,17 @@ context('Cluster page', () => {
         checkTableSize(4);
       })
 
+      cy.get('[data-cy=healthmonitoring]').should('not.exist');
     })
+
+    it('xss', () => {
+
+      addDefaultFixtures(xssPrefix);
+
+      watchForAlert(() => {
+        cy.visit('/#/details')
+      })
+    });
 
     it('upgrade in progress - manual mode', () => {
       cy.intercept('GET', upgradeProgress_route, { fixture: 'cluster-page/upgrade/manual-mode-upgrade.json' }).as("upgrade");
@@ -145,6 +212,7 @@ context('Cluster page', () => {
       cy.get('[data-cy=upgrade-bar]').should('not.exist')
 
       cy.get('[data-cy=upgrade-bar-domain]').should('not.exist');
+      cy.get('[data-cy=healthmonitoring]').should('not.exist');
     })
 
     it('upgrade in progress - no auto load safety checks', () => {
@@ -153,6 +221,8 @@ context('Cluster page', () => {
       cy.visit('/#/details')
 
       cy.wait("@inprogres")
+
+      cy.contains("2020-08-25T18:09:10.960Z");
 
       cy.get('[data-cy=currentud]').within(() => {
         cy.contains('Node : 1').click();
@@ -189,6 +259,8 @@ context('Cluster page', () => {
           cy.get('[data-cy=failedphase]')
         })
       })
+      cy.get('[data-cy=healthmonitoring]').should('not.exist');
+
     })
 
     it('upgrade completed', () => {
@@ -202,28 +274,45 @@ context('Cluster page', () => {
   })
 
   describe("metrics", () => {
+    const visit = () => {
+      const url = "/#/metrics";
+      const waitUrl = "@nodeLoad";
+      cy.visit(url)
+      cy.wait(waitUrl);
+    }
     it('load metrics', () => {
       cy.intercept('GET', nodes_route, { fixture: 'cluster-page/nodes-1-warning.json' })
       cy.intercept('GET', apiUrl('/Nodes/_nt_0/$/GetLoadInformation?*'), { fixture: 'node-load/get-node-load-information.json' }).as("nodeLoad")
       cy.intercept(apiUrl('/Nodes/_nt_0/$/GetHealth?EventsHealthStateFilter=0&api-version=3.0'), { fixture: 'cluster-page/node-health.json' }).as('getnodeHealth')
 
-      cy.visit('/#/metrics')
-      cy.wait("@nodeLoad");
+      visit();
 
       cy.get('app-metrics').within(() => {
         cy.contains("Reserved CpuCores");
       })
     })
 
+    it('xss', () => {
+      cy.intercept('GET', nodes_route, { fixture: 'cluster-page/nodes-1-warning.json' })
+      cy.intercept('GET', apiUrl('/Nodes/_nt_0/$/GetLoadInformation?*'), { fixture: 'node-load/get-node-load-information.json' }).as("nodeLoad")
+      cy.intercept(apiUrl('/Nodes/_nt_0/$/GetHealth?EventsHealthStateFilter=0&api-version=3.0'), { fixture: 'cluster-page/node-health.json' }).as('getnodeHealth')
+
+      addDefaultFixtures(xssPrefix);
+
+      watchForAlert(() => {
+        visit();
+      })
+    });
   })
 
   describe("clustermap", () => {
+    const url = '/#/clustermap';
     it('load clustermap', () => {
       const checkNodes = (ref, expectedCount) => {
 
         let count = 0;
         cy.get(ref).each(item => {
-          if(item.text().trim() !== "0") {
+          if (item.text().trim() !== "0") {
             count += parseInt(item.text().trim());
           }
         }).then(($lis) => {
@@ -239,7 +328,7 @@ context('Cluster page', () => {
 
       const down_node_ref = '[data-cy=down-nodes]';
 
-      cy.visit('/#/clustermap')
+      cy.visit(url)
 
       checkNodes(down_node_ref, 0);
 
@@ -271,22 +360,30 @@ context('Cluster page', () => {
       })
     })
 
+    it('xss', () => {
+      addDefaultFixtures(xssPrefix);
+
+      watchForAlert(() => {
+        cy.visit(url)
+      })
+    });
+
   })
 
   describe("image store", () => {
+    const waitRef = 'baseDirectory';
+    const url = '/#/imagestore';
+
+    const visit = () => {
+      cy.visit(url)
+      cy.wait('@get' + waitRef)
+    }
     it('load image store', () => {
-      addRoute('baseDirectory', 'cluster-page/imagestore/base-directory.json', apiUrl('/ImageStore?*'))
+      addRoute(waitRef, 'cluster-page/imagestore/base-directory.json', apiUrl('/ImageStore?*'))
       addRoute('nestedDictectory', 'cluster-page/imagestore/nested-directory.json', apiUrl('/ImageStore/StoreTest?*'))
       addRoute('loadSize', 'cluster-page/imagestore/load-size.json', apiUrl('/ImageStore/Store/VisualObjectsApplicationType/$/FolderSize?*'))
 
-      // cy.intercept('GET', apiUrl('/ImageStore?*'), 'fixture:cluster-page/imagestore/base-directory').as('getbaseDirectory')
-      // cy.intercept('GET', apiUrl('/ImageStore/StoreTest?*'), 'fixture:cluster-page/imagestore/nested-directory').as('getnestedDictectory')
-      // cy.intercept('GET', apiUrl('/ImageStore/Store/VisualObjectsApplicationType/$/FolderSize?*'),
-      // 'fixture:cluster-page/imagestore/load-size.json').as('getloadSize')
-
-      cy.visit('/#/imagestore')
-
-      cy.wait('@getbaseDirectory')
+      visit();
 
       cy.get('[data-cy=imagestore]').within(() => {
 
@@ -305,15 +402,26 @@ context('Cluster page', () => {
   })
 
   describe("manifest", () => {
+    const visit = () => {
+      cy.visit('/#/manifest');
+      cy.wait(FIXTURE_REF_MANIFEST);
+    }
     it('load manifest page', () => {
-      cy.visit('/#/manifest')
 
-      cy.wait(FIXTURE_REF_MANIFEST)
+      visit();
 
       cy.get('app-manifest-viewer').within(() => {
         cy.contains("WRP_Generated_ClusterManifest");
       })
     })
+
+    it('xss', () => {
+      addDefaultFixtures(xssPrefix);
+
+      watchForAlert(() => {
+        visit();
+      })
+    });
   })
 
   describe("back up restore", () => {
@@ -359,7 +467,7 @@ context('Cluster page', () => {
         cy.wait(aliasedCreateBRS)
 
         cy.get(aliasedCreateBRS).its('request.body')
-          .should('deep.equal',{
+          .should('deep.equal', {
             "Name": name,
             "AutoRestoreOnDataLoss": true,
             "MaxIncrementalBackups": maxIncBackups,
@@ -448,34 +556,34 @@ context('Cluster page', () => {
 
         cy.wait(aliasedCreateBRS)
         cy.get(aliasedCreateBRS).its('request.body').should('deep.equal',
-        {
-          "Name": name,
-          "AutoRestoreOnDataLoss": false,
-          "MaxIncrementalBackups": maxIncBackups,
-          "Schedule": {
-            "ScheduleKind": "TimeBased",
-            "ScheduleFrequencyType": "Weekly",
-            "RunDays": [
-              "Tuesday",
-              "Saturday"
-            ],
-            "RunTimes": [],
-            "Interval": "PT15M"
-          },
-          "Storage": {
-            "StorageKind": "FileShare",
-            "FriendlyName": "",
-            "Path": "somePath",
-            "ConnectionString": "",
-            "ContainerName": "",
-            "BlobServiceUri": "",
-            "ManagedIdentityType": "",
-            "PrimaryUserName": "username",
-            "PrimaryPassword": "password",
-            "SecondaryUserName": "",
-            "SecondaryPassword": ""
-          }
-        })
+          {
+            "Name": name,
+            "AutoRestoreOnDataLoss": false,
+            "MaxIncrementalBackups": maxIncBackups,
+            "Schedule": {
+              "ScheduleKind": "TimeBased",
+              "ScheduleFrequencyType": "Weekly",
+              "RunDays": [
+                "Tuesday",
+                "Saturday"
+              ],
+              "RunTimes": [],
+              "Interval": "PT15M"
+            },
+            "Storage": {
+              "StorageKind": "FileShare",
+              "FriendlyName": "",
+              "Path": "somePath",
+              "ConnectionString": "",
+              "ContainerName": "",
+              "BlobServiceUri": "",
+              "ManagedIdentityType": "",
+              "PrimaryUserName": "username",
+              "PrimaryPassword": "password",
+              "SecondaryUserName": "",
+              "SecondaryPassword": ""
+            }
+          })
       })
 
     })
@@ -488,8 +596,34 @@ context('Cluster page', () => {
 
       cy.visit('/#/events')
 
-      cy.wait(['@getevents','@getrepairs'])
+      cy.wait(['@getevents', '@getrepairs'])
     };
+
+    it("loads properly", () => {
+      addRoute('events', 'empty-list.json', apiUrl(`/EventsStore/Cluster/Events?*`))
+      addRoute('events', 'cluster-page/naming/naming-partitions.json', apiUrl(`/Applications/System/$/GetServices/System%2FNamingService/$/GetPartitions?*`))
+      addRoute('events', 'cluster-page/naming/naming-partition-1000.json', apiUrl(`/EventsStore/Partitions/00000000-0000-0000-0000-000000001000/$/Replicas/Events?*`))
+      cy.visit('/#/')
+
+      cy.get('[data-cy=navtabs]').within(() => {
+        cy.contains('naming').click();
+      })
+
+      cy.wait('@getevents');
+      cy.url().should('include', 'naming');
+
+      cy.get('[data-cy=metric]').should('have.length', 3);
+      cy.get("[class=highcharts-point]").should('have.length', 12);
+
+
+      cy.get('[data-cy=overviewpanel]').should('have.length', 1).first().within(() => {
+        cy.contains("Total Volume: 78887");
+        cy.contains("1000").click();
+      })
+
+      //toggle data set
+      cy.get("[class=highcharts-point]").should('have.length', 0);
+    })
 
     it("loads properly", () => {
       addRoute('events', 'empty-list.json', apiUrl(`/EventsStore/Cluster/Events?*`))
@@ -512,7 +646,7 @@ context('Cluster page', () => {
       addRoute('repair-manager-manifest', 'manifestRepairManagerDisabled.json', manifest_route)
 
       cy.visit('/#/events')
-      cy.wait(['@getevents','@getrepair-manager-manifest'])
+      cy.wait(['@getevents', '@getrepair-manager-manifest'])
 
       cy.get(EVENT_TABS).within(() => {
         cy.contains(CLUSTER_TAB_NAME)
@@ -547,7 +681,7 @@ context('Cluster page', () => {
 
       cy.get(OPTION_PICKER).within(() => {
         cy.contains(REPAIR_TASK_TAB_NAME)
-        cy.get('[type=checkbox]').eq(1).check({force: true})
+        cy.get('[type=checkbox]').eq(1).check({ force: true })
       })
 
       cy.get(EVENT_TABS).within(() => {
@@ -556,7 +690,7 @@ context('Cluster page', () => {
       checkTableSize(6);
     })
 
-    it("failed request",() => {
+    it("failed request", () => {
       setup('failed-events.json', 'empty-list.json')
 
       cy.get(EVENT_TABS).within(() => {
@@ -574,7 +708,7 @@ context('Cluster page', () => {
       addRoute('repairs', file, apiUrl('/$/GetRepairTaskList?*'))
       cy.visit('/#/repairtasks')
 
-      cy.wait("@getrepairs")
+      cy.wait(["@getrepairs", FIXTURE_REF_APPTYPES])
     }
 
     it('loads properly', () => {
@@ -607,6 +741,20 @@ context('Cluster page', () => {
           cy.contains('Restoring : Done');
         })
       });
+
+      cy.get('[data-cy=health-checks').within(() => {
+        cy.contains(/Perform Preparing Health Check * Yes/);
+        cy.contains(/Perform Restoring Health Check * No/);
+      })
+    })
+
+    it('view duration graph', () => {
+      setup('cluster-page/repair-jobs/simple.json')
+
+      cy.contains("Duration Graph").click();
+
+      cy.wait(1000)
+      cy.get('[class=highcharts-point]').should('have.length', 21)
     })
 
     it('view in progress repair job - stuck in approving', () => {
@@ -635,12 +783,16 @@ context('Cluster page', () => {
           cy.contains('Preparing : Done');
           cy.contains('Executing : In Progress');
           cy.contains('Restoring : Not Started');
+          cy.contains('2020-06-10T00:13:55.675Z');
         })
       });
+
     })
 
     it('view in progress repair job - stuck in health check', () => {
       setup('cluster-page/repair-jobs/stuck-in-health-check.json')
+
+      cy.contains("node_1:Restart");
 
       cy.get('[data-cy=pendingjobs]').within(() => {
         cy.get('tbody > tr').eq(1).within(() => {
@@ -674,18 +826,20 @@ context('Cluster page', () => {
     })
   })
 
-  describe.only("systemService - infraservice", () => {
+  describe("systemService - infraservice", () => {
     beforeEach(() => {
       addDefaultFixtures();
 
+
+    })
+
+    it('executing job', () => {
       addRoute("infra-service-data", "system-service/infrastructure-data.json", apiUrl(`/$/InvokeInfrastructureQuery?api-version=6.0&Command=GetJobs&ServiceId=System/InfrastructureService/Type134*`))
       addRoute("infra-service-data", "empty-list.json", apiUrl(`/$/InvokeInfrastructureQuery?api-version=6.0&Command=GetJobs&ServiceId=System/InfrastructureService/Type135*`))
       addRoute(FIXTURE_REF_SYSTEMAPPS, 'cluster-page/infra/systemServicesWithInfra.json', systemApps_route)
 
-      cy.visit(`/#/infrastructure`)
-    })
 
-    it('executing job', () => {
+      cy.visit(`/#/infrastructure`)
       cy.get('[data-cy=navtabs]').within(() => {
         cy.contains('infrastructure jobs').click();
       })
@@ -709,6 +863,128 @@ context('Cluster page', () => {
         cy.contains('Active : 1')
       })
 
+    })
+
+    describe('banners infrastructure service', () => {
+      const bannerText = "Nodetype worker is deployed with less than 5 VMs.";
+
+      beforeEach(() => {
+        addRoute("infra-service-data", "empty-list.json", apiUrl(`/$/InvokeInfrastructureQuery?api-version=6.0&Command=GetJobs&ServiceId=System/InfrastructureService/**`))
+      })
+
+      describe('Coordinated', () => {
+        it('coordinated guid', () => {
+          addRoute(FIXTURE_REF_SYSTEMAPPS, 'system-service/coordinated-infra-guid.json', systemApps_route)
+          cy.visit(`/#/infrastructure`)
+
+          cy.contains(bannerText).should('not.exist')
+        })
+      })
+
+      describe('cross AZ', () => {
+        beforeEach(() => {
+          addRoute(FIXTURE_REF_SYSTEMAPPS, 'system-service/cross-az-infra.json', systemApps_route)
+        })
+
+        it('5 nodes of one nodetype - ', () => {
+          cy.intercept('GET', nodes_route, { fixture: 'system-service/cross-az-nodes.json' })
+
+          cy.visit(`/#/infrastructure`)
+
+          cy.get('[data-cy=navtabs]').within(() => {
+            cy.contains('infrastructure jobs').click();
+          })
+
+          cy.contains(bannerText).should('not.exist')
+        })
+
+        it('< 5 nodes of one node type - cross AZ', () => {
+          cy.intercept('GET', nodes_route, { fixture: 'system-service/cross-az-nodes-4.json' })
+
+          cy.visit(`/#/infrastructure`)
+
+          cy.get('[data-cy=navtabs]').within(() => {
+            cy.contains('infrastructure jobs').click();
+          })
+
+          cy.contains(bannerText)
+        })
+      })
+
+    })
+  })
+
+  describe("commands", () => {
+    beforeEach(() => {
+      cy.visit('');
+
+      cy.wait(FIXTURE_REF_CLUSTERHEALTH)
+    })
+
+    it('view commands', () => {
+      checkCommand(3, 1);
+    })
+
+    it('check command input', () => {
+
+      cy.get('[data-cy=navtabs]').within(() => {
+          cy.contains('commands').click();
+      });
+
+      cy.url().should('include', 'commands');
+
+      cy.wait(500);
+
+      cy.get('[data-cy=commandNav]').within(() => {
+        cy.contains('Unsafe Commands').click();
+      })
+
+      cy.get('[data-cy=submit]').click();
+      cy.wait(500);
+
+      cy.get('[data-cy=command]').within(() => {
+        cy.get('.detail-pane').should('have.css', 'border-left-color', 'rgb(252, 209, 22)')
+        cy.get('[data-cy=requiredInput]').should('have.length', 3)
+        cy.get('[data-cy=optionalInput]').should('have.length', 0)
+        cy.get('[data-cy=warning]').should('include.text', 'HealthState, SourceId, HealthProperty')
+        cy.get('[data-cy=clipboard]').get('button').should('be.disabled')
+        cy.get('[data-cy=copy-text]').should('have.text', ' Send-ServiceFabricClusterHealthReport  ')
+
+        cy.contains('Optional Parameters').click()
+        cy.get('[data-cy=optionalInput]').should('have.length', 6)
+
+        cy.contains('HealthState').click().contains('OK').click()
+        cy.get('[data-cy=warning]').should('not.include.text', 'HealthState')
+        cy.get('[data-cy=copy-text]').should('include.text', '-HealthState  OK')
+
+        cy.contains('SourceId').type('id')
+        cy.get('[data-cy=warning]').should('not.include.text', 'SourceId')
+        cy.get('[data-cy=copy-text]').should('include.text', '-SourceId  "id"')
+
+        cy.contains('HealthProperty').type('property')
+        cy.get('[data-cy=warning]').should('not.exist')
+        cy.get('[data-cy=copy-text]').should('include.text', '-HealthProperty  "property"')
+
+        cy.get('[data-cy=clipboard]').get('button').should('be.enabled')
+
+        cy.contains('Description').type('description sentence')
+        cy.get('[data-cy=copy-text]').should('include.text', '-Description  "description sentence"')
+
+        cy.contains('TimeToLiveSec').type('10')
+        cy.get('[data-cy=copy-text]').should('include.text', '-TimeToLiveSec  10')
+
+        cy.contains('RemoveWhenExpired').click()
+        cy.get('[data-cy=copy-text]').should('include.text', '-RemoveWhenExpired')
+
+        cy.contains('SequenceNumber').type('99')
+        cy.get('[data-cy=copy-text]').should('include.text', '-SequenceNumber  99')
+
+        cy.contains('Immediate').click()
+        cy.get('[data-cy=copy-text]').should('include.text', '-Immediate')
+
+        cy.contains('TimeoutSec').type('100')
+        cy.get('[data-cy=copy-text]').should('include.text', '-TimeoutSec  10')
+      })
     })
   })
 

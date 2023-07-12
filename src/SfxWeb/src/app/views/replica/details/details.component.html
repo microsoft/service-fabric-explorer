@@ -3,7 +3,7 @@
     <div class="detail-pane essen-pane">
         <app-collapse-container sectionName="General">
             <div collapse-header>
-                <h4>General</h4>
+                <h2>General</h2>
             </div>
             <div collapse-body>
                 <app-detail-view-part [data]="replica"></app-detail-view-part>    
@@ -14,9 +14,9 @@
     <div class="detail-pane essen-pane">
         <app-collapse-container sectionName="Details">
             <div collapse-header>
-                <h4>
+                <h2>
                     Details
-                </h4>
+                </h2>
             </div>
             <div collapse-body>
                 <app-detail-view-part [data]="replica.detail.raw" [parent]="replica.detail"></app-detail-view-part>    

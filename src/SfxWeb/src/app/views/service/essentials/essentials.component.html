@@ -10,14 +10,29 @@
     <app-state-info [stateful]="service.isStatefulService" [data]="service.description.raw"></app-state-info>
   </app-tile-wrapper>
 
+  <app-dashboard-text-scale-tile *ngIf="service?.description?.isInitialized" data-cy="placementconstraints">
+    <div class="placement-constraint-wrapper">
+      <div class="text-center ">
+        <div class="top-seperator title">Placement Constraints</div>
+        <div>
+          {{service.description.raw.PlacementConstraints || 'No placement constraints defined'}}
+        </div>
+      </div>
+      <div>
+        <a href="https://learn.microsoft.com/en-us/azure/service-fabric/service-fabric-cluster-resource-manager-configure-services#placement-constraints"
+          target="_blank"><span class="mif-info"></span> Learn More</a>
+      </div>
+    </div>
+  </app-dashboard-text-scale-tile>
+
   <app-dashboard-tile [data]="partitionsDashboard" *ngIf="partitionsDashboard"></app-dashboard-tile>
   <app-dashboard-tile [data]="replicasDashboard" *ngIf="replicasDashboard"></app-dashboard-tile>
 </div>
 
 <div class="detail-pane essen-pane">
-  <app-collapse-container sectionName="Unhealthy Evaluations" [tooltipSouth]="true">
+  <app-collapse-container sectionName="Health Evaluations" [tooltipSouth]="true">
     <div collapse-header>
-      <h4>Health Evaluations</h4>
+      <h2>Health Evaluations</h2>
     </div>
     <div collapse-body>
         <app-health-viewer *ngIf="service && service.health" [healthyEvaluations]="service.health.healthEvents" [unhealthyEvaluations]="service.health.unhealthyEvaluations" ></app-health-viewer>
@@ -28,7 +43,7 @@
 <div class="detail-pane essen-pane">
   <app-collapse-container sectionName="Partitions">
     <div collapse-header>
-      <h4>Partitions</h4>
+      <h2>Partitions</h2>
     </div>
     <div collapse-body>
       <app-detail-list [list]="service.partitions.collection" [listSettings]="listSettings" data-cy="partitions"

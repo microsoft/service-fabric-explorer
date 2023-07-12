@@ -3,14 +3,14 @@ import { Utils } from '../Utils/Utils';
 import { HyperLinkComponent } from '../modules/detail-list-templates/hyper-link/hyper-link.component';
 import { CopyTextComponent } from '../modules/detail-list-templates/copy-text/copy-text.component';
 import { RowDisplayComponent } from '../modules/event-store/row-display/row-display.component';
-import { FullDescriptionComponent } from '../modules/event-store/full-description/full-description.component';
+import { FullDescriptionComponent } from '../modules/detail-list-templates/full-description/full-description.component';
 import { DetailBaseComponent } from '../ViewModels/detail-table-base.component';
 import { Type } from '@angular/core';
 import { UtcTimestampComponent } from '../modules/detail-list-templates/utc-timestamp/utc-timestamp.component';
 import { ITextAndBadge } from '../Utils/ValueResolver';
 import { ShortenComponent } from '../modules/detail-list-templates/shorten/shorten.component';
 import { HealthbadgeComponent } from '../modules/detail-list-templates/healthbadge/healthbadge.component';
-import { EventStoreComponent } from '../modules/event-store/event-store/event-store.component';
+import { IConcurrentEvents } from './eventstore/rcaEngine';
 
 // -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -139,7 +139,7 @@ export class FilterValue {
 /**
  * @param sortPropertyPaths The properties to sort against when user click the column header, instead of defaulting to property path
  * @param enableFilter Whether to enable filters for this column
- * @param getDisplayHtml Customize the HTML to render in this column giving a specific item
+ * @param cssClasses provide specific css classes to be applied on the cell
  * @param colspan The colspan for the extra line, does not affect the first line
  * @param clickEvent A callback that will be executed on click
  * @param canNotExport This column will not be selectable when exporting table
@@ -148,11 +148,12 @@ export class FilterValue {
 export interface IListColumnAdditionalSettings {
     sortPropertyPaths?: string[];
     enableFilter?: boolean;
-    getDisplayHtml?: (item, property) => string;
+    cssClasses?: string,
     colspan?: number;
     clickEvent?: (item) => void;
     canNotExport?: boolean;
     alternateExportFormat?: (item) => string;
+    id?: string;
 }
 
 export interface ITemplate {
@@ -185,6 +186,9 @@ export class ListColumnSetting {
         return this.filterValues.every(val => !val.isChecked);
     }
 
+    public get id() {
+        return this.config.id;
+    }
     /**
      * Create a column setting
      * @param propertyPath The property path to retrieve display object/value
@@ -201,6 +205,7 @@ export class ListColumnSetting {
             clickEvent: (item) => null,
             canNotExport: false,
             sortPropertyPaths: [propertyPath],
+            cssClasses: "",
             ...config
         };
 
@@ -234,9 +239,6 @@ export class ListColumnSetting {
 
     public getDisplayContentsInHtml(item: any): string {
         const property = this.getProperty(item);
-        if (this.config.getDisplayHtml) {
-            return this.config.getDisplayHtml(item, property);
-        }
 
         if (property === undefined || property === null) {
             return '';
@@ -357,11 +359,11 @@ export class ListColumnSettingWithCustomComponent extends ListColumnSetting impl
     }
 }
 
-export class ListColumnSettingWithEmbeddedVisTool extends ListColumnSetting implements ITemplate {
+export class ListColumnSettingWithEmbeddedVis extends ListColumnSetting implements ITemplate {
     public constructor(public template: Type<DetailBaseComponent>,
                        public propertyPath: string = '',
                        public displayName: string = '',
-                       public eventStoreRef: EventStoreComponent,
+                       public visEvents: Record<string, IConcurrentEvents>,
                        config?: IListColumnAdditionalSettings) {
         super(propertyPath, displayName, config);
     }

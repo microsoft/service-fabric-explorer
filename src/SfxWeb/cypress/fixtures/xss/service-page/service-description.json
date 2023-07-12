@@ -1,0 +1,30 @@
+{
+    "ServiceKind": "Stateful",
+    "ApplicationName": "fabric:/<img src='1' onerror='window.alert(document.domain)'>",
+    "ServiceName": "fabric:/<img src='1' onerror='window.alert(document.domain)'>/<img src='1' onerror='window.alert(document.domain)'>",
+    "ServiceTypeName": "<img src='1' onerror='window.alert(document.domain)'>",
+    "InitializationData": [],
+    "PartitionDescription": {
+        "PartitionScheme": "UniformInt64Range",
+        "Count": 10,
+        "LowKey": "-9223372036854775808",
+        "HighKey": "9223372036854775807"
+    },
+    "TargetReplicaSetSize": 3,
+    "MinReplicaSetSize": 2,
+    "HasPersistedState": true,
+    "PlacementConstraints": "<img src='1' onerror='window.alert(document.domain)'>",
+    "CorrelationScheme": [],
+    "ServiceLoadMetrics": [],
+    "ServicePlacementPolicies": [],
+    "Flags": 15,
+    "ReplicaRestartWaitDurationSeconds": 1800,
+    "QuorumLossWaitDurationSeconds": 3214202341,
+    "StandByReplicaKeepDurationSeconds": 604800,
+    "DefaultMoveCost": "<img src='1' onerror='window.alert(document.domain)'>",
+    "IsDefaultMoveCostSpecified": true,
+    "ServicePackageActivationMode": "SharedProcess",
+    "ServiceDnsName": "<img src='1' onerror='window.alert(document.domain)'>",
+    "ScalingPolicies": [],
+    "ServicePlacementTimeLimitSeconds": 0
+}

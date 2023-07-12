@@ -27,6 +27,7 @@ export abstract class FabricEventBase implements IFabricEventMetadata, IEventPro
     public category: string;
     public raw: { [key: string]: any; } = {};
     public get timeStampString() {  return TimeUtils.datetimeToString(this.timeStamp); }
+    public time: Date;
 
     public fillFromJSON(responseItem: any) {
         this.raw = responseItem;
@@ -34,6 +35,10 @@ export abstract class FabricEventBase implements IFabricEventMetadata, IEventPro
             if (!this.extractField(property, responseItem[property])) {
                 this.eventProperties[property] = responseItem[property];
             }
+        }
+
+        if(!this.category) {
+          this.category = "Operational";
         }
     }
 
@@ -50,6 +55,7 @@ export abstract class FabricEventBase implements IFabricEventMetadata, IEventPro
                 return true;
             case 'TimeStamp':
                 this.timeStamp = value;
+                this.time = new Date(this.timeStamp)
                 return true;
             case 'HasCorrelatedEvents':
                 this.hasCorrelatedEvents = value;
@@ -57,7 +63,6 @@ export abstract class FabricEventBase implements IFabricEventMetadata, IEventPro
             default:
                 break;
         }
-
         return false;
     }
 }

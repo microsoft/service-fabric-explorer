@@ -1,0 +1,90 @@
+{
+  "CodeVersion": "10.0.100.9494",
+  "ConfigVersion": "v1",
+  "UpgradeDomains": [
+    {
+      "Name": "UD_3",
+      "State": "Pending"
+    },
+    {
+      "Name": "UD_4",
+      "State": "Pending"
+    },
+    {
+      "Name": "UD_5",
+      "State": "Pending"
+    },
+    {
+      "Name": "UD_1",
+      "State": "Completed"
+    },
+    {
+      "Name": "UD_2",
+      "State": "Completed"
+    }
+  ],
+  "UpgradeUnits": [
+    {
+      "Name": "UD_3",
+      "State": "Pending"
+    },
+    {
+      "Name": "UD_4",
+      "State": "Pending"
+    },
+    {
+      "Name": "UD_5",
+      "State": "Pending"
+    },
+    {
+      "Name": "UD_1",
+      "State": "Completed"
+    },
+    {
+      "Name": "UD_2",
+      "State": "Completed"
+    }
+  ],
+  "UpgradeState": "RollingForwardPending",
+  "NextUpgradeDomain": "UD_3",
+  "RollingUpgradeMode": "Monitored",
+  "UpgradeDescription": {
+    "CodeVersion": "10.0.100.9494",
+    "ConfigVersion": "v1",
+    "UpgradeKind": "Rolling",
+    "RollingUpgradeMode": "Monitored",
+    "UpgradeReplicaSetCheckTimeoutInSeconds": 10,
+    "InstanceCloseDelayDurationInSeconds": 4294967295,
+    "ForceRestart": false,
+    "MonitoringPolicy": {
+      "FailureAction": "Rollback",
+      "HealthCheckWaitDurationInMilliseconds": "PT0H0M10S",
+      "HealthCheckStableDurationInMilliseconds": "PT0H0M5S",
+      "HealthCheckRetryTimeoutInMilliseconds": "PT0H5M0S",
+      "UpgradeTimeoutInMilliseconds": "PT2H0M0S",
+      "UpgradeDomainTimeoutInMilliseconds": "PT0H10M0S"
+    },
+    "EnableDeltaHealthEvaluation": false,
+    "SortOrder": "Default"
+  },
+  "UpgradeDurationInMilliseconds": "PT0H0M35.8401S",
+  "UpgradeDomainDurationInMilliseconds": "PT0H0M15.4141S",
+  "UnhealthyEvaluations": [],
+  "CurrentUpgradeDomainProgress": {
+    "DomainName": "UD_3",
+    "NodeUpgradeProgressList": []
+  },
+  "CurrentUpgradeUnitsProgress": {
+    "DomainName": "UD_3",
+    "NodeUpgradeProgressList": []
+  },
+  "StartTimestampUtc": "2023-05-11T20:41:02.659Z",
+  "FailureTimestampUtc": "0001-01-01T00:00:00.000Z",
+  "FailureReason": "None",
+  "UpgradeDomainProgressAtFailure": {
+    "NodeUpgradeProgressList": []
+  },
+  "IsNodeByNode": false,
+  "HealthCheckElapsedTime": "PT0H0M05.0001S",
+  "HealthCheckPhase": "WaitDuration"
+}

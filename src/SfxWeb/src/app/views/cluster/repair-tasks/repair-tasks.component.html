@@ -23,7 +23,7 @@
                             {{line.secondaryText}}
                         </div>
                         <div class="left-auto">
-                            <app-clip-board [text]="line.secondaryText"></app-clip-board>
+                            <app-clip-board [text]="line.secondaryText" [name]="line.primaryText"></app-clip-board>
                         </div>
                     </div>
                 </div>
@@ -49,9 +49,9 @@
 
     <div class="detail-pane essen-pane" data-cy="pendingjobs">
         <app-collapse-container sectionName="Visualization">
-            <h4 collapse-header>
+            <h2 collapse-header>
                 Visualization
-            </h4>
+            </h2>
             <div collapse-body>
                 <div ngbNav #nav="ngbNav" [destroyOnHide]="false" (navChange)="changeChart()" class="nav-wrapper"  >
                     <div ngbNavItem>
@@ -62,9 +62,9 @@
                             <div *ngIf="timelineData" style="margin-bottom: 20px;">
                                 <div data-cy="pendingjobs" class="detail-pane" style="margin-bottom: 0px;">
                                     <app-collapse-container sectionName="Pending Repair Tasks" collapsed="true">
-                                        <h4 collapse-header>
+                                        <h3 class="heading"collapse-header>
                                             Repair Task timeline Legend
-                                        </h4>
+                                        </h3>
                                         <div style="display: flex; flex-direction: row;" collapse-body>
                                             <div class="vis-item vis-range blue example-wrapper">
                                                 <div class="vis-item-content">
@@ -110,9 +110,9 @@
 
     <div class="detail-pane essen-pane" data-cy="pendingjobs">
         <app-collapse-container sectionName="Pending Repair Tasks">
-            <h4 collapse-header>
+            <h2 collapse-header>
                 Pending Repair Tasks
-            </h4>
+            </h2>
             <app-detail-list [list]="repairTaskCollection.repairTasks" [listSettings]="repairTaskListSettings"
                 collapse-body (sorted)="sorted($event, false)"></app-detail-list>
         </app-collapse-container>
@@ -120,9 +120,9 @@
 
     <div class="detail-pane essen-pane" data-cy="completedjobs">
         <app-collapse-container collapsed=true sectionName="Completed Repair Tasks">
-            <h4 collapse-header>
+            <h2 collapse-header>
                 Completed Repair Tasks
-            </h4>
+            </h2>
             <app-detail-list [list]="repairTaskCollection.completedRepairTasks"
                 [listSettings]="completedRepairTaskListSettings" collapse-body (sorted)="sorted($event)" (sortOrdering)="setSortOrdering($event)">
             </app-detail-list>

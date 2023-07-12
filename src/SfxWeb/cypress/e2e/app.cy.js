@@ -1,28 +1,38 @@
 /// <reference types="cypress" />
-
-import { addDefaultFixtures, apiUrl, FIXTURE_REF_MANIFEST, EMPTY_LIST_TEXT, addRoute, apps_route } from './util.cy';
+import { addDefaultFixtures, apiUrl, FIXTURE_REF_MANIFEST, EMPTY_LIST_TEXT, addRoute, aad_route,
+        checkCommand, xssPrefix, watchForAlert, plaintextXSS2, plaintextXSS, xssEncoded, windowAlertText } from './util.cy';
 
 const appName = "VisualObjectsApplicationType";
 const waitRequest = "@getapp";
+
+const initializeRoutes = (app, appType, prefix = "") => {
+  addDefaultFixtures(prefix);
+  addRoute("upgradeProgress", prefix + "app-page/upgrade-progress.json", apiUrl(`/Applications/${app}/$/GetUpgradeProgress?*`))
+  addRoute("services", prefix + "app-page/services.json", apiUrl(`/Applications/${app}/$/GetServices?*`))
+  addRoute("apphealth", prefix + "app-page/app-health.json", apiUrl(`/Applications/${app}/$/GetHealth?*`))
+  addRoute("app", prefix + "app-page/app-type.json", apiUrl(`/Applications/${app}/?a*`))
+  addRoute("serviceTypes", prefix + "app-page/service-types.json", apiUrl(`/ApplicationTypes/${appType}/$/GetServiceTypes?ApplicationTypeVersion=16.0.0*`))
+
+}
+
 context('app', () => {
     beforeEach(() => {
-        addDefaultFixtures();
-        addRoute("upgradeProgress", "app-page/upgrade-progress.json", apiUrl(`/Applications/${appName}/$/GetUpgradeProgress?*`))
-        addRoute("services", "app-page/services.json", apiUrl(`/Applications/${appName}/$/GetServices?*`))
-        addRoute("apphealth", "app-page/app-health.json", apiUrl(`/Applications/${appName}/$/GetHealth?*`))
-        addRoute("app", "app-page/app-type.json", apiUrl(`/Applications/${appName}/?a*`))
-        addRoute("appParams", "app-page/app-type-excluded-params.json", apiUrl(`/Applications/${appName}/?ExcludeApplicationParameters=true*`))
-        addRoute("events", "app-page/app-events.json", apiUrl(`/EventsStore/Applications/${appName}/$/Events?*`))
+      initializeRoutes(appName, appName);
+      addRoute("appParams", "app-page/app-type-excluded-params.json", apiUrl(`/Applications/${appName}/?ExcludeApplicationParameters=true*`))
+      addRoute("events", "app-page/app-events.json", apiUrl(`/EventsStore/Applications/${appName}/$/Events?*`))
 
-        addRoute("manifest", "app-page/manifest.json", apiUrl(`/Applications/${appName}/$/GetApplicationManifest?*`))
-        addRoute("serviceTypes", "app-page/service-types.json", apiUrl(`/ApplicationTypes/${appName}/$/GetServiceTypes?ApplicationTypeVersion=16.0.0*`))
+      addRoute("manifest", "app-page/manifest.json", apiUrl(`/Applications/${appName}/$/GetApplicationManifest?*`))
+      addRoute("serviceTypes", "app-page/service-types.json", apiUrl(`/ApplicationTypes/${appName}/$/GetServiceTypes?ApplicationTypeVersion=16.0.0*`))
+
     })
 
     describe("essentials", () => {
-        it('load essentials', () => {
+        const visit = () => {
           cy.visit(`/#/apptype/${appName}/app/${appName}`)
-
-            cy.wait(waitRequest);
+          cy.wait(waitRequest);
+        }
+        it('load essentials', () => {
+            visit();
             cy.get('[data-cy=header').within(() => {
                 cy.contains(appName).click();
             })
@@ -49,6 +59,34 @@ context('app', () => {
             cy.contains("ApplicationProcessExited - 1 Events")
         })
 
+        it('xss', () => {
+          initializeRoutes(`*${windowAlertText}*`, appName, xssPrefix);
+          addRoute("events", "xss/app-page/app-events.json", apiUrl(`/EventsStore/Applications/**window.alert**/$/Events?**`))
+          addRoute('events', 'empty-list.json', apiUrl(`/EventsStore/Cluster/Events?*`))
+
+          watchForAlert(() => {
+            cy.visit(`/#/apptype/${appName}/app/${xssEncoded}`)
+            cy.contains('16.0.0');
+            cy.contains(plaintextXSS);
+            cy.contains("VisualObjects." + plaintextXSS2);
+          })
+
+          watchForAlert(() => {
+            cy.visit(`/#/apptype/${appName}/app/${xssEncoded}/details`);
+            cy.contains("VisualObjects.WebService_InstanceCount");
+          })
+
+          watchForAlert(() => {
+            cy.visit(`/#/apptype/${appName}/app/${xssEncoded}/deployments`);
+            cy.contains("VisualObjects.WebService_InstanceCount");
+          })
+
+          watchForAlert(() => {
+            cy.visit(`/#/apptype/${appName}/app/${xssEncoded}/events`);
+            cy.contains(`<img src="1">`);
+          })
+        });
+
         it('upgrade in progress', () => {
           addRoute("upgradeProgress", "app-page/upgrade-in-progress.json", apiUrl(`/Applications/${appName}/$/GetUpgradeProgress?*`))
 
@@ -65,17 +103,20 @@ context('app', () => {
                 cy.contains('81 milliseconds')
               })
           })
+          cy.get('[data-cy=flips]').should('not.exist')
+
       })
 
     })
 
     describe("details", () => {
         const param = "Parameters"
-
+        const visit = (app) => {
+          cy.visit(`/#/apptype/${app}/app/${app}`)
+          cy.wait([waitRequest, "@getapphealth"]);
+        }
         it('view details', () => {
-          cy.visit(`/#/apptype/${appName}/app/${appName}`)
-
-            cy.wait([waitRequest, "@getapphealth"]);
+            visit(appName);
 
             cy.get('[data-cy=navtabs]').within(() => {
                 cy.contains('details').click();
@@ -167,6 +208,17 @@ context('app', () => {
             cy.wait('@getevents')
             cy.url().should('include', '/events')
         })
+    })
+
+    describe("commands", () => {
+      it('view commands', () => {
+        cy.visit(`/#/apptype/${appName}/app/${appName}`)
+
+        cy.wait(waitRequest)
+
+        checkCommand(4, 1);
+
+      })
     })
 
 })

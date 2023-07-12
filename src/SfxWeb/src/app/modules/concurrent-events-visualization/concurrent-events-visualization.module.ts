@@ -5,8 +5,13 @@ import { VisualizationLogoComponent } from './visualization-logo/visualization-l
 import { RcaSummaryComponent } from './rca-summary/rca-summary.component';
 import { RcaOverviewComponent } from './rca-overview/rca-overview.component';
 import { SharedModule } from 'src/app/shared/shared.module';
-import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDropdownModule, NgbNavModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { RelationViewerComponent } from './relation-viewer/relation-viewer.component';
+import { TimeseriesComponent } from './timeseries/timeseries.component';
+import { DetailListTemplatesModule } from '../detail-list-templates/detail-list-templates.module';
+import { TimeseriesItemComponent } from './timeseries-item/timeseries-item.component';
+import { NamingViewerComponent } from './naming-viewer/naming-viewer.component';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -14,16 +19,26 @@ import { RelationViewerComponent } from './relation-viewer/relation-viewer.compo
     VisualizationLogoComponent,
     RcaSummaryComponent,
     RcaOverviewComponent,
-    RelationViewerComponent
+    RelationViewerComponent,
+    TimeseriesComponent,
+    TimeseriesItemComponent,
+    NamingViewerComponent
   ],
   imports: [
     CommonModule,
     SharedModule,
-    NgbNavModule
+    NgbNavModule,
+    DetailListTemplatesModule,
+    NgbNavModule,
+    FormsModule,
+    NgbDropdownModule,
+    NgbTooltipModule
   ],
   exports:[
     VisualizationToolComponent,
-    RcaSummaryComponent
+    RcaSummaryComponent,
+    TimeseriesComponent,
+    NamingViewerComponent
   ]
 })
 export class ConcurrentEventsVisualizationModule { }

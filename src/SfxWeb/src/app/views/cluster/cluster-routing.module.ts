@@ -11,7 +11,8 @@ import { EventsComponent } from './events/events.component';
 import { BackupsComponent } from './backups/backups.component';
 import { RepairTasksComponent } from './repair-tasks/repair-tasks.component';
 import { InfrastructureViewComponent } from './infrastructure-view/infrastructure-view.component';
-
+import { CommandsComponent } from './commands/commands.component';
+import { NamingViewerPageComponent } from './naming-viewer-page/naming-viewer-page.component';
 
 const routes: Routes = [{
   path: '', component: BaseComponent, children: [
@@ -24,6 +25,8 @@ const routes: Routes = [{
     { path: 'backups', component: BackupsComponent },
     { path: 'repairtasks', component: RepairTasksComponent },
     { path: 'infrastructure', component: InfrastructureViewComponent },
+    { path: 'naming', component: NamingViewerPageComponent },
+    { path: 'commands', component: CommandsComponent },
     { path: '', component: EssentialsComponent },
   ]
   }

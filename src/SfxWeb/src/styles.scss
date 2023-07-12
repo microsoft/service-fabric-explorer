@@ -102,13 +102,14 @@ html,body {
     display: block;
     margin-bottom: 15px;
 
-    h4, h2 {
+    h4, h2, .heading {
         color: var(--font-accent-color);
         margin-left: 0;
         font-size: var(--font-size-large);
         margin-top: 0;
         padding-top: 0px;
         margin-bottom: 0px;
+        font-weight: 500;
     }
 
     h4.no-uppercase {
@@ -442,12 +443,21 @@ table.detail-list {
 
 .input-flat {
     padding: 3px 6px;
-    font-size: 8pt;
+    font-size: 10pt;
     border-style: solid;
     border-width: 1px;
     border-color: #727272;
     background-color: transparent;
-    color: var(--font-primary-color);
+    color: var(--font-accent-color);
+    border-radius: var(--primary-border-radius);
+
+    &:focus, &:hover {
+      box-shadow: var(--heavy-box-shadow);
+    }
+    &::placeholder{
+        color: var(--font-placeholder-color);
+        font-style: italic;
+    }
 }
 
 .input-flat.ng-valid[required], .input-flat.ng-valid.required  {
@@ -501,11 +511,6 @@ table.detail-list {
     }
 }
 
-.spacer {
-    width: 10px; height: 1px;
-}
-
-
 .highlight-hover {
     transition: .5s;
     &:hover, &:focus-within {
@@ -524,30 +529,37 @@ table.detail-list {
 }
 
 
-@media screen and (-ms-high-contrast: active) {
+@media screen and (forced-colors: active) {
   .highcharts-title {
-    color: black !important;
-    fill: black !important;
+    color: CanvasText !important;
+    fill: CanvasText !important;
   }
 
   .highcharts-subtitle {
-    color: black !important;
-    fill: black !important;
-  }
-
-  .dropdown-item.disabled, .dropdown-item:disabled {
-    border: 1px solid black;
+    color: CanvasText !important;
+    fill: CanvasText !important;
   }
 
   .page-item {
     .page-link {
-    border: 1px solid gray !important;
-    box-sizing: border-box;
-
-    &:focus {
-      border: 2px solid gray !important;
+        &:hover {
+        border: 2px solid HighlightText !important;
+        }
     }
   }
+  .radio-btns {
+    .checkbox-push{
+        input:checked  + label{
+            @-moz-document url-prefix() {
+                color: HighlightText !important;
+            }
+            color: Highlight !important;
+            & {
+                background-color: Highlight !important;
+            }
+        } 
+
+    }
   }
 }
 
@@ -587,15 +599,16 @@ table.detail-list {
 
 .text-wrapper {
     position: relative;
-    overflow: hidden;
+    overflow-x: auto;
     flex: 1;
+    gap: 5px;
+
     .middle-text {
         transition: .5s;
-        overflow: hidden;
-        text-overflow: ellipsis;
         max-width: 800px;
         text-align: right;
         flex: 1;
+        white-space: nowrap;
     }
 
     .left-text {
@@ -606,21 +619,30 @@ table.detail-list {
         font-size: 14px;
     }
 
+    &::-webkit-scrollbar {
+        width: 5px;
+        height: 5px;
+    }
+    &::-webkit-scrollbar-track {
+        border-radius: 10px;
+        background: transparent
+    }
+    &::-webkit-scrollbar-thumb{
+        border-radius: 10px;
+        background: var(--font-accent-color);
+    }
+    &::-webkit-scrollbar-thumb:hover{
+        background: var(--font-placeholder-color);
+    }
+    &::-webkit-scrollbar-thumb:active{
+        background: var(--font-placeholder-color);
+    }
+
 }
 
 .essential-list-item {
     display: flex; align-items: center;
     justify-content: space-between;
-    &:hover {
-        .middle-text {
-            min-width: fit-content;
-            white-space: normal;
-        }
-
-        .left-text {
-            overflow: hidden;
-        }
-    }
 
 }
 
@@ -702,4 +724,44 @@ table.detail-list {
 .warning-icon {
   align-self: center;
   color: var(--badge-warning);
+}
+
+.top-seperator {
+  border-bottom: 5px solid var(--accent-underline);
+  padding-bottom: 8px;
+}
+
+.radio-btns {
+  .solid-grey {
+    border-radius: 0px !important;
+    border-color: white !important;
+    background-color: gray;
+    border-width: 2px;
+    font-size: unset;
+    line-height: unset;
+
+    &:hover {
+        color: white;
+    }
+  }
+
+  .checkbox-push {
+    input {
+      display: none;
+    }
+  }
+
+  input:checked + label{
+    background-color: var(--accent-darkblue) !important;
+  }
+
+}
+
+.wrap-overflow {
+    overflow-wrap: break-word;
+}
+
+.main-view {
+    padding-top: 18px;
+    padding-right: 5px;
 }

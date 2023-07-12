@@ -1,0 +1,13 @@
+.placement-constraint-wrapper {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  .inner-list {
+    overflow: auto;;
+  }
+  .title {
+    font-size: var(--font-size-large);
+    font-weight: 500;
+    line-height: 1.2;
+  }
+}

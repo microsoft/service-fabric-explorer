@@ -1,4 +1,5 @@
-import { Component, Input, OnChanges, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, SecurityContext } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
 import { Chart, Options, chart } from 'highcharts';
 import { RepairTask } from 'src/app/Models/DataModels/repairTask';
 import { ISortOrdering } from 'src/app/modules/detail-list-templates/detail-list/detail-list.component';
@@ -21,7 +22,7 @@ export class RepairJobChartComponent implements OnInit, OnChanges {
 
   private chart: Chart;
 
-  constructor() { }
+  constructor(private sanitizer: DomSanitizer) { }
 
   ngOnInit(): void {
     const options: Options = {
@@ -47,9 +48,13 @@ export class RepairJobChartComponent implements OnInit, OnChanges {
         },
         lineColor: '#fff',
         labels: {
-          style: this.fontColor,
-          formatter() { return TimeUtils.getDuration(this.value); }
-        },
+        style: this.fontColor,
+        formatter: (() => {
+          const bind = this; return function () {
+            return bind.sanitizer.sanitize(SecurityContext.HTML, TimeUtils.getDuration(this.value));
+          }
+        })()
+      },
 
     },
 
@@ -66,13 +71,17 @@ export class RepairJobChartComponent implements OnInit, OnChanges {
         verticalAlign: 'middle',
         itemStyle: {
           color: this.fontColor.color
+        },
+        itemHoverStyle: {
+          color: this.fontColor.color
         }
     },
     tooltip: {
       headerFormat: '<b>{series.name}</b><br />',
       formatter: (() => { const bind = this; return function() {
         const task = bind.jobs.concat(bind.jobs)[this.point.index];
-        return `Job ${task.id} <br> ${this.point.series.name} : ${task.getHistoryPhase(this.point.series.name).duration} <br> Total Duration :  ${task.displayDuration}`; };
+        const formatted = bind.sanitizer.sanitize(SecurityContext.HTML, `Job ${task.id} <br> ${this.point.series.name} : ${task.getHistoryPhase(this.point.series.name).duration} <br> Total Duration :  ${task.displayDuration}`);
+        return formatted};
       })()
     },
     plotOptions: {
@@ -103,7 +112,8 @@ export class RepairJobChartComponent implements OnInit, OnChanges {
           color: '#0075c9',
           data: []
         },
-      ]
+      ],
+      credits: {enabled: false}
     };
     this.chart = chart('repair-job-chart-container', options);
     this.setGraph(this.jobs);

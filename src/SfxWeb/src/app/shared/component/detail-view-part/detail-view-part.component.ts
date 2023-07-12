@@ -27,6 +27,7 @@ export class ResolvedObject {
 export class DetailViewPartComponent implements OnChanges {
 
   @Input() noFixedLayout = false;
+  @Input() useLink = false;
 
   resolvedData: any;
 
@@ -55,10 +56,10 @@ export class DetailViewPartComponent implements OnChanges {
         return 'Object';
     } else if (this.isArray(value)) {
         return 'Array';
-    } else if (this.isHtml(value)) {
-        return 'Html';
-    } else if (this.isISODate(value)) {
+    }else if (this.isISODate(value)) {
         return 'Date';
+    }else if (this.useLink && Utils.isSingleURL(value)) {
+      return 'Link';
     }else{
       return 'Value'
     }
@@ -91,10 +92,6 @@ export class DetailViewPartComponent implements OnChanges {
         return Array.isArray(value);
     }
 
-    private isHtml(value: string): boolean {
-        return HtmlUtils.isHtml(value);
-    }
-
     private isISODate(value: any): boolean {
         return /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(value);
     }
@@ -122,7 +119,7 @@ export class DetailViewPartComponent implements OnChanges {
                       resolvedName = parent.decorators.decorators[name].displayName(name);
                   }
                   if (parent.decorators.decorators[name].displayValueInHtml) {
-                      resolvedValue = parent.decorators.decorators[name].displayValueInHtml(value);
+                      resolvedValue = parent.decorators.decorators[name].displayValue(value);
                   }
               }
           }

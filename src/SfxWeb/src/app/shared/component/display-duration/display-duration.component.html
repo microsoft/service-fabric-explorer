@@ -3,8 +3,9 @@
         {{topText}} : {{topInMilliseconds | formatDate}}
     </div>
     <div style="display: flex; margin-bottom: 5px; margin-top: 5px">
-        <div style="height: 5px;" [ngClass]="barColor" [ngStyle]="{'flex': leftDuration }" data-cy="bar-progress"></div>
-        <div style="height: 5px; background-color: grey;"[ngStyle]="{'flex': rightDuration }"></div>
+        <div style="height: 5px;" *ngFor="let section of sections"
+        [ngStyle]="{'flex': section.width, 'background-color': section.color}"
+             data-cy="bar-progress"></div>
     </div>
     <div>
         {{bottomText}} : {{timeLeft | formatDate}}

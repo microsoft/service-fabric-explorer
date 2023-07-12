@@ -1,6 +1,6 @@
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { Clipboard } from '@angular/cdk/clipboard';
-import { Component, OnInit, Input, ChangeDetectionStrategy, ViewChild, ElementRef, ContentChild, OnChanges } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy, ViewChild, ElementRef, OnChanges } from '@angular/core';
 import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
@@ -12,14 +12,18 @@ import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
 export class ClipBoardComponent implements OnChanges {
 
   @Input() text = '';
+  @Input() tooltipText = '';
+  @Input() disabled = false;
+  @Input() name = '';
   @ViewChild('ref') ref: ElementRef;
   @ViewChild(NgbTooltip) tooltip: NgbTooltip; // First
   public ariaLabel = '';
 
   constructor(private liveAnnouncer: LiveAnnouncer,
               private clipboard: Clipboard) { }
-
-  copy(){
+              
+  copy() {
+    
     this.clipboard.copy(this.text)
 
     this.tooltip.close();
@@ -29,7 +33,7 @@ export class ClipBoardComponent implements OnChanges {
       this.tooltip.triggers = 'manual';
       this.tooltip.closeDelay = 2000;
       this.tooltip.open();
-      this.tooltip.ngbTooltip = 'copy to clipboard';
+      this.tooltip.ngbTooltip = this.tooltipText ? this.tooltipText : 'copy to clipboard';
       this.liveAnnouncer.announce('Copied to clipboard');
     }, 250);
 

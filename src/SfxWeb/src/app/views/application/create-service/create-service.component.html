@@ -1,6 +1,6 @@
 <form name="createServiceForm" *ngIf="description" class="action-modal">
     <div class="modal-header">
-        <h4 class="modal-title">Create Service</h4>
+        <h1 class="modal-title">Create Service</h1>
     </div>
     <div class="modal-body" style="max-height: 550px;">
         <dl class="dl-horizontal">
@@ -23,11 +23,15 @@
             </dd>
             <dt title="Service Package Activation Mode">Service Package Activation Mode</dt>
             <dd>
-                <div class="btn-group btn-group-toggle" ngbRadioGroup name="radioBasic" [(ngModel)]="description.raw.ServicePackageActivationMode" [ngModelOptions]="{standalone: true}">
-                    <label class=" flat-button checkbox-push solid-grey" *ngFor="let activationMode of description.servicePackageActivationModes; let i = index;" ngbButtonLabel>
-                        <input ngbButton type="radio" [value]="i.toString()"> {{activationMode}}
-                    </label>
+              <div class="btn-group btn-group-toggle radio-btns">
+                <ng-container *ngFor="let activationMode of description.servicePackageActivationModes; let i = index;">
+                  <div class="checkbox-push">
+                    <input type="radio" [value]="i.toString()" name="a" [id]="i + 'a'" [(ngModel)]="description.raw.ServicePackageActivationMode" [ngModelOptions]="{standalone: true}">
+                    <label [for]="i + 'a'" class="flat-button solid-grey">{{activationMode}}</label>
                   </div>
+                </ng-container>
+              </div>
+
             </dd>
             <dt>Initialization Data</dt>
             <dd>
@@ -44,8 +48,8 @@
             </dd>
         </dl>
 
-        <app-collapse-container [collapsed]="description.isAdvancedOptionCollapsed" *ngIf="!description.createFromTemplate" >
-            <h4 collapse-header>{{description.isAdvancedOptionCollapsed ? "Show" : "Hide"}} Advanced Options</h4>
+        <app-collapse-container [collapsed]="description.isAdvancedOptionCollapsed" *ngIf="!description.createFromTemplate" sectionName="Advanced Options">
+            <h1 collapse-header>{{description.isAdvancedOptionCollapsed ? "Show" : "Hide"}} Advanced Options</h1>
             <div collapse-body>
                 <dl class="dl-horizontal" >
                     <dt>Service Dns Name</dt>
@@ -62,8 +66,8 @@
                     </dd>
                     <dt *ngIf="serviceType.raw.ServiceTypeDescription.IsStateful">Min Replica Set Size</dt>
                     <dd *ngIf="serviceType.raw.ServiceTypeDescription.IsStateful">
-                        <input type="number" class="input-flat" autocomplete="off" [ngModelOptions]="{standalone: true}" [(ngModel)]="description.raw.MinReplicaSetSize" name="MinReplicaSetSize" 
-                        aria-label="Min Replica Set Size" min="1" aria-valuemin="1" integer>                
+                        <input type="number" class="input-flat" autocomplete="off" [ngModelOptions]="{standalone: true}" [(ngModel)]="description.raw.MinReplicaSetSize" name="MinReplicaSetSize"
+                        aria-label="Min Replica Set Size" min="1" aria-valuemin="1" integer>
                     </dd>
                     <dt *ngIf="serviceType.raw.ServiceTypeDescription.IsStateful">Target Replica Set Size</dt>
                     <dd *ngIf="serviceType.raw.ServiceTypeDescription.IsStateful">
@@ -94,18 +98,16 @@
                     </dd>
                     <dt>Partition Scheme</dt>
                     <dd>
-                        <!-- <div class="btn-group">
-                            <span *ngFor="let partitionScheme of description.servicePartitionKinds">
-                                <button class="btn btn-primary" [ngModelOptions]="{standalone: true}" [(ngModel)]="description.raw.PartitionDescription.PartitionScheme"
-                                *ngIf="index > 0" uib-btn-radio="index.toString()">
-                                {{partitionScheme}}
-                            </button>
-                            </span>
-                        </div> -->
-                        <div class="btn-group btn-group-toggle" ngbRadioGroup name="radioBasic" [(ngModel)]="description.raw.PartitionDescription.PartitionScheme" [ngModelOptions]="{standalone: true}">
-                            <label class=" flat-button checkbox-push solid-grey" *ngFor="let partitionScheme of description.servicePartitionKinds;  let i = index;" ngbButtonLabel>
-                                <input ngbButton type="radio" [value]="i.toString()"> {{partitionScheme}}
-                            </label>
+
+                        <div class="btn-group btn-group-toggle radio-btns">
+                            <ng-container
+                                *ngFor="let partitionScheme of description.servicePartitionKinds;  let i = index;">
+                                <div class="checkbox-push">
+                                  <input ngbButton type="radio" [value]="i.toString()" [id]="i + 's'" name="s"
+                                         [(ngModel)]="description.raw.PartitionDescription.PartitionScheme" [ngModelOptions]="{standalone: true}">
+                                  <label [for]="i + 's'" class="solid-grey flat-button">{{partitionScheme}}</label>
+                                </div>
+                            </ng-container>
                         </div>
                         <dl class="dl-horizontal short">
                             <dt *ngIf="description.raw.PartitionDescription.PartitionScheme !== '1'">Count</dt>

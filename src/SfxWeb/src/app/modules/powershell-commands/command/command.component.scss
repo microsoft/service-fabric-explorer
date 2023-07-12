@@ -1,0 +1,70 @@
+
+.detail-pane {
+    border-left: 5px solid;
+    
+    &.safe {
+        border-color: var(--badge-ok);
+    }
+
+    &.unsafe {
+        border-color: var(--badge-warning);
+    }
+
+    &.danger {
+        border-color: var(--badge-error);
+    }
+}
+
+.command-name {
+    display: flex;
+    align-items: baseline;
+    gap: 5px;
+    .command-title {
+        color: var(--font-color-primary);
+        margin-right: auto;
+    }
+}
+
+.card {
+    background-color: var(--accent-background-color);
+    
+    .card-body {
+        padding: 10px;
+    }
+}
+
+.invalid-text {
+    color: var(--badge-warning);
+}
+
+.input-group{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px 15px;
+    align-items: center;
+    max-width: 1150px;
+    margin-bottom: 15px;
+    padding-left: 15px;
+
+}
+
+.disabled-copy {
+    background-color: transparent;
+    color: var(--disabled);
+    border: 0px solid white;
+    padding: 0px;
+    margin: 0px 5px;
+    float: right;
+}
+.param-value {
+    color: var(--accent-lightblue);
+}
+
+.reference-link {
+    border: none;
+    background-color: inherit;
+}
+
+.param-title {
+    font-size: var(--font-size-medium);
+}

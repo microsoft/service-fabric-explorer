@@ -270,6 +270,10 @@ export interface IRawApplicationUpgradeProgress {
         UpgradeUnits: IUpgradeUnitInfo[];
         CurrentUpgradeUnitsProgress: ICurrentUpgradeUnitsProgressInfo;
         IsNodeByNode: boolean;
+
+        HealthCheckPhase?: "Invalid" | "WaitDuration" | "StableDuration" | "Retry";
+        HealthCheckElapsedTime?: number;
+        HealthCheckRetryFlips?: number;
     }
 
 export interface IRawClusterHealth extends IRawHealth {
@@ -310,6 +314,9 @@ export interface IRawClusterUpgradeProgress {
         UpgradeUnits: IUpgradeUnitInfo[];
         CurrentUpgradeUnitsProgress: ICurrentUpgradeUnitsProgressInfo;
         IsNodeByNode: boolean;
+        HealthCheckPhase?: "Invalid" | "WaitDuration" | "StableDuration" | "Retry";
+        HealthCheckElapsedTime?: number;
+        HealthCheckRetryFlips?: number;
     }
 
 export interface IRawClusterLoadInformation {
@@ -448,6 +455,7 @@ export interface IRawNodeDeactivationInfo {
 export interface IRawNodeDeactivationTask {
         NodeDeactivationTaskId: IRawNodeDeactivationTaskId;
         NodeDeactivationIntent: string;
+        NodeDeactivationDescription?: string;
     }
 export interface IRawSchedule {
         ScheduleKind: string;
@@ -826,6 +834,7 @@ export interface IRawServiceTypeDescription {
         HasPersistedState: boolean;
         UseImplicitHost: boolean;
     }
+
 
 export interface IRawUpgradeDomainProgress {
         DomainName: string;

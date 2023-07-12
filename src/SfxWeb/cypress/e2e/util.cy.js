@@ -64,19 +64,19 @@ export const addRoute = (fixtureName, fixtureFileName, route, requestType = 'GET
     cy.intercept(requestType, route, {fixture: fixtureFileName}).as(fixtureRequestFormatter(fixtureName))
 }
 
-export const addDefaultFixtures = () => {
-    addRoute(FIXTURE_AAD, 'aad.json', aad_route)
-    addRoute(FIXTURE_APPS, 'applications.json', apps_route)
-    addRoute(FIXTURE_APPTYPES, 'appType.json', apptypes_route)
-    addRoute(FIXTURE_CLUSTERHEALTH, 'clusterHealth.json', clusterHealth_route)
-    addRoute(FIXTURE_CLUSTERHEALTHCHUNK, 'clusterHealthChunk.json', clusterHealthChunk_route, 'POST')
-    addRoute(FIXTURE_MANIFEST, 'clusterManifest.json', manifest_route)
-    addRoute(FIXTURE_NODES, 'nodes.json', nodes_route)
-    addRoute(FIXTURE_SYSTEMAPPLICATIONS_HEALTH, 'systemApplicationHealth.json', systemApplicationHealth_route)
-    addRoute(FIXTURE_UPGRADEPROGRESS, 'upgradeProgress.json', upgradeProgress_route)
-    addRoute(FIXTURE_REF_SYSTEMAPPS, 'systemApps.json', systemApps_route)
-    addRoute(FIXTURE_UPGRADEREPAIRTASK, 'emptyRepairJobs.json', repairTask_route)
-    addRoute('visualObjectsApplicationType', 'visualObjectsApplicationType.json', apiUrl('/Applications/VisualObjectsApplicationType/?*'))
+export const addDefaultFixtures = (prefix = "") => {
+    addRoute(FIXTURE_AAD, prefix + 'aad.json', aad_route)
+    addRoute(FIXTURE_APPS, prefix + 'applications.json', apps_route)
+    addRoute(FIXTURE_APPTYPES, prefix + 'appType.json', apptypes_route)
+    addRoute(FIXTURE_CLUSTERHEALTH, prefix + 'clusterHealth.json', clusterHealth_route)
+    addRoute(FIXTURE_CLUSTERHEALTHCHUNK, prefix + 'clusterHealthChunk.json', clusterHealthChunk_route, 'POST')
+    addRoute(FIXTURE_MANIFEST, prefix + 'clusterManifest.json', manifest_route)
+    addRoute(FIXTURE_NODES, prefix + 'nodes.json', nodes_route)
+    addRoute(FIXTURE_SYSTEMAPPLICATIONS_HEALTH, prefix + 'systemApplicationHealth.json', systemApplicationHealth_route)
+    addRoute(FIXTURE_UPGRADEPROGRESS, prefix + 'upgradeProgress.json', upgradeProgress_route)
+    addRoute(FIXTURE_REF_SYSTEMAPPS, prefix + 'systemApps.json', systemApps_route)
+    addRoute(FIXTURE_UPGRADEREPAIRTASK, prefix + 'emptyRepairJobs.json', repairTask_route)
+    addRoute('visualObjectsApplicationType', prefix + 'visualObjectsApplicationType.json', apiUrl('/Applications/VisualObjectsApplicationType/?*'))
 }
 
 
@@ -111,7 +111,7 @@ Used to validate detail lists on the events page.
 */
 export const checkTableErrorMessage = (message) => {
     checkTableSize(1);
-    cy.get('tbody > tr').first().within(() => {
+    cy.get('tbody').first().within(() => {
        cy.contains(message)
     });
 }
@@ -146,6 +146,56 @@ export const checkCheckBox = (inputRef) => {
   })
 }
 
+export const checkCommand = (numSafeCommands, numUnsafeCommands = 0) => {
+
+  cy.get('[data-cy=navtabs]').within(() => {
+    cy.contains('commands').click();
+  })
+
+  cy.url().should('include', 'commands');
+
+  cy.wait(500);
+
+  cy.get('[data-cy=safeCommands]');
+
+  cy.get('[data-cy=command]').should('have.length', numSafeCommands);
+
+  if (numUnsafeCommands) {
+
+    cy.get('[data-cy=unsafeCommands]');
+    cy.get('[data-cy=commandNav]').within(() => {
+      cy.contains('Unsafe Commands').click();
+    })
+
+    cy.get('[data-cy=submit]').click();
+
+    cy.get('[data-cy=command]').should('have.length', numUnsafeCommands);
+  }
+}
+
+export const watchForAlert = (func)  => {
+  const stub = cy.stub()
+  cy.on('window:alert', stub)
+  func();
+  cy.wait(4000).then(() => {
+    expect(stub).not.called;
+  })
+}
+
+export const xssPrefix = "xss/"
+
+export const xssHtml = `xss%22%3C%3Cimg%20src%3D1%20onerror%3Dalert%28document.domain%29%3Exss`;
+export const partialXssDecoding = `xss%22%3C%3Cimg%20src%3D1%20onerror%3Dwindow.alert(document.domain)%3Exss`
+export const renderedSanitizedXSS = `xss"<<img src="1">xss`;
+export const plaintextXSS = "<<img src='1' onerror='window.alert(document.domain)'>";
+
+export const plaintextXSS2 = "<img src='1' onerror='window.alert(document.domain)'>";
+export const xssEncoded = "%253Cimg%2520src%253D'1'%2520onerror%253D'window.alert%28document.domain%29'%253E";
+export const windowAlertText = "window.alert";
+
 // Tabs names
+export const OPTION_PICKER = '[data-cy=option-picker]'
+export const SELECT_EVENT_TYPES = '[sectionName=select-event-types]'
+
 export const REPAIR_TASK_TAB_NAME = "Repair Tasks";
 export const CLUSTER_TAB_NAME = "Cluster";

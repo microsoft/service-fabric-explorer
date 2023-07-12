@@ -1,4 +1,6 @@
-import { Component, ViewChild, ElementRef, Input, AfterViewInit, OnChanges, ChangeDetectionStrategy, Output, EventEmitter, OnDestroy } from '@angular/core';
+import { Component, ViewChild, ElementRef, Input, AfterViewInit, OnChanges, ChangeDetectionStrategy, Output, EventEmitter, OnDestroy, SecurityContext } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
+import { pregeneratedColors } from 'src/app/Common/Constants';
 import { ITimelineData } from 'src/app/Models/eventstore/timelineGenerators';
 import { Timeline, DataItem, DataGroup, moment, DataSet } from 'vis-timeline/standalone/esm';
 
@@ -11,7 +13,7 @@ import { Timeline, DataItem, DataGroup, moment, DataSet } from 'vis-timeline/sta
 export class EventStoreTimelineComponent implements AfterViewInit, OnChanges, OnDestroy {
 
   @Input() events: ITimelineData;
-
+  @Input() additionalWhiteListClasses = [];
   @Input() fitOnDataChange = true;
   @Input() displayMoveToStart = true;
   @Input() displayMoveToEnd = true;
@@ -31,7 +33,7 @@ export class EventStoreTimelineComponent implements AfterViewInit, OnChanges, On
   @ViewChild('visualization') container: ElementRef;
 
 
-  constructor() { }
+  constructor(private sanitzer: DomSanitizer) { }
 
   ngOnChanges() {
     if (this.timeline) {
@@ -47,10 +49,10 @@ export class EventStoreTimelineComponent implements AfterViewInit, OnChanges, On
     this.timeline = new Timeline(this.container.nativeElement, items, {
       locale: 'en_US',
       xss: {
-        disabled: true,
+        disabled: false,
         filterOptions: {
           whiteList: {
-            "div": ['class', 'inner-tooltip', 'white-space', 'margin-left', 'color'],
+            "div": ['class', 'inner-tooltip', 'white-space', 'margin-left', 'color', 'background-color'].concat(pregeneratedColors.map(c => "color-"+c)),
             "table": [],
             "tbody": [],
             "tr": [],
@@ -58,10 +60,6 @@ export class EventStoreTimelineComponent implements AfterViewInit, OnChanges, On
             "b": [],
             "br": []
           },
-          css: {
-            'color': true,
-            'background-color': true
-          }
         }
       }
     });
@@ -70,12 +68,23 @@ export class EventStoreTimelineComponent implements AfterViewInit, OnChanges, On
       this.itemClicked.emit(data.item)
     })
 
+    this.flipTimeZone(this.isUTC);
+
     this.updateList(this.events);
   }
 
-  public flipTimeZone() {
+  private sanitizeData(items: DataSet<DataGroup | DataItem>) {
+    items.forEach(item => {
+      item.content = this.sanitzer.sanitize(SecurityContext.HTML, item.content);
+      if(item.title) {
+        item.title = this.sanitzer.sanitize(SecurityContext.HTML, item.title);
+      }
+    })
+  }
+
+  public flipTimeZone(utc: boolean) {
     this.timeline.setOptions({
-      moment: this.isUTC ? moment : moment.utc
+      moment: utc ? moment.utc : moment
     });
   }
 
@@ -123,11 +132,13 @@ export class EventStoreTimelineComponent implements AfterViewInit, OnChanges, On
 
     if (events) {
       if (events.groups) {
+        this.sanitizeData(events.groups)
         this.timeline.setData({
           groups: events.groups,
         });
       }
       if (events.items) {
+        this.sanitizeData(events.items);
         this.timeline.setData({
           items: events.items
         });
@@ -136,11 +147,15 @@ export class EventStoreTimelineComponent implements AfterViewInit, OnChanges, On
 
       const options = {
         selectable: false,
-        template: (itemData, element, data) => {
+        template: (itemData, element: HTMLElement, data) => {
           if (data.isCluster) {
-            return `<div style="background-color:${itemData.items[0].color}">${data.items.length} ${data.items[0].kind} events </div>`
+            const color = itemData.items[0].groupColor;
+            if(color) {
+              element.classList.add(color);
+            }
+            return this.sanitzer.sanitize(SecurityContext.HTML, `<div class="${color}">${data.items.length} ${data.items[0].kind} events </div>`)
           } else {
-            return `<div>${data.content}</div>`;
+            return this.sanitzer.sanitize(SecurityContext.HTML, `<div>${data.content}</div>`);
           }
         },
         margin: {
@@ -149,10 +164,12 @@ export class EventStoreTimelineComponent implements AfterViewInit, OnChanges, On
           }
         },
         tooltip: {
-          overflowMethod: "flip" as any,
+          followMouse: true,
           template: (itemData) => {
+            let content = itemData.title;
+
             if(itemData.isCluster) {
-              return `<div class="inner-tooltip">
+              content =  `<div class="inner-tooltip">
                   <div>
                   ${itemData.items[0].group} ${itemData.items.length}  events
                   </div>
@@ -162,9 +179,9 @@ export class EventStoreTimelineComponent implements AfterViewInit, OnChanges, On
                     end : ${itemData.items[itemData.items.length - 1].start}
                   </div>
               </div>`
-            }else {
-              return `${itemData.title}`
             }
+
+            return this.sanitzer.sanitize(SecurityContext.HTML, content);
           }
         },
         stack: true,

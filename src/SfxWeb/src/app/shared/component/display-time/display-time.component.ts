@@ -24,7 +24,7 @@ export class DisplayTimeComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnChanges(): void {
-    this.localTime = this.time.toLocaleString();
+    this.localTime = new Date(this.time).toISOString();
   }
 
   ngOnDestroy(): void {

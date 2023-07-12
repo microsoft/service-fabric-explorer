@@ -1,6 +1,6 @@
 <div class="detail-pane" data-cy="imagestore">
         <div class="detail-pane essen-pane">
-            <h4>Configuration</h4>
+            <h2>Configuration</h2>
             <div class="table-responsive">
                 <table class="table detail-table table-layout-fixed" role="presentation" style="width: 100%;">
                     <tr>
@@ -19,8 +19,8 @@
             <strong>Image store viewer does not appear to be supported on this cluster.</strong>
         </div>
 
-        <div class="detail-pane store-content-pane essen-pane" *ngIf="imagestoreRoot.isNative && imagestoreRoot.isAvailable">
-            <h4>Store Content</h4>
+        <div class="detail-pane essen-pane" *ngIf="imagestoreRoot.isNative && imagestoreRoot.isAvailable">
+            <h2>Store Content</h2>
             <div class="image-store-breadcrumb">
                 <span *ngIf="imagestoreRoot.isLoadingFolderContent" style="padding-right: 5px;">
                     <span  class="mif-refresh mif-large rotate" aria-label="refresh" title="Loading folder content"></span>

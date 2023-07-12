@@ -16,6 +16,11 @@ button {
 }
 
 .node {
+
+  &:hover {
+    color: var(--font-primary-color);
+  }
+
   color: var(--font-primary-color);
   .more-children {
     margin-left: 46px;
@@ -25,7 +30,7 @@ button {
     white-space: nowrap;
     cursor: pointer;
     position: relative;
-
+    min-height: 23px;
     width: calc(100% - 10px);
     min-width: fit-content;
     margin-left: 5px;
@@ -73,10 +78,8 @@ button {
 }
 
 .disabled {
-  .icon {
-    cursor: auto;
-    color: gray;
-  }
+  cursor: auto;
+  color: gray;
 }
 
 ul {

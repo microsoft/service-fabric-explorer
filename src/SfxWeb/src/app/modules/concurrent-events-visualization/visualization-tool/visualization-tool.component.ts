@@ -1,20 +1,8 @@
-import { Component, OnInit, OnChanges, AfterViewInit, Input, ViewChild, ElementRef } from '@angular/core';
-import { EventStoreComponent } from '../../event-store/event-store/event-store.component';
-import * as Highcharts from 'highcharts';
+import { Component, OnChanges, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
 import { chart, Chart, Options, SeriesOptionsType, SeriesSankeyNodesOptionsObject } from 'highcharts';
-import HighchartsSankey from "highcharts/modules/sankey";
-import HighchartsOrganization from "highcharts/modules/organization";
 import { DetailBaseComponent } from 'src/app/ViewModels/detail-table-base.component';
-import { ListColumnSetting } from 'src/app/Models/ListSettings';
+import { ListColumnSetting, ListColumnSettingWithEmbeddedVis } from 'src/app/Models/ListSettings';
 import { IConcurrentEvents, IRCAItem } from 'src/app/Models/eventstore/rcaEngine';
-
-HighchartsSankey(Highcharts);
-HighchartsOrganization(Highcharts);
-
-export interface IEventStoreRef extends ListColumnSetting {
-  eventStoreRef: EventStoreComponent;
-}
-
 
 
 @Component({
@@ -31,7 +19,7 @@ export class VisualizationToolComponent implements OnChanges, AfterViewInit, Det
 
   visEvents : IConcurrentEvents;
   item : IRCAItem;
-  listSetting : IEventStoreRef;
+  listSetting : ListColumnSettingWithEmbeddedVis;
 
   @ViewChild('container') private container: ElementRef;
 
@@ -72,11 +60,10 @@ export class VisualizationToolComponent implements OnChanges, AfterViewInit, Det
   }
 
   ngAfterViewInit(): void {
-    this.visEvents = this.listSetting.eventStoreRef.simulEvents.find(
-      visEvent => visEvent.eventInstanceId == this.item.eventInstanceId);
+
     this.options.series = [this.traverse()];
     const data = this.traverse();
-    this.options.chart.height = data.levels.length * 110;
+    this.options.chart.height = data.levels.length * 110 || 1;
     this.chart = chart(this.container.nativeElement, this.options);
   }
 
@@ -94,6 +81,7 @@ export class VisualizationToolComponent implements OnChanges, AfterViewInit, Det
     }
     // perform BFS to convert to organization chart
     let queue: IConcurrentEvents[] = [];
+    this.visEvents = this.listSetting.visEvents[this.item.eventInstanceId];
     if (this.visEvents) {
       queue = [this.visEvents];
 
@@ -106,7 +94,7 @@ export class VisualizationToolComponent implements OnChanges, AfterViewInit, Det
           maxHeight = Math.max(currSize, maxHeight);
           for (let i = 0; i < currSize; i++) {
               let currEvent = queue.shift();
-              let action = currEvent.reasonForEvent ? currEvent.reasonForEvent : "";
+              let action = currEvent.reasonForEvent ? "Reason: " + currEvent.reasonForEvent + "</br>" : "";
               let newNodeComponent : SeriesSankeyNodesOptionsObject = {
                   id: fontPrefix + currEvent.eventInstanceId + "</p>",
                   title: titlePrefix + action + currEvent.kind + "</p>",

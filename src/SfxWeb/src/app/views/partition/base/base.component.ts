@@ -1,4 +1,4 @@
-import { Component, Injector } from '@angular/core';
+import { Component, ElementRef, Injector } from '@angular/core';
 import { ITab } from 'src/app/shared/component/navbar/navbar.component';
 import { PartitionBaseControllerDirective } from '../PartitionBase';
 import { DataService } from 'src/app/services/data.service';
@@ -7,13 +7,14 @@ import { IdGenerator } from 'src/app/Utils/IdGenerator';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Observable, of } from 'rxjs';
 import { Constants } from 'src/app/Common/Constants';
+import { IBaseView } from '../../BaseView';
 
 @Component({
   selector: 'app-base',
   templateUrl: './base.component.html',
   styleUrls: ['./base.component.scss']
 })
-export class BaseComponent extends PartitionBaseControllerDirective {
+export class BaseComponent extends PartitionBaseControllerDirective implements IBaseView {
 
   tabs: ITab[] = [{
     name: 'essentials',
@@ -22,10 +23,14 @@ export class BaseComponent extends PartitionBaseControllerDirective {
     {
       name: 'details',
       route: './details'
+    },
+    {
+      name: 'commands',
+      route: './commands'
     }
   ];
 
-  constructor(protected dataService: DataService, injector: Injector, private tree: TreeService) {
+  constructor(protected dataService: DataService, injector: Injector, private tree: TreeService, public el: ElementRef) {
     super(dataService, injector);
   }
 

@@ -18,9 +18,6 @@ import { RoutesService } from 'src/app/services/routes.service';
 export class DeployedApplication extends DataModelBase<IRawDeployedApplication> {
     public decorators: IDecorators = {
         decorators: {
-            TypeName: {
-                displayValueInHtml: (value) => HtmlUtils.getLinkHtml(value, this.appTypeViewPath)
-            }
         }
     };
 

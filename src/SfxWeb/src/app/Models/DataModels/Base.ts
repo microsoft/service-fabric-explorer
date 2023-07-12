@@ -5,7 +5,6 @@ import { Observable, of, Subject } from 'rxjs';
 import { IHealthStateChunk, IClusterHealthChunkQueryDescription, IHealthStateFilter } from '../HealthChunkRawDataTypes';
 import { mergeMap, map } from 'rxjs/operators';
 import { ActionCollection } from '../ActionCollection';
-
 // -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
@@ -61,7 +60,7 @@ export interface IDataModel<T> {
 // Used to decorate the properties in raw object to customize the display names and values.
 export interface IDecorator {
     displayName?: (name: string) => string;
-    displayValueInHtml?: (value: any) => string;
+    displayValue?: (value: any) => string;
 }
 
 export interface IDecorators {

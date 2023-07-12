@@ -34,7 +34,7 @@ import { DeployedApplicationCollection } from '../Models/DataModels/collections/
 import { MatDialog } from '@angular/material/dialog';
 import { RepairTaskCollection } from '../Models/DataModels/collections/RepairTaskCollection';
 import { ApplicationEvent, ClusterEvent, FabricEventBase, NodeEvent, PartitionEvent, ReplicaEvent, ServiceEvent } from '../Models/eventstore/Events';
-import { IEventStoreData } from '../modules/event-store/event-store/event-store.component';
+import { EventType, IEventStoreData } from '../modules/event-store/event-store/event-store.component';
 import { SettingsService } from './settings.service';
 import { RepairTask } from '../Models/DataModels/repairTask';
 import { ApplicationTimelineGenerator, ClusterTimelineGenerator, NodeTimelineGenerator, PartitionTimelineGenerator, RepairTaskTimelineGenerator } from '../Models/eventstore/timelineGenerators';
@@ -335,28 +335,28 @@ export class DataService {
         data.listSettings = data.eventsList.settings;
         data.getEvents = () => data.eventsList.collection.map(event => event.raw);
         data.setDateWindow = (startDate: Date, endDate: Date) => data.eventsList.setDateWindow(startDate, endDate);
-        data.timelineResolver = (id: string) => data.eventsList.collection.some(item => item.raw.eventInstanceId === id);
+        data.objectResolver = (id: string) => data.eventsList.collection.find(item => item.raw.eventInstanceId === id);
         return data;
     }
 
     public getRepairTasksData(settings: SettingsService): IEventStoreData<RepairTaskCollection, RepairTask>{
         return {
             eventsList: this.repairCollection,
-            timelineGenerator: new RepairTaskTimelineGenerator(),
+            type: "RepairTask",
             displayName: 'Repair Tasks',
             listSettings: settings.getNewOrExistingCompletedRepairTaskListSettings(),
             getEvents: () => this.repairCollection.collection,
-            timelineResolver:  (id: string) => {
-              return this.repairCollection.collection.some(task => task.raw.TaskId === id);
+            objectResolver:  (id: string) => {
+              return this.repairCollection.collection.find(task => task.raw.TaskId === id);
             }
         };
     }
 
     public getClusterEventData(): IEventStoreData<ClusterEventList, ClusterEvent>{
         const list = new ClusterEventList(this);
-        const d = {
+        const d : IEventStoreData<ClusterEventList, ClusterEvent> = {
             eventsList : list,
-            timelineGenerator : new ClusterTimelineGenerator(),
+            type : "Cluster",
             displayName : 'Cluster',
         };
 
@@ -366,9 +366,9 @@ export class DataService {
 
     public getNodeEventData(nodeName?: string): IEventStoreData<NodeEventList, NodeEvent>{
         const list = new NodeEventList(this, nodeName);
-        const d = {
+        const d: IEventStoreData<NodeEventList, NodeEvent> = {
             eventsList: list,
-            timelineGenerator: new NodeTimelineGenerator(),
+            type: "Node",
             displayName: nodeName ? nodeName : 'Nodes',
         };
 
@@ -378,9 +378,9 @@ export class DataService {
 
     public getApplicationEventData(applicationId?: string): IEventStoreData<ApplicationEventList, ApplicationEvent> {
         const list = new ApplicationEventList(this, applicationId);
-        const d = {
+        const d: IEventStoreData<ApplicationEventList, ApplicationEvent> = {
             eventsList : list,
-            timelineGenerator : applicationId ? new ApplicationTimelineGenerator() : null,
+            type : applicationId ? "Application" : null,
             displayName : applicationId ? applicationId : 'Apps',
         };
 
@@ -401,9 +401,9 @@ export class DataService {
 
     public getPartitionEventData(partitionId?: string): IEventStoreData<PartitionEventList, PartitionEvent> {
         const list = new PartitionEventList(this, partitionId);
-        const d = {
+        const d: IEventStoreData<PartitionEventList, PartitionEvent> = {
             eventsList : list,
-            timelineGenerator : new PartitionTimelineGenerator(),
+            type : "Partition",
             displayName : partitionId
         };
 
@@ -413,9 +413,10 @@ export class DataService {
 
     public getReplicaEventData(partitionId: string, replicaId?: string): IEventStoreData<ReplicaEventList, ReplicaEvent> {
         const list = new ReplicaEventList(this, partitionId, replicaId);
-        const d = {
+        const d: IEventStoreData<ReplicaEventList, ReplicaEvent> = {
             eventsList : list,
-            displayName : replicaId
+            displayName : replicaId || partitionId + " replicas",
+            type: "Replica"
         };
 
         this.addFabricEventData<ReplicaEventList, ReplicaEvent>(d);

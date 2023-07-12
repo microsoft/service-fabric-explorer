@@ -1,0 +1,48 @@
+<label>
+    <span>{{commandParam.name}}</span>
+    <div *ngIf="!commandParam.allowCustomValAndOptions; else dropDown" >
+        <div [ngSwitch]="commandParam.type">
+            <input *ngSwitchCase="paramTypes.string" [id]="commandParam.name" [name]="commandParam.name"
+            type="text" [formControl]="value" [required]="commandParam.required" class="input-flat" />
+            
+            <input *ngSwitchCase="paramTypes.number" [id]="commandParam.name" [name]="commandParam.name"
+            type="number" [formControl]="value" [required]="commandParam.required" class="input-flat"/>   
+            
+            <div *ngSwitchCase="paramTypes.enum">
+                <ng-container *ngTemplateOutlet="dropDown"></ng-container>
+            </div>
+            <!-- no need to account for required fields, as required switches are in the prefix -->
+            <div *ngSwitchDefault>
+                <app-toggle (stateChange)="setFormValue($event)" [state]="commandParam.value"></app-toggle>
+            </div>
+        </div>
+    </div>
+</label>
+
+<!-- dropdown applies to enums but also others with predefined options -->
+<ng-template #dropDown>
+    <div ngbDropdown 
+    [class]="(value.invalid ? 'invalid ' : 'valid ') + (commandParam.required ? 'required' : '')" >
+        
+        <input [id]="commandParam.name" [name]="commandParam.name"
+        type="hidden" [formControl]="value" [required]="commandParam.required" />
+        
+        <button class="simple-button" ngbDropdownToggle>{{commandParam.value ? commandParam.value : '-Select-'}}</button>
+        
+        <div ngbDropdownMenu>
+            <div>
+                <button value="" ngbDropdownItem (click)="setFormValue($event.target.value)">-Select-</button>
+            </div>
+            <div *ngFor="let option of commandParam.options" >
+                <button [value]="option"  
+                ngbDropdownItem (click)="setFormValue($event.target.value)">
+                    {{option}}
+                </button>
+            </div>
+            <div *ngIf="commandParam.allowCustomValAndOptions">
+                <input [id]="commandParam.name + '-custom'" [name]="commandParam.name + '-custom'"
+                type="text" [formControl]="value" placeholder="custom input" class="input-flat"/>
+            </div>
+        </div>
+    </div>
+</ng-template>

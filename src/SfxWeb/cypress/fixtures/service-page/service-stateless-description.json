@@ -10,7 +10,7 @@
     "InstanceCount": 1,
     "MinInstanceCount": 1,
     "MinInstancePercentage": 0,
-    "PlacementConstraints": "",
+    "PlacementConstraints": "(nodetype == \"main\")",
     "CorrelationScheme": [],
     "ServiceLoadMetrics": [],
     "ServicePlacementPolicies": [],

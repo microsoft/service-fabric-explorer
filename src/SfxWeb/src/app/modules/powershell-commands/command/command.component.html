@@ -1,0 +1,58 @@
+<div class="detail-pane essen-pane" [class]="command.safetyLevel">
+<app-collapse-container [sectionName]="command.name">
+    <div collapse-header class="command-name">
+        <span [ngSwitch]="command.safetyLevel">
+            <app-health-badge *ngSwitchCase="safetyLevelEnum.safe" 
+            text="Safe Command" [showText]="false" [badgeClass]="BadgeConstants.BadgeOK"></app-health-badge>
+            <app-health-badge *ngSwitchCase="safetyLevelEnum.unsafe" 
+            text="Unsafe Command" [showText]="false" [badgeClass]="BadgeConstants.BadgeWarning"></app-health-badge>
+            <app-health-badge *ngSwitchCase="safetyLevelEnum.dangerous"
+            text="Dangerous Command" [showText]="false" [badgeClass]="BadgeConstants.BadgeError"></app-health-badge>
+        </span>
+        <h2 class="command-title">{{command.adminOnly? command.name + ' - Admin Only' : command.name}}</h2>
+        <button class="reference-link" *ngIf="command.referenceUrl" (click)="goToReference($event)" [attr.aria-label]="'learn about' + command.name">
+            <span class="mif-info link"></span>
+        </button>
+    </div>
+
+    <div collapse-body>
+        <form [formGroup]="inputForm">
+            <ng-container formGroupName="requiredInputs" *ngIf="requiredParams.length">
+                <h3 class="param-title">Required Parameters</h3>
+                <div class="input-group">
+                    <div *ngFor="let commandParam of requiredParams">
+                       <app-command-input [commandParam]="commandParam" [inputGroup]="requiredInputs" data-cy="requiredInput"></app-command-input>
+                    </div>
+                </div>
+            </ng-container>
+            
+            <ng-container formGroupName="optionalInputs" *ngIf="optionalParams.length">
+                <app-collapse-container sectionName="Optional Parameters"[collapsed]="true" >
+                    <h3 class="param-title" collapse-header >Optional Parameters</h3>
+                    <div collapse-body class="input-group" >
+                        <div *ngFor="let commandParam of optionalParams">
+                            <app-command-input [commandParam]="commandParam" [inputGroup]="optionalInputs" data-cy="optionalInput"></app-command-input>
+                        </div>
+                    </div>
+                </app-collapse-container>
+            </ng-container>
+        </form>
+
+        <app-warning data-cy="warning" *ngIf="!inputForm.valid" description="The following parameters have invalid values: " iconSize="mif-lg">
+            <span class="invalid-text" description-add-on>{{invalidInputs}}</span>
+        </app-warning>
+       
+        <div class="card">
+            <div class="card-body">
+                <app-clip-board style="float: right;" [text]="command.getScript()" data-cy="clipboard" 
+                    [disabled]="!inputForm.valid" [tooltipText]="inputForm.valid ? '' : 'Missing required parameters!'" name="command"></app-clip-board>
+                <p class="card-text" data-cy="copy-text">
+                    {{(command.safetyLevel === safetyLevelEnum.dangerous ? '#' : '') + command.prefix}}
+                    <span *ngFor="let param of command.paramsToStringArr()"> {{param.name}} <span class="param-value"> {{param.value}} </span></span>
+                </p>
+            </div>
+        </div>
+    </div>
+    
+</app-collapse-container>
+</div>

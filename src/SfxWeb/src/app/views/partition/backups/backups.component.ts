@@ -13,7 +13,7 @@ import { PartitionDisableBackUpComponent } from 'src/app/modules/backup-restore/
 import { PartitionEnableBackUpComponent } from 'src/app/modules/backup-restore/partition-enable-back-up/partition-enable-back-up.component';
 import { PartitionTriggerBackUpComponent } from '../partition-trigger-back-up/partition-trigger-back-up.component';
 import { PartitionRestoreBackUpComponent } from '../partition-restore-back-up/partition-restore-back-up.component';
-import { IOnDateChange } from 'src/app/modules/event-store/double-slider/double-slider.component';
+import { IOnDateChange } from 'src/app/modules/time-picker/double-slider/double-slider.component';
 
 @Component({
   selector: 'app-backups',
@@ -41,7 +41,7 @@ export class BackupsComponent extends PartitionBaseControllerDirective {
     this.partitionBackupListSettings = this.settings.getNewOrExistingListSettings('partitionBackups', [null], [
       new ListColumnSetting('raw.BackupId', 'BackupId', {
         enableFilter: false,
-        getDisplayHtml: (item, property) =>  `<span class="link">${property}</span>`,
+        cssClasses: "link",
         clickEvent: item => item.action.run()
       }),
       new ListColumnSetting('raw.BackupType', 'BackupType'),

@@ -57,10 +57,7 @@ const routes: Routes = [
 const isIframe = window !== window.parent && !window.opener;
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes, { useHash: true, relativeLinkResolution: 'legacy' ,
-      // Don't perform initial navigation in iframes
-      initialNavigation: !isIframe ? 'enabled' : 'disabled'
-})],
+  imports: [RouterModule.forRoot(routes, { useHash: true, relativeLinkResolution: 'legacy', initialNavigation: !isIframe ? 'enabledBlocking' : 'disabled'})],
   exports: [RouterModule]
 })
 export class AppRoutingModule { }

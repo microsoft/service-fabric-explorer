@@ -1,8 +1,8 @@
-<div class="detail-pane essen-pane" *ngIf="appTypeGroup">
+<div class="detail-pane essen-pane" *ngIf="appTypeGroup" data-cy="apptypeviewer">
     <app-collapse-container sectionName="Application Type versions">
-        <h4 collapse-header>
+        <h2 collapse-header>
             Application Type versions
-        </h4>
+        </h2>
         <div collapse-body>
             <div ngbNav #nav="ngbNav" class="nav-wrapper" >
                 <div ngbNavItem>
@@ -30,9 +30,9 @@
 
 <div class="detail-pane essen-pane" *ngIf="appTypeGroup">
     <app-collapse-container sectionName="Applications">
-        <h4 collapse-header>
+        <h2 collapse-header>
             Applications
-        </h4>
+        </h2>
         <app-detail-list [list]="appTypeGroup.apps" [listSettings]="appsListSettings" collapse-body data-cy="applicationsList"></app-detail-list>
     </app-collapse-container>
 </div>
