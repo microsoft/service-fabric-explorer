@@ -1,7 +1,7 @@
 import { NgModule, APP_INITIALIZER } from '@angular/core';
 import {
   IPublicClientApplication, PublicClientApplication,
-  InteractionType, BrowserCacheLocation
+  InteractionType, BrowserCacheLocation, LogLevel
 } from '@azure/msal-browser';
 import {
   MsalGuard, MsalBroadcastService,
@@ -16,16 +16,28 @@ export function initializerFactory(env: AadConfigService): any {
   return () => env.init();
 }
 
+export function loggerCallback(logLevel: LogLevel, message: string) {
+  console.log(message);
+}
+
 export function MSALInstanceFactory(config: AadConfigService): IPublicClientApplication {
   const client = new PublicClientApplication({
     auth: {
       clientId: config.getCluster(),
       authority: config.getAuthority(),
+      navigateToLoginRequestUrl: true
     },
     cache: {
       cacheLocation: BrowserCacheLocation.LocalStorage,
       storeAuthStateInCookie: Utils.isIE
     },
+    system: {
+      loggerOptions: {
+        loggerCallback,
+        logLevel: LogLevel.Info,
+        piiLoggingEnabled: false
+      }
+    }
   });
   return client;
 }

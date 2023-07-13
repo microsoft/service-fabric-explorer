@@ -20,16 +20,14 @@ export class AadConfigService {
   }
 
    init(): Promise<boolean> {
-     return new Promise( (resolve, reject) => {
-      this.getAADmetadata().subscribe(data => {
-        this.metaData = data;
+    return this.getAADmetadata().pipe(map(data => {
+      this.metaData = data;
 
-        if (data.isAadAuthType){
-          this.aadEnabled = true;
-        }
-        resolve(true);
-      });
-     });
+      if (data.isAadAuthType){
+        this.aadEnabled = true;
+      }
+      return true;
+    })).toPromise();
   }
 
   public getAADmetadata(): Observable<AadMetadata> {

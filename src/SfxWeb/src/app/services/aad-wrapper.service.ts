@@ -2,8 +2,8 @@ import { Inject, Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { AadConfigService } from '../modules/msal-dynamic-config/config-service.service';
 import { MsalService, MsalBroadcastService, MSAL_GUARD_CONFIG, MsalGuardConfiguration } from '@azure/msal-angular';
-import { AuthenticationResult, EventMessage, EventType, InteractionStatus, PopupRequest } from '@azure/msal-browser';
-import { filter, map, mergeMap } from 'rxjs/operators';
+import { InteractionStatus, PopupRequest, InteractionRequiredAuthError } from '@azure/msal-browser';
+import { filter, map, mergeMap, catchError } from 'rxjs/operators';
 import { AccountInfo } from '@azure/msal-common';
 /*
 Wrapping around the config service in the MSAL module.
@@ -24,21 +24,19 @@ export class AadWrapperService {
               @Inject(MSAL_GUARD_CONFIG) private msalGuardConfig: MsalGuardConfiguration) { }
 
   init(): Observable<any> {
-
     if (this.aadEnabled) {
       return this.msalBroadcastService.inProgress$
-      .pipe(
-        filter((status: InteractionStatus) => status === InteractionStatus.None)
-      )
-      .pipe(mergeMap(() => {
-        if (this.msalService.instance.getAllAccounts().length === 0) {
-          this.login();
-        }else{
-          this.checkAndSetActiveAccount();
-          return of(null)
-        }
-      }))
-
+        .pipe(
+          filter((status: InteractionStatus) => status === InteractionStatus.None)
+        )
+        .pipe(mergeMap((status) => {
+          if (this.msalService.instance.getAllAccounts().length === 0) {
+            return this.login();
+          } else {
+            this.checkAndSetActiveAccount();
+            return of(null)
+          }
+        }))
     } else {
       return of(null);
     }
@@ -59,7 +57,7 @@ export class AadWrapperService {
   }
 
   login() {
-    this.msalService.loginRedirect({...this.msalGuardConfig.authRequest} as PopupRequest)
+    return this.msalService.loginRedirect({...this.msalGuardConfig.authRequest} as PopupRequest)
   }
 
   logout() {
@@ -68,5 +66,16 @@ export class AadWrapperService {
 
   public get aadEnabled() {
     return this.aadConfigService.aadEnabled;
+  }
+
+  public acquireToken() {
+    return this.msalService.acquireTokenSilent({
+      scopes: [`${this.aadConfigService.getCluster()}/.default`],
+      authority: this.aadConfigService.getAuthority()
+    }).pipe(catchError(err => {
+      if (err instanceof InteractionRequiredAuthError) {
+        return this.login();
+      }
+    }))
   }
 }

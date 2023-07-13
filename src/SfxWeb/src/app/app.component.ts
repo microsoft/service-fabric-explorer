@@ -63,8 +63,11 @@ export class AppComponent implements OnInit {
     if(this.standalone.isStandalone()) {
       this.initializeView();
     }else{
-      this.AadService.init().subscribe(() => {
+      this.AadService.init().subscribe(next => {
         this.initializeView();
+      },
+      err => {
+        console.log(err)
       });
     }
 

@@ -69,7 +69,7 @@
             (click)="smallScreenLeftPanelWidth === '0%' ? resize(60): resize(0)" tabindex="0" [title]="smallScreenLeftPanelWidth === '0%' ? 'Open navigation tree panel' : 'Close navigation tree panel'">
       menu
     </button>
-      <div class="left-panel left-bar"  [ngStyle]="{'width': smallScreenSize ? smallScreenLeftPanelWidth : treeWidth, 'display' : smallScreenSize ?  smallScreenTreeDisplay : treeDisplay }">
+      <div class="left-panel left-bar" *ngIf="showTree"  [ngStyle]="{'width': smallScreenSize ? smallScreenLeftPanelWidth : treeWidth, 'display' : smallScreenSize ?  smallScreenTreeDisplay : treeDisplay }">
           <nav class="tree-container" [attr.aria-hidden]="smallScreenSize ? smallScreenLeftPanelWidth === '0%' : false" role="navigation">
             <app-tree-view (treeResize)="resize($event)" [smallWindowSize]="smallScreenSize"  ></app-tree-view>
           </nav>
