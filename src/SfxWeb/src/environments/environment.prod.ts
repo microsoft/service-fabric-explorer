@@ -4,5 +4,6 @@ export const environment = {
   version: "9.1.2",
   assetBase: "",
   showBeta: false,
-  telemetryKey: ""
+  telemetryKey: "",
+  msalLogging: false
 };

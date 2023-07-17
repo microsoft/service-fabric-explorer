@@ -8,7 +8,8 @@ export const environment = {
   version: 'test',
   assetBase: '',
   showBeta: false,
-  telemetryKey: ''
+  telemetryKey: '',
+  msalLogging: true
 };
 
 /*

@@ -11,6 +11,7 @@ import {
 } from '@azure/msal-angular';
 import { AadConfigService } from './config-service.service';
 import { Utils } from 'src/app/Utils/Utils';
+import { environment } from 'src/environments/environment';
 
 export function initializerFactory(env: AadConfigService): any {
   return () => env.init();
@@ -33,7 +34,7 @@ export function MSALInstanceFactory(config: AadConfigService): IPublicClientAppl
     },
     system: {
       loggerOptions: {
-        loggerCallback,
+        loggerCallback: environment.msalLogging ? loggerCallback : null,
         logLevel: LogLevel.Info,
         piiLoggingEnabled: false
       }

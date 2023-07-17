@@ -35,10 +35,13 @@
         <div ngbDropdownMenu style="padding: 10px;" *ngIf="AadService.user">
           <div ngbDropdownItem style="padding-bottom: 10px;" class="repress-highlight">
             <div>
-              User: {{AadService.user.name}}
+              User: {{AadService.user.user}}
             </div>
             <div>
-              Roles: {{AadService.user.idTokenClaims['roles']}}
+              Roles: {{AadService.user.roles}}
+            </div>
+            <div>
+              {{AadService.useAdal ? 'adal' : 'msal'}}
             </div>
           </div>
           <button class="simple-button" (click)="AadService.logout()" ngbDropdownItem>

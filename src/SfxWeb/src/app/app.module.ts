@@ -16,7 +16,6 @@ import { DebuggingModule } from './views/debugging/debugging.module';
 import { TelemetrySnackBarComponent } from './telemetry-snack-bar/telemetry-snack-bar.component';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { AppInsightsErrorHandler } from './error-handling';
-import { MsalRedirectComponent } from '@azure/msal-angular';
 import { RestClientService } from './services/rest-client.service';
 import { MsalConfigDynamicModule } from './modules/msal-dynamic-config/msal-dynamic-config.module';
 import { StandaloneIntegrationService } from './services/standalone-integration.service';
@@ -58,6 +57,6 @@ import { initApp } from './app-initializers';
     httpInterceptorProviders,
     { provide: ErrorHandler, useClass: AppInsightsErrorHandler }
   ],
-  bootstrap: [AppComponent, MsalRedirectComponent],
+  bootstrap: [AppComponent, ],
 })
 export class AppModule { }

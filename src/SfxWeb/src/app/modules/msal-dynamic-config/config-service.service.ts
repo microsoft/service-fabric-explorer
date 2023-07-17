@@ -41,4 +41,8 @@ export class AadConfigService {
   public getAuthority() {
     return this.metaData.metadata.authority || '';
   }
+
+  public getTenant() {
+    return this.metaData.metadata.tenant || '';
+  }
 }
