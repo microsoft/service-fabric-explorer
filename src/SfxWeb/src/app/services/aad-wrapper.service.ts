@@ -6,6 +6,7 @@ import { InteractionStatus, PopupRequest, InteractionRequiredAuthError, ServerEr
 import { filter, map, mergeMap, catchError } from 'rxjs/operators';
 import AuthenticationContext, { Options } from 'adal-angular';
 import { StringUtils } from '../Utils/StringUtils';
+import { StorageService } from './storage.service';
 /*
 Wrapping around the config service in the MSAL module.
 This is done to make dependency easier given we are trying to avoid http interceptor issues and circular dependency
@@ -43,19 +44,28 @@ export class AadWrapperService {
   public useAdal = false;
   public user: IUserInfo;
 
+  private daysBeforeMsalAttempt = 7;
+  private readonly MSAL_CHECK_KEY = "msalCheckDate";
+
   constructor(private aadConfigService: AadConfigService,
               private msalService: MsalService,
               private msalBroadcastService: MsalBroadcastService,
+              private storageService: StorageService,
               @Inject(MSAL_GUARD_CONFIG) private msalGuardConfig: MsalGuardConfiguration) { }
 
   init(): Observable<any> {
     this.initAdal();
+
+    const expirationCheck = new Date(new Date().setDate(new Date().getDate() - this.daysBeforeMsalAttempt)).getTime();
+    const msalCheckDate = this.storageService.getValueNumber(this.MSAL_CHECK_KEY, new Date().getTime());
+
     //TODO consider having a cached value to attempt msal again?
-    if (window.location.hash.includes("id_token=") || this.isAdalAuthenticated) {
+    if (window.location.hash.includes("id_token=") || (this.isAdalAuthenticated && msalCheckDate > expirationCheck )) {
       this.useAdal = true;
       this.handleWindowCallbackAdal();
       return of(null);
     } else if (this.aadEnabled) {
+      this.storageService.setValue(this.MSAL_CHECK_KEY, new Date().getTime());
       return this.msalService.handleRedirectObservable().pipe(
         catchError(err => {
           //dont attempt login here because it has a slight delay which can cause msal to attempt a login after.
