@@ -26,8 +26,8 @@ export function MSALInstanceFactory(config: AadConfigService): IPublicClientAppl
     auth: {
       clientId: config.getCluster(),
       authority: config.getAuthority(),
-      // navigateToLoginRequestUrl: false,
-      //redirectUri: window.location.host + window.location.pathname
+      navigateToLoginRequestUrl: false,
+      // redirectUri: window.location.host + window.location.pathname
     },
     cache: {
       cacheLocation: BrowserCacheLocation.LocalStorage,
