@@ -12,6 +12,14 @@ $dialog-input-bg-color: #242424;
         background-color: $dialog-input-bg-color;
     }
 
+    @media (max-height: 400px) {
+        .modal-header {
+            padding: 2px 15px !important;
+        }
+        .modal-footer {
+            padding: 2px 15px !important;
+        }
+    }
     .modal-header {
         color: white !important;
         background-color: var(--accent-darkblue) !important;
@@ -26,7 +34,7 @@ $dialog-input-bg-color: #242424;
 
     .modal-body {
         color: var(--font-primary-color);
-        max-height: 550px;
+        max-height: 50vh;
         overflow-y: auto;
         padding: 12px 15px 5px 15px;
         border: none !important;
