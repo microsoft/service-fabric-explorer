@@ -54,6 +54,9 @@ export class AadWrapperService {
               @Inject(MSAL_GUARD_CONFIG) private msalGuardConfig: MsalGuardConfiguration) { }
 
   init(): Observable<any> {
+    if(!this.aadEnabled) {
+      return of(null);
+    }
     this.initAdal();
 
     const expirationCheck = new Date(new Date().setDate(new Date().getDate() - this.daysBeforeMsalAttempt)).getTime();
