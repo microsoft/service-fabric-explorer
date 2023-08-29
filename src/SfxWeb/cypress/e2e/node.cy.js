@@ -87,7 +87,7 @@ context('node page', () => {
 
       })
 
-      it.only('deactivated', () => {
+      it('deactivated', () => {
         addRoute("deactivatedNode", "node-page/deactivated-node.json", apiUrl(`/Nodes/${nodeName}/?*`));
         addRoute(FIXTURE_NODES, "node-page/deactivated-node-list.json", nodes_route);
 
