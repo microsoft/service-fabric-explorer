@@ -599,7 +599,7 @@ context('Cluster page', () => {
       cy.wait(['@getevents', '@getrepairs'])
     };
 
-    it("loads properly", () => {
+    it("naming", () => {
       addRoute('events', 'empty-list.json', apiUrl(`/EventsStore/Cluster/Events?*`))
       addRoute('events', 'cluster-page/naming/naming-partitions.json', apiUrl(`/Applications/System/$/GetServices/System%2FNamingService/$/GetPartitions?*`))
       addRoute('events', 'cluster-page/naming/naming-partition-1000.json', apiUrl(`/EventsStore/Partitions/00000000-0000-0000-0000-000000001000/$/Replicas/Events?*`))
@@ -615,12 +615,10 @@ context('Cluster page', () => {
       cy.get('[data-cy=metric]').should('have.length', 3);
       cy.get("[class=highcharts-point]").should('have.length', 12);
 
-
       cy.get('[data-cy=overviewpanel]').should('have.length', 1).first().within(() => {
         cy.contains("Total Volume: 78887");
         cy.contains("1000").click();
       })
-
       //toggle data set
       cy.get("[class=highcharts-point]").should('have.length', 0);
     })
@@ -639,6 +637,14 @@ context('Cluster page', () => {
       cy.get(EVENT_TABS).within(() => {
         cy.contains(CLUSTER_TAB_NAME)
       })
+
+      cy.contains('label', 'Correlated').should('have.attr', 'role', 'radio').and('have.attr', 'aria-checked', 'true');
+      cy.contains('label', 'All').should('have.attr', 'role', 'radio').and('have.attr', 'aria-checked', 'false');
+       
+      cy.contains("Why is data missing?").within(()=> {
+        cy.get('span[class=mif-info]').should('have.attr', 'tabindex', '0').and('have.attr', 'aria-label');
+      });
+
     })
 
     it("repair manager disabled", () => {
@@ -953,10 +959,15 @@ context('Cluster page', () => {
         cy.contains('Optional Parameters').click()
         cy.get('[data-cy=optionalInput]').should('have.length', 6)
 
-        cy.contains('HealthState').click().contains('OK').click()
+        cy.contains('HealthState').click().contains('OK').then(btn => {
+          cy.wrap(btn).should('have.attr', 'aria-label').and('equal', 'OK 1 of 3')
+          cy.wrap(btn).click()
+        })
         cy.get('[data-cy=warning]').should('not.include.text', 'HealthState')
         cy.get('[data-cy=copy-text]').should('include.text', '-HealthState  OK')
-
+        cy.contains('HealthState').click().within(() => {
+          cy.get('button[value="OK"]').should('have.attr', 'aria-label').and('equal', 'OK selected 1 of 3')
+        })
         cy.contains('SourceId').type('id')
         cy.get('[data-cy=warning]').should('not.include.text', 'SourceId')
         cy.get('[data-cy=copy-text]').should('include.text', '-SourceId  "id"')
