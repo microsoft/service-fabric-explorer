@@ -1,4 +1,4 @@
-import { Component, Injector, Input } from '@angular/core';
+import { Component, Injector, Input, OnChanges } from '@angular/core';
 import { ApplicationType } from 'src/app/Models/DataModels/ApplicationType';
 import { ListSettings } from 'src/app/Models/ListSettings';
 import { DataService } from 'src/app/services/data.service';
@@ -10,7 +10,7 @@ import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
   templateUrl: './apptype-viewer.component.html',
   styleUrls: ['./apptype-viewer.component.scss']
 })
-export class ApptypeViewerComponent extends BaseControllerDirective {
+export class ApptypeViewerComponent extends BaseControllerDirective implements OnChanges {
 
   @Input() activeAppTypes: ApplicationType[];
   @Input() inactiveAppTypes: ApplicationType[];
@@ -27,4 +27,9 @@ export class ApptypeViewerComponent extends BaseControllerDirective {
     this.appTypesListSettings = this.settings.getNewOrExistingAppTypeListSettings();
     this.allAppTypes = this.activeAppTypes.concat(this.inactiveAppTypes);
   }
+
+  ngOnChanges(): void { 
+    this.allAppTypes = this.activeAppTypes.concat(this.inactiveAppTypes);
+  }
+
 }
