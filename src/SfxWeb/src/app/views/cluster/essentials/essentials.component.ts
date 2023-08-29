@@ -16,6 +16,8 @@ import { HealthUtils, HealthStatisticsEntityKind } from 'src/app/Utils/healthUti
 import { RepairTaskCollection } from 'src/app/Models/DataModels/collections/RepairTaskCollection';
 import { IEssentialListItem } from 'src/app/modules/charts/essential-health-tile/essential-health-tile.component';
 import { InfrastructureCollection } from 'src/app/Models/DataModels/collections/infrastructureCollection';
+import { RestClientService } from 'src/app/services/rest-client.service';
+import { IRawPartition } from 'src/app/Models/RawDataTypes';
 
 @Component({
   selector: 'app-essentials',
@@ -41,12 +43,16 @@ export class EssentialsComponent extends BaseControllerDirective {
   replicasDashboard: IDashboardViewModel;
   upgradesDashboard: IDashboardViewModel;
   upgradeAppsCount = 0;
+  fmQuorumLossStatus : string;
+  fmQuorumLossWarning : string;
+  partition : IRawPartition;
 
   essentialItems: IEssentialListItem[] = [];
 
   constructor(public data: DataService,
               public injector: Injector,
               public settings: SettingsService,
+              public RestClient: RestClientService,
               private routes: RoutesService) {
     super(injector);
   }
@@ -61,6 +67,7 @@ export class EssentialsComponent extends BaseControllerDirective {
 
     this.infraCollection = this.data.infrastructureCollection;
     this.infraSettings = this.settings.getNewOrExistingInfrastructureSettings();
+    //this.fmInQuorumLossState = this.RestClient.getPartitionById("1");
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
@@ -91,6 +98,18 @@ export class EssentialsComponent extends BaseControllerDirective {
       this.nodes.refresh(messageHandler).pipe(map(() => {this.updateItemInEssentials(); })),
       this.systemApp.refresh(messageHandler).pipe(catchError(err => of(null))),
       this.clusterUpgradeProgress.refresh(messageHandler),
+      //this.data.getFM
+      this.RestClient.getPartitionById("00000000-0000-0000-0000-000000000001", messageHandler).pipe(map((partition) => {
+        this.fmQuorumLossStatus = partition.PartitionStatus;
+        if (this.fmQuorumLossStatus == "InQuorumLoss") {
+          this.fmQuorumLossWarning = "The Failover Manager partition is currently in quorum loss state. " +
+          "Cluster will be stucking during Failover Manager Quorum Loss. " + 
+          "Service failover, automatic recovery will be blocked. " + 
+          "Health/availability state of services/nodes may not be reflected. "
+        }
+        this.partition = partition;
+      })),
+      
       this.data.getClusterManifest().pipe(map((manifest) => {
         if (manifest.isRepairManagerEnabled) {
           return this.repairtaskCollection.refresh(messageHandler);
