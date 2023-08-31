@@ -78,18 +78,6 @@ $dashboard-small-padding-horizontal: 12px;
                     &.badge-upgrade-inactive {
                         background: var(--accent-background-color);
                     }
-
-                    &.badge-error-active {
-                        background: var(--badge-error);
-                    }
-
-                    &.badge-warning-active {
-                        background: var(--badge-warning);
-                    }
-
-                    &.badge-error-inactive {
-                        background: var(--badge-ok);
-                    }
                 }
 
                 .dashboard-tile-title {

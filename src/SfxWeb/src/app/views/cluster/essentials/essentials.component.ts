@@ -98,7 +98,6 @@ export class EssentialsComponent extends BaseControllerDirective {
       this.nodes.refresh(messageHandler).pipe(map(() => {this.updateItemInEssentials(); })),
       this.systemApp.refresh(messageHandler).pipe(catchError(err => of(null))),
       this.clusterUpgradeProgress.refresh(messageHandler),
-      //this.data.getFM
       this.RestClient.getPartitionById("00000000-0000-0000-0000-000000000001", messageHandler).pipe(map((partition) => {
         this.fmQuorumLossStatus = partition.PartitionStatus;
         if (this.fmQuorumLossStatus == "InQuorumLoss") {
