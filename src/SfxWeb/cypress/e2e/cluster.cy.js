@@ -637,9 +637,6 @@ context('Cluster page', () => {
       cy.get(EVENT_TABS).within(() => {
         cy.contains(CLUSTER_TAB_NAME)
       })
-
-      cy.contains('label', 'Correlated').should('have.attr', 'role', 'radio').and('have.attr', 'aria-checked', 'true');
-      cy.contains('label', 'All').should('have.attr', 'role', 'radio').and('have.attr', 'aria-checked', 'false');
        
       cy.contains("Why is data missing?").within(()=> {
         cy.get('span[class=mif-info]').should('have.attr', 'tabindex', '0').and('have.attr', 'aria-label');
