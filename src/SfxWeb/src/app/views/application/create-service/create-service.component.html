@@ -23,14 +23,12 @@
             </dd>
             <dt title="Service Package Activation Mode">Service Package Activation Mode</dt>
             <dd>
-              <div class="btn-group btn-group-toggle radio-btns">
                 <ng-container *ngFor="let activationMode of description.servicePackageActivationModes; let i = index;">
-                  <div class="checkbox-push">
-                    <input type="radio" [value]="i.toString()" name="a" [id]="i + 'a'" [(ngModel)]="description.raw.ServicePackageActivationMode" [ngModelOptions]="{standalone: true}">
-                    <label [for]="i + 'a'" class="flat-button solid-grey">{{activationMode}}</label>
+                  <div class="radio-btns">
+                      <input type="radio" [value]="i.toString()" name="a" [id]="i + 'a'" [(ngModel)]="description.raw.ServicePackageActivationMode" [ngModelOptions]="{standalone: true}">
+                    <label [for]="i + 'a'">{{activationMode}}</label>
                   </div>
                 </ng-container>
-              </div>
 
             </dd>
             <dt>Initialization Data</dt>
@@ -99,16 +97,14 @@
                     <dt>Partition Scheme</dt>
                     <dd>
 
-                        <div class="btn-group btn-group-toggle radio-btns">
-                            <ng-container
-                                *ngFor="let partitionScheme of description.servicePartitionKinds;  let i = index;">
-                                <div class="checkbox-push">
-                                  <input ngbButton type="radio" [value]="i.toString()" [id]="i + 's'" name="s"
-                                         [(ngModel)]="description.raw.PartitionDescription.PartitionScheme" [ngModelOptions]="{standalone: true}">
-                                  <label [for]="i + 's'" class="solid-grey flat-button">{{partitionScheme}}</label>
-                                </div>
-                            </ng-container>
-                        </div>
+                        <ng-container
+                            *ngFor="let partitionScheme of description.servicePartitionKinds;  let i = index;">
+                            <div class="radio-btns">
+                                <input ngbButton type="radio" [value]="i.toString()" [id]="i + 's'" name="s"
+                                        [(ngModel)]="description.raw.PartitionDescription.PartitionScheme" [ngModelOptions]="{standalone: true}">
+                                <label [for]="i + 's'">{{partitionScheme}}</label>
+                            </div>
+                        </ng-container>
                         <dl class="dl-horizontal short">
                             <dt *ngIf="description.raw.PartitionDescription.PartitionScheme !== '1'">Count</dt>
                             <dd *ngIf="description.raw.PartitionDescription.PartitionScheme !== '1'">
