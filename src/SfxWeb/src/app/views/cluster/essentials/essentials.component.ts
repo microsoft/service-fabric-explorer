@@ -101,8 +101,8 @@ export class EssentialsComponent extends BaseControllerDirective {
       this.RestClient.getPartitionById("00000000-0000-0000-0000-000000000001", messageHandler).pipe(map((partition) => {
         this.fmQuorumLossStatus = partition.PartitionStatus;
         if (this.fmQuorumLossStatus == "InQuorumLoss") {
-          this.fmQuorumLossWarning = "The Failover Manager partition is currently in quorum loss state. " +
-          "Cluster will be stucking during Failover Manager Quorum Loss. " + 
+          this.fmQuorumLossWarning = "The Failover Manager service is in quorum loss state. " +
+          "Cluster may not be responding. " + 
           "Service failover, automatic recovery will be blocked. " + 
           "Health/availability state of services/nodes may not be reflected. "
         }
