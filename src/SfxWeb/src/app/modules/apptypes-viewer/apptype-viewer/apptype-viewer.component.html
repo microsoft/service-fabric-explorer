@@ -9,7 +9,7 @@
                 <a ngbNavLink style="font-size: 12pt;">
                   In Use <span class="mif-info" ngbTooltip="Application Types which have at least 1 application instance."
                     aria-label="Tooltip - Application Types which have at least 1 application instance."
-                    placement="bottom" tooltipClass="styled-tooltip" style="font-size: small;" container="body"></span>
+                    placement="bottom" tooltipClass="styled-tooltip" style="font-size: small;" container="body" tabindex="0"></span>
                 </a>
                 <ng-template ngbNavContent>
                     <app-detail-list [list]="activeAppTypes" [listSettings]="appTypesListSettings" data-cy="appTypeVersions"></app-detail-list>
