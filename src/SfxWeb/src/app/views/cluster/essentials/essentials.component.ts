@@ -45,7 +45,6 @@ export class EssentialsComponent extends BaseControllerDirective {
   upgradeAppsCount = 0;
   fmQuorumLossStatus : string;
   fmQuorumLossWarning : string;
-  partition : IRawPartition;
 
   essentialItems: IEssentialListItem[] = [];
 
@@ -67,7 +66,8 @@ export class EssentialsComponent extends BaseControllerDirective {
 
     this.infraCollection = this.data.infrastructureCollection;
     this.infraSettings = this.settings.getNewOrExistingInfrastructureSettings();
-    //this.fmInQuorumLossState = this.RestClient.getPartitionById("1");
+    this.fmQuorumLossWarning = `The Failover Manager service is in quorum loss state. Cluster may not be responding. 
+    Service failover, automatic recovery will be blocked.Health/availability state of services/nodes may not be reflected.`
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
@@ -98,15 +98,8 @@ export class EssentialsComponent extends BaseControllerDirective {
       this.nodes.refresh(messageHandler).pipe(map(() => {this.updateItemInEssentials(); })),
       this.systemApp.refresh(messageHandler).pipe(catchError(err => of(null))),
       this.clusterUpgradeProgress.refresh(messageHandler),
-      this.RestClient.getPartitionById("00000000-0000-0000-0000-000000000001", messageHandler).pipe(map((partition) => {
+      this.RestClient.getPartitionById(this.data.getFailoverManagerPartition(), messageHandler).pipe(map((partition) => {
         this.fmQuorumLossStatus = partition.PartitionStatus;
-        if (this.fmQuorumLossStatus == "InQuorumLoss") {
-          this.fmQuorumLossWarning = "The Failover Manager service is in quorum loss state. " +
-          "Cluster may not be responding. " + 
-          "Service failover, automatic recovery will be blocked. " + 
-          "Health/availability state of services/nodes may not be reflected. "
-        }
-        this.partition = partition;
       })),
       
       this.data.getClusterManifest().pipe(map((manifest) => {

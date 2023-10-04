@@ -423,6 +423,10 @@ export class DataService {
         return d;
     }
 
+    public getFailoverManagerPartition(): string {
+        return "00000000-0000-0000-0000-000000000001";
+    }
+
     public createCorrelatedEventList(eventInstanceId: string) {
         return new CorrelatedEventList(this, eventInstanceId);
     }

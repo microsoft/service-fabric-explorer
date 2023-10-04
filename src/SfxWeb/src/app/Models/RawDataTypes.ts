@@ -1,4 +1,3 @@
-import { extend } from 'cypress/types/lodash';
 import { NodeStatusConstants, HealthStateConstants } from '../Common/Constants';
 import { Node } from './DataModels/Node';
 
