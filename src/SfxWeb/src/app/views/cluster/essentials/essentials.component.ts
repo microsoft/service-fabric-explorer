@@ -5,6 +5,7 @@ import { HealthStateFilterFlags } from 'src/app/Models/HealthChunkRawDataTypes';
 import { SystemApplication } from 'src/app/Models/DataModels/Application';
 import { Observable, forkJoin, of } from 'rxjs';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
+import { SystemServicePartitionId } from 'src/app/Common/Constants';
 import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 import { NodeCollection } from 'src/app/Models/DataModels/collections/NodeCollection';
 import { ListSettings } from 'src/app/Models/ListSettings';
@@ -43,7 +44,7 @@ export class EssentialsComponent extends BaseControllerDirective {
   replicasDashboard: IDashboardViewModel;
   upgradesDashboard: IDashboardViewModel;
   upgradeAppsCount = 0;
-  fmQuorumLossStatus : string;
+  fmQuorumLossStatus : boolean;
   fmQuorumLossWarning : string;
 
   essentialItems: IEssentialListItem[] = [];
@@ -98,8 +99,10 @@ export class EssentialsComponent extends BaseControllerDirective {
       this.nodes.refresh(messageHandler).pipe(map(() => {this.updateItemInEssentials(); })),
       this.systemApp.refresh(messageHandler).pipe(catchError(err => of(null))),
       this.clusterUpgradeProgress.refresh(messageHandler),
-      this.RestClient.getPartitionById(this.data.getFailoverManagerPartition(), messageHandler).pipe(map((partition) => {
-        this.fmQuorumLossStatus = partition.PartitionStatus;
+      this.RestClient.getPartitionById(SystemServicePartitionId.FailoverManagerId, messageHandler).pipe(map((partition) => {
+        if (partition.PartitionStatus === 'InQuorumLoss') {
+          this.fmQuorumLossStatus = true;
+        }
       })),
       
       this.data.getClusterManifest().pipe(map((manifest) => {

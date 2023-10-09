@@ -40,7 +40,7 @@
   </app-collapse-container>
 </div>
 
-<div *ngIf="fmQuorumLossStatus === 'InQuorumLoss'" style="margin-bottom: 15px;" data-cy="fmql-warning">
+<div *ngIf="fmQuorumLossStatus" style="margin-bottom: 15px;" data-cy="fmql-warning">
   <app-warning [description]="fmQuorumLossWarning" ></app-warning>
 </div>
 
