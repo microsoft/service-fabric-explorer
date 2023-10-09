@@ -5,7 +5,7 @@ import { HealthStateFilterFlags } from 'src/app/Models/HealthChunkRawDataTypes';
 import { SystemApplication } from 'src/app/Models/DataModels/Application';
 import { Observable, forkJoin, of } from 'rxjs';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
-import { SystemServicePartitionId } from 'src/app/Common/Constants';
+import { SystemServicePartitionIds } from 'src/app/Common/Constants';
 import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 import { NodeCollection } from 'src/app/Models/DataModels/collections/NodeCollection';
 import { ListSettings } from 'src/app/Models/ListSettings';
@@ -67,8 +67,9 @@ export class EssentialsComponent extends BaseControllerDirective {
 
     this.infraCollection = this.data.infrastructureCollection;
     this.infraSettings = this.settings.getNewOrExistingInfrastructureSettings();
-    this.fmQuorumLossWarning = `The Failover Manager service is in quorum loss state. Cluster may not be responding. 
-    Service failover, automatic recovery will be blocked.Health/availability state of services/nodes may not be reflected.`
+    this.fmQuorumLossWarning = `The Failover Manager service is in quorum loss state, which can cause disruptions in the cluster. Operations in PowerShell will likely to fail.
+    Cluster will not be loaded and availability state of Application/System/Nodes may not be reflected. For more guidance, please refer to this link:
+    https://eng.ms/docs/cloud-ai-platform/azure-core/one-fleet-platform/one-fleet-platform-timmall/service-fabric-service/service-fabric-service/tsgs-and-traces-by-component/failover/tsg/fm-deadlock`
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
@@ -99,10 +100,8 @@ export class EssentialsComponent extends BaseControllerDirective {
       this.nodes.refresh(messageHandler).pipe(map(() => {this.updateItemInEssentials(); })),
       this.systemApp.refresh(messageHandler).pipe(catchError(err => of(null))),
       this.clusterUpgradeProgress.refresh(messageHandler),
-      this.RestClient.getPartitionById(SystemServicePartitionId.FailoverManagerId, messageHandler).pipe(map((partition) => {
-        if (partition.PartitionStatus === 'InQuorumLoss') {
-          this.fmQuorumLossStatus = true;
-        }
+      this.RestClient.getPartitionById(SystemServicePartitionIds.FailoverManagerId, messageHandler).pipe(map((partition) => {
+          this.fmQuorumLossStatus = partition.PartitionStatus === 'InQuorumLoss';
       })),
       
       this.data.getClusterManifest().pipe(map((manifest) => {

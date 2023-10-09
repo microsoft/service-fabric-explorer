@@ -224,7 +224,7 @@ export class TelemetryEventNames {
 }
 
 
-export class SystemServicePartitionId {
+export class SystemServicePartitionIds {
   public static FailoverManagerId = '00000000-0000-0000-0000-000000000001';
 } 
 
