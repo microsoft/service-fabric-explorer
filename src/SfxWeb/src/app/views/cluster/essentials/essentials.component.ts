@@ -68,8 +68,8 @@ export class EssentialsComponent extends BaseControllerDirective {
     this.infraCollection = this.data.infrastructureCollection;
     this.infraSettings = this.settings.getNewOrExistingInfrastructureSettings();
     this.fmQuorumLossWarning = `The Failover Manager service is in quorum loss state, which can cause disruptions in the cluster. Operations in PowerShell will likely to fail.
-    Cluster will not be loaded and availability state of Application/System/Nodes may not be reflected. For more guidance, please refer to this link:
-    https://eng.ms/docs/cloud-ai-platform/azure-core/one-fleet-platform/one-fleet-platform-timmall/service-fabric-service/service-fabric-service/tsgs-and-traces-by-component/failover/tsg/fm-deadlock`
+    Cluster will not be loaded and the availability state of Application/System/Nodes may not be reflected in sfx. Failover Manager partition info 
+    can still be queried by using Service Fabric client API. Please refer to this link: https://learn.microsoft.com/en-us/rest/api/servicefabric/sfclient-api-getpartitioninfo`
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
