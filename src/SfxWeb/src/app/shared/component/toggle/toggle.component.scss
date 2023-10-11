@@ -7,7 +7,7 @@ $border-radius: 50px;
     display: inline-block;
     width: 44px;
     height: 24px;
-    border: 2px solid #919191;
+    border: 2px solid var(--toggle-dark-grey);
     border-radius: $border-radius;
 
     &:focus-within {
@@ -30,7 +30,7 @@ $border-radius: 50px;
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: #919191;
+    background-color: var(--toggle-dark-grey);
     -webkit-transition: .25s;
     transition: .25s;
     border-radius: $border-radius;
