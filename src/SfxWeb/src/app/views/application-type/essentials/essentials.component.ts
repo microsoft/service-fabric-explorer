@@ -16,20 +16,14 @@ import { map } from 'rxjs/operators';
 export class EssentialsComponent extends ApplicationTypeBaseControllerDirective {
   appTypeGroup: ApplicationTypeGroup;
   appsListSettings: ListSettings;
-  appTypesListSettings: ListSettings;
-  activeAppTypesListSettings: ListSettings;
 
-  // have a separate list for active app types in addition to the app types on the appTypeGroup
-  activeAppTypes: ApplicationType[] = [];
 
   constructor(protected data: DataService, injector: Injector, private settings: SettingsService) {
     super(data, injector);
   }
 
   setup() {
-    this.activeAppTypesListSettings = this.settings.getNewOrExistingAppTypeListSettings();
-    this.appTypesListSettings = this.settings.getNewOrExistingAppTypeListSettings(true);
-
+   
     this.appsListSettings = this.settings.getNewOrExistingListSettings('appTypeApps', ['name'], [
       new ListColumnSettingForLink('name', 'Name', item => item.viewPath),
       new ListColumnSetting('raw.TypeName', 'Application Type'),
@@ -41,8 +35,6 @@ export class EssentialsComponent extends ApplicationTypeBaseControllerDirective 
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
-    return this.data.getApps(true, messageHandler).pipe(map(() => {
-      this.activeAppTypes = this.appTypeGroup.activeAppTypes;
-    }))
+    return this.data.getApps(true, messageHandler)
   }
 }

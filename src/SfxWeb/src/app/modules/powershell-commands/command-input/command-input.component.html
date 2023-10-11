@@ -31,10 +31,11 @@
         
         <div ngbDropdownMenu>
             <div>
-                <button value="" ngbDropdownItem (click)="setFormValue($event.target.value)">-Select-</button>
+                <button value="" type="button" ngbDropdownItem (click)="setFormValue($event.target.value)">-Select-</button>
             </div>
-            <div *ngFor="let option of commandParam.options" >
-                <button [value]="option"  
+            <div *ngFor="let option of commandParam.options; let i = index" >
+                <button [value]="option" type="button"
+                [attr.aria-label]="option + (option === commandParam.value ? ' selected ' : ' ') + (i+1) + ' of ' + commandParam.options.length"
                 ngbDropdownItem (click)="setFormValue($event.target.value)">
                     {{option}}
                 </button>

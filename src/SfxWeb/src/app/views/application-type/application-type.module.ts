@@ -13,6 +13,7 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { NgbNavModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { CommandsComponent } from './commands/commands.component';
 import { PowershellCommandsModule } from 'src/app/modules/powershell-commands/powershell-commands.module';
+import { ApptypesViewerModule } from 'src/app/modules/apptypes-viewer/apptypes-viewer.module';
 
 
 @NgModule({
@@ -26,7 +27,8 @@ import { PowershellCommandsModule } from 'src/app/modules/powershell-commands/po
         FormsModule,
         NgbNavModule,
         NgbTooltipModule,
-        PowershellCommandsModule
+        PowershellCommandsModule,
+        ApptypesViewerModule
     ]
 })
 export class ApplicationTypeModule { }
