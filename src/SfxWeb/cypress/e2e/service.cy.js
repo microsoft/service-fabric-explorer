@@ -48,8 +48,8 @@ context('service', () => {
       it('arm-managed', () => {
 
         addRoute("services", "app-page/services-arm-managed.json", apiUrl(`/Applications/${appName}/$/GetServices?*`))
-        addRoute("serviceInfo", "service-page/service-arm-managed.json", apiUrl(`${routeFormatter(appName, "VisualObjects.ActorService")}?*`))
-        cy.visit(urlFormatter(appName, serviceName))
+        addRoute("serviceInfo", "service-page/service-arm-managed.json", apiUrl(`${routeFormatter(appName, serviceName)}?*`))
+        cy.reload();
         cy.wait(waitRequest);
 
         cy.get('[data-cy=armWarning]').should('exist');
@@ -193,7 +193,7 @@ context('service', () => {
 
             addRoute("services", "app-page/services-arm-managed.json", apiUrl(`/Applications/${appName}/$/GetServices?*`))
             addRoute("serviceInfo", "service-page/service-stateless-arm-managed.json",apiUrl(`${routeFormatter(appName, statelessServiceName)}?*`))
-            cy.visit(urlFormatter(appName, statelessServiceName))
+            cy.reload();
             cy.wait(waitRequest);
 
             cy.get('[data-cy=armWarning]').should('exist');
