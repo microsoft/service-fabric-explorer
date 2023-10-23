@@ -74,7 +74,7 @@ export class ReplicaOnPartition extends DataModelBase<IRawReplicaOnPartition> {
 
     public get role(): string {
         if (this.parent.raw.PartitionStatus === 'Reconfiguring') {
-            return `Reconfiguring - Target Role: ${this.raw.ReplicaRole}`;
+          return `Reconfiguring - ${this.raw.PreviousReplicaRole} -> ${this.raw.ReplicaRole}`;
         }
 
         return this.raw.ReplicaRole;

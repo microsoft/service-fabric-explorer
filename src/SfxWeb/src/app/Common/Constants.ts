@@ -173,8 +173,9 @@ export class ServicePartitionKindRegexes {
 }
 
 export class ServiceKindRegexes {
-    public static Stateless: RegExp = /Stateless/i;
-    public static Stateful: RegExp = /Stateful/i;
+  public static Stateless: RegExp = /Stateless/i;
+  public static selfReconfiguring: RegExp = /SelfReconfiguring/i;
+  public static Stateful: RegExp = /Stateful/i;
 }
 
 export class UpgradeDomainStateRegexes {

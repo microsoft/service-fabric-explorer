@@ -10,7 +10,6 @@ import { IRawPartition, IRawServiceDescription } from 'src/app/Models/RawDataTyp
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class StateInfoComponent {
-
   @Input() stateful = false;
   @Input() data: IRawServiceDescription | IRawPartition;
 

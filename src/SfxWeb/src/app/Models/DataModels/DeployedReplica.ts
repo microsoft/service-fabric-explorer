@@ -73,8 +73,8 @@ export class DeployedReplica extends DataModelBase<IRawDeployedReplica> {
     }
 
     public get role(): string {
-        if (this.partition && this.partition.PartitionStatus === 'Reconfiguring') {
-            return `Reconfiguring - Target Role: ${this.raw.ReplicaRole}`;
+      if (this.partition && this.partition.PartitionStatus === 'Reconfiguring') {
+            return `Reconfiguring - ${this.raw.PreviousReplicaRole} -> ${this.raw.ReplicaRole}`;
         }
 
         return this.raw.ReplicaRole;

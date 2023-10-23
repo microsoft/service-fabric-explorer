@@ -59,7 +59,11 @@ export class Service extends DataModelBase<IRawService> {
     }
 
     public get isStatelessService(): boolean {
-        return ServiceKindRegexes.Stateless.test(this.raw.ServiceKind);
+      return ServiceKindRegexes.Stateless.test(this.raw.ServiceKind) || ServiceKindRegexes.selfReconfiguring.test(this.raw.ServiceKind);
+    }
+
+    public get isSelfReconfiguringService(): boolean {
+      return ServiceKindRegexes.selfReconfiguring.test(this.raw.ServiceKind);
     }
 
     public get serviceKindInNumber(): number {
