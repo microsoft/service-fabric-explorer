@@ -1,3 +1,7 @@
+<div style="margin-bottom: 10px;" *ngIf="service.isSelfReconfiguringService" >
+  <app-warning [description]="'Self Reconfiguring partitions will follow safety checks like stateful partitions but replication is not handled through Service Fabric Explorer'"></app-warning>
+</div>
+
 <div class="tile-container">
   <app-essential-health-tile [healthState]="service?.healthState" *ngIf="service && service.isInitialized" class="long"
     [listItems]="essentialItems">
