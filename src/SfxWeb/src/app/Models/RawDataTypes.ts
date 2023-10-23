@@ -523,6 +523,8 @@ export interface IRawPartition {
         PartitionStatus: string;
         CurrentConfigurationEpoch: IRawConfigurationEpoch;
         MinInstanceCount: number;
+        SelfReconfiguringInstanceCount: number;
+        SelfReconfiguringMinInstanceCount: number;
     }
 
 export interface IRawPartitionDescription {
@@ -772,6 +774,9 @@ export interface IRawServiceDescription {
     InstanceCloseDelayDurationSeconds: number;
     InstanceLifecycleDescription: any; // TODO
     InstanceRestartWaitDurationSeconds: number;
+
+    SelfReconfiguringInstanceCount: number;
+    SelfReconfiguringMinInstanceCount: number;
 
     Flags: string;
     }

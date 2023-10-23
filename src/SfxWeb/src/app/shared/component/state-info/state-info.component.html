@@ -8,7 +8,16 @@
             <span  class="mif-star-full icon-item-left link"></span>
         </div>
         <div>
-            <div *ngIf="stateful">
+          <div *ngFor="let item of keyvalues; let last = last;">
+            <div class="flex-center {{ !last ? 'line-item-seperator' : ''}}">
+              <div class="line-item-small">
+                  {{item.value}}
+              </div>
+              <div>{{item.key}}</div>
+            </div>
+          </div>
+
+            <!-- <div *ngIf="stateful">
                 <div class="flex-center line-item-seperator">
                     <div class="line-item-small">
                         {{data.MinReplicaSetSize}}
@@ -36,7 +45,7 @@
                     </div>
                     <div >Minimum Instance Count</div>
                 </div>
-            </div>
+            </div> -->
         </div>
     </div>
 </div>
