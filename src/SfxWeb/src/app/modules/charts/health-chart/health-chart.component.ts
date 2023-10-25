@@ -10,6 +10,7 @@ import { Chart, Options, chart, PointOptionsObject, SeriesPieOptions } from 'hig
 export class HealthChartComponent implements OnInit, AfterViewInit, OnChanges {
   @Input() data: IDashboardDataPointViewModel[];
   @Input() width = '80';
+  @Input() innerArc: '';
   @Input() title: number | string = '';
 
   @ViewChild('chart') private chartContainer: ElementRef;
@@ -116,6 +117,9 @@ export class HealthChartComponent implements OnInit, AfterViewInit, OnChanges {
 
     this.options.title.style.fontSize =  +this.width * .2 + 'pt';
     this.options.subtitle.style.fontSize =  +this.width * .2 + 'pt';
+    if(this.innerArc) {
+      this.options.plotOptions.pie.innerSize = this.innerArc;
+    }
   }
 
   ngAfterViewInit() {
@@ -124,7 +128,7 @@ export class HealthChartComponent implements OnInit, AfterViewInit, OnChanges {
 
   getDataSet(): PointOptionsObject[] {
     const colors = {
-      Healthy: '#7FBA00',
+      Healthy: 'green',
       Warning: '#FCD116',
       Error: '#E81123'
     };

@@ -20,6 +20,10 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { AppInsightsErrorHandler } from './error-handling';
 import { StandaloneIntegrationService } from './services/standalone-integration.service';
 
+import { FormsModule } from '@angular/forms';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -37,7 +41,10 @@ import { StandaloneIntegrationService } from './services/standalone-integration.
     ReactiveFormsModule,
     NgbTooltipModule,
     MatSnackBarModule,
-    DebuggingModule
+    DebuggingModule,
+    FormsModule,
+    NgbModule,
+    NgbPaginationModule
   ],
 
   providers: [

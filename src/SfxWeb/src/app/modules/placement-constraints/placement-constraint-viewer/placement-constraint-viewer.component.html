@@ -1,0 +1,41 @@
+<div class="tile-container">
+  <app-dashboard-text-tile [barClass]="'badge-upgrade-inactive'" [count]="validNodes.length" title="Valid Nodes">
+  </app-dashboard-text-tile>
+  <app-dashboard-text-tile [barClass]="'badge-upgrade-inactive'" [count]="invalidNodes.length" title="Invalid Nodes">
+  </app-dashboard-text-tile>
+</div>
+
+<div class="essen-pane detail-pane">
+  <h5 class="underline">Placement Constraint</h5>
+  <div class="placement-container">
+    {{placementConstraints}}
+  </div>
+</div>
+
+<div class="essen-pane detail-pane">
+  <app-collapse-container sectionName="Valid Nodes">
+    <div collapse-header>
+      <h4>Valid Nodes - {{validNodes.length}}</h4>
+    </div>
+
+    <div collapse-body class="results-container">
+      <app-quick-view [placementInfo]="validNodes"></app-quick-view>
+      <app-detail-list [listSettings]="validListSettings" [list]="validNodes" data-cy="validNodes" style="flex: 1;">
+      </app-detail-list>
+    </div>
+  </app-collapse-container>
+</div>
+
+<div class="essen-pane detail-pane">
+  <app-collapse-container sectionName="Valid Nodes" [collapsed]="true">
+    <div collapse-header>
+      <h4>Invalid Nodes - {{invalidNodes.length}}</h4>
+    </div>
+
+    <div collapse-body class="results-container">
+      <app-quick-view [placementInfo]="invalidNodes"></app-quick-view>
+      <app-detail-list [listSettings]="invalidListSettings" [list]="invalidNodes" data-cy="validNodes" style="flex: 1;">
+      </app-detail-list>
+    </div>
+  </app-collapse-container>
+</div>

@@ -69,6 +69,17 @@ export class BaseComponent extends ServiceBaseControllerDirective implements IBa
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
     return this.data.clusterManifest.ensureInitialized().pipe(map(() => {
+      this.tabs = this.tabs.filter(tab => tab.name !== 'backup' && tab.name !== "Placement Constraints");
+
+      this.data.versionCheck("9.1").then(valid => {
+        if (this.service.description.raw.PlacementConstraints.length > 0 && valid) {
+          this.tabs.push({
+            name: 'Placement Constraints',
+            route: './placement'
+          });
+        }
+      })
+
       this.tabs = this.tabs.filter(tab => tab.name !== 'backup');
       if (this.data.clusterManifest.isBackupRestoreEnabled && this.service.isStatefulService
           && this.appTypeName !== Constants.SystemAppTypeName) {

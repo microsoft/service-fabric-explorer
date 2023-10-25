@@ -32,8 +32,8 @@ import { DisplayDurationComponent } from './component/display-duration/display-d
 import { PhaseDiagramComponent } from './component/phase-diagram/phase-diagram.component';
 import { NodeFilterComponent } from './component/node-filter/node-filter.component';
 import {ClipboardModule} from '@angular/cdk/clipboard';
-
 import { WarningComponent } from './component/warning/warning.component';
+import { NgbPaginationModule} from '@ng-bootstrap/ng-bootstrap';
 import { EventStoreTimelineComponent } from './component/event-store-timeline/event-store-timeline.component';
 import { FocusableDirective } from './directive/focusable.directive';
 @NgModule({
@@ -56,7 +56,7 @@ import { FocusableDirective } from './directive/focusable.directive';
     NgbToastModule,
     NgbDatepickerModule,
     NgbTooltipModule,
-    ClipboardModule
+    ClipboardModule,NgbPaginationModule
   ],
   exports: [NavbarComponent, ClipBoardComponent, HealthBadgeComponent, CandyBarCompactComponent, DetailViewPartComponent,
             CollapseContainerComponent, RefreshRateComponent, DragDirective, ActionDialogComponent, ManifestComponent,

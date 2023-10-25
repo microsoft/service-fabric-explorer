@@ -137,8 +137,8 @@ export class ClusterManifest extends DataModelBase<IRawClusterManifest> {
     public isBackupRestoreEnabled = false;
     public isRepairManagerEnabled = false;
     public isEventStoreEnabled = false;
-    public eventStoreTimeRange = 30;
     public nodeTypeProperties: INodeTypeInfo[];
+    public eventStoreTimeRange = 30;
 
     public constructor(data: DataService) {
         super(data);
@@ -196,7 +196,6 @@ export class ClusterManifest extends DataModelBase<IRawClusterManifest> {
         const parser = new DOMParser();
         const xml = parser.parseFromString(this.raw.Manifest, 'text/xml');
 
-        // let $xml = $($.parseXML(this.raw.Manifest));
         const manifest = xml.getElementsByTagName('ClusterManifest')[0];
         this.clusterManifestName = manifest.getAttribute('Name');
 

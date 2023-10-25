@@ -1,0 +1,4 @@
+<div *ngIf="blockList && nodeTypeInfo && service.description?.raw?.PlacementConstraints">
+  <app-placement-constraint-viewer [placementConstraints]="service.description?.raw?.PlacementConstraints"
+    [nodes]="nodes.collection" [blockList]="blockList" [nodeTypeInfo]="nodeTypeInfo"></app-placement-constraint-viewer>
+</div>

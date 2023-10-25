@@ -1146,3 +1146,8 @@ export interface IRawServiceNameInfo{
         Id: string;
         Name: string;
     }
+
+export interface IRawServiceBlockList {
+    ContinuationToken: string;
+    Items: any[];
+}
