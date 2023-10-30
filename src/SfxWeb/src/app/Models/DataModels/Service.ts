@@ -191,7 +191,7 @@ export class ServiceType extends DataModelBase<IRawServiceType> {
     }
 
     public get serviceKind(): string {
-        return this.raw.ServiceTypeDescription.IsStateful ? Constants.ServiceKindStateful : Constants.ServiceKindStateless;
+        return this.raw.ServiceTypeDescription.Kind;
     }
 
     public get serviceKindInNumber(): number {

@@ -46,11 +46,11 @@ export class StateInfoComponent implements OnChanges {
     }else if(this.data.ServiceKind === "SelfReconfiguring") {
       this.keyvalues.push({
         key: "Instance Count",
-        value: this.data.SelfReconfiguringInstanceCount.toString()
+        value: this.data.InstanceCount.toString()
       })
       this.keyvalues.push({
         key: "Minimum Instance Count",
-        value: this.data.SelfReconfiguringMinInstanceCount.toString()
+        value: this.data.InstanceCount.toString()
       })
     }
   }

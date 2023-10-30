@@ -697,6 +697,7 @@ export interface IRawReplicaOnPartition {
         HealthState: string;
         ReplicaId: string;
         ReplicaRole: string;
+        InstanceRole: string;
         PreviousReplicaRole: string;
         InstanceId: string;
         LastInBuildDurationInSeconds: string;
@@ -832,9 +833,11 @@ export interface IRawServiceType {
         ServiceManifestVersion: string;
         ServiceManifestName: string;
         IsServiceGroup: boolean;
-    }
+      }
 
 export interface IRawServiceTypeDescription {
+        Kind: string;
+        IsSelfReconfiguring: boolean;
         IsStateful: boolean;
         ServiceTypeName: string;
         PlacementConstraints: string;

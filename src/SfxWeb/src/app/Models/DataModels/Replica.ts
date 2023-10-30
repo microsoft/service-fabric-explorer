@@ -13,6 +13,7 @@ import { Observable } from 'rxjs';
 import { map, mergeMap } from 'rxjs/operators';
 import { ActionWithConfirmationDialog } from '../Action';
 import { RoutesService } from 'src/app/services/routes.service';
+import { ThisReceiver } from '@angular/compiler';
 
 // -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -61,7 +62,7 @@ export class ReplicaOnPartition extends DataModelBase<IRawReplicaOnPartition> {
     }
 
     public get isStatelessService(): boolean {
-        return ServiceKindRegexes.Stateless.test(this.raw.ServiceKind);
+        return ServiceKindRegexes.Stateless.test(this.raw.ServiceKind) || ServiceKindRegexes.selfReconfiguring.test(this.raw.ServiceKind);
     }
 
     public get id(): string {
@@ -77,7 +78,7 @@ export class ReplicaOnPartition extends DataModelBase<IRawReplicaOnPartition> {
           return `Reconfiguring - ${this.raw.PreviousReplicaRole} -> ${this.raw.ReplicaRole}`;
         }
 
-        return this.raw.ReplicaRole;
+        return this.raw.ReplicaRole || this.raw.InstanceRole; //should check for InstanceRole
     }
 
     public get viewPath(): string {
