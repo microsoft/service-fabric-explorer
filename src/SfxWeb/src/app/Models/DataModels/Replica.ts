@@ -65,6 +65,10 @@ export class ReplicaOnPartition extends DataModelBase<IRawReplicaOnPartition> {
         return ServiceKindRegexes.Stateless.test(this.raw.ServiceKind) || ServiceKindRegexes.selfReconfiguring.test(this.raw.ServiceKind);
     }
 
+    public get isSelfReconfiguring(): boolean {
+      return ServiceKindRegexes.selfReconfiguring.test(this.raw.ServiceKind);
+  }
+
     public get id(): string {
         return this.raw.ReplicaId || this.raw.InstanceId;
     }

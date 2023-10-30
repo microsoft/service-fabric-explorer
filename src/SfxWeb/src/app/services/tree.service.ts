@@ -23,7 +23,7 @@ export class TreeService {
         public tree: TreeViewModel;
         private clusterHealth: ClusterHealth;
         // controller views can get instantiated before this service and so a request to set the tree location might
-        // get requested before the init function is called 
+        // get requested before the init function is called
         private selectTreeNodeCalled = false;
         private cachedTreeSelection: {path: string[], skipSelectAction?: boolean};
 
@@ -53,13 +53,13 @@ export class TreeService {
 
         public selectTreeNode(path: string[], skipSelectAction?: boolean): Observable<any> {
             this.cachedTreeSelection = {path, skipSelectAction};
-            
+
             // if init hasnt been called and set this.tree, then wait for it to be set
             if (!this.tree) {
                 this.selectTreeNodeCalled = true;
                 return of(null);
             }
-            
+
             return this.tree.selectTreeNode(path, skipSelectAction);
         }
 
@@ -422,9 +422,14 @@ export class TreeService {
                 return replicas.collection.map(replica => {
                     return {
                         nodeId: IdGenerator.replica(replica.id),
-                        displayName: () => replica.isStatelessService
-                            ? replica.raw.NodeName
-                            : `${replica.role} (${replica.raw.NodeName})`,
+                        displayName: () => {
+
+                          if(replica.isSelfReconfiguring || replica.isStatefulService) {
+                            return `${replica.role} (${replica.raw.NodeName})`
+                          }else if(replica.isStatelessService) {
+                            return replica.raw.NodeName;
+                          }
+                        },
                         selectAction: () => this.routes.navigate(() => replica.viewPath, () => this.focusService.focus()),
                         badge: () => replica.healthState,
                         sortBy: () => replica.isStatelessService
