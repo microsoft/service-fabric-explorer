@@ -589,6 +589,7 @@ export interface IRawDeployedReplica {
     ReplicaId: string;
     PartitionId: string;
     ReplicaRole: string;
+    InstanceRole: string;
     PreviousReplicaRole: string;
     ReplicaStatus: string;
     ServiceKind: string;

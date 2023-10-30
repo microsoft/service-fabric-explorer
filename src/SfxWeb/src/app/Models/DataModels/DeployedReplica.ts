@@ -57,7 +57,7 @@ export class DeployedReplica extends DataModelBase<IRawDeployedReplica> {
     }
 
     public get isStatelessService(): boolean {
-        return ServiceKindRegexes.Stateless.test(this.raw.ServiceKind);
+        return ServiceKindRegexes.Stateless.test(this.raw.ServiceKind) || ServiceKindRegexes.selfReconfiguring.test(this.raw.ServiceKind);
     }
 
     public get uniqueId(): string {
@@ -74,10 +74,10 @@ export class DeployedReplica extends DataModelBase<IRawDeployedReplica> {
 
     public get role(): string {
       if (this.partition && this.partition.PartitionStatus === 'Reconfiguring') {
-            return `Reconfiguring - ${this.raw.PreviousReplicaRole} -> ${this.raw.ReplicaRole}`;
+            return `Reconfiguring - ${this.raw.PreviousReplicaRole} -> ${this.raw.ReplicaRole || this.raw.InstanceRole}`;
         }
 
-        return this.raw.ReplicaRole;
+        return this.raw.ReplicaRole || this.raw.InstanceRole;
     }
 
     public get viewPath(): string {
