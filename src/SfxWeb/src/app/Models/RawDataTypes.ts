@@ -694,6 +694,7 @@ export interface IRawReplicaOnPartition {
         HealthState: string;
         ReplicaId: string;
         ReplicaRole: string;
+        PreviousReplicaRole: string;
         InstanceId: string;
         LastInBuildDurationInSeconds: string;
         NodeName: string;

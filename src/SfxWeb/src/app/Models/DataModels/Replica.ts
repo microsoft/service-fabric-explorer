@@ -73,11 +73,31 @@ export class ReplicaOnPartition extends DataModelBase<IRawReplicaOnPartition> {
     }
 
     public get role(): string {
+        const previousRole: string = this.raw.PreviousReplicaRole ? `Previous Role: ${this.raw.PreviousReplicaRole} |` : '';
+        const targetRole: string = this.raw.ReplicaRole;
+
+        // If the partition is reconfiguring, we want to show what the previous role was and what the target role is.
+        if (this.parent.raw.PartitionStatus === 'Reconfiguring') {
+            return `Reconfiguring - ${previousRole} Target Role: ${targetRole}`;
+        }
+
+        return targetRole;
+    }
+
+    public get currentRole(): string {
         if (this.parent.raw.PartitionStatus === 'Reconfiguring') {
             return `Reconfiguring - Target Role: ${this.raw.ReplicaRole}`;
         }
 
         return this.raw.ReplicaRole;
+    }
+
+    public get previousRole(): string {
+        if (this.parent.raw.PartitionStatus === 'Reconfiguring' && this.raw.PreviousReplicaRole) {
+            return this.raw.PreviousReplicaRole;
+        }
+
+        return 'None';
     }
 
     public get viewPath(): string {
