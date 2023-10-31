@@ -19,7 +19,7 @@ export class MessageWithWarningComponent implements AfterViewInit {
 
   ngAfterViewInit(): void {
     if (this.inputs.template) {
-      this.instance = ActionDialogUtils.createChildComponent(this.body, this.instance, this.inputs, this.inputs.template, (value) => { this.emitEvent(value) });
+      this.instance = ActionDialogUtils.createChildComponent(this.body, this.inputs, this.inputs.template, (value) => { this.emitEvent(value) });
     }  
   }
 
@@ -28,7 +28,7 @@ export class MessageWithWarningComponent implements AfterViewInit {
   }
 
   ok(): Observable<boolean> {
-    if (this.instance.ok) {
+    if (this.instance?.ok) {
       return this.instance.ok();
     }
     else {

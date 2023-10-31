@@ -1153,19 +1153,14 @@ export interface IRawServiceNameInfo{
     
 export interface IRawApplicationMetadata{
     ArmMetadata: IRawArmMetadata;
-    HealthState: string;
-    Id: string;
 }
 
 export interface IRawApplicationTypeMetadata{
     ArmMetadata: IRawArmMetadata;
-    ApplicationTypeProvisionTimestamp: string;
 }
 
 export interface IRawServiceMetadata{
     ArmMetadata: IRawArmMetadata;
-    ServiceStatus: string;
-    TypeName: string;
 }
 export interface IRawArmMetadata{
     ArmResourceId?: string;

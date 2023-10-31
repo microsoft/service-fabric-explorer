@@ -1,11 +1,11 @@
-import { Component, OnInit, Inject, Input, EventEmitter } from '@angular/core';
+import { Component, OnInit, Inject, Input, EventEmitter, OnDestroy } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { IsolatedAction } from 'src/app/Models/Action';
 import { Service } from 'src/app/Models/DataModels/Service';
 import { IRawStatelessServiceDescription, IRawUpdateServiceDescription } from 'src/app/Models/RawDataTypes';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { DialogBodyComponent } from 'src/app/modules/action-dialog/DialogBodyComponent';
-import { Observable, of } from 'rxjs';
+import { Observable, Subscription, of } from 'rxjs';
 import { catchError, defaultIfEmpty } from 'rxjs/operators';
 
 @Component({
@@ -13,7 +13,7 @@ import { catchError, defaultIfEmpty } from 'rxjs/operators';
   templateUrl: './scale-service.component.html',
   styleUrls: ['./scale-service.component.scss']
 })
-export class ScaleServiceComponent implements OnInit, DialogBodyComponent {
+export class ScaleServiceComponent implements OnInit, OnDestroy, DialogBodyComponent {
 
   @Input() inputs: { service: Service };
   count: number;
@@ -22,6 +22,8 @@ export class ScaleServiceComponent implements OnInit, DialogBodyComponent {
 
   form: UntypedFormGroup;
   disableSubmit = new EventEmitter<boolean>();
+
+  validityCheckerSubscription: Subscription;
   
   constructor(public dialogRef: MatDialogRef<ScaleServiceComponent>,
               @Inject(MAT_DIALOG_DATA) public data: IsolatedAction,
@@ -53,6 +55,10 @@ export class ScaleServiceComponent implements OnInit, DialogBodyComponent {
 
   checkFormValidity() {
     this.disableSubmit.emit(!this.form.valid);
+  }
+
+  ngOnDestroy(): void {
+    this.validityCheckerSubscription.unsubscribe();
   }
 
 }

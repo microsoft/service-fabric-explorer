@@ -1,10 +1,10 @@
-import { Component, OnInit, Inject, Input, EventEmitter } from '@angular/core';
+import { Component, OnInit, Inject, Input, EventEmitter, OnDestroy } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { IsolatedAction } from 'src/app/Models/Action';
 import { ApplicationType } from 'src/app/Models/DataModels/ApplicationType';
 import { Validators, UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { Constants } from 'src/app/Common/Constants';
-import { Observable, of } from 'rxjs';
+import { Observable, Subscription, of } from 'rxjs';
 import { catchError, defaultIfEmpty } from 'rxjs/operators';
 
 @Component({
@@ -12,11 +12,13 @@ import { catchError, defaultIfEmpty } from 'rxjs/operators';
   templateUrl: './create-application.component.html',
   styleUrls: ['./create-application.component.scss']
 })
-export class CreateApplicationComponent implements OnInit {
+export class CreateApplicationComponent implements OnInit, OnDestroy {
 
   @Input() inputs: { appType: ApplicationType };
   form: UntypedFormGroup;
   disableSubmit = new EventEmitter<boolean>();
+  validityCheckerSubscription: Subscription;
+
 
   constructor(public dialogRef: MatDialogRef<CreateApplicationComponent>,
               @Inject(MAT_DIALOG_DATA) public data: IsolatedAction,
@@ -26,7 +28,7 @@ export class CreateApplicationComponent implements OnInit {
     this.form = this.formBuilder.group({
       userInput: [Constants.FabricPrefix + this.inputs.appType.name, [Validators.required, Validators.pattern(/^fabric:\/.+/)]]
     });
-    this.form.valueChanges.subscribe(() => {
+    this.validityCheckerSubscription = this.form.valueChanges.subscribe(() => {
       this.checkFormValidity();
     })
   }
@@ -41,6 +43,10 @@ export class CreateApplicationComponent implements OnInit {
 
   checkFormValidity() {
     this.disableSubmit.emit(!this.form.valid);
+  }
+
+  ngOnDestroy(): void {
+    this.validityCheckerSubscription.unsubscribe();
   }
 
 }

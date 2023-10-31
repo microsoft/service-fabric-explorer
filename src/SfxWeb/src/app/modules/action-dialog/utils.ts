@@ -4,11 +4,11 @@ import { DialogBodyComponent } from "./DialogBodyComponent";
 
 export class ActionDialogUtils {
 
-    public static createChildComponent(parent: DialogBodyDirective, child: DialogBodyComponent, inputs: any, template: Type<DialogBodyComponent>, disableSubmit?: (boolean)=>void) : DialogBodyComponent {
+    public static createChildComponent(parent: DialogBodyDirective, inputs: any, template: Type<DialogBodyComponent>, disableSubmit?: (boolean)=>void) : DialogBodyComponent {
     
-        child = parent.viewContainerRef.createComponent(template).instance;
+        var child: DialogBodyComponent = parent.viewContainerRef.createComponent(template).instance;
         child.inputs = inputs;    
-        if (child.disableSubmit) {
+        if (child.disableSubmit && disableSubmit) {
             child.disableSubmit.subscribe((value) => disableSubmit(value));
         }
 
