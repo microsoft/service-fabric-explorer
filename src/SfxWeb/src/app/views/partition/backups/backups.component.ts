@@ -187,9 +187,15 @@ export class BackupsComponent extends PartitionBaseControllerDirective {
                 this.partition.partitionBackupInfo.partitionBackupConfigurationInfo.raw.Kind === 'Partition' &&
                 this.partition.partitionBackupInfo.partitionBackupConfigurationInfo.raw.PolicyInheritedFrom === 'Partition' &&
                 this.partition.partitionBackupInfo.partitionBackupConfigurationInfo.raw.SuspensionInfo.IsSuspended === false,
-          'Confirm Partition Backup Suspension',
-          `Suspend partition backup for ${this.partition.name} ?`,
-          this.partition.name));
+          {
+            title: 'Confirm Partition Backup Suspension'
+          },
+          {
+            inputs: {
+                message: `Suspend partition backup for ${this.partition.name} ?`,
+                confirmationKeyword: this.partition.name
+            }
+          }));
 
       this.actions.add(new ActionWithConfirmationDialog(
           this.data.dialog,
@@ -202,10 +208,16 @@ export class BackupsComponent extends PartitionBaseControllerDirective {
           () => this.partition.partitionBackupInfo.partitionBackupConfigurationInfo.raw &&
                 this.partition.partitionBackupInfo.partitionBackupConfigurationInfo.raw.Kind === 'Partition' &&
                 this.partition.partitionBackupInfo.partitionBackupConfigurationInfo.raw.PolicyInheritedFrom === 'Partition' &&
-                this.partition.partitionBackupInfo.partitionBackupConfigurationInfo.raw.SuspensionInfo.IsSuspended === true,
-          'Confirm Partition Backup Resumption',
-          `Resume partition backup for ${this.partition.name} ?`,
-          this.partition.name));
+          this.partition.partitionBackupInfo.partitionBackupConfigurationInfo.raw.SuspensionInfo.IsSuspended === true,
+          {
+            title: 'Confirm Partition Backup Resumption'
+          },
+          {
+            inputs: {
+                message: `Resume partition backup for ${this.partition.name} ?`,
+                confirmationKeyword: this.partition.name
+            }
+          }));
 
       this.actions.add(new IsolatedAction(
           this.data.dialog,

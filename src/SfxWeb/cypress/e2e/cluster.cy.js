@@ -946,7 +946,7 @@ context('Cluster page', () => {
       cy.wait(500);
 
       cy.get('[data-cy=command]').within(() => {
-        cy.get('.detail-pane').should('have.css', 'border-left-color', 'rgb(252, 209, 22)')
+        cy.get('.detail-pane').should('have.class', 'unsafe')
         cy.get('[data-cy=requiredInput]').should('have.length', 3)
         cy.get('[data-cy=optionalInput]').should('have.length', 0)
         cy.get('[data-cy=warning]').should('include.text', 'HealthState, SourceId, HealthProperty')

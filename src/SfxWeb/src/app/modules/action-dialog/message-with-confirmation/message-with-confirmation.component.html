@@ -1,0 +1,4 @@
+<label>{{inputs.message}}
+    <input class="input-flat"  data-cy="input-dialog" type="text" [placeholder]="placeHolderText" name="userInput" style="width: 100%;"
+    *ngIf="inputs.confirmationKeyword" [(ngModel)]="userInput" (ngModelChange)="userInputChange($event)">
+</label>

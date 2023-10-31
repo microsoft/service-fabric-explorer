@@ -126,9 +126,9 @@ export class DashboardTileComponent implements OnInit, AfterViewInit, OnChanges 
 
   getDataSet(): PointOptionsObject[] {
     const colors = {
-      Healthy: '#7FBA00',
-      Warning: '#FCD116',
-      Error: '#E81123'
+      Healthy: 'var(--badge-ok)',
+      Warning: 'var(--badge-warning)',
+      Error: 'var(--badge-error)'
     };
 
     const data = this.data.dataPoints.map(p => {

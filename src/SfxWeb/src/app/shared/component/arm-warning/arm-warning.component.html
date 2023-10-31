@@ -1,0 +1,6 @@
+<app-warning [description]="armWarningText" iconSize="mif-2x"  data-cy="armWarning" warning
+    [link]="resourceId ? 'https://ms.portal.azure.com/#@microsoft.onmicrosoft.com/resource' + resourceId + '/overview' : null" 
+    [linkText]="resourceId ? 'Click here to visit this resource in the Azure portal.' : null"
+>
+    <a description-add-on href="https://learn.microsoft.com//azure/service-fabric/managed-cluster-service-fabric-explorer-blocking-operation" target="_blank" class="link"> Click here for more info about the warning.</a>
+</app-warning>

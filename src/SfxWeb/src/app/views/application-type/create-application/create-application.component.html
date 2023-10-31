@@ -1,16 +1,6 @@
-<form class="action-modal" [formGroup]="form">
-    <div class="modal-header">
-        <h1 class="modal-title">Create app instance
-        </h1>
-    </div>
-    <div class="modal-body">
-        <p>Supply the full application name to create an application instance of {{app.name}} :</p>
-        <input class="input-flat" type="text" placeholder="Name of application" name="userInput" style="width: 100%;"
-                formControlName="userInput" aria-label="placeHolderText">
-        <p style="color: red;" *ngIf="form.invalid">Application name must start with fabric:/</p>
-    </div>
-    <div class="modal-footer">
-        <button type="submit" class="solid-button blue" [disabled]="form.invalid" (click)="ok()">create application</button>
-        <button type="button" class="flat-button" (click)="close()">Cancel</button>
-    </div>
-</form>
+<div  [formGroup]="form">
+    <p>Supply the full application name to create an application instance of {{inputs.appType.name}} :</p>
+    <input class="input-flat" type="text" placeholder="Name of application" name="userInput" style="width: 100%;"
+            formControlName="userInput" aria-label="placeHolderText">
+    <p style="color: red;" *ngIf="form.invalid">Application name must start with fabric:/</p>
+</div>

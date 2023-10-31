@@ -36,9 +36,15 @@ export class StatusWarningsComponent{
         'acknowledge',
         () => of(this.alerts.removeNotificationById(alert.id, true)),
         () => true,
-        'Acknowledge',
-        alert.confirmText,
-        'Accept').run();
+        {
+          title: 'Acknowledge'
+        },
+        {
+          inputs: {
+              message: alert.confirmText,
+              confirmationKeyword: 'Accept'
+          }
+        }).run();
   }
 
 

@@ -163,7 +163,7 @@ export class UpgradeProgressComponent implements AfterViewInit, OnChanges {
       };
       ref[UpgradeDomainStateNames.InProgress] = {
         name: UpgradeDomainStateNames.InProgress,
-        css: BadgeConstants.BadgeWarning,
+        css: 'blue',
         uds: []
       };
       ref[UpgradeDomainStateNames.Completed] = {

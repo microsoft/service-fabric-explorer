@@ -1,11 +1,7 @@
 import { Component, Injector } from '@angular/core';
-import { Observable } from 'rxjs';
-import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { CommandFactory, CommandParamTypes, CommandSafetyLevel, PowershellCommand, PowershellCommandParameter } from 'src/app/Models/PowershellCommand';
 import { DataService } from 'src/app/services/data.service';
-import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
-import { map } from 'rxjs/operators';
-import { Application } from 'src/app/Models/DataModels/Application';
+import { ApplicationsBaseControllerDirective } from '../applicationsBase';
 
 
 @Component({
@@ -13,12 +9,12 @@ import { Application } from 'src/app/Models/DataModels/Application';
   templateUrl: './commands.component.html',
   styleUrls: ['./commands.component.scss']
 })
-export class CommandsComponent extends BaseControllerDirective {
+export class CommandsComponent extends ApplicationsBaseControllerDirective {
 
   commands: PowershellCommand[] = [];
   
-  constructor(private data: DataService, injector: Injector) {
-    super(injector);
+  constructor(data: DataService, injector: Injector) {
+    super(data, injector);
    }
 
   afterDataSet(): void {
