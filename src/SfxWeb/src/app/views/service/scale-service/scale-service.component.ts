@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject, Input, EventEmitter, OnDestroy } from '@angular/core';
+import { Component, OnInit, Inject, Input, EventEmitter, OnDestroy, Output } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { IsolatedAction } from 'src/app/Models/Action';
 import { Service } from 'src/app/Models/DataModels/Service';
@@ -21,9 +21,10 @@ export class ScaleServiceComponent implements OnInit, OnDestroy, DialogBodyCompo
   updateServiceDescription: IRawUpdateServiceDescription;
 
   form: UntypedFormGroup;
-  disableSubmit = new EventEmitter<boolean>();
+  @Output() disableSubmit = new EventEmitter<boolean>();
 
   validityCheckerSubscription: Subscription;
+  disableSubmitSubscription: Subscription = new Subscription();
   
   constructor(public dialogRef: MatDialogRef<ScaleServiceComponent>,
               @Inject(MAT_DIALOG_DATA) public data: IsolatedAction,
@@ -39,7 +40,7 @@ export class ScaleServiceComponent implements OnInit, OnDestroy, DialogBodyCompo
     this.form = this.formBuilder.group({
       count: [(this.inputs.service.description.raw as IRawStatelessServiceDescription).InstanceCount, [Validators.required, Validators.pattern('^(?:-1|[1-9]\\d*)$')]],
     });
-    this.form.valueChanges.subscribe(() => {
+    this.validityCheckerSubscription = this.form.valueChanges.subscribe(() => {
       this.checkFormValidity();
     })
   }
@@ -59,6 +60,8 @@ export class ScaleServiceComponent implements OnInit, OnDestroy, DialogBodyCompo
 
   ngOnDestroy(): void {
     this.validityCheckerSubscription.unsubscribe();
+    this.disableSubmitSubscription.unsubscribe();
+
   }
 
 }

@@ -1,5 +1,5 @@
-import { AfterViewInit, Component, EventEmitter, Input, Output, Type, ViewChild } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { AfterViewInit, Component, EventEmitter, Input, OnDestroy, Output, Type, ViewChild } from '@angular/core';
+import { Observable, Subscription, of } from 'rxjs';
 import { DialogBodyDirective } from '../dialog-body.directive';
 import { DialogBodyComponent } from '../DialogBodyComponent';
 import { ActionDialogUtils } from '../utils';
@@ -9,11 +9,12 @@ import { ActionDialogUtils } from '../utils';
   templateUrl: './message-with-warning.component.html',
   styleUrls: ['./message-with-warning.component.scss']
 })
-export class MessageWithWarningComponent implements AfterViewInit {
+export class MessageWithWarningComponent implements AfterViewInit, OnDestroy, DialogBodyComponent {
 
   @ViewChild(DialogBodyDirective) body: DialogBodyDirective;
   @Input() inputs: {description: string, link: string, linkText: string, template?: Type<DialogBodyComponent>};
   @Output() disableSubmit = new EventEmitter<boolean>();
+  disableSubmitSubscription: Subscription = new Subscription();
 
   instance: DialogBodyComponent;
 
@@ -34,5 +35,9 @@ export class MessageWithWarningComponent implements AfterViewInit {
     else {
       return of(true);
     }
+  }
+  
+  ngOnDestroy(): void { 
+    this.disableSubmitSubscription.unsubscribe();
   }
 }

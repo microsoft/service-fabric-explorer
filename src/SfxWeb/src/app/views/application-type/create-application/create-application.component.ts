@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject, Input, EventEmitter, OnDestroy } from '@angular/core';
+import { Component, OnInit, Inject, Input, EventEmitter, OnDestroy, Output } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { IsolatedAction } from 'src/app/Models/Action';
 import { ApplicationType } from 'src/app/Models/DataModels/ApplicationType';
@@ -16,8 +16,9 @@ export class CreateApplicationComponent implements OnInit, OnDestroy {
 
   @Input() inputs: { appType: ApplicationType };
   form: UntypedFormGroup;
-  disableSubmit = new EventEmitter<boolean>();
+  @Output() disableSubmit = new EventEmitter<boolean>();
   validityCheckerSubscription: Subscription;
+  disableSubmitSubscription: Subscription = new Subscription();
 
 
   constructor(public dialogRef: MatDialogRef<CreateApplicationComponent>,
@@ -47,6 +48,7 @@ export class CreateApplicationComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.validityCheckerSubscription.unsubscribe();
+    this.disableSubmitSubscription.unsubscribe();
   }
 
 }
