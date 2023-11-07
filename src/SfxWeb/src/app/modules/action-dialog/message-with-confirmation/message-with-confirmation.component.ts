@@ -1,16 +1,19 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { DialogBodyComponent } from '../DialogBodyComponent';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-message-with-confirmation',
   templateUrl: './message-with-confirmation.component.html',
   styleUrls: ['./message-with-confirmation.component.scss']
 })
-export class MessageWithConfirmationComponent implements OnInit, DialogBodyComponent {
+export class MessageWithConfirmationComponent implements OnInit, OnDestroy, DialogBodyComponent {
 
   @Input() inputs: {message?: string, confirmationKeyword?: string};
   @Output() disableSubmit = new EventEmitter<boolean>();
  
+  disableSubmitSubscription: Subscription = new Subscription();
+
   userInput = '';
   placeHolderText = '';
 
@@ -26,6 +29,10 @@ export class MessageWithConfirmationComponent implements OnInit, DialogBodyCompo
     else {
       this.disableSubmit.emit(false);
     }
+  }
+
+  ngOnDestroy(): void {
+    this.disableSubmitSubscription.unsubscribe();
   }
  
 }
