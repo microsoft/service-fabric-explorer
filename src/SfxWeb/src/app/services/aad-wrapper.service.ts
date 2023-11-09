@@ -1,12 +1,10 @@
 import { Inject, Injectable } from '@angular/core';
-import { Observable, Subscriber, of } from 'rxjs';
+import { Observable, Subject, Subscriber, of } from 'rxjs';
 import { AadConfigService } from '../modules/msal-dynamic-config/config-service.service';
 import { MsalService, MsalBroadcastService, MSAL_GUARD_CONFIG, MsalGuardConfiguration } from '@azure/msal-angular';
-import { InteractionStatus, PopupRequest, InteractionRequiredAuthError, ServerError, AuthError } from '@azure/msal-browser';
+import { InteractionStatus, PopupRequest, InteractionRequiredAuthError, ServerError, AuthError, SilentRequest, AuthenticationResult } from '@azure/msal-browser';
 import { filter, map, mergeMap, catchError } from 'rxjs/operators';
-import AuthenticationContext, { Options } from 'adal-angular';
-import { StringUtils } from '../Utils/StringUtils';
-import { StorageService } from './storage.service';
+
 /*
 Wrapping around the config service in the MSAL module.
 This is done to make dependency easier given we are trying to avoid http interceptor issues and circular dependency
@@ -39,65 +37,40 @@ export interface IUserInfo {
 })
 export class AadWrapperService {
 
-  private adalContext: AuthenticationContext;
-
-  public useAdal = false;
   public user: IUserInfo;
 
-  private daysBeforeMsalAttempt = 7;
-  private readonly MSAL_CHECK_KEY = "msalCheckDate";
+  private silentRequest: SilentRequest;
 
   constructor(private aadConfigService: AadConfigService,
-              private msalService: MsalService,
-              private msalBroadcastService: MsalBroadcastService,
-              private storageService: StorageService,
-              @Inject(MSAL_GUARD_CONFIG) private msalGuardConfig: MsalGuardConfiguration) { }
+    private msalService: MsalService,
+    private msalBroadcastService: MsalBroadcastService,
+    @Inject(MSAL_GUARD_CONFIG) private msalGuardConfig: MsalGuardConfiguration) { }
 
   init(): Observable<any> {
-    if(!this.aadEnabled) {
+
+    this.silentRequest = {
+      scopes: [`${this.aadConfigService.getCluster()}/.default`],
+      authority: this.aadConfigService.getAuthority()
+    }
+    if (!this.aadEnabled) {
       return of(null);
     }
-    this.initAdal();
-
-    const expirationCheck = new Date(new Date().setDate(new Date().getDate() - this.daysBeforeMsalAttempt)).getTime();
-    const msalCheckDate = this.storageService.getValueNumber(this.MSAL_CHECK_KEY, new Date().getTime());
-
-    //TODO consider having a cached value to attempt msal again?
-    if (window.location.hash.includes("id_token=") || (this.isAdalAuthenticated && msalCheckDate > expirationCheck )) {
-      this.useAdal = true;
-      this.handleWindowCallbackAdal();
-      return of(null);
-    } else if (this.aadEnabled) {
-      this.storageService.setValue(this.MSAL_CHECK_KEY, new Date().getTime());
-      return this.msalService.handleRedirectObservable().pipe(
-        catchError(err => {
-          //dont attempt login here because it has a slight delay which can cause msal to attempt a login after.
-          //pass info to tell the next observable step to attempt a adal login.
-          if (err instanceof ServerError) {
-            if (this.shouldMsalFallbackToAdal(err)) {
-              return of(false)
+    return this.msalService.handleRedirectObservable().pipe(
+      catchError(err => {
+        return of(true);
+      }),
+      mergeMap((value) => this.msalBroadcastService.inProgress$
+        .pipe(
+          filter((status: InteractionStatus) => status === InteractionStatus.None),
+          mergeMap(() => {
+            if (this.msalService.instance.getAllAccounts().length === 0) {
+              return this.loginMsal();
+            } else {
+              this.checkAndSetActiveAccountMsal();
+              return of(null)
             }
-          }
-          return of(true);
-        }),
-        mergeMap((value) => this.msalBroadcastService.inProgress$
-          .pipe(
-            filter((status: InteractionStatus) => status === InteractionStatus.None),
-            mergeMap(() => {
-              if(value === false) {
-                this.adalContext.login();
-                return of(null);
-              }
-              else if (this.msalService.instance.getAllAccounts().length === 0) {
-                return this.loginMsal();
-              } else {
-                this.checkAndSetActiveAccountMsal();
-                return of(null)
-              }
-            }))))
-    } else {
-      return of(null);
-    }
+          }))))
+
   }
 
   checkAndSetActiveAccountMsal(){
@@ -123,11 +96,7 @@ export class AadWrapperService {
   }
 
   logout() {
-    if(this.useAdal) {
-      this.adalContext.logOut();
-    }else{
-      this.msalService.logoutRedirect();
-    }
+    this.msalService.logoutRedirect();
   }
 
   public get aadEnabled() {
@@ -135,18 +104,11 @@ export class AadWrapperService {
   }
 
   public acquireToken() {
-    if(this.useAdal) {
-      return this.acquireTokenAdal();
-    }else{
-      return this.acquireTokenMsal();
-    }
+    return this.acquireTokenMsal();
   }
 
   acquireTokenMsal() {
-    return this.msalService.acquireTokenSilent({
-      scopes: [`${this.aadConfigService.getCluster()}/.default`],
-      authority: this.aadConfigService.getAuthority()
-    }).pipe(
+    return this.msalService.acquireTokenSilent(this.silentRequest).pipe(
       map(tokenInfo => {
         return tokenInfo.accessToken
       }),
@@ -154,67 +116,6 @@ export class AadWrapperService {
       if (err instanceof InteractionRequiredAuthError) {
         return this.loginMsal();
       }
-      if (this.shouldMsalFallbackToAdal(err)) {
-        this.adalContext.login();
-        return of(false)
-      }
     }))
   }
-
-  shouldMsalFallbackToAdal(err: AuthError) {
-    return err.errorMessage.includes("AADSTS9002326");
-  }
-
-  initAdal() {
-    const config: Options = {
-      tenant: this.aadConfigService.metaData.raw.metadata.tenant,
-      clientId: this.aadConfigService.getCluster(),
-      cacheLocation: 'localStorage'
-    };
-
-    if (this.aadConfigService.metaData.raw.metadata.login) {
-      config.instance = StringUtils.EnsureEndsWith(this.aadConfigService.metaData.raw.metadata.login, '/');
-    }
-    this.adalContext = new AuthenticationContext(config);
-  }
-
-  public getAccessTokenAdal(endpoint: string, callbacks: (message: string, token: string) => any) {
-    return this.adalContext.acquireToken(endpoint, callbacks);
-  }
-
-  public acquireTokenAdal(): Observable<any> {
-    return new Observable<any>((subscriber: Subscriber<any>) => {
-      this.adalContext.acquireToken(this.aadConfigService.metaData.raw.metadata.cluster,
-                                (message: string, token: string) => {
-        if (token) {
-          subscriber.next(token);
-        } else {
-          console.error(message);
-          subscriber.error(message);
-        }
-        subscriber.complete();
-      });
-    })
-  }
-
-  handleWindowCallbackAdal() {
-    this.adalContext.handleWindowCallback();
-
-    const user = this.adalUserInfo();
-    this.user = {
-      user: user.userName,
-      roles: user?.profile?.roles || []
-    }
-  }
-
-  public adalUserInfo() {
-    return this.adalContext.getCachedUser();
-  }
-  public get adalAccessToken() {
-    return this.adalContext.getCachedToken(this.aadConfigService.metaData.metadata.cluster);
-  }
-  public get isAdalAuthenticated(): boolean {
-    return !!this.adalUserInfo && !!this.adalAccessToken;
-  }
-
 }

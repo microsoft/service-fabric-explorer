@@ -40,9 +40,9 @@
             <div>
               Roles: {{AadService.user.roles}}
             </div>
-            <div>
+            <!-- <div>
               {{AadService.useAdal ? 'adal' : 'msal'}}
-            </div>
+            </div> -->
           </div>
           <button class="simple-button" (click)="AadService.logout()" ngbDropdownItem>
             Log Out
