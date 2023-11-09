@@ -89,7 +89,7 @@ context('node page', () => {
 
       it('deactivated', () => {
         addRoute("deactivatedNode", "node-page/deactivated-node.json", apiUrl(`/Nodes/${nodeName}/?*`));
-        addRoute(FIXTURE_NODES, "node-page/node-list.json", nodes_route);
+        addRoute(FIXTURE_NODES, "node-page/deactivated-node-list.json", nodes_route);
 
         cy.visit(`/#/node/${nodeName}`);
 

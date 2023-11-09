@@ -54,10 +54,6 @@
   }
 }
 
-.alert-warning {
-  background-color: yellow;
-}
-
 .alert-info {
   background-color: lightblue;
 }
@@ -68,6 +64,7 @@
 
 .alert-warning {
   background-color: var(--badge-warning);
+  color: var(--primary-background-color);
 }
 
 .remove-placement {

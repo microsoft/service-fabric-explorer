@@ -18,8 +18,18 @@ export class HyperLinkComponent implements OnInit, DetailBaseComponent {
   constructor() { }
 
   ngOnInit() {
-    this.value = this.listSetting.getValue(this.item);
+    if (this.listSetting.linkName) {
+      this.value = this.listSetting.linkName;
+    }
+    else {
+      this.value = this.listSetting.getValue(this.item);
+    }
+    
     this.link = this.listSetting.href(this.item);
+    if (this.link === null) {
+      this.value = "";
+    }
+
   }
 
 }

@@ -1,4 +1,9 @@
 <div class="actions-row">
+    <div *ngIf="item.isArmManaged" class="mif-notification mif-2x warning-icon"
+     ngbTooltip="This is an ARM managed app type. ARM managed resources should only be modified during ARM deployments."
+     tooltipClass="styled-tooltip" container="body"
+     >
+    </div>
     <button class="simple-button" *ngFor="let action of item.actions.collection" [disabled]="action.running"
              (click)="item.actions.runWithTelemetry(action, 'serviceTypesTable')">
         {{ action.displayTitle }}

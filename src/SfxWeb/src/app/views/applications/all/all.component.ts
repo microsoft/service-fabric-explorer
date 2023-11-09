@@ -1,25 +1,20 @@
-import { Component, OnInit, Injector } from '@angular/core';
-import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
+import { Component, Injector } from '@angular/core';
 import { DataService } from 'src/app/services/data.service';
 import { SettingsService } from 'src/app/services/settings.service';
-import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
-import { Observable } from 'rxjs';
-import { ApplicationCollection } from 'src/app/Models/DataModels/collections/Collections';
-import { ListSettings, ListColumnSettingForLink, ListColumnSettingWithFilter, ListColumnSettingForBadge, ListColumnSetting } from 'src/app/Models/ListSettings';
-import { map } from 'rxjs/operators';
+import { ListSettings, ListColumnSettingForLink, ListColumnSettingWithFilter, ListColumnSettingForBadge, ListColumnSetting, ListColumnSettingForArmManaged } from 'src/app/Models/ListSettings';
+import { ApplicationsBaseControllerDirective } from '../applicationsBase';
 
 @Component({
   selector: 'app-all',
   templateUrl: './all.component.html',
   styleUrls: ['./all.component.scss']
 })
-export class AllComponent extends BaseControllerDirective {
+export class AllComponent extends ApplicationsBaseControllerDirective {
 
-  apps: ApplicationCollection;
   listSettings: ListSettings;
 
-  constructor(private data: DataService, private settings: SettingsService, injector: Injector) {
-    super(injector);
+  constructor(public data: DataService, private settings: SettingsService, injector: Injector) {
+    super(data, injector);
    }
 
   setup() {
@@ -28,14 +23,9 @@ export class AllComponent extends BaseControllerDirective {
       new ListColumnSettingWithFilter('raw.TypeName', 'Application Type'),
       new ListColumnSetting('raw.TypeVersion', 'Version'),
       new ListColumnSettingForBadge('healthState', 'Health State'),
-      new ListColumnSettingWithFilter('raw.Status', 'Status')
+      new ListColumnSettingWithFilter('raw.Status', 'Status'),
+      new ListColumnSettingForArmManaged()
     ]);
-  }
-
-  refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
-    return this.data.getApps(true, messageHandler).pipe(map(apps => {
-      this.apps = apps;
-    }));
   }
 
 }

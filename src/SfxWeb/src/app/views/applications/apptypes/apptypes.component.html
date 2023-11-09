@@ -1,1 +1,13 @@
-<app-apptype-viewer></app-apptype-viewer>
+<div class="tile-container" data-cy="tiles">
+    <app-dashboard-text-tile [barClass]="'badge-upgrade-active'" [count]="usage.activeAppTypes.length" *ngIf="usage"
+      title="Active Application Types" style="display: block" data-cy="active-app-type">
+    </app-dashboard-text-tile>
+  
+    <app-dashboard-text-tile [barClass]="'badge-upgrade-inactive'" [count]="usage.inactiveAppTypes.length" *ngIf="usage"
+      title="Unused Application Types" style="display: block" data-cy="inactive-app-type">
+    </app-dashboard-text-tile>
+</div>
+  
+<div class="detail-pane essen-pane" *ngIf="usage">
+    <app-apptype-viewer [activeAppTypes]="usage.activeAppTypes" [inactiveAppTypes]="usage.inactiveAppTypes"></app-apptype-viewer>
+</div>

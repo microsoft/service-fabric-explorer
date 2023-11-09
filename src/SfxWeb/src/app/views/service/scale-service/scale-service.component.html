@@ -1,13 +1,4 @@
-<form class="action-modal" [formGroup]="form">
-    <div class="modal-header">
-        <h1 class="modal-title">Scale Service</h1>
-    </div>
-    <div class="modal-body" style="margin: auto; text-align: center;">
+<div [formGroup]="form" style="margin: auto; text-align: center;">    
         <p>Enter the new number of instances for the service:</p>
         <input class="input-flat" type="number" formControlName="count" style="width: 100%;">
-    </div>
-    <div class="modal-footer">
-        <button type="submit" class="solid-button blue" (click)="ok()" [disabled]="form.invalid">Update Service</button>
-        <button type="button" class="flat-button" (click)="close()">Cancel</button>
-    </div>
-</form>
+</div>

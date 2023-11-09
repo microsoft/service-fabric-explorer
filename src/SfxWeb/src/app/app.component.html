@@ -77,7 +77,7 @@
         <div class="view-container">
           <div class="expander-container" *ngIf="!smallScreenSize">
             <button class="expander-icon mif-vertical-align-bottom" [ngClass]="{'flip': treeWidth === '8px'}" placement="right"
-                  [ngbTooltip]="(treeWidth === '8px' ? 'Expand' : 'Close') + ' tree view'"  tooltipClass="styled-tooltip" (click)="collapseSide()"></button>
+                  [title]="(treeWidth === '8px' ? 'Expand' : 'Close') + ' tree view'" (click)="collapseSide()"></button>
           </div>
           <router-outlet id="view-container"></router-outlet>
         </div>

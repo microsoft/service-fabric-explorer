@@ -1,4 +1,6 @@
-<app-navbar [tabs]="tabs" type="Application" [name]="app?.name" [actions]="app?.actions"></app-navbar>
+<app-navbar [tabs]="tabs" type="Application" [name]="app?.name" [actions]="app?.actions">
+    <app-arm-warning warning *ngIf="app?.isArmManaged" [resourceId]="app?.resourceId"></app-arm-warning>
+</app-navbar>
 <div class="main-view">
     <div class="flex-child">
         <router-outlet></router-outlet>
