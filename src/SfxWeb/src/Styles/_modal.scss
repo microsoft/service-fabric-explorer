@@ -91,7 +91,7 @@ $dialog-input-bg-color: #242424;
                     margin-top: -4px;
                 }
 
-                .table {
+                .default-table {
                     margin-bottom: 0;
                     color: white;
                     thead > tr > th {
@@ -115,7 +115,7 @@ $dialog-input-bg-color: #242424;
 }
 
 
-.mat-dialog-container-wrapper .mat-dialog-container {
+.mat-mdc-dialog-container-wrapper .mat-dialog-container {
     padding: 0px;
 }
 
