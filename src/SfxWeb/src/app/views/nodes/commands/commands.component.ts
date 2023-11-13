@@ -4,7 +4,7 @@ import { DataService } from 'src/app/services/data.service';
 import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 
 @Component({
-  selector: 'app-commands',
+  selector: 'app-nodes-commands',
   templateUrl: './commands.component.html',
   styleUrls: ['./commands.component.scss']
 })
@@ -14,7 +14,7 @@ export class CommandsComponent extends BaseControllerDirective {
   constructor(private data: DataService, injector: Injector) {
     super(injector);
   }
-  
+
   afterDataSet(): void {
     this.setUpCommands();
   }
