@@ -105,7 +105,16 @@ context('app', () => {
           })
           cy.get('[data-cy=flips]').should('not.exist')
 
-      })
+        })
+
+        it('arm managed app', () => {
+          addRoute('visualObjectsApplicationType', 'app-page/app-arm-managed.json', apiUrl('/Applications/VisualObjectsApplicationType/?*'))
+          cy.visit(`/#/apptype/${appName}/app/${appName}`)
+
+          cy.get('[data-cy=armWarning]').should('exist');
+          cy.get('[data-cy=actions]').should('not.exist');
+
+        })
 
     })
 

@@ -1,8 +1,11 @@
 import { Injectable } from '@angular/core';
-import { ListColumnSetting, ListSettings, ListColumnSettingForBadge, ListColumnSettingForLink,
-         ListColumnSettingWithCopyText, ListColumnSettingWithUtcTime, ListColumnSettingWithCustomComponent,
-         ListColumnSettingWithShorten,
-         ListColumnSettingWithFilter} from '../Models/ListSettings';
+import {
+    ListColumnSetting, ListSettings, ListColumnSettingForBadge, ListColumnSettingForLink,
+    ListColumnSettingWithCopyText, ListColumnSettingWithUtcTime, ListColumnSettingWithCustomComponent,
+    ListColumnSettingWithShorten,
+    ListColumnSettingWithFilter,
+    ListColumnSettingForArmManaged
+} from '../Models/ListSettings';
 import { NodeStatusConstants, Constants } from '../Common/Constants';
 import { ClusterLoadInformation } from '../Models/DataModels/Cluster';
 import { MetricsViewModel } from '../ViewModels/MetricsViewModel';
@@ -216,13 +219,17 @@ export class SettingsService {
     true);
   }
 
-  public getNewOrExistingAppTypeListSettings(includeIsUsedColumn: boolean = false, includeActions: boolean = true) {
+  public getNewOrExistingAppTypeListSettings(includeIsUsedColumn: boolean = false, includeActions: boolean = true, includeArmLink: boolean = true) {
     let listKey = 'appTypeAppTypes';
     const settings = [
       new ListColumnSettingWithFilter('name', 'Name'),
       new ListColumnSetting('raw.Version', 'Version'),
       new ListColumnSettingWithFilter('raw.Status', 'Status'),
     ];
+      
+    if (includeArmLink) {
+        settings.push(new ListColumnSettingForArmManaged());
+    }
 
     if(includeActions) {
       settings.push(new ListColumnSettingForApplicationType())

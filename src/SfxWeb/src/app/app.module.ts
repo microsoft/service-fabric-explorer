@@ -20,6 +20,7 @@ import { RestClientService } from './services/rest-client.service';
 import { MsalConfigDynamicModule } from './modules/msal-dynamic-config/msal-dynamic-config.module';
 import { StandaloneIntegrationService } from './services/standalone-integration.service';
 import { initApp } from './app-initializers';
+import { ActionDialogModule } from './modules/action-dialog/action-dialog.module';
 
 @NgModule({
   declarations: [
@@ -39,7 +40,8 @@ import { initApp } from './app-initializers';
     NgbTooltipModule,
     MatSnackBarModule,
     DebuggingModule,
-    MsalConfigDynamicModule.forRoot()
+    MsalConfigDynamicModule.forRoot(),
+    ActionDialogModule
   ],
 
   providers: [

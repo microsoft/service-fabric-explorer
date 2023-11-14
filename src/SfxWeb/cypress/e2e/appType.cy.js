@@ -13,20 +13,35 @@ context('app type', () => {
   })
 
   describe("essentials", () => {
-      it('load essentials', () => {
-          cy.get('[data-cy=header').within(() => {
-              cy.contains(`Application Type ${appTypeName}`).click();
-            })
-
-          cy.get('[data-cy=appTypeVersions]').within(() => {
-              cy.contains(appTypeName)
-              cy.contains('16.0.0')
+    it('load essentials', () => {
+        cy.get('[data-cy=header').within(() => {
+            cy.contains(`Application Type ${appTypeName}`).click();
           })
 
-          cy.get('[data-cy=applicationsList]').within(() => {
-              cy.contains(appname)
-          })
-      })
+        cy.get('[data-cy=armWarning]').should('exist');
+        
+        cy.get('[data-cy=appTypeVersions]').within(() => {
+            cy.contains(appTypeName)
+            cy.contains("tr", "16.0.0").within(()=>{
+              cy.contains('button', 'Unprovision');
+              cy.contains('a', 'View').should('not.exist');
+            });
+            cy.contains("tr", "18.0.0").within(()=> {
+              cy.contains('button', 'unprovision').should('not.exist');
+              cy.contains('a', 'View');
+            }) 
+        })
+
+        cy.contains('All').click();
+
+        cy.get('[data-cy=allAppTypeVersions]').within(() => {
+          cy.contains('17.0.0')              
+        });
+
+        cy.get('[data-cy=applicationsList]').within(() => {
+            cy.contains(appname)
+        })
+    })
 
     it('unprovision', () => {
       cy.intercept('POST', apiUrl('/ApplicationTypes/VisualObjectsApplicationType/$/Unprovision?*'), {
@@ -39,8 +54,8 @@ context('app type', () => {
         cy.contains("Unprovision").click()
       }).then(() => {
         cy.get(".action-modal").within(() => {
-          cy.get('[data-cy=input-dialog]');
-        }).type('VisualObjectsApplicationType')
+          cy.get('[data-cy=input-dialog]').type('VisualObjectsApplicationType');
+        })
 
         cy.get('[data-cy=submit]').click();
       })
@@ -53,10 +68,14 @@ context('app type', () => {
       cy.get('@getunprovision.0').then(request1 => {
         cy.get('@getunprovision.1').then(request2 => {
           const versionsSeen = [request1.request.body.ApplicationTypeVersion, request2.request.body.ApplicationTypeVersion];
-          expect(versionsSeen).to.include.members(["16.0.0", "17.0.0"])
+          expect(versionsSeen).to.include.members(["16.0.0", "17.0.0"]);
+          expect(versionsSeen).to.not.include("18.0.0");
+        })
+
+        cy.get('[data-cy=applicationsList]').within(() => {
+            cy.contains(appname)
         })
       })
-
     })
 
   })

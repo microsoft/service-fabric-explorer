@@ -23,9 +23,9 @@ export class TimelineComponent implements VisualizationComponent {
   @Output() selectEvent = new EventEmitter<string>();
 
 
-  public get showAllEvents() { return this.pshowAllEvents; }
-  public set showAllEvents(state: boolean) {
-    this.pshowAllEvents = state;
+  public get showCorrelatedEvents() { return this.pshowCorrelatedEvents; }
+  public set showCorrelatedEvents(state: boolean) {
+    this.pshowCorrelatedEvents = state;
     this.getTimelineData();
   }
 
@@ -33,7 +33,7 @@ export class TimelineComponent implements VisualizationComponent {
   public showCorrelatedBtn = false;
   public transformText = 'Category,Kind';
 
-  private pshowAllEvents = false;
+  private pshowCorrelatedEvents = true;
 
 
   constructor(
@@ -76,7 +76,7 @@ export class TimelineComponent implements VisualizationComponent {
     for (const data of this.listEventStoreData) {
       if (data.eventsList.lastRefreshWasSuccessful) {
         try {
-          if (this.pshowAllEvents) {
+          if (!this.pshowCorrelatedEvents) {
             if (data.setDateWindow) {
               rawEventlist = rawEventlist.concat(data.getEvents());
             }
@@ -94,7 +94,7 @@ export class TimelineComponent implements VisualizationComponent {
       }
     }
 
-    if (this.pshowAllEvents) {
+    if (!this.pshowCorrelatedEvents) {
       const d = parseEventsGenerically(rawEventlist, this.transformText);
 
       combinedTimelineData = {
@@ -114,13 +114,9 @@ export class TimelineComponent implements VisualizationComponent {
     this.startDate = data.startDate;
     this.endDate = data.endDate;
 
-    this.pshowAllEvents = this.checkAllOption();
-    this.showCorrelatedBtn = !this.pshowAllEvents;
+    this.pshowCorrelatedEvents = !this.checkAllOption();
+    this.showCorrelatedBtn = this.pshowCorrelatedEvents;
 
     this.getTimelineData();
-  }
-
-  public updateShowAllEvents(value: boolean) {
-    this.showAllEvents = value;
   }
 }

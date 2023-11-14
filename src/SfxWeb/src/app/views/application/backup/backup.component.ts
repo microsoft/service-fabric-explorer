@@ -98,10 +98,16 @@ export class BackupComponent extends ApplicationBaseControllerDirective  {
         () => this.app.applicationBackupConfigurationInfoCollection.collection.length && this.app.applicationBackupConfigurationInfoCollection.collection[0].raw &&
               this.app.applicationBackupConfigurationInfoCollection.collection[0].raw.Kind === 'Application' &&
               this.app.applicationBackupConfigurationInfoCollection.collection[0].raw.PolicyInheritedFrom === 'Application' &&
-              this.app.applicationBackupConfigurationInfoCollection.collection[0].raw.SuspensionInfo.IsSuspended === false,
-        'Confirm Application Backup Suspension',
-        `Suspend application backup for ${this.app.name} ?`,
-        this.app.name));
+          this.app.applicationBackupConfigurationInfoCollection.collection[0].raw.SuspensionInfo.IsSuspended === false,
+        {
+          title:  'Confirm Application Backup Suspension'
+        },
+        {
+          inputs: {
+              message: `Suspend application backup for ${this.app.name} ?`,
+              confirmationKeyword: this.app.name
+          }
+        }));
 
       this.actions.add(new ActionWithConfirmationDialog(
         this.data.dialog,
@@ -114,10 +120,16 @@ export class BackupComponent extends ApplicationBaseControllerDirective  {
         () => this.app.applicationBackupConfigurationInfoCollection.collection.length && this.app.applicationBackupConfigurationInfoCollection.collection[0].raw &&
               this.app.applicationBackupConfigurationInfoCollection.collection[0].raw.Kind === 'Application' &&
               this.app.applicationBackupConfigurationInfoCollection.collection[0].raw.PolicyInheritedFrom === 'Application' &&
-              this.app.applicationBackupConfigurationInfoCollection.collection[0].raw.SuspensionInfo.IsSuspended === true,
-        'Confirm Application Backup Resumption',
-        `Resume application backup for ${this.app.name} ?`,
-        this.app.name));
+          this.app.applicationBackupConfigurationInfoCollection.collection[0].raw.SuspensionInfo.IsSuspended === true,
+        {
+          title:  'Confirm Application Backup Resumption'
+        },
+        {
+          inputs: {
+              message: `Resume application backup for ${this.app.name} ?`,
+              confirmationKeyword: this.app.name
+          }
+        }));
     }
   }
 

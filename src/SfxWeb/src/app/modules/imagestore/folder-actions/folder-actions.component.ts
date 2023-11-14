@@ -26,9 +26,15 @@ export class FolderActionsComponent  implements DetailBaseComponent {
       '',
       () => this.listSetting.imagestore.deleteContent(this.item.path),
       () => true,
-      'Confirm Deletion',
-      `Delete ${this.item.path}? This action cannot be undone`,
-      this.item.path).run();
+      {
+        title:  'Confirm Deletion'
+      },
+      {
+        inputs: {
+            message: `Delete ${this.item.path}? This action cannot be undone`,
+            confirmationKeyword: this.item.path
+        }
+      }).run();
   }
 
 }

@@ -1,11 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Injector } from '@angular/core';
+import { ApplicationsBaseControllerDirective } from '../applicationsBase';
+import { DataService } from 'src/app/services/data.service';
 
 @Component({
   selector: 'app-apptypes',
   templateUrl: './apptypes.component.html',
   styleUrls: ['./apptypes.component.scss']
 })
-export class ApptypesComponent {
+export class ApptypesComponent  extends ApplicationsBaseControllerDirective {
 
-  constructor() { }
+  constructor(private dataService: DataService, injector: Injector) {
+    super(dataService, injector);
+  }
 }

@@ -1,6 +1,8 @@
 import { DataModelBase, IDecorators } from './Base';
-import { IRawService, IRawUpdateServiceDescription, IRawServiceHealth, IRawServiceDescription, IRawServiceType, IRawServiceManifest,
-         IRawCreateServiceDescription, IRawServiceBackupConfigurationInfo, IRawCreateServiceFromTemplateDescription } from '../RawDataTypes';
+import {
+    IRawService, IRawUpdateServiceDescription, IRawServiceHealth, IRawServiceDescription, IRawServiceType, IRawServiceManifest,
+    IRawCreateServiceDescription, IRawServiceBackupConfigurationInfo, IRawCreateServiceFromTemplateDescription
+} from '../RawDataTypes';
 import { PartitionCollection, ServiceBackupConfigurationInfoCollection } from './collections/Collections';
 import { DataService } from 'src/app/services/data.service';
 import { HealthStateFilterFlags, IClusterHealthChunkQueryDescription, IServiceHealthStateFilter } from '../HealthChunkRawDataTypes';
@@ -19,6 +21,7 @@ import { ActionWithConfirmationDialog, IsolatedAction } from '../Action';
 import { ScaleServiceComponent } from 'src/app/views/service/scale-service/scale-service.component';
 import { ViewBackupComponent } from 'src/app/modules/backup-restore/view-backup/view-backup.component';
 import { RoutesService } from 'src/app/services/routes.service';
+import { ActionDialogComponent } from 'src/app/modules/action-dialog/action-dialog/action-dialog.component';
 // -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
@@ -70,6 +73,14 @@ export class Service extends DataModelBase<IRawService> {
         return RoutesService.getServiceViewPath(this.parent.raw.TypeName, this.parent.id, this.id);
     }
 
+    public get resourceId(): string {
+        return this.raw.ServiceMetadata?.ArmMetadata?.ArmResourceId;
+    }
+
+    public get isArmManaged(): boolean {
+        return this.resourceId?.length > 0;
+    }
+
     public addHealthStateFiltersForChildren(clusterHealthChunkQueryDescription: IClusterHealthChunkQueryDescription): IServiceHealthStateFilter {
         const appFilter = this.parent.addHealthStateFiltersForChildren(clusterHealthChunkQueryDescription);
         let serviceFilter = appFilter.ServiceFilters.find(filter => filter.ServiceNameFilter === this.name);
@@ -102,31 +113,49 @@ export class Service extends DataModelBase<IRawService> {
             return;
         }
 
-        this.actions.add(new ActionWithConfirmationDialog(
-            this.data.dialog,
-            'deleteService',
-            'Delete Service',
-            'Deleting',
-            () => this.delete().pipe(map( () => {
-                this.data.routes.navigate(() => this.parent.viewPath);
-            })),
-            () => true,
-            'Confirm Service Deletion',
-            `Delete service ${this.name} from cluster ${window.location.host}?`,
-            this.name
-        ));
-
-        if (this.isStatelessService) {
-            this.actions.add(new IsolatedAction(
+        if (!this.isArmManaged) {
+            this.actions.add(new ActionWithConfirmationDialog(
                 this.data.dialog,
-                'scaleService',
-                'Scale Service',
-                'Scaling Service',
-                this,
-                ScaleServiceComponent,
-                () => this.isStatelessService
+                'deleteService',
+                'Delete Service',
+                'Deleting',
+                () => this.delete().pipe(map( () => {
+                    this.data.routes.navigate(() => this.parent.viewPath);
+                })),
+                () => true,
+                {
+                    title: 'Confirm Service Deletion',
+                },
+                {
+                    inputs: {
+                        message: `Delete service ${this.name} from cluster ${window.location.host}?`,
+                        confirmationKeyword: this.name,
+                    }
+                }
             ));
+            if (this.isStatelessService) {
+                this.actions.add(new IsolatedAction(
+                    this.data.dialog,
+                    'scaleService',
+                    'Scale Service',
+                    'Scaling Service',
+                    this,
+                    ActionDialogComponent,
+                    () => this.isStatelessService,
+                    null,
+                    {
+                        title: "Scale Service",
+                    },
+                    {
+                        template: ScaleServiceComponent,
+                        inputs: {
+                            service: this
+                        }
+                    }
+                ));
+            }
         }
+
 
     }
 

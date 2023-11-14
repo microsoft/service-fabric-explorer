@@ -69,9 +69,15 @@ export class DeployedCodePackage extends DataModelBase<IRawDeployedCodePackage> 
             'Restarting',
             () => this.restart(),
             () => true,
-            'Confirm Code Package Restart',
-            `Restart code package ${this.name}?`,
-            this.name
+            {
+                title: 'Confirm Code Package Restart'
+            },
+            {
+                inputs: {
+                    message: `Restart code package ${this.name}?`,
+                    confirmationKeyword: this.name
+                }
+            }
         ));
     }
 }

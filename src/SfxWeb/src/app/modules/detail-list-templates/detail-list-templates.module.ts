@@ -17,12 +17,13 @@ import { ShortenComponent } from './shorten/shorten.component';
 import { CustomTrackByPipe } from './custom-track-by.pipe';
 import { HealthbadgeComponent } from './healthbadge/healthbadge.component';
 import { FullDescriptionComponent } from './full-description/full-description.component';
+import { ArmManagedComponent } from './arm-managed/arm-managed.component';
 
 
 
 @NgModule({
   declarations: [HyperLinkComponent, DetailTableResolverComponent, ResolverDirective, CopyTextComponent, ResolverDirective, FullDescriptionComponent,
-                 DetailListComponent, PagerComponent, UtcTimestampComponent, ExportModalComponent, QuestionToolTipComponent, ShortenComponent, CustomTrackByPipe, HealthbadgeComponent],
+                 DetailListComponent, PagerComponent, UtcTimestampComponent, ExportModalComponent, QuestionToolTipComponent, ShortenComponent, CustomTrackByPipe, HealthbadgeComponent, ArmManagedComponent],
   imports: [
     CommonModule,
     RouterModule,

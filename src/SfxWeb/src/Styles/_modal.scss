@@ -12,11 +12,25 @@ $dialog-input-bg-color: #242424;
         background-color: $dialog-input-bg-color;
     }
 
+    @media (max-height: 400px) {
+        .modal-header {
+            padding: 2px 15px !important;
+        }
+        .modal-footer {
+            padding: 2px 15px !important;
+        }
+    }
     .modal-header {
         color: white !important;
         background-color: var(--accent-darkblue) !important;
         padding: 18px 15px 18px 15px;
         border: none !important;
+
+        &.warning {
+            background-color: var(--badge-warning) !important;
+            color: var(--primary-background-color) !important;
+
+        }
 
         .modal-title {
           font-weight: var(--font-weight-normal);
@@ -26,7 +40,7 @@ $dialog-input-bg-color: #242424;
 
     .modal-body {
         color: var(--font-primary-color);
-        max-height: 550px;
+        max-height: 50vh;
         overflow-y: auto;
         padding: 12px 15px 5px 15px;
         border: none !important;
