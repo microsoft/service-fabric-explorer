@@ -19,8 +19,8 @@
         "@angular/platform-browser": "^15.2.9",
         "@angular/platform-browser-dynamic": "^15.2.9",
         "@angular/router": "^15.2.9",
-        "@azure/msal-angular": "^2.5.9",
-        "@azure/msal-browser": "^2.38.0",
+        "@azure/msal-angular": "^3.0.8",
+        "@azure/msal-browser": "^3.5.0",
         "@microsoft/applicationinsights-web": "^2.5.10",
         "@ng-bootstrap/ng-bootstrap": "^14.2.0",
         "@types/adal-angular": "^1.0.2",
@@ -33,7 +33,7 @@
         "metro4": "^4.3.5",
         "moment": "^2.29.2",
         "nouislider": "^15.4.0",
-        "rxjs": "~6.5.4",
+        "rxjs": "^7.8.1",
         "tslib": "^2.0.0",
         "vis-data": "7.1.6",
         "vis-timeline": "^7.1.3",
@@ -1231,32 +1231,32 @@
       "license": "Apache-2.0"
     },
     "node_modules/@azure/msal-angular": {
-      "version": "2.5.9",
-      "resolved": "https://registry.npmjs.org/@azure/msal-angular/-/msal-angular-2.5.9.tgz",
-      "integrity": "sha512-eSkOXEZma9f8ItzOfe1MBTCSuOwal/1eP7eMChqfVqtP2aNtksd1m1KT8MLT7i4/ErblNDPWBm0Y2Xb3s1UTMw==",
+      "version": "3.0.8",
+      "resolved": "https://registry.npmjs.org/@azure/msal-angular/-/msal-angular-3.0.8.tgz",
+      "integrity": "sha512-s+aRlFx73dgR2SDSgHEQ9YYfR0Ku68OA5rfdWlbabLnSENHRP9Pmer/BCBRrgNtCL3Zc1593zhwXT/aYbqIa6g==",
       "dependencies": {
-        "tslib": "^2.0.0"
+        "tslib": "^2.3.0"
       },
       "peerDependencies": {
-        "@azure/msal-browser": "^2.38.0",
-        "rxjs": "^6.0.0 || ^7.0.0"
+        "@azure/msal-browser": "^3.5.0",
+        "rxjs": "^7.0.0"
       }
     },
     "node_modules/@azure/msal-browser": {
-      "version": "2.38.0",
-      "resolved": "https://registry.npmjs.org/@azure/msal-browser/-/msal-browser-2.38.0.tgz",
-      "integrity": "sha512-gxBh83IumHgEP9uMCm9pJLKLRwICMQTxG9TX3AytdNt3oLUI3tytm/szYD5u5zKJgSkhHvwFSM+NPnM04hYw3w==",
+      "version": "3.5.0",
+      "resolved": "https://registry.npmjs.org/@azure/msal-browser/-/msal-browser-3.5.0.tgz",
+      "integrity": "sha512-2NtMuel4CI3UEelCPKkNRXgKzpWEX48fvxIvPz7s0/sTcCaI08r05IOkH2GkXW+czUOtuY6+oGafJCpumnjRLg==",
       "dependencies": {
-        "@azure/msal-common": "13.2.0"
+        "@azure/msal-common": "14.4.0"
       },
       "engines": {
         "node": ">=0.8.0"
       }
     },
     "node_modules/@azure/msal-common": {
-      "version": "13.2.0",
-      "resolved": "https://registry.npmjs.org/@azure/msal-common/-/msal-common-13.2.0.tgz",
-      "integrity": "sha512-rnstQ7Zgn3fSTKNQO+/YNV34/QXJs0vni7IA0/3QB1EEyrJg14xyRmTqlw9ta+pdSuT5OJwUP8kI3D/rBwUIBw==",
+      "version": "14.4.0",
+      "resolved": "https://registry.npmjs.org/@azure/msal-common/-/msal-common-14.4.0.tgz",
+      "integrity": "sha512-ffCymScQuMKVj+YVfwNI52A5Tu+uiZO2eTf+c+3TXxdAssks4nokJhtr+uOOMxH0zDi6d1OjFKFKeXODK0YLSg==",
       "engines": {
         "node": ">=0.8.0"
       }
@@ -11112,15 +11112,6 @@
         "node": ">=8"
       }
     },
-    "node_modules/inquirer/node_modules/rxjs": {
-      "version": "7.8.0",
-      "resolved": "https://registry.npmjs.org/rxjs/-/rxjs-7.8.0.tgz",
-      "integrity": "sha512-F2+gxDshqmIub1KdvZkaEfGDwLNpPvk9Fs6LD/MyQxNgMds/WH9OdDDXOmxUZpME+iSK3rQCctkL0DYyytUqMg==",
-      "dev": true,
-      "dependencies": {
-        "tslib": "^2.1.0"
-      }
-    },
     "node_modules/inquirer/node_modules/strip-ansi": {
       "version": "6.0.1",
       "resolved": "https://registry.npmjs.org/strip-ansi/-/strip-ansi-6.0.1.tgz",
@@ -12483,14 +12474,6 @@
       "version": "1.1.4",
       "dev": true,
       "license": "MIT"
-    },
-    "node_modules/listr2/node_modules/rxjs": {
-      "version": "7.5.4",
-      "dev": true,
-      "license": "Apache-2.0",
-      "dependencies": {
-        "tslib": "^2.1.0"
-      }
     },
     "node_modules/listr2/node_modules/strip-ansi": {
       "version": "6.0.1",
@@ -15865,18 +15848,12 @@
       }
     },
     "node_modules/rxjs": {
-      "version": "6.5.4",
-      "license": "Apache-2.0",
+      "version": "7.8.1",
+      "resolved": "https://registry.npmjs.org/rxjs/-/rxjs-7.8.1.tgz",
+      "integrity": "sha512-AA3TVj+0A2iuIoQkWEK/tqFjBq2j+6PO6Y0zJcvzLAFhEFIO3HL0vls9hWLncZbAAbK0mar7oZ4V079I/qPMxg==",
       "dependencies": {
-        "tslib": "^1.9.0"
-      },
-      "engines": {
-        "npm": ">=2.0.0"
+        "tslib": "^2.1.0"
       }
-    },
-    "node_modules/rxjs/node_modules/tslib": {
-      "version": "1.13.0",
-      "license": "0BSD"
     },
     "node_modules/safe-buffer": {
       "version": "5.1.2",
@@ -19626,25 +19603,25 @@
       "dev": true
     },
     "@azure/msal-angular": {
-      "version": "2.5.9",
-      "resolved": "https://registry.npmjs.org/@azure/msal-angular/-/msal-angular-2.5.9.tgz",
-      "integrity": "sha512-eSkOXEZma9f8ItzOfe1MBTCSuOwal/1eP7eMChqfVqtP2aNtksd1m1KT8MLT7i4/ErblNDPWBm0Y2Xb3s1UTMw==",
+      "version": "3.0.8",
+      "resolved": "https://registry.npmjs.org/@azure/msal-angular/-/msal-angular-3.0.8.tgz",
+      "integrity": "sha512-s+aRlFx73dgR2SDSgHEQ9YYfR0Ku68OA5rfdWlbabLnSENHRP9Pmer/BCBRrgNtCL3Zc1593zhwXT/aYbqIa6g==",
       "requires": {
-        "tslib": "^2.0.0"
+        "tslib": "^2.3.0"
       }
     },
     "@azure/msal-browser": {
-      "version": "2.38.0",
-      "resolved": "https://registry.npmjs.org/@azure/msal-browser/-/msal-browser-2.38.0.tgz",
-      "integrity": "sha512-gxBh83IumHgEP9uMCm9pJLKLRwICMQTxG9TX3AytdNt3oLUI3tytm/szYD5u5zKJgSkhHvwFSM+NPnM04hYw3w==",
+      "version": "3.5.0",
+      "resolved": "https://registry.npmjs.org/@azure/msal-browser/-/msal-browser-3.5.0.tgz",
+      "integrity": "sha512-2NtMuel4CI3UEelCPKkNRXgKzpWEX48fvxIvPz7s0/sTcCaI08r05IOkH2GkXW+czUOtuY6+oGafJCpumnjRLg==",
       "requires": {
-        "@azure/msal-common": "13.2.0"
+        "@azure/msal-common": "14.4.0"
       }
     },
     "@azure/msal-common": {
-      "version": "13.2.0",
-      "resolved": "https://registry.npmjs.org/@azure/msal-common/-/msal-common-13.2.0.tgz",
-      "integrity": "sha512-rnstQ7Zgn3fSTKNQO+/YNV34/QXJs0vni7IA0/3QB1EEyrJg14xyRmTqlw9ta+pdSuT5OJwUP8kI3D/rBwUIBw=="
+      "version": "14.4.0",
+      "resolved": "https://registry.npmjs.org/@azure/msal-common/-/msal-common-14.4.0.tgz",
+      "integrity": "sha512-ffCymScQuMKVj+YVfwNI52A5Tu+uiZO2eTf+c+3TXxdAssks4nokJhtr+uOOMxH0zDi6d1OjFKFKeXODK0YLSg=="
     },
     "@babel/code-frame": {
       "version": "7.22.5",
@@ -26600,15 +26577,6 @@
           "integrity": "sha512-EykJT/Q1KjTWctppgIAgfSO0tKVuZUjhgMr17kqTumMl6Afv3EISleU7qZUzoXDFTAHTDC4NOoG/ZxU3EvlMPQ==",
           "dev": true
         },
-        "rxjs": {
-          "version": "7.8.0",
-          "resolved": "https://registry.npmjs.org/rxjs/-/rxjs-7.8.0.tgz",
-          "integrity": "sha512-F2+gxDshqmIub1KdvZkaEfGDwLNpPvk9Fs6LD/MyQxNgMds/WH9OdDDXOmxUZpME+iSK3rQCctkL0DYyytUqMg==",
-          "dev": true,
-          "requires": {
-            "tslib": "^2.1.0"
-          }
-        },
         "strip-ansi": {
           "version": "6.0.1",
           "resolved": "https://registry.npmjs.org/strip-ansi/-/strip-ansi-6.0.1.tgz",
@@ -27498,13 +27466,6 @@
         "color-name": {
           "version": "1.1.4",
           "dev": true
-        },
-        "rxjs": {
-          "version": "7.5.4",
-          "dev": true,
-          "requires": {
-            "tslib": "^2.1.0"
-          }
         },
         "strip-ansi": {
           "version": "6.0.1",
@@ -29851,14 +29812,11 @@
       }
     },
     "rxjs": {
-      "version": "6.5.4",
+      "version": "7.8.1",
+      "resolved": "https://registry.npmjs.org/rxjs/-/rxjs-7.8.1.tgz",
+      "integrity": "sha512-AA3TVj+0A2iuIoQkWEK/tqFjBq2j+6PO6Y0zJcvzLAFhEFIO3HL0vls9hWLncZbAAbK0mar7oZ4V079I/qPMxg==",
       "requires": {
-        "tslib": "^1.9.0"
-      },
-      "dependencies": {
-        "tslib": {
-          "version": "1.13.0"
-        }
+        "tslib": "^2.1.0"
       }
     },
     "safe-buffer": {
