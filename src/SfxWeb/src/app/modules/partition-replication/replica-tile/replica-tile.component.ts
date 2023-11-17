@@ -38,16 +38,32 @@ export class ReplicaTileComponent implements OnChanges {
         displayText: this.replica.name
       },
       {
-        descriptionName: 'Role',
-        copyTextValue: this.replica.role,
-        displayText: this.replica.role,
-      },
-      {
         descriptionName: 'Node',
         copyTextValue: this.replica.raw.NodeName,
         displayText: this.replica.raw.NodeName,
-      },
+      }
     ];
+
+    if (this.replica.parent.raw.PartitionStatus !== 'Reconfiguring') {
+      this.overviewItems.push(
+        {
+          descriptionName: 'Role',
+          copyTextValue: this.replica.role,
+          displayText: this.replica.role,
+        });
+    } else {
+      this.overviewItems.push(
+        {
+          descriptionName: 'Target Role',
+          copyTextValue: this.replica.currentRole,
+          displayText: this.replica.currentRole,
+        },
+        {
+          descriptionName: 'Previous Role',
+          copyTextValue: this.replica.previousRole,
+          displayText: this.replica.previousRole,
+        });
+    }
 
     this.status = {
       descriptionName: 'Status',
