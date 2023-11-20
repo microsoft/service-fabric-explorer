@@ -134,7 +134,7 @@ export class DataModelCollectionBase<T extends IDataModel<any>> implements IData
 
     protected cancelLoad(): void {
         if (this.refreshingPromise) {
-            this.refreshingPromise.next();
+            this.refreshingPromise.next(null);
             this.refreshingPromise.complete();
         }
     }
