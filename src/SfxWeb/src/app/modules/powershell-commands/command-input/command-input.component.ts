@@ -20,6 +20,7 @@ export class CommandInputComponent implements OnInit{
 
   ngOnInit() {
     this.inputGroup.addControl(this.commandParam.name, this.value);
+    this.value.setValue(this.commandParam.value);
   }
 
   setFormValue(value: any) {

@@ -925,7 +925,7 @@ context('Cluster page', () => {
     })
 
     it('view commands', () => {
-      checkCommand(3, 1);
+      checkCommand(4, 1);
     })
 
     it('check command input', () => {
