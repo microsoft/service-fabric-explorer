@@ -1,0 +1,28 @@
+.list-container {
+  display: flex;
+  gap: 5px;
+  flex-direction: column;
+}
+
+.table-item {
+  background-color: var(--primary-background-color);
+  border-radius: var(--primary-border-radius);
+  padding: 2px;
+  display: flex;
+  justify-content: space-between;
+
+
+}
+
+.tooltip-content {
+  white-space: nowrap;
+  text-align: left;
+
+  tr {
+    height: 35px;
+
+    *:first-child {
+      padding-right: 5px;
+    }
+  }
+}

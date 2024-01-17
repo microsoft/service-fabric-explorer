@@ -20,6 +20,7 @@ import { ChartsModule } from 'src/app/modules/charts/charts.module';
 import { HealthStateModule } from 'src/app/modules/health-state/health-state.module';
 import { CommandsComponent } from './commands/commands.component';
 import { PowershellCommandsModule } from 'src/app/modules/powershell-commands/powershell-commands.module';
+import { ClustermapModule } from 'src/app/modules/clustermap/clustermap.module';
 
 
 @NgModule({
@@ -36,7 +37,8 @@ import { PowershellCommandsModule } from 'src/app/modules/powershell-commands/po
     FormsModule,
     ChartsModule,
     HealthStateModule,
-    PowershellCommandsModule
+    PowershellCommandsModule,
+    ClustermapModule
   ],
   exports: [BackupinfoComponent]
 })

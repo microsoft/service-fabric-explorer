@@ -1,7 +1,7 @@
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { ITextAndBadge, ValueResolver } from 'src/app/Utils/ValueResolver';
 import { DataService } from 'src/app/services/data.service';
-import { Observable, of, Subject } from 'rxjs';
+import { Observable, of, ReplaySubject, Subject } from 'rxjs';
 import { IHealthStateChunk, IClusterHealthChunkQueryDescription, IHealthStateFilter } from '../HealthChunkRawDataTypes';
 import { mergeMap, map } from 'rxjs/operators';
 import { ActionCollection } from '../ActionCollection';
@@ -82,6 +82,8 @@ export class DataModelBase<T> implements IDataModel<T> {
     protected valueResolver: ValueResolver;
     private refreshingPromise: Subject<any>;
 
+    public subject: ReplaySubject<T> = new ReplaySubject();
+
     public get isRefreshing(): boolean {
         return !!this.refreshingPromise;
     }
@@ -134,6 +136,7 @@ export class DataModelBase<T> implements IDataModel<T> {
                 this.refreshingPromise.next(this);
                 this.refreshingPromise.complete();
                 this.refreshingPromise = null;
+                // this.subject.next()
             },
             err => {
                 this.refreshingPromise.error(this);

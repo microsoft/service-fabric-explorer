@@ -6,6 +6,9 @@ import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers'
 import { Observable, forkJoin, of } from 'rxjs';
 import { PartitionBaseControllerDirective } from '../PartitionBase';
 import { IEssentialListItem } from 'src/app/modules/charts/essential-health-tile/essential-health-tile.component';
+import { mergeMap, tap } from 'rxjs/operators';
+import { Utils } from 'src/app/Utils/Utils';
+import { ReplicaOnPartition } from 'src/app/Models/DataModels/Replica';
 
 @Component({
   selector: 'app-essentials',
@@ -18,8 +21,10 @@ export class EssentialsComponent extends PartitionBaseControllerDirective {
   listSettings: ListSettings;
 
   essentialItems: IEssentialListItem[] = [];
+  map: Record<string, ReplicaOnPartition[]> = {};
+  nodes = [];
 
-  constructor(protected data: DataService, injector: Injector, private settings: SettingsService) {
+  constructor(public data: DataService, injector: Injector, private settings: SettingsService) {
     super(data, injector);
   }
 
@@ -51,7 +56,11 @@ export class EssentialsComponent extends PartitionBaseControllerDirective {
 
     return forkJoin([
       this.partition.health.refresh(messageHandler),
-      this.partition.replicas.refresh(messageHandler)
+      this.partition.replicas.refresh(messageHandler).pipe(mergeMap(() => this.data.nodes.refresh()), tap(_ => {
+        console.log(Utils.groupBy(this.partition.replicas.collection, 'raw.NodeName'))
+        this.map = Utils.groupBy(this.partition.replicas.collection, 'raw.NodeName');
+        this.nodes = this.data.nodes.collection.filter(n => this.map[n.name]);
+      })),
     ]);
   }
 

@@ -24,6 +24,18 @@
     </app-collapse-container>
   </div>
 
+  <ng-template #fooForm let-data="data">
+    <div *ngFor="let replica of map[data.name]" class="table-item">
+      <a [routerLink]="replica.viewPath">
+        <div>
+          <app-status-resolver [status]="replica.raw.ReplicaStatus" [showText]="false"></app-status-resolver> {{replica.isStatelessService ? replica.raw.ReplicaStatus : replica.role}}
+        </div>
+      </a>
+    </div>
+  </ng-template>
+
+  <app-map [nodes]="nodes" [listTemplate]="fooForm"></app-map>
+
   <div *ngIf="partition.isStatefulService" class="replicator-section">
     <app-collapse-container sectionName="Replicator Status" data-cy="replicator">
       <div collapse-header>

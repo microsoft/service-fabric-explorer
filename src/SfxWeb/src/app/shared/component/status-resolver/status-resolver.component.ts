@@ -21,6 +21,7 @@ export class StatusResolverComponent implements  OnInit, OnChanges {
   ngOnInit(): void {
     this.statusIconResolver.Active = 'mif-arrow-up green-resolve';
     this.statusIconResolver.Ready = 'mif-arrow-up green-resolve';
+    this.statusIconResolver.Ready = 'mif-arrow-up green-resolve';
 
     this.statusIconResolver[NodeStatusConstants.Up] = 'mif-arrow-up green-resolve';
     this.statusIconResolver[NodeStatusConstants.Down] = 'mif-arrow-down red-resolve';
@@ -33,7 +34,7 @@ export class StatusResolverComponent implements  OnInit, OnChanges {
 
   ngOnChanges() {
     if (this?.healthState === HealthStateConstants.Warning && this.status === NodeStatusConstants.Up ) {
-      this.displayClass = 'mif-arrow-up orange';
+      this.displayClass = 'mif-arrow-up orange-resolve';
     }else if (this?.healthState === HealthStateConstants.Error && this.status === NodeStatusConstants.Up ) {
       this.displayClass = 'mif-arrow-up red-resolver';
     } else {

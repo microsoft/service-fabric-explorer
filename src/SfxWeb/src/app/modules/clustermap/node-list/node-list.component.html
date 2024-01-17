@@ -1,8 +1,8 @@
-<div>
-  <div class=" {{!l || underlineLast ? 'underline' : ''}}" *ngFor="let item of nodes; let l = last; trackBy: trackByFn"
+<div style="display: flex; flex-direction: column; gap: 5px;">
+  <div *ngFor="let item of nodes; let l = last; trackBy: trackByFn"
     style="min-height: 30px;" data-cy="node">
-    <div style="display: flex; flex-direction: column;">
-      <div class="essential-list-item">
+    <div class="node-container">
+      <div class="essential-list-item {{listTemplate ? 'underline': ''}}">
         <app-status-resolver [status]="item.nodeStatus" [healthState]="item.healthState.text" [showText]="false"
           class="space-right"></app-status-resolver>
         <a [routerLink]="item.viewPath" style="margin: auto;">{{item.name}}</a>

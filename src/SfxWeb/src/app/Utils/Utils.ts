@@ -40,15 +40,20 @@ export class Utils {
                                                      }
                                                     //  previous[key] = (previous[key] || []).push(current);
                                                      return previous; }, {});
-    }
+  }
 
-    /**
-     * implements lodash groupBy in es6. returns a dictionary of lists
-     * @param key key for value
-     */
-    public static groupBy<T>(list: T[], key: string): Record<string, T[]> {
-        return list.reduce( (previous, current) => { const itemKey = Utils.result(current, key) ;previous[itemKey] = (previous[itemKey] || []).push(current) ; return previous; }, {});
-    }
+  /**
+   * implements lodash groupBy in es6. returns a dictionary of lists
+   * @param key key for value
+   */
+  public static groupBy<T>(list: T[], key: string): Record<string, T[]> {
+    return list.reduce<Record<string, T[]>>((previous, current) => {
+      const itemKey = Utils.result(current, key);
+      previous[itemKey] = (previous[itemKey] || []).concat([current]);
+      return previous;
+    },
+      {});
+  }
 
     /**
      * implements lodash keyBy in es6. returns a dictionary of lists

@@ -20,11 +20,13 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { AppInsightsErrorHandler } from './error-handling';
 import { StandaloneIntegrationService } from './services/standalone-integration.service';
 import { ActionDialogModule } from './modules/action-dialog/action-dialog.module';
+import { ReplicaMapComponent } from './replica-map/replica-map.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    TelemetrySnackBarComponent
+    TelemetrySnackBarComponent,
+    ReplicaMapComponent
   ],
   imports: [
     BrowserModule,
@@ -57,5 +59,8 @@ import { ActionDialogModule } from './modules/action-dialog/action-dialog.module
     { provide: ErrorHandler, useClass: AppInsightsErrorHandler }
   ],
   bootstrap: [AppComponent],
+  exports: [
+    ReplicaMapComponent
+  ],
 })
 export class AppModule { }

@@ -1,0 +1,36 @@
+<ng-template #fooForm let-data="data">
+  <div class="list-container">
+    <div *ngFor="let replica of map[data.name]" class="table-item">
+      <ng-template #popTemplate>
+        <div class="tooltip-content">
+            <table>
+              <tr>
+                <td class="underline">
+                  Replica
+                </td>
+                <td class="underline">
+                  {{replica.name}}
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  Partition
+                </td>
+                <td>
+                  {{replica.parent.name}}
+                </td>
+              </tr>
+            </table>
+        </div>
+      </ng-template>
+      <div tooltipClass="styled-tooltip" [ngbTooltip]="popTemplate" container="body" [closeDelay]="100000">
+        <a [routerLink]="replica.viewPath">
+          <app-status-resolver [status]="replica.raw.ReplicaStatus" [showText]="false"></app-status-resolver>
+          {{replica.isStatelessService ? replica.raw.ReplicaStatus : replica.role}}
+        </a>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<app-map [nodes]="nodes" [listTemplate]="fooForm"></app-map>
