@@ -4,20 +4,20 @@ import { DataService } from 'src/app/services/data.service';
 import { NodeBaseControllerDirective } from '../NodeBase';
 
 @Component({
-  selector: 'app-commands',
+  selector: 'app-node-commands',
   templateUrl: './commands.component.html',
   styleUrls: ['./commands.component.scss']
 })
 export class CommandsComponent extends NodeBaseControllerDirective {
   commands: PowershellCommand[] = [];
-  
+
   constructor(protected data: DataService, injector: Injector) {
     super(data, injector);
   }
 
   afterDataSet() {
     this.setUpCommands();
-    
+
   }
 
   protected setUpCommands(): void {

@@ -4,14 +4,14 @@ import { DataService } from 'src/app/services/data.service';
 import { ApplicationTypeBaseControllerDirective } from '../ApplicationTypeBase';
 
 @Component({
-  selector: 'app-commands',
+  selector: 'app-apptype-commands',
   templateUrl: './commands.component.html',
   styleUrls: ['./commands.component.scss']
 })
 export class CommandsComponent extends ApplicationTypeBaseControllerDirective {
 
   commands: PowershellCommand[] = [];
-  
+
   constructor(protected data: DataService, injector: Injector) {
     super(data, injector);
    }
@@ -19,11 +19,11 @@ export class CommandsComponent extends ApplicationTypeBaseControllerDirective {
   afterDataSet(): void {
     this.setUpCommands();
   }
-  
+
   setUpCommands() {
     const appDefKindFilter = new PowershellCommandParameter('ApplicationDefinitionKindFilter', CommandParamTypes.enum,
       { options: ['Default', 'ServiceFabricApplicationDescription', 'Compose', 'MeshApplicationDescription', 'All'], allowCustomValAndOptions: true });
-    
+
     const excludeAppParam = new PowershellCommandParameter('ExcludeApplicationParameters', CommandParamTypes.switch);
     const getSinglePage = new PowershellCommandParameter('GetSinglePage', CommandParamTypes.switch);
     const maxResults = new PowershellCommandParameter('MaxResults', CommandParamTypes.number);

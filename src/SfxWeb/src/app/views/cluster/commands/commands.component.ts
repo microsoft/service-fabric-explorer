@@ -1,5 +1,4 @@
 import { Component, Injector } from '@angular/core';
-import { Command } from 'protractor';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
@@ -8,7 +7,7 @@ import { DataService } from 'src/app/services/data.service';
 import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 
 @Component({
-  selector: 'app-commands',
+  selector: 'app-cluster-commands',
   templateUrl: './commands.component.html',
   styleUrls: ['./commands.component.scss']
 })
@@ -19,7 +18,7 @@ export class CommandsComponent extends BaseControllerDirective {
   constructor(protected data: DataService, injector: Injector) {
     super(injector);
   }
-  
+
   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
     return this.data.getClusterManifest().pipe(map((manifest) => {
       if (manifest.isRepairManagerEnabled) {
@@ -30,7 +29,7 @@ export class CommandsComponent extends BaseControllerDirective {
       }
     }))
   }
-  
+
   afterDataSet() {
     this.setUpCommands();
   }
@@ -40,7 +39,7 @@ export class CommandsComponent extends BaseControllerDirective {
 
     const healthReport = CommandFactory.GenSendHealthReport("Cluster");
     this.commands.push(healthReport);
-    
+
     const getUpgrade = new PowershellCommand(
       'Get Cluster Upgrade',
       'https://docs.microsoft.com/powershell/module/servicefabric/get-servicefabricclusterupgrade',
@@ -50,7 +49,7 @@ export class CommandsComponent extends BaseControllerDirective {
     );
     this.commands.push(getUpgrade);
 
-    
+
     const appsFilter = CommandFactory.GenHealthFilterParam('Applications');
     const considerWarnAsErr = new PowershellCommandParameter("ConsiderWarningAsError", CommandParamTypes.bool);
     const eventsFilter = CommandFactory.GenHealthFilterParam('Events');
@@ -72,7 +71,7 @@ export class CommandsComponent extends BaseControllerDirective {
       { options: ['Default', 'Created', 'Claimed', 'Preparing', 'Approved', 'Executing', 'ReadyToExecute', 'Restoring', 'Active', 'Completed', 'All'], allowCustomValAndOptions: true }
     );
     const taskId = new PowershellCommandParameter('TaskId', CommandParamTypes.enum, { options: this.data.repairCollection.collection.map(task => task.id)});
-    
+
     if (this.hasRepairTask) {
       const getRepairTasks = new PowershellCommand(
         "Get Repair Task",
@@ -82,9 +81,9 @@ export class CommandsComponent extends BaseControllerDirective {
         [taskId, state, CommandFactory.GenTimeoutSecParam()]
       );
       this.commands.push(getRepairTasks);
-      
+
     }
-    
+
     this.commands = [...this.commands];
   }
 

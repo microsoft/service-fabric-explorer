@@ -6,12 +6,12 @@ import { DataService } from 'src/app/services/data.service';
 import { PartitionBaseControllerDirective } from '../PartitionBase';
 
 @Component({
-  selector: 'app-commands',
+  selector: 'app-partition-commands',
   templateUrl: './commands.component.html',
   styleUrls: ['./commands.component.scss']
 })
 export class CommandsComponent extends PartitionBaseControllerDirective{
-  
+
   commands: PowershellCommand[] = [];
 
   constructor(protected data: DataService, injector: Injector) {
@@ -24,7 +24,7 @@ export class CommandsComponent extends PartitionBaseControllerDirective{
 
   afterDataSet(): void {
     this.setUpCommands();
-  } 
+  }
 
   private setUpCommands() {
 
@@ -58,7 +58,7 @@ export class CommandsComponent extends PartitionBaseControllerDirective{
 
     const statusFilter = new PowershellCommandParameter("ReplicaStatusFilter", CommandParamTypes.enum,
       { options: ['Default', 'InBuild', 'Standby', 'Ready', 'Down', 'Dropped', 'Completed', 'All'] });
-    
+
     const getReplicas = new PowershellCommand(
       'Get Replicas',
       'https://docs.microsoft.com/powershell/module/servicefabric/get-servicefabricreplica',
@@ -70,7 +70,7 @@ export class CommandsComponent extends PartitionBaseControllerDirective{
     this.commands.push(getReplicas);
 
     if (this.partition.isStatefulService) {
-      
+
       const completionMode = new PowershellCommandParameter("CommandCompletionMode", CommandParamTypes.enum, { options: ['Invalid', 'DoNotVerify', 'Verify'] });
       const restartPrimeReplica = new PowershellCommand(
         "Restart Primary Replica",
@@ -80,9 +80,9 @@ export class CommandsComponent extends PartitionBaseControllerDirective{
         [completionMode, CommandFactory.GenTimeoutSecParam()], true
       )
       this.commands.push(restartPrimeReplica);
-      
+
       const nodes = this.data.nodes.collection.map(node => node.name);
-      
+
       const movePrimeReplicaSpecific = new PowershellCommand(
         "Move Primary Replica To Specifc Node",
         'https://docs.microsoft.com/powershell/module/servicefabric/move-servicefabricprimaryreplica',
@@ -91,7 +91,7 @@ export class CommandsComponent extends PartitionBaseControllerDirective{
         [CommandFactory.GenNodeListParam("NodeName", nodes), CommandFactory.GenIgnoreConstraintsParam(), CommandFactory.GenTimeoutSecParam()], true
       )
       this.commands.push(movePrimeReplicaSpecific);
-  
+
       const movePrimeReplicaRandom = new PowershellCommand(
         "Move Primary Replica To Random Node",
         'https://docs.microsoft.com/powershell/module/servicefabric/move-servicefabricprimaryreplica',
