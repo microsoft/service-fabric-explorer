@@ -54,6 +54,18 @@ context('Cluster page', () => {
       cy.contains('Thumbprint : 52b0278d37cbfe68f8cdf04f423a994d66ceb932')
     })
 
+    it('certificate client expiring banner', () => {
+      cy.intercept(nodes_route, { fixture: 'cluster-page/nodes-1-warning.json' })
+      cy.intercept(apiUrl('/Nodes/_nt_0/$/GetHealth?*'), { fixture: 'cluster-page/node-health-client-certificate.json' }).as('getnodeHealth')
+
+      cy.visit('')
+
+      cy.wait('@getnodeHealth')
+
+      cy.contains('A client certificate is set to expire soon. Replace it as soon as possible to avoid catastrophic failure.')
+      cy.contains('Thumbprint : 0cb9ed28a3582424dd423321915e6c6a5846e3df')
+    })
+
     it('long running job in approval', () => {
       cy.intercept(repairTask_route, { fixture: 'cluster-page/repair-jobs/long-running-approval.json' }).as("repairTasks")
 
@@ -637,7 +649,7 @@ context('Cluster page', () => {
       cy.get(EVENT_TABS).within(() => {
         cy.contains(CLUSTER_TAB_NAME)
       })
-       
+
       cy.contains("Why is data missing?").within(()=> {
         cy.get('span[class=mif-info]').should('have.attr', 'tabindex', '0').and('have.attr', 'aria-label');
       });

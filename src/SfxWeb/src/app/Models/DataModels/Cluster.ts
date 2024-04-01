@@ -75,16 +75,24 @@ export class ClusterHealth extends HealthBase<IRawClusterHealth> {
 
         const thumbprintSearchText = 'thumbprint = ';
         const thumbprintIndex = healthEvent.raw.Description.indexOf(thumbprintSearchText);
-        const thumbprint =  healthEvent.raw.Description.substr(thumbprintIndex + thumbprintSearchText.length).split(',')[0];
+        const thumbprint =  healthEvent.raw.Description.substring(thumbprintIndex + thumbprintSearchText.length).split(',')[0];
 
         const expirationSearchText = 'expiration = ';
         const expirationIndex = healthEvent.raw.Description.indexOf('expiration = ');
         const expiration = healthEvent.raw.Description.substring(expirationIndex + expirationSearchText.length).split(',')[0];
 
+        let prefix = "cluster";
+        let priority = 5;
+
+        if(healthEvent.raw.Property === CertExpiraryHealthEventProperty.Client ) {
+          prefix = "client";
+          priority = 4;
+        }
+
         this.data.warnings.addOrUpdateNotification({
-            message: `A cluster certificate is set to expire soon. Replace it as soon as possible to avoid catastrophic failure. Thumbprint : ${thumbprint}  Expiration: ${expiration}`,
+            message: `A ${prefix} certificate is set to expire soon. Replace it as soon as possible to avoid catastrophic failure. Thumbprint : ${thumbprint}  Expiration: ${expiration}`,
             level: StatusWarningLevel.Error,
-            priority: 5,
+            priority,
             id: BannerWarningID.ExpiringClusterCert,
             link: 'https://aka.ms/sfrenewclustercert/',
             linkText: 'Read here for more guidance'
@@ -94,7 +102,7 @@ export class ClusterHealth extends HealthBase<IRawClusterHealth> {
 
     private containsCertExpiringHealthEvent(unhealthyEvaluations: HealthEvent[]): HealthEvent[] {
         return unhealthyEvaluations.filter(event => event.raw.Description.indexOf('Certificate expiration') === 0 &&
-                                            event.raw.Property === CertExpiraryHealthEventProperty.Cluster &&
+                                            (event.raw.Property === CertExpiraryHealthEventProperty.Cluster || event.raw.Property === CertExpiraryHealthEventProperty.Client ) &&
                                             (event.raw.HealthState === HealthStateConstants.Warning || event.raw.HealthState === HealthStateConstants.Error));
     }
 
