@@ -72,10 +72,7 @@ export class InfrastructureCollection extends DataModelCollectionBase<Infrastruc
       this.data.warnings.addOrUpdateNotification({
         message: `Active updates count has exceeded the max allowed for safe rollout of updates for
                     ${throttledIS.map(is => is.name).join(",")}
-                    Once the existing updates complete, the pending updates will start automatically
-                    To forcefully allow an MR job to go through, connect to the SF cluster and execute this command:
-                    Invoke-ServiceFabricInfrastructureCommand -ServiceName <InfrastructureService Name like fabric:/System/InfrastructureService/nt1>
-                    -Command AllowAction:<MR_job-id_guid>:*:Prepare`,
+                    Once the existing updates complete, the pending updates will start automatically.`,
         level: StatusWarningLevel.Warning,
         priority: 4,
         id: InfrastructureCollection.bannerThrottledJobs,
