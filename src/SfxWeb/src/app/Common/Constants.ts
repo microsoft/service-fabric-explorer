@@ -248,6 +248,10 @@ export class RepairTaskMessages {
   }
 }
 
+export class UnicodeConstants {
+    public static RightArrow = '\u279c';
+}
+
 export interface IPregeneratedColor {
   color: string,
   hex: string

@@ -5,7 +5,7 @@ import { DeployedReplicaDetail } from './DeployedReplica';
 import { DataService } from 'src/app/services/data.service';
 import { Partition } from './Partition';
 import { HealthStateFilterFlags } from '../HealthChunkRawDataTypes';
-import { ServiceKindRegexes, SortPriorities } from 'src/app/Common/Constants';
+import { ServiceKindRegexes, SortPriorities, UnicodeConstants } from 'src/app/Common/Constants';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { HealthBase } from './HealthEvent';
@@ -27,7 +27,7 @@ export class ReplicaOnPartition extends DataModelBase<IRawReplicaOnPartition> {
                 displayValue: (value) => this.lastInBuildDuration
             },
             ReplicaRole: {
-              displayValue: (value) => this.role
+                displayValue: (value) => this.role
             }
         }
     };
@@ -81,10 +81,10 @@ export class ReplicaOnPartition extends DataModelBase<IRawReplicaOnPartition> {
         }
     
         if (!PreviousReplicaRole || PreviousReplicaRole === 'None') {
-            return `Reconfiguring: Target Role: ${ReplicaRole}`;
+            return `Reconfiguring - Target Role: ${ReplicaRole}`;
         }
     
-        const roleTransition = PreviousReplicaRole === ReplicaRole ? ReplicaRole : `${PreviousReplicaRole} -> ${ReplicaRole}`;
+        const roleTransition = PreviousReplicaRole === ReplicaRole ? ReplicaRole : `${PreviousReplicaRole} ${UnicodeConstants.RightArrow} ${ReplicaRole}`;
         return `Reconfiguring: ${roleTransition}`;
     }
 
@@ -93,7 +93,11 @@ export class ReplicaOnPartition extends DataModelBase<IRawReplicaOnPartition> {
     }
 
     public get previousRole(): string {
-        return this.raw.PreviousReplicaRole;
+        if (this.parent.raw.PartitionStatus === 'Reconfiguring' && this.raw.PreviousReplicaRole) {
+            return this.raw.PreviousReplicaRole;
+        }
+
+        return 'None';
     }
 
     public get viewPath(): string {
