@@ -139,6 +139,7 @@ export class ClusterManifest extends DataModelBase<IRawClusterManifest> {
     public isEventStoreEnabled = false;
     public eventStoreTimeRange = 30;
     public nodeTypeProperties: INodeTypeInfo[];
+    public isManagedIdentityEnabled = false;
 
     public constructor(data: DataService) {
         super(data);
@@ -215,6 +216,20 @@ export class ClusterManifest extends DataModelBase<IRawClusterManifest> {
                 this.isRepairManagerEnabled = true;
             }else if (item.getAttribute('Name') === 'EventStoreService'){
                 this.isEventStoreEnabled = true;
+            } else if (item.getAttribute('Name') === 'Diagnostics') {
+                const params = item.getElementsByTagName('Parameter');
+                const paramsArray = Array.from(params);
+
+                // Function to heck if both "IdentityKind" and "IdentityReference" values are present
+                function containsParameterNames(params: Element[], ...names: string[]): boolean {
+                    return names.every(name => 
+                        params.some(param => param.getAttribute('Name') === name)
+                    );
+                }
+
+                if (containsParameterNames(paramsArray, 'IdentityKind', 'IdentityReference')) {
+                    this.isManagedIdentityEnabled = true;
+                }
             } else if (item.getAttribute('Name') === 'AzureBlobServiceFabricEtw') {
                 const params = item.getElementsByTagName('Parameter');
                 for (let j = 0; j < params.length; j++){
