@@ -139,6 +139,7 @@ export class ClusterManifest extends DataModelBase<IRawClusterManifest> {
     public isEventStoreEnabled = false;
     public eventStoreTimeRange = 30;
     public nodeTypeProperties: INodeTypeInfo[];
+    public isManagedIdentityEnabled = false;
 
     public constructor(data: DataService) {
         super(data);
@@ -192,6 +193,13 @@ export class ClusterManifest extends DataModelBase<IRawClusterManifest> {
       return this.nodeTypeProperties.find(properties => properties.name === nodeType);
     }
 
+    // Function to heck if both "IdentityKind" and "IdentityReference" values are present
+    public containsParameterNames(params: Element[], ...names: string[]): boolean {
+        return names.every(name => 
+            params.some(param => param.getAttribute('Name') === name)
+        );
+    }
+
     protected updateInternal(): Observable<any> | void {
         const parser = new DOMParser();
         const xml = parser.parseFromString(this.raw.Manifest, 'text/xml');
@@ -215,6 +223,13 @@ export class ClusterManifest extends DataModelBase<IRawClusterManifest> {
                 this.isRepairManagerEnabled = true;
             }else if (item.getAttribute('Name') === 'EventStoreService'){
                 this.isEventStoreEnabled = true;
+            } else if (item.getAttribute('Name') === 'Diagnostics') {
+                const params = item.getElementsByTagName('Parameter');
+                const paramsArray = Array.from(params);
+
+                if (this.containsParameterNames(paramsArray, 'IdentityKind', 'IdentityReference')) {
+                    this.isManagedIdentityEnabled = true;
+                }
             } else if (item.getAttribute('Name') === 'AzureBlobServiceFabricEtw') {
                 const params = item.getElementsByTagName('Parameter');
                 for (let j = 0; j < params.length; j++){
@@ -224,6 +239,19 @@ export class ClusterManifest extends DataModelBase<IRawClusterManifest> {
                 }
             }
         }
+
+        if(this.isManagedIdentityEnabled && this.isEventStoreEnabled) {
+            this.data.warnings.addOrUpdateNotification({
+              message: `This cluster is using Managed Identity authentication. EventStore events may be temporarily unavailable. You may temporarily opt out of EventStore in your cluster to avoid this warning.`,
+              level: StatusWarningLevel.Warning,
+              link: "https://learn.microsoft.com/en-us/azure/service-fabric/service-fabric-diagnostics-eventstore#azure-cluster-version-65", 
+              linkText: "Click here to learn how to disable EventStore",
+              priority: 4,
+              id: "ManagedIdentity"
+            });
+          } else {
+            this.data.warnings.removeNotificationById("ManagedIdentity");
+          }
 
         this.nodeTypeProperties = this.getNodesProperty(manifest);
     }
