@@ -193,6 +193,13 @@ export class ClusterManifest extends DataModelBase<IRawClusterManifest> {
       return this.nodeTypeProperties.find(properties => properties.name === nodeType);
     }
 
+    // Function to heck if both "IdentityKind" and "IdentityReference" values are present
+    public containsParameterNames(params: Element[], ...names: string[]): boolean {
+        return names.every(name => 
+            params.some(param => param.getAttribute('Name') === name)
+        );
+    }
+
     protected updateInternal(): Observable<any> | void {
         const parser = new DOMParser();
         const xml = parser.parseFromString(this.raw.Manifest, 'text/xml');
@@ -220,14 +227,7 @@ export class ClusterManifest extends DataModelBase<IRawClusterManifest> {
                 const params = item.getElementsByTagName('Parameter');
                 const paramsArray = Array.from(params);
 
-                // Function to heck if both "IdentityKind" and "IdentityReference" values are present
-                function containsParameterNames(params: Element[], ...names: string[]): boolean {
-                    return names.every(name => 
-                        params.some(param => param.getAttribute('Name') === name)
-                    );
-                }
-
-                if (containsParameterNames(paramsArray, 'IdentityKind', 'IdentityReference')) {
+                if (this.containsParameterNames(paramsArray, 'IdentityKind', 'IdentityReference')) {
                     this.isManagedIdentityEnabled = true;
                 }
             } else if (item.getAttribute('Name') === 'AzureBlobServiceFabricEtw') {

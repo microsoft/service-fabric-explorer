@@ -1,3 +1,4 @@
+<app-mi-warning warning *ngIf="dataService.clusterManifest.isManagedIdentityEnabled && dataService.clusterManifest.isEventStoreEnabled"></app-mi-warning>
 <app-navbar [tabs]="tabs" type="Cluster" [name]="SFXClusterName">
     <app-status-warnings></app-status-warnings>
 </app-navbar>
