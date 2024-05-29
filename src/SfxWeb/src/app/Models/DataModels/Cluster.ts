@@ -240,6 +240,19 @@ export class ClusterManifest extends DataModelBase<IRawClusterManifest> {
             }
         }
 
+        if(this.isManagedIdentityEnabled && this.isEventStoreEnabled) {
+            this.data.warnings.addOrUpdateNotification({
+              message: `This cluster is using Managed Identity authentication. EventStore events may be temporarily unavailable. You may temporarily opt out of EventStore in your cluster to avoid this warning.`,
+              level: StatusWarningLevel.Warning,
+              link: "https://learn.microsoft.com/en-us/azure/service-fabric/service-fabric-diagnostics-eventstore#azure-cluster-version-65", 
+              linkText: "Click here to learn how to disable EventStore",
+              priority: 4,
+              id: "ManagedIdentity"
+            });
+          } else {
+            this.data.warnings.removeNotificationById("ManagedIdentity");
+          }
+
         this.nodeTypeProperties = this.getNodesProperty(manifest);
     }
 }
