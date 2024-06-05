@@ -1,0 +1,103 @@
+pool:
+  name: Azure Pipelines
+  demands:
+  - npm
+  - azureps
+
+steps:
+- task: Npm@1
+  displayName: '[SfxWeb] npm install'
+  inputs:
+    workingDir: src/SfxWeb
+    verbose: false
+
+- task: Npm@1
+  displayName: '[SfxWeb] npm replaceEnvVar'
+  inputs:
+    command: custom
+    workingDir: src/SfxWeb
+    verbose: false
+    customCommand: 'run replaceEnv -- telemetryKey:''2f163305-3c8e-47a4-9ac0-f332cdac1869'''
+
+- task: Npm@1
+  displayName: '[SfxWeb] npm build prod copy'
+  inputs:
+    command: custom
+    workingDir: src/SfxWeb
+    verbose: false
+    customCommand: 'run build:prod'
+
+- task: SFP.build-tasks.custom-build-task-1.EsrpCodeSigning@3
+  displayName: 'ESRP CodeSigning copy'
+  inputs:
+    ConnectedServiceName: ServiceFabricIndiaSign
+    FolderPath: src/SfxWeb/dist
+    Pattern: '*.js, *.woff, *.ts, *.eot, *.ttf'
+    signConfigType: inlineSignParams
+    inlineOperation: |
+     []
+     
+    SessionTimeout: 20
+  enabled: false
+  timeoutInMinutes: 20
+
+- task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
+  displayName: 'Component Detection'
+
+- task: NuGetCommand@2
+  displayName: 'NuGet pack'
+  inputs:
+    command: pack
+    packagesToPack: src/SfxWeb/Sfx.nuspec
+    packDestination: src/Sfx/bin
+    versioningScheme: byBuildNumber
+
+- task: SFP.build-tasks.custom-build-task-1.EsrpCodeSigning@1
+  displayName: 'ESRP CodeSigning'
+  inputs:
+    ConnectedServiceName: ServiceFabricIndiaSign
+    FolderPath: src/Sfx/bin
+    Pattern: '*.nupkg'
+    signConfigType: inlineSignParams
+    inlineOperation: |
+     [
+         {
+             "keyCode": "CP-401405",
+             "operationSetCode": "NuGetSign",
+             "parameters": [ ],
+             "toolName": "sign",
+             "toolVersion": "1.0"
+         },
+         {
+             "keyCode": "CP-401405",
+             "operationSetCode": "NuGetVerify",
+             "parameters": [ ],
+             "toolName": "sign",
+             "toolVersion": "1.0"
+         }
+     ]
+     
+    SessionTimeout: 20
+  enabled: false
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact: NugetPackage'
+  inputs:
+    PathtoPublish: src/Sfx/bin/
+    ArtifactName: NugetPackage
+
+- task: AzureFileCopy@1
+  displayName: 'Publish Nuget to blob (for linux)'
+  inputs:
+    SourcePath: 'src\Sfx\bin'
+    azureSubscription: 'SF-EngSystemsSubscription'
+    Destination: AzureBlob
+    storage: sfprebuiltinternal212418
+    ContainerName: binaries
+
+- task: NuGetCommand@2
+  displayName: 'Publish Internal Nuget Package to WindowsFabric2'
+  inputs:
+    command: push
+    packagesToPush: 'src\Sfx\bin\*.nupkg'
+    publishVstsFeed: One/SFX
