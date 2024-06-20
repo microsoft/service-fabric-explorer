@@ -6,12 +6,12 @@ import { DataService } from 'src/app/services/data.service';
 import { ReplicaBaseControllerDirective } from '../ReplicaBase';
 
 @Component({
-  selector: 'app-commands',
+  selector: 'app-replica-commands',
   templateUrl: './commands.component.html',
   styleUrls: ['./commands.component.scss']
 })
 export class CommandsComponent extends ReplicaBaseControllerDirective{
-  
+
   commands: PowershellCommand[] = [];
   replicaRole: string;
 
@@ -70,7 +70,7 @@ export class CommandsComponent extends ReplicaBaseControllerDirective{
         [CommandFactory.GenNodeListParam("NewInstanceNodeName", nodes), CommandFactory.GenIgnoreConstraintsParam(), CommandFactory.GenTimeoutSecParam()],
         true
       );
-      this.commands.push(moveInstance);  
+      this.commands.push(moveInstance);
     }
     else {
 
@@ -96,9 +96,9 @@ export class CommandsComponent extends ReplicaBaseControllerDirective{
           CommandFactory.GenIgnoreConstraintsParam(),
           CommandFactory.GenTimeoutSecParam()
           ], true);
-        
+
         this.commands.push(moveSecondReplicaSpecific);
-    
+
         const moveSecondReplicaRandom = new PowershellCommand(
           "Move Secondary Replica To Random Node",
           'https://docs.microsoft.com/powershell/module/servicefabric/move-servicefabricsecondaryreplica',

@@ -5,7 +5,7 @@ import { IEventStoreData } from 'src/app/modules/event-store/event-store/event-s
 import { IOptionConfig } from 'src/app/modules/event-store/option-picker/option-picker.component';
 
 @Component({
-  selector: 'app-events',
+  selector: 'app-app-events',
   templateUrl: './events.component.html',
   styleUrls: ['./events.component.scss']
 })
@@ -19,10 +19,10 @@ export class EventsComponent extends ApplicationBaseControllerDirective {
     super(data, injector);
   }
 
-  setup() {    
-    // grab event data for all nodes for concurrent events visualization tool    
+  setup() {
+    // grab event data for all nodes for concurrent events visualization tool
     this.listEventStoreData = [
-      this.data.getApplicationEventData(this.appId)   
+      this.data.getApplicationEventData(this.appId)
     ];
 
     this.optionsConfig = {
