@@ -17,8 +17,8 @@ try {
 }
 
 //get flags
-let recordRequest = process.argv.includes("-r");
-let replayRequest = process.argv.includes("-p");
+let recordRequest = process.argv.includes("r");
+let replayRequest = process.argv.includes("p");
 let serveSFXV1Files = process.argv.includes("-s");
 let stripEventSToreRequests = !process.argv.includes("-e");
 
