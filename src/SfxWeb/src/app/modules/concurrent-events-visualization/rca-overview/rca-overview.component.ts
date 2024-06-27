@@ -4,7 +4,8 @@ import { IPregeneratedColor, pregeneratedColors } from 'src/app/Common/Constants
 import { IConcurrentEvents } from 'src/app/Models/eventstore/rcaEngine';
 import { EventStoreUtils, ITimelineData, ITimelineItem } from 'src/app/Models/eventstore/timelineGenerators';
 import { Utils } from 'src/app/Utils/Utils';
-import { DataGroup, DataSet } from 'vis-timeline/standalone/esm';
+import { DataGroup } from 'vis-timeline/peer';
+import { DataSet } from 'vis-data';
 import { IEssentialListItem } from '../../charts/essential-health-tile/essential-health-tile.component';
 
 interface ExtendedListItem extends IEssentialListItem {
