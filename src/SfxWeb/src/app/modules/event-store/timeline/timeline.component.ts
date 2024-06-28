@@ -5,7 +5,8 @@ import { ITimelineData, ITimelineItem, parseEventsGenerically } from 'src/app/Mo
 import { DataService } from 'src/app/services/data.service';
 import { TelemetryService } from 'src/app/services/telemetry.service';
 import { TimelineGeneratorFactoryService } from 'src/app/services/timeline-generator-factory.service';
-import { DataSet, DataGroup } from 'vis-timeline/standalone/esm';
+import { DataGroup } from 'vis-timeline/peer';
+import { DataSet } from 'vis-data';
 import { IEventStoreData } from '../event-store/event-store.component';
 import { VisualizationComponent, VisUpdateData } from '../visualizationComponents';
 

@@ -67,7 +67,7 @@ There are 2 optional flags
 -r which would record every request to a folder(by default called playbackRecordings) and overwriting if the same request is made again
 -p every request will be checked for a saved response and if one exists get served instead
 ```Shell
-npm start -- -r -p
+npm start -- r p
 ```
 
 If proxying requests to a secure cluster adding a file called localsettings.json to src/Sfx-Proxy can take a cert pfx location like below.
