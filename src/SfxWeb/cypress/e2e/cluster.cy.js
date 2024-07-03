@@ -486,6 +486,7 @@ context('Cluster page', () => {
               "ContainerName": "",
               "BlobServiceUri": "",
               "ManagedIdentityType": "",
+              "ManagedIdentityClientId": "",
               "PrimaryUserName": "",
               "PrimaryPassword": "",
               "SecondaryUserName": "",
@@ -500,6 +501,7 @@ context('Cluster page', () => {
 
         cy.get("[formcontrolname=BlobServiceUri]").type("BSUURI");
         cy.get("[formcontrolname=ContainerName]").type("sillycontainername");
+        cy.get("[formcontrolname=ManagedIdentityClientId]").type("sillyclientid");
         cy.get("[value=Cluster]").click();
 
         cy.get(submitButton).click();
@@ -526,6 +528,7 @@ context('Cluster page', () => {
               "ContainerName": "sillycontainername",
               "BlobServiceUri": "BSUURI",
               "ManagedIdentityType": "Cluster",
+              "ManagedIdentityClientId": "sillyclientid",
               "PrimaryUserName": "",
               "PrimaryPassword": "",
               "SecondaryUserName": "",
@@ -578,6 +581,7 @@ context('Cluster page', () => {
               "ContainerName": "",
               "BlobServiceUri": "",
               "ManagedIdentityType": "",
+              "ManagedIdentityClientId": "",
               "PrimaryUserName": "username",
               "PrimaryPassword": "password",
               "SecondaryUserName": "",
