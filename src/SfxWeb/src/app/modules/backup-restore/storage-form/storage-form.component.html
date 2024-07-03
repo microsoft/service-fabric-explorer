@@ -58,6 +58,12 @@
                     VMSS
                 </label><br />
             </dd>
+            <dt>ManagedIdentityClientId
+                <span tabindex="0" class="mif-info" title="Client-id of the user-assigned managed identity (in the case of the system-assigned managed identity, please keep ManagedIdentityClientId Empty)"></span>
+            </dt>
+            <dd>
+                <input type="text" class="input-flat" formControlName="ManagedIdentityClientId" name="ManagedIdentityClientId">
+            </dd>
         </dl>
         <dl class="dl-horizontal" *ngIf="localForm.value.StorageKind === 'FileShare'">
             <dt>FriendlyName</dt>

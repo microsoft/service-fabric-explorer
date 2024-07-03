@@ -1,6 +1,6 @@
 @import "vars.scss";
 
-$modal-dt-width: 160px;
+$modal-dt-width: 180px;
 $modal-short-dt-width: 100px;
 $dialog-input-bg-color: #242424;
 
@@ -63,7 +63,7 @@ $dialog-input-bg-color: #242424;
 
             dd {
                 padding: 5px 0px;
-
+                width: calc(100% - $modal-dt-width);
                 dl {
                     margin-top: 5px;
                 }

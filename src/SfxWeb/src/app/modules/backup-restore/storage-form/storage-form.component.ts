@@ -24,6 +24,7 @@ export class StorageFormComponent implements OnInit {
       ContainerName: [''],
       BlobServiceUri: [''],
       ManagedIdentityType: [''],
+      ManagedIdentityClientId: [''],
       IsEmptyPrimaryCredential: [true],
       PrimaryUserName: [''],
       PrimaryPassword: [''],
@@ -58,6 +59,7 @@ export class StorageFormComponent implements OnInit {
       ContainerName: '',
       BlobServiceUri: '',
       ManagedIdentityType: '',
+      ManagedIdentityClientId: '',
       IsEmptyPrimaryCredential: true,
       PrimaryUserName: '',
       PrimaryPassword: '',
@@ -88,6 +90,7 @@ export class StorageFormComponent implements OnInit {
 
       storage.get('BlobServiceUri').setValidators(null);
       storage.get('ManagedIdentityType').setValidators(null);
+      storage.get('ManagedIdentityClientId').setValidators(null);
     }
 
     if (storageKind === 'FileShare') {
@@ -102,6 +105,7 @@ export class StorageFormComponent implements OnInit {
 
       storage.get('BlobServiceUri').setValidators(null);
       storage.get('ManagedIdentityType').setValidators(null);
+      storage.get('ManagedIdentityClientId').setValidators(null);
     }
 
     if (storageKind === 'ManagedIdentityAzureBlobStore')
@@ -115,6 +119,7 @@ export class StorageFormComponent implements OnInit {
       storage.get('BlobServiceUri').setValidators([Validators.required]);
       storage.get('ManagedIdentityType').setValidators([Validators.required]);
       storage.get('ContainerName').setValidators([Validators.required]);
+      storage.get('ManagedIdentityClientId').setValidators(null);
     }
 
     storage.get('ContainerName').updateValueAndValidity();
@@ -122,6 +127,7 @@ export class StorageFormComponent implements OnInit {
     storage.get('Path').updateValueAndValidity();
     storage.get('BlobServiceUri').updateValueAndValidity();
     storage.get('ManagedIdentityType').updateValueAndValidity();
+    storage.get('ManagedIdentityClientId').updateValueAndValidity();
   }
 
   updateStorageKindValidatorsPrimaryCredentials(storage: AbstractControl, IsEmptyPrimaryCredential: boolean) {
