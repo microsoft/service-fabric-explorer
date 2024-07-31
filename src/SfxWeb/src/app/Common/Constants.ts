@@ -224,6 +224,11 @@ export class TelemetryEventNames {
 }
 
 
+export class SystemServicePartitionIds {
+  public static FailoverManagerId = '00000000-0000-0000-0000-000000000001';
+} 
+
+
 export class RepairTaskMessages {
   public static longExecutingMessage = "This update can prevent other updates from going through. Please reach out to Azure VMSS to figure out why the updates are not completing.";
   public static longExecutingId = "longExecuting";

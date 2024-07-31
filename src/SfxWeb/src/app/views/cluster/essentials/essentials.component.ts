@@ -5,6 +5,7 @@ import { HealthStateFilterFlags } from 'src/app/Models/HealthChunkRawDataTypes';
 import { SystemApplication } from 'src/app/Models/DataModels/Application';
 import { Observable, forkJoin, of } from 'rxjs';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
+import { SystemServicePartitionIds } from 'src/app/Common/Constants';
 import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 import { NodeCollection } from 'src/app/Models/DataModels/collections/NodeCollection';
 import { ListSettings } from 'src/app/Models/ListSettings';
@@ -16,6 +17,8 @@ import { HealthUtils, HealthStatisticsEntityKind } from 'src/app/Utils/healthUti
 import { RepairTaskCollection } from 'src/app/Models/DataModels/collections/RepairTaskCollection';
 import { IEssentialListItem } from 'src/app/modules/charts/essential-health-tile/essential-health-tile.component';
 import { InfrastructureCollection } from 'src/app/Models/DataModels/collections/infrastructureCollection';
+import { RestClientService } from 'src/app/services/rest-client.service';
+import { IRawPartition } from 'src/app/Models/RawDataTypes';
 
 @Component({
   selector: 'app-essentials',
@@ -41,12 +44,15 @@ export class EssentialsComponent extends BaseControllerDirective {
   replicasDashboard: IDashboardViewModel;
   upgradesDashboard: IDashboardViewModel;
   upgradeAppsCount = 0;
+  fmQuorumLossStatus : boolean;
+  fmQuorumLossWarning : string;
 
   essentialItems: IEssentialListItem[] = [];
 
   constructor(public data: DataService,
               public injector: Injector,
               public settings: SettingsService,
+              public RestClient: RestClientService,
               private routes: RoutesService) {
     super(injector);
   }
@@ -61,6 +67,9 @@ export class EssentialsComponent extends BaseControllerDirective {
 
     this.infraCollection = this.data.infrastructureCollection;
     this.infraSettings = this.settings.getNewOrExistingInfrastructureSettings();
+    this.fmQuorumLossWarning = `The Failover Manager service is in quorum loss state, which can cause disruptions in the cluster. Operations in PowerShell will likely to fail.
+    Cluster will not be loaded and the availability state of Application/System/Nodes may not be reflected in sfx. Failover Manager partition info 
+    can still be queried by using Service Fabric client API. Please refer to this link: https://learn.microsoft.com/en-us/rest/api/servicefabric/sfclient-api-getpartitioninfo`
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
@@ -91,6 +100,10 @@ export class EssentialsComponent extends BaseControllerDirective {
       this.nodes.refresh(messageHandler).pipe(map(() => {this.updateItemInEssentials(); })),
       this.systemApp.refresh(messageHandler).pipe(catchError(err => of(null))),
       this.clusterUpgradeProgress.refresh(messageHandler),
+      this.RestClient.getPartitionById(SystemServicePartitionIds.FailoverManagerId, messageHandler).pipe(map((partition) => {
+          this.fmQuorumLossStatus = partition.PartitionStatus === 'InQuorumLoss';
+      })),
+      
       this.data.getClusterManifest().pipe(map((manifest) => {
         if (manifest.isRepairManagerEnabled) {
           return this.repairtaskCollection.refresh(messageHandler);
