@@ -255,6 +255,7 @@ export class ServiceType extends DataModelBase<IRawServiceType> {
 
 export class ServiceManifest extends DataModelBase<IRawServiceManifest> {
     public packages: ServiceTypePackage[] = [];
+    public serviceManifestName: string;
 
     public constructor(data: DataService, public parent: DeployedServicePackage | ServiceType) {
         super(data, null, parent);
@@ -276,6 +277,9 @@ export class ServiceManifest extends DataModelBase<IRawServiceManifest> {
     protected updateInternal(): Observable<any> | void {
             const parser = new DOMParser();
             const xml = parser.parseFromString(this.raw.Manifest, 'text/xml');
+
+            const manifest = xml.getElementsByTagName('ServiceManifest')[0];
+            this.serviceManifestName = manifest.getAttribute('Name');
 
             // let $xml = $($.parseXML(this.raw.Manifest));
             let packType = xml.getElementsByTagName('CodePackage');

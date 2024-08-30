@@ -2,5 +2,7 @@
     <h2>
         <span id="clusterManifestName">{{manifestName}}</span>
     </h2>
-    <code [attr.aria-label]="'manifest of ' + manifestName">{{manifest}}</code>
+    <code [attr.aria-label]="'manifest of ' + manifestName">
+        <code *ngFor="let line of manifestLines">{{line}}</code>
+    </code>
 </div>
