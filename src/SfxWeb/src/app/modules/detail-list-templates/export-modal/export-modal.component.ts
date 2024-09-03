@@ -18,6 +18,13 @@ export class ExportModalComponent implements OnInit {
     this.selected = this.data.config.columnSettings.reduce((previous, current) => { previous[current.displayName] = true; return previous; }, {});
   }
 
+  updateCheckAll(event) {
+    if (event.target.checked) {
+      this.selectAll();
+    } else {
+      this.unselectAll();
+    }
+  }
   selectAll() {
     Object.keys(this.selected).forEach(key => this.selected[key] = true);
   }
