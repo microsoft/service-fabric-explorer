@@ -40,6 +40,10 @@
   </app-collapse-container>
 </div>
 
+<div *ngIf="fmQuorumLossStatus" style="margin-bottom: 15px;" data-cy="fmql-warning">
+  <app-warning [description]="fmQuorumLossWarning" ></app-warning>
+</div>
+
 <div *ngIf="clusterUpgradeProgress.isInitialized && clusterUpgradeProgress.isUpgrading" class="detail-pane">
   <div data-cy="upgradeDetails" class="essen-pane" style="flex: 1; min-width: 600px;">
     <app-collapse-container sectionName="Upgrade Status" collapsed="true">

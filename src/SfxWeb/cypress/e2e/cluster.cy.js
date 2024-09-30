@@ -21,6 +21,10 @@ context('Cluster page', () => {
   })
 
   describe("essentials", () => {
+    beforeEach(() => {
+      cy.intercept(apiUrl('/Partitions/00000000-0000-0000-0000-000000000001?*'), 
+      {fixture: 'cluster-page/fm/notInQuorumLoss.json'}).as("getFMQuorumLossStatus")
+    })
     it('load essentials', () => {
       cy.visit('')
 
@@ -70,6 +74,19 @@ context('Cluster page', () => {
       });
 
     })
+
+
+    it('displays FM quorum loss warning when in quorum loss status', () => {
+      cy.visit('');
+      cy.wait('@getFMQuorumLossStatus')
+      cy.get('[data-cy="fmql-warning"]').should('not.exist');
+      cy.intercept(apiUrl('/Partitions/00000000-0000-0000-0000-000000000001?*'), 
+      {fixture: 'cluster-page/fm/inQuorumLoss.json'}).as("getFMQuorumLossStatus")
+      cy.reload();
+      cy.wait('@getFMQuorumLossStatus')
+      cy.get('[data-cy="fmql-warning"]').should('exist').should('be.visible');      
+    });
+
 
     it('xss', () => {
 
