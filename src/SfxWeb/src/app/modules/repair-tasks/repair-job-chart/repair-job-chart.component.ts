@@ -28,7 +28,9 @@ export class RepairJobChartComponent implements OnInit, OnChanges {
     const options: Options = {
       chart: {
         type: 'area',
-        zoomType: 'x',
+        zooming: {
+          type: 'x'
+        },
         backgroundColor: '#262626'
       },
       title: {

@@ -4,14 +4,14 @@ import { DataService } from 'src/app/services/data.service';
 import { ServiceBaseControllerDirective } from '../ServiceBase';
 
 @Component({
-  selector: 'app-commands',
+  selector: 'app-service-commands',
   templateUrl: './commands.component.html',
   styleUrls: ['./commands.component.scss']
 })
 export class CommandsComponent extends ServiceBaseControllerDirective {
-  
+
   commands: PowershellCommand[] = [];
-  
+
   constructor(protected data: DataService, injector: Injector) {
     super(data, injector);
   }

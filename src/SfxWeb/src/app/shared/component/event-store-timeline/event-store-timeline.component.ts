@@ -2,7 +2,9 @@ import { Component, ViewChild, ElementRef, Input, AfterViewInit, OnChanges, Chan
 import { DomSanitizer } from '@angular/platform-browser';
 import { pregeneratedColors } from 'src/app/Common/Constants';
 import { ITimelineData } from 'src/app/Models/eventstore/timelineGenerators';
-import { Timeline, DataItem, DataGroup, moment, DataSet } from 'vis-timeline/standalone/esm';
+import * as moment from 'moment';
+import { Timeline, DataItem, DataGroup } from 'vis-timeline/peer';
+import { DataSet } from 'vis-data';
 
 @Component({
   selector: 'app-event-store-timeline',

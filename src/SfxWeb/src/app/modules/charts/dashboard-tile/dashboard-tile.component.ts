@@ -33,7 +33,8 @@ export class DashboardTileComponent implements OnInit, AfterViewInit, OnChanges 
       x: 10,
       style: {
         color: '#fff',
-        fontSize: '15pt'
+        fontSize: '14pt',
+        fontWeight: 'normal'
       }
     },
     subtitle: {
@@ -113,9 +114,8 @@ export class DashboardTileComponent implements OnInit, AfterViewInit, OnChanges 
     (this.options.series[0] as SeriesPieOptions).data = data;
 
     if (!this.data.largeTile) {
-      this.options.title.style.fontSize = '13pt';
       this.options.title.y = 9;
-      this.options.subtitle.style.fontSize = '13pt';
+      this.options.subtitle.style.fontSize = '14pt';
       this.options.subtitle.y = 30;
     }
   }
@@ -126,9 +126,9 @@ export class DashboardTileComponent implements OnInit, AfterViewInit, OnChanges 
 
   getDataSet(): PointOptionsObject[] {
     const colors = {
-      Healthy: '#7FBA00',
-      Warning: '#FCD116',
-      Error: '#E81123'
+      Healthy: 'var(--badge-ok)',
+      Warning: 'var(--badge-warning)',
+      Error: 'var(--badge-error)'
     };
 
     const data = this.data.dataPoints.map(p => {

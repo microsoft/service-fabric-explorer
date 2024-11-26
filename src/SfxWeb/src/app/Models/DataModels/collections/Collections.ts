@@ -50,6 +50,10 @@ export class ApplicationCollection extends DataModelCollectionBase<Application> 
         return RoutesService.getAppsViewPath();
     }
 
+    public get isArmManaged(): boolean {
+        return this.collection.some(app => app.isArmManaged);
+    }
+    
     public mergeClusterHealthStateChunk(clusterHealthChunk: IClusterHealthChunk): Observable<any> {
         return this.updateCollectionFromHealthChunkList(clusterHealthChunk.ApplicationHealthStateChunks, item => IdGenerator.app(IdUtils.nameToId(item.ApplicationName))).pipe(mergeMap(() => {
             this.updateAppsHealthState();

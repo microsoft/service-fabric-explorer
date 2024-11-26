@@ -4,7 +4,7 @@ import { SettingsService } from 'src/app/services/settings.service';
 import { Observable } from 'rxjs';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { ApplicationType, ApplicationTypeGroup } from 'src/app/Models/DataModels/ApplicationType';
-import { ListSettings, ListColumnSetting, ListColumnSettingWithFilter, ListColumnSettingForBadge, ListColumnSettingForLink } from 'src/app/Models/ListSettings';
+import { ListSettings, ListColumnSetting, ListColumnSettingWithFilter, ListColumnSettingForBadge, ListColumnSettingForLink, ListColumnSettingForArmManaged } from 'src/app/Models/ListSettings';
 import { ApplicationTypeBaseControllerDirective } from '../ApplicationTypeBase';
 import { map } from 'rxjs/operators';
 
@@ -30,6 +30,7 @@ export class EssentialsComponent extends ApplicationTypeBaseControllerDirective 
       new ListColumnSetting('raw.TypeVersion', 'Version'),
       new ListColumnSettingForBadge('healthState', 'Health State'),
       new ListColumnSettingWithFilter('raw.Status', 'Status'),
+      new ListColumnSettingForArmManaged()
     ]);
 
   }

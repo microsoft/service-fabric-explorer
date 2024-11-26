@@ -7,17 +7,17 @@
           <label class="toggle-wrapper ">
             <app-health-badge [badgeClass]="'badge-ok'" [text]="'OK'"></app-health-badge>
 
-            <app-toggle [(state)]="treeService.tree.showOkItems" color="green"></app-toggle>
+            <app-toggle [(state)]="treeService.tree.showOkItems" color="var(--dark-green)"></app-toggle>
           </label>
 
           <label class="toggle-wrapper ">
             <app-health-badge [badgeClass]="'badge-warning'" [text]="'Warning'"></app-health-badge>
-            <app-toggle [(state)]="treeService.tree.showWarningItems" color="#f19d03"></app-toggle>
+            <app-toggle [(state)]="treeService.tree.showWarningItems" color="var(--badge-warning)"></app-toggle>
           </label>
 
           <label class="toggle-wrapper ">
             <app-health-badge [badgeClass]="'badge-error'" [text]="'Error'"></app-health-badge>
-            <app-toggle [(state)]="treeService.tree.showErrorItems" color="red"></app-toggle>
+            <app-toggle [(state)]="treeService.tree.showErrorItems" color="var(--badge-error)"></app-toggle>
           </label>
 
           <label class="toggle-wrapper ">

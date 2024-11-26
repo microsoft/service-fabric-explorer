@@ -4,12 +4,12 @@ import { DataService } from 'src/app/services/data.service';
 import { DeployedServicePackageBaseControllerDirective } from '../DeployedServicePackage';
 
 @Component({
-  selector: 'app-commands',
+  selector: 'app-deployed-service-package-commands',
   templateUrl: './commands.component.html',
   styleUrls: ['./commands.component.scss']
 })
 export class CommandsComponent extends DeployedServicePackageBaseControllerDirective{
-  
+
   commands: PowershellCommand[] = [];
 
   constructor(protected data: DataService, injector: Injector) {
@@ -24,7 +24,7 @@ export class CommandsComponent extends DeployedServicePackageBaseControllerDirec
 
     const healthReport = CommandFactory.GenSendHealthReport("DeployedServicePackage", `-ApplicationName ${this.servicePackage.parent.name} -ServiceManifestName ${this.servicePackage.name} -NodeName "${this.nodeName}"`);
     this.commands.push(healthReport);
-    
+
     const considerWarnAsErr = new PowershellCommandParameter("ConsiderWarningAsError", CommandParamTypes.bool);
     const eventsFilter = CommandFactory.GenHealthFilterParam("Events");
     const servicePacActivId = this.servicePackage.raw.ServicePackageActivationId;
@@ -56,7 +56,7 @@ export class CommandsComponent extends DeployedServicePackageBaseControllerDirec
       `Get-ServiceFabricDeployedReplica -NodeName "${this.nodeName}" -ApplicationName ${this.servicePackage.parent.name} -ServiceManifestName ${this.servicePackage.name}`,
       [CommandFactory.GenTimeoutSecParam()]
     );
-    
+
     this.commands.push(getReplica);
     this.commands = [...this.commands];
 

@@ -1,0 +1,12 @@
+<form class="action-modal">
+    <div [class]="'modal-header ' + data.modalTitle.class">
+        <h1 class="modal-title">{{data.modalTitle.title}}</h1>
+    </div>
+    <div class="modal-body"> 
+        <ng-template appDialogBody></ng-template>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="solid-button blue" [disabled]="disableSubmit" (click)="ok()" data-cy="submit">{{data.title}}</button>
+        <button type="button" class="flat-button" (click)="cancel()">Cancel</button>
+    </div>
+</form>

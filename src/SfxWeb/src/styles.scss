@@ -18,6 +18,15 @@
 // Include the common styles for Angular Material. We include this here so that you only
 // have to load a single css file for Angular Material in your app.
 // Be sure that you only ever include this mixin once!
+// TODO(v15): As of v15 mat.legacy-core no longer includes default typography styles.
+//  The following line adds:
+//    1. Default typography styles for all components
+//    2. Styles for typography hierarchy classes (e.g. .mat-headline-1)
+//  If you specify typography styles for the components you use elsewhere, you should delete this line.
+//  If you don't need the default component typographies but still want the hierarchy styles,
+//  you can delete this line and instead use:
+//    `@include mat.legacy-typography-hierarchy(mat.define-typography-config());`
+@include mat.all-component-typographies();
 @include mat.core();
 
 // Define the palettes for your theme using the Material Design palettes available in palette.scss
@@ -156,14 +165,11 @@ table.detail-list {
     color: var(--font-primary-color);
     overflow-x: inherit;
 
-    .no-border {
-        border-top: none;
-    }
-
     td {
         vertical-align: middle !important;
         padding: 5px;
         white-space: normal;
+        border-top: 1px solid var(--accent-underline);
     }
 
     th {
@@ -172,6 +178,11 @@ table.detail-list {
         border: 0px solid;
         border-bottom: 1px solid var(--accent-underline);
     }
+
+    .no-border {
+      border-top: none;
+  }
+
 
     .shift-expander-col {
         margin-left: 27px;
@@ -277,10 +288,18 @@ table.detail-list {
     -webkit-overflow-scrolling: touch;
 }
 
-.table>tbody>tr>td {
-    line-height: 1.42857;
-    vertical-align: top;
-    border-top: 1px solid var(--accent-underline);
+.default-table {
+  width: 100%;
+
+  tbody {
+    tr {
+      td {
+        line-height: 1.42857;
+        vertical-align: top;
+        border-top: 1px solid var(--accent-underline);
+      }
+    }
+  }
 }
 
 .clear-button {
@@ -557,7 +576,7 @@ table.detail-list {
             & {
                 background-color: Highlight !important;
             }
-        } 
+        }
 
     }
   }
@@ -738,4 +757,30 @@ table.detail-list {
 .main-view {
     padding-top: 18px;
     padding-right: 5px;
+}
+
+
+.form-inline {
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-flow: row wrap;
+  flex-flow: row wrap;
+  -ms-flex-align: center;
+  align-items: center
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0
+}
+
+.dropdown-item.disabled {
+  color: #6c757d;
 }

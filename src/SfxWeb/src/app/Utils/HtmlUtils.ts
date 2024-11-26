@@ -24,7 +24,7 @@ export class EventTypesUtil {
         'ReplicatorFaulted',
         'SecondaryReplicationQueueFull',
         'SecondaryReplicationQueueWarning'],
-        item => item.split('-')[0].replace('*', '') );
+        item => item.split('-')[0].replaceAll('*', '') );
     private ErrorEventTypes = Utils.keyByFromFunction( [
         '*HealthReportCreated-HealthState:Error',
         '*NewHealthReport-HealthState:Error',
@@ -32,11 +32,11 @@ export class EventTypesUtil {
         'NodeOpenFailed',
         'NodeAborted',
         'TStoreError' ],
-        item => item.split('-')[0].replace('*', '') );
+        item => item.split('-')[0].replaceAll('*', '') );
     private ResolvedEventTypes = Utils.keyByFromFunction( [
         '*HealthReportCreated-HealthState:Ok',
         '*NewHealthReport-HealthState:Ok' ],
-        item => item.split('-')[0].replace('*', '') );
+        item => item.split('-')[0].replaceAll('*', '') );
 
     private warningEventsRegExp = EventTypesUtil.constructRegExp(
         Object.keys(this.WarningEventTypes).map(e => this.WarningEventTypes[e]));

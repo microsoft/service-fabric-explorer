@@ -1,34 +1,30 @@
 import { Component, Injector } from '@angular/core';
-import { Observable } from 'rxjs';
-import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { CommandFactory, CommandParamTypes, CommandSafetyLevel, PowershellCommand, PowershellCommandParameter } from 'src/app/Models/PowershellCommand';
 import { DataService } from 'src/app/services/data.service';
-import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
-import { map } from 'rxjs/operators';
-import { Application } from 'src/app/Models/DataModels/Application';
+import { ApplicationsBaseControllerDirective } from '../applicationsBase';
 
 
 @Component({
-  selector: 'app-commands',
+  selector: 'app-apps-commands',
   templateUrl: './commands.component.html',
   styleUrls: ['./commands.component.scss']
 })
-export class CommandsComponent extends BaseControllerDirective {
+export class CommandsComponent extends ApplicationsBaseControllerDirective {
 
   commands: PowershellCommand[] = [];
-  
-  constructor(private data: DataService, injector: Injector) {
-    super(injector);
+
+  constructor(data: DataService, injector: Injector) {
+    super(data, injector);
    }
 
   afterDataSet(): void {
     this.setUpCommands();
   }
-  
+
   setUpCommands() {
     const appDefKindFilter = new PowershellCommandParameter('ApplicationDefinitionKindFilter', CommandParamTypes.enum,
       { options: ['Default', 'ServiceFabricApplicationDescription', 'Compose', 'MeshApplicationDescription', 'All'], allowCustomValAndOptions: true });
-    
+
     const excludeAppParam = new PowershellCommandParameter('ExcludeApplicationParameters', CommandParamTypes.switch);
     const getSinglePage = new PowershellCommandParameter('GetSinglePage', CommandParamTypes.switch);
     const maxResults = new PowershellCommandParameter('MaxResults', CommandParamTypes.number);

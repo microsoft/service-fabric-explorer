@@ -1,0 +1,36 @@
+{
+    "ContinuationToken": "",
+    "Items": [
+        {
+            "ServiceKind": "Stateful",
+            "Name": "fabric:/VisualObjectsApplicationType/VisualObjects.ActorService",
+            "TypeName": "VisualObjects.ActorServiceType",
+            "ManifestVersion": "3.0.0",
+            "HasPersistedState": true,
+            "HealthState": "Ok",
+            "ServiceStatus": "Active",
+            "IsServiceGroup": false,
+            "Id": "VisualObjectsApplicationType/VisualObjects.ActorService",
+            "ServiceMetadata": {
+                "ArmMetadata": {
+                    "ArmResourceId": "\/subscriptions\/13ad2c84-84fa-4798-ad71-e70c07af873f\/resourcegroups\/sfmc\/providers\/Microsoft.ServiceFabric\/managedClusters\/luslevinsfmc10\/applicationTypes\/VotingType\/versions\/1.0.0"
+                }
+            }
+        },
+        {
+            "ServiceKind": "Stateless",
+            "Name": "fabric:/VisualObjectsApplicationType/VisualObjects.WebService",
+            "TypeName": "VisualObjects.WebServiceType",
+            "ManifestVersion": "12.0.0",
+            "HealthState": "Ok",
+            "ServiceStatus": "Active",
+            "IsServiceGroup": false,
+            "Id": "VisualObjectsApplicationType/VisualObjects.WebService",
+            "ServiceMetadata": {
+                "ArmMetadata": {
+                    "ArmResourceId": "\/subscriptions\/13ad2c84-84fa-4798-ad71-e70c07af873f\/resourcegroups\/sfmc\/providers\/Microsoft.ServiceFabric\/managedClusters\/luslevinsfmc10\/applicationTypes\/VotingType\/versions\/1.0.0"
+                }
+            }
+        }
+    ]
+}

@@ -1,6 +1,6 @@
 @import "vars.scss";
 
-$modal-dt-width: 160px;
+$modal-dt-width: 180px;
 $modal-short-dt-width: 100px;
 $dialog-input-bg-color: #242424;
 
@@ -25,6 +25,12 @@ $dialog-input-bg-color: #242424;
         background-color: var(--accent-darkblue) !important;
         padding: 18px 15px 18px 15px;
         border: none !important;
+
+        &.warning {
+            background-color: var(--badge-warning) !important;
+            color: var(--primary-background-color) !important;
+
+        }
 
         .modal-title {
           font-weight: var(--font-weight-normal);
@@ -57,7 +63,7 @@ $dialog-input-bg-color: #242424;
 
             dd {
                 padding: 5px 0px;
-
+                width: calc(100% - $modal-dt-width);
                 dl {
                     margin-top: 5px;
                 }
@@ -85,7 +91,7 @@ $dialog-input-bg-color: #242424;
                     margin-top: -4px;
                 }
 
-                .table {
+                .default-table {
                     margin-bottom: 0;
                     color: white;
                     thead > tr > th {
@@ -109,7 +115,7 @@ $dialog-input-bg-color: #242424;
 }
 
 
-.mat-dialog-container-wrapper .mat-dialog-container {
+.mat-mdc-dialog-container-wrapper .mat-dialog-container {
     padding: 0px;
 }
 

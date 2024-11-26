@@ -1,4 +1,6 @@
-<app-navbar [tabs]="tabs" type="Applications" [name]="''" [showCopy]="false"></app-navbar>
+<app-navbar [tabs]="tabs" type="Applications" [name]="''" [showCopy]="false">
+    <app-arm-warning warning *ngIf="apps?.isArmManaged || hasArmManagedAppType" armWarningText="Some of the applications are ARM managed. ARM managed resources should only be modified during ARM deployments."></app-arm-warning>
+</app-navbar>
 <div class="main-view">
     <div class="flex-child">
         <router-outlet></router-outlet>

@@ -114,7 +114,6 @@ export class HealthChartComponent implements OnInit, AfterViewInit, OnChanges {
     this.options.tooltip.enabled = data.length === 3;
     (this.options.series[0] as SeriesPieOptions).data = data;
 
-    this.options.title.style.fontSize =  +this.width * .2 + 'pt';
     this.options.subtitle.style.fontSize =  +this.width * .2 + 'pt';
   }
 

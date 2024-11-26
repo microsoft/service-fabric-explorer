@@ -10,6 +10,7 @@
         </h1>
         <app-clip-board [text]="name" *ngIf="showCopy" [name]="type + ' name '"></app-clip-board>
       </div>
+      <ng-content select="[warning]"></ng-content>
       <div class="detail-view-navbar nav-wrapper" role="tablist" [attr.aria-label]="name" data-cy="navtabs">
           <a  *ngFor="let tab of tabs; let i = index" #rla="routerLinkActive" [attr.aria-selected]="rla.isActive" [routerLink]="tab.route"
             [attr.aria-posinset]="i + 1" role="tab" routerLinkActive="current" [routerLinkActiveOptions]="{ exact: true }"

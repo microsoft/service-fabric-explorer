@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
 import { map, mergeMap } from 'rxjs/operators';
 
 @Component({
-  selector: 'app-manifest',
+  selector: 'app-service-manifest',
   templateUrl: './manifest.component.html',
   styleUrls: ['./manifest.component.scss']
 })

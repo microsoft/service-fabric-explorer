@@ -2,7 +2,7 @@ import { Component, Injector, ChangeDetectorRef } from '@angular/core';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { DataService } from 'src/app/services/data.service';
 import { ApplicationUpgradeProgress, ApplicationHealth } from 'src/app/Models/DataModels/Application';
-import { ListSettings, ListColumnSettingForLink, ListColumnSetting, ListColumnSettingWithFilter, ListColumnSettingForBadge } from 'src/app/Models/ListSettings';
+import { ListSettings, ListColumnSettingForLink, ListColumnSetting, ListColumnSettingWithFilter, ListColumnSettingForBadge, ListColumnSettingForArmManaged } from 'src/app/Models/ListSettings';
 import { SettingsService } from 'src/app/services/settings.service';
 import { forkJoin, of, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -48,14 +48,14 @@ export class EssentialsComponent extends ApplicationBaseControllerDirective {
       new ListColumnSetting('raw.ManifestVersion', 'Version'),
       new ListColumnSettingWithFilter('raw.ServiceKind', 'Service Kind'),
       new ListColumnSettingForBadge('healthState', 'Health State'),
-      new ListColumnSettingWithFilter('raw.ServiceStatus', 'Status')
+      new ListColumnSettingWithFilter('raw.ServiceStatus', 'Status'),
+      new ListColumnSettingForArmManaged()
     ]);
-
+    
     this.serviceTypesListSettings = this.settings.getNewOrExistingListSettings('serviceTypes', ['raw.ServiceTypeDescription.ServiceTypeName'], [
-        new ListColumnSetting('raw.ServiceTypeDescription.ServiceTypeName', 'Service Type Name'),
-        new ListColumnSettingWithFilter('serviceKind', 'Service Kind'),
-        new ListColumnSetting('raw.ServiceManifestVersion', 'Service Manifest Version'),
-        new ListColumnSettingForApplicationServiceRow(),
+      new ListColumnSetting('raw.ServiceTypeDescription.ServiceTypeName', 'Service Type Name'),
+      new ListColumnSettingWithFilter('serviceKind', 'Service Kind'),
+      new ListColumnSetting('raw.ServiceManifestVersion', 'Service Manifest Version')
     ]);
 
     this.upgradeProgressUnhealthyEvaluationsListSettings = this.settings.getNewOrExistingUnhealthyEvaluationsListSettings('upgradeProgressUnhealthyEvaluations');
@@ -75,6 +75,12 @@ export class EssentialsComponent extends ApplicationBaseControllerDirective {
         })
       }
     })
+  }
+
+  afterDataSet(): void {
+    if(!this.app.isArmManaged) {
+      this.serviceTypesListSettings.columnSettings.push(new ListColumnSettingForApplicationServiceRow());
+    }
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{

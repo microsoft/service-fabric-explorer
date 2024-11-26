@@ -6,12 +6,12 @@ import { DataService } from 'src/app/services/data.service';
 import { DeployedAppBaseControllerDirective } from '../DeployedApplicationBase';
 
 @Component({
-  selector: 'app-commands',
+  selector: 'app-deployed-app-commands',
   templateUrl: './commands.component.html',
   styleUrls: ['./commands.component.scss']
 })
 export class CommandsComponent extends DeployedAppBaseControllerDirective{
-  
+
   commands: PowershellCommand[] = [];
 
   constructor(protected data: DataService, injector: Injector) {
@@ -45,7 +45,7 @@ export class CommandsComponent extends DeployedAppBaseControllerDirective{
     );
     this.commands.push(getHealth);
 
-    
+
     const getDeployedApp = new PowershellCommand(
       "Get Deployed Application",
       'https://docs.microsoft.com/powershell/module/servicefabric/get-servicefabricdeployedapplication',
@@ -53,9 +53,9 @@ export class CommandsComponent extends DeployedAppBaseControllerDirective{
       `Get-ServiceFabricDeployedApplication -NodeName "${this.nodeName}" -ApplicationName ${this.deployedApp.name}`,
       [new PowershellCommandParameter("IncludeHealthState", CommandParamTypes.switch), CommandFactory.GenTimeoutSecParam()]
     );
-      
+
     this.commands.push(getDeployedApp);
-      
+
     const includeHealthState = new PowershellCommandParameter("IncludeHealthState", CommandParamTypes.switch);
     const getSinglePage = new PowershellCommandParameter('GetSinglePage', CommandParamTypes.switch);
     const maxResults = new PowershellCommandParameter('MaxResults', CommandParamTypes.number);
@@ -76,7 +76,7 @@ export class CommandsComponent extends DeployedAppBaseControllerDirective{
       `Get-ServiceFabricDeployedReplica -NodeName "${this.nodeName}" -ApplicationName ${this.deployedApp.name}`,
       [CommandFactory.GenTimeoutSecParam()]
     );
-    
+
     this.commands.push(getReplica);
     this.commands = [...this.commands];
 

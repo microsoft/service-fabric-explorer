@@ -2,9 +2,9 @@ import { DataModelBase } from './Base';
 import { IRawApplicationType } from '../RawDataTypes';
 import { ServiceTypeCollection, ApplicationCollection } from './collections/Collections';
 import { DataService } from 'src/app/services/data.service';
-import { HealthStateConstants, Constants } from 'src/app/Common/Constants';
+import { HealthStateConstants } from 'src/app/Common/Constants';
 import { CollectionUtils } from 'src/app/Utils/CollectionUtils';
-import { Observable, forkJoin} from 'rxjs';
+import { Observable, forkJoin } from 'rxjs';
 import { Application } from './Application';
 import { ITextAndBadge, ValueResolver } from 'src/app/Utils/ValueResolver';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
@@ -13,6 +13,9 @@ import { Utils } from 'src/app/Utils/Utils';
 import { ActionWithConfirmationDialog, IsolatedAction } from '../Action';
 import { CreateApplicationComponent } from 'src/app/views/application-type/create-application/create-application.component';
 import { RoutesService } from 'src/app/services/routes.service';
+import { MessageWithWarningComponent } from 'src/app/modules/action-dialog/message-wth-warning/message-with-warning.component';
+import { MessageWithConfirmationComponent } from 'src/app/modules/action-dialog/message-with-confirmation/message-with-confirmation.component';
+import { ActionDialogComponent } from 'src/app/modules/action-dialog/action-dialog/action-dialog.component';
 
 // -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -41,6 +44,14 @@ export class ApplicationType extends DataModelBase<IRawApplicationType> {
         return RoutesService.getAppTypeViewPath(this.name);
     }
 
+    public get resourceId(): string {
+        return this.raw.ApplicationTypeMetadata?.ArmMetadata?.ArmResourceId;
+    }
+
+    public get isArmManaged(): boolean{
+        return this.resourceId?.length > 0;
+    }
+
     public unprovision(): Observable<any> {
         return this.data.restClient.unprovisionApplicationType(this.name, this.raw.Version);
     }
@@ -51,6 +62,10 @@ export class ApplicationType extends DataModelBase<IRawApplicationType> {
 
     private setUpActions() {
 
+        if (this.isArmManaged) {
+            return;
+        }
+
         this.actions.add(new ActionWithConfirmationDialog(
             this.data.dialog,
             'unprovisionAppType',
@@ -58,9 +73,15 @@ export class ApplicationType extends DataModelBase<IRawApplicationType> {
             'Unprovisioning',
             () => this.unprovision(),
             () => true,
-            'Confirm Type Unprovision',
-            `Unprovision application type ${this.name}@${this.raw.Version} from cluster ${window.location.host}?`,
-            `${this.name}@${this.raw.Version}`
+            {
+                title: 'Confirm Type Unprovision',
+            },
+            {
+                inputs: {
+                    message: `Unprovision application type ${this.name}@${this.raw.Version} from cluster ${window.location.host}?`,
+                    confirmationKeyword: `${this.name}@${this.raw.Version}`,
+                }
+            }
         ));
 
         this.actions.add(new IsolatedAction(
@@ -71,8 +92,18 @@ export class ApplicationType extends DataModelBase<IRawApplicationType> {
             {
                 appType: this,
             },
-            CreateApplicationComponent,
-            () => true)
+            ActionDialogComponent,
+            () => true,
+            null,
+            {
+                title: "Create app instance",
+            },
+            {
+                template: CreateApplicationComponent,
+                inputs: {
+                    appType: this,
+                }
+            })
             );
     }
 }
@@ -97,6 +128,10 @@ export class ApplicationTypeGroup extends DataModelBase<IRawApplicationType> {
 
     public get viewPath(): string {
         return RoutesService.getAppTypeViewPath(this.name);
+    }
+
+    public get isArmManaged(): boolean{
+        return this.appTypes.some(app => app.isArmManaged);
     }
 
     // Whenever the data.apps get refreshed, it will call this method to
@@ -143,9 +178,19 @@ export class ApplicationTypeGroup extends DataModelBase<IRawApplicationType> {
             'Unprovisioning',
             () => this.unprovision(),
             () => true,
-            'Confirm Type Unprovision',
-            `Unprovision all versions of application type ${this.name} from cluster ${window.location.host}?`,
-            this.name
+            {
+                title: 'Confirm Type Unprovision',
+                class: this.isArmManaged ? 'warning' : null
+            },
+            {
+                template: this.isArmManaged ? MessageWithWarningComponent : null,
+                inputs: {
+                    message: `Unprovision all ${this.isArmManaged ? " non-arm managed " : null} versions of application type ${this.name} from cluster ${window.location.host}?`,
+                    confirmationKeyword: this.name,
+                    description: `Some versions of application type ${this.name} are ARM managed, this action will not unprovision those versions.`,
+                    template: MessageWithConfirmationComponent
+                }
+            }
         ));
     }
 
@@ -153,7 +198,9 @@ export class ApplicationTypeGroup extends DataModelBase<IRawApplicationType> {
         return this.data.getAppTypeGroup(this.name, true).pipe(mergeMap(appTypeGroup => {
             const unprovisonPromises = [];
             appTypeGroup.appTypes.forEach(applicationType => {
-                unprovisonPromises.push(applicationType.unprovision());
+                if (!applicationType.isArmManaged) {
+                    unprovisonPromises.push(applicationType.unprovision());
+                }
             });
             return forkJoin(unprovisonPromises);
         }));

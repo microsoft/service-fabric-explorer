@@ -1,11 +1,10 @@
 import { ChangeDetectionStrategy, Component,  Input, ViewChild, OnChanges } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { NgbNav, NgbNavChangeEvent } from '@ng-bootstrap/ng-bootstrap';
-import { result } from 'cypress/types/lodash';
 import { CommandSafetyLevel, PowershellCommand } from 'src/app/Models/PowershellCommand';
 import { SettingsService } from 'src/app/services/settings.service';
-import { ActionDialogComponent } from 'src/app/shared/component/action-dialog/action-dialog.component';
-import { ModalData } from 'src/app/ViewModels/Modal';
+import { ActionDialogComponent } from 'src/app/modules/action-dialog/action-dialog/action-dialog.component';
+import { IModalBody, IModalData, IModalTitle } from 'src/app/ViewModels/Modal';
 
 @Component({
   selector: 'app-powershell-commands',
@@ -13,12 +12,16 @@ import { ModalData } from 'src/app/ViewModels/Modal';
   styleUrls: ['./powershell-commands.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class PowershellCommandsComponent implements ModalData, OnChanges{
+export class PowershellCommandsComponent implements IModalData, OnChanges{
 
   title: string = 'Acknowledge';
-  modalTitle: string = 'Warning';
-  modalMessage: string;
   
+  modalTitle: IModalTitle = {
+    title: 'Warning',
+    class: 'warning'
+  }
+  modalBody: IModalBody = { inputs: {message: ''} };
+
   activeId:any = 1;
   safetyLevelEnum = CommandSafetyLevel;
   
@@ -41,12 +44,12 @@ export class PowershellCommandsComponent implements ModalData, OnChanges{
   onNavChange(e: NgbNavChangeEvent) {
     if (e.nextId == 2 && !this.settings.getSessionVariable<boolean>('unsafeCommandsWarned')) {
       e.preventDefault();
-      this.modalMessage = "The commands you are about to view are potentially unsafe, and executing them can result in undesirable results. Please ensure you understand their risks."
+      this.modalBody.inputs.message = "The commands you are about to view are potentially unsafe, and executing them can result in undesirable results. Please ensure you understand their risks."
       this.openWarningModal('unsafeCommandsWarned', e.nextId);
     }
     else if (e.nextId == 3 && !this.settings.getSessionVariable<boolean>('dangerCommandsWarned')) {
       e.preventDefault();
-      this.modalMessage = "The commands you are about to view are potentially very dangerous to the cluster, and executing them incorrectly can lead to dire consequences."
+      this.modalBody.inputs.message = "The commands you are about to view are potentially very dangerous to the cluster, and executing them incorrectly can lead to dire consequences."
       this.openWarningModal('dangerCommandsWarned', e.nextId);
     }
     

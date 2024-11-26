@@ -486,6 +486,7 @@ context('Cluster page', () => {
               "ContainerName": "",
               "BlobServiceUri": "",
               "ManagedIdentityType": "",
+              "ManagedIdentityClientId": "",
               "PrimaryUserName": "",
               "PrimaryPassword": "",
               "SecondaryUserName": "",
@@ -500,6 +501,7 @@ context('Cluster page', () => {
 
         cy.get("[formcontrolname=BlobServiceUri]").type("BSUURI");
         cy.get("[formcontrolname=ContainerName]").type("sillycontainername");
+        cy.get("[formcontrolname=ManagedIdentityClientId]").type("sillyclientid");
         cy.get("[value=Cluster]").click();
 
         cy.get(submitButton).click();
@@ -526,6 +528,7 @@ context('Cluster page', () => {
               "ContainerName": "sillycontainername",
               "BlobServiceUri": "BSUURI",
               "ManagedIdentityType": "Cluster",
+              "ManagedIdentityClientId": "sillyclientid",
               "PrimaryUserName": "",
               "PrimaryPassword": "",
               "SecondaryUserName": "",
@@ -578,6 +581,7 @@ context('Cluster page', () => {
               "ContainerName": "",
               "BlobServiceUri": "",
               "ManagedIdentityType": "",
+              "ManagedIdentityClientId": "",
               "PrimaryUserName": "username",
               "PrimaryPassword": "password",
               "SecondaryUserName": "",
@@ -946,7 +950,7 @@ context('Cluster page', () => {
       cy.wait(500);
 
       cy.get('[data-cy=command]').within(() => {
-        cy.get('.detail-pane').should('have.css', 'border-left-color', 'rgb(252, 209, 22)')
+        cy.get('.detail-pane').should('have.class', 'unsafe')
         cy.get('[data-cy=requiredInput]').should('have.length', 3)
         cy.get('[data-cy=optionalInput]').should('have.length', 0)
         cy.get('[data-cy=warning]').should('include.text', 'HealthState, SourceId, HealthProperty')

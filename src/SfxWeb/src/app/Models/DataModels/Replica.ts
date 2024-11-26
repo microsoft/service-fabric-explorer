@@ -137,9 +137,15 @@ export class ReplicaOnPartition extends DataModelBase<IRawReplicaOnPartition> {
               'Restarting',
               () => this.restartReplica(),
               () => true,
-              `Confirm Replica Restart`,
-              `Restart Replica for ${serviceName}`,
-              'confirm'
+              {
+                title:  `Confirm Replica Restart`
+              },
+              {
+                inputs: {
+                    message: `Restart Replica for ${serviceName}`,
+                    confirmationKeyword: 'confirm'
+                }
+              }
           ));
       } else if (this.isStatelessService) {
           this.actions.add(new ActionWithConfirmationDialog(
@@ -149,9 +155,15 @@ export class ReplicaOnPartition extends DataModelBase<IRawReplicaOnPartition> {
               'Deleting',
               () => this.deleteInstance(),
               () => true,
-              `Confirm Instance Delete`,
-              `Delete Instance for ${serviceName}`,
-              'confirm'
+              {
+                title:  `Confirm Instance Delete`
+              },
+              {
+                inputs: {
+                    message: `Delete Instance for ${serviceName}`,
+                    confirmationKeyword: 'confirm'
+                }
+              }
           ));
       }
 

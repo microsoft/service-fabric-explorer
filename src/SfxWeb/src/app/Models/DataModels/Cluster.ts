@@ -224,7 +224,6 @@ export class ClusterManifest extends DataModelBase<IRawClusterManifest> {
                 }
             }
         }
-
         this.nodeTypeProperties = this.getNodesProperty(manifest);
     }
 }

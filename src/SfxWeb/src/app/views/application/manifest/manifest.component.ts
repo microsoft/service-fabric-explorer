@@ -5,7 +5,7 @@ import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers'
 import { Observable } from 'rxjs';
 
 @Component({
-  selector: 'app-manifest',
+  selector: 'app-app-manifest',
   templateUrl: './manifest.component.html',
   styleUrls: ['./manifest.component.scss']
 })

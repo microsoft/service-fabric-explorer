@@ -12,8 +12,8 @@ import { IConcurrentEvents, IRCAItem } from 'src/app/Models/eventstore/rcaEngine
 })
 
 export class VisualizationToolComponent implements OnChanges, AfterViewInit, DetailBaseComponent {
-  private nameSizePx: number = 10;
-  private kindSizePx: number = 10;
+  private nameSizePx: number = 12;
+  private kindSizePx: number = 12;
   private titleSizePx: number = 20;
   private chart: Chart;
 

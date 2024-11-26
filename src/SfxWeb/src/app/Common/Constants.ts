@@ -225,7 +225,7 @@ export class TelemetryEventNames {
 
 
 export class RepairTaskMessages {
-  public static longExecutingMessage = "This update can prevent other updates from going through. Please reach out to the Azure Compute teams (“Compute Manager/Blackbird”) to figure out why the updates are not completing.";
+  public static longExecutingMessage = "This update can prevent other updates from going through. Please reach out to Azure VMSS to figure out why the updates are not completing.";
   public static longExecutingId = "longExecuting";
   public static seedNodeChecks = "Disabling a seed node can get stuck indefinitely. This is blocked by design to prevent any risk to the cluster availability. There are multiple options available to come out of this state. read more here https://aka.ms/sfseednodequoromtsg";
   public static seedNodeChecksId = "seedNode";
