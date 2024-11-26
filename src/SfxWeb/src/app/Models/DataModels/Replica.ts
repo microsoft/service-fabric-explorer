@@ -84,8 +84,7 @@ export class ReplicaOnPartition extends DataModelBase<IRawReplicaOnPartition> {
             return `Reconfiguring - Target Role: ${ReplicaRole}`;
         }
     
-        const roleTransition = PreviousReplicaRole === ReplicaRole ? ReplicaRole : `${PreviousReplicaRole} ${UnicodeConstants.RightArrow} ${ReplicaRole}`;
-        return `Reconfiguring: ${roleTransition}`;
+        return `Reconfiguring: ${PreviousReplicaRole} ${UnicodeConstants.RightArrow} ${ReplicaRole}`;
     }
 
     public get currentRole(): string {
