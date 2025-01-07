@@ -10,5 +10,11 @@ export class ManifestComponent {
   @Input() manifestName = '';
   @Input() manifest = '';
 
+  manifestLines: Array<string> = [];
   constructor() { }
+
+  ngOnInit() {  
+    this.manifestLines = this.manifest.split(/\r?\n/).map(line => line + '\n');
+  }
+
 }

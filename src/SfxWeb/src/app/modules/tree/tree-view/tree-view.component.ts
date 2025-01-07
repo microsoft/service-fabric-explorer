@@ -52,7 +52,7 @@ export class TreeViewComponent implements DoCheck, AfterViewInit {
   setSearchText(text: string) {
     this.treeService.tree.searchTerm = text;
     try {
-      this.liveAnnouncer.announce(`${this.treeService.tree.childGroupViewModel.children[0].filtered} search results`);
+      this.liveAnnouncer.announce(`${this.treeService.tree.childGroupViewModel.children[0].filtered} highlighted items`);
     } catch {
       this.liveAnnouncer.announce(`0 search results`);
 

@@ -487,10 +487,6 @@ table.detail-list {
     border-left: 5px solid var(--badge-error);
   }
 
-.search-match {
-  color: black;
-  background-color: #FDFBAC;
-}
 
 
 .row-wrapper-container {
@@ -511,6 +507,13 @@ table.detail-list {
     border-bottom-width: 0px;
     color: #FFFFFF !important;
     border-bottom-color: inherit;
+
+    &:focus-visible {
+        outline: -webkit-focus-ring-color auto 1px;
+        @-moz-document url-prefix() {
+            outline: Highlight auto 1px;
+        }
+    }
 }
 
 .nav-link:hover {
@@ -580,6 +583,7 @@ table.detail-list {
 
     }
   }
+
 }
 
 :checked {

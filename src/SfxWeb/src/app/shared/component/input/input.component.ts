@@ -15,6 +15,7 @@ export class InputComponent implements OnInit, OnDestroy {
   modelValue: string;
 
   @Input() placeholder = 'Search list';
+  @Input() label = 'Search list';
   @Input()
   get model(){
     return this.modelValue;

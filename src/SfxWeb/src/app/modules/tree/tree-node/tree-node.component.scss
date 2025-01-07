@@ -87,3 +87,14 @@ ul {
   list-style: none;
   padding: 0px;
 }
+
+mark::before {
+  clip-path: inset(100%);
+  clip: rect(1px, 1px, 1px, 1px);
+  height: 1px;
+  width: 1px;
+  overflow: hidden;
+  position: absolute;
+  white-space: nowrap;
+  content: " [highlighted] ";
+}

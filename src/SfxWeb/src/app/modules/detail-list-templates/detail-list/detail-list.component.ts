@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, ViewChildren, QueryList} from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, ViewChildren, QueryList, ViewChild, ElementRef} from '@angular/core';
 import { ListSettings, ListColumnSetting, FilterValue } from 'src/app/Models/ListSettings';
 import { DataModelCollectionBase } from 'src/app/Models/DataModels/collections/CollectionBase';
 import fill from 'lodash/fill';
@@ -38,10 +38,11 @@ export class DetailListComponent implements OnInit, OnDestroy {
   @Input() showTopOptions = true;
   @Output() sorted = new EventEmitter<any[]>();
   @Output() sortOrdering = new EventEmitter<ISortOrdering>();
-
+  
   private iList: any[];
   public sortedFilteredList: any[] = []; // actual list displayed in html.
-
+  
+  paginationAlert = '';
   page = 1;
   totalListSize = 0;
   displayPath = '';
@@ -221,6 +222,7 @@ export class DetailListComponent implements OnInit, OnDestroy {
 
   pageChange(newPage: number) {
     this.page = newPage;
+    this.liveAnnouncer.announce("navigated to page " + newPage);
   }
 
   updateList() {
@@ -228,6 +230,16 @@ export class DetailListComponent implements OnInit, OnDestroy {
     this.debounceHandler.next(this.sortedFilteredList);
   }
 
+  updateCheckAll(columnSetting: ListColumnSetting, event) {
+    if(event.target.checked){
+      columnSetting.checkAll();
+    }
+    else{
+      columnSetting.uncheckAll();
+    }
+
+    this.updateList();
+  }
 }
 
 // TODO verify this works

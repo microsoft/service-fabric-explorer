@@ -4,6 +4,7 @@ import { DataService } from 'src/app/services/data.service';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { ServiceManifest } from 'src/app/Models/DataModels/Service';
 
 @Component({
   selector: 'app-manifest',
@@ -11,7 +12,7 @@ import { map } from 'rxjs/operators';
   styleUrls: ['./manifest.component.scss']
 })
 export class ManifestComponent extends DeployedServicePackageBaseControllerDirective {
-  serviceManifest: string;
+  serviceManifest: ServiceManifest;
 
   constructor(protected data: DataService, injector: Injector) {
     super(data, injector);
@@ -21,7 +22,7 @@ export class ManifestComponent extends DeployedServicePackageBaseControllerDirec
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
     return this.servicePackage.manifest.refresh(messageHandler).pipe(map(manifest => {
-      this.serviceManifest = manifest.raw.Manifest;
+      this.serviceManifest = manifest;
     }));
   }
 }

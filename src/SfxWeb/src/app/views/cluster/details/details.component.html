@@ -1,5 +1,5 @@
 <div data-cy="upgradeDetails" *ngIf="clusterUpgradeProgress.isInitialized" class="detail-pane essen-pane">
-    <app-collapse-container sectionName="Upgrade Status">
+    <app-collapse-container [sectionName]="clusterUpgradeProgress.isUpgrading ? 'Cluster Upgrade In Progress' : 'Latest Cluster Upgrade'">
         <div collapse-header>
                 <h2 *ngIf="clusterUpgradeProgress.isUpgrading">Cluster Upgrade In Progress</h2>
                 <h2 *ngIf="!clusterUpgradeProgress.isUpgrading">Latest Cluster Upgrade</h2>
