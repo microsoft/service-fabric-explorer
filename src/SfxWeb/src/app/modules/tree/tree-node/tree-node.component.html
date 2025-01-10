@@ -46,8 +46,13 @@
                     <app-health-badge [badgeClass]="child.badge()?.badgeClass" [text]="child.badge()?.text" [showText]="false"></app-health-badge>
                 </span>
                 
-                <div class=" {{child.isHighlighted ? 'search-match' : ''}}"  [title]="child.displayName()" >
-                {{child.displayName()}}
+                <div  [title]="child.displayName()">
+                    <mark *ngIf="child.isHighlighted; else noHighlight">
+                        {{child.displayName()}}
+                    </mark>
+                    <ng-template #noHighlight>
+                        {{child.displayName()}}
+                    </ng-template>
                 </div>
         
                 <div *ngIf="child.actions" class="hidden right-action">

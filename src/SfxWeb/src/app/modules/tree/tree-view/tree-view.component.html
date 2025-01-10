@@ -26,7 +26,7 @@
           </label>
         </div>
         <div class="input-wrapper">
-            <app-input (changed)="setSearchText($event)"></app-input>
+            <app-input (changed)="setSearchText($event)" placeholder="Type to Highlight" label="Highlight items in list"></app-input>
         </div>
     </div>
     <div class="tree-list" #treeContainer [ngClass]="{'focused':focused}" data-cy="tree-panel">

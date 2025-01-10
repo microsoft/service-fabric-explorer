@@ -42,7 +42,7 @@
 
 <div *ngIf="clusterUpgradeProgress.isInitialized && clusterUpgradeProgress.isUpgrading" class="detail-pane">
   <div data-cy="upgradeDetails" class="essen-pane" style="flex: 1; min-width: 600px;">
-    <app-collapse-container sectionName="Upgrade Status" collapsed="true">
+    <app-collapse-container sectionName="Cluster Upgrade In Progress" collapsed="true">
         <div collapse-header>
           <h2>Cluster Upgrade In Progress</h2>
         </div>
@@ -56,7 +56,7 @@
   </div>
 
   <div class="essen-pane" *ngIf="nodes.isInitialized && nodes.disabledAndDisablingNodes.length > 0"  style="flex: 1; min-width: 600px;">
-    <app-collapse-container [sectionName]="'Nodes Deactivation'" collapsed="true">
+    <app-collapse-container [sectionName]="'Deactivation Nodes Info'" collapsed="true">
       <div collapse-header>
         <h2>
           Deactivation Nodes Info ({{nodes.disabledAndDisablingNodes.length}})

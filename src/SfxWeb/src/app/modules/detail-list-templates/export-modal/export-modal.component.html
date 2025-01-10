@@ -4,12 +4,12 @@
     </div>
     <div class="modal-body" style="display: flex; flex-direction: column;">
         Export the table to CSV by selecting which columns to include.
-
-        <div style="margin: auto; display: flex; flex-direction:row;">
-            <button type="button" class="flat-button" (click)="selectAll()" *ngIf="!allChecked">Check all</button>
-            <button type="button" class="flat-button" (click)="unselectAll()" *ngIf="!noneChecked">Uncheck all</button>
-        </div>
+     
         <ul data-cy="columns">
+            <li>
+                <input type="checkbox" [name]="'Check All'" [ngModel]="allChecked" (click)="updateCheckAll($event)" [indeterminate]="!allChecked && !noneChecked" style="margin-right: 5px;" />
+                <label [for]="'Check All'">Check All</label>
+            </li>
             <ng-container *ngFor="let column of data.config.columnSettings">
                 <li *ngIf="!column.config.canNotExport">
                     <input type="checkbox" [name]="column.displayName" [(ngModel)]="selected[column.displayName]"

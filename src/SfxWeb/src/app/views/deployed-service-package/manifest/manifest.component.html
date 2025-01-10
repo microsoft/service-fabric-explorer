@@ -1,3 +1,3 @@
 <div class="detail-pane" *ngIf="serviceManifest">
-    <pre role="presentation" tabindex="0"><code aria-label="service manifest">{{serviceManifest}}</code></pre>
+    <app-manifest-viewer [manifestName]="serviceManifest.serviceManifestName" [manifest]="serviceManifest.raw.Manifest"></app-manifest-viewer>
 </div>

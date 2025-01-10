@@ -30,12 +30,12 @@
                               <span  class="mif-filter" [ngClass]="{'link': columnSetting.hasEffectiveFilters}" placement="bottom-left"></span>
                           </button>
                           <ul ngbDropdownMenu role="menu" class="dropdown-layout"  >
-                              <li role="menuitem" class="check-options item" *ngIf="!columnSetting.allChecked">
-                                <button aria-label="Check all options" class="flat-button" (click)="columnSetting.checkAll(); updateList()">Check All</button>
-                              </li>
-                              <li role="menuitem" class="check-options item" *ngIf="!columnSetting.noneChecked">
-                                <button aria-label="unCheck all options" class="flat-button" (click)="columnSetting.uncheckAll(); updateList()">Uncheck All</button>
-                              </li>
+                              <li role="menuitem" class="item">
+                                <label>
+                                    <input type="checkbox" (click)="updateCheckAll(columnSetting, $event)" [ngModel]="columnSetting.allChecked" [indeterminate]="!columnSetting.allChecked && !columnSetting.noneChecked"/>
+                                    Check All
+                                </label>
+                            </li>
                               <li role="menuitem" *ngFor="let filterValue of columnSetting.filterValues" class="item">
                                   <label>
                                       <input type="checkbox" [(ngModel)]="filterValue.isChecked" (ngModelChange)="updateList();" (click)=" $event.stopPropagation()" />
