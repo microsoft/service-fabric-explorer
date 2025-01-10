@@ -133,6 +133,14 @@ context('replica', () => {
             });
 
         })
+
+        it('view reconfiguration text', () => {
+            addRoute("partitionInfo", "replica-page/stateful-partition-reconfiguration-info.json", apiUrl(`${baseUrl}?*`))
+            addRoute("replicaInfo", "replica-page/stateful-replica-reconfiguration.json", apiUrl(`${baseUrl}/$/GetReplicas/${replicaId}?*`))
+            cy.wait(waitRequest)
+
+            cy.get('[data-cy="tree-panel"]').contains('Reconfiguring: ActiveSecondary ➜ Primary');
+        })
     })
 
     describe("stateless", () => {
