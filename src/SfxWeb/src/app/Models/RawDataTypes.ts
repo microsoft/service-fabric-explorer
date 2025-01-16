@@ -582,6 +582,13 @@ export interface IRawReplicaHealth extends IRawHealth {
         InstanceId: string;
     }
 
+export interface IReconfigurationInformation {
+    PreviousConfigurationRole: string;
+    ReconfigurationPhase: string;
+    ReconfigurationType: string;
+    ReconfigurationStartTimeUtc: string;
+}
+
 export interface IRawDeployedReplica {
     Address: string;
     CodePackageName: string;
@@ -589,6 +596,7 @@ export interface IRawDeployedReplica {
     LastInBuildDurationInSeconds: string;
     ReplicaId: string;
     PartitionId: string;
+    ReconfigurationInformation: IReconfigurationInformation;
     ReplicaRole: string;
     ReplicaStatus: string;
     ServiceKind: string;
@@ -597,8 +605,6 @@ export interface IRawDeployedReplica {
     ServiceTypeName: string;
     ServicePackageActivationId: string;
 }
-
-
 
 export interface IRawDeployedReplicaDetail {
     PartitionId: string;
@@ -697,6 +703,7 @@ export interface IRawReplicaOnPartition {
         HealthState: string;
         ReplicaId: string;
         ReplicaRole: string;
+        PreviousReplicaRole: string;
         InstanceId: string;
         LastInBuildDurationInSeconds: string;
         NodeName: string;

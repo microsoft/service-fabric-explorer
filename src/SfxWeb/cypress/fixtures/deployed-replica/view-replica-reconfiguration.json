@@ -1,0 +1,23 @@
+[
+    {
+        "ServiceKind": "Stateful",
+        "ServiceName": "fabric:/VisualObjectsApplicationType/VisualObjects.ActorService",
+        "ServiceTypeName": "VisualObjects.ActorServiceType",
+        "ServiceManifestVersion": "",
+        "ServiceManifestName": "VisualObjects.ActorServicePkg",
+        "CodePackageName": "Code",
+        "PartitionId": "41fb6918-986b-4b6d-bff6-0495b114c720",
+        "ReplicaId": "132431356665040624",
+        "ReplicaRole": "Primary",
+        "ReplicaStatus": "Ready",
+        "Address": "{\"Endpoints\":{\"\":\"10.0.0.6:20000+41fb6918-986b-4b6d-bff6-0495b114c720-132431356665040624\"}}",
+        "ServicePackageActivationId": "",
+        "HostProcessId": "4120",
+        "ReconfigurationInformation": {
+            "PreviousConfigurationRole": "ActiveSecondary",
+            "ReconfigurationPhase": "None",
+            "ReconfigurationType": "None",
+            "ReconfigurationStartTimeUtc": "0001-01-01T00:00:00.000Z"
+        }
+    }
+]

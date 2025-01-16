@@ -46,7 +46,7 @@ export class ReplicaTileComponent implements OnChanges {
         descriptionName: 'Node',
         copyTextValue: this.replica.raw.NodeName,
         displayText: this.replica.raw.NodeName,
-      },
+      }
     ];
 
     this.status = {

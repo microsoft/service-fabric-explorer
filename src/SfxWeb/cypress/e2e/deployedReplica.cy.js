@@ -81,6 +81,13 @@ context('deployed replica', () => {
             checkCommand(1);
 
         })
+
+        it('reconfiguration text', () => {
+          cy.intercept(apiUrl(`/Partitions/${partition}?*`), { fixture: 'deployed-replica/partition-reconfiguration.json' }).as('partition-reconfig');
+          cy.intercept(apiUrl(`/Nodes/${nodeName}/$/GetApplications/${appName}/$/GetReplicas?*`), { fixture: 'deployed-replica/view-replica-reconfiguration.json' }).as('replica-reconfig');
+
+          cy.get('[data-cy="tree-panel"]').contains('Reconfiguring: ActiveSecondary ➜ Primary');
+        })
     })
   })
 

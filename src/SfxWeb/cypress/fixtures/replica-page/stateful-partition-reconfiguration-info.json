@@ -1,0 +1,18 @@
+{
+    "ServiceKind": "Stateful",
+    "PartitionInformation": {
+        "ServicePartitionKind": "Int64Range",
+        "Id": "28bfaf73-37b0-467d-9d47-d011b0aedbc0",
+        "LowKey": "-9223372036854775808",
+        "HighKey": "-7378697629483820647"
+    },
+    "TargetReplicaSetSize": 3,
+    "MinReplicaSetSize": 2,
+    "HealthState": "Ok",
+    "PartitionStatus": "Reconfiguring",
+    "LastQuorumLossDurationInSeconds": "0",
+    "CurrentConfigurationEpoch": {
+        "ConfigurationVersion": "85899345920",
+        "DataLossVersion": "132399270145364138"
+    }
+}

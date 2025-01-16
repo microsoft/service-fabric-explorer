@@ -5,7 +5,7 @@ import { DeployedReplicaDetail } from './DeployedReplica';
 import { DataService } from 'src/app/services/data.service';
 import { Partition } from './Partition';
 import { HealthStateFilterFlags } from '../HealthChunkRawDataTypes';
-import { ServiceKindRegexes, SortPriorities } from 'src/app/Common/Constants';
+import { ServiceKindRegexes, SortPriorities, UnicodeConstants } from 'src/app/Common/Constants';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { HealthBase } from './HealthEvent';
@@ -27,7 +27,7 @@ export class ReplicaOnPartition extends DataModelBase<IRawReplicaOnPartition> {
                 displayValue: (value) => this.lastInBuildDuration
             },
             ReplicaRole: {
-              displayValue: (value) => this.role
+                displayValue: (value) => this.role
             }
         }
     };
@@ -73,11 +73,30 @@ export class ReplicaOnPartition extends DataModelBase<IRawReplicaOnPartition> {
     }
 
     public get role(): string {
-        if (this.parent.raw.PartitionStatus === 'Reconfiguring') {
-            return `Reconfiguring - Target Role: ${this.raw.ReplicaRole}`;
+        const { PartitionStatus } = this.parent.raw;
+        const { PreviousReplicaRole, ReplicaRole } = this.raw;
+    
+        if (PartitionStatus !== 'Reconfiguring') {
+            return ReplicaRole;
+        }
+    
+        if (!PreviousReplicaRole || PreviousReplicaRole === 'None') {
+            return `Reconfiguring - Target Role: ${ReplicaRole}`;
+        }
+    
+        return `Reconfiguring: ${PreviousReplicaRole} ${UnicodeConstants.RightArrow} ${ReplicaRole}`;
+    }
+
+    public get currentRole(): string {
+        return this.raw.ReplicaRole;
+    }
+
+    public get previousRole(): string {
+        if (this.parent.raw.PartitionStatus === 'Reconfiguring' && this.raw.PreviousReplicaRole) {
+            return this.raw.PreviousReplicaRole;
         }
 
-        return this.raw.ReplicaRole;
+        return 'None';
     }
 
     public get viewPath(): string {
