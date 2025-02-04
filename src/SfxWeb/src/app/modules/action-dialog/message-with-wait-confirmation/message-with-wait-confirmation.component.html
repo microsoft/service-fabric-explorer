@@ -25,6 +25,10 @@
       <button class="solid-button" (click)="cancel()" data-cy="cancel-operation">cancel operation</button>
     </div>
 
+    <div *ngIf="countDown && countDownLeft === 0">
+        <div>Operation sent</div>
+    </div>
+
   </div>
 
   <div class="modal-footer" *ngIf="!countDown">
