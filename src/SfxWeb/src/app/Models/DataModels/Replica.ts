@@ -13,6 +13,7 @@ import { Observable } from 'rxjs';
 import { map, mergeMap } from 'rxjs/operators';
 import { ActionWithConfirmationDialog } from '../Action';
 import { RoutesService } from 'src/app/services/routes.service';
+import { ActionDialogUtils } from 'src/app/modules/action-dialog/utils';
 
 // -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -75,15 +76,15 @@ export class ReplicaOnPartition extends DataModelBase<IRawReplicaOnPartition> {
     public get role(): string {
         const { PartitionStatus } = this.parent.raw;
         const { PreviousReplicaRole, ReplicaRole } = this.raw;
-    
+
         if (PartitionStatus !== 'Reconfiguring') {
             return ReplicaRole;
         }
-    
+
         if (!PreviousReplicaRole || PreviousReplicaRole === 'None') {
             return `Reconfiguring - Target Role: ${ReplicaRole}`;
         }
-    
+
         return `Reconfiguring: ${PreviousReplicaRole} ${UnicodeConstants.RightArrow} ${ReplicaRole}`;
     }
 
@@ -147,19 +148,25 @@ export class ReplicaOnPartition extends DataModelBase<IRawReplicaOnPartition> {
               }
           ));
       } else if (this.isStatelessService) {
+        const deleteInstanceText = "Delete Instance";
           this.actions.add(new ActionWithConfirmationDialog(
               this.data.dialog,
-              'Delete Instance',
-              'Delete Instance',
+              deleteInstanceText,
+              deleteInstanceText,
               'Deleting',
-              () => this.deleteInstance(),
+              () => ActionDialogUtils.wrapWithDangerousOperationDialogConfirmation(
+                this.data.dialog,
+                deleteInstanceText,
+                deleteInstanceText,
+                this.deleteInstance()
+              ),
               () => true,
               {
-                title:  `Confirm Instance Delete`
+                title:  `Confirm ${deleteInstanceText}`
               },
               {
                 inputs: {
-                    message: `Delete Instance for ${serviceName}`,
+                    message: `${deleteInstanceText} for ${serviceName}`,
                     confirmationKeyword: 'confirm'
                 }
               }

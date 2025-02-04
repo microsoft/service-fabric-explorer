@@ -22,6 +22,7 @@ import { ActionWithConfirmationDialog, IsolatedAction } from '../Action';
 import isEmpty from 'lodash/isEmpty';
 import { ViewBackupComponent } from 'src/app/modules/backup-restore/view-backup/view-backup.component';
 import { RoutesService } from 'src/app/services/routes.service';
+import { ActionDialogUtils } from 'src/app/modules/action-dialog/utils';
 // -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
@@ -125,19 +126,25 @@ export class Application extends DataModelBase<IRawApplication> {
             return;
         }
 
+        const deleteApplicationText = "Delete Application";
         this.actions.add(new ActionWithConfirmationDialog(
             this.data.dialog,
-            'deleteApplication',
-            'Delete Application',
+            deleteApplicationText,
+            deleteApplicationText,
             'Deleting...',
-            () => this.delete(),
+            () => ActionDialogUtils.wrapWithDangerousOperationDialogConfirmation(
+                this.data.dialog,
+                deleteApplicationText,
+                deleteApplicationText,
+                this.delete()
+            ),
             () => true,
             {
                 title: 'Confirm Application Deletion',
             },
             {
                 inputs: {
-                    message: `Delete application ${this.name} from cluster ${window.location.host}?`,
+                    message: `${deleteApplicationText} ${this.name} from cluster ${window.location.host}?`,
                     confirmationKeyword: this.name,
                 }
             }

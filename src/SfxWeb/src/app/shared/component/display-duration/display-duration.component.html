@@ -1,6 +1,6 @@
 <div style="flex: 1;">
     <div>
-        {{topText}} : {{topInMilliseconds | formatDate}}
+        <span *ngIf="topText">{{topText}} :</span> {{topInMilliseconds | formatDate}}
     </div>
     <div style="display: flex; margin-bottom: 5px; margin-top: 5px">
         <div style="height: 5px;" *ngFor="let section of sections"
@@ -8,8 +8,9 @@
              data-cy="bar-progress"></div>
     </div>
     <div>
+      <span *ngIf="bottomText">
         {{bottomText}} : {{timeLeft | formatDate}}
-
+      </span>
         <a class="link" style="float: right;" target="_blank" [href]="bottomHelpTextLink">
           {{bottomHelpText}}
         </a>
