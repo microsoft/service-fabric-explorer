@@ -1,6 +1,10 @@
 import { Type } from "@angular/core";
 import { DialogBodyDirective } from "./dialog-body.directive";
 import { DialogBodyComponent } from "./DialogBodyComponent";
+import { MatDialog } from "@angular/material/dialog";
+import { Observable } from "rxjs";
+import { IsolatedAction } from "src/app/Models/Action";
+import { MessageWithWaitConfirmationComponent } from "./message-with-wait-confirmation/message-with-wait-confirmation.component";
 
 export class ActionDialogUtils {
 
@@ -13,9 +17,9 @@ export class ActionDialogUtils {
      * @return {DialogBodyComponent} The new component
      */
     public static createChildComponent(parent: DialogBodyDirective, inputs: any, template: Type<DialogBodyComponent>, disableSubmit?: (value: boolean) => void): DialogBodyComponent {
-    
+
         const child: DialogBodyComponent = parent.viewContainerRef.createComponent(template).instance;
-        child.inputs = inputs;    
+        child.inputs = inputs;
         if (child.disableSubmit && disableSubmit) {
             try {
                 const sub = child.disableSubmit.subscribe((value: boolean) => disableSubmit(value));
@@ -28,4 +32,30 @@ export class ActionDialogUtils {
 
         return child;
     }
+
+
+  public static wrapWithDangerousOperationDialogConfirmation(dialog: MatDialog, title: string, description: string, callback: Observable<any>): Observable<any> {
+    const d = new IsolatedAction(
+      dialog,
+      title,
+      title,
+      '',
+      {
+        callback
+      },
+      MessageWithWaitConfirmationComponent,
+      () => true,
+      null,
+      {
+        title: `Confirm ${title} - Potential Data Loss`,
+        class: 'error'
+      },
+      {
+        template: null,
+        inputs: {
+          description
+        }
+      })
+      return d.runWithFinalNotification();
+  }
 }

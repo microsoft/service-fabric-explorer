@@ -5,7 +5,7 @@ import { Component, OnInit, Input } from '@angular/core';
   templateUrl: './manifest.component.html',
   styleUrls: ['./manifest.component.scss']
 })
-export class ManifestComponent {
+export class ManifestComponent implements OnInit {
 
   @Input() manifestName = '';
   @Input() manifest = '';
@@ -13,7 +13,7 @@ export class ManifestComponent {
   manifestLines: Array<string> = [];
   constructor() { }
 
-  ngOnInit() {  
+  ngOnInit() {
     this.manifestLines = this.manifest.split(/\r?\n/).map(line => line + '\n');
   }
 

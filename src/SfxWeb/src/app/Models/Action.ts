@@ -1,5 +1,5 @@
 import { Observable, of } from 'rxjs';
-import { mergeMap, finalize } from 'rxjs/operators';
+import { mergeMap, finalize, map } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { ActionDialogComponent } from '../modules/action-dialog/action-dialog/action-dialog.component';
 import { ComponentType } from '@angular/cdk/portal';
@@ -36,6 +36,15 @@ export class Action {
 
     public runWithCallbacks(success: (result: any) => void, error: (reason: string) => void, ...params: any[]): Observable<any> {
         return this.runInternal(success, error, params);
+    }
+
+    public runWithFinalNotification(...params: any[]) {
+      return new Observable(subscriber => {
+        this.runInternal(() => null, () => null, params).subscribe(data => {
+          subscriber.next(data);
+          subscriber.complete();
+        });
+      });
     }
 
     protected runInternal(success: (result: any) => void, error: (reason: string) => void, ...params: any[]): Observable<any> {
@@ -127,11 +136,16 @@ export class IsolatedAction extends Action implements IModalData{
 
     protected runInternal(success: (result: any) => void, error: (reason: string) => void, ...params: any[]): Observable<any> {
         if (this.canRun()) {
-            return (!!this.beforeOpen ? this.beforeOpen() : of(null)).pipe(mergeMap(() => {
+          this.running = true;
+          return (!!this.beforeOpen ? this.beforeOpen() : of(null)).pipe(mergeMap(() => {
                 const dialogRef = this.dialog.open(this.template, {data: this, panelClass: 'mat-dialog-container-wrapper'});
-                return dialogRef.afterClosed();
+                return dialogRef.afterClosed().pipe(map((data: any) => {
+                    this.running = false;
+                    return data;
+                }));
             }));
         }else{
+            this.running = false;
             return of(null);
         }
     }

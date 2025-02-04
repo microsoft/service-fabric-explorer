@@ -1,0 +1,41 @@
+<form class="action-modal">
+  <div [class]="'modal-header error'">
+    <h1 class="modal-title">
+      <img src="assets/badge-warning.svg" style="width: 25px;">
+      {{data.modalTitle.title}}</h1>
+  </div>
+  <div class="modal-body">
+    <div style="text-align: center;">
+      This is a potentially dangerous operation that could result in data loss.
+      If you are sure there is no concern for potential data loss or other issues, click the Confirm button.
+
+      After 15 seconds your request will be initiated automatically, click cancel operation to stop this.
+    </div>
+
+    <div class="check" *ngIf="!countDown">
+      <input type="checkbox" [(ngModel)]="checked" [ngModelOptions]="{standalone: true}">
+      <div>I Acknowledge</div>
+    </div>
+
+    <app-display-duration *ngIf="countDown && countDownLeft > 0" topText="Time Left Until operation will send" [topInMilliseconds]="countDownLeft"
+      [bottomInMilliseconds]="15000" [colorMap]="colorMap" style="width: 50%;">
+    </app-display-duration>
+
+    <div *ngIf="countDown && countDownLeft > 0">
+      <button class="solid-button" (click)="cancel()" data-cy="cancel-operation">cancel operation</button>
+    </div>
+
+    <div *ngIf="countDown && countDownLeft === 0">
+        <div>Operation sent</div>
+    </div>
+
+  </div>
+
+  <div class="modal-footer" *ngIf="!countDown">
+    <div class="options">
+      <button class="solid-button" [disabled]="!checked" (click)="confirmed()" data-cy="confirm">Confirm</button>
+
+      <button class="flat-button" (click)="close()" data-cy="cancel">Cancel</button>
+    </div>
+  </div>
+</form>

@@ -22,6 +22,7 @@ import { ScaleServiceComponent } from 'src/app/views/service/scale-service/scale
 import { ViewBackupComponent } from 'src/app/modules/backup-restore/view-backup/view-backup.component';
 import { RoutesService } from 'src/app/services/routes.service';
 import { ActionDialogComponent } from 'src/app/modules/action-dialog/action-dialog/action-dialog.component';
+import { ActionDialogUtils } from 'src/app/modules/action-dialog/utils';
 // -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
@@ -114,21 +115,26 @@ export class Service extends DataModelBase<IRawService> {
         }
 
         if (!this.isArmManaged) {
+          const deleteServiceText = "Delete Service";
             this.actions.add(new ActionWithConfirmationDialog(
                 this.data.dialog,
-                'deleteService',
-                'Delete Service',
+                deleteServiceText,
+                deleteServiceText,
                 'Deleting',
-                () => this.delete().pipe(map( () => {
+                () => ActionDialogUtils.wrapWithDangerousOperationDialogConfirmation(
+                    this.data.dialog,
+                    deleteServiceText,
+                    deleteServiceText,
+                this.delete().pipe(map( () => {
                     this.data.routes.navigate(() => this.parent.viewPath);
-                })),
+                }))),
                 () => true,
                 {
                     title: 'Confirm Service Deletion',
                 },
                 {
                     inputs: {
-                        message: `Delete service ${this.name} from cluster ${window.location.host}?`,
+                        message: `${deleteServiceText} ${this.name} from cluster ${window.location.host}?`,
                         confirmationKeyword: this.name,
                     }
                 }

@@ -1,0 +1,23 @@
+.modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+}
+
+.check {
+  display: flex;
+      gap: 5px;
+}
+
+
+.options {
+  display: flex;
+  gap: 10px;
+  margin: auto;
+}
+
+.modal-title {
+  display: flex;
+  justify-content: center;
+}

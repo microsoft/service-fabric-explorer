@@ -67,13 +67,66 @@ context('service', () => {
         })
       })
 
-      it('actions', () => {
+      it('actions - delete service - accept', () => {
         cy.wait(waitRequest);
 
         cy.get('[data-cy=actions]').within(() => {
           cy.contains("Actions").click();
-          cy.contains("Delete Service")
+          cy.contains("Delete").click();
         })
+
+
+        cy.get(".action-modal").within(() => {
+          cy.get('[data-cy=input-dialog]').type(`fabric:/${appName}/${serviceName}`);
+          cy.get('[data-cy=submit]').click();
+        })
+
+        cy.intercept('POST', apiUrl(`/Applications/${appName}/$/GetServices/${appName}%2F${serviceName}/$/Delete?**`), {
+          statusCode: 200,
+          body: {},
+        }).as("deleteService");
+
+        cy.get(".action-modal").within(() => {
+          cy.get('input').click();
+          cy.get("[data-cy=confirm]").click();
+        })
+
+        cy.wait("@deleteService", { timeout: 20000 });
+      })
+
+      it('actions - delete service - cancel', () => {
+        cy.wait(waitRequest);
+
+        cy.get('[data-cy=actions]').within(() => {
+          cy.contains("Actions").click();
+          cy.contains("Delete").click();
+        })
+
+
+        cy.get(".action-modal").within(() => {
+          cy.get('[data-cy=input-dialog]').type(`fabric:/${appName}/${serviceName}`);
+          cy.get('[data-cy=submit]').click();
+        })
+
+        cy.intercept('POST', apiUrl(`/Applications/${appName}/$/GetServices/${appName}%2F${serviceName}/$/Delete?**`), {
+          statusCode: 200,
+          body: {},
+        }).as("deleteService");
+
+        cy.get(".action-modal").within(() => {
+          cy.get('input').click();
+          cy.get("[data-cy=confirm]").click();
+        })
+
+        cy.wait(3000);
+        cy.get('[data-cy=cancel-operation]').click();
+        cy.wait(16000);
+
+        cy.get("@deleteService").should('not.exist');
+
+        cy.get('[data-cy=cancel]').click();
+
+        cy.get(".action-modal").should('not.exist');
       })
 
       it('view details', () => {
