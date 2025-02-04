@@ -29,6 +29,10 @@ export class MessageWithWaitConfirmationComponent implements OnInit, DialogBodyC
   ) { }
 
   ngOnInit(): void {
+    this.dialogRef.beforeClosed().subscribe(() => {
+      this.cancel();
+      console.log('closed');
+    });
   }
 
   confirmed() {
