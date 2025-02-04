@@ -67,7 +67,7 @@ context('service', () => {
         })
       })
 
-      it.only('actions - delete service - accept', () => {
+      it('actions - delete service - accept', () => {
         cy.wait(waitRequest);
 
         cy.get('[data-cy=actions]').within(() => {
@@ -94,7 +94,7 @@ context('service', () => {
         cy.wait("@deleteService", { timeout: 20000 });
       })
 
-      it.only('actions - delete service - cancel', () => {
+      it('actions - delete service - cancel', () => {
         cy.wait(waitRequest);
 
         cy.get('[data-cy=actions]').within(() => {
