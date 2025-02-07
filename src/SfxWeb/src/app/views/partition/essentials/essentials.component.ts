@@ -6,6 +6,9 @@ import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers'
 import { Observable, forkJoin, of } from 'rxjs';
 import { PartitionBaseControllerDirective } from '../PartitionBase';
 import { IEssentialListItem } from 'src/app/modules/charts/essential-health-tile/essential-health-tile.component';
+import { IProgressStatus } from 'src/app/shared/component/phase-diagram/phase-diagram.component';
+import { map } from 'rxjs/operators';
+import { HealthEvent } from 'src/app/Models/DataModels/HealthEvent';
 
 @Component({
   selector: 'app-essentials',
@@ -18,6 +21,38 @@ export class EssentialsComponent extends PartitionBaseControllerDirective {
   listSettings: ListSettings;
 
   essentialItems: IEssentialListItem[] = [];
+
+  public progress: IProgressStatus[] = [
+    {
+      name: 'Backup DB',
+      textRight: '12:34:01'
+    },
+    {
+      name: 'Archive (zip)',
+      textRight: '12:34:01'
+    },
+    {
+      name: 'open and verify',
+      textRight: '12:34:01'
+    }
+  ];
+
+  public progress2: IProgressStatus[] = [
+    {
+      name: 'Replicate to secondary',
+    },
+  ];
+
+  public progress3: IProgressStatus[] = [
+    {
+      name: 'Extract',
+    },
+    {
+      name: 'Restore',
+    },
+  ];
+
+  public index = -1;
 
   constructor(protected data: DataService, injector: Injector, private settings: SettingsService) {
     super(data, injector);
@@ -50,9 +85,20 @@ export class EssentialsComponent extends PartitionBaseControllerDirective {
     }
 
     return forkJoin([
-      this.partition.health.refresh(messageHandler),
+      this.partition.health.refresh(messageHandler).pipe(map(() => {
+        this.partition.health.healthEvents.forEach(event => {
+          this.parseHealthEvents(event)
+        })
+      })),
       this.partition.replicas.refresh(messageHandler)
     ]);
+  }
+
+  parseHealthEvents(data: HealthEvent) {
+    //it would probably be good to look for a specific SourceId or Property
+    if(data.raw.SourceId === "replicatorInfo") {
+      console.log(JSON.parse(data.description));
+    }
   }
 
   setEssentialData() {

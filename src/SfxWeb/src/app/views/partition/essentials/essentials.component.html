@@ -13,6 +13,40 @@
   </div>
 
 
+  <div class="detail-pane essen-pane">
+    Building Idle Secondary(ies)
+<div style="display: flex; gap: 10px;">
+
+  <div>
+    pane 1 Primary
+    <app-phase-diagram [items]="progress" [currentIndex]="index" [vertical]="true"></app-phase-diagram>
+
+  </div>
+  <div>
+    pane 2 Replication
+    <app-phase-diagram [items]="progress2" [currentIndex]="index" [vertical]="true"></app-phase-diagram>
+
+  </div>
+  <div>
+    pane 3 Seconary phase
+    <app-phase-diagram [items]="progress3" [currentIndex]="index" [vertical]="true"></app-phase-diagram>
+
+  </div>
+</div>
+    <!-- <div>
+      Primary
+    </div> -->
+
+    <!-- <div>
+      Replica 1
+
+      <div>
+
+      </div>
+    </div> -->
+
+  </div>
+
   <div class="detail-pane essen-pane" data-cy="health">
     <app-collapse-container sectionName="Health Evaluations">
       <div collapse-header>
