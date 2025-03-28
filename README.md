@@ -63,6 +63,9 @@ Navigate to `src/Sfx-Proxy`
 npm start
 ```
 
+> [!NOTE]  
+> SFX-Proxy is a local dev tool to forward cluster requests for testing purposes. It should not be hosted as a public server.
+
 There are 2 optional flags
 -r which would record every request to a folder(by default called playbackRecordings) and overwriting if the same request is made again
 -p every request will be checked for a saved response and if one exists get served instead

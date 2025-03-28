@@ -76,6 +76,8 @@ const proxyRequest = async (req) => {
     const method = req.method.toLowerCase();
     let conf = {
         method,
+        // this line leaves potential for SSFR, however, since this is a loal dev tool, it is not a concern
+        // codeql [SM04580]: suppress
         url: `${config.TargetCluster.Url}${url}`,
         data, 
         headers
