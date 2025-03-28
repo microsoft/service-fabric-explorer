@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnInit, TemplateRef } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, TemplateRef } from '@angular/core';
 
 @Component({
   selector: 'app-phase-diagram',
@@ -12,6 +12,9 @@ export class PhaseDiagramComponent implements OnChanges {
   @Input() currentIndex = 0;
   @Input() vertical = false;
   @Input() failed: boolean = false; //treat in progress phases as failed
+
+  @Output() phaseClicked: EventEmitter<number> = new EventEmitter<number>();
+
   public progress: IProgressStatusWithIndex[] = [];
   public wrapperClass = '';
 
@@ -56,6 +59,11 @@ export class PhaseDiagramComponent implements OnChanges {
     }else{
       return this.failed ? -2 : 0;
     }
+  }
+
+  phaseClick(index: number) {
+    console.log('phase clicked', index);
+    this.phaseClicked.emit(index);
   }
 
 }

@@ -14,6 +14,7 @@ import { ChartsModule } from 'src/app/modules/charts/charts.module';
 import { HealthStateModule } from 'src/app/modules/health-state/health-state.module';
 import { CommandsComponent } from './commands/commands.component';
 import { PowershellCommandsModule } from 'src/app/modules/powershell-commands/powershell-commands.module';
+import { ReplicationViewModule } from 'src/app/modules/replication-view/replication-view.module';
 
 
 @NgModule({
@@ -27,7 +28,8 @@ import { PowershellCommandsModule } from 'src/app/modules/powershell-commands/po
     NgbTooltipModule,
     ChartsModule,
     HealthStateModule,
-    PowershellCommandsModule
+    PowershellCommandsModule,
+    ReplicationViewModule
   ]
 })
 export class ReplicaModule { }

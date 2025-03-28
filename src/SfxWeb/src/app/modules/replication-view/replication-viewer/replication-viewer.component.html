@@ -1,0 +1,17 @@
+<div class="container">
+  <div class="essen-pane overall-progress">
+    <div class="header">
+      Replication Phases
+    </div>
+    <app-phase-diagram [items]="progress" [currentIndex]="index" (phaseClicked)="phaseClicked($event)"
+      [vertical]="true"></app-phase-diagram>
+  </div>
+
+  <div class="essen-pane" style="flex: 1;">
+    <div class="header">
+      Current Phase {{currentSubPhase}}
+    </div>
+    <app-phase-diagram [items]="subPhases[currentSubPhase]" [currentIndex]="currentSubPhasephase"></app-phase-diagram>
+  </div>
+
+</div>

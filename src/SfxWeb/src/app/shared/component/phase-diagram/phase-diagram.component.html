@@ -1,8 +1,8 @@
 
 <div class="flex-center" [ngClass]="wrapperClass">
-  <ng-container  *ngFor="let phase of progress; let l = last;">
+  <ng-container  *ngFor="let phase of progress; let l = last; let i = index;" >
     <div class="progress-item hover-row" [ngClass]="cssClass[phase.state]" [attr.data-cy]="cssClass[phase.state] + 'phase'"
-          [disableTooltip]="!phase.tooltip" [ngbTooltip]="phase.tooltip" tooltipClass="styled-tooltip" container="body" >
+          [disableTooltip]="!phase.tooltip" [ngbTooltip]="phase.tooltip" tooltipClass="styled-tooltip" container="body" (click)="phaseClick(i)" >
       <div class="text-description" > <i *ngIf="phase.tooltip" class="mif-info link"></i> {{phase.name}}
       </div>
       <div>
