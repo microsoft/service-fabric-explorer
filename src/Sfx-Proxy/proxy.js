@@ -29,7 +29,7 @@ console.log("record playbackLocation: " + config.recordFileBase)
 httpsAgent = null;
 if(config.TargetCluster.PFXLocation){
     httpsAgent = new https.Agent({
-        rejectUnauthorized: false,
+        rejectUnauthorized: true,
         pfx: fsBase.readFileSync(config.TargetCluster.PFXLocation),
         passphrase: config.TargetCluster.PFXPassPhrase
       })
