@@ -4,6 +4,7 @@ const { promises: fs } = require("fs");
 const fsBase = require("fs");
 
 const https = require("https");
+const tls = require("tls");
 const express = require('express');
 const path = require('path');
 
@@ -30,8 +31,10 @@ httpsAgent = null;
 if(config.TargetCluster.PFXLocation){
     httpsAgent = new https.Agent({
         rejectUnauthorized: true,
+        ca: [...tls.rootCertificates, fsBase.readFileSync(config.TargetCluster.CALocation)],
         pfx: fsBase.readFileSync(config.TargetCluster.PFXLocation),
-        passphrase: config.TargetCluster.PFXPassPhrase
+        passphrase: config.TargetCluster.PFXPassPhrase,
+        servername: ''
       })
 }
 
@@ -93,16 +96,13 @@ const proxyRequest = async (req) => {
     }
     //handle axios throwing an error(like 400 level issues) which should just be passed through
     catch(e){
+        console.log(e)
         return e.response;
     }
 }
 
 const app = express()
 const port = process.env.PORT || 2500;
-
-//need to be set to accept certs from secure clusters when certs cant be trusted
-//this is mainly for SFRP clusters to test against.
-process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
 
 // const basePath = __dirname  +  serveSFXV1Files ? '../Sfx' : ''
 app.use(express.static(__dirname + '/wwwroot/'))

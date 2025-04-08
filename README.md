@@ -73,16 +73,21 @@ There are 2 optional flags
 npm start -- r p
 ```
 
-If proxying requests to a secure cluster adding a file called localsettings.json to src/Sfx-Proxy can take a cert pfx location like below.
+If proxying requests to a secure cluster adding a file called localsettings.json to src/Sfx-Proxy can take a cert pfx location like below.  
 ```
 {
   "TargetCluster": {
     "Url": "https://test.eastus.cloudapp.azure.com:19080",
     "PFXLocation": "C:/some_cert.pfx",
-    "PFXPassPhrase": "password"
+    "PFXPassPhrase": "password",
+    "CALocation": "C:\some_ca.pem" //only needed for self signed cert
   },
   "recordFileBase": "playbackRecordings/"
 }
+```
+If the certificate for the cluster is self signed, which is often the case for test sfrp clusters, add the CALocation as well.  The pem file can be generated from the pfx file using openssl.
+```
+openssl pkcs12 -in C:/some_cert.pfx -out C:/some_ca.pem -nodes
 ```
 
 
