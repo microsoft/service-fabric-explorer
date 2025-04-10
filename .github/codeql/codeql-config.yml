@@ -1,1 +1,1 @@
-paths-ignore: 'src/Sfx-Proxy/proxy.js'
+paths-ignore: '**/Sfx-Proxy/proxy.js'
