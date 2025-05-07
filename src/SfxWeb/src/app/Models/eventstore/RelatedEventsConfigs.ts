@@ -366,7 +366,7 @@ export let RelatedEventsConfigs: IConcurrentEventsConfig[] = [
               property: "eventProperties.ActivityId",
             },
             target: {
-              property: "eventProperties.ActivityId"
+              property: "eventInstanceId"
             }
           }
         ],
