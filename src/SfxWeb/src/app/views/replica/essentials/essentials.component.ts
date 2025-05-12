@@ -62,6 +62,18 @@ export class EssentialsComponent extends ReplicaBaseControllerDirective {
         }
       ];
 
+      this.replica.raw.IsStopped = true;
+
+      if(this.replica.raw.IsStopped) {
+        const strIsStopped = String(this.replica.raw.IsStopped);
+        this.essentialItems.push({
+          descriptionName: 'IsStopped',
+          displayText: strIsStopped,
+          copyTextValue: strIsStopped,
+          selectorName: 'stopped'
+        })
+      }
+
       if(!this.isSystem) {
         this.essentialItems.push(        {
           selectorName: 'viewNode',
