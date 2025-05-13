@@ -72,6 +72,16 @@ export class EssentialsComponent extends ReplicaBaseControllerDirective {
           copyTextValue: strIsStopped,
           selectorName: 'stopped'
         })
+        
+        const now = new Date();
+        const tomorrowUTC = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+        const expirationTimestampUTC = tomorrowUTC.toISOString();
+        this.essentialItems.push({
+          descriptionName: 'Replica Expiration Timestamp UTC',
+          displayText: expirationTimestampUTC,
+          copyTextValue: expirationTimestampUTC,
+          selectorName: 'stoppedExpirationTimestamp'
+        })
       }
 
       if(!this.isSystem) {
