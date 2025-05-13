@@ -3,8 +3,8 @@ import { ListSettings } from 'src/app/Models/ListSettings';
 import { DataService } from 'src/app/services/data.service';
 import { SettingsService } from 'src/app/services/settings.service';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
-import { of, forkJoin, Observable } from 'rxjs';
-import { catchError, map, tap } from 'rxjs/operators';
+import { forkJoin, Observable } from 'rxjs';
+import { map, tap } from 'rxjs/operators';
 import { ReplicaBaseControllerDirective } from '../ReplicaBase';
 import { RoutesService } from 'src/app/services/routes.service';
 import { IEssentialListItem } from 'src/app/modules/charts/essential-health-tile/essential-health-tile.component';
@@ -29,90 +29,65 @@ export class EssentialsComponent extends ReplicaBaseControllerDirective {
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
     return forkJoin([
-      this.replica.health.refresh(messageHandler).pipe(
-        catchError(err => {
-          console.error('Health refresh failed', err);
-          return of(null); // Or some fallback/default value
-        })
-      ),
-      this.replica.detail.refresh(messageHandler).pipe(
-        map(() => {
-          if (!this.isSystem) {
-            const rawDataProperty = this.replica.isStatefulService
-              ? 'DeployedServiceReplica'
-              : 'DeployedServiceReplicaInstance';
-            const detailRaw = this.replica.detail.raw[rawDataProperty];
-
-            const serviceNameOnly = detailRaw?.ServiceManifestName;
-            const activationId = detailRaw?.ServicePackageActivationId || null;
-
-            if (serviceNameOnly) {
-              this.nodeView = RoutesService.getDeployedReplicaViewPath(
-                this.replica.raw.NodeName,
-                this.appId,
-                serviceNameOnly,
-                activationId,
-                this.partitionId,
-                this.replicaId
-              );
-            }
-          }
-        }),
-        catchError(err => {
-          console.error('Detail refresh failed', err);
-          return of(null); // Still allow forkJoin to complete
-        })
-      )
-    ]).pipe(
-      map(() => {
-        this.essentialItems = [
-          {
-            descriptionName: 'Node Name',
-            copyTextValue: this.replica.raw?.NodeName ?? 'Unknown',
-            selectorName: 'nodeName',
-            displaySelector: true
-          },
-          {
-            descriptionName: 'Process Id',
-            displayText: this.replica.detail?.processID ?? 'Unavailable',
-            copyTextValue: this.replica.detail?.processID ?? 'Unavailable'
-          },
-          {
-            descriptionName: 'Status',
-            displayText: this.replica.raw?.ReplicaStatus ?? 'Unknown',
-            copyTextValue: this.replica.raw?.ReplicaStatus ?? 'Unknown',
-            selectorName: 'status',
-            displaySelector: true
-          }
-        ];
-
-        if (this.replica.raw?.ReplicaIsStopped) {
-          const strIsStopped = String(this.replica.raw.ReplicaIsStopped);
-          this.essentialItems.push({
-            descriptionName: 'IsStopped',
-            displayText: strIsStopped,
-            copyTextValue: strIsStopped,
-            selectorName: 'stopped'
-          });
-
-          const now = new Date();
-          const tomorrowUTC = new Date(now.getTime() + 24 * 60 * 60 * 1000);
-          const expirationTimestampUTC = tomorrowUTC.toISOString();
-          this.essentialItems.push({
-            descriptionName: 'Replica Expiration Timestamp UTC',
-            displayText: expirationTimestampUTC,
-            copyTextValue: expirationTimestampUTC,
-            selectorName: 'stoppedExpirationTimestamp'
-          });
-        }
-
+      this.replica.health.refresh(messageHandler),
+      this.replica.detail.refresh(messageHandler).pipe(map(() => {
         if (!this.isSystem) {
-          this.essentialItems.push({
-            selectorName: 'viewNode',
-            displaySelector: true
-          });
+          const rawDataProperty = this.replica.isStatefulService ? 'DeployedServiceReplica' : 'DeployedServiceReplicaInstance';
+          const detailRaw = this.replica.detail.raw[rawDataProperty];
+
+          const serviceNameOnly = detailRaw.ServiceManifestName;
+          const activationId = detailRaw.ServicePackageActivationId || null;
+          this.nodeView = RoutesService.getDeployedReplicaViewPath(this.replica.raw.NodeName, this.appId, serviceNameOnly, activationId, this.partitionId, this.replicaId);
         }
-      })
-    );
+      }))
+    ]).pipe(map(() => {
+      this.essentialItems = [
+        {
+          descriptionName: 'Node Name',
+          copyTextValue: this.replica.raw.NodeName,
+          selectorName: 'nodeName',
+          displaySelector: true
+        },
+        {
+          descriptionName: 'Process Id',
+          displayText: this.replica.detail.processID,
+          copyTextValue: this.replica.detail.processID
+        },
+        {
+          descriptionName: 'Status',
+          displayText: this.replica.raw.ReplicaStatus,
+          copyTextValue: this.replica.raw.ReplicaStatus,
+          selectorName: 'status',
+          displaySelector: true
+        }
+      ];
+
+      if(this.replica.raw.ReplicaIsStopped) {
+        const strIsStopped = String(this.replica.raw.ReplicaIsStopped);
+        this.essentialItems.push({
+          descriptionName: 'IsStopped',
+          displayText: strIsStopped,
+          copyTextValue: strIsStopped,
+          selectorName: 'stopped'
+        })
+        
+        const now = new Date();
+        const tomorrowUTC = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+        const expirationTimestampUTC = tomorrowUTC.toISOString();
+        this.essentialItems.push({
+          descriptionName: 'Replica Expiration Timestamp UTC',
+          displayText: expirationTimestampUTC,
+          copyTextValue: expirationTimestampUTC,
+          selectorName: 'stoppedExpirationTimestamp'
+        })
+      }
+
+      if(!this.isSystem) {
+        this.essentialItems.push(        {
+          selectorName: 'viewNode',
+          displaySelector: true
+        })
+      }
+    }));
   }
 }
