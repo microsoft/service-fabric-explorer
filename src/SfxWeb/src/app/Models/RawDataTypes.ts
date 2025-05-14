@@ -710,7 +710,7 @@ export interface IRawReplicaOnPartition {
         ReplicaStatus: string;
         ServiceKind: string;
         ReplicaIsStopped: boolean;
-        StoppedReplicaExpirationTimestampUTC: string;
+        StoppedReplicaExpirationTimeUtc: string;
     }
 
 export interface IRawReplicaHealthState {

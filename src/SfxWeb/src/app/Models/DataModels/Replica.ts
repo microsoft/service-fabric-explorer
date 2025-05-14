@@ -125,6 +125,10 @@ export class ReplicaOnPartition extends DataModelBase<IRawReplicaOnPartition> {
         return this.raw.ReplicaIsStopped;
     }
 
+    public get stoppedReplicaExpirationTimeUtc(): string {
+        return TimeUtils.timestampToUTCString(this.raw.StoppedReplicaExpirationTimeUTC);
+    }
+
     protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<any> {
         // Refresh the parent partition here as well because we need its status to display the correct role name
         return this.parent.refresh().pipe(mergeMap(
