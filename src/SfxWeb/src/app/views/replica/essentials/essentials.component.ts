@@ -71,7 +71,7 @@ export class EssentialsComponent extends ReplicaBaseControllerDirective {
           selectorName: 'stopped'
         })
         
-        const expirationTimestampUTC = this.replica.raw.StoppedReplicaExpirationTimeUTC;
+        const expirationTimestampUTC = this.replica.raw.StoppedReplicaExpirationTimeUtc;
         this.essentialItems.push({
           descriptionName: 'Replica Expiration Time UTC',
           displayText: expirationTimestampUTC,

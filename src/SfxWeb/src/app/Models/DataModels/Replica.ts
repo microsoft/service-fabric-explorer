@@ -126,7 +126,7 @@ export class ReplicaOnPartition extends DataModelBase<IRawReplicaOnPartition> {
     }
 
     public get stoppedReplicaExpirationTimeUtc(): string {
-        return TimeUtils.timestampToUTCString(this.raw.StoppedReplicaExpirationTimeUTC);
+        return TimeUtils.timestampToUTCString(this.raw.StoppedReplicaExpirationTimeUtc);
     }
 
     protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<any> {
