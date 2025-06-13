@@ -64,4 +64,7 @@ export class BaseComponent extends ApplicationBaseControllerDirective implements
     });
   }
 
+  getDisabledServicesWarning(): string {
+    return `This application is currently undergoing an upgrade and has ${this.app?.disabledServicesCount} disabled services. Please note that once the upgrade is complete and the services are re-enabled, they may not function as expected or run with the latest version.`;
+  }
 }
