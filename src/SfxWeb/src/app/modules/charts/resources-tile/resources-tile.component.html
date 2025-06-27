@@ -1,0 +1,16 @@
+<div class="dashboard-wrapper resources-tile" style="width: fit-content;">
+    <div class="dashboard dashboard-small "  >
+        <h4 class="dashboard-tile-title" >
+            {{title}}
+        </h4>
+        <div class="dashboard-tile flex-center" style="height: 100%; ">
+            <div class="flex-center dashboard-tile-inner"  style="height: 100%;">
+                <div>
+                    <app-resource-item *ngFor="let item of internalList; let l = last" [ngClass]="l ? '': 'underline'" [item]="item" >
+                        <ng-container *ngTemplateOutlet="item.ref"></ng-container>
+                    </app-resource-item>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

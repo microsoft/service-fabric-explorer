@@ -1,0 +1,19 @@
+<div class="tile-container ">
+    <app-resources-tile [listItems]="cpuData" [title]="'CPU'" >
+        <ng-template appResourcesTemplate id="requested">
+        </ng-template>
+        <ng-template appResourcesTemplate id="limit">
+        </ng-template>
+        <ng-template appResourcesTemplate id="dynamic">
+        </ng-template>
+    </app-resources-tile>
+
+    <app-resources-tile [listItems]="memoryData" [title]="'Memory'" >
+        <ng-template appResourcesTemplate id="requested">
+        </ng-template>
+        <ng-template appResourcesTemplate id="limit">
+        </ng-template>
+        <ng-template appResourcesTemplate id="dynamic">
+        </ng-template>
+    </app-resources-tile>
+</div>

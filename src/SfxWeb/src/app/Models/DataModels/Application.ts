@@ -415,4 +415,8 @@ export class ApplicationBackupConfigurationInfo extends DataModelBase<IRawApplic
     }
 }
 
-
+export enum RGMetric{
+    None = 0,
+    CPU = 1,
+    Memory = 2
+}

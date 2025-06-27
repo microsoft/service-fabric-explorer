@@ -1,0 +1,8 @@
+.card-container {
+  width: 100%;
+  display: grid;
+  grid-auto-flow: dense;
+  grid-gap: 10px;
+  grid-auto-rows: 200px;
+  margin-bottom: 15px;
+}

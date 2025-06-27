@@ -36,6 +36,7 @@ import { WarningComponent } from './component/warning/warning.component';
 import { EventStoreTimelineComponent } from './component/event-store-timeline/event-store-timeline.component';
 import { FocusableDirective } from './directive/focusable.directive';
 import { ArmWarningComponent } from './component/arm-warning/arm-warning.component';
+import { ResourceItemComponent } from './component/resource-item/resource-item.component';
 
 @NgModule({
   declarations: [NavbarComponent, ClipBoardComponent, HealthBadgeComponent, CandyBarCompactComponent, DetailViewPartComponent,
@@ -48,7 +49,7 @@ import { ArmWarningComponent } from './component/arm-warning/arm-warning.compone
                  DisplayDurationComponent,
                  PhaseDiagramComponent,
                  NodeFilterComponent,
-                 WarningComponent, EventStoreTimelineComponent, FocusableDirective, ArmWarningComponent],
+                 WarningComponent, EventStoreTimelineComponent, FocusableDirective, ArmWarningComponent, ResourceItemComponent],
   imports: [
     CommonModule,
     RouterModule,
@@ -65,6 +66,6 @@ import { ArmWarningComponent } from './component/arm-warning/arm-warning.compone
             ClusterUpgradeBannerComponent, DualDatePickerComponent, AdvancedOptionComponent, ReplicaAddressComponent,
             FormatDatePipe, LocalTimeComponent, DisplayTimeComponent, ToggleComponent, StatusResolverComponent,
             StateInfoComponent, EssentialItemComponent, DisplayDurationComponent, PhaseDiagramComponent, NodeFilterComponent,
-            WarningComponent, EventStoreTimelineComponent, ArmWarningComponent]
+            WarningComponent, EventStoreTimelineComponent, ArmWarningComponent, ResourceItemComponent]
 })
 export class SharedModule { }
