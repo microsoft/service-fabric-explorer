@@ -125,8 +125,7 @@ export class VisualizationToolComponent implements OnChanges, AfterViewInit, Det
               if (currEvent.reason) {
                 if (currEvent.reason.name == "self") {
                   config.data.push({
-                    from: `${idPrefix}${currEvent.eventInstanceId}</p>`,
-                    to: `${idPrefix}${currEvent.eventInstanceId}</p>`
+                    from: `${idPrefix}${currEvent.eventInstanceId}</p>`
                   });
                 } else {
                   config.data.push({
