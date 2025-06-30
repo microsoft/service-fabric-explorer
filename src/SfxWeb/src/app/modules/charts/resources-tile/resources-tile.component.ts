@@ -13,7 +13,7 @@ interface IResourceItemInternal extends IResourceItem {
   ref?: TemplateRef<any>;
 }
 
-@Directive({ selector: '[appResourcesTemplate]'})
+@Directive({ selector: '[resourcesTemplate]'})
 export class ResourcesTemplateDirective {
   @Input() id: string;
 
@@ -26,7 +26,7 @@ export class ResourcesTemplateDirective {
 }
 
 @Component({
-  selector: 'app-resources-tile',
+  selector: 'service-resources-tile',
   templateUrl: './resources-tile.component.html',
   styleUrls: ['./resources-tile.component.scss']
 })

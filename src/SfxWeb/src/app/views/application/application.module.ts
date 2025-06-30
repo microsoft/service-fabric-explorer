@@ -22,10 +22,9 @@ import { HealthStateModule } from 'src/app/modules/health-state/health-state.mod
 import { ConcurrentEventsVisualizationModule } from 'src/app/modules/concurrent-events-visualization/concurrent-events-visualization.module';
 import { CommandsComponent } from './commands/commands.component';
 import { PowershellCommandsModule } from 'src/app/modules/powershell-commands/powershell-commands.module';
-import { ResourcesComponent } from './resources/resources.component';
 
 @NgModule({
-  declarations: [BaseComponent, EssentialsComponent, DetailsComponent, DeploymentsComponent, ManifestComponent, EventsComponent, CreateServiceComponent, ActionRowComponent, BackupComponent, CommandsComponent, ResourcesComponent],
+  declarations: [BaseComponent, EssentialsComponent, DetailsComponent, DeploymentsComponent, ManifestComponent, EventsComponent, CreateServiceComponent, ActionRowComponent, BackupComponent, CommandsComponent],
   imports: [
     CommonModule,
     ApplicationRoutingModule,

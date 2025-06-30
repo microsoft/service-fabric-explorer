@@ -8,7 +8,6 @@ import { ManifestComponent } from './manifest/manifest.component';
 import { EventsComponent } from './events/events.component';
 import { BackupComponent } from './backup/backup.component';
 import { CommandsComponent } from './commands/commands.component';
-import { ResourcesComponent } from './resources/resources.component';
 
 
 const routes: Routes = [{
@@ -19,8 +18,7 @@ const routes: Routes = [{
     { path: 'manifest', component: ManifestComponent },
     { path: 'events', component: EventsComponent },
     { path: 'backup', component: BackupComponent },
-    { path: 'commands', component: CommandsComponent },
-    { path: 'resources', component: ResourcesComponent }
+    { path: 'commands', component: CommandsComponent }
     ]
   }
 ];

@@ -1,0 +1,31 @@
+<div class="tile-container ">
+    <service-resources-tile [listItems]="cpuData" [title]="'CPU'" class="long" >
+        <ng-template resourcesTemplate id="requested">
+        </ng-template>
+        <ng-template resourcesTemplate id="limit">
+        </ng-template>
+        <ng-template resourcesTemplate id="dynamic">
+        </ng-template>
+    </service-resources-tile>
+
+    <service-resources-tile [listItems]="memoryData" [title]="'Memory'" class="long">
+        <ng-template resourcesTemplate id="requested">
+        </ng-template>
+        <ng-template resourcesTemplate id="limit">
+        </ng-template>
+        <ng-template resourcesTemplate id="dynamic">
+        </ng-template>
+    </service-resources-tile>
+</div>
+
+<!-- <div class="detail-pane essen-pane" *ngIf="app && app.services"> -->
+<!-- <div class="detail-pane essen-pane">
+    <app-collapse-container sectionName="Nodes dynamic load reports">
+        <div collapse-header>
+            <h2>Load</h2>
+        </div>
+        <div collapse-body>
+            <app-detail-list [list]="app.services.collection" [listSettings]="listSettings" data-cy="services"></app-detail-list>
+        </div>
+    </app-collapse-container>
+</div> -->

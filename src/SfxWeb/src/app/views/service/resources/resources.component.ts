@@ -1,15 +1,16 @@
-import { Component, Injector } from '@angular/core';
-import { ApplicationBaseControllerDirective } from '../applicationBase';
+import { Component, Injector, OnInit } from '@angular/core';
+import { ServiceBaseControllerDirective } from '../ServiceBase';
 import { DataService } from 'src/app/services/data.service';
-import { RGMetric } from 'src/app/Models/DataModels/Application';
 import { IResourceItem } from 'src/app/modules/charts/resources-tile/resources-tile.component';
+import { RGMetric } from 'src/app/Models/DataModels/Application';
+import { NodeLoadInformation } from 'src/app/Models/DataModels/Node';
 
 @Component({
   selector: 'app-resources',
   templateUrl: './resources.component.html',
   styleUrls: ['./resources.component.scss']
 })
-export class ResourcesComponent extends ApplicationBaseControllerDirective {
+export class ResourcesComponent extends ServiceBaseControllerDirective {
 
   constructor(protected data: DataService, injector: Injector) {
     super(data, injector);
@@ -19,7 +20,7 @@ export class ResourcesComponent extends ApplicationBaseControllerDirective {
   memoryData: IResourceItem[] = [];
   dynamicMetric: RGMetric = RGMetric.CPU;
 
-  dynamicMetricByNode: Map<number, number> = new Map<number, number>();
+  nodeLoad: NodeLoadInformation[] = [];
 
   setup() {
 
@@ -35,7 +36,7 @@ export class ResourcesComponent extends ApplicationBaseControllerDirective {
           selectorName: "limit"
       },
       {
-        title: "Dynamic reporting",
+        title: "Dynamic load reporting",
         boolValue: this.dynamicMetric == RGMetric.CPU,
         selectorName: "dynamic",
         displaySelector: true
@@ -54,7 +55,7 @@ export class ResourcesComponent extends ApplicationBaseControllerDirective {
           selectorName: "limit"
       },
       {
-        title: "Dynamic reporting",
+        title: "Dynamic load reporting",
         boolValue: this.dynamicMetric == RGMetric.Memory,
         selectorName: "dynamic",
         displaySelector: true

@@ -33,10 +33,6 @@ export class BaseComponent extends ApplicationBaseControllerDirective implements
   {
     name: 'commands',
     route: './commands'
-  },
-  {
-    name: 'resources',
-    route: './resources'
   }
   ];
 
