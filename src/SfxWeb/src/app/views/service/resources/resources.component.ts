@@ -2,8 +2,6 @@ import { Component, Injector, OnInit } from '@angular/core';
 import { ServiceBaseControllerDirective } from '../ServiceBase';
 import { DataService } from 'src/app/services/data.service';
 import { IResourceItem } from 'src/app/modules/charts/resources-tile/resources-tile.component';
-import { RGMetric } from 'src/app/Models/DataModels/Application';
-import { NodeLoadInformation } from 'src/app/Models/DataModels/Node';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { map, mergeMap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
@@ -23,9 +21,15 @@ export class ResourcesComponent extends ServiceBaseControllerDirective {
   public static readonly cpuCoresLimitKey: string = "CpuCoresLimit=";
   public static readonly memoryKey: string = "MemoryInMB=";
   public static readonly memoryLimitKey: string = "MemoryInMBLimit=";
+  public static readonly cpuMetricName: string = "servicefabric:/_CpuCores";
+  public static readonly memMetricName: string = "servicefabric:/_MemoryInMB";
 
   appManifestParameterCollection: { [key: string]: string } = {};
   servicePackageName: string = "";
+
+  // special values and their meanings for variables below:
+  // -1: Unknown. Part of equation could not be resolved because it is stored in a remote location
+  //  0: Undefined. Customer didn't define value for this.
   cpuCores: number = 0;
   cpuCoresLimit: number = 0;
   memory: number = 0;
@@ -34,11 +38,12 @@ export class ResourcesComponent extends ServiceBaseControllerDirective {
   cpuData: IResourceItem[] = [];
   memoryData: IResourceItem[] = [];
   spData: IResourceItem[] = [];
-  // note: string = "";
 
-  dynamicMetric: RGMetric = RGMetric.CPU; //kako dohvatiti koja je ukljucena? + disclaimer
+  dynamicCpu: boolean = false;
+  dynamicMem: boolean = false;
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
+    this.clearRG();
     const app = this.service.parent;
     
     return this.data.getServiceType(app.raw.TypeName, app.raw.TypeVersion, this.service.description.raw.ServiceTypeName, true, messageHandler)
@@ -48,48 +53,34 @@ export class ResourcesComponent extends ServiceBaseControllerDirective {
               this.servicePackageName = this.getServicePackageFromManifest(serviceType.manifest.raw.Manifest);
               app.manifest.refresh(messageHandler).subscribe({
                 next: (manifest) => {
-//                   let m = `
-//     <?xml version='1.0' encoding='UTF-8'?>
-// <ApplicationManifest ApplicationTypeName='TestAppTC1' ApplicationTypeVersion='vTC1' xsi:schemaLocation='http://schemas.microsoft.com/2011/01/fabric ServiceFabricServiceModel.xsd' xmlns='http://schemas.microsoft.com/2011/01/fabric' xmlns:xsi='https://www.w3.org/2001/XMLSchema-instance'>
+                  let m = `
+    <?xml version='1.0' encoding='UTF-8'?>
+<ApplicationManifest ApplicationTypeName='TestAppTC1' ApplicationTypeVersion='vTC1' xsi:schemaLocation='http://schemas.microsoft.com/2011/01/fabric ServiceFabricServiceModel.xsd' xmlns='http://schemas.microsoft.com/2011/01/fabric' xmlns:xsi='https://www.w3.org/2001/XMLSchema-instance'>
 
-//   <Parameters>
-//     <Parameter Name="CpuCores" DefaultValue="4" />
-//     <Parameter Name="CpuSharesA" DefaultValue="512" />
-//     <Parameter Name="CpuSharesB" DefaultValue="512" />
-//     <Parameter Name="MemoryA" DefaultValue="1000" />
-//     <Parameter Name="MemoryB" DefaultValue="100" />
-//     <Parameter Name="MemoryC" DefaultValue="10" />
-//   </Parameters>
-//   <ServiceManifestImport>
-//     <ServiceManifestRef ServiceManifestName='SP3' ServiceManifestVersion='v1'/>
-//     <Policies>
-//       <ServicePackageResourceGovernancePolicy CpuCores="[CpuCores]"/>
-//       <ResourceGovernancePolicy CodePackageRef="CodeA1" CpuShares="[CpuSharesA]" MemoryInMB="[MemoryA]"/>
-//       <ResourceGovernancePolicy CodePackageRef="CodeA2" CpuShares="[CpuSharesB]" MemoryInMB="[MemoryB]" />
-//     </Policies>
-//   </ServiceManifestImport>
-  
-//   <ServiceManifestImport>
-//     <ServiceManifestRef ServiceManifestName='SP2' ServiceManifestVersion='v1'/>
-//     <Policies>
-//       <ServicePackageResourceGovernancePolicy CpuCores="[CpuCores]"/>
-//       <ResourceGovernancePolicy CodePackageRef="CodeA1" CpuShares="[CpuSharesA]" MemoryInMB="[MemoryA]" />
-//       <ResourceGovernancePolicy CodePackageRef="CodeA2" CpuShares="[CpuSharesB]" MemoryInMB="[MemoryB]" />
-//     </Policies>
-//   </ServiceManifestImport>
-//   <ServiceManifestImport>
-//     <ServiceManifestRef ServiceManifestName='SP1' ServiceManifestVersion='v1'/>
-//     <Policies>
-//       <ServicePackageResourceGovernancePolicy CpuCores="[CpuCores]" CpuCoresLimit="12"/>
-//       <ResourceGovernancePolicy CodePackageRef="CodeA1" CpuShares="[CpuSharesA]" MemoryInMB="[MemoryA]"  MemoryInMBLimit="1000"/>
-//       <ResourceGovernancePolicy CodePackageRef="CodeA2" CpuShares="[CpuSharesB]" MemoryInMB="[MemoryB]" MemoryInMBLimit="[MemoryC]"/>
-//       <ResourceGovernancePolicy CodePackageRef="CodeA2" CpuShares="[CpuSharesB]" MemoryInMBLimit="[MemoryC]" MemoryInMB="[MemoryB]"/>
-//     </Policies>
-//   </ServiceManifestImport>
-//     `;
+  <Parameters>
+    <Parameter Name="CpuCores" DefaultValue="4" />
+    <Parameter Name="CpuSharesA" DefaultValue="512" />
+    <Parameter Name="CpuSharesB" DefaultValue="512" />
+    <Parameter Name="MemoryA" DefaultValue="1000" />
+    <Parameter Name="MemoryB" DefaultValue="100" />
+    <Parameter Name="MemoryC" DefaultValue="1" />
+    <Parameter Name="MemoryD" DefaultValue="azk10" />
+  </Parameters>
+  <ServiceManifestImport>
+    <ServiceManifestRef ServiceManifestName='SP1' ServiceManifestVersion='v1'/>
+    <Policies>
+      <ServicePackageResourceGovernancePolicy CpuCores="[CpuCores]" CpuCoresLimit="12"/>
+      <ResourceGovernancePolicy CodePackageRef="CodeA1" CpuShares="[CpuSharesA]" MemoryInMB="[MemoryA]"  MemoryInMBLimit="1000"/>
+      <ResourceGovernancePolicy CodePackageRef="CodeA2" CpuShares="[CpuSharesB]" MemoryInMB="[MemoryB]" MemoryInMBLimit="[MemoryC]"/>
+      <ResourceGovernancePolicy CodePackageRef="CodeA2" CpuShares="[CpuSharesB]" MemoryInMBLimit="[MemoryC]" MemoryInMB="[MemoryB]"/>
+    </Policies>
+  </ServiceManifestImport>
+    `;
 
-//                   this.appManifestParameterCollection = this.getAppManifestParameters(m);
-//                   this.getServiceManifestImport(m);
+                  this.getSectionInfo(this.data.clusterManifest.raw.Manifest, "DynamicRGMetrics");
+                  // this.getSectionInfo(this.data.clusterManifest.raw.Manifest, "DefragmentationScopedAlgorithmEnabled");
+                  // this.appManifestParameterCollection = this.getAppManifestParameters(m);
+                  // this.getServiceManifestImport(m);
                   this.appManifestParameterCollection = this.getAppManifestParameters(manifest.raw.Manifest);
                   this.getServiceManifestImport(manifest.raw.Manifest);
                 }
@@ -125,11 +116,10 @@ export class ResourcesComponent extends ServiceBaseControllerDirective {
       content = content.substring(i2+1);
     }
 
-    console.log(parameters);
     return parameters;
   }
 
-  getServiceManifestImport(appmanifest: string){
+  getServiceManifestImport(appmanifest: string) {
     let currentManifest = appmanifest;
     
     while (currentManifest != ""){ 
@@ -149,7 +139,7 @@ export class ResourcesComponent extends ServiceBaseControllerDirective {
     }
   }
 
-  getServicePackageFromManifest(manifest: string): string{
+  getServicePackageFromManifest(manifest: string): string {
     let manifestTagDecl = manifest.substring(0, manifest.indexOf(">"));
     let properties = manifestTagDecl.split(" ");
     let name = "";
@@ -158,7 +148,6 @@ export class ResourcesComponent extends ServiceBaseControllerDirective {
       if(element.startsWith("Name")){
         let i1 = element.indexOf('"');
         let i2 = element.lastIndexOf('"');
-        console.log(element.substring(i1+1,i2));
         name = element.substring(i1+1,i2);
         return;
       }
@@ -167,63 +156,104 @@ export class ResourcesComponent extends ServiceBaseControllerDirective {
     return name;
   }
 
-  parseServiceManifestImport(manifest: string){
-    this.clearRG();
-    console.log("CREATING MANIFEST IMPORT");
+  getSectionInfo(manifest: string, sectionName: string) {
+    let match = manifest.match(new RegExp(`<Section\\s+Name="${sectionName}"[^>]*>([\\s\\S]*?)<\\/Section>`));
+    if (!match) return;
+
+    let content = match[1];
+    while(content.length > 0){
+      let keyMatch  = content.match(/Name="([^"]+)"/);
+      let valueMatch = content.match(/Value="([^"]+)"/);
+      if (!keyMatch || !valueMatch) break;
+
+      if (keyMatch[1] == ResourcesComponent.cpuMetricName) this.dynamicCpu = valueMatch[1] == "True";
+      if (keyMatch[1] == ResourcesComponent.memMetricName) this.dynamicMem = valueMatch[1] == "True";
+      content = content.substring(content.indexOf("/>")+2);
+    }
+  }
+
+  parseServiceManifestImport(manifest: string) {
     let patternMatch = `["']\\[?([^"'\\[\\]]+)\\]?["']`;
-    let cpuCoresMatch = manifest.match(new RegExp(`${ResourcesComponent.cpuCoresKey}${patternMatch}`));
-    if (cpuCoresMatch) this.cpuCores = this.resolveParam(cpuCoresMatch[1]);
-    
-    let cpuCoresLimitMatch = manifest.match(new RegExp(`${ResourcesComponent.cpuCoresLimitKey}${patternMatch}`));
-    if (cpuCoresLimitMatch) this.cpuCoresLimit = this.resolveParam(cpuCoresLimitMatch[1]);
 
-    let tempInput = manifest;
-    while (tempInput.length > 0){
-      let memoryMatch = tempInput.match(new RegExp(`${ResourcesComponent.memoryKey}${patternMatch}`));
-      if (!memoryMatch) break;
-
-      this.memory += this.resolveParam(memoryMatch[1]);
-      let ind = tempInput.indexOf(ResourcesComponent.memoryKey+"");
-      tempInput = tempInput.substring(ind + ResourcesComponent.memoryKey.length);
-    }
-    
-    tempInput = manifest;
-    while (tempInput.length > 0){
-      let memoryLimitMatch = tempInput.match(new RegExp(`${ResourcesComponent.memoryLimitKey}${patternMatch}`));
-      if (!memoryLimitMatch) break;
-
-      this.memoryLimit += this.resolveParam(memoryLimitMatch[1]);
-      let ind = tempInput.indexOf(ResourcesComponent.memoryLimitKey);
-      tempInput = tempInput.substring(ind + ResourcesComponent.memoryLimitKey.length);
-    }
+    this.cpuCores = this.sumValuesFromTags(manifest, ResourcesComponent.cpuCoresKey, patternMatch);
+    this.cpuCoresLimit = this.sumValuesFromTags(manifest, ResourcesComponent.cpuCoresLimitKey, patternMatch);
+    this.memory = this.sumValuesFromTags(manifest, ResourcesComponent.memoryKey, patternMatch);
+    this.memoryLimit = this.sumValuesFromTags(manifest, ResourcesComponent.memoryLimitKey, patternMatch);
 
     this.fillDisplayData();
   }
 
-  clearRG(){
+  sumValuesFromTags(input: string, key: string, pattern: string) : number {
+    let tempInput = input;
+    let sumValue = 0;
+
+    while (tempInput.length > 0){
+      let match = tempInput.match(new RegExp(`${key}${pattern}`));
+      if (!match) break;
+
+      let val = this.resolveParam(match[1]);
+      if (val == -1){
+        return -1;
+      }
+      
+      sumValue += val;
+      tempInput = tempInput.substring(tempInput.indexOf(key) + key.length);
+    }
+    return sumValue;
+  }
+
+  clearRG() {
     this.cpuCores = 0;
     this.cpuCoresLimit = 0;
     this.memory = 0;
     this.memoryLimit = 0;
+
+    this.dynamicCpu = false;
+    this.dynamicMem = false;
+
+    this.cpuData = [];
+    this.memoryData = [];
+    this.spData = [];
   }
 
   resolveParam(key: string) : number {
-    console.log("resolving: "+ key);
+    let keyNum = Number(key);
+    if (!isNaN(keyNum)) return keyNum;
+
     let value = this.appManifestParameterCollection[key];
-    if (!value) return Number(key);
-
     let valNum = Number(value);
-    if (isNaN(valNum)) return 0;
+    if (!isNaN(valNum)) return valNum;
 
-    return valNum;
+    return -1;
+  }
+
+  resolveRGDisplayValue(num: number) : string {
+    switch(num){
+      case -1:
+        return "Unknown";
+      case 0:
+        return "Undefined";
+      default:
+        return num.toString();
+    }
+  }
+  
+  resolveToolTipInfo(num: number) : string {
+    switch(num){
+      case -1:
+        return "Value could not be displayed. Reason: part of value or complete value is stored on a remote location.";
+      case 0:
+        return "Value has not been specified by the user.";
+      default:
+        return null;
+    }
   }
 
   fillDisplayData() {
-    let dynamicCpuOn = this.dynamicMetric == RGMetric.CPU && this.isServiceExclusiveProcess();
-    // let dynamicMemoryOn = this.dynamicMetric == RGMetric.Memory && this.isServiceExclusiveProcess();
-    let dynamicMemoryOn = true;
+    let dynamicCpuOn = this.dynamicCpu && this.isServiceExclusiveProcess();
+    let dynamicMemoryOn = this.dynamicMem && this.isServiceExclusiveProcess();
     let dynamicLoadInfoText = "You can see values of dynamically reported loads in Partition View - Replicas/Instances table.";
-
+    
     this.cpuData = [
       {
           title: "CPU",
@@ -233,14 +263,16 @@ export class ResourcesComponent extends ServiceBaseControllerDirective {
       },
       {
           title: "Requested",
-          displayText: this.cpuCores ? this.cpuCores.toString() : "Undefined",
-          disabled: this.cpuCores == 0,
+          displayText: this.resolveRGDisplayValue(this.cpuCores),
+          disabled: this.cpuCores <= 0,
+          toolTip: this.resolveToolTipInfo(this.cpuCores),
           selectorName: "requested"
       },
       {
           title: "Limit",
-          displayText: this.cpuCoresLimit ? this.cpuCoresLimit.toString() : "Undefined",
-          disabled: this.cpuCoresLimit == 0,
+          displayText: this.resolveRGDisplayValue(this.cpuCoresLimit),
+          disabled: this.cpuCoresLimit <= 0,
+          toolTip: this.resolveToolTipInfo(this.cpuCoresLimit),
           selectorName: "limit"
       },
       {
@@ -261,14 +293,16 @@ export class ResourcesComponent extends ServiceBaseControllerDirective {
       },
       {
           title: "Requested",
-          displayText: this.memory ? this.memory.toString() : "Undefined",
-          disabled: this.memory == 0,
+          displayText: this.resolveRGDisplayValue(this.memory),
+          disabled: this.memory <= 0,
+          toolTip: this.resolveToolTipInfo(this.memory),
           selectorName: "requested"
       },
       {
           title: "Limit",
-          displayText: this.memoryLimit ? this.memoryLimit.toString() : "Undefined",
-          disabled: this.memoryLimit == 0,
+          displayText: this.resolveRGDisplayValue(this.memoryLimit),
+          disabled: this.memoryLimit <= 0,
+          toolTip: this.resolveToolTipInfo(this.memoryLimit),
           selectorName: "limit"
       },
       {
@@ -278,7 +312,7 @@ export class ResourcesComponent extends ServiceBaseControllerDirective {
         selectorName: "dynamic",
         toolTip: dynamicMemoryOn ? dynamicLoadInfoText : null
       }
-    ]
+    ];
 
     this.spData = [
       {
@@ -298,13 +332,11 @@ export class ResourcesComponent extends ServiceBaseControllerDirective {
         title: "Dynamic load reporting supported",
         displayText: this.isServiceExclusiveProcess() ? "Yes" : "No"
       }
-    ]
+    ];
   }
   
-  isServiceExclusiveProcess() : boolean
-  {
+  isServiceExclusiveProcess() : boolean {
     return this.service.description.raw.ServicePackageActivationMode == "ExclusiveProcess";
   }
 
-  setup() {}
 }
