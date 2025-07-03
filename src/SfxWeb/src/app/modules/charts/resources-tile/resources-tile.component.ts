@@ -4,9 +4,11 @@ import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component,
 export interface IResourceItem {
   title: string;
   displayText?: string;
-  boolValue?: boolean;
   selectorName?: string;
   displaySelector?: boolean;
+  isTitle?: boolean;
+  toolTip?: string;
+  disabled?: boolean;
 }
 
 interface IResourceItemInternal extends IResourceItem {
@@ -32,7 +34,6 @@ export class ResourcesTemplateDirective {
 })
 export class ResourcesTileComponent implements AfterViewInit, OnChanges {
   
-  @Input() title: string = "";
   @Input() listItems: IResourceItem[] = [];
   @Input() templateRefs: Record<string, TemplateRef<any>>;
   @ContentChildren(ResourcesTemplateDirective, { descendants: true } ) test!: QueryList<ResourcesTemplateDirective>;
