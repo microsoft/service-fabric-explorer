@@ -136,7 +136,7 @@ export class ClusterManifest extends DataModelBase<IRawClusterManifest> {
     public isNetworkInventoryManagerEnabled = false;
     public isBackupRestoreEnabled = false;
     public isRepairManagerEnabled = false;
-    public isEventStoreEnabled = false;
+    public isEventStoreEnabled = true;
     public eventStoreTimeRange = 30;
     public nodeTypeProperties: INodeTypeInfo[];
 
