@@ -192,12 +192,8 @@ const APE: IRelevantEventsConfig[] = [
     ],
     selfTransform: [
       {
-        type: "trimFront",
-        value: "."
-      },
-      {
         type: "trimBack",
-        value: "For information"
+        value: "("
       },
       {
         type: "prefix",
@@ -285,10 +281,10 @@ export let RelatedEventsConfigs: IConcurrentEventsConfig[] = [
     "result": "raw.Action"
   },
   {
-    "eventType": "PartitionReconfigurationStarted",
+    "eventType": "PartitionReconfigured",
     "relevantEventsType": [
       {
-        eventType: "PartitionReconfigured",
+        eventType: "PartitionReconfigurationStarted",
         propertyMappings: [
           {
             source: {
@@ -301,19 +297,108 @@ export let RelatedEventsConfigs: IConcurrentEventsConfig[] = [
         ],
       }
     ],
-    "result": "eventProperties.NewPrimaryNodeName",
-    "resultTransform": [
+    "result": ""
+  },
+  {
+    "eventType": "PartitionReconfigurationStarted",
+    "relevantEventsType": [
       {
-        type: "prefix",
-        value: "New Primary Node Name is "
+        eventType: "ClientReportFaultEvent",
+        propertyMappings: [
+          {
+            source: {
+              property: "eventProperties.ActivityId",
+            },
+            target: {
+              property: "eventProperties.ActivityId"
+            }
+          }
+        ],
+      },
+      {
+        eventType: "ServiceReportFaultEvent",
+        propertyMappings: [
+          {
+            source: {
+              property: "eventProperties.ActivityId",
+            },
+            target: {
+              property: "eventProperties.ActivityId"
+            }
+          }
+        ],
+      },
+      {
+        eventType: "CRMOperationGenerated",
+        propertyMappings: [
+          {
+            source: {
+              property: "eventProperties.ActivityId",
+            },
+            target: {
+              property: "eventProperties.DecisionId"
+            }
+          }
+        ],
+      },
+      {
+        eventType: "ApplicationProcessExited",
+        propertyMappings: [
+          {
+            source: {
+              property: "eventProperties.ActivityId",
+            },
+            target: {
+              property: "eventProperties.ActivityId"
+            }
+          }
+        ],
+      },
+      {
+        eventType: "NodeDown",
+        propertyMappings: [
+          {
+            source: {
+              property: "eventProperties.ActivityId",
+            },
+            target: {
+              property: "eventInstanceId"
+            }
+          }
+        ],
       }
-    ]
+    ],
+    "result": ""
+  },
+  {
+    "eventType": "ServiceReportFaultEvent",
+    "relevantEventsType": [
+    ],
+    "result": "eventProperties.Description"
+  },
+  {
+    "eventType": "ClientReportFaultEvent",
+    "relevantEventsType": [
+    ],
+    "result": "eventProperties.Description"
   },
   {
     "eventType": "PartitionReconfigured",
     "relevantEventsType": [
     ],
     "result": "eventProperties.ReconfigType"
+  },
+  {
+    "eventType": "CRMOperationGenerated",
+    "relevantEventsType": [
+    ],
+    "result": "eventProperties.Phase"
+  },
+  {
+    "eventType": "NodeDown",
+    "relevantEventsType": [
+    ],
+    "result": "raw.NodeName"
   },
   {
     "eventType": "ClusterNewHealthReport",

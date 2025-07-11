@@ -27,6 +27,7 @@ export class EventsComponent extends PartitionBaseControllerDirective {
     this.optionsConfig = {
       enableCluster: true,
       enableNodes: true,
+      enableApplication: true,
       enableRepairTasks: true
     };
   }
