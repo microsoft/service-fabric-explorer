@@ -34,12 +34,14 @@ import { CommandsComponent } from './commands/commands.component';
 import { PowershellCommandsModule } from 'src/app/modules/powershell-commands/powershell-commands.module';
 import { ConcurrentEventsVisualizationModule } from 'src/app/modules/concurrent-events-visualization/concurrent-events-visualization.module';
 import { NamingViewerPageComponent } from './naming-viewer-page/naming-viewer-page.component';
+import { OrchestrationViewComponent } from './orchestration-view/orchestration-view.component';
+import { TimePickerModule } from "src/app/modules/time-picker/time-picker.module";
 
 @NgModule({
   declarations: [EssentialsComponent, DetailsComponent, BaseComponent, MetricsComponent, ClustermapComponent,
                  ImagestoreComponent, ManifestComponent, EventsComponent, ActionCreateBackupPolicyComponent,
                  StatusWarningsComponent, BackupsComponent, RepairTasksComponent, MetricTileComponent,
-                 InfrastructureViewComponent, CommandsComponent, NamingViewerPageComponent],
+                 InfrastructureViewComponent, CommandsComponent, NamingViewerPageComponent, OrchestrationViewComponent],
   imports: [
     CommonModule,
     ClusterRoutingModule,
@@ -62,7 +64,8 @@ import { NamingViewerPageComponent } from './naming-viewer-page/naming-viewer-pa
     RepairTasksModule,
     NgbTooltipModule,
     ConcurrentEventsVisualizationModule,
-    PowershellCommandsModule
-  ]
+    PowershellCommandsModule,
+    TimePickerModule
+]
 })
 export class ClusterModule { }

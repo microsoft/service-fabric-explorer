@@ -213,6 +213,12 @@
   box-sizing: content-box !important;
 }
 
+.orchestration-view-timeline {
+  .vis-panel.vis-left {
+    border: 0 !important;
+  }
+}
+
 .rca-summary-key {
   width: 15px;
   height: 15px;
