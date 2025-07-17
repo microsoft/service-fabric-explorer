@@ -14,22 +14,22 @@
   <label style="display: block; margin-top: 15px; margin-bottom: 15px;">
     <app-toggle [(state)]="balancingToggle" [color]="balancingEventColor"
       (stateChange)="updateBalancingToggle($event)" data-cy="balancing-toggle"></app-toggle>
-    Enable Balancing Operations
+    Show Balancing Operations
   </label>
   <label style="display: block; margin-top: 15px; margin-bottom: 15px;">
     <app-toggle [(state)]="placementToggle" [color]="placementEventColor"
       (stateChange)="updatePlacementToggle($event)" data-cy="placement-toggle"></app-toggle>
-    Enable Placement Operations
+    Show Placement Operations
   </label>
   <label style="display: block; margin-top: 15px; margin-bottom: 15px;">
     <app-toggle [(state)]="constrainCheckToggle" [color]="constraintCheckEventColor"
       (stateChange)="updateConstrantCheckToggle($event)" data-cy="constrain-check-toggle"></app-toggle>
-    Enable Constraint Check Operations
+    Show Constraint Check Operations
   </label>
   <label style="display: block; margin-top: 15px; margin-bottom: 15px;">
     <app-toggle [(state)]="otherToggle" [color]="otherEventColor"
       (stateChange)="updateOtherToggle($event)" data-cy="other-toggle"></app-toggle>
-    Enable Other (ClientAPI) Operations
+    Show Other (ClientAPI) Operations
   </label>
   <app-event-store-timeline *ngIf="timeLineEventsData" [events]="timeLineEventsData"
     (itemClicked)="selectEvent($event)" class="orchestration-view-timeline" data-cy="orchestration-timeline"></app-event-store-timeline>
