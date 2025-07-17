@@ -1,0 +1,89 @@
+<div class="detail-pane essen-pane">
+  <div style="margin-bottom: 10px;" *ngIf="dateMin">
+    <app-time-picker [dateMin]="dateMin" (dateChange)="setDate($event)" data-cy="time-picker"></app-time-picker>
+  </div>
+</div>
+
+<div class="detail-pane essen-pane">
+  <h2>Partition Operations</h2>
+  <div style="margin-top: 15px; margin-bottom: 15px;">
+    <input type="text" class="input-flat" style="width: 100%; max-width: 320px; margin-right: 15px;" [placeholder]="'partition id'" [(ngModel)]="partitionId" data-cy="partition-input">
+    <!-- <app-input class="input-wrapper" [placeholder]="'partition id'" (changed)="partitionId = $event" data-cy="partition-input"></app-input> -->
+    <button class="simple-button" (click)="search(true)" data-cy="confirm-button">Confirm</button>
+  </div>
+  <label style="display: block; margin-top: 15px; margin-bottom: 15px;">
+    <app-toggle [(state)]="balancingToggle" [color]="balancingEventColor"
+      (stateChange)="updateBalancingToggle($event)" data-cy="balancing-toggle"></app-toggle>
+    Show Balancing Operations
+  </label>
+  <label style="display: block; margin-top: 15px; margin-bottom: 15px;">
+    <app-toggle [(state)]="placementToggle" [color]="placementEventColor"
+      (stateChange)="updatePlacementToggle($event)" data-cy="placement-toggle"></app-toggle>
+    Show Placement Operations
+  </label>
+  <label style="display: block; margin-top: 15px; margin-bottom: 15px;">
+    <app-toggle [(state)]="constrainCheckToggle" [color]="constraintCheckEventColor"
+      (stateChange)="updateConstrantCheckToggle($event)" data-cy="constrain-check-toggle"></app-toggle>
+    Show Constraint Check Operations
+  </label>
+  <label style="display: block; margin-top: 15px; margin-bottom: 15px;">
+    <app-toggle [(state)]="otherToggle" [color]="otherEventColor"
+      (stateChange)="updateOtherToggle($event)" data-cy="other-toggle"></app-toggle>
+    Show Other (ClientAPI) Operations
+  </label>
+  <app-event-store-timeline *ngIf="timeLineEventsData" [events]="timeLineEventsData"
+    (itemClicked)="selectEvent($event)" class="orchestration-view-timeline" data-cy="orchestration-timeline"></app-event-store-timeline>
+</div>
+
+<div *ngIf="selectedEvent" class="event-details-container" data-cy="event-details">
+  <div class="detail-pane essen-pane event-details">
+    <h2 class="event-details-title">Operation Details</h2>
+    <div class="details-grid">
+      <div class="detail-row">
+        <span>Partition:</span>
+        <span>{{ selectedEvent.raw['PartitionId'] }}</span>
+      </div>
+      <div *ngIf="selectedEvent.timeStamp" class="detail-row">
+        <span>Timestamp:</span>
+        <span>{{ selectedEvent.timeStamp | date:'EEE MMM dd yyyy HH:mm:ss zzzz' }}</span>
+      </div>
+      <div *ngIf="selectedEvent.raw['Phase']" class="detail-row">
+        <span>Phase:</span>
+        <span>{{ selectedEvent.raw['Phase'] }}</span>
+      </div>
+      <div *ngIf="selectedEvent.raw['Action']" class="detail-row">
+        <span>Action:</span>
+        <span>{{ selectedEvent.raw['Action'] }}</span>
+      </div>
+      <div *ngIf="selectedEvent.raw['SourceNodeName']" class="detail-row">
+        <span>Source Node:</span>
+        <span>{{ selectedEvent.raw['SourceNodeName'] }}</span>
+      </div>
+      <div *ngIf="selectedEvent.raw['TargetNodeName']" class="detail-row">
+        <span>Target Node:</span>
+        <span>{{ selectedEvent.raw['TargetNodeName'] }}</span>
+      </div>
+      <div *ngIf="selectedEvent.raw['MoveCost']" class="detail-row">
+        <span>Move Cost:</span>
+        <span>{{ selectedEvent.raw['MoveCost'] }}</span>
+      </div>
+    </div>
+  </div>
+  <div class="detail-pane essen-pane event-details">
+    <h2 class="event-details-title">Decision Details</h2>
+    <div class="details-grid">
+      <div *ngIf="selectedEvent.raw['DecisionId']" class="detail-row">
+        <span>Decision:</span>
+        <span>{{ selectedEvent.raw['DecisionId'] }}</span>
+      </div>
+      <div *ngIf="selectedEvent.raw['Stage']" class="detail-row">
+        <span>Type:</span>
+        <span>{{ selectedEvent.raw['Stage'] }}</span>
+      </div>
+      <div *ngIf="selectedEvent.raw['Reason']" class="detail-row">
+        <span>Reason:</span>
+        <pre style="white-space: pre-wrap;">{{ selectedEvent.raw['Reason'] }}</pre>
+      </div>
+    </div>
+  </div>
+</div>

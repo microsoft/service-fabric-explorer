@@ -13,6 +13,7 @@ import { RepairTasksComponent } from './repair-tasks/repair-tasks.component';
 import { InfrastructureViewComponent } from './infrastructure-view/infrastructure-view.component';
 import { CommandsComponent } from './commands/commands.component';
 import { NamingViewerPageComponent } from './naming-viewer-page/naming-viewer-page.component';
+import { OrchestrationViewComponent } from './orchestration-view/orchestration-view.component';
 
 const routes: Routes = [{
   path: '', component: BaseComponent, children: [
@@ -26,6 +27,7 @@ const routes: Routes = [{
     { path: 'repairtasks', component: RepairTasksComponent },
     { path: 'infrastructure', component: InfrastructureViewComponent },
     { path: 'naming', component: NamingViewerPageComponent },
+    { path: 'orchestration', component: OrchestrationViewComponent},
     { path: 'commands', component: CommandsComponent },
     { path: '', component: EssentialsComponent },
   ]
