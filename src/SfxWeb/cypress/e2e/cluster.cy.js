@@ -797,7 +797,16 @@ context('Cluster page', () => {
 
   describe("orchestration view", () => {
     beforeEach(() => {
-      cy.intercept('GET', '**/EventsStore/Partitions/**', { fixture: 'cluster-page/orchestration-view/partition-operation-events.json' }).as('partitionevents');
+      cy.fixture('cluster-page/orchestration-view/partition-operation-events.json').then((partitionEvents) => {
+        partitionEvents.forEach(event => {
+          // update timestamp to use yesterday's date but keep the time
+          let yesterday = new Date();
+          yesterday.setDate(yesterday.getDate() - 1);
+          let eventDate = new Date(event.TimeStamp);
+          event.TimeStamp = new Date(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate(), eventDate.getHours(), eventDate.getMinutes(), eventDate.getSeconds()).toISOString();
+        })
+        cy.intercept('GET', '**/EventsStore/Partitions/**', partitionEvents).as('partitionevents');
+      })
     })
 
     it("opens orchestration view page", () => {
