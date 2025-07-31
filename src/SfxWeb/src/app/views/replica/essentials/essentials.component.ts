@@ -62,21 +62,13 @@ export class EssentialsComponent extends ReplicaBaseControllerDirective {
         }
       ];
 
-      if(this.replica.raw.ReplicaIsStopped) {
-        const strIsStopped = String(this.replica.raw.ReplicaIsStopped);
-        this.essentialItems.push({
-          descriptionName: 'IsStopped',
-          displayText: strIsStopped,
-          copyTextValue: strIsStopped,
-          selectorName: 'stopped'
-        })
-        
-        const expirationTimestampUTC = this.replica.raw.StoppedReplicaExpirationTimeUtc;
+      if(this.replica.raw.ReplicaStatus == 'ToBeRemoved') {      
+        const expirationTimestampUTC = this.replica.raw.ToBeRemovedReplicaExpirationTimeUtc;
         this.essentialItems.push({
           descriptionName: 'Replica Expiration Time UTC',
           displayText: expirationTimestampUTC,
           copyTextValue: expirationTimestampUTC,
-          selectorName: 'stoppedExpirationTimeUTC'
+          selectorName: 'toBeRemovedExpirationTimeUTC'
         })
       }
 

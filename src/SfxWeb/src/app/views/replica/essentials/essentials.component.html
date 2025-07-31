@@ -1,7 +1,7 @@
 <div *ngIf="replica">
-  <div *ngIf="replica.raw.ReplicaIsStopped">
-    <h3> IsStopped: {{replica.raw.ReplicaIsStopped}}</h3>
-    <h3> Replica Expiration TimeStamp UTC: {{replica.raw.StoppedReplicaExpirationTimeUtc}} </h3>
+  <div *ngIf="replica.raw.ReplicaStatus === 'ToBeRemoved'">
+      <h3> ReplicaStatus: {{replica.raw.ReplicaStatus}}</h3>
+      <h3> ToBeRemovedReplicaExpirationTimeUTC: {{replica.raw.ToBeRemovedReplicaExpirationTimeUtc}} </h3>
   </div>
   <div class="tile-container">
     <app-essential-health-tile [healthState]="replica?.healthState" *ngIf="replica && replica.isInitialized"

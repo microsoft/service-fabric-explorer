@@ -75,11 +75,11 @@ export class ReplicaOnPartition extends DataModelBase<IRawReplicaOnPartition> {
 
     public get role(): string {
         const { PartitionStatus } = this.parent.raw;
-        const { PreviousReplicaRole, ReplicaRole, ReplicaIsStopped } = this.raw;
+        const { PreviousReplicaRole, ReplicaRole, ReplicaStatus} = this.raw;
 
-        if (ReplicaIsStopped)
+        if (ReplicaStatus == 'ToBeRemoved')
         {
-            return `Stopped: ToBeDeleted`;
+            return `ToBeRemoved`;
         }
 
         if (PartitionStatus !== 'Reconfiguring') {
@@ -121,12 +121,8 @@ export class ReplicaOnPartition extends DataModelBase<IRawReplicaOnPartition> {
         return SortPriorities.ReplicaRolesToSortPriorities[this.raw.ReplicaRole] || 0;
     }
 
-    public get replicaIsStopped(): boolean {
-        return this.raw.ReplicaIsStopped;
-    }
-
     public get stoppedReplicaExpirationTimeUtc(): string {
-        return TimeUtils.timestampToUTCString(this.raw.StoppedReplicaExpirationTimeUtc);
+        return TimeUtils.timestampToUTCString(this.raw.ToBeRemovedReplicaExpirationTimeUtc);
     }
 
     protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<any> {

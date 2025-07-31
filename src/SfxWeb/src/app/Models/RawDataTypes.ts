@@ -709,8 +709,7 @@ export interface IRawReplicaOnPartition {
         NodeName: string;
         ReplicaStatus: string;
         ServiceKind: string;
-        ReplicaIsStopped: boolean;
-        StoppedReplicaExpirationTimeUtc: string;
+        ToBeRemovedReplicaExpirationTimeUtc: string;
     }
 
 export interface IRawReplicaHealthState {
