@@ -471,8 +471,8 @@ context('Cluster page', () => {
             "Name": name,
             "AutoRestoreOnDataLoss": true,
             "MaxIncrementalBackups": maxIncBackups,
-            "QuickRecovery": true,
-            "CompressionStrategy": "ZIP",
+            "QuickRecovery": false,
+            "CompressionStrategy": "DEFAULT",
             "Schedule": {
               "ScheduleKind": "FrequencyBased",
               "ScheduleFrequencyType": "",
@@ -511,8 +511,8 @@ context('Cluster page', () => {
             "Name": name,
             "AutoRestoreOnDataLoss": false,
             "MaxIncrementalBackups": maxIncBackups,
-            "QuickRecovery": false,
-            "CompressionStrategy": "ZIP",
+            "QuickRecovery": true,
+            "CompressionStrategy": "DEFAULT",
             "Schedule": {
               "ScheduleKind": "FrequencyBased",
               "ScheduleFrequencyType": "",
@@ -538,7 +538,7 @@ context('Cluster page', () => {
       })
 
 
-      it('create by AzureBlobStore - dropdown CompressionStrategy', () => {
+      it('create by AzureBlobStore - dropdown CompressionStrategy is ZSTANDARD', () => {
         cy.get("[formcontrolname=ConnectionString]").type("constring");
         cy.get("[formcontrolname=CompressionStrategy]").select("ZSTANDARD");
 
@@ -551,8 +551,47 @@ context('Cluster page', () => {
             "Name": name,
             "AutoRestoreOnDataLoss": false,
             "MaxIncrementalBackups": maxIncBackups,
-            "QuickRecovery": true,
+            "QuickRecovery": false,
             "CompressionStrategy": "ZSTANDARD",
+            "Schedule": {
+              "ScheduleKind": "FrequencyBased",
+              "ScheduleFrequencyType": "",
+              "RunDays": [],
+              "RunTimes": [],
+              "Interval": "PT15M"
+            },
+            "Storage": {
+              "StorageKind": "AzureBlobStore",
+              "FriendlyName": "",
+              "Path": "",
+              "ConnectionString": "constring",
+              "ContainerName": "",
+              "BlobServiceUri": "",
+              "ManagedIdentityType": "",
+              "ManagedIdentityClientId": "",
+              "PrimaryUserName": "",
+              "PrimaryPassword": "",
+              "SecondaryUserName": "",
+              "SecondaryPassword": ""
+            }
+          })
+      })
+
+      it('create by AzureBlobStore - dropdown CompressionStrategy is ZIP', () => {
+        cy.get("[formcontrolname=ConnectionString]").type("constring");
+        cy.get("[formcontrolname=CompressionStrategy]").select("ZSTANDARD");
+
+        cy.get(submitButton).click();
+
+        cy.wait(aliasedCreateBRS)
+
+        cy.get(aliasedCreateBRS).its('request.body')
+          .should('deep.equal', {
+            "Name": name,
+            "AutoRestoreOnDataLoss": false,
+            "MaxIncrementalBackups": maxIncBackups,
+            "QuickRecovery": false,
+            "CompressionStrategy": "ZIP",
             "Schedule": {
               "ScheduleKind": "FrequencyBased",
               "ScheduleFrequencyType": "",
@@ -594,8 +633,8 @@ context('Cluster page', () => {
             "Name": name,
             "AutoRestoreOnDataLoss": false,
             "MaxIncrementalBackups": maxIncBackups,
-            "QuickRecovery": true,
-            "CompressionStrategy": "ZIP",
+            "QuickRecovery": false,
+            "CompressionStrategy": "DEFAULT",
             "Schedule": {
               "ScheduleKind": "FrequencyBased",
               "ScheduleFrequencyType": "",
@@ -646,8 +685,8 @@ context('Cluster page', () => {
             "Name": name,
             "AutoRestoreOnDataLoss": false,
             "MaxIncrementalBackups": maxIncBackups,
-            "QuickRecovery": true,
-            "CompressionStrategy": "ZIP",
+            "QuickRecovery": false,
+            "CompressionStrategy": "DEFAULT",
             "Schedule": {
               "ScheduleKind": "TimeBased",
               "ScheduleFrequencyType": "Weekly",
