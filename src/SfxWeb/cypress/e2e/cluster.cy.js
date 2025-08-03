@@ -579,7 +579,7 @@ context('Cluster page', () => {
 
       it('create by AzureBlobStore - dropdown CompressionStrategy is ZIP', () => {
         cy.get("[formcontrolname=ConnectionString]").type("constring");
-        cy.get("[formcontrolname=CompressionStrategy]").select("ZIP");
+        cy.get("[formcontrolname=CompressionStrategy]").select("ZSTANDARD");
 
         cy.get(submitButton).click();
 
