@@ -471,8 +471,8 @@ context('Cluster page', () => {
             "Name": name,
             "AutoRestoreOnDataLoss": true,
             "MaxIncrementalBackups": maxIncBackups,
-            "QuickRecovery": true,
-            "CompressionStrategy": "ZIP",
+            "QuickRecovery": false,
+            "CompressionType": "DEFAULT",
             "Schedule": {
               "ScheduleKind": "FrequencyBased",
               "ScheduleFrequencyType": "",
@@ -511,8 +511,47 @@ context('Cluster page', () => {
             "Name": name,
             "AutoRestoreOnDataLoss": false,
             "MaxIncrementalBackups": maxIncBackups,
+            "QuickRecovery": true,
+            "CompressionType": "DEFAULT",
+            "Schedule": {
+              "ScheduleKind": "FrequencyBased",
+              "ScheduleFrequencyType": "",
+              "RunDays": [],
+              "RunTimes": [],
+              "Interval": "PT15M"
+            },
+            "Storage": {
+              "StorageKind": "AzureBlobStore",
+              "FriendlyName": "",
+              "Path": "",
+              "ConnectionString": "constring",
+              "ContainerName": "",
+              "BlobServiceUri": "",
+              "ManagedIdentityType": "",
+              "ManagedIdentityClientId": "",
+              "PrimaryUserName": "",
+              "PrimaryPassword": "",
+              "SecondaryUserName": "",
+              "SecondaryPassword": ""
+            }
+          })
+      })
+
+      it('create by AzureBlobStore - dropdown CompressionType is ZIP', () => {
+        cy.get("[formcontrolname=ConnectionString]").type("constring");
+        cy.get("[formcontrolname=CompressionType]").select("ZIP");
+
+        cy.get(submitButton).click();
+
+        cy.wait(aliasedCreateBRS)
+
+        cy.get(aliasedCreateBRS).its('request.body')
+          .should('deep.equal', {
+            "Name": name,
+            "AutoRestoreOnDataLoss": false,
+            "MaxIncrementalBackups": maxIncBackups,
             "QuickRecovery": false,
-            "CompressionStrategy": "ZIP",
+            "CompressionType": "ZIP",
             "Schedule": {
               "ScheduleKind": "FrequencyBased",
               "ScheduleFrequencyType": "",
@@ -538,9 +577,10 @@ context('Cluster page', () => {
       })
 
 
-      it('create by AzureBlobStore - dropdown CompressionStrategy', () => {
+
+      it('create by AzureBlobStore - dropdown CompressionType is ZSTANDARD', () => {
         cy.get("[formcontrolname=ConnectionString]").type("constring");
-        cy.get("[formcontrolname=CompressionStrategy]").select("ZSTANDARD");
+        cy.get("[formcontrolname=CompressionType]").select("ZSTANDARD");
 
         cy.get(submitButton).click();
 
@@ -551,8 +591,8 @@ context('Cluster page', () => {
             "Name": name,
             "AutoRestoreOnDataLoss": false,
             "MaxIncrementalBackups": maxIncBackups,
-            "QuickRecovery": true,
-            "CompressionStrategy": "ZSTANDARD",
+            "QuickRecovery": false,
+            "CompressionType": "ZSTANDARD",
             "Schedule": {
               "ScheduleKind": "FrequencyBased",
               "ScheduleFrequencyType": "",
@@ -594,8 +634,8 @@ context('Cluster page', () => {
             "Name": name,
             "AutoRestoreOnDataLoss": false,
             "MaxIncrementalBackups": maxIncBackups,
-            "QuickRecovery": true,
-            "CompressionStrategy": "ZIP",
+            "QuickRecovery": false,
+            "CompressionType": "DEFAULT",
             "Schedule": {
               "ScheduleKind": "FrequencyBased",
               "ScheduleFrequencyType": "",
@@ -646,8 +686,8 @@ context('Cluster page', () => {
             "Name": name,
             "AutoRestoreOnDataLoss": false,
             "MaxIncrementalBackups": maxIncBackups,
-            "QuickRecovery": true,
-            "CompressionStrategy": "ZIP",
+            "QuickRecovery": false,
+            "CompressionType": "DEFAULT",
             "Schedule": {
               "ScheduleKind": "TimeBased",
               "ScheduleFrequencyType": "Weekly",

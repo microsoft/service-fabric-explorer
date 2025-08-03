@@ -18,10 +18,11 @@
                 <input type="number" class="input-flat" formControlName="MaxIncrementalBackups" required
                     name="MaxIncrementalBackups" />
             </dd>
-            <dt>CompressionStrategy</dt>
+            <dt>CompressionType</dt>
             <dd>
-                <select class="input-flat" formControlName="CompressionStrategy" aria-label="Compression strategy (zip/ZStandard)"
-                    name="CompressionStrategy">
+                <select class="input-flat" formControlName="CompressionType" aria-label="Compression type (zip/ZStandard)"
+                    name="CompressionType">
+                    <option value="DEFAULT">DEFAULT</option>
                     <option value="ZIP">ZIP</option>
                     <option value="ZSTANDARD">ZSTANDARD</option>
                 </select>
