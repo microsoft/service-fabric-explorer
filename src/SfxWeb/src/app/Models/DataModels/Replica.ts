@@ -83,7 +83,7 @@ export class ReplicaOnPartition extends DataModelBase<IRawReplicaOnPartition> {
         }
 
         if (PartitionStatus !== 'Reconfiguring') {
-            return `${ReplicaRole}`;
+            return ReplicaRole;
         }
 
         if (!PreviousReplicaRole || PreviousReplicaRole === 'None') {
