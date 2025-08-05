@@ -709,6 +709,7 @@ export interface IRawReplicaOnPartition {
         NodeName: string;
         ReplicaStatus: string;
         ServiceKind: string;
+        ToBeRemovedReplicaExpirationTimeUtc: string;
     }
 
 export interface IRawReplicaHealthState {
