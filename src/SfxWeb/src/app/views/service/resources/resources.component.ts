@@ -209,7 +209,7 @@ export class ResourcesComponent extends ServiceBaseControllerDirective {
   fillDisplayData() : void {
     let dynamicCpuOn = this.dynamicCpu && this.isServiceExclusiveProcess();
     let dynamicMemoryOn = this.dynamicMem && this.isServiceExclusiveProcess();
-    let dynamicLoadInfoText = "You can see values of dynamically reported loads in Partition View - Replicas/Instances table.";
+    // let dynamicLoadInfoText = "You can see values of dynamically reported loads in Partition View - Replicas/Instances table.";
     
     this.cpuData = [
       {
@@ -237,7 +237,7 @@ export class ResourcesComponent extends ServiceBaseControllerDirective {
         displayText: dynamicCpuOn ? "ON" : "OFF",
         disabled: !dynamicCpuOn,
         selectorName: "dynamic",
-        toolTip: dynamicCpuOn ? dynamicLoadInfoText : null
+        //toolTip: dynamicCpuOn ? dynamicLoadInfoText : null
       }
     ];
     
@@ -267,7 +267,7 @@ export class ResourcesComponent extends ServiceBaseControllerDirective {
         displayText: dynamicMemoryOn ? "ON" : "OFF",
         disabled: !dynamicMemoryOn,
         selectorName: "dynamic",
-        toolTip: dynamicMemoryOn ? dynamicLoadInfoText : null
+        //toolTip: dynamicMemoryOn ? dynamicLoadInfoText : null
       }
     ];
 
