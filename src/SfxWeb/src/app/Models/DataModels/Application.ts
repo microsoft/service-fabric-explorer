@@ -414,3 +414,4 @@ export class ApplicationBackupConfigurationInfo extends DataModelBase<IRawApplic
         return this.raw.PolicyName + '-' + this.raw.Kind;
     }
 }
+
