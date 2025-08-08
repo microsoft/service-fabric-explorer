@@ -28,7 +28,7 @@ export class ResourcesTemplateDirective {
 }
 
 @Component({
-  selector: 'service-resources-tile',
+  selector: 'app-service-resources-tile',
   templateUrl: './resources-tile.component.html',
   styleUrls: ['./resources-tile.component.scss']
 })
