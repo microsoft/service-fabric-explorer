@@ -15,7 +15,7 @@ interface IResourceItemInternal extends IResourceItem {
   ref?: TemplateRef<any>;
 }
 
-@Directive({ selector: '[resourcesTemplate]'})
+@Directive({ selector: '[appResourcesTemplate]'})
 export class ResourcesTemplateDirective {
   @Input() id: string;
 
