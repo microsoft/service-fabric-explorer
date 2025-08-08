@@ -414,9 +414,3 @@ export class ApplicationBackupConfigurationInfo extends DataModelBase<IRawApplic
         return this.raw.PolicyName + '-' + this.raw.Kind;
     }
 }
-
-export enum RGMetric{
-    None = 0,
-    CPU = 1,
-    Memory = 2
-}
