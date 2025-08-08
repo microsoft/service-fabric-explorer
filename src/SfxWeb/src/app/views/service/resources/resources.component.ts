@@ -21,7 +21,7 @@ export class ResourcesComponent extends ServiceBaseControllerDirective {
   public static readonly cpuCoresLimitKey: string = "CpuCoresLimit=";
   public static readonly memoryKey: string = "MemoryInMB=";
   public static readonly memoryLimitKey: string = "MemoryInMBLimit=";
-  public static readonly cpuMetricName: string = "servicefabric:/_CpuCores";
+  public static readonly cpuMetricName: string = "servicefabric:/_CpuCores"; 
   public static readonly memMetricName: string = "servicefabric:/_MemoryInMB";
 
   appManifestParameterCollection: { [key: string]: string } = {};
@@ -49,43 +49,14 @@ export class ResourcesComponent extends ServiceBaseControllerDirective {
     return this.data.getServiceType(app.raw.TypeName, app.raw.TypeVersion, this.service.description.raw.ServiceTypeName, true, messageHandler)
         .pipe(mergeMap(serviceType => {
             return serviceType.manifest.refresh(messageHandler).pipe(map(() => {
-
               this.servicePackageName = this.getServicePackageFromManifest(serviceType.manifest.raw.Manifest);
               app.manifest.refresh(messageHandler).subscribe({
                 next: (manifest) => {
-                  let m = `
-    <?xml version='1.0' encoding='UTF-8'?>
-<ApplicationManifest ApplicationTypeName='TestAppTC1' ApplicationTypeVersion='vTC1' xsi:schemaLocation='http://schemas.microsoft.com/2011/01/fabric ServiceFabricServiceModel.xsd' xmlns='http://schemas.microsoft.com/2011/01/fabric' xmlns:xsi='https://www.w3.org/2001/XMLSchema-instance'>
-
-  <Parameters>
-    <Parameter Name="CpuCores" DefaultValue="4" />
-    <Parameter Name="CpuSharesA" DefaultValue="512" />
-    <Parameter Name="CpuSharesB" DefaultValue="512" />
-    <Parameter Name="MemoryA" DefaultValue="1000" />
-    <Parameter Name="MemoryB" DefaultValue="100" />
-    <Parameter Name="MemoryC" DefaultValue="1" />
-    <Parameter Name="MemoryD" DefaultValue="azk10" />
-  </Parameters>
-  <ServiceManifestImport>
-    <ServiceManifestRef ServiceManifestName='SP1' ServiceManifestVersion='v1'/>
-    <Policies>
-      <ServicePackageResourceGovernancePolicy CpuCores="[CpuCores]" CpuCoresLimit="12"/>
-      <ResourceGovernancePolicy CodePackageRef="CodeA1" CpuShares="[CpuSharesA]" MemoryInMB="[MemoryA]"  MemoryInMBLimit="1000"/>
-      <ResourceGovernancePolicy CodePackageRef="CodeA2" CpuShares="[CpuSharesB]" MemoryInMB="[MemoryB]" MemoryInMBLimit="[MemoryC]"/>
-      <ResourceGovernancePolicy CodePackageRef="CodeA2" CpuShares="[CpuSharesB]" MemoryInMBLimit="[MemoryC]" MemoryInMB="[MemoryB]"/>
-    </Policies>
-  </ServiceManifestImport>
-    `;
-
-                  this.getSectionInfo(this.data.clusterManifest.raw.Manifest, "DynamicRGMetrics");
-                  // this.getSectionInfo(this.data.clusterManifest.raw.Manifest, "DefragmentationScopedAlgorithmEnabled");
-                  // this.appManifestParameterCollection = this.getAppManifestParameters(m);
-                  // this.getServiceManifestImport(m);
+                  this.parseSectionInfo(this.data.clusterManifest.raw.Manifest, "DynamicRGMetrics");
                   this.appManifestParameterCollection = this.getAppManifestParameters(manifest.raw.Manifest);
-                  this.getServiceManifestImport(manifest.raw.Manifest);
+                  this.parseServiceManifestImport(manifest.raw.Manifest);
                 }
               });
-
             }));
         }));
   }
@@ -119,7 +90,7 @@ export class ResourcesComponent extends ServiceBaseControllerDirective {
     return parameters;
   }
 
-  getServiceManifestImport(appmanifest: string) {
+  parseServiceManifestImport(appmanifest: string) : void {
     let currentManifest = appmanifest;
     
     while (currentManifest != ""){ 
@@ -133,13 +104,13 @@ export class ResourcesComponent extends ServiceBaseControllerDirective {
       if (!name) continue;
 
       if (name[1]==this.servicePackageName) {
-        this.parseServiceManifestImport(smImport[1]);
+        this.parseServicePackageRG(smImport[1]);
         break;
       }
     }
   }
 
-  getServicePackageFromManifest(manifest: string): string {
+  getServicePackageFromManifest(manifest: string) : string {
     let manifestTagDecl = manifest.substring(0, manifest.indexOf(">"));
     let properties = manifestTagDecl.split(" ");
     let name = "";
@@ -156,7 +127,7 @@ export class ResourcesComponent extends ServiceBaseControllerDirective {
     return name;
   }
 
-  getSectionInfo(manifest: string, sectionName: string) {
+  parseSectionInfo(manifest: string, sectionName: string) : void {
     let match = manifest.match(new RegExp(`<Section\\s+Name="${sectionName}"[^>]*>([\\s\\S]*?)<\\/Section>`));
     if (!match) return;
 
@@ -172,7 +143,7 @@ export class ResourcesComponent extends ServiceBaseControllerDirective {
     }
   }
 
-  parseServiceManifestImport(manifest: string) {
+  parseServicePackageRG(manifest: string) : void {
     let patternMatch = `["']\\[?([^"'\\[\\]]+)\\]?["']`;
 
     this.cpuCores = this.sumValuesFromTags(manifest, ResourcesComponent.cpuCoresKey, patternMatch);
@@ -202,20 +173,6 @@ export class ResourcesComponent extends ServiceBaseControllerDirective {
     return sumValue;
   }
 
-  clearRG() {
-    this.cpuCores = 0;
-    this.cpuCoresLimit = 0;
-    this.memory = 0;
-    this.memoryLimit = 0;
-
-    this.dynamicCpu = false;
-    this.dynamicMem = false;
-
-    this.cpuData = [];
-    this.memoryData = [];
-    this.spData = [];
-  }
-
   resolveParam(key: string) : number {
     let keyNum = Number(key);
     if (!isNaN(keyNum)) return keyNum;
@@ -243,13 +200,13 @@ export class ResourcesComponent extends ServiceBaseControllerDirective {
       case -1:
         return "Value could not be displayed. Reason: part of value or complete value is stored on a remote location.";
       case 0:
-        return "Value has not been specified by the user.";
+        return "Value has not been specified by the cluster owner.";
       default:
         return null;
     }
   }
 
-  fillDisplayData() {
+  fillDisplayData() : void {
     let dynamicCpuOn = this.dynamicCpu && this.isServiceExclusiveProcess();
     let dynamicMemoryOn = this.dynamicMem && this.isServiceExclusiveProcess();
     let dynamicLoadInfoText = "You can see values of dynamically reported loads in Partition View - Replicas/Instances table.";
@@ -337,6 +294,20 @@ export class ResourcesComponent extends ServiceBaseControllerDirective {
   
   isServiceExclusiveProcess() : boolean {
     return this.service.description.raw.ServicePackageActivationMode == "ExclusiveProcess";
+  }
+
+  clearRG() : void {
+    this.cpuCores = 0;
+    this.cpuCoresLimit = 0;
+    this.memory = 0;
+    this.memoryLimit = 0;
+
+    this.dynamicCpu = false;
+    this.dynamicMem = false;
+
+    this.cpuData = [];
+    this.memoryData = [];
+    this.spData = [];
   }
 
 }
