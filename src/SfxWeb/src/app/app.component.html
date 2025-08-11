@@ -60,25 +60,30 @@
   </header>
 
   <div>
-    <button *ngIf="smallScreenSize" class="simple-button sidenav-button"
-            (click)="smallScreenLeftPanelWidth === '0%' ? resize(60): resize(0)" tabindex="0" [title]="smallScreenLeftPanelWidth === '0%' ? 'Open navigation tree panel' : 'Close navigation tree panel'">
-      menu
-    </button>
-      <div class="left-panel left-bar"  [ngStyle]="{'width': smallScreenSize ? smallScreenLeftPanelWidth : treeWidth, 'display' : smallScreenSize ?  smallScreenTreeDisplay : treeDisplay }">
-          <nav class="tree-container" [attr.aria-hidden]="smallScreenSize ? smallScreenLeftPanelWidth === '0%' : false" role="navigation">
-            <app-tree-view (treeResize)="resize($event)" [smallWindowSize]="smallScreenSize"  ></app-tree-view>
-          </nav>
-          <div class="slider-bar" appDrag (dragFinish)="resize($event)" *ngIf="!smallScreenSize">
-        </div>
-        <div class="slider-bar" style="cursor: initial;" *ngIf="smallScreenSize"></div>
+    <div class="left-panel left-bar"  [ngStyle]="{'width': smallScreenSize ? smallScreenLeftPanelWidth : treeWidth, 'display' : smallScreenSize ?  smallScreenTreeDisplay : treeDisplay, 'overflow' : smallScreenSize ? 'initial' : 'hidden' }">
+      <button *ngIf="smallScreenSize && smallScreenLeftPanelWidth !== '0%'" class="simple-button sidenav-button close"
+          (click)="resize(0)" tabindex="0" title="Close navigation tree panel">
+        close
+      </button>  
+      <nav class="tree-container" [attr.aria-hidden]="smallScreenSize ? smallScreenLeftPanelWidth === '0%' : false" role="navigation">
+          <app-tree-view (treeResize)="resize($event)" [smallWindowSize]="smallScreenSize"  ></app-tree-view>
+        </nav>
+        <div class="slider-bar" appDrag (dragFinish)="resize($event)" *ngIf="!smallScreenSize">
+      </div>
+      <div class="slider-bar" style="cursor: initial;" *ngIf="smallScreenSize"></div>
     </div>
-    <div [ngStyle]="{'left': smallScreenSize ? '0px' : rightOffset }" class="right-panel main-content" (click)="smallScreenSize ? resize(0): null" (focusin)="smallScreenSize ? resize(0): null">
+    <div [ngStyle]="{'left': smallScreenSize ? '0px' : rightOffset }" class="right-panel main-content" >
       <main>
-        <div class="view-container">
-          <div class="expander-container" *ngIf="!smallScreenSize">
-            <button class="expander-icon mif-vertical-align-bottom" [ngClass]="{'flip': treeWidth === '8px'}" placement="right"
+        <div class="expander-container" >
+            <button class="expander-icon mif-vertical-align-bottom" [ngClass]="{'flip': treeWidth === '8px'}" placement="right" *ngIf="!smallScreenSize"
                   [title]="(treeWidth === '8px' ? 'Expand' : 'Close') + ' tree view'" (click)="collapseSide()"></button>
+            <button *ngIf="smallScreenSize && smallScreenLeftPanelWidth === '0%'" class="simple-button sidenav-button open"
+              (click)="resize(60)" tabindex="0" title="Open navigation tree panel">
+              menu
+            </button>
           </div>
+        <div class="view-container" (click)="smallScreenSize ? resize(0): null" (focusin)="smallScreenSize ? resize(0): null">
+          
           <router-outlet id="view-container"></router-outlet>
         </div>
       </main>
