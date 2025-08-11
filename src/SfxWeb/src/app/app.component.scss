@@ -15,7 +15,12 @@ $right-panel-min-width: 200px !default;
 
     .navbar-brand-icon {
         display: inline-block;
-        margin-right: 14px;
+    }
+
+    &.navbar-brand-small {
+      margin-right: 0px;
+      padding: 12px 0px;
+      font-size: var(--font-size-medium);
     }
 }
 
@@ -78,6 +83,11 @@ $right-panel-min-width: 200px !default;
 
     .right-panel {
       bottom: 0px;
+    }
+
+    .flat-button {
+      padding-left: 0px;
+      padding-right: 0px;
     }
 }
 

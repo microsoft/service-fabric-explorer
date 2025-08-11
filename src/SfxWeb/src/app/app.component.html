@@ -4,16 +4,16 @@
     Skip to content
   </button>
   <header class="header-bar">
-    <a href="https://aka.ms/portalsfx" target="_blank" tabindex="0" sfx-tree-set-focus selected="true" *ngIf="!hideAzure">
-      <div class="navbar-brand navbar-brand-azure">
+    <a href="https://aka.ms/portalsfx" target="_blank" tabindex="0" sfx-tree-set-focus selected="true" >
+      <div [class]="'navbar-brand navbar-brand-azure' + (shrinkAllHeaderItem ? ' navbar-brand-small' : '')">
         <span>
-            Microsoft Azure
+          {{(!shortenAzure ? 'Microsoft Azure' : 'Azure')}}
         </span>
       </div>
       </a>
-    <a class="navbar-brand navbar-brand-title" [routerLink]="['/']" *ngIf="!hideSFXLogo" >
+    <a [class]="'navbar-brand' + (shrinkAllHeaderItem ? ' navbar-brand-small' : '')" [routerLink]="['/']" >
       <img style="width: 32px" [src]="assetBase + 'assets/favicon.svg'" title="Service Fabric Explorer" class="navbar-brand-icon"/>
-      <span style="vertical-align: middle;" *ngIf="!hideSFXTest">
+      <span style="vertical-align: middle; margin-left: 14px;" *ngIf="!hideSFXText">
         Service Fabric Explorer
       </span>
     </a>
@@ -23,7 +23,7 @@
     <!-- push stuff to align right -->
     <div style="margin-left: auto;"></div>
     <div>
-      <app-refresh-rate [value]="refreshService.refreshRate" (rateChange)="refreshService.updateRefreshInterval($event)"
+      <app-refresh-rate [value]="refreshService.refreshRate" (rateChange)="refreshService.updateRefreshInterval($event)" [condensedVersion]="shrinkAllHeaderItem"
                         [refresh]="refreshService.isRefreshing" (forceRefreshed)="attemptForceRefresh()"></app-refresh-rate>
     </div>
     <app-advanced-option></app-advanced-option>
