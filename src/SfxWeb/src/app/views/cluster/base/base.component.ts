@@ -57,7 +57,11 @@ export class BaseComponent implements OnInit, IBaseView {
         this.tabs = this.tabs.concat({
           name: 'naming viewer',
           route: './naming'
-          })
+          });
+        this.tabs = this.tabs.concat({
+          name: 'orchestration view',
+          route: './orchestration'
+          });
       }
       if (this.dataService.clusterManifest.isBackupRestoreEnabled) {
         this.tabs = this.tabs.concat({
