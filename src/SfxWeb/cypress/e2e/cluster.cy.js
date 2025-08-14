@@ -471,8 +471,8 @@ context('Cluster page', () => {
             "Name": name,
             "AutoRestoreOnDataLoss": true,
             "MaxIncrementalBackups": maxIncBackups,
-            "QuickRecovery": true,
-            "CompressionStrategy": "ZIP",
+            "QuickRecovery": false,
+            "CompressionStrategy": "DEFAULT",
             "Schedule": {
               "ScheduleKind": "FrequencyBased",
               "ScheduleFrequencyType": "",
@@ -511,8 +511,8 @@ context('Cluster page', () => {
             "Name": name,
             "AutoRestoreOnDataLoss": false,
             "MaxIncrementalBackups": maxIncBackups,
-            "QuickRecovery": false,
-            "CompressionStrategy": "ZIP",
+            "QuickRecovery": true,
+            "CompressionStrategy": "DEFAULT",
             "Schedule": {
               "ScheduleKind": "FrequencyBased",
               "ScheduleFrequencyType": "",
@@ -538,7 +538,7 @@ context('Cluster page', () => {
       })
 
 
-      it('create by AzureBlobStore - dropdown CompressionStrategy', () => {
+      it('create by AzureBlobStore - dropdown CompressionStrategy is ZSTANDARD', () => {
         cy.get("[formcontrolname=ConnectionString]").type("constring");
         cy.get("[formcontrolname=CompressionStrategy]").select("ZSTANDARD");
 
@@ -551,8 +551,47 @@ context('Cluster page', () => {
             "Name": name,
             "AutoRestoreOnDataLoss": false,
             "MaxIncrementalBackups": maxIncBackups,
-            "QuickRecovery": true,
+            "QuickRecovery": false,
             "CompressionStrategy": "ZSTANDARD",
+            "Schedule": {
+              "ScheduleKind": "FrequencyBased",
+              "ScheduleFrequencyType": "",
+              "RunDays": [],
+              "RunTimes": [],
+              "Interval": "PT15M"
+            },
+            "Storage": {
+              "StorageKind": "AzureBlobStore",
+              "FriendlyName": "",
+              "Path": "",
+              "ConnectionString": "constring",
+              "ContainerName": "",
+              "BlobServiceUri": "",
+              "ManagedIdentityType": "",
+              "ManagedIdentityClientId": "",
+              "PrimaryUserName": "",
+              "PrimaryPassword": "",
+              "SecondaryUserName": "",
+              "SecondaryPassword": ""
+            }
+          })
+      })
+
+      it('create by AzureBlobStore - dropdown CompressionStrategy is ZIP', () => {
+        cy.get("[formcontrolname=ConnectionString]").type("constring");
+        cy.get("[formcontrolname=CompressionStrategy]").select("ZIP");
+
+        cy.get(submitButton).click();
+
+        cy.wait(aliasedCreateBRS)
+
+        cy.get(aliasedCreateBRS).its('request.body')
+          .should('deep.equal', {
+            "Name": name,
+            "AutoRestoreOnDataLoss": false,
+            "MaxIncrementalBackups": maxIncBackups,
+            "QuickRecovery": false,
+            "CompressionStrategy": "ZIP",
             "Schedule": {
               "ScheduleKind": "FrequencyBased",
               "ScheduleFrequencyType": "",
@@ -594,8 +633,8 @@ context('Cluster page', () => {
             "Name": name,
             "AutoRestoreOnDataLoss": false,
             "MaxIncrementalBackups": maxIncBackups,
-            "QuickRecovery": true,
-            "CompressionStrategy": "ZIP",
+            "QuickRecovery": false,
+            "CompressionStrategy": "DEFAULT",
             "Schedule": {
               "ScheduleKind": "FrequencyBased",
               "ScheduleFrequencyType": "",
@@ -646,8 +685,8 @@ context('Cluster page', () => {
             "Name": name,
             "AutoRestoreOnDataLoss": false,
             "MaxIncrementalBackups": maxIncBackups,
-            "QuickRecovery": true,
-            "CompressionStrategy": "ZIP",
+            "QuickRecovery": false,
+            "CompressionStrategy": "DEFAULT",
             "Schedule": {
               "ScheduleKind": "TimeBased",
               "ScheduleFrequencyType": "Weekly",
@@ -797,7 +836,16 @@ context('Cluster page', () => {
 
   describe("orchestration view", () => {
     beforeEach(() => {
-      cy.intercept('GET', '**/EventsStore/Partitions/**', { fixture: 'cluster-page/orchestration-view/partition-operation-events.json' }).as('partitionevents');
+      cy.fixture('cluster-page/orchestration-view/partition-operation-events.json').then((partitionEvents) => {
+        partitionEvents.forEach(event => {
+          // update timestamp to use yesterday's date but keep the time
+          let yesterday = new Date();
+          yesterday.setDate(yesterday.getDate() - 1);
+          let eventDate = new Date(event.TimeStamp);
+          event.TimeStamp = new Date(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate(), eventDate.getHours(), eventDate.getMinutes(), eventDate.getSeconds()).toISOString();
+        })
+        cy.intercept('GET', '**/EventsStore/Partitions/**', partitionEvents).as('partitionevents');
+      })
     })
 
     it("opens orchestration view page", () => {
