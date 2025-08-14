@@ -1,7 +1,7 @@
 <span *ngIf="clusterUpgradeProgress.isInitialized && clusterUpgradeProgress.isUpgrading" data-cy="upgradebanner">
     <div style="display: inline-flex; height: 50px;" >
-        <a routerLink="/details" style="margin: auto;" class="essen-pane" >
-            <span class="dark-background-link mif-info"></span>
+        <a routerLink="/details" style="margin: auto;" [class]="displayAllText ? 'essen-pane' : ''" >
+            <span class="dark-background-link mif-info" title="Cluster Upgrade Info"></span>
             <span *ngIf="displayAllText">
                 <span style="padding-left: 2px;">{{clusterUpgradeProgress.isUDUpgrade ? '': 'Node by Node '}} Cluster Upgrade </span>
                 <span *ngIf="displayMiddleText">

@@ -1,14 +1,29 @@
-<div class="refresh-container" data-cy="refreshrate">
-    <div style="overflow: hidden;">
-      Refresh Rate : {{displayRate === "0" ? 'Off' : displayRate}}
-    </div>
-    <button (click)="change(0)" class="flat-button rounded-button" ngbTooltip="Turn off refresh rate"  tooltipClass="styled-tooltip"> Off </button>
+<ng-template #refreshOptions>
+  <button (click)="change(0)" class="flat-button rounded-button" ngbTooltip="Turn off refresh rate"  tooltipClass="styled-tooltip"> Off </button>
     <input [(ngModel)]="refreshRate" type="range" list="tickmarks" step="1" min="0" max="5" (click)="changed()" class="rate-picker"
       ngbTooltip="Set the refresh rate" aria-label="The rate at which content is refreshed" tooltipClass="styled-tooltip">
     <button (click)="change(5)" class="flat-button rounded-button" ngbTooltip="Set refresh rate to 5 seconds."  tooltipClass="styled-tooltip"> Fast </button>
     <button (click)="forceRefresh()" class="flat-button" data-cy="refresh"
       aria-label="Force a refresh"  tooltipClass="styled-tooltip"
       [ngbTooltip]="refresh ? 'Refreshing' : 'Force a refresh'"> <i class="mif-refresh mif-2x " [ngClass]="{'rotate': refresh}"></i> </button>
+</ng-template>
+
+<div *ngIf="!condensedVersion" class="refresh-container" data-cy="refreshrate">
+    <div style="overflow: hidden;">
+      Refresh Rate : {{displayRate === "0" ? 'Off' : displayRate}}
+    </div>
+    <ng-container *ngTemplateOutlet="refreshOptions"></ng-container>
+</div>
+
+<div ngbDropdown *ngIf="condensedVersion" class="refresh-container" data-cy="refreshrate" container="body">
+    <button class="flat-button rounded-button" ngbDropdownToggle>
+      Refresh Rate : {{displayRate === "0" ? 'Off' : displayRate}}
+    </button>
+    <div ngbDropdownMenu>
+      <span style="display: flex;">
+        <ng-container *ngTemplateOutlet="refreshOptions"></ng-container>
+      </span>
+    </div>
 </div>
 
 <datalist id="tickmarks">
