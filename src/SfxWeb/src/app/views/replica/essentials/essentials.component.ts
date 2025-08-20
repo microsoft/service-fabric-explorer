@@ -45,35 +45,43 @@ export class EssentialsComponent extends ReplicaBaseControllerDirective {
           const activationId = detailRaw.ServicePackageActivationId || null;
           this.nodeView = RoutesService.getDeployedReplicaViewPath(this.replica.raw.NodeName, this.appId, serviceNameOnly, activationId, this.partitionId, this.replicaId);
       }
+      return true;
     }),
     catchError(error => {
       console.error("Detail refresh failed", error);
-      return of(null); // Continue with null on failure
+      return of(false); // Emit with "failed" flag
     })
   );
 
   return forkJoin([safeHealthRefresh$, safeDetailRefresh$]).pipe(
-    map(() => {
+    map(([_, detailSuccess]) => {
       this.essentialItems = [
         {
           descriptionName: 'Node Name',
           copyTextValue: this.replica.raw.NodeName,
           selectorName: 'nodeName',
           displaySelector: true
-        },
+        }];
+
+        detailSuccess = false;
+        this.replica.raw.ReplicaStatus = 'ToBeRemoved';
+
+        if(detailSuccess)
         {
+          this.essentialItems.push({
           descriptionName: 'Process Id',
           displayText: this.replica.detail.processID,
           copyTextValue: this.replica.detail.processID
-        },
-        {
+        });
+        }
+
+        this.essentialItems.push({
           descriptionName: 'Status',
           displayText: this.replica.raw.ReplicaStatus,
           copyTextValue: this.replica.raw.ReplicaStatus,
           selectorName: 'status',
           displaySelector: true
-        }
-      ];
+        });
 
       if (this.replica.raw.ReplicaStatus === 'ToBeRemoved') {
         const expirationTimestampUTC = this.replica.raw.ToBeRemovedReplicaExpirationTimeUtc;
