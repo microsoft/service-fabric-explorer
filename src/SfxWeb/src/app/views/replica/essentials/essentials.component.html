@@ -1,5 +1,4 @@
 <div *ngIf="replica">
-
   <div class="tile-container">
     <app-essential-health-tile [healthState]="replica?.healthState" *ngIf="replica && replica.isInitialized"
       class="long" [listItems]="essentialItems">

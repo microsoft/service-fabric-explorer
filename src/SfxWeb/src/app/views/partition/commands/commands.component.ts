@@ -57,7 +57,7 @@ export class CommandsComponent extends PartitionBaseControllerDirective{
     this.commands.push(getPartition);
 
     const statusFilter = new PowershellCommandParameter("ReplicaStatusFilter", CommandParamTypes.enum,
-      { options: ['Default', 'InBuild', 'Standby', 'Ready', 'Down', 'Dropped', 'Completed', 'All'] });
+      { options: ['Default', 'InBuild', 'Standby', 'Ready', 'Down', 'Dropped', 'Completed', 'ToBeRemoved', 'All'] });
 
     const getReplicas = new PowershellCommand(
       'Get Replicas',
