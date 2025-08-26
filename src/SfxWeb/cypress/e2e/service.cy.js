@@ -192,9 +192,9 @@ context('service', () => {
 
         cy.url().should('include', '/resources')
 
-        cy.get("[data-cy=servicepackage-data]").should("exist");
-        cy.get("[data-cy=cpu-data]").should("exist");
-        cy.get("[data-cy=memory-data]").should("exist");
+        cy.get("[data-cy=servicepackage-info]").should("exist");
+        cy.get("[data-cy=cpu-info]").should("exist");
+        cy.get("[data-cy=memory-info]").should("exist");
 
       });
 
