@@ -1,13 +1,13 @@
 <div class="card-container ">
     
-    <app-service-resources-tile [listItems]="spData" class="long">
+    <app-service-resources-tile [listItems]="spData" class="long" data-cy="servicepackage-info">
     </app-service-resources-tile>
     
 </div>
 
 <div class="card-container ">    
     
-    <app-service-resources-tile [listItems]="cpuData" class="long" >
+    <app-service-resources-tile [listItems]="cpuData" class="long" data-cy="cpu-info">
         <ng-template appResourcesTemplate id="requested">
         </ng-template>
         <ng-template appResourcesTemplate id="limit">
@@ -16,7 +16,7 @@
         </ng-template>
     </app-service-resources-tile>
 
-    <app-service-resources-tile [listItems]="memoryData" class="long">
+    <app-service-resources-tile [listItems]="memoryData" class="long" data-cy="memory-info">
         <ng-template appResourcesTemplate id="requested">
         </ng-template>
         <ng-template appResourcesTemplate id="limit">
