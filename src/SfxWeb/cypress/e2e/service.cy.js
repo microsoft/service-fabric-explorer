@@ -182,6 +182,22 @@ context('service', () => {
         checkCommand(3, 1);
 
       })
+      
+      it("view resources", () => {
+        cy.wait(waitRequest);
+
+        cy.get('[data-cy=navtabs]').within(() => {
+          cy.contains('resources').click();
+        })
+
+        cy.url().should('include', '/resources')
+
+        cy.get("[data-cy=servicepackage-data]").should("exist");
+        cy.get("[data-cy=cpu-data]").should("exist");
+        cy.get("[data-cy=memory-data]").should("exist");
+
+      });
+
     })
 
     describe("stateful - with auxiliary replicas", () => {
