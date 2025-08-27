@@ -11,7 +11,7 @@
 
     <app-dashboard-text-scale-tile *ngIf="placementProperties" data-cy="placementconstraints">
       <div class="placement-constraint-wrapper text-center">
-        <div class="top-seperator title">Placement Properties</div>
+        <h2 class="top-seperator title">Placement Properties</h2>
         <div class="inner-list" *ngFor="let property of placementProperties.placementProperties | keyvalue">
           <div>{{property.key}} : {{property.value}}</div>
         </div>
