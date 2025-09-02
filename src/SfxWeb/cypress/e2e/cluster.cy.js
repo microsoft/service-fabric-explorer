@@ -471,8 +471,8 @@ context('Cluster page', () => {
             "Name": name,
             "AutoRestoreOnDataLoss": true,
             "MaxIncrementalBackups": maxIncBackups,
-            "QuickRecovery": false,
-            "CompressionStrategy": "DEFAULT",
+            "QuickRecovery": "Disabled",
+            "CompressionType": "CLUSTER_DEFINED",
             "Schedule": {
               "ScheduleKind": "FrequencyBased",
               "ScheduleFrequencyType": "",
@@ -498,9 +498,9 @@ context('Cluster page', () => {
       })
 
 
-      it('create by AzureBlobStore - toggle QuickRecovery', () => {
+      it('create by AzureBlobStore - drop down QuickRecovery', () => {
         cy.get("[formcontrolname=ConnectionString]").type("constring");
-        cy.get("[formcontrolname=QuickRecovery]").click();
+        cy.get("[formcontrolname=QuickRecovery]").select("FromPrimary");
 
         cy.get(submitButton).click();
 
@@ -511,8 +511,8 @@ context('Cluster page', () => {
             "Name": name,
             "AutoRestoreOnDataLoss": false,
             "MaxIncrementalBackups": maxIncBackups,
-            "QuickRecovery": true,
-            "CompressionStrategy": "DEFAULT",
+            "QuickRecovery": "FromPrimary",
+            "CompressionType": "CLUSTER_DEFINED",
             "Schedule": {
               "ScheduleKind": "FrequencyBased",
               "ScheduleFrequencyType": "",
@@ -538,9 +538,9 @@ context('Cluster page', () => {
       })
 
 
-      it('create by AzureBlobStore - dropdown CompressionStrategy is ZSTANDARD', () => {
+      it('create by AzureBlobStore - dropdown CompressionType is ZSTANDARD', () => {
         cy.get("[formcontrolname=ConnectionString]").type("constring");
-        cy.get("[formcontrolname=CompressionStrategy]").select("ZSTANDARD");
+        cy.get("[formcontrolname=CompressionType]").select("ZSTANDARD");
 
         cy.get(submitButton).click();
 
@@ -551,8 +551,8 @@ context('Cluster page', () => {
             "Name": name,
             "AutoRestoreOnDataLoss": false,
             "MaxIncrementalBackups": maxIncBackups,
-            "QuickRecovery": false,
-            "CompressionStrategy": "ZSTANDARD",
+            "QuickRecovery": "Disabled",
+            "CompressionType": "ZSTANDARD",
             "Schedule": {
               "ScheduleKind": "FrequencyBased",
               "ScheduleFrequencyType": "",
@@ -577,9 +577,9 @@ context('Cluster page', () => {
           })
       })
 
-      it('create by AzureBlobStore - dropdown CompressionStrategy is ZIP', () => {
+      it('create by AzureBlobStore - dropdown CompressionType is ZIP', () => {
         cy.get("[formcontrolname=ConnectionString]").type("constring");
-        cy.get("[formcontrolname=CompressionStrategy]").select("ZIP");
+        cy.get("[formcontrolname=CompressionType]").select("ZIP");
 
         cy.get(submitButton).click();
 
@@ -590,8 +590,8 @@ context('Cluster page', () => {
             "Name": name,
             "AutoRestoreOnDataLoss": false,
             "MaxIncrementalBackups": maxIncBackups,
-            "QuickRecovery": false,
-            "CompressionStrategy": "ZIP",
+            "QuickRecovery": "Disabled",
+            "CompressionType": "ZIP",
             "Schedule": {
               "ScheduleKind": "FrequencyBased",
               "ScheduleFrequencyType": "",
@@ -633,8 +633,8 @@ context('Cluster page', () => {
             "Name": name,
             "AutoRestoreOnDataLoss": false,
             "MaxIncrementalBackups": maxIncBackups,
-            "QuickRecovery": false,
-            "CompressionStrategy": "DEFAULT",
+            "QuickRecovery": "Disabled",
+            "CompressionType": "CLUSTER_DEFINED",
             "Schedule": {
               "ScheduleKind": "FrequencyBased",
               "ScheduleFrequencyType": "",
@@ -685,8 +685,8 @@ context('Cluster page', () => {
             "Name": name,
             "AutoRestoreOnDataLoss": false,
             "MaxIncrementalBackups": maxIncBackups,
-            "QuickRecovery": false,
-            "CompressionStrategy": "DEFAULT",
+            "QuickRecovery": "Disabled",
+            "CompressionType": "CLUSTER_DEFINED",
             "Schedule": {
               "ScheduleKind": "TimeBased",
               "ScheduleFrequencyType": "Weekly",
