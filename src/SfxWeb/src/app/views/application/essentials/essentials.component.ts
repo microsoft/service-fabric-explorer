@@ -79,7 +79,9 @@ export class EssentialsComponent extends ApplicationBaseControllerDirective {
 
   afterDataSet(): void {
     if(!this.app.isArmManaged) {
-      this.serviceTypesListSettings.columnSettings.push(new ListColumnSettingForApplicationServiceRow());
+      if (!this.serviceTypesListSettings.columnSettings.some(c => c instanceof ListColumnSettingForApplicationServiceRow)) {
+        this.serviceTypesListSettings.columnSettings.push(new ListColumnSettingForApplicationServiceRow());
+      }
     }
   }
 
