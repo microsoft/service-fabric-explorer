@@ -7,6 +7,7 @@ import { EventsComponent } from './events/events.component';
 import { ManifestComponent } from './manifest/manifest.component';
 import { BackupComponent } from './backup/backup.component';
 import { CommandsComponent } from './commands/commands.component';
+import { ResourcesComponent } from './resources/resources.component';
 
 const routes: Routes = [{
   path: '', component: BaseComponent, children: [
@@ -15,7 +16,8 @@ const routes: Routes = [{
     { path: 'manifest', component: ManifestComponent },
     { path: 'events', component: EventsComponent },
     { path: 'backup', component: BackupComponent },
-    { path: 'commands', component: CommandsComponent}
+    { path: 'commands', component: CommandsComponent },
+    { path: 'resources', component: ResourcesComponent }
   ]
 }];
 

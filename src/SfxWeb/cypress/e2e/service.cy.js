@@ -182,6 +182,22 @@ context('service', () => {
         checkCommand(3, 1);
 
       })
+      
+      it("view resources", () => {
+        cy.wait(waitRequest);
+
+        cy.get('[data-cy=navtabs]').within(() => {
+          cy.contains('resources').click();
+        })
+
+        cy.url().should('include', '/resources')
+
+        cy.get("[data-cy=servicepackage-info]").should("exist");
+        cy.get("[data-cy=cpu-info]").should("exist");
+        cy.get("[data-cy=memory-info]").should("exist");
+
+      });
+
     })
 
     describe("stateful - with auxiliary replicas", () => {
@@ -242,20 +258,20 @@ context('service', () => {
         })
       })
 
-        it('arm-managed', () => {
+      it('arm-managed', () => {
 
-            addRoute("services", "app-page/services-arm-managed.json", apiUrl(`/Applications/${appName}/$/GetServices?*`))
-            addRoute("serviceInfo", "service-page/service-stateless-arm-managed.json",apiUrl(`${routeFormatter(appName, statelessServiceName)}?*`))
-            cy.reload();
-            cy.wait(waitRequest);
+          addRoute("services", "app-page/services-arm-managed.json", apiUrl(`/Applications/${appName}/$/GetServices?*`))
+          addRoute("serviceInfo", "service-page/service-stateless-arm-managed.json",apiUrl(`${routeFormatter(appName, statelessServiceName)}?*`))
+          cy.reload();
+          cy.wait(waitRequest);
 
-            cy.get('[data-cy=armWarning]').should('exist');
-            cy.get('[data-cy=actions]').should('not.exist');
+          cy.get('[data-cy=armWarning]').should('exist');
+          cy.get('[data-cy=actions]').should('not.exist');
 
-        })
+      })
 
-        it('actions', () => {
-            cy.wait(waitRequest);
+      it('actions', () => {
+        cy.wait(waitRequest);
 
         cy.get('[data-cy=actions]').within(() => {
           cy.contains("Actions").click();
