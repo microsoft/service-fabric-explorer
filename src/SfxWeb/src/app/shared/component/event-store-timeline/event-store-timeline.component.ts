@@ -1,5 +1,6 @@
-import { Component, ViewChild, ElementRef, Input, AfterViewInit, OnChanges, ChangeDetectionStrategy, Output, EventEmitter, OnDestroy, SecurityContext } from '@angular/core';
+import { Component, ViewChild, ElementRef, Input, AfterViewInit, OnChanges, ChangeDetectionStrategy, Output, EventEmitter, OnDestroy, SecurityContext,  } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
+import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { pregeneratedColors } from 'src/app/Common/Constants';
 import { ITimelineData } from 'src/app/Models/eventstore/timelineGenerators';
 import * as moment from 'moment';
@@ -35,7 +36,7 @@ export class EventStoreTimelineComponent implements AfterViewInit, OnChanges, On
   @ViewChild('visualization') container: ElementRef;
 
 
-  constructor(private sanitzer: DomSanitizer) { }
+  constructor(private sanitzer: DomSanitizer, private liveAnnouncer: LiveAnnouncer) { }
 
   ngOnChanges() {
     if (this.timeline) {
@@ -92,30 +93,36 @@ export class EventStoreTimelineComponent implements AfterViewInit, OnChanges, On
 
   public fitData() {
     this.timeline.fit();
+    this.liveAnnouncer.announce('Fitted timeline to display only the time range that has events.');
   }
 
   public fitWindow() {
     this.timeline.setWindow(this.start, this.end);
+    this.liveAnnouncer.announce('Fitted timeline to display the whole time range.');
   }
 
   public moveStart() {
     this.timeline.moveTo(this.start);
+    this.liveAnnouncer.announce('Moved timeline to start of the time range.');
   }
 
   public moveEnd() {
     this.timeline.moveTo(this.end);
+    this.liveAnnouncer.announce('Moved timeline to end of the time range.');
   }
 
   public moveToOldestEvent() {
     if (this.oldestEvent) {
       this.timeline.setWindow(this.oldestEvent.start, this.oldestEvent.end);
     }
+    this.liveAnnouncer.announce('Moved timeline to oldest event.');
   }
 
   public moveToNewestEvent() {
     if (this.mostRecentEvent) {
       this.timeline.setWindow(this.mostRecentEvent.start, this.mostRecentEvent.end);
     }
+    this.liveAnnouncer.announce('Moved timeline to newest event.');
   }
 
   public updateList(events: ITimelineData) {
