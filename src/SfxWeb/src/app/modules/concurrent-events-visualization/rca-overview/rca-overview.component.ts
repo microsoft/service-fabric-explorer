@@ -114,7 +114,9 @@ export class RcaOverviewComponent implements AfterViewInit, OnChanges {
       }
     }));
     this.reasons = grouped.sort((a, b) => b[1].length - a[1].length).map(reason => {
-      this.colorKey[reason[0]] = this.colorKey[reason[0]] || this.preGeneratedColors.pop();
+      this.colorKey[reason[0]] = this.colorKey[reason[0]] || this.preGeneratedColors[
+        Object.keys(this.colorKey).length % this.preGeneratedColors.length
+      ];
       return {
         displayText: reason[1].length.toString(),
         copyTextValue: reason[0] + ' ' + reason[1].length.toString(),
