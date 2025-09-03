@@ -15,7 +15,12 @@ $right-panel-min-width: 200px !default;
 
     .navbar-brand-icon {
         display: inline-block;
-        margin-right: 14px;
+    }
+
+    &.navbar-brand-small {
+      margin-right: 0px;
+      padding: 12px 0px;
+      font-size: var(--font-size-medium);
     }
 }
 
@@ -59,7 +64,7 @@ $right-panel-min-width: 200px !default;
     position: absolute;
     top: 50px;
     bottom: 0;
-    z-index: 11;
+    z-index: 12;
 }
 
 .main-content {
@@ -78,6 +83,11 @@ $right-panel-min-width: 200px !default;
 
     .right-panel {
       bottom: 0px;
+    }
+
+    .flat-button {
+      padding-left: 0px;
+      padding-right: 0px;
     }
 }
 
@@ -128,12 +138,24 @@ $right-panel-min-width: 200px !default;
 
 .sidenav-button {
     position: absolute;
-    left: 0px;
-    top: 50px;
     z-index: 12;
     padding: 0px;
     background-color: transparent;
     color: white;
+    
+    &.open{
+      left: -21px;
+      top: 0px;
+    }
+
+    &.close{
+      left:100%;
+      top: 0px;
+    }
+
+    @media (max-height: 500px) {
+      position: initial;
+    }
 }
 
 .report {
@@ -166,6 +188,13 @@ $right-panel-min-width: 200px !default;
   height: 20px;
   z-index: 11;
   background-color: var(--accent-background-color);
+  
+  @media (max-height: 500px) {
+    position: initial;
+    .expander-icon {
+      left: -2px;
+    }
+  }
 }
 
 .expander-icon {

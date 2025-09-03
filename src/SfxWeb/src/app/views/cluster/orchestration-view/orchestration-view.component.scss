@@ -1,0 +1,35 @@
+.event-details-container {
+  display: flex;
+  flex-wrap: wrap;
+  max-width: 100%;
+  gap: 15px;
+  margin-bottom: 15px;
+  align-items: stretch;
+  container-type: inline-size;
+}
+
+.event-details {
+  flex: 1 1 48%;
+  margin-bottom: 0;
+  box-sizing: border-box;
+}
+
+@container (max-width: 800px) {
+  .event-details {
+    flex: 1 1 100%;
+  }
+}
+
+.event-details-title {
+  margin-bottom: 15px;
+}
+
+.details-grid {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 8px;
+}
+
+.detail-row {
+  display: contents;
+}

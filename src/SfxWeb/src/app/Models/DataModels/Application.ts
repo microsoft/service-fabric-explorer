@@ -68,6 +68,13 @@ export class Application extends DataModelBase<IRawApplication> {
         return this.raw.Status === AppStatusConstants.Upgrading;
     }
 
+    public get disabledServicesCount(): number {
+        if (this?.services?.collection) {
+            return this.services.collection.filter(service => service.raw.ServiceStatus === 'Disabled').length;
+        }
+        return 0;
+    }
+
     public get viewPath(): string {
         return RoutesService.getAppViewPath(this.raw.TypeName, this.id);
     }
@@ -320,7 +327,6 @@ export class ApplicationUpgradeProgress extends DataModelBase<IRawApplicationUpg
     public get upgradeDomainDuration(): string {
         return TimeUtils.getDuration(this.raw.UpgradeDomainDurationInMilliseconds);
     }
-
 
     public get isUpgrading() {
       return UpgradeDomainStateRegexes.InProgress.test(this.raw.UpgradeState) || this.raw.UpgradeState === ClusterUpgradeStates.RollingForwardPending;

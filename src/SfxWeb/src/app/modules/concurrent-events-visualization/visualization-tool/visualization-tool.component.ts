@@ -12,9 +12,15 @@ import { IConcurrentEvents, IRCAItem } from 'src/app/Models/eventstore/rcaEngine
 })
 
 export class VisualizationToolComponent implements OnChanges, AfterViewInit, DetailBaseComponent {
-  private nameSizePx: number = 12;
-  private kindSizePx: number = 12;
+  private idSizePx: number = 12;
+  private eventTitleSizePx: number = 14;
+  private textSizePx: number = 12;
   private titleSizePx: number = 20;
+
+  private idColor: string = "var(--font-placeholder-color)";
+  private eventTitleColor: string = "var(--font-primary-color)";
+  private textColor: string = "var(--font-accent-color)";
+
   private chart: Chart;
 
   visEvents : IConcurrentEvents;
@@ -86,18 +92,21 @@ export class VisualizationToolComponent implements OnChanges, AfterViewInit, Det
       queue = [this.visEvents];
 
       let levels = 0;
-      let fontPrefix = `<p style='font-size: ${this.nameSizePx}px; color: white;'>`
-      let titlePrefix = `<p style='font-size: ${this.kindSizePx}px; color: white;'>`
+      let idPrefix = `<p style='font-size: ${this.idSizePx}px; color: ${this.idColor};'> <b>EventInstanceId: </b>`
+      let eventTitlePrefix = `<p style='font-size: ${this.eventTitleSizePx}px; color: ${this.eventTitleColor};'>`
+      let descriptionPrefix = `<p style='font-size: ${this.textSizePx}px; color: ${this.textColor};'>`
       let maxHeight = 0;
       while (queue.length > 0) {
           let currSize = queue.length;
           maxHeight = Math.max(currSize, maxHeight);
           for (let i = 0; i < currSize; i++) {
               let currEvent = queue.shift();
-              let action = currEvent.reasonForEvent ? "Reason: " + currEvent.reasonForEvent + "</br>" : "";
+              let action = currEvent.reasonForEvent ? "<b>Reason: </b>" + currEvent.reasonForEvent + "</br>" : "";
+              let timestamp = "<b>Timestamp: </b>" + currEvent.timeStamp;
               let newNodeComponent : SeriesSankeyNodesOptionsObject = {
-                  id: fontPrefix + currEvent.eventInstanceId + "</p>",
-                  title: titlePrefix + action + currEvent.kind + "</p>",
+                  id: idPrefix + currEvent.eventInstanceId + "</p>",
+                  title: eventTitlePrefix + currEvent.kind + "</p>",
+                  description: descriptionPrefix + action + timestamp +"</p>",
                   layout: "hanging",
                   height: 80,
                   opacity: 1,
@@ -116,13 +125,12 @@ export class VisualizationToolComponent implements OnChanges, AfterViewInit, Det
               if (currEvent.reason) {
                 if (currEvent.reason.name == "self") {
                   config.data.push({
-                    from: `${fontPrefix}${currEvent.eventInstanceId}</p>`,
-                    to: `${fontPrefix}${currEvent.eventInstanceId}</p>`
+                    from: `${idPrefix}${currEvent.eventInstanceId}</p>`
                   });
                 } else {
                   config.data.push({
-                    from: `${fontPrefix}${currEvent.eventInstanceId}</p>`,
-                    to: `${fontPrefix}${currEvent.reason.eventInstanceId}</p>`
+                    to: `${idPrefix}${currEvent.eventInstanceId}</p>`,
+                    from: `${idPrefix}${currEvent.reason.eventInstanceId}</p>`
                   });
                   queue.push(currEvent.reason);
                 }

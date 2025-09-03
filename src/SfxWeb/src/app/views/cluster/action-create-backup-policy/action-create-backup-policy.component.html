@@ -18,6 +18,23 @@
                 <input type="number" class="input-flat" formControlName="MaxIncrementalBackups" required
                     name="MaxIncrementalBackups" />
             </dd>
+            <dt>CompressionType</dt>
+            <dd>
+                <select class="input-flat" formControlName="CompressionType" aria-label="Compression type (zip/ZStandard)"
+                    name="CompressionType">
+                    <option value="CLUSTER_DEFINED">CLUSTER_DEFINED</option>
+                    <option value="ZIP">ZIP</option>
+                    <option value="ZSTANDARD">ZSTANDARD</option>
+                </select>
+            </dd>
+            <dt>QuickRecovery</dt>
+            <dd>
+                <select class="input-flat" formControlName="QuickRecovery" aria-label="Quick Recovery"
+                    name="QuickRecovery">
+                    <option value="Disabled">Disabled</option>
+                    <option value="FromPrimary">FromPrimary</option>
+                </select>
+            </dd>
             <dt>ScheduleKind</dt>
             <div formGroupName="Schedule">
                 <dl>

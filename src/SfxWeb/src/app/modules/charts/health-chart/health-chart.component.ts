@@ -11,6 +11,7 @@ export class HealthChartComponent implements OnInit, AfterViewInit, OnChanges {
   @Input() data: IDashboardDataPointViewModel[];
   @Input() width = '80';
   @Input() title: number | string = '';
+  @Input() description: string = '';
 
   @ViewChild('chart') private chartContainer: ElementRef;
 
@@ -32,14 +33,15 @@ export class HealthChartComponent implements OnInit, AfterViewInit, OnChanges {
       spacingRight: 0,
     },
     title: {
-      text: '',
+      text: this.description,
       align: 'left',
       verticalAlign: 'middle',
       y: 0,
       x: 30,
       style: {
         color: '#fff',
-        fontSize: '15pt'
+        fontSize: '15pt',
+        opacity: 0
       }
     },
     subtitle: {
@@ -108,6 +110,7 @@ export class HealthChartComponent implements OnInit, AfterViewInit, OnChanges {
   ngOnInit() {
     this.options.chart.height = this.width;
     this.options.chart.width = this.width;
+    this.options.title.text = this.description.toString();
     this.options.subtitle.text = this.title.toString();
 
     const data = this.getDataSet();
