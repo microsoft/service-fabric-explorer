@@ -63,9 +63,6 @@ export class EssentialsComponent extends ReplicaBaseControllerDirective {
           displaySelector: true
         }];
 
-        detailSuccess = false;
-        this.replica.raw.ReplicaStatus = 'ToBeRemoved';
-
         if(detailSuccess)
         {
           this.essentialItems.push({
