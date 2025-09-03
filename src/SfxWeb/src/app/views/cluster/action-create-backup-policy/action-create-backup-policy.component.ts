@@ -62,8 +62,8 @@ export class ActionCreateBackupPolicyComponent implements OnInit {
       Name: ['', [Validators.required]],
       AutoRestoreOnDataLoss: [false],
       MaxIncrementalBackups: [null, [Validators.required]],
-      CompressionStrategy:['DEFAULT'],
-      QuickRecovery: [false],
+      CompressionType: ['CLUSTER_DEFINED'],
+      QuickRecovery: ['Disabled'],
       Schedule: this.formBuilder.group({
         ScheduleKind: ['FrequencyBased', [Validators.required]],
         ScheduleFrequencyType: [''],
