@@ -13,6 +13,8 @@ export class RefreshRateComponent {
     this.change( +(Object.keys(this.mapping).find(key => this.mapping[key] === val) || 4), false );
   }
 
+  @Input() condensedVersion = false;
+
   @Output() rateChange = new EventEmitter<string>();
   @Output() forceRefreshed = new EventEmitter<any>();
   refreshRate = 0;

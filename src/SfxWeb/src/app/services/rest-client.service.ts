@@ -782,11 +782,11 @@ export class RestClientService {
       return this.get(this.getApiUrl(url, RestClientService.apiVersion64), 'Get cluster version', messageHandler);
   }
 
-  private getEvents<T extends FabricEventBase>(eventType: new () => T, url: string, startTime: Date, endTime: Date, eventTypesFilter: string[], messageHandler?: IResponseMessageHandler, apiVersion?: string): Observable<T[]> {
+  private getEvents<T extends FabricEventBase>(eventType: new () => T, url: string, startTime: Date, endTime: Date, eventsTypesFilter: string[], messageHandler?: IResponseMessageHandler, apiVersion?: string): Observable<T[]> {
       const paramObject = {
         'starttimeutc': startTime.toISOString().substring(0, 19) + 'Z',
         'endtimeutc': endTime.toISOString().substr(0, 19) + 'Z',
-        'eventTypesFilter': eventTypesFilter.join()
+        ...(eventsTypesFilter.length && { eventsTypesFilter: eventsTypesFilter.join() })
       }
 
       const params = new HttpParams({

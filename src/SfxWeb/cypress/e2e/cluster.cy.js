@@ -471,6 +471,8 @@ context('Cluster page', () => {
             "Name": name,
             "AutoRestoreOnDataLoss": true,
             "MaxIncrementalBackups": maxIncBackups,
+            "QuickRecovery": "Disabled",
+            "CompressionType": "CLUSTER_DEFINED",
             "Schedule": {
               "ScheduleKind": "FrequencyBased",
               "ScheduleFrequencyType": "",
@@ -496,6 +498,124 @@ context('Cluster page', () => {
       })
 
 
+      it('create by AzureBlobStore - drop down QuickRecovery', () => {
+        cy.get("[formcontrolname=ConnectionString]").type("constring");
+        cy.get("[formcontrolname=QuickRecovery]").select("FromPrimary");
+
+        cy.get(submitButton).click();
+
+        cy.wait(aliasedCreateBRS)
+
+        cy.get(aliasedCreateBRS).its('request.body')
+          .should('deep.equal', {
+            "Name": name,
+            "AutoRestoreOnDataLoss": false,
+            "MaxIncrementalBackups": maxIncBackups,
+            "QuickRecovery": "FromPrimary",
+            "CompressionType": "CLUSTER_DEFINED",
+            "Schedule": {
+              "ScheduleKind": "FrequencyBased",
+              "ScheduleFrequencyType": "",
+              "RunDays": [],
+              "RunTimes": [],
+              "Interval": "PT15M"
+            },
+            "Storage": {
+              "StorageKind": "AzureBlobStore",
+              "FriendlyName": "",
+              "Path": "",
+              "ConnectionString": "constring",
+              "ContainerName": "",
+              "BlobServiceUri": "",
+              "ManagedIdentityType": "",
+              "ManagedIdentityClientId": "",
+              "PrimaryUserName": "",
+              "PrimaryPassword": "",
+              "SecondaryUserName": "",
+              "SecondaryPassword": ""
+            }
+          })
+      })
+
+
+      it('create by AzureBlobStore - dropdown CompressionType is ZSTANDARD', () => {
+        cy.get("[formcontrolname=ConnectionString]").type("constring");
+        cy.get("[formcontrolname=CompressionType]").select("ZSTANDARD");
+
+        cy.get(submitButton).click();
+
+        cy.wait(aliasedCreateBRS)
+
+        cy.get(aliasedCreateBRS).its('request.body')
+          .should('deep.equal', {
+            "Name": name,
+            "AutoRestoreOnDataLoss": false,
+            "MaxIncrementalBackups": maxIncBackups,
+            "QuickRecovery": "Disabled",
+            "CompressionType": "ZSTANDARD",
+            "Schedule": {
+              "ScheduleKind": "FrequencyBased",
+              "ScheduleFrequencyType": "",
+              "RunDays": [],
+              "RunTimes": [],
+              "Interval": "PT15M"
+            },
+            "Storage": {
+              "StorageKind": "AzureBlobStore",
+              "FriendlyName": "",
+              "Path": "",
+              "ConnectionString": "constring",
+              "ContainerName": "",
+              "BlobServiceUri": "",
+              "ManagedIdentityType": "",
+              "ManagedIdentityClientId": "",
+              "PrimaryUserName": "",
+              "PrimaryPassword": "",
+              "SecondaryUserName": "",
+              "SecondaryPassword": ""
+            }
+          })
+      })
+
+      it('create by AzureBlobStore - dropdown CompressionType is ZIP', () => {
+        cy.get("[formcontrolname=ConnectionString]").type("constring");
+        cy.get("[formcontrolname=CompressionType]").select("ZIP");
+
+        cy.get(submitButton).click();
+
+        cy.wait(aliasedCreateBRS)
+
+        cy.get(aliasedCreateBRS).its('request.body')
+          .should('deep.equal', {
+            "Name": name,
+            "AutoRestoreOnDataLoss": false,
+            "MaxIncrementalBackups": maxIncBackups,
+            "QuickRecovery": "Disabled",
+            "CompressionType": "ZIP",
+            "Schedule": {
+              "ScheduleKind": "FrequencyBased",
+              "ScheduleFrequencyType": "",
+              "RunDays": [],
+              "RunTimes": [],
+              "Interval": "PT15M"
+            },
+            "Storage": {
+              "StorageKind": "AzureBlobStore",
+              "FriendlyName": "",
+              "Path": "",
+              "ConnectionString": "constring",
+              "ContainerName": "",
+              "BlobServiceUri": "",
+              "ManagedIdentityType": "",
+              "ManagedIdentityClientId": "",
+              "PrimaryUserName": "",
+              "PrimaryPassword": "",
+              "SecondaryUserName": "",
+              "SecondaryPassword": ""
+            }
+          })
+      })
+
       it('create by ManagedIdentityAzureBlobStore', () => {
         cy.get("[value=ManagedIdentityAzureBlobStore]").click();
 
@@ -513,6 +633,8 @@ context('Cluster page', () => {
             "Name": name,
             "AutoRestoreOnDataLoss": false,
             "MaxIncrementalBackups": maxIncBackups,
+            "QuickRecovery": "Disabled",
+            "CompressionType": "CLUSTER_DEFINED",
             "Schedule": {
               "ScheduleKind": "FrequencyBased",
               "ScheduleFrequencyType": "",
@@ -563,6 +685,8 @@ context('Cluster page', () => {
             "Name": name,
             "AutoRestoreOnDataLoss": false,
             "MaxIncrementalBackups": maxIncBackups,
+            "QuickRecovery": "Disabled",
+            "CompressionType": "CLUSTER_DEFINED",
             "Schedule": {
               "ScheduleKind": "TimeBased",
               "ScheduleFrequencyType": "Weekly",
@@ -641,7 +765,7 @@ context('Cluster page', () => {
       cy.get(EVENT_TABS).within(() => {
         cy.contains(CLUSTER_TAB_NAME)
       })
-       
+
       cy.contains("Why is data missing?").within(()=> {
         cy.get('span[class=mif-info]').should('have.attr', 'tabindex', '0').and('have.attr', 'aria-label');
       });
@@ -709,6 +833,96 @@ context('Cluster page', () => {
       checkTableErrorMessage(FAILED_TABLE_TEXT);
     })
   })
+
+  describe("orchestration view", () => {
+    beforeEach(() => {
+      cy.fixture('cluster-page/orchestration-view/partition-operation-events.json').then((partitionEvents) => {
+        partitionEvents.forEach(event => {
+          // update timestamp to use yesterday's date but keep the time
+          let yesterday = new Date();
+          yesterday.setDate(yesterday.getDate() - 1);
+          let eventDate = new Date(event.TimeStamp);
+          event.TimeStamp = new Date(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate(), eventDate.getHours(), eventDate.getMinutes(), eventDate.getSeconds()).toISOString();
+        })
+        cy.intercept('GET', '**/EventsStore/Partitions/**', partitionEvents).as('partitionevents');
+      })
+    })
+
+    it("opens orchestration view page", () => {
+      cy.visit('/#/')
+      cy.get('[data-cy=navtabs]').within(() => {
+        cy.contains('orchestration view').click();
+      })
+    });
+
+    it("renders time picker, partition input and stage toggles", () => {
+      cy.get("[data-cy=time-picker]").should("exist");
+      cy.get("[data-cy=partition-input]").should("exist").and('have.value', '');
+      cy.get("[data-cy=confirm-button]").should("exist");
+      cy.get("[data-cy=balancing-toggle]").should("exist");
+      cy.get("[data-cy=constrain-check-toggle]").should("exist");
+      cy.get("[data-cy=orchestration-timeline]").should("not.exist");
+      cy.get("[data-cy=event-details]").should("not.exist");
+    });
+
+    it("doesn't disaply the timeline when clicking on Confirm with empty partition id", () => {
+      cy.get("[data-cy=confirm-button]").click();
+      cy.wait(1000);
+      cy.get("[data-cy=orchestration-timeline]").should("not.exist");
+    });
+
+    it("disaplies the timeline and events when clicking on Confirm with existing partition id", () => {
+      cy.get("[data-cy=partition-input]").type("745ab433-dc74-4edb-ac37-ad9cc9a0446d");
+      cy.get("[data-cy=confirm-button]").click();
+      cy.wait('@partitionevents');
+      cy.get("[data-cy=orchestration-timeline]").should("exist");
+      cy.get("[data-cy=orchestration-timeline] .vis-point").should("have.length", 4);
+      cy.get("[data-cy=event-details]").should("not.exist");
+    });
+
+    it("toggles balancing operations", () => {
+      cy.get("[data-cy=balancing-toggle]").click();
+      cy.wait('@partitionevents');
+      cy.get("[data-cy=orchestration-timeline] .vis-point").should("have.length", 3);
+      cy.get("[data-cy=balancing-toggle]").click();
+      cy.wait('@partitionevents');
+      cy.get("[data-cy=orchestration-timeline] .vis-point").should("have.length", 4);
+    });
+
+    it("toggles placement operations", () => {
+      cy.get("[data-cy=placement-toggle]").click();
+      cy.wait('@partitionevents');
+      cy.get("[data-cy=orchestration-timeline] .vis-point").should("have.length", 3);
+      cy.get("[data-cy=placement-toggle]").click();
+      cy.wait('@partitionevents');
+      cy.get("[data-cy=orchestration-timeline] .vis-point").should("have.length", 4);
+    });
+
+    it("toggles constraint check operations", () => {
+      cy.get("[data-cy=constrain-check-toggle]").click();
+      cy.wait('@partitionevents');
+      cy.get("[data-cy=orchestration-timeline] .vis-point").should("have.length", 3);
+      cy.get("[data-cy=constrain-check-toggle]").click();
+      cy.wait('@partitionevents');
+      cy.get("[data-cy=orchestration-timeline] .vis-point").should("have.length", 4);
+    });
+
+    it("toggles other operations", () => {
+      cy.get("[data-cy=other-toggle]").click();
+      cy.wait('@partitionevents');
+      cy.get("[data-cy=orchestration-timeline] .vis-point").should("have.length", 3);
+      cy.get("[data-cy=other-toggle]").click();
+      cy.wait('@partitionevents');
+      cy.get("[data-cy=orchestration-timeline] .vis-point").should("have.length", 4);
+    });
+
+    it("displays event details when an event is selected", () => {
+      cy.get("[data-cy=orchestration-timeline] .vis-point").first().click();
+      cy.get("[data-cy=event-details]").should("exist");
+      cy.contains("Operation Details");
+      cy.contains("Decision Details");
+    });
+  });
 
   describe("repair tasks", () => {
     const setup = (file) => {

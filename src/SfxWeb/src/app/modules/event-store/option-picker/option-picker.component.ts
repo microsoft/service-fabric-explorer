@@ -12,6 +12,7 @@ export interface IOptionData {
 export interface IOptionConfig{
     enableCluster?: boolean;
     enableNodes?: boolean;
+    enableApplication?: boolean;
     enableRepairTasks?: boolean;
 }
 
@@ -44,6 +45,14 @@ export class OptionPickerComponent implements OnChanges {
         this.options.push(nodes);
       }
       this.checkedStates[nodes.displayName] = this.listEventStoreData.some(ESD => ESD.displayName === nodes.displayName);
+    }
+
+    if (this.optionsConfig.enableApplication) {
+      const application = this.dataService.getApplicationEventData();
+      if(!this.options.some(option => option.displayName === application.displayName)) {
+        this.options.push(application);
+      }
+      this.checkedStates[application.displayName] = this.listEventStoreData.some(ESD => ESD.displayName === application.displayName);
     }
 
     if (this.optionsConfig.enableRepairTasks) {

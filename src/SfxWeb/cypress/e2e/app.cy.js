@@ -118,6 +118,38 @@ context('app', () => {
 
     })
 
+    describe("disabled services warning", () => {
+      it('displays warning when services are disabled and app is upgrading', () => {
+        addRoute("services", "app-page/services-with-disabled.json", apiUrl(`/Applications/${appName}/$/GetServices?*`))
+        addRoute("upgradeProgress", "app-page/upgrade-in-progress.json", apiUrl(`/Applications/${appName}/$/GetUpgradeProgress?*`))
+        addRoute("app", "app-page/app-type-upgrading.json", apiUrl(`/Applications/${appName}/?a*`))
+
+        cy.visit(`/#/apptype/${appName}/app/${appName}`)
+        cy.wait(waitRequest);
+
+        cy.get('[data-cy=disabledServicesWarning]').should('exist').within(() => {
+          cy.contains('This application is currently undergoing an upgrade and has 1 disabled services.');
+        });
+      });
+
+      it('does not display warning when services are disabled but app is not upgrading', () => {
+        addRoute("services", "app-page/services-with-disabled.json", apiUrl(`/Applications/${appName}/$/GetServices?*`))
+        cy.visit(`/#/apptype/${appName}/app/${appName}`)
+        cy.wait(waitRequest);
+        cy.get('[data-cy=disabledServicesWarning]').should('not.exist');
+      });
+
+      it('does not display warning when upgrading but no services are disabled', () => {
+        addRoute("upgradeProgress", "app-page/upgrade-in-progress.json", apiUrl(`/Applications/${appName}/$/GetUpgradeProgress?*`))
+        addRoute("app", "app-page/app-type-upgrading.json", apiUrl(`/Applications/${appName}/?a*`))
+
+        cy.visit(`/#/apptype/${appName}/app/${appName}`)
+        cy.wait(waitRequest);
+
+        cy.get('[data-cy=disabledServicesWarning]').should('not.exist');
+      });
+    })
+
     describe("details", () => {
         const param = "Parameters"
         const visit = (app) => {

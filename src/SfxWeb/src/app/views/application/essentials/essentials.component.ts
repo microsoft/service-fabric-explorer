@@ -51,7 +51,7 @@ export class EssentialsComponent extends ApplicationBaseControllerDirective {
       new ListColumnSettingWithFilter('raw.ServiceStatus', 'Status'),
       new ListColumnSettingForArmManaged()
     ]);
-    
+
     this.serviceTypesListSettings = this.settings.getNewOrExistingListSettings('serviceTypes', ['raw.ServiceTypeDescription.ServiceTypeName'], [
       new ListColumnSetting('raw.ServiceTypeDescription.ServiceTypeName', 'Service Type Name'),
       new ListColumnSettingWithFilter('serviceKind', 'Service Kind'),
@@ -65,7 +65,7 @@ export class EssentialsComponent extends ApplicationBaseControllerDirective {
     this.data.getClusterManifest().subscribe(manifest => {
       if(manifest.isEventStoreEnabled) {
         this.eventStoreHandler = this.data.getApplicationEventData(this.appId);
-        this.eventStoreHandler.eventsList.setEventFilter(['ApplicationProcessExited', 'ApplicationContainerInstanceExited']);
+        this.eventStoreHandler.eventsList.setEventFilter(['ProcessDeactivated', 'ContainerDeactivated']);
         this.eventStoreHandler.eventsList.refresh().subscribe((success) => {
           if(success) {
             this.highValueEvents = getSimultaneousEventsForEvent(RelatedEventsConfigs, this.eventStoreHandler.getEvents(), this.eventStoreHandler.getEvents());
@@ -79,7 +79,9 @@ export class EssentialsComponent extends ApplicationBaseControllerDirective {
 
   afterDataSet(): void {
     if(!this.app.isArmManaged) {
-      this.serviceTypesListSettings.columnSettings.push(new ListColumnSettingForApplicationServiceRow());
+      if (!this.serviceTypesListSettings.columnSettings.some(c => c instanceof ListColumnSettingForApplicationServiceRow)) {
+        this.serviceTypesListSettings.columnSettings.push(new ListColumnSettingForApplicationServiceRow());
+      }
     }
   }
 

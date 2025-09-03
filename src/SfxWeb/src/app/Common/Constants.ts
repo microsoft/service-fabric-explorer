@@ -431,4 +431,84 @@ export const pregeneratedColors: IPregeneratedColor[] = [
         "color": "a6c96a",
         "hex": "#a6c96a"
     },
+    {
+        "color": "FF5733",
+        "hex": "#FF5733"
+    },
+    {
+        "color": "33FF57",
+        "hex": "#33FF57"
+    },
+    {
+        "color": "3357FF",
+        "hex": "#3357FF"
+    },
+    {
+        "color": "8E44AD",
+        "hex": "#8E44AD"
+    },
+    {
+        "color": "2ECC71",
+        "hex": "#2ECC71"
+    },
+    {
+        "color": "3498DB",
+        "hex": "#3498DB"
+    },
+    {
+        "color": "E74C3C",
+        "hex": "#E74C3C"
+    },
+    {
+        "color": "F1C40F",
+        "hex": "#F1C40F"
+    },
+    {
+        "color": "1ABC9C",
+        "hex": "#1ABC9C"
+    },
+    {
+        "color": "9B59B6",
+        "hex": "#9B59B6"
+    },
+    {
+        "color": "34495E",
+        "hex": "#34495E"
+    },
+    {
+        "color": "16A085",
+        "hex": "#16A085"
+    },
+    {
+        "color": "27AE60",
+        "hex": "#27AE60"
+    },
+    {
+        "color": "2980B9",
+        "hex": "#2980B9"
+    },
+    {
+        "color": "C0392B",
+        "hex": "#C0392B"
+    },
+    {
+        "color": "D35400",
+        "hex": "#D35400"
+    },
+    {
+        "color": "7F8C8D",
+        "hex": "#7F8C8D"
+    },
+    {
+        "color": "2C3E50",
+        "hex": "#2C3E50"
+    },
+    {
+        "color": "BDC3C7",
+        "hex": "#BDC3C7"
+    },
+    {
+        "color": "ECF0F1",
+        "hex": "#ECF0F1"
+    }
 ]

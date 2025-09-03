@@ -13,7 +13,7 @@
   <app-dashboard-text-scale-tile *ngIf="service?.description?.isInitialized" data-cy="placementconstraints">
     <div class="placement-constraint-wrapper">
       <div class="text-center ">
-        <div class="top-seperator title">Placement Constraints</div>
+        <h2 class="top-seperator title">Placement Constraints</h2>
         <div>
           {{service.description.raw.PlacementConstraints || 'No placement constraints defined'}}
         </div>

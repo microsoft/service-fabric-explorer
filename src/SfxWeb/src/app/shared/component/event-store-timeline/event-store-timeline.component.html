@@ -15,8 +15,9 @@
 
         <button class="simple-button flip-button" (click)="flipShowControls();">
             <span class="mif-arrow-drop-up mif-2x" style="transition: .5s;"
+            [title]="showControls ? 'Hide Controls' : 'Show Controls'"
                 [ngClass]="{'rotated': showControls}"></span>
-            {{showControls ? '' : 'Show Controls'}}
+            {{showControls ? 'Hide Controls' : 'Show Controls'}}
         </button>
 
         <ng-container  *ngIf="showControls">
@@ -26,7 +27,7 @@
             </button>
 
             <button type="button" class="simple-button margined" (click)="fitWindow()"  tooltipClass="styled-tooltip"
-                title="Fit the timeline to display the whole time range.">
+                ngbTooltip="Fit the timeline to display the whole time range.">
                 Fit Range
             </button>
 
