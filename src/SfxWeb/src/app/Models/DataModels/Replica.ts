@@ -163,12 +163,7 @@ export class ReplicaOnPartition extends DataModelBase<IRawReplicaOnPartition> {
               deleteInstanceText,
               deleteInstanceText,
               'Deleting',
-              () => ActionDialogUtils.wrapWithDangerousOperationDialogConfirmation(
-                this.data.dialog,
-                deleteInstanceText,
-                deleteInstanceText,
-                this.deleteInstance()
-              ),
+              () => this.deleteInstance(),
               () => true,
               {
                 title:  `Confirm ${deleteInstanceText}`
