@@ -34,9 +34,9 @@ export class AppComponent implements OnInit{
   previousTreeWidth = this.treeWidth;
 
   rightOffset: string = this.treeWidth;
-  hideAzure = false;
-  hideSFXTest = false;
-  hideSFXLogo = false;
+  shortenAzure = false;
+  hideSFXText = false;
+  shrinkAllHeaderItem = false;
   constructor(public treeService: TreeService,
               public refreshService: RefreshService,
               public adalService: AdalService,
@@ -80,9 +80,9 @@ export class AppComponent implements OnInit{
     const widthReduction = this.dataService.clusterUpgradeProgress.isInitialized && this.dataService.clusterUpgradeProgress.isUpgrading ? 300 : 0;
     this.smallScreenSize = width < 720;
 
-    this.hideAzure = width < (980 + widthReduction);
-    this.hideSFXTest = width < (787 + widthReduction);
-    this.hideSFXLogo = width < (600 + widthReduction);
+    this.shortenAzure = width < (980 + widthReduction);
+    this.hideSFXText = width < (787 + widthReduction);
+    this.shrinkAllHeaderItem = width < (600 + widthReduction);
   }
 
   resize($event: number): void {

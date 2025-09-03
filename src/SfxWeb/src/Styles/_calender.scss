@@ -40,11 +40,24 @@
     background-color: #e6e6e6;
 }
 .custom-day.range, .custom-day:hover {
-background-color: rgb(2, 117, 216);
-color: white;
+    background-color: var(--accent-darkblue);
+    color: white;
 }
 .custom-day.faded {
-background-color: rgba(2, 117, 216, 0.5);
+    background-color: color-mix(in srgb, var(--accent-darkblue) 50%, transparent);
+}
+
+@media screen and (forced-colors: active) {
+    .custom-day.range, .custom-day:hover {
+        background-color: Highlight;
+    }
+    
+    .disabled {
+        .custom-day {
+            color: GrayText;
+        }
+        background-color: GrayText;
+    }
 }
 
 .ngb-dp-month-name {
@@ -53,14 +66,14 @@ background-color: rgba(2, 117, 216, 0.5);
 }
 
 .ngb-dp-month{
-    background: --primary-background-color !important;
+    background: var(--primary-background-color) !important;
     color: white;
 }
 
 .ngb-dp-weekdays, .ngb-dp-weekday {
-    background: --primary-background-color !important;
+    background: var(--primary-background-color) !important;
 }
 
 .ngb-dp-header {
-    background: --primary-background-color !important;
+    background: var(--primary-background-color) !important;
 }

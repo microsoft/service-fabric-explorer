@@ -42,7 +42,6 @@ export class DetailListComponent implements OnInit, OnDestroy {
   private iList: any[];
   public sortedFilteredList: any[] = []; // actual list displayed in html.
   
-  paginationAlert = '';
   page = 1;
   totalListSize = 0;
   displayPath = '';
@@ -222,7 +221,11 @@ export class DetailListComponent implements OnInit, OnDestroy {
 
   pageChange(newPage: number) {
     this.page = newPage;
-    this.liveAnnouncer.announce("navigated to page " + newPage);
+    this.liveAnnouncer.announce(`navigated to page ${newPage}, Showing ${(this.page - 1) * this.listSettings.limit + 1} - ${this.getEndIndex()} of ${this.sortedFilteredList.length} items`);
+  }
+
+  getEndIndex() {
+    return Math.min(this.page * this.listSettings.limit, this.sortedFilteredList.length);
   }
 
   updateList() {
