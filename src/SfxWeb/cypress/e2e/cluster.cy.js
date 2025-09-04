@@ -716,6 +716,107 @@ context('Cluster page', () => {
 
     })
 
+    describe("update", () => {
+      const updateBRS = "updateBRS";
+      const aliasedUpdateBRS = "@" + updateBRS;
+      
+      // Test policy data that will be used for update tests
+      const existingPolicy = {
+        "Name": "TestUpdatePolicy",
+        "AutoRestoreOnDataLoss": true,
+        "MaxIncrementalBackups": 5,
+        "CompressionType": "ZIP",
+        "QuickRecovery": "FromPrimary",
+        "Schedule": {
+          "ScheduleKind": "TimeBased",
+          "ScheduleFrequencyType": "Weekly",
+          "RunDays": ["Monday", "Wednesday", "Friday"],
+          "RunTimes": ["0001-01-01T18:00:00", "0001-01-01T22:00:00"],
+          "Interval": ""
+        },
+        "Storage": {
+          "StorageKind": "AzureBlobStore",
+          "FriendlyName": "TestStorage",
+          "Path": "test/path",
+          "ConnectionString": "test-connection-string",
+          "ContainerName": "test-container",
+          "BlobServiceUri": "",
+          "ManagedIdentityType": "",
+          "ManagedIdentityClientId": "",
+          "PrimaryUserName": "",
+          "PrimaryPassword": "",
+          "SecondaryUserName": "",
+          "SecondaryPassword": ""
+        },
+        "RetentionPolicy": {
+          "RetentionPolicyType": "Basic",
+          "MinimumNumberOfBackups": 3,
+          "RetentionDuration": "P30D"
+        }
+      };
+
+      beforeEach(() => {
+        // Mock the backup policies list with our test policy
+        cy.intercept('GET', apiUrl('/BackupRestore/BackupPolicies/?*'), {
+          statusCode: 200,
+          body: {
+            "Items": [existingPolicy],
+            "ContinuationToken": null
+          }
+        }).as('loadBRS');
+
+        // Mock the update API call
+        cy.intercept('POST', apiUrl(`/BackupRestore/BackupPolicies/$/Update?*`), { statusCode: 200 }).as(updateBRS);
+
+        // Visit the backup policies page
+        cy.visit('/#/backups');
+        cy.wait('@loadBRS');
+      });
+
+      it('should populate form with existing policy values when clicking Update', () => {
+        // Click on the policy name in the table to open view dialog
+        // The policy name has a click event that opens the view dialog
+        cy.get('td').contains('TestUpdatePolicy').click();
+        
+        // Click Update Backup Policy button
+        cy.contains('Update Backup Policy').click();
+        
+        // Verify that the form is populated with existing values
+        cy.get("[formcontrolname=Name]").should('have.value', 'TestUpdatePolicy');
+        cy.get("[formcontrolname=Name]").should('be.disabled'); // Name should be disabled in update mode
+        
+        cy.get("[formcontrolname=AutoRestoreOnDataLoss]").should('be.checked');
+        cy.get("[formcontrolname=MaxIncrementalBackups]").should('have.value', '5');
+        cy.get("[formcontrolname=CompressionType]").should('have.value', 'ZIP');
+        cy.get("[formcontrolname=QuickRecovery]").should('have.value', 'FromPrimary');
+        
+        // Verify schedule settings
+        cy.get("[value=TimeBased]").should('be.checked');
+        cy.get("[value=Weekly]").should('be.checked');
+        
+        // Verify selected days - the checkbox is inside the label with the day name
+        cy.contains("label", "Monday").find('input[type=checkbox]').should('be.checked');
+        cy.contains("label", "Tuesday").find('input[type=checkbox]').should('not.be.checked');
+        cy.contains("label", "Wednesday").find('input[type=checkbox]').should('be.checked');
+        cy.contains("label", "Thursday").find('input[type=checkbox]').should('not.be.checked');
+        cy.contains("label", "Friday").find('input[type=checkbox]').should('be.checked');
+        cy.contains("label", "Saturday").find('input[type=checkbox]').should('not.be.checked');
+        cy.contains("label", "Sunday").find('input[type=checkbox]').should('not.be.checked');
+        
+        // Verify storage settings
+        cy.get("[formcontrolname=ConnectionString]").should('have.value', 'test-connection-string');
+        cy.get("[formcontrolname=ContainerName]").should('have.value', 'test-container');
+        
+        // Verify retention policy
+        cy.get("[formcontrolname=retentionPolicyRequired]").should('be.checked');
+        cy.get("[formcontrolname=MinimumNumberOfBackups]").should('have.value', '3');
+        cy.get("[formcontrolname=RetentionDuration]").should('have.value', 'P30D');
+        
+        // Verify the button text shows "Update backup policy"
+        cy.get("[data-cy=submit]").should('contain.text', 'Update backup policy');
+      });
+    })
+
   })
   describe("events", () => {
     const setup = (fileCluster, fileTasks) => {

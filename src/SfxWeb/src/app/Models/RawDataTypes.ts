@@ -440,6 +440,8 @@ export interface IRawBackupPolicy {
         MaxIncrementalBackups: number;
         Schedule: IRawSchedule;
         Storage: IRawStorage;
+        CompressionType?: string;
+        QuickRecovery?: string;
     }
 
 export interface IRawRetentionPolicy {
