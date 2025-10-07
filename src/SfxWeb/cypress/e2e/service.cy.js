@@ -18,6 +18,10 @@ const setupStatefulService = (app, service, prefix="") => {
   addRoute("serviceInfo", prefix + "service-page/service-info.json", apiUrl(`${routeFormatter(app, service)}?*`))
   addRoute("partitions", prefix + "service-page/service-partitions.json", apiUrl(`${routeFormatter(app, service)}/$/GetPartitions?*`))
   addRoute("health", prefix + "service-page/service-health.json", apiUrl(`${routeFormatter(app, service)}/$/GetHealth?*`))
+  addRoute("app", prefix + "app-page/app-type.json", apiUrl(`/Applications/${app}/?a*`))
+  addRoute("serviceTypes", prefix + "app-page/service-types.json", apiUrl(`/ApplicationTypes/${app}/$/GetServiceTypes?ApplicationTypeVersion=18.0.0*`))
+  addRoute("appManifest", prefix + "app-page/app-manifest.json", apiUrl(`/ApplicationTypes/${app}/$/GetApplicationManifest?*`))
+  addRoute("serviceManifest", prefix + "service-page/service-manifest.json", apiUrl(`/ApplicationTypes/${app}/$/GetServiceManifest?*`))
 }
 
 context('service', () => {
@@ -196,6 +200,21 @@ context('service', () => {
         cy.get("[data-cy=cpu-info]").should("exist");
         cy.get("[data-cy=memory-info]").should("exist");
 
+        cy.get("[data-cy=servicepackage-info]").within(() => {
+          cy.get('[data-cy=spName]').should('have.text', ' VisualObjects.ActorServicePkg ');
+        });
+
+        cy.get("[data-cy=cpu-info]").within(() => {
+          cy.get('[data-cy=requested]').should('have.text', ' 4 ');
+          cy.get('[data-cy=limit]').should('have.text', ' 12 ');
+          cy.get('[data-cy=dynamic]').should('have.text', ' OFF ');
+        });
+
+        cy.get("[data-cy=memory-info]").within(() => {
+          cy.get('[data-cy=requested]').should('have.text', ' 1200 ');
+          cy.get('[data-cy=limit]').should('have.text', ' 1002 ');
+          cy.get('[data-cy=dynamic]').should('have.text', ' OFF ');
+        });
       });
 
     })

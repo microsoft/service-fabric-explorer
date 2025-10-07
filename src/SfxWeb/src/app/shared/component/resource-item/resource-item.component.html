@@ -10,9 +10,9 @@
                 placement="bottom" tooltipClass="styled-tooltip" style="font-size: small;" container="body" tabindex="0"></span>
             
         </div>
-        <div class="middle-text ">
+        <div class="middle-text " [attr.data-cy]="item.selectorName">
             <span [class.off]="item.disabled" >
-                {{item.displayText}} 
+                {{item.displayText}}
             </span>
         </div>
     </div>

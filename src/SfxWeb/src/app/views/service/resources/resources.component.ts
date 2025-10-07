@@ -274,20 +274,24 @@ export class ResourcesComponent extends ServiceBaseControllerDirective {
     this.spData = [
       {
         title: "Service package info",
-        isTitle: true
+        isTitle: true,
+        selectorName: "spInfoTitle"
       },
       {
         title: "Name",
-        displayText: this.servicePackageName
+        displayText: this.servicePackageName,
+        selectorName: "spName"
       },
       {
         title: "Service package activation mode",
         displayText: this.service.description.raw.ServicePackageActivationMode,
-        toolTip: "Dynamic load reporting is available only for services with ExclusiveProcess service package activation mode."
+        toolTip: "Dynamic load reporting is available only for services with ExclusiveProcess service package activation mode.",
+        selectorName: "spActivationMode"
       },
       {
         title: "Dynamic load reporting supported",
-        displayText: this.isServiceExclusiveProcess() ? "Yes" : "No"
+        displayText: this.isServiceExclusiveProcess() ? "Yes" : "No",
+        selectorName: "spDynamicSupport"
       }
     ];
   }
