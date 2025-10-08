@@ -1,0 +1,23 @@
+<div class="essential-list-item highlight-hover" [ngClass]="{'underline': !underline }">
+    <div class="resource-text-wrapper resource-item" >
+        
+        <div class="tile-list-entry left-text">
+            <h2 *ngIf="item.isTitle">{{item.title}}</h2>
+            <span *ngIf="!item.isTitle">{{item.title}}</span>
+            &nbsp;
+            <span *ngIf="item.toolTip" class="mif-info" [ngbTooltip]="toolTipContent"
+                aria-label="Tooltip"
+                placement="bottom" tooltipClass="styled-tooltip" style="font-size: small;" container="body" tabindex="0"></span>
+            
+        </div>
+        <div class="middle-text " [attr.data-cy]="item.selectorName">
+            <span [class.off]="item.disabled" >
+                {{item.displayText}}
+            </span>
+        </div>
+    </div>
+</div>
+
+<ng-template #toolTipContent>
+    {{item.toolTip}}
+</ng-template>

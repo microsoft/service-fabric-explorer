@@ -28,6 +28,10 @@ export class BaseComponent extends ServiceBaseControllerDirective implements IBa
     {
       name: 'commands',
       route: './commands'
+    },
+    {
+      name: 'resources',
+      route: './resources'
     }
   ];
   constructor(protected dataService: DataService, injector: Injector, private tree: TreeService, public el: ElementRef) {

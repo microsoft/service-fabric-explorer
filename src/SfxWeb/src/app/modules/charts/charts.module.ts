@@ -9,18 +9,20 @@ import { EssentialHealthTileComponent, EssentialTemplateDirective } from './esse
 import { SharedModule } from 'src/app/shared/shared.module';
 import { TileWrapperComponent } from './tile-wrapper/tile-wrapper.component';
 import { HealthChartComponent } from './health-chart/health-chart.component';
+import { ResourcesTileComponent } from './resources-tile/resources-tile.component';
 
 
 @NgModule({
   declarations: [DashboardTileComponent, DashboardTextTileComponent, BarChartComponent, DashboardTextScaleTileComponent, EssentialHealthTileComponent, EssentialTemplateDirective,
                  TileWrapperComponent,
-                 HealthChartComponent],
+                 HealthChartComponent,
+                 ResourcesTileComponent],
   imports: [
     CommonModule,
     RouterModule,
     SharedModule
   ],
   exports: [DashboardTileComponent, DashboardTextTileComponent, BarChartComponent, DashboardTextScaleTileComponent,
-            EssentialHealthTileComponent, EssentialTemplateDirective, TileWrapperComponent, HealthChartComponent]
+            EssentialHealthTileComponent, EssentialTemplateDirective, TileWrapperComponent, HealthChartComponent, ResourcesTileComponent]
 })
 export class ChartsModule { }

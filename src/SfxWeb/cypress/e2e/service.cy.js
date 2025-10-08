@@ -18,6 +18,10 @@ const setupStatefulService = (app, service, prefix="") => {
   addRoute("serviceInfo", prefix + "service-page/service-info.json", apiUrl(`${routeFormatter(app, service)}?*`))
   addRoute("partitions", prefix + "service-page/service-partitions.json", apiUrl(`${routeFormatter(app, service)}/$/GetPartitions?*`))
   addRoute("health", prefix + "service-page/service-health.json", apiUrl(`${routeFormatter(app, service)}/$/GetHealth?*`))
+  addRoute("app", prefix + "app-page/app-type.json", apiUrl(`/Applications/${app}/?a*`))
+  addRoute("serviceTypes", prefix + "app-page/service-types.json", apiUrl(`/ApplicationTypes/${app}/$/GetServiceTypes?ApplicationTypeVersion=18.0.0*`))
+  addRoute("appManifest", prefix + "app-page/app-manifest.json", apiUrl(`/ApplicationTypes/${app}/$/GetApplicationManifest?*`))
+  addRoute("serviceManifest", prefix + "service-page/service-manifest.json", apiUrl(`/ApplicationTypes/${app}/$/GetServiceManifest?*`))
 }
 
 context('service', () => {
@@ -182,6 +186,37 @@ context('service', () => {
         checkCommand(3, 1);
 
       })
+      
+      it("view resources", () => {
+        cy.wait(waitRequest);
+
+        cy.get('[data-cy=navtabs]').within(() => {
+          cy.contains('resources').click();
+        })
+
+        cy.url().should('include', '/resources')
+
+        cy.get("[data-cy=servicepackage-info]").should("exist");
+        cy.get("[data-cy=cpu-info]").should("exist");
+        cy.get("[data-cy=memory-info]").should("exist");
+
+        cy.get("[data-cy=servicepackage-info]").within(() => {
+          cy.get('[data-cy=spName]').should('have.text', ' VisualObjects.ActorServicePkg ');
+        });
+
+        cy.get("[data-cy=cpu-info]").within(() => {
+          cy.get('[data-cy=requested]').should('have.text', ' 4 ');
+          cy.get('[data-cy=limit]').should('have.text', ' 12 ');
+          cy.get('[data-cy=dynamic]').should('have.text', ' OFF ');
+        });
+
+        cy.get("[data-cy=memory-info]").within(() => {
+          cy.get('[data-cy=requested]').should('have.text', ' 1200 ');
+          cy.get('[data-cy=limit]').should('have.text', ' 1002 ');
+          cy.get('[data-cy=dynamic]').should('have.text', ' OFF ');
+        });
+      });
+
     })
 
     describe("stateful - with auxiliary replicas", () => {
@@ -242,20 +277,20 @@ context('service', () => {
         })
       })
 
-        it('arm-managed', () => {
+      it('arm-managed', () => {
 
-            addRoute("services", "app-page/services-arm-managed.json", apiUrl(`/Applications/${appName}/$/GetServices?*`))
-            addRoute("serviceInfo", "service-page/service-stateless-arm-managed.json",apiUrl(`${routeFormatter(appName, statelessServiceName)}?*`))
-            cy.reload();
-            cy.wait(waitRequest);
+          addRoute("services", "app-page/services-arm-managed.json", apiUrl(`/Applications/${appName}/$/GetServices?*`))
+          addRoute("serviceInfo", "service-page/service-stateless-arm-managed.json",apiUrl(`${routeFormatter(appName, statelessServiceName)}?*`))
+          cy.reload();
+          cy.wait(waitRequest);
 
-            cy.get('[data-cy=armWarning]').should('exist');
-            cy.get('[data-cy=actions]').should('not.exist');
+          cy.get('[data-cy=armWarning]').should('exist');
+          cy.get('[data-cy=actions]').should('not.exist');
 
-        })
+      })
 
-        it('actions', () => {
-            cy.wait(waitRequest);
+      it('actions', () => {
+        cy.wait(waitRequest);
 
         cy.get('[data-cy=actions]').within(() => {
           cy.contains("Actions").click();

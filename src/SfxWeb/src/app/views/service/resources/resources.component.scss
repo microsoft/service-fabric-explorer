@@ -1,0 +1,11 @@
+.card-container {
+  width: 100%;
+  display: grid;
+  grid-auto-flow: dense;
+  grid-gap: 10px;
+  grid-auto-rows: 235px;
+
+  @media (min-width: 550px){
+    grid-template-columns: repeat(auto-fit, 220px);
+  }
+}
