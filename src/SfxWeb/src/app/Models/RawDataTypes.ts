@@ -1175,3 +1175,9 @@ export interface IRawServiceMetadata{
 export interface IRawArmMetadata{
     ArmResourceId?: string;
 }
+
+export interface IRawFMMLocation {
+    NodeName: string;
+    NodeId: string;
+    InstanceId: string;
+}
