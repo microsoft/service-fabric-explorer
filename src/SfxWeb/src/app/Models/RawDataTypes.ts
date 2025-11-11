@@ -1178,6 +1178,6 @@ export interface IRawArmMetadata{
 
 export interface IRawFMMLocation {
     NodeName: string;
-    NodeId: string;
+    NodeId: IRawId;
     InstanceId: string;
 }
