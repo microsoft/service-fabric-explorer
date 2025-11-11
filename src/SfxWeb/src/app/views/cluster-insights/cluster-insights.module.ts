@@ -6,9 +6,10 @@ import { ReplicaListComponent } from './replica-list/replica-list.component';
 import { ClusterInsightsRoutingModule } from './cluster-insights-routing.module';
 import { FmmLocationComponent } from './fmm-location/fmm-location.component';
 import { ChartsModule } from 'src/app/modules/charts/charts.module';
+import { FMMNodesComponent } from './fmm-nodes/all-nodes.component';
 
 @NgModule({
-  declarations: [ReplicaListComponent, FmmLocationComponent],
+  declarations: [ReplicaListComponent, FmmLocationComponent, FMMNodesComponent],
   imports: [
     SharedModule,
     DetailListTemplatesModule,
