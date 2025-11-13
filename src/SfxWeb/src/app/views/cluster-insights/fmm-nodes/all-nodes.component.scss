@@ -6,7 +6,9 @@
   app-dashboard-tile,
   app-dashboard-text-scale-tile,
   app-fmm-location {
-    flex: 1;
+    flex: 0 0 auto;
+    width: 300px;
+    height: 200px;
     min-width: 0;
   }
 }

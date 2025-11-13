@@ -4,21 +4,22 @@
     <!-- FMM Node Statistics Summary -->
     <app-dashboard-text-scale-tile> 
         <div class="stat-item">
-            <span class="stat-label">Seed Nodes : </span>
-            <span class="stat-value">{{ seedNodeCount }}</span>
+            <span class="stat-label">Code Versions : </span>
+            <span class="stat-value code-versions">{{ uniqueCodeVersions.join(', ') || 'N/A' }}</span>
         </div>
         <div class="stat-item">
             <span class="stat-label">Fault Domains: </span>
             <span class="stat-value">{{ faultDomainCount }}</span>
-        </div>
+        </div>        
         <div class="stat-item">
             <span class="stat-label">Upgrade Domains : </span>
             <span class="stat-value">{{ upgradeDomainCount }}</span>
         </div>
         <div class="stat-item">
-            <span class="stat-label">Code Versions : </span>
-            <span class="stat-value code-versions">{{ uniqueCodeVersions.join(', ') || 'N/A' }}</span>
+            <span class="stat-label">Seed Nodes : </span>
+            <span class="stat-value">{{ seedNodeCount }}</span>
         </div>
+        
     </app-dashboard-text-scale-tile>
 
     <!-- Node Status Ring Chart -->
