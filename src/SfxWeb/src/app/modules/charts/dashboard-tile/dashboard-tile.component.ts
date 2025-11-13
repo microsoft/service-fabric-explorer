@@ -128,7 +128,9 @@ export class DashboardTileComponent implements OnInit, AfterViewInit, OnChanges 
     const colors = {
       Healthy: 'var(--badge-ok)',
       Warning: 'var(--badge-warning)',
-      Error: 'var(--badge-error)'
+      Error: 'var(--badge-error)',
+      Up: 'var(--badge-ok)',
+      Disabled: 'var(--badge-error)'
     };
 
     const data = this.data.dataPoints.map(p => {

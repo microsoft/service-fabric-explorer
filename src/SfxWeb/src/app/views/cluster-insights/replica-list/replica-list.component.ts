@@ -26,7 +26,6 @@ export class ReplicaListComponent implements OnInit {
       new ListColumnSettingWithFilter('id', 'Id'),
       new ListColumnSetting('raw.NodeName', 'Node Name'),
       new ListColumnSettingWithFilter('role', 'Replica Role'),
-      new ListColumnSettingWithFilter('healthState', 'Health State'),
       new ListColumnSettingWithFilter('raw.ReplicaStatus', 'Status')
     ];
   
@@ -43,7 +42,6 @@ export class ReplicaListComponent implements OnInit {
         id: replica.ReplicaId,
         raw: replica,
         role: replica.ReplicaRole,
-        healthState: replica.HealthState,
         replicaStatus: replica.ReplicaStatus,
       }));
 

@@ -1,0 +1,17 @@
+<div class="recovery-progress-container">
+  <h4>Cluster Recovery Progress</h4>
+  <div class="progress-bar-wrapper">
+    <div class="progress-steps">
+      <div class="progress-step" 
+           [class.success]="step.status === 'success'" 
+           [class.error]="step.status === 'error'"
+           [class.warning]="step.status === 'warning'"
+           [class.pending]="step.status === 'pending'"
+           [attr.title]="step.tooltip"
+           *ngFor="let step of recoverySteps">
+        <div class="step-indicator"></div>
+        <div class="step-label">{{ step.name }}</div>
+      </div>
+    </div>
+  </div>
+</div>

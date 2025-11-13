@@ -1,0 +1,82 @@
+.recovery-progress-container {
+  padding: 20px;
+  background: var(--primary-background-color);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  margin-bottom: 20px;
+
+  h4 {
+    margin: 0 0 15px 0;
+    font-size: 16px;
+    font-weight: bold;
+    color: var(--text-color);
+  }
+}
+
+.progress-bar-wrapper {
+  width: 100%;
+}
+
+.progress-steps {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 15px;
+    left: 30px;
+    right: 30px;
+    height: 4px;
+    background-color: #ddd;
+    z-index: 0;
+  }
+}
+
+.progress-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  position: relative;
+  z-index: 1;
+
+  .step-indicator {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 3px solid #ddd;
+    background-color: white;
+    margin-bottom: 8px;
+  }
+
+  .step-label {
+    font-size: 12px;
+    text-align: center;
+    max-width: 80px;
+    word-wrap: break-word;
+    color: var(--text-color);
+  }
+
+  &.success .step-indicator {
+    background-color: #5cb85c;
+    border-color: #5cb85c;
+  }
+
+  &.error .step-indicator {
+    background-color: #d9534f;
+    border-color: #d9534f;
+  }
+
+  &.warning .step-indicator {
+    background-color: #f0ad4e;
+    border-color: #f0ad4e;
+  }
+
+  &.pending .step-indicator {
+    background-color: white;
+    border-color: #ddd;
+  }
+}

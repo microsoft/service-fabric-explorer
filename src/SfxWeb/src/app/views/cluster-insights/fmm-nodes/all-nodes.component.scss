@@ -1,0 +1,25 @@
+.tile-container {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 20px;
+
+  app-dashboard-tile,
+  app-dashboard-text-scale-tile,
+  app-fmm-location {
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+.stat-item {
+  padding: 5px 0;
+
+  .stat-label {
+    font-weight: bold;
+    margin-right: 8px;
+  }
+
+  .stat-value {
+    color: white;
+  }
+}

@@ -1,18 +1,41 @@
-<div *ngIf="isLoading" class="loading-indicator">
-    Loading FMM Nodes...
-</div>
+<!-- Top section: Node Status Ring, FMM Node Statistics, and FMM Location side by side -->
+<div class="tile-container">
 
-<div *ngIf="!isLoading && tiles.length > 0" class="tile-container">
-    <div *ngFor="let tile of tiles" class="tile">
-        <div class="tile-header">{{ tile.displayName }}</div>
-        <div class="tile-stats">
-            <span class="error" *ngIf="tile.healthState.errorCount > 0">Error: {{ tile.healthState.errorCount }}</span>
-            <span class="warning" *ngIf="tile.healthState.warningCount > 0">Warning: {{ tile.healthState.warningCount }}</span>
-            <span class="ok">Ok: {{ tile.healthState.okCount }}</span>
+    <!-- FMM Node Statistics Summary -->
+    <app-dashboard-text-scale-tile> 
+        <div class="stat-item">
+            <span class="stat-label">Seed Nodes: </span>
+            <span class="stat-value">{{ seedNodeCount }}</span>
         </div>
-    </div>
+        <div class="stat-item">
+            <span class="stat-label">Fault Domains: </span>
+            <span class="stat-value">{{ faultDomainCount }}</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-label">Upgrade Domains: </span>
+            <span class="stat-value">{{ upgradeDomainCount }}</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-label">Code Versions: </span>
+            <span class="stat-value code-versions">{{ uniqueCodeVersions.join(', ') || 'N/A' }}</span>
+        </div>
+    </app-dashboard-text-scale-tile>
+
+    <!-- Node Status Ring Chart -->
+    <app-dashboard-tile [data]="nodeStatusTile"></app-dashboard-tile>
+    
+    <!-- FMM Location Component -->
+    <app-fmm-location></app-fmm-location>
 </div>
 
-<div *ngIf="!isLoading" class="detail-pane essen-pane">
-    <app-detail-list [listSettings]="listSettings" [list]="nodes" data-cy="fmmNodesList"></app-detail-list>
+<!-- FMM Nodes List -->
+<div class="essen-pane detail-pane nav-wrapper">
+    <div ngbNav #nav="ngbNav">
+        <span ngbNavItem>
+            <ng-template ngbNavContent>
+                <app-detail-list [list]="nodes" [listSettings]="listSettings"></app-detail-list>
+            </ng-template>
+        </span>
+    </div>
+    <div [ngbNavOutlet]="nav"></div>
 </div>
