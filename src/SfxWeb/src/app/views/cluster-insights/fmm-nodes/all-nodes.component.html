@@ -4,7 +4,7 @@
     <!-- FMM Node Statistics Summary -->
     <app-dashboard-text-scale-tile> 
         <div class="stat-item">
-            <span class="stat-label">Seed Nodes: </span>
+            <span class="stat-label">Seed Nodes : </span>
             <span class="stat-value">{{ seedNodeCount }}</span>
         </div>
         <div class="stat-item">
@@ -12,18 +12,18 @@
             <span class="stat-value">{{ faultDomainCount }}</span>
         </div>
         <div class="stat-item">
-            <span class="stat-label">Upgrade Domains: </span>
+            <span class="stat-label">Upgrade Domains : </span>
             <span class="stat-value">{{ upgradeDomainCount }}</span>
         </div>
         <div class="stat-item">
-            <span class="stat-label">Code Versions: </span>
+            <span class="stat-label">Code Versions : </span>
             <span class="stat-value code-versions">{{ uniqueCodeVersions.join(', ') || 'N/A' }}</span>
         </div>
     </app-dashboard-text-scale-tile>
 
     <!-- Node Status Ring Chart -->
     <app-dashboard-tile [data]="nodeStatusTile"></app-dashboard-tile>
-    
+
     <!-- FMM Location Component -->
     <app-fmm-location></app-fmm-location>
 </div>
@@ -32,6 +32,7 @@
 <div class="essen-pane detail-pane nav-wrapper">
     <div ngbNav #nav="ngbNav">
         <span ngbNavItem>
+            <h4>Nodes List</h4>
             <ng-template ngbNavContent>
                 <app-detail-list [list]="nodes" [listSettings]="listSettings"></app-detail-list>
             </ng-template>
