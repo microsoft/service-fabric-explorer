@@ -32,5 +32,6 @@ export class InfrastructureOverviewComponent implements OnInit {
 
   trackByFn(index: number, job: InfrastructureJob) {
     return job.id;
+    
   }
 }
