@@ -33,6 +33,7 @@ export class RecoveryProgressComponent implements OnInit {
     // Check all recovery steps in parallel
     forkJoin({
       fmmNodes: this.restClient.getFMMNodes(),
+      nodes: this.restClient.getNodes(),
       failoverManagerReplicas: this.restClient.getReplicasOnPartition('System', 'System/FailoverManagerService', '00000000-0000-0000-0000-000000000001'),
       systemAppHealth: this.restClient.getApplicationHealth('System')
     }).subscribe({
@@ -40,7 +41,7 @@ export class RecoveryProgressComponent implements OnInit {
         this.checkSeedNodeQuorum(results.fmmNodes);
         this.checkFailoverManagerStatus(results.failoverManagerReplicas);
         this.checkSystemServicesStatus(results.systemAppHealth);
-        this.checkNodesStatus(results.fmmNodes);
+        this.checkNodesStatus(results.nodes);
       },
       error: (error) => {
         console.error('Error loading recovery status:', error);
@@ -113,22 +114,31 @@ export class RecoveryProgressComponent implements OnInit {
   }
 
   checkNodesStatus(rawNodes: IRawNode[]): void {
+    const totalNodes = rawNodes.length;
     const disabledNodes = rawNodes.filter(node => node.NodeStatus === 'Disabled');
     const allNodesUp = disabledNodes.length === 0;
+    const hasMinimumNodes = totalNodes >= 9;
     
     console.log('Nodes Status Check:', {
-      totalNodes: rawNodes.length,
+      totalNodes,
       disabledNodes: disabledNodes.length,
-      allNodesUp: allNodesUp
+      allNodesUp,
+      hasMinimumNodes
     });
 
-    // Update Nodes status - red if any node is Disabled, green otherwise
+    // Update Nodes status - red if node count < 9 or any node is Disabled, green otherwise
     const nodesStep = this.recoverySteps.find(step => step.name === 'Nodes');
     if (nodesStep) {
-      nodesStep.status = allNodesUp ? 'success' : 'error';
-      nodesStep.tooltip = allNodesUp 
-        ? 'All nodes are Up' 
-        : `${disabledNodes.length} node(s) are Disabled`;
+      const isHealthy = allNodesUp && hasMinimumNodes;
+      nodesStep.status = isHealthy ? 'success' : 'error';
+      
+      if (!hasMinimumNodes) {
+        nodesStep.tooltip = `Insufficient nodes: ${totalNodes} nodes (minimum 9 required)`;
+      } else if (!allNodesUp) {
+        nodesStep.tooltip = `${disabledNodes.length} node(s) are Disabled`;
+      } else {
+        nodesStep.tooltip = `All ${totalNodes} nodes are Up`;
+      }
     }
   }
 }
