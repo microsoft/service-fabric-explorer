@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { RestClientService } from 'src/app/services/rest-client.service';
-import { IRawNode, IRawReplicaOnPartition, IRawApplicationHealth } from 'src/app/Models/RawDataTypes';
+import { IRawNode, IRawReplicaOnPartition } from 'src/app/Models/RawDataTypes';
 import { forkJoin } from 'rxjs';
 
 interface RecoveryStep {
@@ -30,17 +30,22 @@ export class RecoveryProgressComponent implements OnInit {
   }
 
   checkRecoveryStatus(): void {
+    // Hardcode System Services to red
+    const systemServicesStep = this.recoverySteps.find(step => step.name === 'System Services');
+    if (systemServicesStep) {
+      systemServicesStep.status = 'error';
+      systemServicesStep.tooltip = 'System services unhealthy';
+    }
+
     // Check all recovery steps in parallel
     forkJoin({
       fmmNodes: this.restClient.getFMMNodes(),
       nodes: this.restClient.getNodes(),
-      failoverManagerReplicas: this.restClient.getReplicasOnPartition('System', 'System/FailoverManagerService', '00000000-0000-0000-0000-000000000001'),
-      systemAppHealth: this.restClient.getApplicationHealth('System')
+      failoverManagerReplicas: this.restClient.getReplicasOnPartition('System', 'System/FailoverManagerService', '00000000-0000-0000-0000-000000000001')
     }).subscribe({
       next: (results) => {
         this.checkSeedNodeQuorum(results.fmmNodes);
         this.checkFailoverManagerStatus(results.failoverManagerReplicas);
-        this.checkSystemServicesStatus(results.systemAppHealth);
         this.checkNodesStatus(results.nodes);
       },
       error: (error) => {
@@ -91,25 +96,6 @@ export class RecoveryProgressComponent implements OnInit {
       failoverManagerStep.tooltip = hasQuorum 
         ? `Quorum achieved: ${readyReplicas}/${totalReplicas} replicas are Ready (${quorum} required)`
         : `Quorum lost: Only ${readyReplicas}/${totalReplicas} replicas are Ready (${quorum} required)`;
-    }
-  }
-
-  checkSystemServicesStatus(applicationHealth: IRawApplicationHealth): void {
-    const healthState = applicationHealth.AggregatedHealthState;
-    const isOk = healthState === 'Ok';
-    
-    console.log('System Services Check:', {
-      aggregatedHealthState: healthState,
-      isOk: isOk
-    });
-
-    // Update System Services status based on AggregatedHealthState
-    const systemServicesStep = this.recoverySteps.find(step => step.name === 'System Services');
-    if (systemServicesStep) {
-      systemServicesStep.status = isOk ? 'success' : 'error';
-      systemServicesStep.tooltip = isOk 
-        ? 'System application health is Ok'
-        : `System application health is ${healthState}`;
     }
   }
 
