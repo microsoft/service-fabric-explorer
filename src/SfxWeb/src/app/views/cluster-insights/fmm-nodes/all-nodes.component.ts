@@ -1,17 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { RestClientService } from 'src/app/services/rest-client.service';
 import { SettingsService } from '../../../services/settings.service';
-import { ListSettings, ListColumnSettingForLink, ListColumnSetting, ListColumnSettingWithFilter, ListColumnSettingForBadge } from '../../../Models/ListSettings';
+import { ListSettings, ListColumnSettingForLink, ListColumnSetting, ListColumnSettingWithFilter, ListColumnSettingForBadge, ListColumnSettingForColoredNodeName } from '../../../Models/ListSettings';
 import { IRawNode } from '../../../Models/RawDataTypes';
 import { IDashboardViewModel } from 'src/app/ViewModels/DashboardViewModels';
 
 // Simple interface for FMM Node display
 interface FMMNodeDisplay {
-  //name: string;
-  //viewPath: string;
+  name: string;
   raw: IRawNode;
-  //healthState: string;
-  //nodeStatus: string;
+  nodeStatusBadge: { text: string; badgeClass: string };
 }
 
 @Component({
@@ -22,6 +20,8 @@ interface FMMNodeDisplay {
 export class FMMNodesComponent implements OnInit {
 
   nodes: FMMNodeDisplay[] = [];
+  seedNodes: FMMNodeDisplay[] = [];
+  nonSeedNodes: FMMNodeDisplay[] = [];
   listSettings!: ListSettings;
   seedNodeCount: number = 0;
   faultDomainCount: number = 0;
@@ -56,14 +56,12 @@ export class FMMNodesComponent implements OnInit {
   setupListSettings(): void {
     console.log('Setting up FMM nodes list settings');
     this.listSettings = this.settings.getNewOrExistingListSettings('fmm-nodes', ['name'], [
-      new ListColumnSettingWithFilter('raw.Name', 'Name'),
+      new ListColumnSettingForColoredNodeName('name', 'Name'),
       new ListColumnSetting('raw.IpAddressOrFQDN', 'Address'),
       new ListColumnSettingWithFilter('raw.Type', 'Node Type'),
       new ListColumnSettingWithFilter('raw.UpgradeDomain', 'Upgrade Domain'),
       new ListColumnSettingWithFilter('raw.FaultDomain', 'Fault Domain'),
-      new ListColumnSettingWithFilter('raw.IsSeedNode', 'Is Seed Node'),
-      //new ListColumnSettingForBadge('healthState', 'Health State'),
-      new ListColumnSettingWithFilter('nodeStatus', 'Status'),
+      new ListColumnSettingForBadge('nodeStatusBadge', 'Status'),
       new ListColumnSettingWithFilter('raw.Id.Id', 'Node Id'),
       new ListColumnSettingWithFilter('raw.CodeVersion', 'Code Version'),
     ]);
@@ -86,11 +84,16 @@ export class FMMNodesComponent implements OnInit {
         // Transform raw nodes into display format
         this.nodes = rawNodes.map(rawNode => ({
           name: rawNode.Name,
-          //viewPath: `/node/${encodeURIComponent(rawNode.Name)}`, // Link to node details page
           raw: rawNode,
-          //healthState: rawNode.HealthState,
-          nodeStatus: rawNode.NodeStatus
+          nodeStatusBadge: {
+            text: rawNode.NodeStatus,
+            badgeClass: rawNode.NodeStatus === 'Up' ? 'badge-ok' : 'badge-error'
+          }
         }));
+
+        // Filter seed and non-seed nodes
+        this.seedNodes = this.nodes.filter(node => node.raw.IsSeedNode);
+        this.nonSeedNodes = this.nodes.filter(node => !node.raw.IsSeedNode);
 
         //this.calculateTiles();
         //this.isLoading = false;
@@ -127,7 +130,7 @@ export class FMMNodesComponent implements OnInit {
 
     // Calculate node status for ring chart
     const upNodes = rawNodes.filter(node => node.NodeStatus === 'Up').length;
-    const downNodes = rawNodes.filter(node => node.NodeStatus === 'Disabled').length;
+    const downNodes = rawNodes.filter(node => node.NodeStatus !== 'Up').length;
     
     this.nodeStatusTile = {
       displayTitle: 'Nodes',
@@ -142,7 +145,7 @@ export class FMMNodesComponent implements OnInit {
           adjustedCount: upNodes
         },
         {
-          state: { text: 'Disabled', badgeClass: 'badge-error', badgeId: 'down' },
+          state: { text: 'Disabled', badgeClass: 'badge-error', badgeId: 'disabled' },
           title: 'Disabled',
           count: downNodes,
           adjustedCount: downNodes

@@ -1,0 +1,11 @@
+<div class="essen-pane detail-pane nav-wrapper">
+    <div ngbNav #nav="ngbNav">
+        <span ngbNavItem>
+            <h4>Failover Manager Replica Details</h4>
+            <ng-template ngbNavContent>
+                <app-detail-list [list]="replicaDetailsData" [listSettings]="listSettings"></app-detail-list>
+            </ng-template>
+        </span>
+    </div>
+    <div [ngbNavOutlet]="nav"></div>
+</div>

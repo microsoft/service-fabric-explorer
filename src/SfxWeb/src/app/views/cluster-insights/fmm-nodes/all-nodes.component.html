@@ -30,14 +30,30 @@
 </div>
 
 <!-- FMM Nodes List -->
-<div class="essen-pane detail-pane nav-wrapper">
-    <div ngbNav #nav="ngbNav">
-        <span ngbNavItem>
-            <h4>Nodes List</h4>
-            <ng-template ngbNavContent>
-                <app-detail-list [list]="nodes" [listSettings]="listSettings"></app-detail-list>
-            </ng-template>
-        </span>
+<div class="essen-pane detail-pane">
+    <h4>Nodes List</h4>
+    <div></div>
+    <div class="nav-wrapper">
+        <ul ngbNav #nav="ngbNav" class="nav-wrapper">
+            <li [ngbNavItem]="1">
+                <a ngbNavLink class="nav-link">Seed Nodes ({{ seedNodes.length }})</a>
+                <ng-template ngbNavContent>
+                    <app-detail-list [list]="seedNodes" [listSettings]="listSettings"></app-detail-list>
+                </ng-template>
+            </li>
+            <li [ngbNavItem]="2">
+                <a ngbNavLink class="nav-link">Non-Seed Nodes ({{ nonSeedNodes.length }})</a>
+                <ng-template ngbNavContent>
+                    <app-detail-list [list]="nonSeedNodes" [listSettings]="listSettings"></app-detail-list>
+                </ng-template>
+            </li>
+            <li [ngbNavItem]="3">
+                <a ngbNavLink class="nav-link">All Nodes ({{ nodes.length }})</a>
+                <ng-template ngbNavContent>
+                    <app-detail-list [list]="nodes" [listSettings]="listSettings"></app-detail-list>
+                </ng-template>
+            </li>
+        </ul>
     </div>
     <div [ngbNavOutlet]="nav"></div>
 </div>

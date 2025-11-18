@@ -11,6 +11,7 @@ import { ShortenComponent } from '../modules/detail-list-templates/shorten/short
 import { HealthbadgeComponent } from '../modules/detail-list-templates/healthbadge/healthbadge.component';
 import { IConcurrentEvents } from './eventstore/rcaEngine';
 import { ArmManagedComponent } from '../modules/detail-list-templates/arm-managed/arm-managed.component';
+import { ColoredNodeNameComponent } from '../modules/detail-list-templates/colored-node-name/colored-node-name.component';
 
 // -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -318,6 +319,17 @@ export class ListColumnSettingForArmManaged extends ListColumnSetting {
         super('isArmManaged', 'Arm Managed', {
             enableFilter: true
         })
+    }
+}
+
+export class ListColumnSettingForColoredNodeName extends ListColumnSetting {
+    template = ColoredNodeNameComponent;
+    public constructor(
+        propertyPath: string,
+        displayName: string) {
+        super(propertyPath, displayName, {
+            enableFilter: true
+        });
     }
 }
 
