@@ -24,6 +24,17 @@ export class ColoredNodeNameComponent implements OnInit, DetailBaseComponent {
 
   getColor(): string {
     const status = this.getNodeStatus();
-    return status === 'Up' ? 'var(--badge-ok)' : 'var(--badge-error)';
+    if (status === 'Up') {
+      return 'var(--badge-ok)';
+    }
+    else if (status === 'Down') {
+      return 'var(--badge-error)';
+    } 
+    else if (status === 'Disabled' || status === 'Disabling') { 
+      return 'var(--badge-warning)';
+    }
+    else {
+      return 'var(--badge-unknown)';
+    }
   }
 }

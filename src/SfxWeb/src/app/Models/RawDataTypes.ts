@@ -528,6 +528,7 @@ export interface IRawPartition {
         PartitionStatus: string;
         CurrentConfigurationEpoch: IRawConfigurationEpoch;
         MinInstanceCount: number;
+        LastQuorumLossDurationInSeconds: number;
     }
 
 export interface IRawPartitionDescription {
@@ -1003,6 +1004,12 @@ export interface IRawHealthStateCount {
         OkCount: number;
         ErrorCount: number;
         WarningCount: number;
+    }
+
+export interface IRawNodeStatusCount {
+        UpCount: number;
+        DisabledCount: number;
+        DownCount: number;
     }
 
 export interface IRawRepositoryCredential {

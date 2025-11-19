@@ -1,29 +1,9 @@
-<!-- Top section: Node Status Ring, FMM Node Statistics, and FMM Location side by side -->
 <div class="tile-container">
-
     <!-- FMM Node Statistics Summary -->
-    <app-dashboard-text-scale-tile> 
-        <div class="stat-item">
-            <span class="stat-label">Code Versions : </span>
-            <span class="stat-value code-versions">{{ uniqueCodeVersions.join(', ') || 'N/A' }}</span>
-        </div>
-        <div class="stat-item">
-            <span class="stat-label">Fault Domains: </span>
-            <span class="stat-value">{{ faultDomainCount }}</span>
-        </div>        
-        <div class="stat-item">
-            <span class="stat-label">Upgrade Domains : </span>
-            <span class="stat-value">{{ upgradeDomainCount }}</span>
-        </div>
-        <div class="stat-item">
-            <span class="stat-label">Seed Nodes : </span>
-            <span class="stat-value">{{ seedNodeCount }}</span>
-        </div>
-        
-    </app-dashboard-text-scale-tile>
+    <app-essential-health-tile [listItems]="essentialItems"></app-essential-health-tile>
 
-    <!-- Node Status Ring Chart -->
-    <app-dashboard-tile [data]="nodeStatusTile"></app-dashboard-tile>
+    <!-- Node Status Ring Chart (using tiles array) -->
+    <app-dashboard-tile *ngFor="let tile of tiles" [data]="tile"></app-dashboard-tile>
 
     <!-- FMM Location Component -->
     <app-fmm-location></app-fmm-location>
@@ -32,7 +12,6 @@
 <!-- FMM Nodes List -->
 <div class="essen-pane detail-pane">
     <h4>Nodes List</h4>
-    <div></div>
     <div class="nav-wrapper">
         <ul ngbNav #nav="ngbNav" class="nav-wrapper">
             <li [ngbNavItem]="1">

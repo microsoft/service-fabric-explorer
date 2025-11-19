@@ -130,7 +130,8 @@ export class DashboardTileComponent implements OnInit, AfterViewInit, OnChanges 
       Warning: 'var(--badge-warning)',
       Error: 'var(--badge-error)',
       Up: 'var(--badge-ok)',
-      Disabled: 'var(--badge-error)'
+      Disabled: 'var(--badge-warning)',
+      Down: 'var(--badge-error)'
     };
 
     const data = this.data.dataPoints.map(p => {

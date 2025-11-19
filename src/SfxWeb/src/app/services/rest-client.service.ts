@@ -88,7 +88,7 @@ export class RestClientService {
   }
 
   public getFMMNodes(messageHandler?: IResponseMessageHandler): Observable<IRawNode[]> {
-      return this.getFullCollection<IRawNode>('$/GetFMMNodes', 'Get FMM nodes', RestClientService.apiVersion64);
+      return this.getFullCollection<IRawNode>('$/GetFMMNodeList', 'Get FMM nodes', RestClientService.apiVersion64);
   }
 
   public getNode(nodeName: string, messageHandler?: IResponseMessageHandler): Observable<IRawNode> {
