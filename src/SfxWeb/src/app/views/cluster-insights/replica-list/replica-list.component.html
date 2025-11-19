@@ -8,33 +8,66 @@
     <app-fmm-nodes></app-fmm-nodes>
 </div>
 
-<!-- Replica List -->
+<!-- Replicas -->
 <div class="essen-pane detail-pane nav-wrapper">
-    <div ngbNav #nav="ngbNav">
-        <span ngbNavItem>
-            <h4>Failover Manager Replicas</h4>
-            
-            <!-- Replica Set Size Information -->
-            <div class="replica-set-info">
-                <div class="info-item">
-                    <span class="info-label">Min Replica Set Size:</span>
-                    <span class="info-value">{{ minReplicaSetSize }}</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Target Replica Set Size:</span>
-                    <span class="info-value">{{ targetReplicaSetSize }}</span>
-                </div>
-                <!-- Display LastQuorumLossDurationInSeconds if partition is InQuorumLoss -->
-                <div class="info-item" *ngIf="partitionStatus === 'InQuorumLoss'">
-                    <span class="info-label">Last Quorum Loss Duration:</span>
-                    <span class="info-value quorum-loss">{{ lastQuorumLossDurationInSeconds }} seconds</span>
-                </div>
-            </div>
-            
-            <ng-template ngbNavContent>
-                <app-detail-list [list]="replicaData" [listSettings]="listSettings"></app-detail-list>
-            </ng-template>
-        </span>
+    <h4>System Services</h4>
+    <div class="nav-wrapper">
+        <ul ngbNav #nav="ngbNav" class="nav-wrapper" [(activeId)]="activeTab">
+            <li [ngbNavItem]="'failover-manager'">
+                <a ngbNavLink class="nav-link">Failover Manager</a>
+                <ng-template ngbNavContent>
+                    <!-- Replica Set Information - Four horizontal boxes -->
+                    <div class="replica-stats-container">
+                        <div class="stat-box">
+                            <div class="stat-label">Min Replica Set Size</div>
+                            <div class="stat-value">{{ minReplicaSetSize }}</div>
+                        </div>
+
+                        <div class="stat-box">
+                            <div class="stat-label">Target Replica Set Size</div>
+                            <div class="stat-value">{{ targetReplicaSetSize }}</div>
+                        </div>
+
+                        <div class="stat-box" 
+                             [class.warning-box]="partitionStatus === 'InQuorumLoss'"
+                             [class.success-box]="partitionStatus !== 'InQuorumLoss'">
+                            <div class="stat-label">
+                                <span *ngIf="partitionStatus === 'InQuorumLoss'" class="not-met-label"> Expected</span>
+                                <span *ngIf="partitionStatus !== 'InQuorumLoss'" class="met-label"> Current</span>
+                                Write Quorum
+                            </div>
+                            <div class="stat-value" 
+                                 [class.quorum-loss]="partitionStatus === 'InQuorumLoss'"
+                                 [class.quorum-met]="partitionStatus !== 'InQuorumLoss'">
+                                {{ writeQuorum }}
+                            </div>
+                        </div>
+
+                        <div class="stat-box" *ngIf="partitionStatus === 'InQuorumLoss'" [class.warning-box]="true">
+                            <div class="stat-label">Quorum Loss Duration</div>
+                            <div class="stat-value quorum-loss">{{ lastQuorumLossDuration }}</div>
+                        </div>
+                    </div>
+
+                    <!-- Replica List -->
+                    <app-detail-list [list]="replicaData" [listSettings]="listSettings"></app-detail-list>
+                </ng-template>
+            </li>
+            <li [ngbNavItem]="'cluster-manager'">
+                <a ngbNavLink class="nav-link">Cluster Manager</a>
+                <ng-template ngbNavContent>
+                    <!-- Content for Cluster Manager replicas will go here -->
+                    <p>TBD</p>
+                </ng-template>
+            </li>
+            <li [ngbNavItem]="'naming'">
+                <a ngbNavLink class="nav-link">Naming</a>
+                <ng-template ngbNavContent>
+                    <!-- Content for Naming replicas will go here -->
+                    <p>TBD</p>
+                </ng-template>
+            </li>
+        </ul>
     </div>
     <div [ngbNavOutlet]="nav"></div>
 </div>

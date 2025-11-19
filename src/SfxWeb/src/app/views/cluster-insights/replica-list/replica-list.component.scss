@@ -1,0 +1,63 @@
+// Make tab names bigger
+.nav-wrapper {
+  .nav-link {
+    font-size: 1rem;
+  }
+}
+
+// Add padding between title and tabs
+.essen-pane {
+  h4 {
+    margin-bottom: 0.8rem;
+  }
+}
+
+// Replica stats container with three horizontal boxes
+.replica-stats-container {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+
+
+.stat-box {
+  width: 200px; // Fixed width (reduced from 250px)
+  padding: 1rem; // Reduced padding (from 1.5rem)
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.5rem; // Reduced gap (from 0.75rem)
+
+  &.success-box {
+    border-color: var(--badge-ok);
+    background: linear-gradient(to bottom, rgba(0, 255, 0, 0.1), rgba(0, 255, 0, 0.02));
+  }
+  
+  &.warning-box {
+    border-color: var(--badge-error);
+    background: linear-gradient(to bottom, rgba(255, 0, 0, 0.1), rgba(255, 0, 0, 0.02));
+  }
+
+  .stat-label {
+    font-size: 0.9rem; // Slightly smaller (from 0.9rem)
+    color: var(--text-secondary);
+    font-weight: 400;
+  }
+
+  .stat-value {
+    font-size: 1.3rem; // Slightly smaller (from 1.5rem)
+    font-weight: 600;
+    color: var(--text-primary);
+
+    &.quorum-loss {
+      color: var(--badge-error);
+    }
+  }
+}
