@@ -327,6 +327,7 @@ export class ReplicaListComponent implements OnInit, OnDestroy, AfterViewChecked
         }
 
         const nodeStatusMap = new Map(nodes.map(node => [node.Name, node.NodeStatus]));
+        const nodeSeedMap = new Map(nodes.map(node => [node.Name, node.IsSeedNode]));
 
         // Create initial replica data
         this.replicaData = replicas.map(replica => {
@@ -335,7 +336,8 @@ export class ReplicaListComponent implements OnInit, OnDestroy, AfterViewChecked
             nodeName: replica.NodeName,
             raw: {
               ...replica,
-              NodeStatus: nodeStatusMap.get(replica.NodeName) || 'Unknown'
+              NodeStatus: nodeStatusMap.get(replica.NodeName) || 'Unknown',
+              IsSeedNode: nodeSeedMap.get(replica.NodeName) || false
             },
             previousReplicaRole: replica.PreviousReplicaRole,
             role: replica.ReplicaRole,

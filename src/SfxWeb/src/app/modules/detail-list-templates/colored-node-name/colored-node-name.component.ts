@@ -37,4 +37,8 @@ export class ColoredNodeNameComponent implements OnInit, DetailBaseComponent {
       return 'var(--badge-unknown)';
     }
   }
+
+  isSeedNode(): boolean {
+    return this.item?.raw?.IsSeedNode === true;
+  }
 }
