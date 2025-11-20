@@ -104,7 +104,15 @@ export class ReplicaListComponent implements OnInit, OnDestroy, AfterViewChecked
       columnSettings.splice(1, 0, new ListColumnSettingWithFilter('previousReplicaRole', 'Previous Replica Role'));
     }
 
-    this.listSettings = new ListSettings(10, null, 'replicas', columnSettings, secondRowColumnSettings, true, (item) => item.deployedReplicaDetails !== null);
+    this.listSettings = new ListSettings(
+      10, 
+      null, 
+      'replicas', 
+      columnSettings, 
+      secondRowColumnSettings, 
+      true, 
+      (item) => item.isClickable && item.deployedReplicaDetails !== null
+    );
   }
 
   getRoleOrder(role: string): number {
@@ -264,15 +272,20 @@ export class ReplicaListComponent implements OnInit, OnDestroy, AfterViewChecked
           },
           isSecondRowCollapsed: true,
           deployedReplicaDetails: null,
-          lastSequenceNumber: 'Loading...',
-          isPrimary: replica.ReplicaRole === 'Primary'
+          lastSequenceNumber: replica.ReplicaStatus === 'Down' ? 'N/A' : 'Loading...',
+          isPrimary: replica.ReplicaRole === 'Primary',
+          isClickable: replica.ReplicaStatus !== 'Down'
         }));
 
         // Sort replicas by role
         this.replicaData = this.sortReplicasByRole(this.replicaData);
 
-        // Fetch LastSequenceNumber for each replica independently
+        // Fetch LastSequenceNumber for each replica independently (skip if status is Down)
         this.replicaData.forEach((replicaItem, index) => {
+          if (replicaItem.replicaStatus === 'Down') {
+            return; // Skip API call for Down replicas
+          }
+          
           this.restClientService.getDeployedReplicaDetail(
             replicaItem.nodeName,
             partitionId,
@@ -332,6 +345,11 @@ export class ReplicaListComponent implements OnInit, OnDestroy, AfterViewChecked
   }
 
   handleReplicaIdClick(replicaItem: any): void {
+    // Don't allow clicking if replica status is Down
+    if (!replicaItem.isClickable) {
+      return;
+    }
+    
     // Toggle the row
     replicaItem.isSecondRowCollapsed = !replicaItem.isSecondRowCollapsed;
     
@@ -344,6 +362,11 @@ export class ReplicaListComponent implements OnInit, OnDestroy, AfterViewChecked
   loadDeployedReplicaDetails(replicaItem: any): void {
     // If already loaded, just toggle
     if (replicaItem.deployedReplicaDetails) {
+      return;
+    }
+
+    // Don't load if replica is Down
+    if (!replicaItem.isClickable) {
       return;
     }
 

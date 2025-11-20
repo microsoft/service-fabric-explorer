@@ -135,3 +135,13 @@
     background-color: rgba(255, 165, 0, 0.25) !important;
   }
 }
+
+// Hide the dropdown arrow/expander button in the replica list
+::ng-deep .detail-list tbody .row-expander {
+  display: none;
+}
+
+// Adjust item-wrapper padding since we removed the expander
+::ng-deep .detail-list tbody td .item-wrapper {
+  padding-left: 0;
+}

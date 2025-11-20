@@ -7,3 +7,9 @@
     color: #106ebe;
   }
 }
+
+.non-clickable-replica-id {
+  color: var(--text-primary);
+  cursor: default;
+  text-decoration: none;
+}

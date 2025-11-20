@@ -1,1 +1,4 @@
-<span class="clickable-replica-id" (click)="onClick()">{{ getReplicaId() }}</span>
+<span 
+  [class.clickable-replica-id]="item?.isClickable" 
+  [class.non-clickable-replica-id]="!item?.isClickable"
+  (click)="onClick()">{{ getReplicaId() }}</span>
