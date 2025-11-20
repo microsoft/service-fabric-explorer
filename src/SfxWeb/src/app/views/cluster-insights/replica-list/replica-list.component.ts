@@ -21,6 +21,7 @@ export class ReplicaListComponent implements OnInit, OnDestroy {
   writeQuorum: number = 0;
   activeTab: string = 'failover-manager';
   failoverManagerEssentials: IEssentialListItem[] = [];
+  showPreviousReplicaRole: boolean = true;
   
   private refreshSubscription: Subscription;
   private readonly REFRESH_INTERVAL_NORMAL = 180000; // 3 minutes when healthy
@@ -42,14 +43,36 @@ export class ReplicaListComponent implements OnInit, OnDestroy {
 
   setupReplicaList(): void {
     const columnSettings = [
-      new ListColumnSettingWithFilter('previousReplicaRole', 'Previous Replica Role'),
+      new ListColumnSettingWithFilter('id', 'Replica Id'),
       new ListColumnSettingWithFilter('role', 'Current Replica Role'),
       new ListColumnSettingForBadge('replicaStatusBadge', 'Status'),
-      new ListColumnSettingWithFilter('id', 'Replica Id'),
       new ListColumnSettingForColoredNodeName('nodeName', 'Node Name')
     ];
 
+    // Conditionally add Previous Replica Role column after Replica Id (index 1)
+    if (this.showPreviousReplicaRole) {
+      columnSettings.splice(1, 0, new ListColumnSettingWithFilter('previousReplicaRole', 'Previous Replica Role'));
+    }
+
     this.listSettings = new ListSettings(10, null, 'replicas', columnSettings);
+  }
+
+  getRoleOrder(role: string): number {
+    const roleOrder: { [key: string]: number } = {
+      'Primary': 1,
+      'ActiveSecondary': 2,
+      'IdleSecondary': 3,
+      'None': 4
+    };
+    return roleOrder[role] || 999;
+  }
+
+  sortReplicasByRole(replicas: any[]): any[] {
+    return replicas.sort((a, b) => {
+      const orderA = this.getRoleOrder(a.role);
+      const orderB = this.getRoleOrder(b.role);
+      return orderA - orderB;
+    });
   }
 
   startAutoRefresh(): void {
@@ -121,7 +144,7 @@ export class ReplicaListComponent implements OnInit, OnDestroy {
     // Add Quorum Loss Duration if in quorum loss
     if (this.partitionStatus === 'InQuorumLoss') {
       this.failoverManagerEssentials.push({
-        descriptionName: '⚠️ Quorum Loss Duration',
+        descriptionName: 'Quorum Loss Duration',
         displayText: this.lastQuorumLossDuration,
         copyTextValue: this.lastQuorumLossDuration
       });
@@ -146,13 +169,27 @@ export class ReplicaListComponent implements OnInit, OnDestroy {
         const seconds = partition.LastQuorumLossDurationInSeconds || 0;
         this.lastQuorumLossDuration = this.formatDuration(seconds);
 
+        // Check if all previous replica roles are None
+        const allPreviousNone = replicas.every(replica => 
+          replica.PreviousReplicaRole === 'None' || !replica.PreviousReplicaRole
+        );
+
+        // Update showPreviousReplicaRole flag
+        const previousShowPreviousReplicaRole = this.showPreviousReplicaRole;
+        this.showPreviousReplicaRole = !allPreviousNone;
+
+        // Re-setup list if the column visibility changed
+        if (previousShowPreviousReplicaRole !== this.showPreviousReplicaRole) {
+          this.setupReplicaList();
+        }
+
         // Calculate write quorum
         this.writeQuorum = this.calculateWriteQuorum(replicas);
 
         // Update essential items
         this.updateFailoverManagerEssentials();
 
-        if (this.partitionStatus === 'InQuorumLoss') {
+        if (this.partitionStatus === 'InQuorumLoss' || this.partitionStatus === 'Reconfiguring') {
           this.restartAutoRefreshWithNewInterval(this.REFRESH_INTERVAL_QUORUM_LOSS);
         } else {
           this.restartAutoRefreshWithNewInterval(this.REFRESH_INTERVAL_NORMAL);
@@ -176,7 +213,8 @@ export class ReplicaListComponent implements OnInit, OnDestroy {
           }
         }));
 
-        this.calculateRecoveryPercentage();
+        // Sort replicas by role
+        this.replicaData = this.sortReplicasByRole(this.replicaData);
         
         return [];
       })
@@ -209,12 +247,5 @@ export class ReplicaListComponent implements OnInit, OnDestroy {
     }
   
     return parts.join(' ');
-  }
-
-  calculateRecoveryPercentage(): void {
-    const totalReplicas = this.replicaData.length;
-    const replicasUp = this.replicaData.filter(replica => replica.replicaStatus === 'Ready').length;
-
-    this.recoveryPercentage = totalReplicas > 0 ? Math.round((replicasUp / totalReplicas) * 100) : 0;
   }
 }

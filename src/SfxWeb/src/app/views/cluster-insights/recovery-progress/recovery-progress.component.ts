@@ -70,26 +70,58 @@ export class RecoveryProgressComponent implements OnInit {
     }
   }
 
+  calculateWriteQuorum(replicas: IRawReplicaOnPartition[]): number {
+    // Check if all previous replica roles are None
+    const allPreviousNone = replicas.every(replica => 
+      replica.PreviousReplicaRole === 'None' || !replica.PreviousReplicaRole
+    );
+
+    let n = 0;
+
+    if (allPreviousNone) {
+      // Use current replica role
+      n = replicas.filter(replica => 
+        replica.ReplicaRole === 'ActiveSecondary' || replica.ReplicaRole === 'Primary'
+      ).length;
+    } else {
+      // Use previous replica role
+      n = replicas.filter(replica => 
+        replica.PreviousReplicaRole === 'ActiveSecondary' || replica.PreviousReplicaRole === 'Primary'
+      ).length;
+    }
+
+    // Write Quorum = (n + 1) / 2
+    return Math.floor(n / 2) + 1;
+  }
+
   checkFailoverManagerStatus(replicas: IRawReplicaOnPartition[]): void {
-    const totalReplicas = replicas.length;
     const readyReplicas = replicas.filter(replica => replica.ReplicaStatus === 'Ready').length;
-    const quorum = Math.floor(totalReplicas / 2) + 1;
-    const hasQuorum = readyReplicas >= quorum;
+    const totalReplicas = replicas.length;
+    
+    // Calculate write quorum using the accurate formula
+    const writeQuorum = this.calculateWriteQuorum(replicas);
+    const hasQuorum = readyReplicas >= writeQuorum;
     
     console.log('Failover Manager Check:', {
       totalReplicas,
       readyReplicas,
-      quorum,
-      hasQuorum
+      writeQuorum,
+      hasQuorum,
+      replicaDetails: replicas.map(r => ({
+        id: r.ReplicaId,
+        role: r.ReplicaRole,
+        previousRole: r.PreviousReplicaRole,
+        status: r.ReplicaStatus
+      }))
     });
 
-    // Update Failover Manager status based on replica quorum
+    // Update Failover Manager status based on write quorum
     const failoverManagerStep = this.recoverySteps.find(step => step.name === 'Failover Manager');
     if (failoverManagerStep) {
       failoverManagerStep.status = hasQuorum ? 'success' : 'error';
       failoverManagerStep.tooltip = hasQuorum 
-        ? `Quorum achieved: ${readyReplicas}/${totalReplicas} replicas are Ready (${quorum} required)`
-        : `Quorum lost: Only ${readyReplicas}/${totalReplicas} replicas are Ready (${quorum} required)`;
+        ? `Write quorum achieved: ${readyReplicas}/${totalReplicas} replicas are Ready (${writeQuorum} required)`
+        : `Write quorum lost: Only ${readyReplicas}/${totalReplicas} replicas are Ready (${writeQuorum} required)`;
     }
   }
 

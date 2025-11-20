@@ -19,13 +19,21 @@
                     <!-- Replica Set Information - Four horizontal boxes -->
                     <div class="replica-stats-container">
                         <div class="stat-box">
-                            <div class="stat-label">Min Replica Set Size</div>
-                            <div class="stat-value">{{ minReplicaSetSize }}</div>
+                            <div class="stat-label">Replica Set Size</div>
+                            <div class="stat-value">{{ minReplicaSetSize }} / {{ targetReplicaSetSize }}</div>
+                            <div class="stat-sublabel">
+                                <span>Min / Target</span>
+                            </div>
                         </div>
 
-                        <div class="stat-box">
-                            <div class="stat-label">Target Replica Set Size</div>
-                            <div class="stat-value">{{ targetReplicaSetSize }}</div>
+                        <div class="stat-box"
+                            [class.success-box]="partitionStatus === 'Ready'"
+                            [class.warning-box]="partitionStatus === 'InQuorumLoss'">
+                            <div class="stat-label">Partition Status</div>
+                            <div class="stat-value" 
+                                [class.quorum-loss]="partitionStatus === 'InQuorumLoss'">
+                                {{ partitionStatus }}
+                            </div>
                         </div>
 
                         <div class="stat-box" 
@@ -60,17 +68,7 @@
                     <p>TBD</p>
                 </ng-template>
             </li>
-            <li [ngbNavItem]="'naming'">
-                <a ngbNavLink class="nav-link">Naming</a>
-                <ng-template ngbNavContent>
-                    <!-- Content for Naming replicas will go here -->
-                    <p>TBD</p>
-                </ng-template>
-            </li>
         </ul>
     </div>
     <div [ngbNavOutlet]="nav"></div>
 </div>
-
-<!-- Replica Details Panel -->
-<app-replica-details [replicaData]="replicaData"></app-replica-details>
