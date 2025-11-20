@@ -8,11 +8,12 @@ import { FmmLocationComponent } from './fmm-location/fmm-location.component';
 import { ChartsModule } from 'src/app/modules/charts/charts.module';
 import { FMMNodesComponent } from './fmm-nodes/all-nodes.component';
 import { RecoveryProgressComponent } from './recovery-progress/recovery-progress.component';
-import { ReplicaDetailsComponent } from './replica-details/replica-details.component';
+import { ClickableReplicaIdComponent } from './clickable-replica-id/clickable-replica-id.component';
+import { ReplicaDetailsHtmlComponent } from './replica-details-html/replica-details-html.component';
 import { CommonModule } from '@angular/common';
 
 @NgModule({
-  declarations: [ReplicaListComponent, FmmLocationComponent, FMMNodesComponent, RecoveryProgressComponent, ReplicaDetailsComponent],
+  declarations: [ReplicaListComponent, FmmLocationComponent, FMMNodesComponent, RecoveryProgressComponent, ClickableReplicaIdComponent, ReplicaDetailsHtmlComponent],
   imports: [
     CommonModule,
     SharedModule,

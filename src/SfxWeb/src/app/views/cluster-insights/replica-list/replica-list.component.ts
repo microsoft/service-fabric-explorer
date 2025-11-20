@@ -1,9 +1,31 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { RestClientService } from 'src/app/services/rest-client.service';
-import { ListSettings, ListColumnSettingWithFilter, ListColumnSettingForColoredNodeName, ListColumnSettingForBadge } from 'src/app/Models/ListSettings';
+import { ListSettings, ListColumnSettingWithFilter, ListColumnSettingForColoredNodeName, ListColumnSettingForBadge, ListColumnSetting } from 'src/app/Models/ListSettings';
 import { forkJoin, interval, Subscription } from 'rxjs';
 import { switchMap, startWith } from 'rxjs/operators';
 import { IEssentialListItem } from 'src/app/modules/charts/essential-health-tile/essential-health-tile.component';
+import { ClickableReplicaIdComponent } from '../clickable-replica-id/clickable-replica-id.component';
+import { ReplicaDetailsHtmlComponent } from '../replica-details-html/replica-details-html.component';
+
+// Custom column setting for clickable replica ID
+export class ListColumnSettingForClickableReplicaId extends ListColumnSetting {
+  template = ClickableReplicaIdComponent;
+  clickHandler: (item: any) => void;
+  
+  public constructor(propertyPath: string, displayName: string, clickHandler?: (item: any) => void) {
+    super(propertyPath, displayName);
+    this.clickHandler = clickHandler;
+  }
+}
+
+// Custom column setting for replica details HTML
+export class ListColumnSettingForReplicaDetailsHtml extends ListColumnSetting {
+  template = ReplicaDetailsHtmlComponent;
+  
+  public constructor(propertyPath: string, displayName: string, config?: any) {
+    super(propertyPath, displayName, config);
+  }
+}
 
 @Component({
   selector: 'app-replica-list',
@@ -46,7 +68,13 @@ export class ReplicaListComponent implements OnInit, OnDestroy {
       new ListColumnSettingWithFilter('id', 'Replica Id'),
       new ListColumnSettingWithFilter('role', 'Current Replica Role'),
       new ListColumnSettingForBadge('replicaStatusBadge', 'Status'),
-      new ListColumnSettingForColoredNodeName('nodeName', 'Node Name')
+      new ListColumnSettingForClickableReplicaId('id', 'Replica Id', this.handleReplicaIdClick.bind(this)),
+      new ListColumnSettingForColoredNodeName('nodeName', 'Node Name'),
+      new ListColumnSetting('lastSequenceNumber', 'Last Sequence Number')
+    ];
+
+    const secondRowColumnSettings = [
+      new ListColumnSettingForReplicaDetailsHtml('deployedReplicaDetailsHtml', 'Deployed Replica Details', { colspan: -1 })
     ];
 
     // Conditionally add Previous Replica Role column after Replica Id (index 1)
@@ -54,7 +82,7 @@ export class ReplicaListComponent implements OnInit, OnDestroy {
       columnSettings.splice(1, 0, new ListColumnSettingWithFilter('previousReplicaRole', 'Previous Replica Role'));
     }
 
-    this.listSettings = new ListSettings(10, null, 'replicas', columnSettings);
+    this.listSettings = new ListSettings(10, null, 'replicas', columnSettings, secondRowColumnSettings, true, (item) => item.deployedReplicaDetails !== null);
   }
 
   getRoleOrder(role: string): number {
@@ -197,6 +225,7 @@ export class ReplicaListComponent implements OnInit, OnDestroy {
 
         const nodeStatusMap = new Map(nodes.map(node => [node.Name, node.NodeStatus]));
 
+        // Create initial replica data
         this.replicaData = replicas.map(replica => ({
           id: replica.ReplicaId,
           nodeName: replica.NodeName,
@@ -210,11 +239,31 @@ export class ReplicaListComponent implements OnInit, OnDestroy {
           replicaStatusBadge: {
             text: replica.ReplicaStatus,
             badgeClass: replica.ReplicaStatus === 'Ready' ? 'badge-ok' : 'badge-error'
-          }
+          },
+          isSecondRowCollapsed: true,
+          deployedReplicaDetails: null,
+          lastSequenceNumber: 'Loading...'
         }));
 
-        // Sort replicas by role
-        this.replicaData = this.sortReplicasByRole(this.replicaData);
+        // Fetch LastSequenceNumber for each replica independently
+        this.replicaData.forEach((replicaItem, index) => {
+          this.restClientService.getDeployedReplicaDetail(
+            replicaItem.nodeName,
+            partitionId,
+            replicaItem.id
+          ).subscribe({
+            next: (detail: any) => {
+              const lastSeqNum = detail?.ReplicatorStatus?.ReplicationQueueStatus?.LastSequenceNumber;
+              replicaItem.lastSequenceNumber = lastSeqNum !== undefined && lastSeqNum !== null ? lastSeqNum.toString() : 'N/A';
+            },
+            error: (error) => {
+              console.error(`Error fetching LastSequenceNumber for replica ${replicaItem.id}:`, error);
+              replicaItem.lastSequenceNumber = 'Error';
+            }
+          });
+        });
+
+        this.calculateRecoveryPercentage();
         
         return [];
       })
@@ -247,5 +296,74 @@ export class ReplicaListComponent implements OnInit, OnDestroy {
     }
   
     return parts.join(' ');
+  }
+
+  calculateRecoveryPercentage(): void {
+    const totalReplicas = this.replicaData.length;
+    const replicasUp = this.replicaData.filter(replica => replica.replicaStatus === 'Ready').length;
+
+    this.recoveryPercentage = totalReplicas > 0 ? Math.round((replicasUp / totalReplicas) * 100) : 0;
+  }
+
+  handleReplicaIdClick(replicaItem: any): void {
+    // Toggle the row
+    replicaItem.isSecondRowCollapsed = !replicaItem.isSecondRowCollapsed;
+    
+    // Load data if expanding and not already loaded
+    if (!replicaItem.isSecondRowCollapsed && !replicaItem.deployedReplicaDetails) {
+      this.loadDeployedReplicaDetails(replicaItem);
+    }
+  }
+
+  loadDeployedReplicaDetails(replicaItem: any): void {
+    // If already loaded, just toggle
+    if (replicaItem.deployedReplicaDetails) {
+      return;
+    }
+
+    const partitionId = '00000000-0000-0000-0000-000000000001';
+    
+    this.restClientService.getDeployedReplicaDetail(
+      replicaItem.nodeName,
+      partitionId,
+      replicaItem.id
+    ).subscribe({
+      next: (details: any) => {
+        console.log('Full API Response:', details);
+        
+        // Store the full response for inspection
+        replicaItem.deployedReplicaDetails = details;
+        
+        // Extract the required fields
+        const deployedServiceReplica = details.DeployedServiceReplica || {};
+        const reconfigInfo = details.ReconfigurationInformation || deployedServiceReplica.ReconfigurationInformation || {};
+        
+        // Create simple key-value display
+        const fields = [
+          { key: 'Host Process ID', value: deployedServiceReplica.HostProcessId || details.HostProcessId || 'N/A' },
+          { key: 'Previous Configuration Role', value: reconfigInfo.PreviousConfigurationRole || 'None' },
+          { key: 'Previous Self Reconfiguring Configuration Role', value: reconfigInfo.PreviousSelfReconfiguringConfigurationRole || 'SelfReconfiguringNone' },
+          { key: 'Reconfiguration Phase', value: reconfigInfo.ReconfigurationPhase || 'None' },
+          { key: 'Reconfiguration Type', value: reconfigInfo.ReconfigurationType || 'None' },
+          { key: 'Reconfiguration Start Time UTC', value: reconfigInfo.ReconfigurationStartTimeUtc || '0001-01-01T00:00:00.000Z' }
+        ];
+        
+        // Format as HTML table
+        let html = '<table class="replica-details-table">';
+        fields.forEach(field => {
+          html += `<tr><td class="field-name">${field.key}</td><td class="field-value">${field.value}</td></tr>`;
+        });
+        html += '</table>';
+        
+        replicaItem.deployedReplicaDetailsHtml = html;
+        
+        console.log('Extracted fields:', fields);
+      },
+      error: (error) => {
+        console.error('Error loading deployed replica details:', error);
+        replicaItem.deployedReplicaDetails = { error: true };
+        replicaItem.deployedReplicaDetailsHtml = '<div class="error-message">Failed to load details: ' + (error.message || 'Unknown error') + '</div>';
+      }
+    });
   }
 }
