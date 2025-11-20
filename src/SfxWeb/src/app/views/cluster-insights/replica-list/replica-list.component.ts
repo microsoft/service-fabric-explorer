@@ -65,10 +65,9 @@ export class ReplicaListComponent implements OnInit, OnDestroy {
 
   setupReplicaList(): void {
     const columnSettings = [
-      new ListColumnSettingWithFilter('id', 'Replica Id'),
+      new ListColumnSettingForClickableReplicaId('id', 'Replica Id', this.handleReplicaIdClick.bind(this)),
       new ListColumnSettingWithFilter('role', 'Current Replica Role'),
       new ListColumnSettingForBadge('replicaStatusBadge', 'Status'),
-      new ListColumnSettingForClickableReplicaId('id', 'Replica Id', this.handleReplicaIdClick.bind(this)),
       new ListColumnSettingForColoredNodeName('nodeName', 'Node Name'),
       new ListColumnSetting('lastSequenceNumber', 'Last Sequence Number')
     ];
@@ -244,6 +243,9 @@ export class ReplicaListComponent implements OnInit, OnDestroy {
           deployedReplicaDetails: null,
           lastSequenceNumber: 'Loading...'
         }));
+
+        // Sort replicas by role
+        this.replicaData = this.sortReplicasByRole(this.replicaData);
 
         // Fetch LastSequenceNumber for each replica independently
         this.replicaData.forEach((replicaItem, index) => {
