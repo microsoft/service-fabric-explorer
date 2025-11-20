@@ -52,7 +52,7 @@
                         <!-- track by (item.uniqueId || $id(item)) -->
                         <!-- | slice: listSettings.limit: listSettings.begin; -->
                 <ng-container *ngFor="let item of sortedFilteredList.slice( (page - 1) * listSettings.limit , page * listSettings.limit)">
-                    <tr class="hover-row">
+                    <tr class="hover-row" [ngClass]="item.cssClass">
                             <!-- track by columnSetting.propertyPath -->
                         <td *ngFor="let columnSetting of listSettings.columnSettings; let i = index;">
                             <div class="item-wrapper">

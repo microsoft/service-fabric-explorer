@@ -32,7 +32,7 @@ export class ListColumnSettingForReplicaDetailsHtml extends ListColumnSetting {
   templateUrl: './replica-list.component.html',
   styleUrls: ['./replica-list.component.scss']
 })
-export class ReplicaListComponent implements OnInit, OnDestroy, AfterViewChecked {
+export class ReplicaListComponent implements OnInit, OnDestroy {
   listSettings: ListSettings;
   replicaData: any[] = [];
   recoveryPercentage: number = 0;
@@ -63,70 +63,6 @@ export class ReplicaListComponent implements OnInit, OnDestroy, AfterViewChecked
     if (this.refreshSubscription) {
       this.refreshSubscription.unsubscribe();
     }
-  }
-
-  ngAfterViewChecked(): void {
-    // Only apply row styling if the data has changed
-    if (this.replicaData.length !== this.previousReplicaDataLength) {
-      this.previousReplicaDataLength = this.replicaData.length;
-      // this.applyPrimaryRowStyling();
-      // console.log("HEREREJKLJ:");
-    }
-  }
-
-  applyPrimaryRowStyling(): void {
-    setTimeout(() => {
-      // Try multiple selectors to find the replica table rows
-      let rows: NodeListOf<Element>;
-      
-      // First try: within ngbNavOutlet
-      const navContent = document.querySelector('.essen-pane [ngbNavOutlet]');
-      if (navContent) {
-        rows = navContent.querySelectorAll('.detail-list tbody tr.hover-row');
-        console.log('Found rows via ngbNavOutlet:', rows.length);
-      } else {
-        console.log('ngbNavOutlet not found, trying direct selector');
-        // Fallback: Just get all rows in essen-pane and skip the first N (nodes)
-        const allRows = document.querySelectorAll('.essen-pane .detail-list tbody tr.hover-row');
-        console.log('Total rows in essen-pane:', allRows.length);
-        
-        // The replica rows are the LAST N rows (after node rows)
-        const nodeRowCount = allRows.length - this.replicaData.length;
-        console.log('Calculated node rows:', nodeRowCount, 'Replica rows:', this.replicaData.length);
-        
-        rows = Array.from(allRows).slice(nodeRowCount) as any;
-      }
-      
-      console.log('=== APPLYING ROW STYLING ===');
-      console.log('Found rows for replicas:', rows.length);
-      console.log('Replica data length:', this.replicaData.length);
-      
-      rows.forEach((row, index) => {
-        const replicaItem = this.replicaData[index];
-        
-        if (!replicaItem) {
-          console.log('No replica item at index', index);
-          return;
-        }
-        
-        console.log(`Row ${index}: id=${replicaItem.id}, role=${replicaItem.role}, countsTowardWriteQuorum=${replicaItem.countsTowardWriteQuorum}`);
-        
-        // Apply write quorum styling (orange) - Primary + ActiveSecondary based on calculateWriteQuorum logic
-        if (replicaItem.countsTowardWriteQuorum === true) {
-          row.classList.add('write-quorum-replica-row');
-          console.log('✓ Added write-quorum-replica-row class to row', index);
-        } else {
-          row.classList.remove('write-quorum-replica-row');
-        }
-      });
-      
-      // Verify
-      setTimeout(() => {
-        const quorumRows = document.querySelectorAll('tr.write-quorum-replica-row');
-        this.highlightedReplicaCount = quorumRows.length;
-        console.log('Write quorum rows found:', quorumRows.length);
-      }, 50);
-    }, 500);
   }
 
   setupReplicaList(): void {
@@ -333,6 +269,7 @@ export class ReplicaListComponent implements OnInit, OnDestroy, AfterViewChecked
 
         // Create initial replica data
         this.replicaData = replicas.map(replica => {
+          const countsTowardWriteQuorum = writeQuorumReplicaIds.has(replica.ReplicaId);
           return {
             id: replica.ReplicaId,
             nodeName: replica.NodeName,
@@ -349,10 +286,12 @@ export class ReplicaListComponent implements OnInit, OnDestroy, AfterViewChecked
             },
             isSecondRowCollapsed: true,
             deployedReplicaDetails: null,
-            lastSequenceNumber: replica.ReplicaStatus === 'Down' ? 'N/A' : 'Loading...',
+            lastSequenceNumber: replica.ReplicaStatus === 'Down' ? 'N/A' : 'Loading...',  // Changed from 'Loading...' to empty string
             isPrimary: replica.ReplicaRole === 'Primary',
             isClickable: replica.ReplicaStatus !== 'Down',
-            countsTowardWriteQuorum: writeQuorumReplicaIds.has(replica.ReplicaId)
+            countsTowardWriteQuorum: countsTowardWriteQuorum,
+            // Only apply CSS class when partition is in quorum loss
+            cssClass: (this.partitionStatus === 'InQuorumLoss' && countsTowardWriteQuorum) ? 'write-quorum-replica-row' : ''
           };
         });
 
@@ -363,14 +302,12 @@ export class ReplicaListComponent implements OnInit, OnDestroy, AfterViewChecked
           id: r.id, 
           role: r.role, 
           isPrimary: r.isPrimary, 
-          countsTowardWriteQuorum: r.countsTowardWriteQuorum 
+          countsTowardWriteQuorum: r.countsTowardWriteQuorum,
+          cssClass: r.cssClass
         })));
 
-        // Apply row styling after a delay to ensure DOM is ready
-        // Only apply row styling if in quorum loss AND data has changed
-        if (this.partitionStatus === 'InQuorumLoss') {
-          setTimeout(() => this.applyPrimaryRowStyling(), 200);
-        }
+        // Update highlighted replica count for display
+        this.highlightedReplicaCount = this.replicaData.filter(r => r.countsTowardWriteQuorum).length;
 
         // Fetch LastSequenceNumber for each replica independently (skip if status is Down)
         this.replicaData.forEach((replicaItem, index) => {
@@ -393,21 +330,10 @@ export class ReplicaListComponent implements OnInit, OnDestroy, AfterViewChecked
             }
           });
         });
-        
+
         return [];
       })
     );
-  }
-
-  applyRowHighlighting(): void {
-    setTimeout(() => {
-      const rows = document.querySelectorAll('.detail-list tbody tr.hover-row');
-      console.log(`Found ${rows.length} rows to highlight`);
-      
-      rows.forEach((row, index) => {
-        row.classList.add('quorum-highlight');
-      });
-    }, 0); // Give a bit more time for DOM to render
   }
 
   formatDuration(seconds: number): string {
@@ -437,7 +363,6 @@ export class ReplicaListComponent implements OnInit, OnDestroy, AfterViewChecked
   
     return parts.join(' ');
   }
-
 
   handleReplicaIdClick(replicaItem: any): void {
     // Don't allow clicking if replica status is Down

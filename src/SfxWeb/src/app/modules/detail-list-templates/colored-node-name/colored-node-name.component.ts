@@ -34,7 +34,7 @@ export class ColoredNodeNameComponent implements OnInit, DetailBaseComponent {
       return 'var(--badge-warning)';
     }
     else {
-      return 'var(--badge-unknown)';
+      return 'white';  // Changed from 'var(--badge-unknown)' to 'white'
     }
   }
 }
