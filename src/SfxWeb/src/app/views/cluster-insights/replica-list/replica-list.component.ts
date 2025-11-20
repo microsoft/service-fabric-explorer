@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewChecked, ChangeDetectorRef } from '@angular/core';
 import { RestClientService } from 'src/app/services/rest-client.service';
 import { ListSettings, ListColumnSettingWithFilter, ListColumnSettingForColoredNodeName, ListColumnSettingForBadge, ListColumnSetting } from 'src/app/Models/ListSettings';
 import { forkJoin, interval, Subscription } from 'rxjs';
@@ -32,7 +32,7 @@ export class ListColumnSettingForReplicaDetailsHtml extends ListColumnSetting {
   templateUrl: './replica-list.component.html',
   styleUrls: ['./replica-list.component.scss']
 })
-export class ReplicaListComponent implements OnInit, OnDestroy {
+export class ReplicaListComponent implements OnInit, OnDestroy, AfterViewChecked {
   listSettings: ListSettings;
   replicaData: any[] = [];
   recoveryPercentage: number = 0;
@@ -49,8 +49,9 @@ export class ReplicaListComponent implements OnInit, OnDestroy {
   private readonly REFRESH_INTERVAL_NORMAL = 180000; // 3 minutes when healthy
   private readonly REFRESH_INTERVAL_QUORUM_LOSS = 5000; // 5 seconds when in quorum loss
   private currentRefreshInterval: number = this.REFRESH_INTERVAL_NORMAL;
+  private previousReplicaDataLength: number = 0;
 
-  constructor(private restClientService: RestClientService) {}
+  constructor(private restClientService: RestClientService, private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     this.setupReplicaList();
@@ -61,6 +62,28 @@ export class ReplicaListComponent implements OnInit, OnDestroy {
     if (this.refreshSubscription) {
       this.refreshSubscription.unsubscribe();
     }
+  }
+
+  ngAfterViewChecked(): void {
+    // Only apply row styling if the data has changed
+    if (this.replicaData.length !== this.previousReplicaDataLength) {
+      this.previousReplicaDataLength = this.replicaData.length;
+      this.applyPrimaryRowStyling();
+    }
+  }
+
+  applyPrimaryRowStyling(): void {
+    setTimeout(() => {
+      const rows = document.querySelectorAll('.detail-list tbody tr.hover-row');
+      rows.forEach((row, index) => {
+        // Each item in the list corresponds to one hover-row
+        if (this.replicaData[index]?.isPrimary) {
+          row.classList.add('primary-replica-row');
+        } else {
+          row.classList.remove('primary-replica-row');
+        }
+      });
+    }, 0);
   }
 
   setupReplicaList(): void {
@@ -241,7 +264,8 @@ export class ReplicaListComponent implements OnInit, OnDestroy {
           },
           isSecondRowCollapsed: true,
           deployedReplicaDetails: null,
-          lastSequenceNumber: 'Loading...'
+          lastSequenceNumber: 'Loading...',
+          isPrimary: replica.ReplicaRole === 'Primary'
         }));
 
         // Sort replicas by role
