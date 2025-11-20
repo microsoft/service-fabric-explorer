@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewChecked, ChangeDetectorRef } from '@angular/core';
 import { RestClientService } from 'src/app/services/rest-client.service';
 import { ListSettings, ListColumnSettingWithFilter, ListColumnSettingForColoredNodeName, ListColumnSettingForBadge, ListColumnSetting } from 'src/app/Models/ListSettings';
 import { forkJoin, interval, Subscription } from 'rxjs';
@@ -32,7 +32,7 @@ export class ListColumnSettingForReplicaDetailsHtml extends ListColumnSetting {
   templateUrl: './replica-list.component.html',
   styleUrls: ['./replica-list.component.scss']
 })
-export class ReplicaListComponent implements OnInit, OnDestroy {
+export class ReplicaListComponent implements OnInit, OnDestroy, AfterViewChecked {
   listSettings: ListSettings;
   replicaData: any[] = [];
   recoveryPercentage: number = 0;
@@ -49,8 +49,10 @@ export class ReplicaListComponent implements OnInit, OnDestroy {
   private readonly REFRESH_INTERVAL_NORMAL = 180000; // 3 minutes when healthy
   private readonly REFRESH_INTERVAL_QUORUM_LOSS = 5000; // 5 seconds when in quorum loss
   private currentRefreshInterval: number = this.REFRESH_INTERVAL_NORMAL;
+  private previousReplicaDataLength: number = 0;
+  highlightedReplicaCount: number;
 
-  constructor(private restClientService: RestClientService) {}
+  constructor(private restClientService: RestClientService, private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     this.setupReplicaList();
@@ -61,6 +63,70 @@ export class ReplicaListComponent implements OnInit, OnDestroy {
     if (this.refreshSubscription) {
       this.refreshSubscription.unsubscribe();
     }
+  }
+
+  ngAfterViewChecked(): void {
+    // Only apply row styling if the data has changed
+    if (this.replicaData.length !== this.previousReplicaDataLength) {
+      this.previousReplicaDataLength = this.replicaData.length;
+      // this.applyPrimaryRowStyling();
+      // console.log("HEREREJKLJ:");
+    }
+  }
+
+  applyPrimaryRowStyling(): void {
+    setTimeout(() => {
+      // Try multiple selectors to find the replica table rows
+      let rows: NodeListOf<Element>;
+      
+      // First try: within ngbNavOutlet
+      const navContent = document.querySelector('.essen-pane [ngbNavOutlet]');
+      if (navContent) {
+        rows = navContent.querySelectorAll('.detail-list tbody tr.hover-row');
+        console.log('Found rows via ngbNavOutlet:', rows.length);
+      } else {
+        console.log('ngbNavOutlet not found, trying direct selector');
+        // Fallback: Just get all rows in essen-pane and skip the first N (nodes)
+        const allRows = document.querySelectorAll('.essen-pane .detail-list tbody tr.hover-row');
+        console.log('Total rows in essen-pane:', allRows.length);
+        
+        // The replica rows are the LAST N rows (after node rows)
+        const nodeRowCount = allRows.length - this.replicaData.length;
+        console.log('Calculated node rows:', nodeRowCount, 'Replica rows:', this.replicaData.length);
+        
+        rows = Array.from(allRows).slice(nodeRowCount) as any;
+      }
+      
+      console.log('=== APPLYING ROW STYLING ===');
+      console.log('Found rows for replicas:', rows.length);
+      console.log('Replica data length:', this.replicaData.length);
+      
+      rows.forEach((row, index) => {
+        const replicaItem = this.replicaData[index];
+        
+        if (!replicaItem) {
+          console.log('No replica item at index', index);
+          return;
+        }
+        
+        console.log(`Row ${index}: id=${replicaItem.id}, role=${replicaItem.role}, countsTowardWriteQuorum=${replicaItem.countsTowardWriteQuorum}`);
+        
+        // Apply write quorum styling (orange) - Primary + ActiveSecondary based on calculateWriteQuorum logic
+        if (replicaItem.countsTowardWriteQuorum === true) {
+          row.classList.add('write-quorum-replica-row');
+          console.log('✓ Added write-quorum-replica-row class to row', index);
+        } else {
+          row.classList.remove('write-quorum-replica-row');
+        }
+      });
+      
+      // Verify
+      setTimeout(() => {
+        const quorumRows = document.querySelectorAll('tr.write-quorum-replica-row');
+        this.highlightedReplicaCount = quorumRows.length;
+        console.log('Write quorum rows found:', quorumRows.length);
+      }, 50);
+    }, 500);
   }
 
   setupReplicaList(): void {
@@ -81,7 +147,15 @@ export class ReplicaListComponent implements OnInit, OnDestroy {
       columnSettings.splice(1, 0, new ListColumnSettingWithFilter('previousReplicaRole', 'Previous Replica Role'));
     }
 
-    this.listSettings = new ListSettings(10, null, 'replicas', columnSettings, secondRowColumnSettings, true, (item) => item.deployedReplicaDetails !== null);
+    this.listSettings = new ListSettings(
+      10, 
+      null, 
+      'replicas', 
+      columnSettings, 
+      secondRowColumnSettings, 
+      true, 
+      (item) => item.isClickable && item.deployedReplicaDetails !== null
+    );
   }
 
   getRoleOrder(role: string): number {
@@ -149,6 +223,36 @@ export class ReplicaListComponent implements OnInit, OnDestroy {
     return Math.floor(n / 2) + 1;
   }
 
+  getReplicaIdsCountedInWriteQuorum(replicas: any[]): Set<string> {
+    // Check if all previous replica roles are None
+    const allPreviousNone = replicas.every(replica => 
+      replica.PreviousReplicaRole === 'None' || !replica.PreviousReplicaRole
+    );
+
+    const replicaIds = new Set<string>();
+
+    // Get replicas that count towards write quorum
+    replicas.forEach(replica => {
+      let countsTowardWriteQuorum = false;
+      
+      if (allPreviousNone) {
+        // Use current replica role
+        countsTowardWriteQuorum = 
+          replica.ReplicaRole === 'ActiveSecondary' || replica.ReplicaRole === 'Primary';
+      } else {
+        // Use previous replica role
+        countsTowardWriteQuorum = 
+          replica.PreviousReplicaRole === 'ActiveSecondary' || replica.PreviousReplicaRole === 'Primary';
+      }
+
+      if (countsTowardWriteQuorum) {
+        replicaIds.add(replica.ReplicaId);
+      }
+    });
+
+    return replicaIds;
+  }
+
   updateFailoverManagerEssentials(): void {
     this.failoverManagerEssentials = [
       {
@@ -213,6 +317,9 @@ export class ReplicaListComponent implements OnInit, OnDestroy {
         // Calculate write quorum
         this.writeQuorum = this.calculateWriteQuorum(replicas);
 
+        // Get replicas that count toward write quorum
+        const writeQuorumReplicaIds = this.getReplicaIdsCountedInWriteQuorum(replicas);
+
         // Update essential items
         this.updateFailoverManagerEssentials();
 
@@ -225,33 +332,52 @@ export class ReplicaListComponent implements OnInit, OnDestroy {
         const nodeStatusMap = new Map(nodes.map(node => [node.Name, node.NodeStatus]));
 
         // Create initial replica data
-        this.replicaData = replicas.map(replica => ({
-          id: replica.ReplicaId,
-          nodeName: replica.NodeName,
-          raw: {
-            ...replica,
-            NodeStatus: nodeStatusMap.get(replica.NodeName) || 'Unknown'
-          },
-          previousReplicaRole: replica.PreviousReplicaRole,
-          role: replica.ReplicaRole,
-          replicaStatus: replica.ReplicaStatus,
-          replicaStatusBadge: {
-            text: replica.ReplicaStatus,
-            badgeClass: replica.ReplicaStatus === 'Ready' ? 'badge-ok' : 'badge-error'
-          },
-          isSecondRowCollapsed: true,
-          deployedReplicaDetails: null,
-          lastSequenceNumber: 'Loading...'
-        }));
+        this.replicaData = replicas.map(replica => {
+          return {
+            id: replica.ReplicaId,
+            nodeName: replica.NodeName,
+            raw: {
+              ...replica,
+              NodeStatus: nodeStatusMap.get(replica.NodeName) || 'Unknown'
+            },
+            previousReplicaRole: replica.PreviousReplicaRole,
+            role: replica.ReplicaRole,
+            replicaStatus: replica.ReplicaStatus,
+            replicaStatusBadge: {
+              text: replica.ReplicaStatus,
+              badgeClass: replica.ReplicaStatus === 'Ready' ? 'badge-ok' : 'badge-error'
+            },
+            isSecondRowCollapsed: true,
+            deployedReplicaDetails: null,
+            lastSequenceNumber: replica.ReplicaStatus === 'Down' ? 'N/A' : 'Loading...',
+            isPrimary: replica.ReplicaRole === 'Primary',
+            isClickable: replica.ReplicaStatus !== 'Down',
+            countsTowardWriteQuorum: writeQuorumReplicaIds.has(replica.ReplicaId)
+          };
+        });
 
         // Sort replicas by role
         this.replicaData = this.sortReplicasByRole(this.replicaData);
 
-        // Apply row highlighting after DOM is ready
-        this.applyRowHighlighting();
+        console.log('Replica data after sorting:', this.replicaData.map(r => ({ 
+          id: r.id, 
+          role: r.role, 
+          isPrimary: r.isPrimary, 
+          countsTowardWriteQuorum: r.countsTowardWriteQuorum 
+        })));
 
-        // Fetch LastSequenceNumber for each replica independently
+        // Apply row styling after a delay to ensure DOM is ready
+        // Only apply row styling if in quorum loss AND data has changed
+        if (this.partitionStatus === 'InQuorumLoss') {
+          setTimeout(() => this.applyPrimaryRowStyling(), 200);
+        }
+
+        // Fetch LastSequenceNumber for each replica independently (skip if status is Down)
         this.replicaData.forEach((replicaItem, index) => {
+          if (replicaItem.replicaStatus === 'Down') {
+            return; // Skip API call for Down replicas
+          }
+          
           this.restClientService.getDeployedReplicaDetail(
             replicaItem.nodeName,
             partitionId,
@@ -267,8 +393,6 @@ export class ReplicaListComponent implements OnInit, OnDestroy {
             }
           });
         });
-
-        this.calculateRecoveryPercentage();
         
         return [];
       })
@@ -314,14 +438,13 @@ export class ReplicaListComponent implements OnInit, OnDestroy {
     return parts.join(' ');
   }
 
-  calculateRecoveryPercentage(): void {
-    const totalReplicas = this.replicaData.length;
-    const replicasUp = this.replicaData.filter(replica => replica.replicaStatus === 'Ready').length;
-
-    this.recoveryPercentage = totalReplicas > 0 ? Math.round((replicasUp / totalReplicas) * 100) : 0;
-  }
 
   handleReplicaIdClick(replicaItem: any): void {
+    // Don't allow clicking if replica status is Down
+    if (!replicaItem.isClickable) {
+      return;
+    }
+    
     // Toggle the row
     replicaItem.isSecondRowCollapsed = !replicaItem.isSecondRowCollapsed;
     
@@ -334,6 +457,11 @@ export class ReplicaListComponent implements OnInit, OnDestroy {
   loadDeployedReplicaDetails(replicaItem: any): void {
     // If already loaded, just toggle
     if (replicaItem.deployedReplicaDetails) {
+      return;
+    }
+
+    // Don't load if replica is Down
+    if (!replicaItem.isClickable) {
       return;
     }
 

@@ -57,6 +57,11 @@
                         </div>
                     </div>
 
+                    <div *ngIf="partitionStatus === 'InQuorumLoss'" class="quorum-loss-message">
+                        <i class="bowtie-icon bowtie-status-warning"></i>
+                        You need to have <strong>{{ writeQuorum }}</strong> of the below <strong>{{ highlightedReplicaCount }}</strong> highlighted replicas up to be out of quorum loss.
+                    </div>
+
                     <!-- Replica List -->
                     <app-detail-list [list]="replicaData" [listSettings]="listSettings"></app-detail-list>
                 </ng-template>
