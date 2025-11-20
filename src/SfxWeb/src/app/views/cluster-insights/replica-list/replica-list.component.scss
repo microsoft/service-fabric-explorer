@@ -61,3 +61,67 @@
     }
   }
 }
+
+// Pre-formatted text for JSON display
+::ng-deep .pre-wrap {
+  white-space: pre-wrap;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.85rem;
+  background-color: rgba(0, 0, 0, 0.2);
+  padding: 0.5rem;
+  border-radius: 4px;
+  overflow-x: auto;
+}
+
+// Replica details table styling
+::ng-deep .replica-details-table {
+  width: 100%;
+  margin: 0.5rem 0;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+  background-color: rgba(0, 120, 212, 0.08);
+  border: 2px solid rgba(0, 120, 212, 0.3);
+  border-radius: 4px;
+  
+  tr {
+    border-bottom: 1px solid rgba(0, 120, 212, 0.15);
+    
+    &:last-child {
+      border-bottom: none;
+    }
+    
+    &:first-child td {
+      padding-top: 0.75rem;
+    }
+    
+    &:last-child td {
+      padding-bottom: 0.75rem;
+    }
+  }
+  
+  td {
+    padding: 0.5rem 0.75rem;
+    
+    &.field-name {
+      font-weight: 600;
+      color: #8ab4f8;
+      width: 40%;
+      text-align: left;
+      padding-left: 1rem;
+    }
+    
+    &.field-value {
+      color: var(--text-primary);
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 0.85rem;
+      background-color: rgba(0, 0, 0, 0.15);
+      padding-right: 1rem;
+    }
+  }
+}
+
+::ng-deep .error-message {
+  color: var(--badge-error);
+  padding: 0.5rem;
+  font-style: italic;
+}
