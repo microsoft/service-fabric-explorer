@@ -247,6 +247,9 @@ export class ReplicaListComponent implements OnInit, OnDestroy {
         // Sort replicas by role
         this.replicaData = this.sortReplicasByRole(this.replicaData);
 
+        // Apply row highlighting after DOM is ready
+        this.applyRowHighlighting();
+
         // Fetch LastSequenceNumber for each replica independently
         this.replicaData.forEach((replicaItem, index) => {
           this.restClientService.getDeployedReplicaDetail(
@@ -270,6 +273,17 @@ export class ReplicaListComponent implements OnInit, OnDestroy {
         return [];
       })
     );
+  }
+
+  applyRowHighlighting(): void {
+    setTimeout(() => {
+      const rows = document.querySelectorAll('.detail-list tbody tr.hover-row');
+      console.log(`Found ${rows.length} rows to highlight`);
+      
+      rows.forEach((row, index) => {
+        row.classList.add('quorum-highlight');
+      });
+    }, 0); // Give a bit more time for DOM to render
   }
 
   formatDuration(seconds: number): string {
