@@ -146,3 +146,26 @@
 .essen-pane ::ng-deep .detail-list tbody td .item-wrapper {
   padding-left: 0;
 }
+
+.quorum-loss-message {
+  background-color: rgba(255, 193, 7, 0.15);
+  border-left: 4px solid #ffc107;
+  padding: 1rem 1.5rem;
+  margin-bottom: 1.5rem;
+  border-radius: 4px;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+
+  i {
+    color: #ffc107;
+    font-size: 1.2rem;
+  }
+
+  strong {
+    color: #ffc107;
+    font-weight: 600;
+  }
+}
