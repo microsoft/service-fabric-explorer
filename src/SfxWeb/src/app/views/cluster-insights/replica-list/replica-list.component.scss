@@ -23,8 +23,8 @@
 
 
 .stat-box {
-  width: 200px; // Fixed width (reduced from 250px)
-  padding: 1rem; // Reduced padding (from 1.5rem)
+  width: 180px; // Reduced from 200px
+  padding: 0.75rem; // Reduced from 1rem
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 8px;
@@ -33,7 +33,7 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: 0.5rem; // Reduced gap (from 0.75rem)
+  gap: 0.4rem; // Reduced from 0.5rem
 
   &.success-box {
     border-color: var(--badge-ok);
@@ -46,19 +46,24 @@
   }
 
   .stat-label {
-    font-size: 0.9rem; // Slightly smaller (from 0.9rem)
+    font-size: 0.8rem; // Reduced from 0.9rem
     color: var(--text-secondary);
     font-weight: 400;
   }
 
   .stat-value {
-    font-size: 1.3rem; // Slightly smaller (from 1.5rem)
+    font-size: 1.15rem; // Reduced from 1.3rem
     font-weight: 600;
     color: var(--text-primary);
 
     &.quorum-loss {
       color: var(--badge-error);
     }
+  }
+  
+  .stat-sublabel {
+    font-size: 0.75rem; // Added for the "Min / Target" sublabel
+    color: var(--text-secondary);
   }
 }
 
@@ -79,12 +84,12 @@
   margin: 0.5rem 0;
   border-collapse: collapse;
   font-size: 0.9rem;
-  background-color: rgba(0, 120, 212, 0.08);
-  border: 2px solid rgba(0, 120, 212, 0.3);
+  background-color: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 4px;
   
   tr {
-    border-bottom: 1px solid rgba(0, 120, 212, 0.15);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     
     &:last-child {
       border-bottom: none;
@@ -103,18 +108,17 @@
     padding: 0.5rem 0.75rem;
     
     &.field-name {
-      font-weight: 600;
-      color: #8ab4f8;
+      font-weight: 500;
+      color: var(--font-accent-color);
       width: 40%;
       text-align: left;
       padding-left: 1rem;
     }
     
     &.field-value {
-      color: var(--text-primary);
-      font-family: 'Courier New', Courier, monospace;
-      font-size: 0.85rem;
-      background-color: rgba(0, 0, 0, 0.15);
+      color: var(--font-primary-color);
+      font-size: 0.9rem;
+      background-color: rgba(0, 0, 0, 0.2);
       padding-right: 1rem;
     }
   }

@@ -38,6 +38,7 @@ export class ReplicaListComponent implements OnInit, OnDestroy {
   recoveryPercentage: number = 0;
   minReplicaSetSize: number = 0;
   targetReplicaSetSize: number = 0;
+  currentReplicaSetSize: number = 0;  // Add current replica set size
   partitionStatus: string = '';
   lastQuorumLossDuration: string = '';
   writeQuorum: number = 0;
@@ -310,6 +311,8 @@ export class ReplicaListComponent implements OnInit, OnDestroy {
 
         // Update highlighted replica count for display
         this.highlightedReplicaCount = this.replicaData.filter(r => r.countsTowardWriteQuorum).length;
+        // Update current replica set size
+        this.currentReplicaSetSize = this.highlightedReplicaCount;
 
         // Fetch LastSequenceNumber for each replica independently (skip if status is Down)
         this.replicaData.forEach((replicaItem, index) => {
@@ -413,7 +416,6 @@ export class ReplicaListComponent implements OnInit, OnDestroy {
         const fields = [
           { key: 'Host Process ID', value: deployedServiceReplica.HostProcessId || details.HostProcessId || 'N/A' },
           { key: 'Previous Configuration Role', value: reconfigInfo.PreviousConfigurationRole || 'None' },
-          { key: 'Previous Self Reconfiguring Configuration Role', value: reconfigInfo.PreviousSelfReconfiguringConfigurationRole || 'SelfReconfiguringNone' },
           { key: 'Reconfiguration Phase', value: reconfigInfo.ReconfigurationPhase || 'None' },
           { key: 'Reconfiguration Type', value: reconfigInfo.ReconfigurationType || 'None' },
           { key: 'Reconfiguration Start Time UTC', value: reconfigInfo.ReconfigurationStartTimeUtc || '0001-01-01T00:00:00.000Z' }

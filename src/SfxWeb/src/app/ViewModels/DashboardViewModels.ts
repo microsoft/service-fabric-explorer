@@ -60,15 +60,10 @@ export class DashboardViewModel implements IDashboardViewModel {
 
         const dps: DashboardDataPointViewModel[] = [];
  
-        if (nodeStatusCount.DownCount > 0) {
-            dps.push(new DashboardDataPointViewModel('Down', nodeStatusCount.DownCount, ValueResolver.healthStatuses[3]));
-        }
-        if (nodeStatusCount.DisabledCount > 0) {
-            dps.push(new DashboardDataPointViewModel('Disabled', nodeStatusCount.DisabledCount, ValueResolver.healthStatuses[2]));
-        }
-        if (nodeStatusCount.UpCount > 0) {
-            dps.push(new DashboardDataPointViewModel('Up', nodeStatusCount.UpCount, ValueResolver.healthStatuses[1]));
-        }
+        // Always add all data points to ensure array indices are valid
+        dps.push(new DashboardDataPointViewModel('Down', nodeStatusCount.DownCount, ValueResolver.healthStatuses[3]));
+        dps.push(new DashboardDataPointViewModel('Disabled', nodeStatusCount.DisabledCount, ValueResolver.healthStatuses[2]));
+        dps.push(new DashboardDataPointViewModel('Up', nodeStatusCount.UpCount, ValueResolver.healthStatuses[1]));
 
         const data = new DashboardViewModel(title, titleInSingular, dps, largeTile, routes, viewPath);
         

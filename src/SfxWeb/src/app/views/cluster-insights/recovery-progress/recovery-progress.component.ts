@@ -146,27 +146,45 @@ export class RecoveryProgressComponent implements OnInit {
 
   checkNodesStatus(rawNodes: IRawNode[]): void {
     const totalNodes = rawNodes.length;
-    const disabledNodes = rawNodes.filter(node => node.NodeStatus === 'Disabled');
-    const allNodesUp = disabledNodes.length === 0;
-    const hasMinimumNodes = totalNodes >= 9;
+    const upNodes = rawNodes.filter(node => node.NodeStatus === 'Up').length;
+    const disabledNodes = rawNodes.filter(node => node.NodeStatus === 'Disabled' || node.NodeStatus === 'Disabling');
+    const downNodes = rawNodes.filter(node => node.NodeStatus === 'Down');
+    const seedNodeCount = rawNodes.filter(node => node.IsSeedNode).length;
+    
+    // Calculate minimum required nodes based on seed node count
+    // This follows Service Fabric reliability tier guidelines
+    const minRequiredNodes = seedNodeCount;
+    const allNodesUp = disabledNodes.length === 0 && downNodes.length === 0;
+    const hasMinimumNodes = upNodes >= minRequiredNodes;
     
     console.log('Nodes Status Check:', {
       totalNodes,
+      upNodes,
       disabledNodes: disabledNodes.length,
+      downNodes: downNodes.length,
+      seedNodeCount,
+      minRequiredNodes,
       allNodesUp,
       hasMinimumNodes
     });
 
-    // Update Nodes status - red if node count < 9 or any node is Disabled, green otherwise
+    // Update Nodes status - error if up nodes < seed nodes or any node is Disabled/Disabling/Down, success otherwise
     const nodesStep = this.recoverySteps.find(step => step.name === 'Nodes');
     if (nodesStep) {
       const isHealthy = allNodesUp && hasMinimumNodes;
       nodesStep.status = isHealthy ? 'success' : 'error';
       
       if (!hasMinimumNodes) {
-        nodesStep.tooltip = `Insufficient nodes: ${totalNodes} nodes (minimum 9 required)`;
-      } else if (!allNodesUp) {
-        nodesStep.tooltip = `${disabledNodes.length} node(s) are Disabled`;
+        nodesStep.tooltip = `Insufficient nodes Up: ${upNodes}/${totalNodes} nodes Up (minimum ${minRequiredNodes} required based on ${seedNodeCount} seed nodes)`;
+      } else if (disabledNodes.length > 0 || downNodes.length > 0) {
+        const issues: string[] = [];
+        if (disabledNodes.length > 0) {
+          issues.push(`${disabledNodes.length} node(s) are Disabled or Disabling`);
+        }
+        if (downNodes.length > 0) {
+          issues.push(`${downNodes.length} node(s) are Down`);
+        }
+        nodesStep.tooltip = issues.join(', ');
       } else {
         nodesStep.tooltip = `All ${totalNodes} nodes are Up`;
       }
