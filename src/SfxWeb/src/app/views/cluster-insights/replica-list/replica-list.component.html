@@ -18,15 +18,24 @@
                 <ng-template ngbNavContent>
                     <!-- Replica Set Information - Four horizontal boxes -->
                     <div class="replica-stats-container">
-                        <div class="stat-box">
-                            <div class="stat-sublabel">
-                                <span>Current Replica Set Size: {{ currentReplicaSetSize }}</span>
+                        <div class="stat-box replica-set-box">
+                            <div class="flex-center line-item-seperator">
+                                <div class="line-item-small">
+                                    {{ minReplicaSetSize }}
+                                </div>
+                                <div>Min Replica Set Size</div>
                             </div>
-                            <div class="stat-sublabel">
-                                <span>Min Replica Set Size: {{ minReplicaSetSize }}</span>
+                            <div class="flex-center line-item-seperator">
+                                <div class="line-item-small">
+                                    {{ targetReplicaSetSize }}
+                                </div>
+                                <div>Target Replica Set Size</div>
                             </div>
-                            <div class="stat-sublabel">
-                                <span>Target Replica Set Size: {{ targetReplicaSetSize }}</span>
+                            <div class="flex-center">
+                                <div class="line-item-small">
+                                    {{ currentReplicaSetSize }}
+                                </div>
+                                <div>Current Replica Set Size</div>
                             </div>
                         </div>
 
@@ -35,7 +44,8 @@
                             [class.warning-box]="partitionStatus === 'InQuorumLoss'">
                             <div class="stat-label">Partition Status</div>
                             <div class="stat-value" 
-                                [class.quorum-loss]="partitionStatus === 'InQuorumLoss'">
+                                [class.quorum-loss]="partitionStatus === 'InQuorumLoss'"
+                                [class.quorum-met]="partitionStatus === 'Ready'">
                                 {{ partitionStatus }}
                             </div>
                         </div>
@@ -75,15 +85,24 @@
                 <ng-template ngbNavContent>
                     <!-- Replica Set Information - Four horizontal boxes -->
                     <div class="replica-stats-container">
-                        <div class="stat-box">
-                            <div class="stat-sublabel">
-                                <span>Current Replica Set Size: {{ clusterManagerCurrentReplicaSetSize }}</span>
+                        <div class="stat-box replica-set-box">
+                            <div class="flex-center line-item-seperator">
+                                <div class="line-item-small">
+                                    {{ clusterManagerMinReplicaSetSize }}
+                                </div>
+                                <div>Min Replica Set Size</div>
                             </div>
-                            <div class="stat-sublabel">
-                                <span>Min Replica Set Size: {{ clusterManagerMinReplicaSetSize }}</span>
+                            <div class="flex-center line-item-seperator">
+                                <div class="line-item-small">
+                                    {{ clusterManagerTargetReplicaSetSize }}
+                                </div>
+                                <div>Target Replica Set Size</div>
                             </div>
-                            <div class="stat-sublabel">
-                                <span>Target Replica Set Size: {{ clusterManagerTargetReplicaSetSize }}</span>
+                            <div class="flex-center">
+                                <div class="line-item-small">
+                                    {{ clusterManagerCurrentReplicaSetSize }}
+                                </div>
+                                <div>Current Replica Set Size</div>
                             </div>
                         </div>
 
@@ -92,7 +111,8 @@
                             [class.warning-box]="clusterManagerPartitionStatus === 'InQuorumLoss'">
                             <div class="stat-label">Partition Status</div>
                             <div class="stat-value" 
-                                [class.quorum-loss]="clusterManagerPartitionStatus === 'InQuorumLoss'">
+                                [class.quorum-loss]="clusterManagerPartitionStatus === 'InQuorumLoss'"
+                                [class.quorum-met]="clusterManagerPartitionStatus === 'Ready'">
                                 {{ clusterManagerPartitionStatus }}
                             </div>
                         </div>

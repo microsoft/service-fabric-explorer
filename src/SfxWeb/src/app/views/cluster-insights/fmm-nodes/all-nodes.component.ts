@@ -35,14 +35,12 @@ export class FMMNodesComponent implements OnInit {
     private settings: SettingsService
   ) {}
 
-  ngOnInit() {
-    console.log('FMMNodesComponent ngOnInit called');
+  ngOnInit(): void {
     this.setupListSettings();
     this.loadFMMNodes();
   }
 
   setupListSettings(): void {
-    console.log('Setting up FMM nodes list settings');
     this.listSettings = this.settings.getNewOrExistingListSettings('fmm-nodes', ['name'], [
       new ListColumnSettingForColoredNodeName('name', 'Name'),
       new ListColumnSetting('raw.IpAddressOrFQDN', 'Address'),
@@ -59,8 +57,6 @@ export class FMMNodesComponent implements OnInit {
   loadFMMNodes(): void {    
     this.restClient.getFMMNodes().subscribe({
       next: (rawNodes: IRawNode[]) => {
-        console.log('Raw FMM nodes fetched:', rawNodes);
-
         // Map nodes to display format
         this.nodes = rawNodes.map(rawNode => {
           const nodeStatus = rawNode.NodeStatus || 'Unknown';
@@ -87,8 +83,6 @@ export class FMMNodesComponent implements OnInit {
 
         // Update tiles based on node status
         this.updateTiles();
-
-        console.log('FMM nodes processed:', this.nodes);
       },
       error: (err) => {
         console.error('Error fetching FMM nodes:', err);
@@ -123,8 +117,6 @@ export class FMMNodesComponent implements OnInit {
     this.tiles.push(
       DashboardViewModel.fromNodeStatusCount('Nodes', 'Node', false, nodeStatusCount)
     );
-  
-    console.log('Tiles updated:', this.tiles);
   }
 
   updateItemInEssentials() {

@@ -16,7 +16,8 @@
 .replica-stats-container {
   display: flex;
   gap: 1rem;
-  margin-bottom: 1.5rem;
+  margin-top: 1.5rem;
+  margin-bottom: 2rem;
   flex-wrap: wrap;
 }
 
@@ -34,6 +35,14 @@
   align-items: center;
   text-align: center;
   gap: 0.4rem; // Reduced from 0.5rem
+
+  &.replica-set-box {
+    width: 180px;
+    padding: 0.35rem 0.5rem;
+    align-items: stretch;
+    text-align: left;
+    gap: 0;
+  }
 
   &.success-box {
     border-color: var(--badge-ok);
@@ -58,6 +67,10 @@
 
     &.quorum-loss {
       color: var(--badge-error);
+    }
+
+    &.quorum-met {
+      color: var(--badge-ok);
     }
   }
   
@@ -172,4 +185,37 @@
     color: #ffc107;
     font-weight: 600;
   }
+}
+
+.flex-center {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.line-item {
+  line-height: 0.9;
+  margin-right: 3px;
+
+  &-small {
+    @extend .line-item;
+    font-size: 18px;
+    width: 22px;
+    text-align: end;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  &-large {
+    @extend .line-item;
+    font-size: 33px;
+  }
+}
+
+.line-item-seperator {
+  border-bottom: 1px solid #4c4c4c;
+  padding-bottom: 3px;
+  margin-bottom: 3px;
 }
