@@ -12,7 +12,7 @@
 <div class="essen-pane detail-pane nav-wrapper">
     <h4>System Services</h4>
     <div class="nav-wrapper">
-        <ul ngbNav #nav="ngbNav" class="nav-wrapper" [(activeId)]="activeTab">
+        <ul ngbNav #nav="ngbNav" class="nav-wrapper" [(activeId)]="activeTab" (activeIdChange)="onTabChange($event)">
             <li [ngbNavItem]="'failover-manager'">
                 <a ngbNavLink class="nav-link">Failover Manager</a>
                 <ng-template ngbNavContent>
@@ -63,7 +63,7 @@
 
                     <div *ngIf="partitionStatus === 'InQuorumLoss'" class="quorum-loss-message">
                         <i class="bowtie-icon bowtie-status-warning"></i>
-                        You need to have <strong>{{ writeQuorum }}</strong> of the below <strong>{{ highlightedReplicaCount }}</strong> highlighted replicas up to be out of quorum loss.
+                        You need to have any <strong>{{ quorumNeeded }}</strong> of the below <strong>{{ highlightedReplicaCount }}</strong> highlighted replicas up to be out of quorum loss.
                     </div>
 
                     <!-- Replica List -->
@@ -73,8 +73,58 @@
             <li [ngbNavItem]="'cluster-manager'">
                 <a ngbNavLink class="nav-link">Cluster Manager</a>
                 <ng-template ngbNavContent>
-                    <!-- Content for Cluster Manager replicas will go here -->
-                    <p>TBD</p>
+                    <!-- Replica Set Information - Four horizontal boxes -->
+                    <div class="replica-stats-container">
+                        <div class="stat-box">
+                            <div class="stat-sublabel">
+                                <span>Current Replica Set Size: {{ clusterManagerCurrentReplicaSetSize }}</span>
+                            </div>
+                            <div class="stat-sublabel">
+                                <span>Min Replica Set Size: {{ clusterManagerMinReplicaSetSize }}</span>
+                            </div>
+                            <div class="stat-sublabel">
+                                <span>Target Replica Set Size: {{ clusterManagerTargetReplicaSetSize }}</span>
+                            </div>
+                        </div>
+
+                        <div class="stat-box"
+                            [class.success-box]="clusterManagerPartitionStatus === 'Ready'"
+                            [class.warning-box]="clusterManagerPartitionStatus === 'InQuorumLoss'">
+                            <div class="stat-label">Partition Status</div>
+                            <div class="stat-value" 
+                                [class.quorum-loss]="clusterManagerPartitionStatus === 'InQuorumLoss'">
+                                {{ clusterManagerPartitionStatus }}
+                            </div>
+                        </div>
+
+                        <div class="stat-box" 
+                             [class.warning-box]="clusterManagerPartitionStatus === 'InQuorumLoss'"
+                             [class.success-box]="clusterManagerPartitionStatus !== 'InQuorumLoss'">
+                            <div class="stat-label">
+                                <span *ngIf="clusterManagerPartitionStatus === 'InQuorumLoss'" class="not-met-label"> Expected</span>
+                                <span *ngIf="clusterManagerPartitionStatus !== 'InQuorumLoss'" class="met-label"> Current</span>
+                                Write Quorum
+                            </div>
+                            <div class="stat-value" 
+                                 [class.quorum-loss]="clusterManagerPartitionStatus === 'InQuorumLoss'"
+                                 [class.quorum-met]="clusterManagerPartitionStatus !== 'InQuorumLoss'">
+                                {{ clusterManagerWriteQuorum }}
+                            </div>
+                        </div>
+
+                        <div class="stat-box" *ngIf="clusterManagerPartitionStatus === 'InQuorumLoss'" [class.warning-box]="true">
+                            <div class="stat-label">Quorum Loss Duration</div>
+                            <div class="stat-value quorum-loss">{{ clusterManagerLastQuorumLossDuration }}</div>
+                        </div>
+                    </div>
+
+                    <div *ngIf="clusterManagerPartitionStatus === 'InQuorumLoss'" class="quorum-loss-message">
+                        <i class="bowtie-icon bowtie-status-warning"></i>
+                        You need to have any <strong>{{ clusterManagerQuorumNeeded }}</strong> of the below <strong>{{ clusterManagerHighlightedReplicaCount }}</strong> highlighted replicas up to be out of quorum loss.
+                    </div>
+
+                    <!-- Replica List -->
+                    <app-detail-list [list]="clusterManagerReplicaData" [listSettings]="clusterManagerListSettings"></app-detail-list>
                 </ng-template>
             </li>
         </ul>
