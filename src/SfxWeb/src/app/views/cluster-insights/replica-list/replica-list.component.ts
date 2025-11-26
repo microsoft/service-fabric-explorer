@@ -103,6 +103,9 @@ export class ReplicaListComponent implements OnInit, OnDestroy {
   clusterManagerListSettings: ListSettings;
   private clusterManagerLoaded: boolean = false;
   
+  // Track expansion state and loaded details across refreshes
+  private expandedReplicasState = new Map<string, { isExpanded: boolean, details: any, detailsHtml: string }>();
+  
   private refreshSubscription: Subscription;
   private readonly REFRESH_INTERVAL_NORMAL = 180000; // 3 minutes when healthy
   private readonly REFRESH_INTERVAL_QUORUM_LOSS = 5000; // 5 seconds when in quorum loss
@@ -377,6 +380,9 @@ export class ReplicaListComponent implements OnInit, OnDestroy {
       const countsTowardWriteQuorum = writeQuorumReplicaIds.has(replica.ReplicaId);
       const shouldHighlight = countsTowardWriteQuorum && replica.ReplicaStatus !== 'Ready';
       
+      // Check if this replica was previously expanded
+      const previousState = this.expandedReplicasState.get(replica.ReplicaId);
+      
       return {
         id: replica.ReplicaId,
         nodeName: replica.NodeName,
@@ -392,8 +398,11 @@ export class ReplicaListComponent implements OnInit, OnDestroy {
           text: replica.ReplicaStatus,
           badgeClass: replica.ReplicaStatus === 'Ready' ? 'badge-ok' : 'badge-error'
         },
-        isSecondRowCollapsed: true,
-        deployedReplicaDetails: null,
+        // Restore expansion state if it existed
+        isSecondRowCollapsed: previousState ? !previousState.isExpanded : true,
+        // Restore loaded details if they existed
+        deployedReplicaDetails: previousState?.details || null,
+        deployedReplicaDetailsHtml: previousState?.detailsHtml || null,
         lastSequenceNumber: replica.ReplicaStatus === 'Down' ? 'N/A' : 'Loading...',
         isPrimary: replica.ReplicaRole === 'Primary',
         isClickable: replica.ReplicaStatus !== 'Down',
@@ -558,8 +567,22 @@ export class ReplicaListComponent implements OnInit, OnDestroy {
     
     replicaItem.isSecondRowCollapsed = !replicaItem.isSecondRowCollapsed;
     
-    if (!replicaItem.isSecondRowCollapsed && !replicaItem.deployedReplicaDetails) {
-      this.loadDeployedReplicaDetails(replicaItem, config.partitionId);
+    // Update the expansion state map
+    if (!replicaItem.isSecondRowCollapsed) {
+      // Expanding
+      if (!replicaItem.deployedReplicaDetails) {
+        this.loadDeployedReplicaDetails(replicaItem, config.partitionId);
+      } else {
+        // Already have details, just update the state map
+        this.expandedReplicasState.set(replicaItem.id, {
+          isExpanded: true,
+          details: replicaItem.deployedReplicaDetails,
+          detailsHtml: replicaItem.deployedReplicaDetailsHtml
+        });
+      }
+    } else {
+      // Collapsing - remove from map
+      this.expandedReplicasState.delete(replicaItem.id);
     }
   }
 
@@ -576,29 +599,23 @@ export class ReplicaListComponent implements OnInit, OnDestroy {
       next: (details: any) => {
         replicaItem.deployedReplicaDetails = details;
         
-        const deployedServiceReplica = details.DeployedServiceReplica || {};
-        const reconfigInfo = details.ReconfigurationInformation || deployedServiceReplica.ReconfigurationInformation || {};
-        
-        const fields = [
-          { key: 'Host Process ID', value: deployedServiceReplica.HostProcessId || details.HostProcessId || 'N/A' },
-          { key: 'Previous Configuration Role', value: reconfigInfo.PreviousConfigurationRole || 'None' },
-          { key: 'Reconfiguration Phase', value: reconfigInfo.ReconfigurationPhase || 'None' },
-          { key: 'Reconfiguration Type', value: reconfigInfo.ReconfigurationType || 'None' },
-          { key: 'Reconfiguration Start Time UTC', value: reconfigInfo.ReconfigurationStartTimeUtc || '0001-01-01T00:00:00.000Z' }
-        ];
-        
-        let html = '<table class="replica-details-table">';
-        fields.forEach(field => {
-          html += `<tr><td class="field-name">${field.key}</td><td class="field-value">${field.value}</td></tr>`;
+        // Store in the expansion state map
+        this.expandedReplicasState.set(replicaItem.id, {
+          isExpanded: true,
+          details: replicaItem.deployedReplicaDetails,
+          detailsHtml: null // No longer needed
         });
-        html += '</table>';
-        
-        replicaItem.deployedReplicaDetailsHtml = html;
       },
       error: (error) => {
         console.error('Error loading deployed replica details:', error);
         replicaItem.deployedReplicaDetails = { error: true };
-        replicaItem.deployedReplicaDetailsHtml = '<div class="error-message">Failed to load details: ' + (error.message || 'Unknown error') + '</div>';
+        
+        // Store error state as well
+        this.expandedReplicasState.set(replicaItem.id, {
+          isExpanded: true,
+          details: replicaItem.deployedReplicaDetails,
+          detailsHtml: null
+        });
       }
     });
   }

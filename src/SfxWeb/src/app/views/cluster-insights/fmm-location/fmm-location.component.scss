@@ -2,15 +2,51 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  justify-content: space-between;
 
   .title {
-    font-size: var(--font-size-large);
-    font-weight: 500;
-    line-height: 1.2;
+    font-size: 12pt;
+    font-weight: 600;
+    line-height: 0.9;
+    margin-bottom: 0.3rem;
+    color: var(--font-primary-color);
+    letter-spacing: 0.5px;
+    text-align: center;
+    border-bottom: 0.4px solid #4c4c4c;
+    padding-bottom: 6px;
   }
 }
 
-.label-bold {
-  font-weight: bold;
+.info-grid {
+  display: flex;
+  gap: 0.2rem;
+  flex-wrap: wrap;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  flex: 1;
+  min-width: 250px;
+    
+  .label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #c9c9c9;
+    line-height: 1.2;
+  }
+  
+  .value-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+  
+  .value {
+    font-size: 13px;
+    color: var(--font-primary-color);
+    font-weight: 400;
+    word-break: break-all;
+    line-height: 1.1;
+  }
 }

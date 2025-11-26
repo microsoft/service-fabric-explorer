@@ -73,7 +73,7 @@
 
                     <div *ngIf="partitionStatus === 'InQuorumLoss'" class="quorum-loss-message">
                         <i class="bowtie-icon bowtie-status-warning"></i>
-                        You need to have any <strong>{{ quorumNeeded }}</strong> of the below <strong>{{ highlightedReplicaCount }}</strong> highlighted replicas up to be out of quorum loss.
+                        <span>You need to have any <strong>{{ quorumNeeded }}</strong> of the below <strong>{{ highlightedReplicaCount }}</strong> highlighted replicas up to be out of quorum loss.</span>
                     </div>
 
                     <!-- Replica List -->
@@ -140,7 +140,7 @@
 
                     <div *ngIf="clusterManagerPartitionStatus === 'InQuorumLoss'" class="quorum-loss-message">
                         <i class="bowtie-icon bowtie-status-warning"></i>
-                        You need to have any <strong>{{ clusterManagerQuorumNeeded }}</strong> of the below <strong>{{ clusterManagerHighlightedReplicaCount }}</strong> highlighted replicas up to be out of quorum loss.
+                        <span>You need to have any <strong>{{ clusterManagerQuorumNeeded }}</strong> of the below <strong>{{ clusterManagerHighlightedReplicaCount }}</strong> highlighted replicas up to be out of quorum loss.</span>
                     </div>
 
                     <!-- Replica List -->

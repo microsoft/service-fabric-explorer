@@ -1,15 +1,30 @@
 <app-dashboard-text-scale-tile>
   <div class="fmm-location-wrapper">
-    <div class="text-center">
-      <h2 class="top-seperator title">FMM Location</h2>
-      <div>
-        <span class="label-bold">Node Name:</span> {{ fmmLocation?.NodeName || 'N/A' }}
+    <div class="title">FMM Location</div>
+    
+    <div class="info-grid">
+      <div class="info-item">
+        <div class="label">Node Name</div>
+        <div class="value-wrapper">
+          <div class="value">{{ fmmLocation?.NodeName }}</div>
+          <app-clip-board [text]="fmmLocation?.NodeName" *ngIf="fmmLocation?.NodeName" [name]="'Node Name'"></app-clip-board>
+        </div>
       </div>
-      <div>
-        <span class="label-bold">Node ID:</span> {{ fmmLocation?.NodeId?.Id || 'N/A' }}
+      
+      <div class="info-item">
+        <div class="label">Node ID</div>
+        <div class="value-wrapper">
+          <div class="value node-id">{{ fmmLocation?.NodeId?.Id }}</div>
+          <app-clip-board [text]="fmmLocation?.NodeId?.Id" *ngIf="fmmLocation?.NodeId?.Id" [name]="'Node ID'"></app-clip-board>
+        </div>
       </div>
-      <div>
-        <span class="label-bold">Instance ID:</span> {{ fmmLocation?.InstanceId || 'N/A' }}
+      
+      <div class="info-item">
+        <div class="label">Node Instance ID</div>
+        <div class="value-wrapper">
+          <div class="value">{{ fmmLocation?.InstanceId }}</div>
+          <app-clip-board [text]="fmmLocation?.InstanceId" *ngIf="fmmLocation?.InstanceId" [name]="'Instance ID'"></app-clip-board>
+        </div>
       </div>
     </div>
   </div>

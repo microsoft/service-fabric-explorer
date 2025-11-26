@@ -11,3 +11,7 @@
     margin-bottom: 0.8rem;
   }
 }
+
+.tile-container {
+  grid-template-columns: repeat(auto-fit, 260px);
+}

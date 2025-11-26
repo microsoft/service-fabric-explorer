@@ -5,17 +5,34 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-replica-details-html',
-  template: '<div [innerHTML]="safeHtml"></div>'
+  templateUrl: './replica-details-html.component.html',
+  styleUrls: ['./replica-details-html.component.scss']
 })
 export class ReplicaDetailsHtmlComponent implements OnInit, DetailBaseComponent {
   item: any;
   listSetting: ListColumnSetting;
-  safeHtml: SafeHtml;
+  deployedReplicaDetails: any;
 
   constructor(private sanitizer: DomSanitizer) { }
 
   ngOnInit(): void {
-    const htmlContent = this.item?.deployedReplicaDetailsHtml || '';
-    this.safeHtml = this.sanitizer.sanitize(1, htmlContent) || '';
+    // Get the raw deployed replica details
+    const details = this.item?.deployedReplicaDetails;
+    
+    if (details && !details.error) {
+      // Extract the relevant information for display
+      const deployedServiceReplica = details.DeployedServiceReplica || {};
+      const reconfigInfo = deployedServiceReplica.ReconfigurationInformation || {};
+      console.log(reconfigInfo)
+      
+      // Structure the data for app-detail-view-part - only the 5 required fields
+      this.deployedReplicaDetails = {
+        'Host Process ID': deployedServiceReplica.HostProcessId || '',
+        'Previous Configuration Role': reconfigInfo.PreviousConfigurationRole || '',
+        'Reconfiguration Phase': reconfigInfo.ReconfigurationPhase || '',
+        'Reconfiguration Type': reconfigInfo.ReconfigurationType || '',
+        'Reconfiguration Start Time UTC': reconfigInfo.ReconfigurationStartTimeUtc || ''
+      };
+    }
   }
 }
