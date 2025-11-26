@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { RestClientService } from 'src/app/services/rest-client.service';
 import { IRawApplicationHealth, IRawNode, IRawReplicaOnPartition } from 'src/app/Models/RawDataTypes';
-import { forkJoin } from 'rxjs';
+import { forkJoin, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 
 interface RecoveryStep {
   name: string;
@@ -23,6 +24,8 @@ export class RecoveryProgressComponent implements OnInit {
     { name: 'User Services', status: 'pending' }
   ];
 
+  isLoading: boolean = true;
+
   constructor(private restClient: RestClientService) { }
 
   ngOnInit(): void {
@@ -30,20 +33,36 @@ export class RecoveryProgressComponent implements OnInit {
   }
 
   checkRecoveryStatus(): void {
+    this.isLoading = true;
     // Check all recovery steps in parallel
     forkJoin({
       fmmNodes: this.restClient.getFMMNodes(),
       failoverManagerReplicas: this.restClient.getReplicasOnPartition('System', 'System/FailoverManagerService', '00000000-0000-0000-0000-000000000001'),
-      systemAppHealth: this.restClient.getApplicationHealth('System')
+      systemAppHealth: this.restClient.getApplicationHealth('System').pipe(
+        catchError((error) => {
+          // Handle timeout or any error - mark System Services as error
+          const systemServicesStep = this.recoverySteps.find(step => step.name === 'System Services');
+          if (systemServicesStep) {
+            systemServicesStep.status = 'error';
+            systemServicesStep.tooltip = 'Get system services health timed out. Please check if Cluster Manager is unhealthy.';
+          }
+          return of(null);
+        })
+      )
     }).subscribe({
       next: (results) => {
         this.checkSeedNodeQuorum(results.fmmNodes);
         this.checkFailoverManagerStatus(results.failoverManagerReplicas);
-        this.checkSystemServicesStatus(results.systemAppHealth);
+        // Only check system services status if we have valid health data
+        if (results.systemAppHealth) {
+          this.checkSystemServicesStatus(results.systemAppHealth);
+        }
         this.checkNodesStatus(results.fmmNodes);
+        this.isLoading = false;
       },
       error: (error) => {
         // Error loading recovery status
+        this.isLoading = false;
       }
     });
   }
@@ -89,7 +108,6 @@ export class RecoveryProgressComponent implements OnInit {
 
   checkFailoverManagerStatus(replicas: IRawReplicaOnPartition[]): void {
     const readyReplicas = replicas.filter(replica => replica.ReplicaStatus === 'Ready').length;
-    const totalReplicas = replicas.length;
     
     // Calculate write quorum using the accurate formula
     const writeQuorum = this.calculateWriteQuorum(replicas);
@@ -100,8 +118,8 @@ export class RecoveryProgressComponent implements OnInit {
     if (failoverManagerStep) {
       failoverManagerStep.status = hasQuorum ? 'success' : 'error';
       failoverManagerStep.tooltip = hasQuorum 
-        ? `Write quorum achieved: ${readyReplicas}/${totalReplicas} replicas are Ready (${writeQuorum} required)`
-        : `Write quorum lost: Only ${readyReplicas}/${totalReplicas} replicas are Ready (${writeQuorum} required)`;
+        ? `Write quorum achieved: ${readyReplicas} replicas are Ready (${writeQuorum} required)`
+        : `Write quorum lost: Only ${readyReplicas} replicas are Ready (${writeQuorum} required)`;
     }
   }
 
@@ -129,27 +147,24 @@ export class RecoveryProgressComponent implements OnInit {
     // Calculate minimum required nodes based on seed node count
     // This follows Service Fabric reliability tier guidelines
     const minRequiredNodes = seedNodeCount;
-    const allNodesUp = disabledNodes.length === 0 && downNodes.length === 0;
     const hasMinimumNodes = upNodes >= minRequiredNodes;
 
-    // Update Nodes status - error if up nodes < seed nodes or any node is Disabled/Disabling/Down, success otherwise
+    // Update Nodes status - error if down nodes or insufficient up nodes, warning if disabled nodes, success otherwise
     const nodesStep = this.recoverySteps.find(step => step.name === 'Nodes');
     if (nodesStep) {
-      const isHealthy = allNodesUp && hasMinimumNodes;
-      nodesStep.status = isHealthy ? 'success' : 'error';
-      
-      if (!hasMinimumNodes) {
-        nodesStep.tooltip = `Insufficient nodes Up: ${upNodes}/${totalNodes} nodes Up (minimum ${minRequiredNodes} required based on ${seedNodeCount} seed nodes)`;
-      } else if (disabledNodes.length > 0 || downNodes.length > 0) {
-        const issues: string[] = [];
-        if (disabledNodes.length > 0) {
-          issues.push(`${disabledNodes.length} node(s) are Disabled or Disabling`);
+      if (!hasMinimumNodes || downNodes.length > 0) {
+        nodesStep.status = 'error';
+        
+        if (!hasMinimumNodes) {
+          nodesStep.tooltip = `Insufficient nodes Up: ${upNodes}/${totalNodes} nodes Up (minimum ${minRequiredNodes} required based on ${seedNodeCount} seed nodes)`;
+        } else if (downNodes.length > 0) {
+          nodesStep.tooltip = `${downNodes.length} node(s) are Down`;
         }
-        if (downNodes.length > 0) {
-          issues.push(`${downNodes.length} node(s) are Down`);
-        }
-        nodesStep.tooltip = issues.join(', ');
+      } else if (disabledNodes.length > 0) {
+        nodesStep.status = 'warning';
+        nodesStep.tooltip = `${disabledNodes.length} node(s) are Disabled or Disabling`;
       } else {
+        nodesStep.status = 'success';
         nodesStep.tooltip = `All ${totalNodes} nodes are Up`;
       }
     }

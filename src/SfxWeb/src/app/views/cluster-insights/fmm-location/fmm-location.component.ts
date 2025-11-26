@@ -10,6 +10,7 @@ import { RestClientService } from 'src/app/services/rest-client.service';
 })
 export class FmmLocationComponent implements OnInit {
   fmmLocation: IRawFMMLocation = {} as IRawFMMLocation;
+  isLoading: boolean = true;
   
   constructor(private restClientService: RestClientService) {}
 
@@ -18,8 +19,15 @@ export class FmmLocationComponent implements OnInit {
   }
 
   getFMMLocation(): void {
-    this.restClientService.getFMMLocation().subscribe(data => {
-      this.fmmLocation = data;
+    this.isLoading = true;
+    this.restClientService.getFMMLocation().subscribe({
+      next: (data) => {
+        this.fmmLocation = data;
+        this.isLoading = false;
+      },
+      error: (err) => {
+        this.isLoading = false;
+      }
     });
   }
 }

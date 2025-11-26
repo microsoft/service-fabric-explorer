@@ -14,7 +14,10 @@
     <div class="nav-wrapper">
         <ul ngbNav #nav="ngbNav" class="nav-wrapper" [(activeId)]="activeTab" (activeIdChange)="onTabChange($event)">
             <li [ngbNavItem]="'failover-manager'">
-                <a ngbNavLink class="nav-link">Failover Manager</a>
+                <a ngbNavLink class="nav-link">
+                  Failover Manager
+                  <span class="mif-loop2 rotate" *ngIf="isFailoverManagerLoading" style="margin-left: 5px; font-size: 0.8em;"></span>
+                </a>
                 <ng-template ngbNavContent>
                     <!-- Replica Set Information - Four horizontal boxes -->
                     <div class="replica-stats-container">
@@ -81,7 +84,10 @@
                 </ng-template>
             </li>
             <li [ngbNavItem]="'cluster-manager'">
-                <a ngbNavLink class="nav-link">Cluster Manager</a>
+                <a ngbNavLink class="nav-link">
+                  Cluster Manager
+                  <span class="mif-loop2 rotate" *ngIf="isClusterManagerLoading" style="margin-left: 5px; font-size: 0.8em;"></span>
+                </a>
                 <ng-template ngbNavContent>
                     <!-- Replica Set Information - Four horizontal boxes -->
                     <div class="replica-stats-container">

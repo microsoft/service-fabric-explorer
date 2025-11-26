@@ -1,9 +1,15 @@
 <div class="tile-container">
     <!-- FMM Node Statistics Summary -->
-    <app-essential-health-tile [listItems]="essentialItems"></app-essential-health-tile>
+    <div style="position: relative;">
+        <app-essential-health-tile [listItems]="essentialItems"></app-essential-health-tile>
+        <div *ngIf="isLoading" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 10;">
+            <span class="mif-loop2 rotate"></span>
+        </div>
+    </div>
 
     <!-- Node Status Ring Chart (using tiles array) -->
-    <app-dashboard-tile *ngFor="let tile of tiles" [data]="tile"></app-dashboard-tile>
+        <app-dashboard-tile *ngFor="let tile of tiles" [data]="tile"></app-dashboard-tile>
+
 
     <!-- FMM Location Component -->
     <app-fmm-location></app-fmm-location>
@@ -11,7 +17,10 @@
 
 <!-- FMM Nodes List -->
 <div class="essen-pane detail-pane">
-    <h4>Nodes</h4>
+    <h4>
+      Nodes
+      <span class="mif-loop2 rotate" *ngIf="isLoading" style="margin-left: 5px; font-size: 0.8em;"></span>
+    </h4>
     <div class="nav-wrapper">
         <ul ngbNav #nav="ngbNav" class="nav-wrapper">
             <li [ngbNavItem]="1">

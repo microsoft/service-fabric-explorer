@@ -29,6 +29,7 @@ export class FMMNodesComponent implements OnInit {
   uniqueCodeVersions: string[] = [];
   tiles: IDashboardViewModel[] = [];
   essentialItems: IEssentialListItem[] = [];
+  isLoading: boolean = true;
 
   constructor(
     private restClient: RestClientService, 
@@ -54,7 +55,8 @@ export class FMMNodesComponent implements OnInit {
     ]);
   }
 
-  loadFMMNodes(): void {    
+  loadFMMNodes(): void {
+    this.isLoading = true;
     this.restClient.getFMMNodes().subscribe({
       next: (rawNodes: IRawNode[]) => {
         // Map nodes to display format
@@ -83,9 +85,11 @@ export class FMMNodesComponent implements OnInit {
 
         // Update tiles based on node status
         this.updateTiles();
+        this.isLoading = false;
       },
       error: (err) => {
         // Error loading FMM nodes
+        this.isLoading = false;
       }
     });
   }

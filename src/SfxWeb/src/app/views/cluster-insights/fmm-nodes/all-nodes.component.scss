@@ -15,3 +15,15 @@
 .tile-container {
   grid-template-columns: repeat(auto-fit, 260px);
 }
+
+// Placeholder for ring chart while loading
+.ring-chart-placeholder {
+  position: relative;
+  width: 156px;
+  height: 156px;
+  background-color: #2d2d30;
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

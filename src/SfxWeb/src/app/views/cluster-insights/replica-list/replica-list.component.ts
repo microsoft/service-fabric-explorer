@@ -88,6 +88,7 @@ export class ReplicaListComponent implements OnInit, OnDestroy {
   quorumNeeded: number = 0;
   listSettings: ListSettings;
   failoverManagerEssentials: IEssentialListItem[] = [];
+  isFailoverManagerLoading: boolean = true;
 
   // Cluster Manager state
   clusterManagerReplicaData: any[] = [];
@@ -102,6 +103,7 @@ export class ReplicaListComponent implements OnInit, OnDestroy {
   clusterManagerQuorumNeeded: number = 0;
   clusterManagerListSettings: ListSettings;
   private clusterManagerLoaded: boolean = false;
+  isClusterManagerLoading: boolean = false;
   
   // Track expansion state and loaded details across refreshes
   private expandedReplicasState = new Map<string, { isExpanded: boolean, details: any, detailsHtml: string }>();
@@ -116,6 +118,8 @@ export class ReplicaListComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.setupListSettings('failover-manager');
     this.setupListSettings('cluster-manager');
+    // Load cluster manager data immediately so quorum loss detection works
+    this.clusterManagerLoaded = true;
     this.startAutoRefresh();
   }
 
@@ -221,12 +225,25 @@ export class ReplicaListComponent implements OnInit, OnDestroy {
   }
 
   private fetchServiceData(config: ServiceConfig, service: 'failover-manager' | 'cluster-manager'): Observable<any> {
+    // Set loading state at the start
+    if (service === 'failover-manager') {
+      this.isFailoverManagerLoading = true;
+    } else {
+      this.isClusterManagerLoading = true;
+    }
+
     return forkJoin({
       replicas: this.restClientService.getReplicasOnPartition(config.applicationId, config.serviceId, config.partitionId),
       nodes: this.restClientService.getFMMNodes(),
       partition: this.restClientService.getPartition(config.applicationId, config.serviceId, config.partitionId)
     }).pipe(
       catchError(error => {
+        // Set loading to false on error
+        if (service === 'failover-manager') {
+          this.isFailoverManagerLoading = false;
+        } else {
+          this.isClusterManagerLoading = false;
+        }
         return of(null);
       }),
       switchMap((result) => {
@@ -238,6 +255,13 @@ export class ReplicaListComponent implements OnInit, OnDestroy {
 
         // Process the data using common helper
         this.processServiceData(config, service, replicas, nodes, partition);
+
+        // Set loading to false after processing
+        if (service === 'failover-manager') {
+          this.isFailoverManagerLoading = false;
+        } else {
+          this.isClusterManagerLoading = false;
+        }
 
         return of(result);
       })
