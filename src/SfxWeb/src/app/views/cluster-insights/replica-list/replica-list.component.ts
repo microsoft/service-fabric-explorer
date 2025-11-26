@@ -194,9 +194,7 @@ export class ReplicaListComponent implements OnInit, OnDestroy {
           return forkJoin(requests);
         })
       )
-      .subscribe({
-        error: (err) => console.error('Error in auto-refresh:', err)
-      });
+      .subscribe();
   }
 
   private restartAutoRefreshWithNewInterval(newInterval: number): void {
@@ -216,13 +214,10 @@ export class ReplicaListComponent implements OnInit, OnDestroy {
       return;
     }
 
-    console.log('🔍 Loading Cluster Manager data for the first time...');
     this.clusterManagerLoaded = true;
 
     this.fetchServiceData(this.CLUSTER_MANAGER_CONFIG, 'cluster-manager')
-      .subscribe({
-        error: (err) => console.error('Error loading Cluster Manager:', err)
-      });
+      .subscribe();
   }
 
   private fetchServiceData(config: ServiceConfig, service: 'failover-manager' | 'cluster-manager'): Observable<any> {
@@ -232,20 +227,14 @@ export class ReplicaListComponent implements OnInit, OnDestroy {
       partition: this.restClientService.getPartition(config.applicationId, config.serviceId, config.partitionId)
     }).pipe(
       catchError(error => {
-        console.error(`❌ Error fetching ${config.name} data:`, error);
-        console.error('Status:', error.status);
-        console.error('Message:', error.message);
-        console.error('URL:', error.url);
         return of(null);
       }),
       switchMap((result) => {
         if (!result) {
-          console.log(`⚠️ Skipping ${config.name} processing due to error`);
           return of(null);
         }
 
         const { replicas, nodes, partition } = result;
-        console.log(`✅ ${config.name} data fetched successfully`);
 
         // Process the data using common helper
         this.processServiceData(config, service, replicas, nodes, partition);
@@ -430,7 +419,6 @@ export class ReplicaListComponent implements OnInit, OnDestroy {
           replicaItem.lastSequenceNumber = lastSeqNum !== undefined && lastSeqNum !== null ? lastSeqNum.toString() : 'N/A';
         },
         error: (error) => {
-          console.error(`Error fetching LastSequenceNumber for replica ${replicaItem.id}:`, error);
           replicaItem.lastSequenceNumber = 'Error';
         }
       });
@@ -607,7 +595,6 @@ export class ReplicaListComponent implements OnInit, OnDestroy {
         });
       },
       error: (error) => {
-        console.error('Error loading deployed replica details:', error);
         replicaItem.deployedReplicaDetails = { error: true };
         
         // Store error state as well

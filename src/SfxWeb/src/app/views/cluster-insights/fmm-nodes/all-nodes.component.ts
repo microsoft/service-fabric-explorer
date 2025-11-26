@@ -85,7 +85,7 @@ export class FMMNodesComponent implements OnInit {
         this.updateTiles();
       },
       error: (err) => {
-        console.error('Error fetching FMM nodes:', err);
+        // Error loading FMM nodes
       }
     });
   }

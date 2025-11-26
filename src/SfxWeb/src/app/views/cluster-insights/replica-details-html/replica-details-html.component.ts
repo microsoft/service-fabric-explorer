@@ -23,7 +23,6 @@ export class ReplicaDetailsHtmlComponent implements OnInit, DetailBaseComponent 
       // Extract the relevant information for display
       const deployedServiceReplica = details.DeployedServiceReplica || {};
       const reconfigInfo = deployedServiceReplica.ReconfigurationInformation || {};
-      console.log(reconfigInfo)
       
       // Structure the data for app-detail-view-part - only the 5 required fields
       this.deployedReplicaDetails = {

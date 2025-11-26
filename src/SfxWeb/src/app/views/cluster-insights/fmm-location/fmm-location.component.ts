@@ -20,7 +20,6 @@ export class FmmLocationComponent implements OnInit {
   getFMMLocation(): void {
     this.restClientService.getFMMLocation().subscribe(data => {
       this.fmmLocation = data;
-      console.log('FMM Location:', this.fmmLocation); // Debugging log
     });
   }
 }

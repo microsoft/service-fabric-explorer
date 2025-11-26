@@ -43,7 +43,7 @@ export class RecoveryProgressComponent implements OnInit {
         this.checkNodesStatus(results.fmmNodes);
       },
       error: (error) => {
-        console.error('Error loading recovery status:', error);
+        // Error loading recovery status
       }
     });
   }
@@ -52,13 +52,6 @@ export class RecoveryProgressComponent implements OnInit {
     const totalSeedNodes = rawNodes.filter(node => node.IsSeedNode).length;
     const upSeedNodes = rawNodes.filter(node => node.IsSeedNode && node.NodeStatus === 'Up').length;
     const quorum = Math.floor(totalSeedNodes / 2) + 1;
-
-    console.log('Seed Node Quorum Check:', {
-      totalSeedNodes,
-      upSeedNodes,
-      quorum,
-      hasQuorum: upSeedNodes >= quorum
-    });
 
     // Update Seed Nodes Quorum status
     const seedNodeStep = this.recoverySteps.find(step => step.name === 'Seed Nodes Quorum');
@@ -101,19 +94,6 @@ export class RecoveryProgressComponent implements OnInit {
     // Calculate write quorum using the accurate formula
     const writeQuorum = this.calculateWriteQuorum(replicas);
     const hasQuorum = readyReplicas >= writeQuorum;
-    
-    console.log('Failover Manager Check:', {
-      totalReplicas,
-      readyReplicas,
-      writeQuorum,
-      hasQuorum,
-      replicaDetails: replicas.map(r => ({
-        id: r.ReplicaId,
-        role: r.ReplicaRole,
-        previousRole: r.PreviousReplicaRole,
-        status: r.ReplicaStatus
-      }))
-    });
 
     // Update Failover Manager status based on write quorum
     const failoverManagerStep = this.recoverySteps.find(step => step.name === 'Failover Manager');
@@ -128,11 +108,6 @@ export class RecoveryProgressComponent implements OnInit {
   checkSystemServicesStatus(applicationHealth: IRawApplicationHealth): void {
     const healthState = applicationHealth.AggregatedHealthState;
     const isOk = healthState === 'Ok';
-    
-    console.log('System Services Check:', {
-      aggregatedHealthState: healthState,
-      isOk: isOk
-    });
 
     // Update System Services status based on AggregatedHealthState
     const systemServicesStep = this.recoverySteps.find(step => step.name === 'System Services');
@@ -156,17 +131,6 @@ export class RecoveryProgressComponent implements OnInit {
     const minRequiredNodes = seedNodeCount;
     const allNodesUp = disabledNodes.length === 0 && downNodes.length === 0;
     const hasMinimumNodes = upNodes >= minRequiredNodes;
-    
-    console.log('Nodes Status Check:', {
-      totalNodes,
-      upNodes,
-      disabledNodes: disabledNodes.length,
-      downNodes: downNodes.length,
-      seedNodeCount,
-      minRequiredNodes,
-      allNodesUp,
-      hasMinimumNodes
-    });
 
     // Update Nodes status - error if up nodes < seed nodes or any node is Disabled/Disabling/Down, success otherwise
     const nodesStep = this.recoverySteps.find(step => step.name === 'Nodes');
