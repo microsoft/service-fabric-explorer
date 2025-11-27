@@ -105,12 +105,17 @@ export class ReplicaListComponent implements OnInit, OnDestroy {
   private clusterManagerLoaded: boolean = false;
   isClusterManagerLoading: boolean = false;
   
+  // Track previous quorum loss state to detect transitions
+  private previousFailoverManagerInQuorumLoss: boolean = false;
+  private previousClusterManagerInQuorumLoss: boolean = false;
+  
   // Track expansion state and loaded details across refreshes
   private expandedReplicasState = new Map<string, { isExpanded: boolean, details: any, detailsHtml: string }>();
   
   private refreshSubscription: Subscription;
   private readonly REFRESH_INTERVAL_NORMAL = 180000; // 3 minutes when healthy
-  private readonly REFRESH_INTERVAL_QUORUM_LOSS = 5000; // 5 seconds when in quorum loss
+  private readonly REFRESH_INTERVAL_QUORUM_LOSS = 10000; // 10 seconds when in quorum loss (Failover Manager)
+  private readonly REFRESH_INTERVAL_CM_QUORUM_LOSS = 60000; // 1 minute when Cluster Manager in quorum loss
   private currentRefreshInterval: number = this.REFRESH_INTERVAL_NORMAL;
 
   constructor(private restClientService: RestClientService, private cdr: ChangeDetectorRef) {}
@@ -198,7 +203,9 @@ export class ReplicaListComponent implements OnInit, OnDestroy {
           return forkJoin(requests);
         })
       )
-      .subscribe();
+      .subscribe(() => {
+        this.detectQuorumLossTransitions();
+      });
   }
 
   private restartAutoRefreshWithNewInterval(newInterval: number): void {
@@ -450,15 +457,24 @@ export class ReplicaListComponent implements OnInit, OnDestroy {
   }
 
   private updateRefreshInterval(): void {
-    const hasQuorumLoss = 
+    const failoverManagerInQuorumLoss = 
       this.partitionStatus === 'InQuorumLoss' || 
-      this.partitionStatus === 'Reconfiguring' ||
+      this.partitionStatus === 'Reconfiguring';
+    
+    const clusterManagerInQuorumLoss =
       this.clusterManagerPartitionStatus === 'InQuorumLoss' || 
       this.clusterManagerPartitionStatus === 'Reconfiguring';
 
-    const newInterval = hasQuorumLoss 
-      ? this.REFRESH_INTERVAL_QUORUM_LOSS 
-      : this.REFRESH_INTERVAL_NORMAL;
+    let newInterval = this.REFRESH_INTERVAL_NORMAL;
+    
+    // Failover Manager in quorum loss takes priority with faster refresh (10s)
+    if (failoverManagerInQuorumLoss) {
+      newInterval = this.REFRESH_INTERVAL_QUORUM_LOSS;
+    } 
+    // Cluster Manager only in quorum loss uses slower refresh (1 minute)
+    else if (clusterManagerInQuorumLoss) {
+      newInterval = this.REFRESH_INTERVAL_CM_QUORUM_LOSS;
+    }
 
     this.restartAutoRefreshWithNewInterval(newInterval);
   }
@@ -550,6 +566,22 @@ export class ReplicaListComponent implements OnInit, OnDestroy {
         copyTextValue: this.lastQuorumLossDuration
       });
     }
+  }
+
+  private detectQuorumLossTransitions(): void {
+    const failoverManagerInQuorumLoss = this.partitionStatus === 'InQuorumLoss';
+    const clusterManagerInQuorumLoss = this.clusterManagerPartitionStatus === 'InQuorumLoss';
+
+    if (this.previousFailoverManagerInQuorumLoss && !failoverManagerInQuorumLoss) {
+      location.reload();
+    }
+
+    if (this.previousClusterManagerInQuorumLoss && !clusterManagerInQuorumLoss) {
+      location.reload();
+    }
+
+    this.previousFailoverManagerInQuorumLoss = failoverManagerInQuorumLoss;
+    this.previousClusterManagerInQuorumLoss = clusterManagerInQuorumLoss;
   }
 
   formatDuration(seconds: number): string {

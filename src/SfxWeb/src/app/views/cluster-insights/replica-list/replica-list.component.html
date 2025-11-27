@@ -16,7 +16,7 @@
             <li [ngbNavItem]="'failover-manager'">
                 <a ngbNavLink class="nav-link">
                   Failover Manager
-                  <span class="mif-loop2 rotate" *ngIf="isFailoverManagerLoading" style="margin-left: 5px; font-size: 0.8em;"></span>
+                  <span class="mif-loop2 rotate" *ngIf="isFailoverManagerLoading && replicaData.length === 0" style="margin-left: 5px; font-size: 0.8em;"></span>
                 </a>
                 <ng-template ngbNavContent>
                     <!-- Replica Set Information - Four horizontal boxes -->
@@ -55,7 +55,7 @@
 
                         <div class="stat-box" 
                              [class.warning-box]="partitionStatus === 'InQuorumLoss'"
-                             [class.success-box]="partitionStatus !== 'InQuorumLoss'">
+                             [class.success-box]="partitionStatus !== 'InQuorumLoss' && writeQuorum > 0">
                             <div class="stat-label">
                                 <span *ngIf="partitionStatus === 'InQuorumLoss'" class="not-met-label"> Expected</span>
                                 <span *ngIf="partitionStatus !== 'InQuorumLoss'" class="met-label"> Current</span>
@@ -63,7 +63,7 @@
                             </div>
                             <div class="stat-value" 
                                  [class.quorum-loss]="partitionStatus === 'InQuorumLoss'"
-                                 [class.quorum-met]="partitionStatus !== 'InQuorumLoss'">
+                                 [class.quorum-met]="partitionStatus !== 'InQuorumLoss' && writeQuorum > 0">
                                 {{ writeQuorum }}
                             </div>
                         </div>
@@ -75,7 +75,6 @@
                     </div>
 
                     <div *ngIf="partitionStatus === 'InQuorumLoss'" class="quorum-loss-message">
-                        <i class="bowtie-icon bowtie-status-warning"></i>
                         <span>You need to have any <strong>{{ quorumNeeded }}</strong> of the below <strong>{{ highlightedReplicaCount }}</strong> highlighted replicas up to be out of quorum loss.</span>
                     </div>
 
@@ -86,7 +85,7 @@
             <li [ngbNavItem]="'cluster-manager'">
                 <a ngbNavLink class="nav-link">
                   Cluster Manager
-                  <span class="mif-loop2 rotate" *ngIf="isClusterManagerLoading" style="margin-left: 5px; font-size: 0.8em;"></span>
+                  <span class="mif-loop2 rotate" *ngIf="isClusterManagerLoading && clusterManagerReplicaData.length === 0" style="margin-left: 5px; font-size: 0.8em;"></span>
                 </a>
                 <ng-template ngbNavContent>
                     <!-- Replica Set Information - Four horizontal boxes -->
@@ -125,7 +124,7 @@
 
                         <div class="stat-box" 
                              [class.warning-box]="clusterManagerPartitionStatus === 'InQuorumLoss'"
-                             [class.success-box]="clusterManagerPartitionStatus !== 'InQuorumLoss'">
+                             [class.success-box]="clusterManagerPartitionStatus !== 'InQuorumLoss' && clusterManagerWriteQuorum > 0">
                             <div class="stat-label">
                                 <span *ngIf="clusterManagerPartitionStatus === 'InQuorumLoss'" class="not-met-label"> Expected</span>
                                 <span *ngIf="clusterManagerPartitionStatus !== 'InQuorumLoss'" class="met-label"> Current</span>
@@ -133,7 +132,7 @@
                             </div>
                             <div class="stat-value" 
                                  [class.quorum-loss]="clusterManagerPartitionStatus === 'InQuorumLoss'"
-                                 [class.quorum-met]="clusterManagerPartitionStatus !== 'InQuorumLoss'">
+                                 [class.quorum-met]="clusterManagerPartitionStatus !== 'InQuorumLoss' && clusterManagerWriteQuorum > 0">
                                 {{ clusterManagerWriteQuorum }}
                             </div>
                         </div>
@@ -142,6 +141,10 @@
                             <div class="stat-label">Quorum Loss Duration</div>
                             <div class="stat-value quorum-loss">{{ clusterManagerLastQuorumLossDuration }}</div>
                         </div>
+                    </div>
+                   <!-- Warning when Failover Manager is in quorum loss and Cluster Manager has no data -->
+                    <div *ngIf="partitionStatus === 'InQuorumLoss' && clusterManagerReplicaData.length === 0" class="quorum-loss-message">
+                        <span><strong>Warning:</strong> Cluster Manager data will not load when Failover Manager is in quorum loss.</span>
                     </div>
 
                     <div *ngIf="clusterManagerPartitionStatus === 'InQuorumLoss'" class="quorum-loss-message">

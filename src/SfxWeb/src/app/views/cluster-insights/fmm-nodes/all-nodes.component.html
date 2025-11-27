@@ -1,10 +1,7 @@
 <div class="tile-container">
     <!-- FMM Node Statistics Summary -->
-    <div style="position: relative;">
+    <div >
         <app-essential-health-tile [listItems]="essentialItems"></app-essential-health-tile>
-        <div *ngIf="isLoading" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 10;">
-            <span class="mif-loop2 rotate"></span>
-        </div>
     </div>
 
     <!-- Node Status Ring Chart (using tiles array) -->

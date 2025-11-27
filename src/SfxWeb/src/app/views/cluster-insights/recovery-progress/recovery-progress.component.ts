@@ -52,10 +52,10 @@ export class RecoveryProgressComponent implements OnInit {
     }).subscribe({
       next: (results) => {
         this.checkSeedNodeQuorum(results.fmmNodes);
-        this.checkFailoverManagerStatus(results.failoverManagerReplicas);
+        const fmHasQuorum = this.checkFailoverManagerStatus(results.failoverManagerReplicas);
         // Only check system services status if we have valid health data
         if (results.systemAppHealth) {
-          this.checkSystemServicesStatus(results.systemAppHealth);
+          this.checkSystemServicesStatus(results.systemAppHealth, fmHasQuorum);
         }
         this.checkNodesStatus(results.fmmNodes);
         this.isLoading = false;
@@ -106,7 +106,7 @@ export class RecoveryProgressComponent implements OnInit {
     return Math.floor(n / 2) + 1;
   }
 
-  checkFailoverManagerStatus(replicas: IRawReplicaOnPartition[]): void {
+  checkFailoverManagerStatus(replicas: IRawReplicaOnPartition[]): boolean {
     const readyReplicas = replicas.filter(replica => replica.ReplicaStatus === 'Ready').length;
     
     // Calculate write quorum using the accurate formula
@@ -121,19 +121,28 @@ export class RecoveryProgressComponent implements OnInit {
         ? `Write quorum achieved: ${readyReplicas} replicas are Ready (${writeQuorum} required)`
         : `Write quorum lost: Only ${readyReplicas} replicas are Ready (${writeQuorum} required)`;
     }
+
+    return hasQuorum;
   }
 
-  checkSystemServicesStatus(applicationHealth: IRawApplicationHealth): void {
+  checkSystemServicesStatus(applicationHealth: IRawApplicationHealth, fmHasQuorum: boolean): void {
     const healthState = applicationHealth.AggregatedHealthState;
-    const isOk = healthState === 'Ok';
+    const isOk = healthState === 'Ok' && fmHasQuorum;
 
-    // Update System Services status based on AggregatedHealthState
+    // Update System Services status based on AggregatedHealthState and FM quorum
     const systemServicesStep = this.recoverySteps.find(step => step.name === 'System Services');
     if (systemServicesStep) {
       systemServicesStep.status = isOk ? 'success' : 'error';
-      systemServicesStep.tooltip = isOk 
-        ? 'System application health is Ok'
-        : `System application health is ${healthState}`;
+      
+      if (!fmHasQuorum) {
+        // Failover Manager in quorum loss - override message
+        systemServicesStep.tooltip = 'Failover Manager is in quorum loss';
+      } else {
+        // Use health state message
+        systemServicesStep.tooltip = isOk 
+          ? 'System application health is Ok'
+          : `System application health is ${healthState}`;
+      }
     }
   }
 
