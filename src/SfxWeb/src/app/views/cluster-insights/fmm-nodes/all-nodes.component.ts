@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { RestClientService } from 'src/app/services/rest-client.service';
 import { SettingsService } from 'src/app/services/settings.service';
 import { IRawNode, IRawNodeStatusCount } from 'src/app/Models/RawDataTypes';
-import { ListSettings, ListColumnSettingForLink, ListColumnSetting, ListColumnSettingWithFilter, ListColumnSettingForBadge, ListColumnSettingForColoredNodeName } from 'src/app/Models/ListSettings';
+import { ListSettings, ListColumnSetting, ListColumnSettingWithFilter, ListColumnSettingForBadge, ListColumnSettingForColoredNodeName } from 'src/app/Models/ListSettings';
 import { IDashboardViewModel, DashboardViewModel } from 'src/app/ViewModels/DashboardViewModels';
 import { IEssentialListItem } from 'src/app/modules/charts/essential-health-tile/essential-health-tile.component';
 
@@ -32,7 +32,7 @@ export class FMMNodesComponent implements OnInit {
   isLoading: boolean = true;
 
   constructor(
-    private restClient: RestClientService, 
+    private restClient: RestClientService,
     private settings: SettingsService
   ) {}
 
@@ -59,43 +59,36 @@ export class FMMNodesComponent implements OnInit {
     this.isLoading = true;
     this.restClient.getFMMNodes().subscribe({
       next: (rawNodes: IRawNode[]) => {
-        // Map nodes to display format
         this.nodes = rawNodes.map(rawNode => {
           const nodeStatus = rawNode.NodeStatus || 'Unknown';
-          
+
           return {
             name: rawNode.Name,
             raw: rawNode,
             nodeStatus: nodeStatus,
-            nodeStatusBadge: this.getNodeStatusBadge(nodeStatus),
-            viewPath: `#/node/${encodeURIComponent(rawNode.Name)}` // Construct viewPath manually
+            nodeStatusBadge: this.getNodeStatusBadge(nodeStatus)
           };
         });
 
-        // Separate seed and non-seed nodes
         this.seedNodes = this.nodes.filter(node => node.raw.IsSeedNode === true);
         this.nonSeedNodes = this.nodes.filter(node => node.raw.IsSeedNode === false);
 
-        // Calculate statistics
         this.seedNodeCount = this.seedNodes.length;
         this.faultDomainCount = new Set(rawNodes.map(node => node.FaultDomain)).size;
         this.upgradeDomainCount = new Set(rawNodes.map(node => node.UpgradeDomain)).size;
         this.uniqueCodeVersions = [...new Set(rawNodes.map(node => node.CodeVersion))];
-        this.updateItemInEssentials();
 
-        // Update tiles based on node status
+        this.updateItemInEssentials();
         this.updateTiles();
         this.isLoading = false;
       },
-      error: (err) => {
-        // Error loading FMM nodes
+      error: () => {
         this.isLoading = false;
       }
     });
   }
 
   getNodeStatusBadge(nodeStatus: string): { text: string; badgeClass: string } {
-    // Map node status to badge
     if (nodeStatus === 'Up') {
       return { text: nodeStatus, badgeClass: 'badge-ok' };
     } else if (nodeStatus === 'Down') {
@@ -106,24 +99,20 @@ export class FMMNodesComponent implements OnInit {
       return { text: nodeStatus, badgeClass: 'badge-unknown' };
     }
   }
-  
+
   updateTiles(): void {
-    this.tiles = [];
-  
-    // Count nodes by status
     const nodeStatusCount: IRawNodeStatusCount = {
       UpCount: this.nodes.filter(node => node.nodeStatus === 'Up').length,
       DisabledCount: this.nodes.filter(node => node.nodeStatus === 'Disabled' || node.nodeStatus === 'Disabling').length,
       DownCount: this.nodes.filter(node => node.nodeStatus === 'Down').length
     };
-  
-    // Create a tile using the fromNodeStatusCount method
-    this.tiles.push(
+
+    this.tiles = [
       DashboardViewModel.fromNodeStatusCount('Nodes', 'Node', false, nodeStatusCount)
-    );
+    ];
   }
 
-  updateItemInEssentials() {
+  updateItemInEssentials(): void {
     this.essentialItems = [
       {
         descriptionName: 'Code Version',

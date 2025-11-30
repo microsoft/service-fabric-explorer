@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { IRawFMMLocation } from 'src/app/Models/RawDataTypes';
-import { IEssentialListItem } from 'src/app/modules/charts/essential-health-tile/essential-health-tile.component';
 import { RestClientService } from 'src/app/services/rest-client.service';
 
 @Component({
@@ -25,7 +24,7 @@ export class FmmLocationComponent implements OnInit {
         this.fmmLocation = data;
         this.isLoading = false;
       },
-      error: (err) => {
+      error: () => {
         this.isLoading = false;
       }
     });

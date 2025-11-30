@@ -1,13 +1,12 @@
-import { Component, OnInit, OnDestroy, AfterViewChecked, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { RestClientService } from 'src/app/services/rest-client.service';
 import { ListSettings, ListColumnSettingWithFilter, ListColumnSettingForColoredNodeName, ListColumnSettingForBadge, ListColumnSetting } from 'src/app/Models/ListSettings';
 import { forkJoin, interval, Subscription, of, Observable } from 'rxjs';
-import { switchMap, startWith, catchError, tap } from 'rxjs/operators';
+import { switchMap, startWith, catchError } from 'rxjs/operators';
 import { IEssentialListItem } from 'src/app/modules/charts/essential-health-tile/essential-health-tile.component';
 import { ClickableReplicaIdComponent } from '../clickable-replica-id/clickable-replica-id.component';
 import { ReplicaDetailsHtmlComponent } from '../replica-details-html/replica-details-html.component';
 
-// Custom column setting for clickable replica ID
 export class ListColumnSettingForClickableReplicaId extends ListColumnSetting {
   template = ClickableReplicaIdComponent;
   clickHandler: (item: any) => void;
@@ -18,7 +17,6 @@ export class ListColumnSettingForClickableReplicaId extends ListColumnSetting {
   }
 }
 
-// Custom column setting for replica details HTML
 export class ListColumnSettingForReplicaDetailsHtml extends ListColumnSetting {
   template = ReplicaDetailsHtmlComponent;
   
@@ -27,7 +25,6 @@ export class ListColumnSettingForReplicaDetailsHtml extends ListColumnSetting {
   }
 }
 
-// Service configuration interface
 interface ServiceConfig {
   name: string;
   applicationId: string;
@@ -35,7 +32,6 @@ interface ServiceConfig {
   partitionId: string;
 }
 
-// Service state interface
 interface ServiceState {
   replicaData: any[];
   minReplicaSetSize: number;
@@ -47,8 +43,6 @@ interface ServiceState {
   showPreviousReplicaRole: boolean;
   highlightedReplicaCount: number;
   quorumNeeded: number;
-  listSettings: ListSettings;
-  isLoaded: boolean;
 }
 
 @Component({
@@ -57,7 +51,6 @@ interface ServiceState {
   styleUrls: ['./replica-list.component.scss']
 })
 export class ReplicaListComponent implements OnInit, OnDestroy {
-  // Service configurations
   private readonly FAILOVER_MANAGER_CONFIG: ServiceConfig = {
     name: 'Failover Manager',
     applicationId: 'System',
@@ -72,7 +65,10 @@ export class ReplicaListComponent implements OnInit, OnDestroy {
     partitionId: '00000000-0000-0000-0000-000000002000'
   };
 
-  // Active tab
+  private readonly REFRESH_INTERVAL_NORMAL = 180000;
+  private readonly REFRESH_INTERVAL_QUORUM_LOSS = 10000;
+  private readonly REFRESH_INTERVAL_CM_QUORUM_LOSS = 60000;
+
   activeTab: string = 'failover-manager';
   
   // Failover Manager state
@@ -102,28 +98,23 @@ export class ReplicaListComponent implements OnInit, OnDestroy {
   clusterManagerHighlightedReplicaCount: number = 0;
   clusterManagerQuorumNeeded: number = 0;
   clusterManagerListSettings: ListSettings;
-  private clusterManagerLoaded: boolean = false;
   isClusterManagerLoading: boolean = false;
   
-  // Track previous quorum loss state to detect transitions
   private previousFailoverManagerInQuorumLoss: boolean = false;
   private previousClusterManagerInQuorumLoss: boolean = false;
-  
-  // Track expansion state and loaded details across refreshes
   private expandedReplicasState = new Map<string, { isExpanded: boolean, details: any, detailsHtml: string }>();
-  
   private refreshSubscription: Subscription;
-  private readonly REFRESH_INTERVAL_NORMAL = 180000; // 3 minutes when healthy
-  private readonly REFRESH_INTERVAL_QUORUM_LOSS = 10000; // 10 seconds when in quorum loss (Failover Manager)
-  private readonly REFRESH_INTERVAL_CM_QUORUM_LOSS = 60000; // 1 minute when Cluster Manager in quorum loss
   private currentRefreshInterval: number = this.REFRESH_INTERVAL_NORMAL;
+  private clusterManagerLoaded: boolean = false;
 
-  constructor(private restClientService: RestClientService, private cdr: ChangeDetectorRef) {}
+  constructor(
+    private restClientService: RestClientService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
     this.setupListSettings('failover-manager');
     this.setupListSettings('cluster-manager');
-    // Load cluster manager data immediately so quorum loss detection works
     this.clusterManagerLoaded = true;
     this.startAutoRefresh();
   }
@@ -134,7 +125,6 @@ export class ReplicaListComponent implements OnInit, OnDestroy {
     }
   }
 
-  // Called when tab changes
   onTabChange(tabId: string): void {
     this.activeTab = tabId;
     if (tabId === 'cluster-manager' && !this.clusterManagerLoaded) {
@@ -159,7 +149,6 @@ export class ReplicaListComponent implements OnInit, OnDestroy {
       new ListColumnSetting('lastSequenceNumber', 'Last Sequence Number')
     ];
 
-    // Conditionally add Previous Replica Role column after Replica Id (index 1)
     if (showPreviousRole) {
       columnSettings.splice(1, 0, new ListColumnSettingWithFilter('previousReplicaRole', 'Previous Replica Role'));
     }
@@ -190,12 +179,10 @@ export class ReplicaListComponent implements OnInit, OnDestroy {
       .pipe(
         startWith(0),
         switchMap(() => {
-          // Always refresh failover manager
           const requests: any = {
             failoverManager: this.fetchServiceData(this.FAILOVER_MANAGER_CONFIG, 'failover-manager')
           };
 
-          // Only refresh cluster manager if tab has been loaded
           if (this.clusterManagerLoaded) {
             requests.clusterManager = this.fetchServiceData(this.CLUSTER_MANAGER_CONFIG, 'cluster-manager');
           }
@@ -226,13 +213,10 @@ export class ReplicaListComponent implements OnInit, OnDestroy {
     }
 
     this.clusterManagerLoaded = true;
-
-    this.fetchServiceData(this.CLUSTER_MANAGER_CONFIG, 'cluster-manager')
-      .subscribe();
+    this.fetchServiceData(this.CLUSTER_MANAGER_CONFIG, 'cluster-manager').subscribe();
   }
 
   private fetchServiceData(config: ServiceConfig, service: 'failover-manager' | 'cluster-manager'): Observable<any> {
-    // Set loading state at the start
     if (service === 'failover-manager') {
       this.isFailoverManagerLoading = true;
     } else {
@@ -244,8 +228,7 @@ export class ReplicaListComponent implements OnInit, OnDestroy {
       nodes: this.restClientService.getFMMNodes(),
       partition: this.restClientService.getPartition(config.applicationId, config.serviceId, config.partitionId)
     }).pipe(
-      catchError(error => {
-        // Set loading to false on error
+      catchError(() => {
         if (service === 'failover-manager') {
           this.isFailoverManagerLoading = false;
         } else {
@@ -259,11 +242,8 @@ export class ReplicaListComponent implements OnInit, OnDestroy {
         }
 
         const { replicas, nodes, partition } = result;
-
-        // Process the data using common helper
         this.processServiceData(config, service, replicas, nodes, partition);
 
-        // Set loading to false after processing
         if (service === 'failover-manager') {
           this.isFailoverManagerLoading = false;
         } else {
@@ -282,28 +262,22 @@ export class ReplicaListComponent implements OnInit, OnDestroy {
     nodes: any[],
     partition: any
   ): void {
-    // Extract partition info
     const minReplicaSetSize = partition.MinReplicaSetSize || 0;
     const targetReplicaSetSize = partition.TargetReplicaSetSize || 0;
     const partitionStatus = partition.PartitionStatus || '';
     const lastQuorumLossDuration = this.formatDuration(partition.LastQuorumLossDurationInSeconds || 0);
 
-    // Check if all previous replica roles are None
     const allPreviousNone = replicas.every(replica => 
       replica.PreviousReplicaRole === 'None' || !replica.PreviousReplicaRole
     );
 
     const showPreviousReplicaRole = !allPreviousNone;
-
-    // Calculate write quorum
     const writeQuorum = this.calculateWriteQuorum(replicas);
     const writeQuorumReplicaIds = this.getReplicaIdsCountedInWriteQuorum(replicas);
 
-    // Create node maps
     const nodeStatusMap = new Map(nodes.map(node => [node.Name, node.NodeStatus]));
     const nodeSeedMap = new Map(nodes.map(node => [node.Name, node.IsSeedNode]));
 
-    // Transform replicas to display format
     const replicaData = this.transformReplicas(
       replicas,
       writeQuorumReplicaIds,
@@ -313,13 +287,11 @@ export class ReplicaListComponent implements OnInit, OnDestroy {
       config.partitionId
     );
 
-    // Calculate metrics
     const highlightedReplicaCount = replicaData.filter(r => r.countsTowardWriteQuorum && r.replicaStatus !== 'Ready').length;
     const currentReplicaSetSize = replicaData.filter(r => r.countsTowardWriteQuorum).length;
     const readyReplicasInQuorum = replicaData.filter(r => r.countsTowardWriteQuorum && r.replicaStatus === 'Ready').length;
     const quorumNeeded = writeQuorum - readyReplicasInQuorum;
 
-    // Update state based on service
     if (service === 'failover-manager') {
       this.updateFailoverManagerState({
         replicaData,
@@ -348,10 +320,7 @@ export class ReplicaListComponent implements OnInit, OnDestroy {
       });
     }
 
-    // Check if we need to adjust refresh interval
     this.updateRefreshInterval();
-
-    // Fetch last sequence numbers for each replica
     this.fetchLastSequenceNumbers(replicaData, config.partitionId);
   }
 
@@ -360,7 +329,6 @@ export class ReplicaListComponent implements OnInit, OnDestroy {
     
     Object.assign(this, state);
     
-    // Re-setup list if column visibility changed
     if (previousShowPreviousRole !== this.showPreviousReplicaRole) {
       this.setupListSettings('failover-manager');
     }
@@ -382,7 +350,6 @@ export class ReplicaListComponent implements OnInit, OnDestroy {
     this.clusterManagerHighlightedReplicaCount = state.highlightedReplicaCount || 0;
     this.clusterManagerQuorumNeeded = state.quorumNeeded || 0;
 
-    // Re-setup list if column visibility changed
     if (previousShowPreviousRole !== this.clusterManagerShowPreviousReplicaRole) {
       this.setupListSettings('cluster-manager');
     }
@@ -399,8 +366,6 @@ export class ReplicaListComponent implements OnInit, OnDestroy {
     const replicaData = replicas.map(replica => {
       const countsTowardWriteQuorum = writeQuorumReplicaIds.has(replica.ReplicaId);
       const shouldHighlight = countsTowardWriteQuorum && replica.ReplicaStatus !== 'Ready';
-      
-      // Check if this replica was previously expanded
       const previousState = this.expandedReplicasState.get(replica.ReplicaId);
       
       return {
@@ -418,9 +383,7 @@ export class ReplicaListComponent implements OnInit, OnDestroy {
           text: replica.ReplicaStatus,
           badgeClass: replica.ReplicaStatus === 'Ready' ? 'badge-ok' : 'badge-error'
         },
-        // Restore expansion state if it existed
         isSecondRowCollapsed: previousState ? !previousState.isExpanded : true,
-        // Restore loaded details if they existed
         deployedReplicaDetails: previousState?.details || null,
         deployedReplicaDetailsHtml: previousState?.detailsHtml || null,
         lastSequenceNumber: replica.ReplicaStatus === 'Down' ? 'N/A' : 'Loading...',
@@ -449,7 +412,7 @@ export class ReplicaListComponent implements OnInit, OnDestroy {
           const lastSeqNum = detail?.ReplicatorStatus?.ReplicationQueueStatus?.LastSequenceNumber;
           replicaItem.lastSequenceNumber = lastSeqNum !== undefined && lastSeqNum !== null ? lastSeqNum.toString() : 'N/A';
         },
-        error: (error) => {
+        error: () => {
           replicaItem.lastSequenceNumber = 'Error';
         }
       });
@@ -467,12 +430,9 @@ export class ReplicaListComponent implements OnInit, OnDestroy {
 
     let newInterval = this.REFRESH_INTERVAL_NORMAL;
     
-    // Failover Manager in quorum loss takes priority with faster refresh (10s)
     if (failoverManagerInQuorumLoss) {
       newInterval = this.REFRESH_INTERVAL_QUORUM_LOSS;
-    } 
-    // Cluster Manager only in quorum loss uses slower refresh (1 minute)
-    else if (clusterManagerInQuorumLoss) {
+    } else if (clusterManagerInQuorumLoss) {
       newInterval = this.REFRESH_INTERVAL_CM_QUORUM_LOSS;
     }
 
@@ -611,13 +571,10 @@ export class ReplicaListComponent implements OnInit, OnDestroy {
     
     replicaItem.isSecondRowCollapsed = !replicaItem.isSecondRowCollapsed;
     
-    // Update the expansion state map
     if (!replicaItem.isSecondRowCollapsed) {
-      // Expanding
       if (!replicaItem.deployedReplicaDetails) {
         this.loadDeployedReplicaDetails(replicaItem, config.partitionId);
       } else {
-        // Already have details, just update the state map
         this.expandedReplicasState.set(replicaItem.id, {
           isExpanded: true,
           details: replicaItem.deployedReplicaDetails,
@@ -625,7 +582,6 @@ export class ReplicaListComponent implements OnInit, OnDestroy {
         });
       }
     } else {
-      // Collapsing - remove from map
       this.expandedReplicasState.delete(replicaItem.id);
     }
   }
@@ -643,17 +599,15 @@ export class ReplicaListComponent implements OnInit, OnDestroy {
       next: (details: any) => {
         replicaItem.deployedReplicaDetails = details;
         
-        // Store in the expansion state map
         this.expandedReplicasState.set(replicaItem.id, {
           isExpanded: true,
           details: replicaItem.deployedReplicaDetails,
-          detailsHtml: null // No longer needed
+          detailsHtml: null
         });
       },
-      error: (error) => {
+      error: () => {
         replicaItem.deployedReplicaDetails = { error: true };
         
-        // Store error state as well
         this.expandedReplicasState.set(replicaItem.id, {
           isExpanded: true,
           details: replicaItem.deployedReplicaDetails,
