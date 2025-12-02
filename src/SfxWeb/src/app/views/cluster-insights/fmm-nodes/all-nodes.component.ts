@@ -23,13 +23,13 @@ export class FMMNodesComponent implements OnInit {
   seedNodes: FMMNodeDisplay[] = [];
   nonSeedNodes: FMMNodeDisplay[] = [];
   listSettings!: ListSettings;
-  seedNodeCount: number = 0;
-  faultDomainCount: number = 0;
-  upgradeDomainCount: number = 0;
+  seedNodeCount = 0;
+  faultDomainCount = 0;
+  upgradeDomainCount = 0;
   uniqueCodeVersions: string[] = [];
   tiles: IDashboardViewModel[] = [];
   essentialItems: IEssentialListItem[] = [];
-  isLoading: boolean = true;
+  isLoading = true;
 
   constructor(
     private restClient: RestClientService,
@@ -59,20 +59,15 @@ export class FMMNodesComponent implements OnInit {
     this.isLoading = true;
     this.restClient.getFMMNodes().subscribe({
       next: (rawNodes: IRawNode[]) => {
-        this.nodes = rawNodes.map(rawNode => {
-          const nodeStatus = rawNode.NodeStatus || 'Unknown';
-
-          return {
-            name: rawNode.Name,
-            raw: rawNode,
-            nodeStatus: nodeStatus,
-            nodeStatusBadge: this.getNodeStatusBadge(nodeStatus)
-          };
-        });
+        this.nodes = rawNodes.map(rawNode => ({
+          name: rawNode.Name,
+          raw: rawNode,
+          nodeStatus: rawNode.NodeStatus || 'Unknown',
+          nodeStatusBadge: this.getNodeStatusBadge(rawNode.NodeStatus || 'Unknown')
+        }));
 
         this.seedNodes = this.nodes.filter(node => node.raw.IsSeedNode === true);
         this.nonSeedNodes = this.nodes.filter(node => node.raw.IsSeedNode === false);
-
         this.seedNodeCount = this.seedNodes.length;
         this.faultDomainCount = new Set(rawNodes.map(node => node.FaultDomain)).size;
         this.upgradeDomainCount = new Set(rawNodes.map(node => node.UpgradeDomain)).size;
@@ -89,14 +84,16 @@ export class FMMNodesComponent implements OnInit {
   }
 
   getNodeStatusBadge(nodeStatus: string): { text: string; badgeClass: string } {
-    if (nodeStatus === 'Up') {
-      return { text: nodeStatus, badgeClass: 'badge-ok' };
-    } else if (nodeStatus === 'Down') {
-      return { text: 'Down', badgeClass: 'badge-error' };
-    } else if (nodeStatus === 'Disabling' || nodeStatus === 'Disabled') {
-      return { text: nodeStatus, badgeClass: 'badge-warning' };
-    } else {
-      return { text: nodeStatus, badgeClass: 'badge-unknown' };
+    switch (nodeStatus) {
+      case 'Up':
+        return { text: nodeStatus, badgeClass: 'badge-ok' };
+      case 'Down':
+        return { text: 'Down', badgeClass: 'badge-error' };
+      case 'Disabling':
+      case 'Disabled':
+        return { text: nodeStatus, badgeClass: 'badge-warning' };
+      default:
+        return { text: nodeStatus, badgeClass: 'badge-unknown' };
     }
   }
 

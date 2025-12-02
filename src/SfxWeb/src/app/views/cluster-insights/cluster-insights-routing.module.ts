@@ -1,14 +1,13 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { ReplicaListComponent } from './replica-list/replica-list.component';
+import { ClusterInsightsComponent } from './cluster-insights.component';
 
 const routes: Routes = [
-  { path: '', component: ReplicaListComponent }
+  { path: '', component: ClusterInsightsComponent }
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
-
 export class ClusterInsightsRoutingModule {}

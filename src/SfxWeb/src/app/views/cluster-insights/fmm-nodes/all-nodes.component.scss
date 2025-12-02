@@ -1,11 +1,9 @@
-// Make tab names bigger
 .nav-wrapper {
   .nav-link {
     font-size: 1rem;
   }
 }
 
-// Add padding between title and tabs
 .essen-pane {
   h4 {
     margin-bottom: 0.8rem;
@@ -13,17 +11,25 @@
 }
 
 .tile-container {
-  grid-template-columns: repeat(auto-fit, 260px);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
 }
 
-// Placeholder for ring chart while loading
-.ring-chart-placeholder {
-  position: relative;
-  width: 156px;
-  height: 156px;
-  background-color: #2d2d30;
-  border-radius: 2px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.node-stats-tile {
+  max-width: 330px;
+  width: 330px;
+  flex-shrink: 0;
+}
+
+.fmm-location-tile {
+  max-width: 330px;
+  width: 330px;
+  flex-shrink: 0;
+}
+
+app-dashboard-tile {
+  width: 250px;
+  max-width: 250px;
+  flex-shrink: 0;
 }

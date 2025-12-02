@@ -9,7 +9,7 @@ import { RestClientService } from 'src/app/services/rest-client.service';
 })
 export class FmmLocationComponent implements OnInit {
   fmmLocation: IRawFMMLocation = {} as IRawFMMLocation;
-  isLoading: boolean = true;
+  isLoading = true;
   
   constructor(private restClientService: RestClientService) {}
 

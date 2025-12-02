@@ -1,18 +1,15 @@
-// Make tab names bigger
 .nav-wrapper {
   .nav-link {
     font-size: 1rem;
   }
 }
 
-// Add padding between title and tabs
 .essen-pane {
   h4 {
     margin-bottom: 0.8rem;
   }
 }
 
-// Replica stats container with three horizontal boxes
 .replica-stats-container {
   display: flex;
   gap: 1rem;
@@ -21,11 +18,9 @@
   flex-wrap: wrap;
 }
 
-
-
 .stat-box {
-  width: 180px; // Reduced from 200px
-  padding: 0.75rem; // Reduced from 1rem
+  width: 180px;
+  padding: 0.75rem;
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 8px;
@@ -34,7 +29,7 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: 0.4rem; // Reduced from 0.5rem
+  gap: 0.4rem;
 
   &.replica-set-box {
     width: 180px;
@@ -55,13 +50,13 @@
   }
 
   .stat-label {
-    font-size: 0.8rem; // Reduced from 0.9rem
+    font-size: 0.8rem;
     color: var(--text-secondary);
     font-weight: 400;
   }
 
   .stat-value {
-    font-size: 1.15rem; // Reduced from 1.3rem
+    font-size: 1.15rem;
     font-weight: 600;
     color: var(--text-primary);
 
@@ -73,25 +68,8 @@
       color: var(--badge-ok);
     }
   }
-  
-  .stat-sublabel {
-    font-size: 0.75rem; // Added for the "Min / Target" sublabel
-    color: var(--text-secondary);
-  }
 }
 
-// Pre-formatted text for JSON display
-::ng-deep .pre-wrap {
-  white-space: pre-wrap;
-  font-family: 'Courier New', Courier, monospace;
-  font-size: 0.85rem;
-  background-color: rgba(0, 0, 0, 0.2);
-  padding: 0.5rem;
-  border-radius: 4px;
-  overflow-x: auto;
-}
-
-// Replica details table styling
 ::ng-deep .replica-details-table {
   width: 100%;
   margin: 1rem 0;
@@ -154,8 +132,6 @@
   font-style: italic;
 }
 
-// Highlight write quorum replica rows in orange (only in System Services section, not Nodes)
-// These are replicas that count toward write quorum based on calculateWriteQuorum logic
 .essen-pane ::ng-deep .detail-list tbody tr.write-quorum-replica-row {
   background-color: rgba(255, 165, 0, 0.15) !important;
   border-left: 4px solid #ff8c00 !important;
@@ -165,12 +141,10 @@
   }
 }
 
-// Hide the dropdown arrow/expander button in the replica list (only in System Services)
 .essen-pane ::ng-deep .detail-list tbody .row-expander {
   display: none;
 }
 
-// Adjust item-wrapper padding since we removed the expander (only in System Services)
 .essen-pane ::ng-deep .detail-list tbody td .item-wrapper {
   padding-left: 0;
 }
@@ -224,11 +198,6 @@
     text-align: end;
     font-weight: 600;
     color: var(--text-primary);
-  }
-
-  &-large {
-    @extend .line-item;
-    font-size: 33px;
   }
 }
 

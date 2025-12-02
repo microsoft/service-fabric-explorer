@@ -1,33 +1,33 @@
 <app-dashboard-text-scale-tile>
-  <div class="fmm-location-wrapper">
-    <div class="title">
+  <div style="display: flex; flex-direction: column">
+    <h2 class="title-wrapper top-seperator">
       FMM Location
       <span class="mif-loop2 rotate" *ngIf="isLoading" style="margin-left: 5px; font-size: 0.8em;"></span>
-    </div>
+    </h2>
     
-    <div class="info-grid">
-      <div class="info-item">
-        <div class="label">Node Name</div>
-        <div class="value-wrapper">
-          <div class="value">{{ fmmLocation?.NodeName }}</div>
-          <app-clip-board [text]="fmmLocation?.NodeName" *ngIf="fmmLocation?.NodeName" [name]="'Node Name'"></app-clip-board>
+    <div>
+      <div class="flex-center line-item-seperator">
+        <div class="fmm-label">Node Name</div>
+        <div class="fmm-value">
+          {{ fmmLocation?.NodeName }}
         </div>
+        <app-clip-board [text]="fmmLocation?.NodeName" *ngIf="fmmLocation?.NodeName" [name]="'Node Name'"></app-clip-board>
       </div>
       
-      <div class="info-item">
-        <div class="label">Node ID</div>
-        <div class="value-wrapper">
-          <div class="value node-id">{{ fmmLocation?.NodeId?.Id }}</div>
-          <app-clip-board [text]="fmmLocation?.NodeId?.Id" *ngIf="fmmLocation?.NodeId?.Id" [name]="'Node ID'"></app-clip-board>
+      <div class="flex-center line-item-seperator">
+        <div class="fmm-label">Node ID</div>
+        <div class="fmm-value">
+          {{ fmmLocation?.NodeId?.Id }}
         </div>
+        <app-clip-board [text]="fmmLocation?.NodeId?.Id" *ngIf="fmmLocation?.NodeId?.Id" [name]="'Node ID'"></app-clip-board>
       </div>
       
-      <div class="info-item">
-        <div class="label">Node Instance ID</div>
-        <div class="value-wrapper">
-          <div class="value">{{ fmmLocation?.InstanceId }}</div>
-          <app-clip-board [text]="fmmLocation?.InstanceId" *ngIf="fmmLocation?.InstanceId" [name]="'Instance ID'"></app-clip-board>
+      <div class="flex-center line-item-seperator">
+        <div class="fmm-label">Node Instance ID</div>
+        <div class="fmm-value">
+          {{ fmmLocation?.InstanceId }}
         </div>
+        <app-clip-board [text]="fmmLocation?.InstanceId" *ngIf="fmmLocation?.InstanceId" [name]="'Instance ID'"></app-clip-board>
       </div>
     </div>
   </div>

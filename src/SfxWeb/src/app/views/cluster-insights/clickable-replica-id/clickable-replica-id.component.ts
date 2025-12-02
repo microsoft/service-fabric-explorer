@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { DetailBaseComponent } from 'src/app/ViewModels/detail-table-base.component';
 
 @Component({
@@ -6,13 +6,9 @@ import { DetailBaseComponent } from 'src/app/ViewModels/detail-table-base.compon
   templateUrl: './clickable-replica-id.component.html',
   styleUrls: ['./clickable-replica-id.component.scss']
 })
-export class ClickableReplicaIdComponent implements OnInit, DetailBaseComponent {
+export class ClickableReplicaIdComponent implements DetailBaseComponent {
   item: any;
   listSetting: any;
-
-  constructor() {}
-
-  ngOnInit(): void {}
 
   getReplicaId(): string {
     return this.item?.id || '';

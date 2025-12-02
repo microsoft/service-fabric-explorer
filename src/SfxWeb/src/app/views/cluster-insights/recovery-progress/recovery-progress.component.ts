@@ -24,7 +24,7 @@ export class RecoveryProgressComponent implements OnInit {
     { name: 'User Services', status: 'pending' }
   ];
 
-  isLoading: boolean = true;
+  isLoading = true;
 
   constructor(private restClient: RestClientService) {}
 
@@ -85,17 +85,13 @@ export class RecoveryProgressComponent implements OnInit {
       replica.PreviousReplicaRole === 'None' || !replica.PreviousReplicaRole
     );
 
-    let n = 0;
-
-    if (allPreviousNone) {
-      n = replicas.filter(replica => 
-        replica.ReplicaRole === 'ActiveSecondary' || replica.ReplicaRole === 'Primary'
-      ).length;
-    } else {
-      n = replicas.filter(replica => 
-        replica.PreviousReplicaRole === 'ActiveSecondary' || replica.PreviousReplicaRole === 'Primary'
-      ).length;
-    }
+    const n = allPreviousNone
+      ? replicas.filter(replica => 
+          replica.ReplicaRole === 'ActiveSecondary' || replica.ReplicaRole === 'Primary'
+        ).length
+      : replicas.filter(replica => 
+          replica.PreviousReplicaRole === 'ActiveSecondary' || replica.PreviousReplicaRole === 'Primary'
+        ).length;
 
     return Math.floor(n / 2) + 1;
   }
@@ -123,14 +119,11 @@ export class RecoveryProgressComponent implements OnInit {
     const systemServicesStep = this.recoverySteps.find(step => step.name === 'System Services');
     if (systemServicesStep) {
       systemServicesStep.status = isOk ? 'success' : 'error';
-      
-      if (!fmHasQuorum) {
-        systemServicesStep.tooltip = 'Failover Manager is in quorum loss';
-      } else {
-        systemServicesStep.tooltip = isOk 
+      systemServicesStep.tooltip = !fmHasQuorum
+        ? 'Failover Manager is in quorum loss'
+        : isOk 
           ? 'System application health is Ok'
           : `System application health is ${healthState}`;
-      }
     }
   }
 
@@ -145,14 +138,12 @@ export class RecoveryProgressComponent implements OnInit {
 
     const nodesStep = this.recoverySteps.find(step => step.name === 'Nodes');
     if (nodesStep) {
-      if (!hasMinimumNodes || downNodes.length > 0) {
+      if (!hasMinimumNodes) {
         nodesStep.status = 'error';
-        
-        if (!hasMinimumNodes) {
-          nodesStep.tooltip = `Insufficient nodes Up: ${upNodes}/${totalNodes} nodes Up (minimum ${minRequiredNodes} required based on ${seedNodeCount} seed nodes)`;
-        } else if (downNodes.length > 0) {
-          nodesStep.tooltip = `${downNodes.length} node(s) are Down`;
-        }
+        nodesStep.tooltip = `Insufficient nodes Up: ${upNodes}/${totalNodes} nodes Up (minimum ${minRequiredNodes} required based on ${seedNodeCount} seed nodes)`;
+      } else if (downNodes.length > 0) {
+        nodesStep.status = 'error';
+        nodesStep.tooltip = `${downNodes.length} node(s) are Down`;
       } else if (disabledNodes.length > 0) {
         nodesStep.status = 'warning';
         nodesStep.tooltip = `${disabledNodes.length} node(s) are Disabled or Disabling`;

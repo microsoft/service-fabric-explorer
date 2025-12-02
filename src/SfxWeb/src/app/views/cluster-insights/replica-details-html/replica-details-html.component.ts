@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { DetailBaseComponent } from 'src/app/ViewModels/detail-table-base.component';
 import { ListColumnSetting } from 'src/app/Models/ListSettings';
-import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-replica-details-html',
@@ -12,8 +11,6 @@ export class ReplicaDetailsHtmlComponent implements OnInit, DetailBaseComponent 
   item: any;
   listSetting: ListColumnSetting;
   deployedReplicaDetails: any;
-
-  constructor(private sanitizer: DomSanitizer) {}
 
   ngOnInit(): void {
     const details = this.item?.deployedReplicaDetails;
