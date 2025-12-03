@@ -1,0 +1,28 @@
+
+
+Show off two cases.
+
+Preupgrade Health Check rollback + Regular health check capture
+
+
+Preupgrade SafetyCheck + New Health check capture
+
+
+
+
+
+Test script
+load ConfigureClusterAndBuildApp.test
+
+provisionapp TestAppV1
+createapp fabric:/TestApp1 TestAppV1
+
+provisionapp TestAppV2
+
+// Wait for app to be ready?
+reporthealth application name=fabric:/TestApp1 healthstate=error sequencenumber=1
+queryhealth application error name=fabric:/TestApp1
+
+
+// upgrade app to v2
+upgradeapp fabric:/TestApp1 TestAppV2 mode=Monitored healthcheckstable=10 healthcheckwait=10 healthcheckretrytimeout=10

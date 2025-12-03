@@ -116,7 +116,8 @@ export class EssentialsComponent extends ApplicationBaseControllerDirective {
 
     return forkJoin([
       this.app.upgradeProgress.refresh(messageHandler).pipe(map(upgradeProgress => {
-        this.upgradeProgress = upgradeProgress;
+        this.upgradeProgress = Object.assign({}, upgradeProgress);
+        console.log('Upgrade Progress refreshed in Essentials Component', this.upgradeProgress);
       })),
       this.app.serviceTypes.refresh(messageHandler),
       this.app.services.refresh(messageHandler),
