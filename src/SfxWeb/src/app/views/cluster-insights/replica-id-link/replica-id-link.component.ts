@@ -3,11 +3,11 @@ import { DetailBaseComponent } from 'src/app/ViewModels/detail-table-base.compon
 import { ListColumnSetting } from 'src/app/Models/ListSettings';
 
 @Component({
-  selector: 'app-clickable-replica-id',
-  templateUrl: './clickable-replica-id.component.html',
+  selector: 'app-replica-id-link',
+  templateUrl: './replica-id-link.component.html',
   styleUrls: ['../replica-list/replica-list.component.scss']
 })
-export class ClickableReplicaIdComponent implements DetailBaseComponent {
+export class ExpandableLinkComponent implements DetailBaseComponent {
   item: any;
   listSetting: any;
 
@@ -22,8 +22,8 @@ export class ClickableReplicaIdComponent implements DetailBaseComponent {
   }
 }
 
-export class ListColumnSettingForClickableReplicaId extends ListColumnSetting {
-  template = ClickableReplicaIdComponent;
+export class ListColumnSettingWithExpandableLink extends ListColumnSetting {
+  template = ExpandableLinkComponent;
   clickHandler: (item: any) => void;
   
   constructor(propertyPath: string, displayName: string, clickHandler?: (item: any) => void) {

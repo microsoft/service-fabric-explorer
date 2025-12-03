@@ -70,66 +70,7 @@
   }
 }
 
-::ng-deep .replica-details-table {
-  width: 100%;
-  margin: 1rem 0;
-  border-collapse: separate;
-  border-spacing: 0;
-  font-size: 0.9rem;
-  background-color: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  overflow: hidden;
-  box-shadow: var(--primary-box-shadow);
-  
-  tr {
-    border-bottom: 1px solid var(--accent-underline);
-    transition: background-color 0.2s ease;
-    
-    &:last-child {
-      border-bottom: none;
-    }
-    
-    &:hover {
-      background-color: rgba(255, 255, 255, 0.05);
-    }
-    
-    &:first-child td {
-      padding-top: 1rem;
-    }
-    
-    &:last-child td {
-      padding-bottom: 1rem;
-    }
-  }
-  
-  td {
-    padding: 0.75rem 1rem;
-    
-    &.field-name {
-      font-weight: var(--font-weight-semibold);
-      color: var(--accent-lightblue);
-      width: 35%;
-      text-align: left;
-      padding-left: 1.25rem;
-      font-size: var(--font-size-small);
-    }
-    
-    &.field-value {
-      color: var(--font-primary-color);
-      font-size: var(--font-size-default);
-      background-color: rgba(0, 0, 0, 0.15);
-      padding-right: 1.25rem;
-      border-left: 2px solid var(--accent-underline);
-    }
-  }
-}
-
-::ng-deep .error-message {
-  color: var(--badge-error);
-  padding: 0.5rem;
-  font-style: italic;
-}
-
+// Highlight quorum replicas
 .essen-pane ::ng-deep .detail-list tbody tr.write-quorum-replica-row {
   background-color: rgba(241, 157, 3, 0.15) !important;
   border-left: 4px solid var(--badge-warning) !important;
@@ -139,37 +80,19 @@
   }
 }
 
+// Get rid of drop down menu
 .essen-pane ::ng-deep .detail-list tbody .row-expander {
   display: none;
-}
-
-.essen-pane ::ng-deep .detail-list tbody td .item-wrapper {
-  padding-left: 0;
 }
 
 .quorum-loss-message {
   background-color: rgba(241, 157, 3, 0.15);
   border-left: 4px solid var(--badge-warning);
   padding: 1rem 1.5rem;
-  margin-bottom: 1.5rem;
   border-radius: var(--primary-border-radius);
   font-size: var(--font-size-default);
-  color: var(--font-primary-color);
+  color: var (--font-primary-color);
   display: flex;
-  align-items: flex-start;
-  gap: 0.75rem;
-  line-height: 1.5;
-
-  i {
-    color: var(--badge-warning);
-    font-size: var(--font-size-medium);
-    flex-shrink: 0;
-    margin-top: 0.15rem;
-  }
-
-  span {
-    flex: 1;
-  }
 
   strong {
     color: var(--badge-warning);
@@ -205,14 +128,12 @@
   margin-bottom: 3px;
 }
 
-// Clickable Replica ID styles
-.clickable-replica-id {
+.replica-id-link {
   color: var(--accent-lightblue);
   cursor: pointer;
 }
 
-.non-clickable-replica-id {
+.non-replica-id-link {
   color: var(--font-primary-color);
   cursor: default;
-  text-decoration: none;
 }

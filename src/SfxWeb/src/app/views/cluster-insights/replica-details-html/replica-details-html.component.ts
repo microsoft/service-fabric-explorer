@@ -6,7 +6,7 @@ import { ListColumnSetting } from 'src/app/Models/ListSettings';
   selector: 'app-replica-details-html',
   templateUrl: './replica-details-html.component.html'
 })
-export class ReplicaDetailsHtmlComponent implements OnInit, DetailBaseComponent {
+export class ReplicaDetailsComponent implements OnInit, DetailBaseComponent {
   item: any;
   listSetting: ListColumnSetting;
   deployedReplicaDetails: any;
@@ -29,8 +29,8 @@ export class ReplicaDetailsHtmlComponent implements OnInit, DetailBaseComponent 
   }
 }
 
-export class ListColumnSettingForReplicaDetailsHtml extends ListColumnSetting {
-  template = ReplicaDetailsHtmlComponent;
+export class ListColumnSettingForExpandedDetails extends ListColumnSetting {
+  template = ReplicaDetailsComponent;
   
   constructor(propertyPath: string, displayName: string, config?: any) {
     super(propertyPath, displayName, config);

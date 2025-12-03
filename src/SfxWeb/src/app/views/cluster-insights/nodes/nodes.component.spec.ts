@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
-import { FMMNodesComponent } from './all-nodes.component';
+import { FMMNodesComponent } from './nodes.component';
 
 describe('FMMNodesComponent', () => {
   let component: FMMNodesComponent;

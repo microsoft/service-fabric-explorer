@@ -15,8 +15,8 @@ interface FMMNodeDisplay {
 
 @Component({
   selector: 'app-fmm-nodes',
-  templateUrl: './all-nodes.component.html',
-  styleUrls: ['./all-nodes.component.scss']
+  templateUrl: './nodes.component.html',
+  styleUrls: ['./nodes.component.scss']
 })
 export class FMMNodesComponent implements OnInit {
   nodes: FMMNodeDisplay[] = [];

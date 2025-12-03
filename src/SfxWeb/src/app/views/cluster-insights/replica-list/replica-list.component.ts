@@ -4,8 +4,8 @@ import { ListSettings, ListColumnSettingWithFilter, ListColumnSettingForColoredN
 import { forkJoin, interval, Subscription, of, Observable } from 'rxjs';
 import { switchMap, startWith, catchError } from 'rxjs/operators';
 import { IEssentialListItem } from 'src/app/modules/charts/essential-health-tile/essential-health-tile.component';
-import { ListColumnSettingForClickableReplicaId } from '../clickable-replica-id/clickable-replica-id.component';
-import { ListColumnSettingForReplicaDetailsHtml } from '../replica-details-html/replica-details-html.component';
+import { ListColumnSettingWithExpandableLink } from '../replica-id-link/replica-id-link.component';
+import { ListColumnSettingForExpandedDetails } from '../replica-details-html/replica-details-html.component';
 
 interface ServiceConfig {
   name: string;
@@ -127,7 +127,7 @@ export class ReplicaListComponent implements OnInit, OnDestroy {
       : this.clusterManagerState.showPreviousReplicaRole;
 
     const columnSettings = [
-      new ListColumnSettingForClickableReplicaId('id', 'Replica Id', clickHandler),
+      new ListColumnSettingWithExpandableLink('id', 'Replica Id', clickHandler),
       new ListColumnSettingWithFilter('role', 'Current Replica Role'),
       new ListColumnSettingForBadge('replicaStatusBadge', 'Status'),
       new ListColumnSettingForColoredNodeName('nodeName', 'Node Name'),
@@ -139,7 +139,7 @@ export class ReplicaListComponent implements OnInit, OnDestroy {
     }
 
     const secondRowColumnSettings = [
-      new ListColumnSettingForReplicaDetailsHtml('deployedReplicaDetailsHtml', 'Deployed Replica Details', { colspan: -1 })
+      new ListColumnSettingForExpandedDetails('deployedReplicaDetailsHtml', 'Deployed Replica Details', { colspan: -1 })
     ];
 
     const listSettings = new ListSettings(

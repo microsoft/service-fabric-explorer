@@ -1,22 +1,13 @@
 .recovery-progress-container {
   padding: 1rem;
-  margin-bottom: 1rem;
 
   h4 {
-    margin: 0 0 1rem 0;
-    font-size: var(--font-size-large);
-    color: var(--font-accent-color);
+    margin-bottom: 1rem;
   }
-}
-
-.progress-bar-wrapper {
-  width: 100%;
 }
 
 .progress-steps {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
   position: relative;
   
   &::before {
@@ -26,8 +17,7 @@
     left: 30px;
     right: 30px;
     height: 3px;
-    background-color: var(--font-primary-color);
-    z-index: 0;
+    background-color: #c9c9c9;
   }
 }
 
@@ -44,16 +34,13 @@
     height: 30px;
     border-radius: 50%;
     border: 3px solid var(--accent-underline);
-    background-color: var(--primary-background-color);
     margin-bottom: 0.5rem;
   }
 
   .step-label {
-    font-size: var(--font-size-default);
     text-align: center;
     max-width: 80px;
     word-wrap: break-word;
-    color: var(--font-primary-color);
   }
 
   &.success .step-indicator {
@@ -73,6 +60,6 @@
 
   &.pending .step-indicator {
     background-color: var(--primary-background-color);
-    border-color: var(--font-primary-color);
+    border-color: #c9c9c9;
   }
 }

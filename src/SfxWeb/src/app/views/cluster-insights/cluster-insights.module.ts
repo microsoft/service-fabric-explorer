@@ -8,10 +8,10 @@ import { ClusterInsightsRoutingModule } from './cluster-insights-routing.module'
 import { ClusterInsightsComponent } from './cluster-insights.component';
 import { ReplicaListComponent } from './replica-list/replica-list.component';
 import { FmmLocationComponent } from './fmm-location/fmm-location.component';
-import { FMMNodesComponent } from './fmm-nodes/all-nodes.component';
+import { FMMNodesComponent } from './nodes/nodes.component';
 import { RecoveryProgressComponent } from './recovery-progress/recovery-progress.component';
-import { ClickableReplicaIdComponent } from './clickable-replica-id/clickable-replica-id.component';
-import { ReplicaDetailsHtmlComponent } from './replica-details-html/replica-details-html.component';
+import { ExpandableLinkComponent } from './replica-id-link/replica-id-link.component';
+import { ReplicaDetailsComponent } from './replica-details-html/replica-details-html.component';
 
 @NgModule({
   declarations: [
@@ -20,8 +20,8 @@ import { ReplicaDetailsHtmlComponent } from './replica-details-html/replica-deta
     FmmLocationComponent,
     FMMNodesComponent,
     RecoveryProgressComponent,
-    ClickableReplicaIdComponent,
-    ReplicaDetailsHtmlComponent
+    ExpandableLinkComponent,
+    ReplicaDetailsComponent
   ],
   imports: [
     CommonModule,
