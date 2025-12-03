@@ -4,26 +4,8 @@ import { ListSettings, ListColumnSettingWithFilter, ListColumnSettingForColoredN
 import { forkJoin, interval, Subscription, of, Observable } from 'rxjs';
 import { switchMap, startWith, catchError } from 'rxjs/operators';
 import { IEssentialListItem } from 'src/app/modules/charts/essential-health-tile/essential-health-tile.component';
-import { ClickableReplicaIdComponent } from '../clickable-replica-id/clickable-replica-id.component';
-import { ReplicaDetailsHtmlComponent } from '../replica-details-html/replica-details-html.component';
-
-export class ListColumnSettingForClickableReplicaId extends ListColumnSetting {
-  template = ClickableReplicaIdComponent;
-  clickHandler: (item: any) => void;
-  
-  constructor(propertyPath: string, displayName: string, clickHandler?: (item: any) => void) {
-    super(propertyPath, displayName);
-    this.clickHandler = clickHandler;
-  }
-}
-
-export class ListColumnSettingForReplicaDetailsHtml extends ListColumnSetting {
-  template = ReplicaDetailsHtmlComponent;
-  
-  constructor(propertyPath: string, displayName: string, config?: any) {
-    super(propertyPath, displayName, config);
-  }
-}
+import { ListColumnSettingForClickableReplicaId } from '../clickable-replica-id/clickable-replica-id.component';
+import { ListColumnSettingForReplicaDetailsHtml } from '../replica-details-html/replica-details-html.component';
 
 interface ServiceConfig {
   name: string;

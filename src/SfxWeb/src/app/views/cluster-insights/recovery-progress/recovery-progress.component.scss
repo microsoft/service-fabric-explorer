@@ -1,13 +1,11 @@
 .recovery-progress-container {
-  padding: 20px;
-  background: var(--primary-background-color);
-  border: 1px solid var(--border-color);
-  border-radius: 4px;
-  margin-bottom: 20px;
+  padding: 1rem;
+  margin-bottom: 1rem;
 
   h4 {
-    margin: 0 0 15px 0;
-    font-size: 20px;
+    margin: 0 0 1rem 0;
+    font-size: var(--font-size-large);
+    color: var(--font-accent-color);
   }
 }
 
@@ -27,8 +25,8 @@
     top: 15px;
     left: 30px;
     right: 30px;
-    height: 4px;
-    background-color: #ddd;
+    height: 3px;
+    background-color: var(--font-primary-color);
     z-index: 0;
   }
 }
@@ -45,36 +43,36 @@
     width: 30px;
     height: 30px;
     border-radius: 50%;
-    border: 3px solid #ddd;
-    background-color: white;
-    margin-bottom: 8px;
+    border: 3px solid var(--accent-underline);
+    background-color: var(--primary-background-color);
+    margin-bottom: 0.5rem;
   }
 
   .step-label {
-    font-size: 12px;
+    font-size: var(--font-size-default);
     text-align: center;
     max-width: 80px;
     word-wrap: break-word;
-    color: var(--text-color);
+    color: var(--font-primary-color);
   }
 
   &.success .step-indicator {
-    background-color: #5cb85c;
-    border-color: #5cb85c;
+    background-color: var(--badge-ok);
+    border-color: var(--badge-ok);
   }
 
   &.error .step-indicator {
-    background-color: #d9534f;
-    border-color: #d9534f;
+    background-color: var(--badge-error);
+    border-color: var(--badge-error);
   }
 
   &.warning .step-indicator {
-    background-color: #f0ad4e;
-    border-color: #f0ad4e;
+    background-color: var(--badge-warning);
+    border-color: var(--badge-warning);
   }
 
   &.pending .step-indicator {
-    background-color: white;
-    border-color: #ddd;
+    background-color: var(--primary-background-color);
+    border-color: var(--font-primary-color);
   }
 }

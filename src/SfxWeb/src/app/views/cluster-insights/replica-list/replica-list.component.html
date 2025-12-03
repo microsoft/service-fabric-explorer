@@ -5,7 +5,7 @@
       <li [ngbNavItem]="'failover-manager'">
         <a ngbNavLink class="nav-link">
           Failover Manager
-          <span class="mif-loop2 rotate" *ngIf="failoverManagerState.isLoading && failoverManagerState.replicaData.length === 0" style="margin-left: 5px; font-size: 0.8em;"></span>
+          <span class="mif-loop2 rotate" *ngIf="failoverManagerState.isLoading && failoverManagerState.replicaData.length === 0"></span>
         </a>
         <ng-template ngbNavContent>
           <div class="replica-stats-container">
@@ -66,7 +66,7 @@
       <li [ngbNavItem]="'cluster-manager'">
         <a ngbNavLink class="nav-link">
           Cluster Manager
-          <span class="mif-loop2 rotate" *ngIf="clusterManagerState.isLoading && clusterManagerState.replicaData.length === 0" style="margin-left: 5px; font-size: 0.8em;"></span>
+          <span class="mif-loop2 rotate" *ngIf="clusterManagerState.isLoading && clusterManagerState.replicaData.length === 0"></span>
         </a>
         <ng-template ngbNavContent>
           <div class="replica-stats-container">

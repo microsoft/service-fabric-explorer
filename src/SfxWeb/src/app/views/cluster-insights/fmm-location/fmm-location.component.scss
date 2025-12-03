@@ -1,122 +1,30 @@
-.fmm-location-wrapper {
-  display: flex;
-  flex-direction: column;
-  height: auto;
-  width: 100%;
-
-  .title {
-    font-size: 10pt;
-    font-weight: 600;
-    line-height: 0.9;
-    margin-bottom: 0.3rem;
-    color: var(--font-primary-color);
-    letter-spacing: 0.5px;
-    text-align: center;
-    border-bottom: 0.4px solid #4c4c4c;
-    padding-bottom: 6px;
-  }
-}
-
-.badge-container {
-  margin-right: 10px;
-  width: 40px;
-  height: 40px;
-  justify-content: center;
-}
-
-.line-item {
-  line-height: 1;
-  margin-right: 7px;
-
-  &-small {
-    @extend .line-item;
-    font-size: 28px;
-    width: 30px;
-    text-align: end;
-  }
-
-  &-large {
-    @extend .line-item;
-    font-size: 33px;
-  }
-}
-
 .fmm-label {
-  color: #c9c9c9;
-  font-size: 13px;
+  color: var(--font-list-item-color);
+  font-size: 14px;
   font-weight: 500;
   white-space: nowrap;
-  flex-shrink: 0;
 }
 
 .fmm-value {
   line-height: 1.2;
-  margin-right: 3px;
-  margin-left: 10px;
-  font-size: 13px;
-  font-weight: 400;
+  font-size: 14px;
   text-align: right;
   flex: 1;
-  min-width: 0;
-  word-break: break-word;
-  overflow-wrap: break-word;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  color: var(--font-primary-color);
 }
 
 .title-wrapper {
-  font-size: 14pt;
+  font-size: var(--font-size-large);
   line-height: 0.9;
   color: #c9c9c9;
   font-weight: 600;
-  border-bottom: 2px solid #4c4c4c;
+  border-bottom: 2px solid var(--accent-underline);
   padding-bottom: 8px;
   text-align: center;
 }
 
 .line-item-seperator {
-  border-bottom: 2px solid #4c4c4c;
+  border-bottom: 2px solid var(--accent-underline);
   padding-bottom: 8px;
   margin-bottom: 8px;
-}
-
-.info-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  width: 100%;
-}
-
-.info-item {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 1rem;
-  width: 100%;
-    
-  .label {
-    font-size: 16px;
-    font-weight: 500;
-    color: #c9c9c9;
-    line-height: 1.2;
-    min-width: 130px;
-    flex-shrink: 0;
-  }
-  
-  .value-wrapper {
-    display: flex;
-    align-items: center;
-    gap: 0.3rem;
-    flex: 1;
-    justify-content: flex-end;
-  }
-  
-  .value {
-    font-size: 13px;
-    color: var(--font-primary-color);
-    font-weight: 400;
-    word-break: break-all;
-    line-height: 1.1;
-    text-align: right;
-  }
 }

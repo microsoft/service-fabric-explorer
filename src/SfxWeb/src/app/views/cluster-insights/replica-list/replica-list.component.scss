@@ -13,8 +13,8 @@
 .replica-stats-container {
   display: flex;
   gap: 1rem;
-  margin-top: 1.5rem;
-  margin-bottom: 2rem;
+  margin-top: 1rem;
+  margin-bottom: 1.5rem;
   flex-wrap: wrap;
 }
 
@@ -22,9 +22,9 @@
   width: 180px;
   padding: 0.75rem;
   background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--accent-underline);
+  border-radius: var(--primary-border-radius);
+  box-shadow: var(--primary-box-shadow);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -78,12 +78,11 @@
   font-size: 0.9rem;
   background-color: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 8px;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--primary-box-shadow);
   
   tr {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    border-bottom: 1px solid var(--accent-underline);
     transition: background-color 0.2s ease;
     
     &:last-child {
@@ -107,21 +106,20 @@
     padding: 0.75rem 1rem;
     
     &.field-name {
-      font-weight: 600;
+      font-weight: var(--font-weight-semibold);
       color: var(--accent-lightblue);
       width: 35%;
       text-align: left;
       padding-left: 1.25rem;
-      letter-spacing: 0.3px;
-      font-size: 0.85rem;
+      font-size: var(--font-size-small);
     }
     
     &.field-value {
       color: var(--font-primary-color);
-      font-size: 0.9rem;
+      font-size: var(--font-size-default);
       background-color: rgba(0, 0, 0, 0.15);
       padding-right: 1.25rem;
-      border-left: 2px solid rgba(255, 255, 255, 0.05);
+      border-left: 2px solid var(--accent-underline);
     }
   }
 }
@@ -133,11 +131,11 @@
 }
 
 .essen-pane ::ng-deep .detail-list tbody tr.write-quorum-replica-row {
-  background-color: rgba(255, 165, 0, 0.15) !important;
-  border-left: 4px solid #ff8c00 !important;
+  background-color: rgba(241, 157, 3, 0.15) !important;
+  border-left: 4px solid var(--badge-warning) !important;
   
   &:hover {
-    background-color: rgba(255, 165, 0, 0.25) !important;
+    background-color: rgba(241, 157, 3, 0.25) !important;
   }
 }
 
@@ -150,21 +148,21 @@
 }
 
 .quorum-loss-message {
-  background-color: rgba(255, 166, 0, 0.25);
-  border-left: 4px solid #ff8c00;
+  background-color: rgba(241, 157, 3, 0.15);
+  border-left: 4px solid var(--badge-warning);
   padding: 1rem 1.5rem;
   margin-bottom: 1.5rem;
-  border-radius: 4px;
-  font-size: 0.95rem;
-  color: var(--text-primary);
+  border-radius: var(--primary-border-radius);
+  font-size: var(--font-size-default);
+  color: var(--font-primary-color);
   display: flex;
   align-items: flex-start;
   gap: 0.75rem;
   line-height: 1.5;
 
   i {
-    color: #ff8c00;
-    font-size: 1.2rem;
+    color: var(--badge-warning);
+    font-size: var(--font-size-medium);
     flex-shrink: 0;
     margin-top: 0.15rem;
   }
@@ -174,8 +172,8 @@
   }
 
   strong {
-    color: #ff8c00;
-    font-weight: 600;
+    color: var(--badge-warning);
+    font-weight: var(--font-weight-semibold);
   }
 }
 
@@ -202,7 +200,19 @@
 }
 
 .line-item-seperator {
-  border-bottom: 1px solid #4c4c4c;
+  border-bottom: 1px solid var(--accent-underline);
   padding-bottom: 3px;
   margin-bottom: 3px;
+}
+
+// Clickable Replica ID styles
+.clickable-replica-id {
+  color: var(--accent-lightblue);
+  cursor: pointer;
+}
+
+.non-clickable-replica-id {
+  color: var(--font-primary-color);
+  cursor: default;
+  text-decoration: none;
 }

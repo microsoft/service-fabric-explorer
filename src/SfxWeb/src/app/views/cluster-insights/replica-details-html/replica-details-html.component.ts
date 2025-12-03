@@ -4,8 +4,7 @@ import { ListColumnSetting } from 'src/app/Models/ListSettings';
 
 @Component({
   selector: 'app-replica-details-html',
-  templateUrl: './replica-details-html.component.html',
-  styleUrls: ['./replica-details-html.component.scss']
+  templateUrl: './replica-details-html.component.html'
 })
 export class ReplicaDetailsHtmlComponent implements OnInit, DetailBaseComponent {
   item: any;
@@ -27,5 +26,13 @@ export class ReplicaDetailsHtmlComponent implements OnInit, DetailBaseComponent 
         'Reconfiguration Start Time UTC': reconfigInfo.ReconfigurationStartTimeUtc || ''
       };
     }
+  }
+}
+
+export class ListColumnSettingForReplicaDetailsHtml extends ListColumnSetting {
+  template = ReplicaDetailsHtmlComponent;
+  
+  constructor(propertyPath: string, displayName: string, config?: any) {
+    super(propertyPath, displayName, config);
   }
 }

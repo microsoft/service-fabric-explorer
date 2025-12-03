@@ -24,7 +24,7 @@ export class RecoveryProgressComponent implements OnInit {
     { name: 'User Services', status: 'pending' }
   ];
 
-  isLoading = true;
+  public isLoading = true;
 
   constructor(private restClient: RestClientService) {}
 
