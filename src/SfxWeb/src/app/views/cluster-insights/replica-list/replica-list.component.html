@@ -57,7 +57,7 @@
           </div>
 
           <div *ngIf="failoverManagerState.partitionStatus === 'InQuorumLoss'" class="quorum-loss-message">
-            <span>You need to have any <strong>{{ failoverManagerState.quorumNeeded }}</strong> of the below <strong>{{ failoverManagerState.highlightedReplicaCount }}</strong> highlighted replicas up to be out of quorum loss.</span>
+            <span>You need to have any <strong>{{ failoverManagerState.quorumNeeded }}</strong> of the below <strong>{{ failoverManagerState.highlightedReplicaCount }}</strong> highlighted replicas ready to be out of quorum loss.</span>
           </div>
 
           <app-detail-list [list]="failoverManagerState.replicaData" [listSettings]="failoverManagerState.listSettings"></app-detail-list>
@@ -123,7 +123,7 @@
 
           <div *ngIf="clusterManagerState.partitionStatus === 'InQuorumLoss'" class="quorum-loss-message">
             <i class="bowtie-icon bowtie-status-warning"></i>
-            <span>You need to have any <strong>{{ clusterManagerState.quorumNeeded }}</strong> of the below <strong>{{ clusterManagerState.highlightedReplicaCount }}</strong> highlighted replicas up to be out of quorum loss.</span>
+            <span>You need to have any <strong>{{ clusterManagerState.quorumNeeded }}</strong> of the below <strong>{{ clusterManagerState.highlightedReplicaCount }}</strong> highlighted replicas ready to be out of quorum loss.</span>
           </div>
 
           <app-detail-list [list]="clusterManagerState.replicaData" [listSettings]="clusterManagerState.listSettings"></app-detail-list>

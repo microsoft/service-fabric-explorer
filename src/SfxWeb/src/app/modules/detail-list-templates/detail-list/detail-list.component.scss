@@ -39,3 +39,17 @@ table {
   flex-direction: row;
   align-items: center;
 }
+
+tbody .row-expander {
+  display: none;
+}
+
+// Highlight quorum replicas
+tbody tr.write-quorum-replica-row {
+  background-color: rgba(241, 157, 3, 0.15) !important;
+  border-left: 4px solid var(--badge-warning) !important;
+  
+  &:hover {
+    background-color: rgba(241, 157, 3, 0.25) !important;
+  }
+}
