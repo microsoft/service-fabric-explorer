@@ -83,7 +83,7 @@ verify
 createservice fabric:/app1/monitoredupgradetest/instance.test ServiceTypeA1 y 1 3 persist appname=fabric:/app1/monitoredupgradetest
 verify
 
-reporthealth application appname=fabric:/app1/monitoredupgradetest sequencenumber=1 healthstate=error
+reporthealth application appname=fabric:/app1/monitoredupgradetest sequencenumber=1 healthstate=warning
 queryhealth application appname=fabric:/app1/monitoredupgradetest expectedhealthstate=error
 
 upgradeapp fabric:/app1/monitoredupgradetest 1.1 Rolling upgrademode=monitored healthcheckwait=5 healthcheckretry=30 healthcheckstable=10 failaction=rollback
@@ -94,6 +94,9 @@ reporthealth application appname=fabric:/app1/monitoredupgradetest sequencenumbe
 queryhealth application appname=fabric:/app1/monitoredupgradetest expectedhealthstate=ok
 
 addbehavior b1 * * GetLSN
-swapprimary fabric:/app1/monitoredupgradetest/instance.test 30 10
+swapprimary fabric:/app1/monitoredupgradetest/instance.test 30 20
+upgradeapp fabric:/app1/monitoredupgradetest 1.1 Rolling upgrademode=monitored healthcheckwait=1 healthcheckretry=1 healthcheckstable=1 failaction=rollback udtimeout=10
+
+upgradetimeout=-1 udtimeout=-1
 
 
