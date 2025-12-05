@@ -13,7 +13,7 @@
           [upgradeDomain]="upgradeProgress.raw.UpgradeDomainProgressAtFailure">
         </app-upgrade-domain-progress>
       </div>
-      <div class="overview-container" data-cy="failureoverview">
+      <div class="overview-container" data-cy="failureoverview" *ngIf="upgradeProgress.raw.UpgradeFailureDetails.length > 0">
         <h3>Upgrade Failure Details</h3>
         <div style="text-align: center;">
           {{upgradeProgress.raw.UpgradeFailureDetails}}
@@ -91,7 +91,7 @@
       </app-upgrade-domain-progress>
     </div>
   </div>
-    <div class="detail-pane" *ngIf="upgradeProgress.healthSnapshotAtRollback.length > 0" data-cy="upgradeHealthEvents" style="margin-top: 10px;">
+    <div class="detail-pane" *ngIf="upgradeProgress.healthSnapshotAtRollback.length > 0 && upgradeProgress.unhealthyEvaluations.length < 0" data-cy="upgradeHealthEvents" style="margin-top: 10px;">
     <h3>Health Snapshot At Rollback</h3>
     <app-detail-list [list]="upgradeProgress.healthSnapshotAtRollback"
       [listSettings]="upgradeProgressUnhealthyEvaluationsListSettings"></app-detail-list>
