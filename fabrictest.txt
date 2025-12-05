@@ -11,6 +11,7 @@ set HealthReportRetrySendInterval 5
 set UpgradeStatusPollInterval 5
 set UpgradeHealthCheckInterval 5
 !setcfg Management.CleanupApplicationPackageOnProvisionSuccess=false
+set DummyPLBEnabled true
 
 +10
 +20
@@ -86,5 +87,13 @@ reporthealth application appname=fabric:/app1/monitoredupgradetest sequencenumbe
 queryhealth application appname=fabric:/app1/monitoredupgradetest expectedhealthstate=error
 
 upgradeapp fabric:/app1/monitoredupgradetest 1.1 Rolling upgrademode=monitored healthcheckwait=5 healthcheckretry=30 healthcheckstable=10 failaction=rollback
+
+# case 2 pre upgrade safety check 
+# will also showcase that we capture warning evaluations as part of the health
+reporthealth application appname=fabric:/app1/monitoredupgradetest sequencenumber=2 healthstate=ok
+queryhealth application appname=fabric:/app1/monitoredupgradetest expectedhealthstate=ok
+
+addbehavior b1 * * GetLSN
+swapprimary fabric:/app1/monitoredupgradetest/instance.test 30 10
 
 
