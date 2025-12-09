@@ -44,8 +44,8 @@ tbody .row-expander {
   display: none;
 }
 
-// Highlight quorum replicas
-tbody tr.write-quorum-replica-row {
+// Row highlighting
+tbody tr.highlighted-row {
   background-color: rgba(241, 157, 3, 0.15) !important;
   border-left: 4px solid var(--badge-warning) !important;
   

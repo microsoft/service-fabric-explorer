@@ -2,7 +2,7 @@
   <h4>System Services</h4>
   <div class="nav-wrapper">
     <ul ngbNav #nav="ngbNav" class="nav-wrapper" [(activeId)]="activeTab" (activeIdChange)="onTabChange($event)">
-      <li [ngbNavItem]="'failover-manager'">
+      <li [ngbNavItem]="ServiceName.FailoverManager">
         <a ngbNavLink class="nav-link">
           Failover Manager
           <span class="mif-loop2 rotate" *ngIf="failoverManagerState.isLoading && failoverManagerState.replicaData.length === 0"></span>
@@ -63,7 +63,7 @@
           <app-detail-list [list]="failoverManagerState.replicaData" [listSettings]="failoverManagerState.listSettings"></app-detail-list>
         </ng-template>
       </li>
-      <li [ngbNavItem]="'cluster-manager'">
+      <li [ngbNavItem]="ServiceName.ClusterManager">
         <a ngbNavLink class="nav-link">
           Cluster Manager
           <span class="mif-loop2 rotate" *ngIf="clusterManagerState.isLoading && clusterManagerState.replicaData.length === 0"></span>
