@@ -1007,10 +1007,10 @@ export interface IRawHealthStateCount {
     }
 
 export interface IRawNodeStatusCount {
-        UpCount: number;
-        DisabledCount: number;
-        DownCount: number;
-    }
+    UpCount: number;
+    DisabledCount: number;
+    DownCount: number;
+}
 
 export interface IRawRepositoryCredential {
         RepositoryUserName?: string;
