@@ -192,7 +192,7 @@ export class ReplicaListComponent implements OnInit, OnDestroy {
 
     return forkJoin({
       replicas: this.restClientService.getReplicasOnPartition(config.applicationId, config.serviceId, config.partitionId),
-      nodes: this.restClientService.getFMMNodes(),
+      nodes: this.restClientService.getNodes(),
       partition: this.restClientService.getPartition(config.applicationId, config.serviceId, config.partitionId)
     }).pipe(
       catchError(() => {

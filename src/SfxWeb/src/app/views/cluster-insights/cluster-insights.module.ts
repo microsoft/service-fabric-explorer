@@ -8,7 +8,7 @@ import { ClusterInsightsRoutingModule } from './cluster-insights-routing.module'
 import { ClusterInsightsComponent } from './cluster-insights.component';
 import { ReplicaListComponent } from './replica-list/replica-list.component';
 import { FmmLocationComponent } from './fmm-location/fmm-location.component';
-import { FMMNodesComponent } from './nodes/nodes.component';
+import { NodesComponent } from './nodes/nodes.component';
 import { RecoveryProgressComponent } from './recovery-progress/recovery-progress.component';
 import { ExpandableLinkComponent } from './replica-id-link/replica-id-link.component';
 import { ReplicaDetailsComponent } from './replica-details-html/replica-details-html.component';
@@ -18,7 +18,7 @@ import { ReplicaDetailsComponent } from './replica-details-html/replica-details-
     ClusterInsightsComponent,
     ReplicaListComponent,
     FmmLocationComponent,
-    FMMNodesComponent,
+    NodesComponent,
     RecoveryProgressComponent,
     ExpandableLinkComponent,
     ReplicaDetailsComponent

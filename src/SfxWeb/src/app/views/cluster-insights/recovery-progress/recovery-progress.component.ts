@@ -55,7 +55,7 @@ export class RecoveryProgressComponent implements OnInit {
     this.isLoading = true;
 
     forkJoin({
-      fmmNodes: this.restClient.getFMMNodes(),
+      nodes: this.restClient.getNodes(),
       failoverManagerReplicas: this.restClient.getReplicasOnPartition(
         SYSTEM_APP_NAME,
         FAILOVER_MANAGER_SERVICE,
@@ -69,14 +69,14 @@ export class RecoveryProgressComponent implements OnInit {
       )
     }).subscribe({
       next: (results) => {
-        this.checkSeedNodeQuorum(results.fmmNodes);
+        this.checkSeedNodeQuorum(results.nodes);
         const fmHasQuorum = this.checkFailoverManagerStatus(results.failoverManagerReplicas);
         
         if (results.systemAppHealth) {
           this.checkSystemServicesStatus(results.systemAppHealth, fmHasQuorum);
         }
         
-        this.checkNodesStatus(results.fmmNodes);
+        this.checkNodesStatus(results.nodes);
         this.isLoading = false;
       },
       error: () => {

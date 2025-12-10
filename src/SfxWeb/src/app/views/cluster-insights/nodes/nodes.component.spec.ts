@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
-import { FMMNodesComponent } from './nodes.component';
+import { NodesComponent } from './nodes.component';
 
-describe('FMMNodesComponent', () => {
-  let component: FMMNodesComponent;
-  let fixture: ComponentFixture<FMMNodesComponent>;
+describe('NodesComponent', () => {
+  let component: NodesComponent;
+  let fixture: ComponentFixture<NodesComponent>;
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ FMMNodesComponent ]
+      declarations: [ NodesComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(FMMNodesComponent);
+    fixture = TestBed.createComponent(NodesComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

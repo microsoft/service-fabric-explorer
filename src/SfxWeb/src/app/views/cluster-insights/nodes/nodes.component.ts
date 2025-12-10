@@ -6,7 +6,7 @@ import { ListSettings, ListColumnSetting, ListColumnSettingWithFilter, ListColum
 import { IDashboardViewModel, DashboardViewModel } from 'src/app/ViewModels/DashboardViewModels';
 import { IEssentialListItem } from 'src/app/modules/charts/essential-health-tile/essential-health-tile.component';
 
-interface FMMNodeDisplay {
+interface NodeDisplay {
   name: string;
   raw: IRawNode;
   nodeStatusBadge: { text: string; badgeClass: string };
@@ -18,10 +18,10 @@ interface FMMNodeDisplay {
   templateUrl: './nodes.component.html',
   styleUrls: ['./nodes.component.scss']
 })
-export class FMMNodesComponent implements OnInit {
-  nodes: FMMNodeDisplay[] = [];
-  seedNodes: FMMNodeDisplay[] = [];
-  nonSeedNodes: FMMNodeDisplay[] = [];
+export class NodesComponent implements OnInit {
+  nodes: NodeDisplay[] = [];
+  seedNodes: NodeDisplay[] = [];
+  nonSeedNodes: NodeDisplay[] = [];
   listSettings!: ListSettings;
   seedNodeCount = 0;
   faultDomainCount = 0;
@@ -38,7 +38,7 @@ export class FMMNodesComponent implements OnInit {
 
   ngOnInit(): void {
     this.setupListSettings();
-    this.loadFMMNodes();
+    this.loadNodes();
   }
 
   setupListSettings(): void {
@@ -55,9 +55,9 @@ export class FMMNodesComponent implements OnInit {
     ]);
   }
 
-  loadFMMNodes(): void {
+  loadNodes(): void {
     this.isLoading = true;
-    this.restClient.getFMMNodes().subscribe({
+    this.restClient.getNodes().subscribe({
       next: (rawNodes: IRawNode[]) => {
         this.nodes = rawNodes.map(rawNode => ({
           name: rawNode.Name,
