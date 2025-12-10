@@ -784,7 +784,7 @@ export class RestClientService {
   }
 
   public getFMMLocation(messageHandler?: IResponseMessageHandler): Observable<IRawFMMLocation> {
-    const url = `$/GetClusterInsight`;
+    const url = `$/GetFMMLocation`;
 
     return this.get(this.getApiUrl(url, RestClientService.apiVersion64), 'Get FMM location', messageHandler);
   }
