@@ -5,13 +5,13 @@ import { get } from 'cypress/types/lodash';
 
 @Component({
   selector: 'app-infrastructure-docs',
-  templateUrl: './infrastructure-docs.component.html',
-  styleUrls: ['./infrastructure-docs.component.scss']
+  templateUrl: './Infrastructure-docs.component.html',
+  styleUrls: ['./Infrastructure-docs.component.scss']
 })
 export class InfrastructureDocsComponent  {
   @Input() DocCollection: InfrastructureDocCollection;
   selectedInfrastructureService: any ="None" ;
-  
+
   JsonParsedDocument(doc: InfrastructureDoc): any {
     return typeof doc.raw === 'string' ? JSON.parse(doc.raw) : doc.raw;
   }
