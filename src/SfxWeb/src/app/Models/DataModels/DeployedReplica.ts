@@ -73,7 +73,21 @@ export class DeployedReplica extends DataModelBase<IRawDeployedReplica> {
     }
 
     public get role(): string {
-        const { ReconfigurationInformation, ReplicaRole } = this.raw;
+        const { ReconfigurationInformation, ReplicaRole, InstanceRole } = this.raw;
+
+        if( ServiceKindRegexes.SelfReconfiguring.test(this.raw.ServiceKind)) {
+            if (!this.partition || this.partition.PartitionStatus !== 'Reconfiguring') {
+                return InstanceRole;
+            }
+
+            const PreviousInstanceRole = this.raw.PreviousSelfReconfiguringInstanceRole
+
+            if (!PreviousInstanceRole || PreviousInstanceRole === 'None') {
+                return `Reconfiguring - Target Role: ${InstanceRole}`;
+            }
+
+            return `Reconfiguring: ${PreviousInstanceRole} ${UnicodeConstants.RightArrow} ${InstanceRole}`;
+        }
 
         if (!this.partition || this.partition.PartitionStatus !== 'Reconfiguring') {
             return ReplicaRole;

@@ -76,10 +76,23 @@ export class ReplicaOnPartition extends DataModelBase<IRawReplicaOnPartition> {
     public get role(): string {
         const { PartitionStatus } = this.parent.raw;
         const { PreviousReplicaRole, ReplicaRole, ReplicaStatus} = this.raw;
+        const { PreviousSelfReconfiguringInstanceRole, InstanceRole } = this.raw;
 
         if (ReplicaStatus == 'ToBeRemoved')
         {
             return `ToBeRemoved`;
+        }
+
+        if (ServiceKindRegexes.SelfReconfiguring.test(this.raw.ServiceKind)) {
+            if (PartitionStatus !== 'Reconfiguring') {
+                return InstanceRole;
+            }
+
+            if(!PreviousSelfReconfiguringInstanceRole || PreviousSelfReconfiguringInstanceRole === 'None') {
+                return `Reconfiguring - Target Role: ${InstanceRole}`;
+            }
+
+            return `Reconfiguring: ${PreviousSelfReconfiguringInstanceRole} ${UnicodeConstants.RightArrow} ${InstanceRole}`;
         }
 
         if (PartitionStatus !== 'Reconfiguring') {
