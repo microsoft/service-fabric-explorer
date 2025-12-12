@@ -33,9 +33,12 @@
         margin-left: 10px;"></div>
       <ng-template ngbNavContent>
         <app-infrastructure-overview [jobs]="infra.raw.Jobs" [repairCollection]="repairTaskCollection"
-          [collection]="infra"></app-infrastructure-overview>
-      </ng-template>
+          [collection]="infra" [DocCollection]="docCollection"></app-infrastructure-overview>
+      </ng-template> 
     </div>
   </div>
   <div [ngbNavOutlet]="nav" style="margin-top: 10px"></div>
+</div>
+<div *ngIf="docCollection.isInitialized" class="essen-pane">
+ <app-infrastructure-docs [DocCollection]="docCollection"></app-infrastructure-docs>
 </div>

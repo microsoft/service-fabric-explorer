@@ -1098,6 +1098,102 @@ export interface IRawRepairTask {
         ResultDetails?: string;
     }
 
+export interface IDoc {
+        Incarnation: string;
+        JobDocumentIncarnation: number;
+        Jobs: IJob[];
+        JobSetsRequiringApproval: JobSetsRequiringApproval[];
+        RoleInstanceHealthInfoIncarnation: string;
+        RoleInstanceHealthInfoTimestamp: string;
+        RoleInstanceHealthInfos: IRoleInstanceHealthInfo[];
+        PendingUpdatesOnRoleInstances: IRoleInstancePendingUpdate[];
+        MRConversationId: string;
+        CoordinationGroupId: string;
+        RoleInstanceToNodeIDHashList: IRoleInstanceToNodeIDHashWrapper[];
+    }
+
+export interface IRoleInstanceToNodeIDHashWrapper {
+        RoleInstanceName: string;
+        NodeIdHash: string;
+    }
+
+export interface IRoleInstancePendingUpdate {
+        RoleInstanceName: string;
+        UpdateTypes: string[];
+        ExpectedImpact: IAffectedResourceImpact;
+    }
+
+export interface IAffectedResourceImpact {
+        ListOfImpactTypes: string[];
+        DiskImpact: string;
+        ComputeImpact: string;
+        OSImpact: string;
+        NetworkImpact: string;
+        ApplicationConfigImpact: string;
+        EstimatedImpactDurationInSeconds: number;
+    }
+
+export interface IRoleInstanceHealthInfo {
+        RoleInstanceName: string;
+        Health: string;
+        NodeHealthIndex: number;
+    }
+
+export interface JobSetsRequiringApproval {
+        Jobset: string[];
+    }
+
+export interface IJob {
+        Id: string;
+        JobStatus: string;
+        RoleInstancesToBeImpacted: string[];
+        ContextStringGivenByTenant: string;
+        JobStep: IJobStep[];
+        ImpactDetail: IImpactDetail;
+        CorrelationId: string;
+        IsCriticalRollout: boolean;
+        SafeFlyId: string;
+    }
+
+export interface IImpactDetail {
+        ImpactAction: string;
+        ImpactedResources: IImpactedResources;
+    }
+
+export interface IImpactedResources {
+        ListOfImpactTypes: string[];
+        DiskImpact: string;
+        ComputeImpact: string;
+        OSImpact: string;
+        NetworkImpact: string;
+        ApplicationConfigImpact: string;
+        EstimatedImpactDurationInSeconds: number;
+    }
+
+export interface IJobStep {
+        ImpactStep: string;
+        AcknowledgementStatus: string;
+        DeadlineForResponse: string;
+        CurrentlyImpactedRoleInstances: IInstanceImpact[];
+        ActionStatus: string;
+    }
+
+export interface IInstanceImpact {
+        RoleInstanceName: string;
+        UpdateDomain: string;
+        ExpectedImpact: IExpectedImpact;
+    }
+
+export interface IExpectedImpact {
+        ListOfImpactTypes: string[];
+        DiskImpact: string;
+        ComputeImpact: string;
+        OSImpact: string;
+        NetworkImpact: string;
+        ApplicationConfigImpact: string;
+        EstimatedImpactDurationInSeconds: number;
+    }
+    
 export interface IRawInfrastructureJob {
     Id: string;
     IsActive: string;
