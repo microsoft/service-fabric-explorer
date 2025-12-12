@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ListColumnSetting } from 'src/app/Models/ListSettings';
 import { DetailBaseComponent } from 'src/app/ViewModels/detail-table-base.component';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-colored-node-name',
@@ -11,6 +12,7 @@ export class ColoredNodeNameComponent implements OnInit, DetailBaseComponent {
   item: any;
   listSetting: ListColumnSetting;
   value: string;
+  assetBase = environment.assetBase;
 
   constructor() { }
 

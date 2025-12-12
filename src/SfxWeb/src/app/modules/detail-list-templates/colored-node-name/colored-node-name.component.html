@@ -1,4 +1,4 @@
 <span [style.color]="getColor()" [style.font-weight]="'500'">
   {{ value }}
-  <span *ngIf="isSeedNode()" class="seed-indicator" title="Seed Node">🌱</span>
+  <img *ngIf="isSeedNode()" [src]="assetBase + 'assets/seed.svg'" alt="seed node" class="seed-indicator" title="Seed Node">
 </span>
