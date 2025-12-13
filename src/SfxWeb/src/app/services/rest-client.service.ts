@@ -776,7 +776,6 @@ export class RestClientService {
 
         return this.get(this.getApiUrl(url), 'Get Infrastructure Documents', messageHandler);
     }
-    
   public restartReplica(nodeName: string, partitionId: string, replicaId: string, messageHandler?: IResponseMessageHandler): Observable<{}> {
       const url = `Nodes/${nodeName}/$/GetPartitions/${partitionId}/$/GetReplicas/${replicaId}/$/Restart`;
 
