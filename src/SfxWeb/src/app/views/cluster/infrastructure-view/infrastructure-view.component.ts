@@ -1,5 +1,5 @@
-import { Component, Injector, OnInit } from '@angular/core';
-import { forkJoin, Observable, of, Subscription } from 'rxjs';
+import { Component, Injector } from '@angular/core';
+import { forkJoin, Observable } from 'rxjs';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { InfrastructureCollection } from 'src/app/Models/DataModels/collections/infrastructureCollection';
 import { RepairTaskCollection } from 'src/app/Models/DataModels/collections/RepairTaskCollection';

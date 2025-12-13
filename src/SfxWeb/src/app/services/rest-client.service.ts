@@ -774,7 +774,7 @@ export class RestClientService {
      public getInfrastructureDocs(serviceId: string, messageHandler?: IResponseMessageHandler): Observable<IRawInfratructureDoc[]> {
         const url = `$/InvokeInfrastructureQuery?api-version=6.0&Command=GetAllDocs&ServiceId=` + serviceId;
 
-        return this.get(this.getApiUrl(url), 'Get Infrastructure  Jobs', messageHandler);
+        return this.get(this.getApiUrl(url), 'Get Infrastructure Documents', messageHandler);
     }
     
   public restartReplica(nodeName: string, partitionId: string, replicaId: string, messageHandler?: IResponseMessageHandler): Observable<{}> {
