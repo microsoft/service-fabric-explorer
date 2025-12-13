@@ -1193,7 +1193,6 @@ export interface IExpectedImpact {
         ApplicationConfigImpact: string;
         EstimatedImpactDurationInSeconds: number;
     }
-    
 export interface IRawInfrastructureJob {
     Id: string;
     IsActive: string;
