@@ -4,7 +4,6 @@ import { ListSettings, ListColumnSetting, ListColumnSettingWithFilter, ListColum
 import { SettingsService } from 'src/app/services/settings.service';
 import { RepairTaskCollection } from 'src/app/Models/DataModels/collections/RepairTaskCollection';
 import { InfrastructureCollectionItem } from 'src/app/Models/DataModels/collections/infrastructureCollection';
-import { InfrastructureDocumentCollection } from 'src/app/Models/DataModels/collections/InfrastructureDocCollection';
 @Component({
   selector: 'app-infrastructure-overview',
   templateUrl: './infrastructure-overview.component.html',

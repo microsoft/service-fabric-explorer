@@ -29,7 +29,7 @@ export class InfrastructureViewComponent extends BaseControllerDirective {
   setup() {
     this.collection = this.data.infrastructureCollection;
     this.repairTaskCollection = this.data.repairCollection;
-    this.infrastructureDocumentCollection = this.data.InfrastructureDocCollection;
+    this.infrastructureDocumentCollection = this.data.infrastructureDocCollection;
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any> {

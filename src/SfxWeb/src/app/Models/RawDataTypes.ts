@@ -1098,7 +1098,7 @@ export interface IRawRepairTask {
         ResultDetails?: string;
     }
 
-export interface IRawInfratructureDoc {
+export interface IRawInfrastructureDocument {
         Incarnation: string;
         JobDocumentIncarnation: number;
         Jobs: IJob[];

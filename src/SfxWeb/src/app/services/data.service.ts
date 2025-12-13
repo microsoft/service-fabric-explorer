@@ -60,7 +60,7 @@ export class DataService {
   public backupPolicies: BackupPolicyCollection;
   public repairCollection: RepairTaskCollection;
   public infrastructureCollection: InfrastructureCollection;
-  public InfrastructureDocCollection: InfrastructureDocumentCollection;
+  public infrastructureDocCollection: InfrastructureDocumentCollection;
 
   public readOnlyHeader: boolean =  null;
   public clusterNameMetadata: string = null;
@@ -85,7 +85,7 @@ export class DataService {
     this.backupPolicies = new BackupPolicyCollection(this);
     this.repairCollection = new RepairTaskCollection(this);
     this.infrastructureCollection = new InfrastructureCollection(this);
-    this.InfrastructureDocCollection = new InfrastructureDocumentCollection(this);
+    this.infrastructureDocCollection = new InfrastructureDocumentCollection(this);
     this.clusterHealth = this.getClusterHealth(HealthStateFilterFlags.Default, HealthStateFilterFlags.None, HealthStateFilterFlags.None);
     if(standalone.isStandalone()) {
       this.clusterNameMetadata = standalone.clusterUrl;
