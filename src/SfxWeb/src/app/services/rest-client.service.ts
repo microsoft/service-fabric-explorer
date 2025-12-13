@@ -13,7 +13,7 @@ import { IRawCollection, IRawClusterManifest, IRawClusterHealth, IRawClusterUpgr
          IRawServiceHealth, IRawApplicationUpgradeProgress, IRawCreateComposeDeploymentDescription, IRawPartition, IRawPartitionHealth, IRawPartitionLoadInformation,
          IRawReplicaOnPartition, IRawReplicaHealth, IRawImageStoreContent, IRawStoreFolderSize, IRawClusterVersion, IRawList, IRawAadMetadata, IRawStorage, IRawRepairTask,
          IRawServiceNameInfo, IRawApplicationNameInfo, IRawBackupEntity, IRawInfrastructureJob, IRawInfraRepairTask, IRawRoleInstanceImpact, 
-         IDoc} from '../Models/RawDataTypes';
+         IRawInfratructureDoc} from '../Models/RawDataTypes';
 import { mergeMap, map, catchError, finalize, skip } from 'rxjs/operators';
 import { Application } from '../Models/DataModels/Application';
 import { Service } from '../Models/DataModels/Service';
@@ -771,7 +771,7 @@ export class RestClientService {
         return this.get(this.getApiUrl(url), 'Get Infrastructure  Jobs', messageHandler);
     }
 
-     public getInfrastructureDocs(serviceId: string, messageHandler?: IResponseMessageHandler): Observable<IDoc[]> {
+     public getInfrastructureDocs(serviceId: string, messageHandler?: IResponseMessageHandler): Observable<IRawInfratructureDoc[]> {
         const url = `$/InvokeInfrastructureQuery?api-version=6.0&Command=GetAllDocs&ServiceId=` + serviceId;
 
         return this.get(this.getApiUrl(url), 'Get Infrastructure  Jobs', messageHandler);

@@ -1098,11 +1098,11 @@ export interface IRawRepairTask {
         ResultDetails?: string;
     }
 
-export interface IDoc {
+export interface IRawInfratructureDoc {
         Incarnation: string;
         JobDocumentIncarnation: number;
         Jobs: IJob[];
-        JobSetsRequiringApproval: JobSetsRequiringApproval[];
+        JobSetsRequiringApproval: IJobSetsRequiringApproval[];
         RoleInstanceHealthInfoIncarnation: string;
         RoleInstanceHealthInfoTimestamp: string;
         RoleInstanceHealthInfos: IRoleInstanceHealthInfo[];
@@ -1139,7 +1139,7 @@ export interface IRoleInstanceHealthInfo {
         NodeHealthIndex: number;
     }
 
-export interface JobSetsRequiringApproval {
+export interface IJobSetsRequiringApproval {
         Jobset: string[];
     }
 

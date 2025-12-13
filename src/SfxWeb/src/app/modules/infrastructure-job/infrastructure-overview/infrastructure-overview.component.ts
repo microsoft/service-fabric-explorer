@@ -4,7 +4,7 @@ import { ListSettings, ListColumnSetting, ListColumnSettingWithFilter, ListColum
 import { SettingsService } from 'src/app/services/settings.service';
 import { RepairTaskCollection } from 'src/app/Models/DataModels/collections/RepairTaskCollection';
 import { InfrastructureCollectionItem } from 'src/app/Models/DataModels/collections/infrastructureCollection';
-import { InfrastructureDocCollection } from 'src/app/Models/DataModels/collections/InfrastructureDocCollection';
+import { InfrastructureDocumentCollection } from 'src/app/Models/DataModels/collections/InfrastructureDocCollection';
 @Component({
   selector: 'app-infrastructure-overview',
   templateUrl: './infrastructure-overview.component.html',
@@ -14,7 +14,6 @@ export class InfrastructureOverviewComponent implements OnInit {
   @Input() collection: InfrastructureCollectionItem;
   @Input() jobs: InfrastructureJob[];
   @Input() repairCollection: RepairTaskCollection;
-  @Input() DocCollection: InfrastructureDocCollection;
 
   allPendingMRJobsList: ListSettings;
   completedMRJobsList: ListSettings;

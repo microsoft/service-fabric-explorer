@@ -1,42 +1,42 @@
 import { forkJoin, Observable, of } from 'rxjs';
 import { map, mergeMap } from 'rxjs/operators';
-import { Constants, StatusWarningLevel } from 'src/app/Common/Constants';
+import { Constants } from 'src/app/Common/Constants';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { DataService } from 'src/app/services/data.service';
 import { DataModelBase } from '../Base';
 import { InfrastructureDoc } from '../InfrastructureDoc';
 import { DataModelCollectionBase } from './CollectionBase';
 
-export interface IInfrastructureDocCollectionItem {
+export interface IInfrastructureDocumentCollectionItem {
     InfrastructureServiceName: string;
-    Docs: InfrastructureDoc[];
+    Documents: InfrastructureDoc[];
 }
 
-export class InfrastructureDocCollectionItem extends DataModelBase<IInfrastructureDocCollectionItem> {
+export class InfrastructureDocumentCollectionItem extends DataModelBase<IInfrastructureDocumentCollectionItem> {
     InfrastructureServiceName: string;
-    InfrastructureDocs: InfrastructureDoc[] = [];
+    InfrastructureDocuments: InfrastructureDoc[] = [];
 
-    constructor(public data: DataService, public raw: IInfrastructureDocCollectionItem) {
+    constructor(public data: DataService, public raw: IInfrastructureDocumentCollectionItem) {
         super(data, raw);
         this.updateInternal();
     }
 
     updateInternal(): Observable<any> {
-        this.InfrastructureDocs.length = 0;
-        for (const doc of this.raw.Docs) {
-            this.InfrastructureDocs.push(doc);
+        this.InfrastructureDocuments.length = 0;
+        for (const doc of this.raw.Documents) {
+            this.InfrastructureDocuments.push(doc);
         }
-         this.InfrastructureServiceName = this.raw.InfrastructureServiceName;
+        this.InfrastructureServiceName = this.raw.InfrastructureServiceName;
         return of(null);
     }
 }
 
-export class InfrastructureDocCollection extends DataModelCollectionBase<InfrastructureDocCollectionItem> {
+export class InfrastructureDocumentCollection extends DataModelCollectionBase<InfrastructureDocumentCollectionItem> {
     InfrastructureServiceList: string[] = [];
-    InfrastructureServiceNameToDocsMap = new Map<string, InfrastructureDoc[]>();
+    InfrastructureServiceNameToDocumentsMap = new Map<string, InfrastructureDoc[]>();
 
     public constructor(data: DataService) {
-        super(data, parent);
+        super(data);
     }
 
     protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): Observable<any> {
@@ -49,18 +49,18 @@ export class InfrastructureDocCollection extends DataModelCollectionBase<Infrast
                 return forkJoin(
                     infrastructureServices.map(service =>
                         this.data.restClient.getInfrastructureDocs(service.id).pipe(
-                            map(items => new InfrastructureDocCollectionItem(this.data, {
+                            map(items => new InfrastructureDocumentCollectionItem(this.data, {
                                 InfrastructureServiceName: service.name,
-                                Docs: items.map(item => new InfrastructureDoc(this.data, item))
+                                Documents: items.map(item => new InfrastructureDoc(this.data, item))
                             }))
                         )
                     )
                 );
             }),
             map(items => {
-                this.InfrastructureServiceNameToDocsMap.clear();
+                this.InfrastructureServiceNameToDocumentsMap.clear();
                 for (const item of items) {
-                    this.InfrastructureServiceNameToDocsMap.set(item.InfrastructureServiceName, item.InfrastructureDocs);
+                    this.InfrastructureServiceNameToDocumentsMap.set(item.InfrastructureServiceName, item.InfrastructureDocuments);
                 }
                 return items;
             })

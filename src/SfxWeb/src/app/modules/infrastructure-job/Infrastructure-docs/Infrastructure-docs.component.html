@@ -5,15 +5,15 @@
   <label class="detail-pane" ><strong>Select Infrastructure Service For Policy Engine Documents</strong></label>
   <select class="detail-pane" [(ngModel)]="selectedInfrastructureService" >
     <option [ngValue]="'None'">None</option>
-    <option *ngFor="let svce of DocCollection.InfrastructureServiceList" [ngValue]="svce">
+    <option *ngFor="let svce of infrastructureDocumentCollection.InfrastructureServiceList" [ngValue]="svce">
       {{ svce }}
     </option>
   </select>
 </div>
 <div  class="detail-pane">
-  <div   *ngIf="(DocCollection.InfrastructureServiceNameToDocsMap.get(selectedInfrastructureService)?.length)">
+  <div   *ngIf="(infrastructureDocumentCollection.InfrastructureServiceNameToDocumentsMap.get(selectedInfrastructureService)?.length)">
   <strong >Received Document</strong> :
-    <div  *ngFor="let doc of DocCollection.InfrastructureServiceNameToDocsMap.get(selectedInfrastructureService)">
+    <div  *ngFor="let doc of infrastructureDocumentCollection.InfrastructureServiceNameToDocumentsMap.get(selectedInfrastructureService)">
       <div>
         <pre>{{ JsonParsedDocument(doc) | json }}</pre>
       </div>
