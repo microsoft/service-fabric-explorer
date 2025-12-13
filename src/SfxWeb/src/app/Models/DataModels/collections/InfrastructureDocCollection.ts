@@ -14,7 +14,7 @@ export interface IInfrastructureDocCollectionItem {
 
 export class InfrastructureDocCollectionItem extends DataModelBase<IInfrastructureDocCollectionItem> {
     InfrastructureServiceName: string;
-    InfrastructureDocs: InfrastructureDoc[]=[];
+    InfrastructureDocs: InfrastructureDoc[] = [];
 
     constructor(public data: DataService, public raw: IInfrastructureDocCollectionItem) {
         super(data, raw);
