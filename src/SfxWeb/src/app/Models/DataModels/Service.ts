@@ -66,6 +66,10 @@ export class Service extends DataModelBase<IRawService> {
         return ServiceKindRegexes.Stateless.test(this.raw.ServiceKind);
     }
 
+    public get isSelfReconfiguringService(): boolean {
+        return ServiceKindRegexes.SelfReconfiguring.test(this.raw.ServiceKind);
+    }
+
     public get serviceKindInNumber(): number {
         return this.raw.ServiceKind === Constants.ServiceKindStateful ? 2 : 1;
     }
@@ -222,7 +226,7 @@ export class ServiceType extends DataModelBase<IRawServiceType> {
     }
 
     public get serviceKind(): string {
-        return this.raw.ServiceTypeDescription.IsStateful ? Constants.ServiceKindStateful : Constants.ServiceKindStateless;
+        return this.raw.ServiceTypeDescription.Kind;
     }
 
     public get serviceKindInNumber(): number {

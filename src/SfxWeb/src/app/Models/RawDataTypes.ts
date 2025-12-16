@@ -528,7 +528,9 @@ export interface IRawPartition {
         PartitionStatus: string;
         CurrentConfigurationEpoch: IRawConfigurationEpoch;
         MinInstanceCount: number;
-        LastSentSelfReconfigurationRequest: string;
+        SelfReconfiguringInstanceCount: number;
+        SelfReconfiguringMinInstanceCount: number;
+        LastSentSelfreconfigurationRequest: string;
     }
 
 export interface IRawPartitionDescription {
@@ -847,6 +849,8 @@ export interface IRawServiceType {
     }
 
 export interface IRawServiceTypeDescription {
+        Kind: string;
+        IsSelfReconfiguring: boolean;
         IsStateful: boolean;
         ServiceTypeName: string;
         PlacementConstraints: string;
