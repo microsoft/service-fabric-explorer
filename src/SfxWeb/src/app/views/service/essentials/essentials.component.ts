@@ -1,5 +1,5 @@
 import { Component, OnInit, Injector } from '@angular/core';
-import { ListSettings, ListColumnSettingForLink, ListColumnSettingWithFilter, ListColumnSettingForBadge, ListColumnSetting } from 'src/app/Models/ListSettings';
+import { ListSettings, ListColumnSettingForLink, ListColumnSettingWithFilter, ListColumnSettingForBadge } from 'src/app/Models/ListSettings';
 import { DataService } from 'src/app/services/data.service';
 import { SettingsService } from 'src/app/services/settings.service';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
@@ -34,7 +34,6 @@ export class EssentialsComponent extends ServiceBaseControllerDirective {
       new ListColumnSettingWithFilter('partitionInformation.raw.ServicePartitionKind', 'Partition Kind'),
       new ListColumnSettingForBadge('healthState', 'Health State'),
       new ListColumnSettingWithFilter('raw.PartitionStatus', 'Status'),
-      new ListColumnSetting('raw.LastSentSelfreconfigurationRequest', 'Last Sent Selfreconfiguration Request'),
     ]);
 
     this.essentialItems = [];

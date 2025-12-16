@@ -530,7 +530,6 @@ export interface IRawPartition {
         MinInstanceCount: number;
         SelfReconfiguringInstanceCount: number;
         SelfReconfiguringMinInstanceCount: number;
-        LastSentSelfreconfigurationRequest: string;
     }
 
 export interface IRawPartitionDescription {
