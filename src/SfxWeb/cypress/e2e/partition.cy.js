@@ -5,6 +5,8 @@ import { addDefaultFixtures, apiUrl, checkTableSize, EMPTY_LIST_TEXT, FIXTURE_RE
 const serviceName = "VisualObjects.ActorService";
 const partitionId = "28bfaf73-37b0-467d-9d47-d011b0aedbc0";
 const appName = "VisualObjectsApplicationType";
+const selfReconfiguringServiceName = "VisualObjects.SelfReconfiguringService";
+const selfreconfiguringPartitionId = "79dd3bba-966d-42c2-89b1-baa4580b462c";
 
 const primaryReplica = "132429154475414363";
 
@@ -22,6 +24,12 @@ const setup = (partition, replica, prefix="") => {
 
   addRoute("load", "partition-page/replica-detail.json", apiUrl(`/Nodes/_nt_1/$/GetPartitions/${partitionId}/$/GetReplicas/${primaryReplica}/$/GetDetail?*`));
 
+}
+
+const setupSelfReconfiguring = (partition, prefix="") => {
+  addRoute("partitions", prefix + "partition-page/partitions.json", apiUrl(`${routeFormatter(appName, selfReconfiguringServiceName)}?*`));
+  addRoute("partitionInfo", prefix + "partition-page/selfreconfiguring-partition-info.json", apiUrl(`${routeFormatter(appName, selfReconfiguringServiceName)}/${partitionId}?*`));
+  addRoute("replicasList", prefix + "partition-page/selfreconfiguring-replicas.json", apiUrl(`${routeFormatter(appName, selfReconfiguringServiceName)}/${partitionId}/$/GetReplicas?*`));
 }
 
 context('partition', () => {
@@ -175,4 +183,22 @@ context('partition', () => {
     })
 
   })
+
+  describe("selfreconfiguring", () => {
+        beforeEach(() => {
+            addRoute("partitions", "partition-page/selfreconfiguring-partitions.json", apiUrl(`${routeFormatter(appName, selfReconfiguringServiceName)}?*`));
+            addRoute("partitionInfo", "partition-page/selfreconfiguring-partition-info.json", apiUrl(`${routeFormatter(appName, selfReconfiguringServiceName)}/${selfreconfiguringPartitionId}?*`));
+            
+            cy.visit(urlFormatter(appName, selfReconfiguringServiceName, selfreconfiguringPartitionId))
+        })
+
+        it('replicas', () => {
+          cy.get('[data-cy=replicas]').within(() => {
+            // cy.contains('events').click();
+              cy.contains('SelfReconfiguringMember');
+              cy.contains('_nt1_1');
+              cy.contains('Ready');
+          })
+        })
+    })
 })

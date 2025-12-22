@@ -1,0 +1,24 @@
+{
+    "ServiceKind": "SelfReconfiguring",
+    "ApplicationName": "fabric:/VisualObjectsApplicationType",
+    "ServiceName": "fabric:/VisualObjectsApplicationType/VisualObjects.SelfReconfiguringService",
+    "ServiceTypeName": "VisualObjects.SelfReconfiguringServiceType",
+    "InitializationData": [],
+    "PartitionDescription": {
+        "PartitionScheme": "Singleton"
+    },
+    "InstanceCount": 1,
+    "MinInstanceCount": 1,
+    "MinInstancePercentage": 0,
+    "PlacementConstraints": "(nodetype == \"main\")",
+    "CorrelationScheme": [],
+    "ServiceLoadMetrics": [],
+    "ServicePlacementPolicies": [],
+    "DefaultMoveCost": "Zero",
+    "IsDefaultMoveCostSpecified": true,
+    "ServicePackageActivationMode": "SharedProcess",
+    "ServiceDnsName": "",
+    "ScalingPolicies": [],
+    "InstanceCloseDelayDurationSeconds": 0,
+    "InstanceRestartWaitDurationSeconds": 0
+}

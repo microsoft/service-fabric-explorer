@@ -31,7 +31,7 @@ context('deployed app', () => {
             })
 
             cy.get('[data-cy=services]').within(() => {
-                checkTableSize(2);
+                checkTableSize(3);
             })
 
         })
