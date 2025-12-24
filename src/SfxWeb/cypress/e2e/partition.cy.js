@@ -27,9 +27,11 @@ const setup = (partition, replica, prefix="") => {
 }
 
 const setupSelfReconfiguring = (partition, prefix="") => {
-  addRoute("partitions", prefix + "partition-page/partitions.json", apiUrl(`${routeFormatter(appName, selfReconfiguringServiceName)}?*`));
-  addRoute("partitionInfo", prefix + "partition-page/selfreconfiguring-partition-info.json", apiUrl(`${routeFormatter(appName, selfReconfiguringServiceName)}/${partitionId}?*`));
-  addRoute("replicasList", prefix + "partition-page/selfreconfiguring-replicas.json", apiUrl(`${routeFormatter(appName, selfReconfiguringServiceName)}/${partitionId}/$/GetReplicas?*`));
+  addRoute("partitions", prefix + "partition-page/selfreconfiguring-partitions.json", apiUrl(`${routeFormatter(appName, selfReconfiguringServiceName)}?*`));
+  addRoute("partitionInfo", prefix + "partition-page/selfreconfiguring-partition-info.json", apiUrl(`${routeFormatter(appName, selfReconfiguringServiceName)}/${selfreconfiguringPartitionId}?*`));
+  addRoute("replicasList", prefix + "partition-page/selfreconfiguring-replicas.json", apiUrl(`${routeFormatter(appName, selfReconfiguringServiceName)}/${selfreconfiguringPartitionId}/$/GetReplicas?*`));
+  addRoute("health", prefix + "partition-page/selfreconfiguring-health.json", apiUrl(`${routeFormatter(appName, selfReconfiguringServiceName)}/${selfreconfiguringPartitionId}/$/GetHealth?*`));
+  addRoute("load", prefix + "partition-page/selfreconfiguring-replica-detail.json", apiUrl(`/Nodes/_nt1_1/$/GetPartitions/${selfreconfiguringPartitionId}/$/GetReplicas/1/$/GetDetail?*`));
 }
 
 context('partition', () => {
@@ -186,8 +188,7 @@ context('partition', () => {
 
   describe("selfreconfiguring", () => {
         beforeEach(() => {
-            addRoute("partitions", "partition-page/selfreconfiguring-partitions.json", apiUrl(`${routeFormatter(appName, selfReconfiguringServiceName)}?*`));
-            addRoute("partitionInfo", "partition-page/selfreconfiguring-partition-info.json", apiUrl(`${routeFormatter(appName, selfReconfiguringServiceName)}/${selfreconfiguringPartitionId}?*`));
+            setupSelfReconfiguring(selfreconfiguringPartitionId)
             
             cy.visit(urlFormatter(appName, selfReconfiguringServiceName, selfreconfiguringPartitionId))
         })
@@ -195,6 +196,7 @@ context('partition', () => {
         it('replicas', () => {
           cy.get('[data-cy=replicas]').within(() => {
             // cy.contains('events').click();
+              checkTableSize(2)
               cy.contains('SelfReconfiguringMember');
               cy.contains('_nt1_1');
               cy.contains('Ready');

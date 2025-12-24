@@ -1,0 +1,36 @@
+{
+    "HealthEvents": [
+        {
+            "SourceId": "System.FM",
+            "Property": "State",
+            "HealthState": "Ok",
+            "TimeToLiveInMilliSeconds": "P10675199DT2H48M5.4775807S",
+            "Description": "Partition is healthy.",
+            "SequenceNumber": "52",
+            "RemoveWhenExpired": false,
+            "HealthReportId": "FM_7.0_1011",
+            "SourceUtcTimestamp": "2025-12-16T10:13:33.600Z",
+            "LastModifiedUtcTimestamp": "2025-12-16T10:13:54.394Z",
+            "IsExpired": false,
+            "LastOkTransitionAt": "2025-12-16T10:13:54.394Z",
+            "LastWarningTransitionAt": "2025-12-16T10:13:54.394Z",
+            "LastErrorTransitionAt": "0001-01-01T00:00:00.000Z"
+        }
+    ],
+    "AggregatedHealthState": "Ok",
+    "UnhealthyEvaluations": [],
+    "HealthStatistics": {
+        "HealthStateCountList": [
+            {
+                "EntityKind": "Replica",
+                "HealthStateCount": {
+                    "OkCount": 2,
+                    "ErrorCount": 0,
+                    "WarningCount": 0
+                }
+            }
+        ]
+    },
+    "PartitionId": "79dd3bba-966d-42c2-89b1-baa4580b462c",
+    "ReplicaHealthStates": []
+}
