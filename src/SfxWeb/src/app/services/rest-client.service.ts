@@ -12,7 +12,7 @@ import { IRawCollection, IRawClusterManifest, IRawClusterHealth, IRawClusterUpgr
          IRawApplication, IRawService, IRawCreateServiceDescription, IRawCreateServiceFromTemplateDescription, IRawUpdateServiceDescription, IRawServiceDescription,
          IRawServiceHealth, IRawApplicationUpgradeProgress, IRawCreateComposeDeploymentDescription, IRawPartition, IRawPartitionHealth, IRawPartitionLoadInformation,
          IRawReplicaOnPartition, IRawReplicaHealth, IRawImageStoreContent, IRawStoreFolderSize, IRawClusterVersion, IRawList, IRawAadMetadata, IRawStorage, IRawRepairTask,
-         IRawServiceNameInfo, IRawApplicationNameInfo, IRawBackupEntity, IRawInfrastructureJob, IRawInfraRepairTask, IRawRoleInstanceImpact, 
+         IRawServiceNameInfo, IRawApplicationNameInfo, IRawBackupEntity, IRawInfrastructureJob, IRawInfraRepairTask, IRawRoleInstanceImpact,
          IRawInfrastructureDocument} from '../Models/RawDataTypes';
 import { mergeMap, map, catchError, finalize, skip } from 'rxjs/operators';
 import { Application } from '../Models/DataModels/Application';
