@@ -40,12 +40,10 @@ export class InfrastructureDocumentCollection extends DataModelCollectionBase<In
     }
 
     protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): Observable<any> {
-        this.retrieveInfraStructureServiceCollection().subscribe(service => {
-            this.InfrastructureServiceList = service;
-        });
         return this.data.getSystemServices(true, messageHandler).pipe(
             mergeMap(services => {
                 const infrastructureServices = services.collection.filter(service => service.raw.TypeName === Constants.InfrastructureServiceType);
+                this.InfrastructureServiceList=infrastructureServices.map(service => service.raw.Name);
                 return forkJoin(
                     infrastructureServices.map(service =>
                         this.data.restClient.getInfrastructureDocs(service.id).pipe(
@@ -63,19 +61,6 @@ export class InfrastructureDocumentCollection extends DataModelCollectionBase<In
                     this.InfrastructureServiceNameToDocumentsMap.set(item.InfrastructureServiceName, item.InfrastructureDocuments);
                 }
                 return items;
-            })
-        );
-    }
-
-    public retrieveInfraStructureServiceCollection(messageHandler?: IResponseMessageHandler): Observable<string[]> {
-        return this.data.getSystemServices(true, messageHandler).pipe(
-            map(services => {
-                const infrastructureServices = services.collection
-                    .filter(service => service.raw.TypeName === Constants.InfrastructureServiceType)
-                    .map(services => services.raw.Name
-                    );
-                this.InfrastructureServiceList = infrastructureServices;
-                return infrastructureServices;
             })
         );
     }

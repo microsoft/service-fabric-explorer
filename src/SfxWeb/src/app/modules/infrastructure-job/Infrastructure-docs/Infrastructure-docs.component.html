@@ -5,8 +5,8 @@
   <label class="detail-pane" ><strong>Select Infrastructure Service For the Documents</strong></label>
   <select class="detail-pane" [(ngModel)]="selectedInfrastructureService" >
     <option [ngValue]="'None'">None</option>
-    <option *ngFor="let svce of infrastructureDocumentCollection.InfrastructureServiceList" [ngValue]="svce">
-      {{ svce }}
+    <option *ngFor="let Service of infrastructureDocumentCollection.InfrastructureServiceList" [ngValue]="Service">
+      {{ Service }}
     </option>
   </select>
 </div>
