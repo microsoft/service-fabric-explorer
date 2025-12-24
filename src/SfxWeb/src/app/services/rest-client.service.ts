@@ -772,7 +772,7 @@ export class RestClientService {
     }
 
      public getInfrastructureDocs(serviceId: string, messageHandler?: IResponseMessageHandler): Observable<IRawInfrastructureDocument[]> {
-        const url = `$/InvokeInfrastructureQuery?api-version=6.0&Command=GetAllDocs&ServiceId=` + serviceId;
+        const url = `$/InvokeInfrastructureQuery?api-version=6.0&Command=GetCurrentDocFromIS&ServiceId=` + serviceId;
 
         return this.get(this.getApiUrl(url), 'Get Infrastructure Documents', messageHandler);
     }

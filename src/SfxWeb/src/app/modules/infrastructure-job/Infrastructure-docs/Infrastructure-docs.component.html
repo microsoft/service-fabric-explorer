@@ -1,8 +1,8 @@
 
 <div class="detail-pane" >
-    <h2 >Policy Engine Documents</h2>
+    <h2 >Infrastructure Service Documents</h2>
       <br>
-  <label class="detail-pane" ><strong>Select Infrastructure Service For Policy Engine Documents</strong></label>
+  <label class="detail-pane" ><strong>Select Infrastructure Service For the Documents</strong></label>
   <select class="detail-pane" [(ngModel)]="selectedInfrastructureService" >
     <option [ngValue]="'None'">None</option>
     <option *ngFor="let svce of infrastructureDocumentCollection.InfrastructureServiceList" [ngValue]="svce">

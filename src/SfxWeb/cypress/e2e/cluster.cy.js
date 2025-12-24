@@ -1232,7 +1232,19 @@ context('Cluster page', () => {
           cy.contains(bannerText)
         })
       })
-
+        describe('Infrastructure Service Document', () => {
+        beforeEach(() => {
+          addRoute(FIXTURE_REF_SYSTEMAPPS, 'system-service/coordinated-infra-guid.json', systemApps_route)
+          addRoute("infrastructure-service-document-data", "system-service/GetCurrentDocFromIS_Response.json", apiUrl(`/$/InvokeInfrastructureQuery?api-version=6.0&Command=GetCurrentDocFromIS&ServiceId=System/InfrastructureService/Coordinated_43c17f19-8f43-4afc-56ca-38e81f6c844b*`))
+        })
+          it('Infrastructure Service Document test', () => {
+          cy.visit(`/#/infrastructure`)
+          cy.get('app-infrastructure-docs').find('select.detail-pane').select('fabric:/System/InfrastructureService/Coordinated_43c17f19-8f43-4afc-56ca-38e81f6c844b')
+          cy.contains('Received Document').should('be.visible') 
+          cy.get('app-infrastructure-docs').find('select.detail-pane').select('None')
+          cy.contains('Received Document').should('not.exist') 
+          })
+      })
     })
   })
 
