@@ -1148,7 +1148,7 @@ export interface IJob {
         JobStatus: string;
         RoleInstancesToBeImpacted: string[];
         ContextStringGivenByTenant: string;
-        JobStep: IJobStep[];
+        JobStep: IJobStep;
         ImpactDetail: IImpactDetail;
         CorrelationId: string;
         IsCriticalRollout: boolean;
