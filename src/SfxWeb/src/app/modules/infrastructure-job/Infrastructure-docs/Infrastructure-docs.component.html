@@ -12,7 +12,7 @@
 </div>
 <div  class="detail-pane">
   <div   *ngIf="(infrastructureDocumentCollection.InfrastructureServiceNameToDocumentsMap.get(selectedInfrastructureService)?.length)">
-  <strong >Received Documents</strong> :
+  <strong>Received Documents</strong> :
     <div  *ngFor="let doc of infrastructureDocumentCollection.InfrastructureServiceNameToDocumentsMap.get(selectedInfrastructureService)">
       <div>
         <pre>{{ JsonParsedDocument(doc) | json }}</pre>
