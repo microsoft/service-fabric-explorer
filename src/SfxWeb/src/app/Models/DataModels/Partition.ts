@@ -42,6 +42,10 @@ export class Partition extends DataModelBase<IRawPartition> {
         return ServiceKindRegexes.Stateless.test(this.raw.ServiceKind);
     }
 
+    public get isSelfReconfiguringService(): boolean {
+        return ServiceKindRegexes.SelfReconfiguring.test(this.raw.ServiceKind);
+    }
+
     public get id(): string {
         return this.partitionInformation.id;
     }

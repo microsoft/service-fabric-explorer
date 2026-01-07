@@ -80,7 +80,7 @@ export class DeployedReplica extends DataModelBase<IRawDeployedReplica> {
                 return InstanceRole;
             }
 
-            const PreviousInstanceRole = this.raw.PreviousSelfReconfiguringInstanceRole
+            const PreviousInstanceRole = this.raw.PreviousSelfReconfiguringInstanceRole;
 
             if (!PreviousInstanceRole || PreviousInstanceRole === 'None') {
                 return `Reconfiguring - Target Role: ${InstanceRole}`;
@@ -99,6 +99,22 @@ export class DeployedReplica extends DataModelBase<IRawDeployedReplica> {
         }
     
         return `Reconfiguring: ${PreviousReplicaRole} ${UnicodeConstants.RightArrow} ${ReplicaRole}`;
+    }
+
+    public get activationState(): string {
+        if (!ServiceKindRegexes.SelfReconfiguring.test(this.raw.ServiceKind)) {
+            return 'N/A';
+        }
+
+        const { PartitionStatus } = this.partition;
+        const currentState = this.raw.SelfReconfiguringInstanceActivationState;
+        const previousState = this.raw.PreviousSelfReconfiguringInstanceActivationState;
+
+        if (PartitionStatus !== 'Reconfiguring') {
+            return currentState;
+        }
+
+        return `Reconfiguring: ${previousState} ${UnicodeConstants.RightArrow} ${currentState}`;
     }
 
     public get viewPath(): string {

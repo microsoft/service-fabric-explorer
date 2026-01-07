@@ -45,6 +45,11 @@ export class EssentialsComponent extends PartitionBaseControllerDirective {
             defaultSortProperties = ['raw.NodeName'];
         }
 
+        // Add Activation State column for Self Reconfiguring Services
+        if (this.partition.isSelfReconfiguringService) {
+            columnSettings.splice(3, 0, new ListColumnSetting('activationState', 'Activation State'));
+        }
+
         // Keep the sort properties in sync with the sortBy for ClusterTreeService.getDeployedReplicas
         this.listSettings = this.settings.getNewOrExistingListSettings('replicas', defaultSortProperties, columnSettings);
     }

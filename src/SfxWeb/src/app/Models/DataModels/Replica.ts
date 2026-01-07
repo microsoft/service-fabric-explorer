@@ -106,6 +106,26 @@ export class ReplicaOnPartition extends DataModelBase<IRawReplicaOnPartition> {
         return `Reconfiguring: ${PreviousReplicaRole} ${UnicodeConstants.RightArrow} ${ReplicaRole}`;
     }
 
+    public get activationState(): string {
+        if (!ServiceKindRegexes.SelfReconfiguring.test(this.raw.ServiceKind)) {
+            return 'N/A';
+        }
+
+        const { PartitionStatus } = this.parent.raw;
+        const currentState = this.raw.SelfReconfiguringInstanceActivationState;
+        const previousState = this.raw.PreviousSelfReconfiguringInstanceActivationState;
+
+        if (PartitionStatus !== 'Reconfiguring') {
+            return currentState;
+        }
+
+        if (!previousState || previousState === 'None') {
+            return `Reconfiguring - Target State: ${currentState}`;
+        }
+
+        return `Reconfiguring: ${previousState} ${UnicodeConstants.RightArrow} ${currentState}`;
+    }
+
     public get currentRole(): string {
         return this.raw.ReplicaRole;
     }

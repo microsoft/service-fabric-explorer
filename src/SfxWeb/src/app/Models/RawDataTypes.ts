@@ -610,6 +610,8 @@ export interface IRawDeployedReplica {
     ServicePackageActivationId: string;
     InstanceRole: string;
     PreviousSelfReconfiguringInstanceRole: string;
+    SelfReconfiguringInstanceActivationState: string;
+    PreviousSelfReconfiguringInstanceActivationState: string;
 }
 
 export interface IRawDeployedReplicaDetail {
@@ -718,6 +720,8 @@ export interface IRawReplicaOnPartition {
         ToBeRemovedReplicaExpirationTimeUtc: string;
         InstanceRole: string;
         PreviousSelfReconfiguringInstanceRole: string;
+        SelfReconfiguringInstanceActivationState: string;
+        PreviousSelfReconfiguringInstanceActivationState: string;
     }
 
 export interface IRawReplicaHealthState {
