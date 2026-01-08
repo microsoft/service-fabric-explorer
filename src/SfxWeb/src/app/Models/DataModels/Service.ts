@@ -71,7 +71,13 @@ export class Service extends DataModelBase<IRawService> {
     }
 
     public get serviceKindInNumber(): number {
-        return this.raw.ServiceKind === Constants.ServiceKindStateful ? 2 : 1;
+        if (this.raw.ServiceKind == Constants.ServiceKindStateless) {
+            return 1;
+        } else if (this.raw.ServiceKind == Constants.ServiceKindStateful) {
+            return 2;
+        } else {
+            return 3; // SelfReconfiguring
+        }
     }
 
     public get viewPath(): string {

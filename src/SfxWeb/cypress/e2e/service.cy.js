@@ -363,7 +363,7 @@ context('service', () => {
   })
 
   describe("xss", () => {
-    it.skip("essentials/details", () => {
+    it("essentials/details", () => {
       const alert = `*${windowAlertText}*`;
 
       addDefaultFixtures("xss/");

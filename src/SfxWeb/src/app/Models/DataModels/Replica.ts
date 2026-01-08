@@ -65,6 +65,10 @@ export class ReplicaOnPartition extends DataModelBase<IRawReplicaOnPartition> {
         return ServiceKindRegexes.Stateless.test(this.raw.ServiceKind);
     }
 
+    public get isSelfReconfiguringService(): boolean {
+        return ServiceKindRegexes.SelfReconfiguring.test(this.raw.ServiceKind);
+    }
+
     public get id(): string {
         return this.raw.ReplicaId || this.raw.InstanceId;
     }
@@ -83,7 +87,7 @@ export class ReplicaOnPartition extends DataModelBase<IRawReplicaOnPartition> {
             return `ToBeRemoved`;
         }
 
-        if (ServiceKindRegexes.SelfReconfiguring.test(this.raw.ServiceKind)) {
+        if (this.isSelfReconfiguringService) {
             if (PartitionStatus !== 'Reconfiguring') {
                 return InstanceRole;
             }
@@ -107,7 +111,7 @@ export class ReplicaOnPartition extends DataModelBase<IRawReplicaOnPartition> {
     }
 
     public get activationState(): string {
-        if (!ServiceKindRegexes.SelfReconfiguring.test(this.raw.ServiceKind)) {
+        if (!this.isSelfReconfiguringService) {
             return 'N/A';
         }
 
@@ -126,13 +130,25 @@ export class ReplicaOnPartition extends DataModelBase<IRawReplicaOnPartition> {
         return `Reconfiguring: ${previousState} ${UnicodeConstants.RightArrow} ${currentState}`;
     }
 
-    public get currentRole(): string {
+    public get currentStatefulReplicaRole(): string {
         return this.raw.ReplicaRole;
     }
 
-    public get previousRole(): string {
+    public get currentSelfReconfiguringInstanceRole(): string {
+        return this.raw.InstanceRole;
+    }
+
+    public get previousStatefulReplicaRole(): string {
         if (this.parent.raw.PartitionStatus === 'Reconfiguring' && this.raw.PreviousReplicaRole) {
             return this.raw.PreviousReplicaRole;
+        }
+
+        return 'None';
+    }
+
+    public get previousSelfReconfiguringInstanceRole(): string {
+        if (this.parent.raw.PartitionStatus === 'Reconfiguring' && this.raw.PreviousSelfReconfiguringInstanceRole) {
+            return this.raw.PreviousSelfReconfiguringInstanceRole;
         }
 
         return 'None';

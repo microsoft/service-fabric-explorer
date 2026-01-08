@@ -195,11 +195,27 @@ context('partition', () => {
 
         it('replicas', () => {
           cy.get('[data-cy=replicas]').within(() => {
-            // cy.contains('events').click();
+              // cy.contains('events').click();
               checkTableSize(2)
+              // Check column headers
+              cy.contains('th', 'Activation State');
+              
               cy.contains('SelfReconfiguringMember');
               cy.contains('_nt1_1');
               cy.contains('Ready');
+              cy.contains('Activated');
+          })
+        })
+
+        it('reconfiguration information', () => {
+          addRoute("partitions-reconfig","partition-page/selfreconfiguring-partitions-reconfiguration.json", apiUrl(`${routeFormatter(appName, selfReconfiguringServiceName)}?*`));
+          addRoute("partitionInfo-reconfig","partition-page/selfreconfiguring-partition-reconfiguration.json", apiUrl(`${routeFormatter(appName, selfReconfiguringServiceName)}/${selfreconfiguringPartitionId}?*`));
+          addRoute("replica-reconfig", "partition-page/selfreconfiguring-replica-reconfiguration.json", apiUrl(`${routeFormatter(appName, selfReconfiguringServiceName)}/${selfreconfiguringPartitionId}/$/GetReplicas?*`));
+
+          cy.get('[data-cy=replicas]').within(() => {
+            cy.contains('Down');
+            cy.contains('Reconfiguring: SelfReconfiguringMember ➜ SelfReconfiguringMember');
+            cy.contains('Reconfiguring: Deactivated ➜ Activated');
           })
         })
     })
