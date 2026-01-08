@@ -528,6 +528,8 @@ export interface IRawPartition {
         PartitionStatus: string;
         CurrentConfigurationEpoch: IRawConfigurationEpoch;
         MinInstanceCount: number;
+        SelfReconfiguringInstanceCount: number;
+        SelfReconfiguringMinInstanceCount: number;
     }
 
 export interface IRawPartitionDescription {
@@ -606,6 +608,10 @@ export interface IRawDeployedReplica {
     ServiceName: string;
     ServiceTypeName: string;
     ServicePackageActivationId: string;
+    InstanceRole: string;
+    PreviousSelfReconfiguringInstanceRole: string;
+    SelfReconfiguringInstanceActivationState: string;
+    PreviousSelfReconfiguringInstanceActivationState: string;
 }
 
 export interface IRawDeployedReplicaDetail {
@@ -712,6 +718,10 @@ export interface IRawReplicaOnPartition {
         ReplicaStatus: string;
         ServiceKind: string;
         ToBeRemovedReplicaExpirationTimeUtc: string;
+        InstanceRole: string;
+        PreviousSelfReconfiguringInstanceRole: string;
+        SelfReconfiguringInstanceActivationState: string;
+        PreviousSelfReconfiguringInstanceActivationState: string;
     }
 
 export interface IRawReplicaHealthState {
@@ -842,6 +852,8 @@ export interface IRawServiceType {
     }
 
 export interface IRawServiceTypeDescription {
+        Kind: string;
+        IsSelfReconfiguring: boolean;
         IsStateful: boolean;
         ServiceTypeName: string;
         PlacementConstraints: string;

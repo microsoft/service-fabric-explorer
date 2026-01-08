@@ -12,5 +12,12 @@
         "Status": "Active",
         "ServicePackageActivationId": "",
         "HealthState": "Unknown"
+    },
+    {
+        "Name": "VisualObjects.SelfReconfiguringServicePkg",
+        "Version": "1.0.0",
+        "Status": "Active",
+        "ServicePackageActivationId": "",
+        "HealthState": "Unknown"
     }
 ]
