@@ -3,7 +3,7 @@ import { DetailBaseComponent } from 'src/app/ViewModels/detail-table-base.compon
 import { ListColumnSetting } from 'src/app/Models/ListSettings';
 import { RepairTask } from 'src/app/Models/DataModels/repairTask';
 import { DataService } from 'src/app/services/data.service';
-import { forkJoin, of, Subscription } from 'rxjs';
+import { forkJoin, from, of, Subscription } from 'rxjs';
 import { RefreshService } from 'src/app/services/refresh.service';
 import { catchError, map } from 'rxjs/operators';
 import { IEssentialListItem } from '../../charts/essential-health-tile/essential-health-tile.component';
@@ -59,10 +59,14 @@ export class RepairTaskViewComponent implements OnInit, DetailBaseComponent, OnD
   }
 
   updateNodesList() {
-    return forkJoin(Array.from(new Set(this.item.raw.Target.NodeNames.concat(this.item.impactedNodes))).map(id => {
-      return this.dataService.getNode(id, true).pipe(catchError(err => of(null)));
-    })).pipe(map(data => {
-      this.nodes = data.filter(node => node);
-    }));
+    if(this.item.raw.Target.Kind === "Node") {
+      return forkJoin(Array.from(new Set(this.item.raw.Target.NodeNames.concat(this.item.impactedNodes))).map(id => {
+        return this.dataService.getNode(id, true).pipe(catchError(err => of(null)));
+      })).pipe(map(data => {
+        this.nodes = data.filter(node => node);
+      }));
+    }else{
+      return from([]);
+    }
   }
 }

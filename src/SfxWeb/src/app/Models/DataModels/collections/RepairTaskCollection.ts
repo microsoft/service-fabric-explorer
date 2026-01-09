@@ -95,7 +95,7 @@ export class RepairTaskCollection extends DataModelCollectionBase<RepairTask> {
             }
           })
         } catch (e) {
-          console.log(e)
+          console.error(e)
         }
 
       }));

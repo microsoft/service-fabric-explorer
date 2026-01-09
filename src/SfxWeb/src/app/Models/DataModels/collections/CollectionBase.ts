@@ -83,6 +83,7 @@ export class DataModelCollectionBase<T extends IDataModel<any>> implements IData
                 return this.update(collection);
             }),
             catchError( err => {
+                console.error(err)
                 success = false;
                 return of(err);
             })

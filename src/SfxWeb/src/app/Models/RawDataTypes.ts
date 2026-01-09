@@ -1064,15 +1064,27 @@ export interface IRawNodeImpact {
         ImpactLevel	?: number;
     }
 
-export interface IRawNodeRepairImpactDescription {
-        Kind: string;
-        NodeImpactList: IRawNodeImpact[];
+export interface IRawRepairImpactDescription {
+        Kind: "Node" | "External";
+}
+
+export interface IRawNodeRepairImpactDescription extends IRawRepairImpactDescription {
+    kind: "Node";
+    NodeImpactList: IRawNodeImpact[];
+}
+
+export interface IRawExternalRepairImpactDescription extends IRawRepairImpactDescription {
+    kind: "External";
+    ExternalImpactInfo: {
+        ImpactLevel: string;
     }
+}
 
 export interface IRawNodeRepairTargetDescription {
-        Kind: string;
-        NodeNames: string[];
-    }
+    Kind: string;
+    NodeNames?: string[];
+}
+
 export interface IRawRepairTaskHistory {
         CreatedUtcTimestamp ?: string;
         ClaimedUtcTimestamp ?: string;
@@ -1097,7 +1109,7 @@ export interface IRawRepairTask {
         Target?: IRawNodeRepairTargetDescription;
         Executor?: string;
         ExecutorData?: string;
-        Impact?: IRawNodeRepairImpactDescription;
+        Impact?: IRawRepairImpactDescription;
         ResultStatus?: string;
         ResultCode?: number;
         ResultDetail?: string;
