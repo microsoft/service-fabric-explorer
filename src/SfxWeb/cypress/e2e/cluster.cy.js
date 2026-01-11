@@ -1146,6 +1146,44 @@ context('Cluster page', () => {
         })
       });
     })
+
+    it('filters external repair tasks from action counter and tables', () => {
+      setup('cluster-page/repair-jobs/mixed-node-external.json')
+
+      // Verify that only Node repair tasks appear in the Most Common Actions
+      cy.get('[data-cy=top]').within(() => {
+        // Should show 3 Node-based actions: 2 PlatformUpdate and 1 TenantUpdate
+        cy.contains('System.Azure.Job.PlatformUpdate')
+        cy.contains('System.Azure.Job.TenantUpdate')
+        // Should NOT show External actions
+        cy.contains('External.RestartNode').should('not.exist')
+        cy.contains('External.ApplicationUpgrade').should('not.exist')
+      })
+
+      // Verify only Node repair tasks appear in pending jobs table
+      cy.get('[data-cy=pendingjobs]').within(() => {
+        cy.contains('Repair Tasks In Progress').click()
+        // Should have 1 Node-based repair task in progress
+        checkTableSize(1)
+        cy.contains('Azure/PlatformUpdate/67d9f19b-e150-4261-9d7c-3d6e3576decf/0/628')
+        // Should NOT show External repair tasks
+        cy.contains('External.ApplicationUpgrade').should('not.exist')
+      })
+
+      // Verify only Node repair tasks appear in completed jobs table
+      cy.get('[data-cy=completedjobs]').within(() => {
+        cy.contains('Completed Repair Tasks').click()
+        // Should have 2 Node-based completed repair tasks
+        checkTableSize(2)
+        cy.contains('Azure/PlatformUpdate/00065b20-aa83-4199-877b-a4b51efa8de6/3/616')
+        cy.contains('Azure/TenantUpdate/46df1c03-5212-4b8f-98b0-47dfb70744b6/2/612')
+        // Should NOT show External repair tasks
+        cy.contains('External.RestartNode').should('not.exist')
+      })
+
+      // Verify timeline only shows Node repair tasks
+      cy.get('[data-cy=timeline]').should('exist')
+    })
   })
 
   describe("systemService - infraservice", () => {
