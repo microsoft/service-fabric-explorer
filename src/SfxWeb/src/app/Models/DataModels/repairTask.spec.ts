@@ -1,5 +1,5 @@
 import { RepairTask, Status } from './repairTask';
-import { IRawRepairTask } from '../RawDataTypes';
+import { IRawNodeRepairImpactDescription, IRawRepairTask } from '../RawDataTypes';
 import { DataService } from 'src/app/services/data.service';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { of } from 'rxjs';
@@ -75,7 +75,7 @@ describe('RepairTask', () => {
 
     fit('validate in progress repairTask', () => {
         testData.State = 'Executing';
-        testData.Impact.NodeImpactList = [
+        (testData.Impact as IRawNodeRepairImpactDescription).NodeImpactList = [
             {
                 NodeName: '_NodeType0_6',
                 ImpactLevel: 2
@@ -85,6 +85,20 @@ describe('RepairTask', () => {
 
         expect(task.couldParseExecutorData).toBe(true);
         expect(task.impactedNodes).toEqual(['_NodeType0_6']);
+        expect(task.inProgress).toBe(true);
+    });
+
+    fit('validate external repair impact', () => {
+        testData.State = 'Executing';
+        testData.Impact = {
+            Kind: 'External',
+            ExternalImpactInfo: {
+                ImpactLevel: 'High'
+            }
+        };
+        const task = new RepairTask(dataService, testData);
+
+        expect(task.couldParseExecutorData).toBe(true);
         expect(task.inProgress).toBe(true);
     });
 
@@ -177,7 +191,7 @@ describe('RepairTask', () => {
             RestoringHealthCheckStartUtcTimestamp: '0001-01-01T00:00:00.000Z',
             RestoringHealthCheckEndUtcTimestamp: '0001-01-01T00:00:00.000Z'
         };
-        testData.Impact.NodeImpactList = [{
+        (testData.Impact as IRawNodeRepairImpactDescription).NodeImpactList = [{
           NodeName: 'testnode'
         }]
         const task = new RepairTask(dataService, testData);
@@ -213,7 +227,7 @@ describe('RepairTask', () => {
             RestoringHealthCheckStartUtcTimestamp: '0001-01-01T00:00:00.000Z',
             RestoringHealthCheckEndUtcTimestamp: '0001-01-01T00:00:00.000Z'
         };
-        testData.Impact.NodeImpactList = [{
+        (testData.Impact as IRawNodeRepairImpactDescription).NodeImpactList = [{
           NodeName: 'testnode'
         }]
         const task = new RepairTask(dataService, testData);

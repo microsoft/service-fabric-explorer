@@ -1,4 +1,4 @@
-import { IRawRepairTask } from '../RawDataTypes';
+import { IRawNodeRepairImpactDescription, IRawRepairTask } from '../RawDataTypes';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { DataModelBase } from './Base';
 import { DataService } from 'src/app/services/data.service';
@@ -290,15 +290,16 @@ export class RepairTask extends DataModelBase<IRawRepairTask> implements IRCAIte
   }
 
     updateInternal(): Observable<any> {
-        if (this.raw.Impact) {
-            this.impactedNodes = this.raw.Impact.NodeImpactList.map(node => node.NodeName);
-            this.impactedNodesWithImpact = this.raw.Impact.NodeImpactList.map(node => {
+        if (this.raw.Impact && this.raw.Impact !== undefined && this.raw.Impact.Kind === 'Node' && Array.isArray((this.raw.Impact as IRawNodeRepairImpactDescription).NodeImpactList)) {
+            const nodeImpactList = (this.raw.Impact as IRawNodeRepairImpactDescription).NodeImpactList;
+            this.impactedNodes = nodeImpactList.map(node => node.NodeName);
+            this.impactedNodesWithImpact = nodeImpactList.map(node => {
               let name = node.NodeName;
-              if(node.ImpactLevel) {
-                name += ":" + node.ImpactLevel
+              if (node.ImpactLevel !== undefined && node.ImpactLevel !== null && node.ImpactLevel !== '') {
+                name += ":" + node.ImpactLevel;
               }
               return name;
-            })
+            });
         }
         this.timeStamp = new Date(this.raw.History.CreatedUtcTimestamp).toISOString();
         this.inProgress = this.raw.State !== 'Completed';

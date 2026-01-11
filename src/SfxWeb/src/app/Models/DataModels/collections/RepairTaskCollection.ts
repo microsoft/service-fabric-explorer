@@ -5,6 +5,7 @@ import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers'
 import { DataService } from 'src/app/services/data.service';
 import { RepairTask, StatusCSS } from '../repairTask';
 import { DataModelCollectionBase } from './CollectionBase';
+import { IRawNodeRepairTargetDescription } from '../../RawDataTypes';
 
 export class RepairTaskCollection extends DataModelCollectionBase<RepairTask> {
     static readonly minDurationApprovalbanner = 1000 * 60 * 15; // 15 minutes
@@ -36,7 +37,7 @@ export class RepairTaskCollection extends DataModelCollectionBase<RepairTask> {
         this.completedRepairTasks = [];
 
         this.collection.forEach(task => {
-            if (task.inProgress) {
+            if (task.inProgress && task.raw.Target && task.raw.Target !== undefined && task.raw.Target.Kind === 'Node') {
                 this.repairTasks.push(task);
                 const executingPhase = task.getPhase('Executing');
                 const approving = task.getPhase('Approved');
@@ -55,7 +56,9 @@ export class RepairTaskCollection extends DataModelCollectionBase<RepairTask> {
                             longRunningExecutingRepairTask = task;
                 }
             } else {
+              if (task.raw.Target && task.raw.Target !== undefined && task.raw.Target.Kind === 'Node') {
                 this.completedRepairTasks.push(task);
+              }
             }
         });
 
@@ -95,13 +98,16 @@ export class RepairTaskCollection extends DataModelCollectionBase<RepairTask> {
             }
           })
         } catch (e) {
-          console.log(e)
+          console.error(e)
         }
 
       }));
     }
 
     public getRepairJobsForANode(nodeName: string) {
-      return this.collection.filter(task => task.raw.Target.NodeNames.includes(nodeName) || task.impactedNodes.includes(nodeName));
+      return this.collection.filter(task => {
+        const targetNodeNames = (task.raw.Target && task.raw.Target !== undefined && task.raw.Target.Kind === 'Node' && (task.raw.Target as IRawNodeRepairTargetDescription).NodeNames) ? (task.raw.Target as IRawNodeRepairTargetDescription).NodeNames : [];
+        return targetNodeNames.includes(nodeName) || task.impactedNodes.includes(nodeName);
+      });
     }
 }
