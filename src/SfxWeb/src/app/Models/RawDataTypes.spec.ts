@@ -208,6 +208,35 @@ describe('ServiceKind Type Guards', () => {
             expect(isStatelessService(partition)).toBe(true);
             expect(isSelfReconfiguringService(partition)).toBe(false);
         });
+
+        it('should correctly identify self-reconfiguring partition', () => {
+            const partition: IRawPartition = {
+                ServiceKind: 'SelfReconfiguring',
+                PartitionInformation: {
+                    Id: 'partition-3',
+                    ServicePartitionKind: 'Singleton',
+                    HighKey: '',
+                    LowKey: '',
+                    Name: ''
+                },
+                TargetReplicaSetSize: 0,
+                MinReplicaSetSize: 0,
+                AuxiliaryReplicaCount: 0,
+                InstanceCount: 0,
+                HealthState: 'Ok',
+                PartitionStatus: 'Ready',
+                CurrentConfigurationEpoch: {
+                    ConfigurationVersion: 1,
+                    DataLossVersion: 1
+                },
+                MinInstanceCount: 0,
+                SelfReconfiguringInstanceCount: 3,
+                SelfReconfiguringMinInstanceCount: 1
+            };
+            expect(isStatefulService(partition)).toBe(false);
+            expect(isStatelessService(partition)).toBe(false);
+            expect(isSelfReconfiguringService(partition)).toBe(true);
+        });
     });
 
     describe('Type guards work with IRawReplicaOnPartition', () => {
@@ -232,6 +261,53 @@ describe('ServiceKind Type Guards', () => {
             };
             expect(isStatefulService(replica)).toBe(true);
             expect(isStatelessService(replica)).toBe(false);
+            expect(isSelfReconfiguringService(replica)).toBe(false);
+        });
+
+        it('should correctly identify stateless replica', () => {
+            const replica: IRawReplicaOnPartition = {
+                ServiceKind: 'Stateless',
+                Address: '',
+                HealthState: 'Ok',
+                ReplicaId: '',
+                ReplicaRole: '',
+                PreviousReplicaRole: '',
+                InstanceId: 'instance-1',
+                LastInBuildDurationInSeconds: '0',
+                NodeName: 'Node1',
+                ReplicaStatus: 'Ready',
+                ToBeRemovedReplicaExpirationTimeUtc: '',
+                InstanceRole: '',
+                PreviousSelfReconfiguringInstanceRole: '',
+                SelfReconfiguringInstanceActivationState: '',
+                PreviousSelfReconfiguringInstanceActivationState: ''
+            };
+            expect(isStatefulService(replica)).toBe(false);
+            expect(isStatelessService(replica)).toBe(true);
+            expect(isSelfReconfiguringService(replica)).toBe(false);
+        });
+
+        it('should correctly identify self-reconfiguring replica', () => {
+            const replica: IRawReplicaOnPartition = {
+                ServiceKind: 'SelfReconfiguring',
+                Address: '',
+                HealthState: 'Ok',
+                ReplicaId: '',
+                ReplicaRole: '',
+                PreviousReplicaRole: '',
+                InstanceId: 'instance-2',
+                LastInBuildDurationInSeconds: '0',
+                NodeName: 'Node1',
+                ReplicaStatus: 'Ready',
+                ToBeRemovedReplicaExpirationTimeUtc: '',
+                InstanceRole: 'Active',
+                PreviousSelfReconfiguringInstanceRole: 'None',
+                SelfReconfiguringInstanceActivationState: 'Activated',
+                PreviousSelfReconfiguringInstanceActivationState: 'None'
+            };
+            expect(isStatefulService(replica)).toBe(false);
+            expect(isStatelessService(replica)).toBe(false);
+            expect(isSelfReconfiguringService(replica)).toBe(true);
         });
     });
 });
