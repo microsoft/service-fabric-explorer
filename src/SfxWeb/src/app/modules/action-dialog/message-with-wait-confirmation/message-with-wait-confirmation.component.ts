@@ -1,3 +1,8 @@
+// -----------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// Licensed under the MIT License. See License file under the project root for license information.
+// -----------------------------------------------------------------------------
+
 import { Component, Inject, Input, OnInit } from '@angular/core';
 import { DialogBodyComponent } from '../DialogBodyComponent';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';

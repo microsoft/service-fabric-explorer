@@ -1,3 +1,8 @@
+// -----------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// Licensed under the MIT License. See License file under the project root for license information.
+// -----------------------------------------------------------------------------
+
 import { IRawReplicaOnPartition, IRawReplicaHealth } from '../RawDataTypes';
 import { IDecorators, DataModelBase } from './Base';
 import { HtmlUtils } from 'src/app/Utils/HtmlUtils';
@@ -14,11 +19,6 @@ import { map, mergeMap } from 'rxjs/operators';
 import { ActionWithConfirmationDialog } from '../Action';
 import { RoutesService } from 'src/app/services/routes.service';
 import { ActionDialogUtils } from 'src/app/modules/action-dialog/utils';
-
-// -----------------------------------------------------------------------------
-// Copyright (c) Microsoft Corporation.  All rights reserved.
-// Licensed under the MIT License. See License file under the project root for license information.
-// -----------------------------------------------------------------------------
 
 export class ReplicaOnPartition extends DataModelBase<IRawReplicaOnPartition> {
     public decorators: IDecorators = {

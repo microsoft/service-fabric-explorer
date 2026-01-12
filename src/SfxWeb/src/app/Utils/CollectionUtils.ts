@@ -1,10 +1,11 @@
-import { IDataModel } from '../Models/DataModels/Base';
-import { Utils } from './Utils';
-import keyBy from 'lodash/keyBy';
 // -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
 // -----------------------------------------------------------------------------
+
+import { IDataModel } from '../Models/DataModels/Base';
+import { Utils } from './Utils';
+import keyBy from 'lodash/keyBy';
 
 export class CollectionUtils {
 

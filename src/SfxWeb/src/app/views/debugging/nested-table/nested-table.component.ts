@@ -1,3 +1,8 @@
+// -----------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// Licensed under the MIT License. See License file under the project root for license information.
+// -----------------------------------------------------------------------------
+
 import { Component, OnInit } from '@angular/core';
 import { IRequestsData } from 'src/app/Models/DataModels/networkDebugger';
 import { ListColumnSetting, ListSettings } from 'src/app/Models/ListSettings';

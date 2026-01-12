@@ -1,3 +1,8 @@
+// -----------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// Licensed under the MIT License. See License file under the project root for license information.
+// -----------------------------------------------------------------------------
+
 import { getAndTransform, IPropertyMapper, IRCAItem } from 'src/app/Models/eventstore/rcaEngine';
 import { IAnalysisResultDiff, IDiffAnalysis, IDiffProperty } from 'src/app/Models/eventstore/rcaEngineConfigurations';
 import { EventStoreUtils, ITimelineData, ITimelineItem } from 'src/app/Models/eventstore/timelineGenerators';

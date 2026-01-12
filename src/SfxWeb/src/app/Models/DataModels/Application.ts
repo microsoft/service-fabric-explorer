@@ -1,3 +1,8 @@
+// -----------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// Licensed under the MIT License. See License file under the project root for license information.
+// -----------------------------------------------------------------------------
+
 import {
     IRawApplication, IRawApplicationHealth, IRawApplicationManifest, IRawDeployedApplicationHealthState,
     IRawApplicationUpgradeProgress, IRawApplicationBackupConfigurationInfo
@@ -23,10 +28,6 @@ import isEmpty from 'lodash/isEmpty';
 import { ViewBackupComponent } from 'src/app/modules/backup-restore/view-backup/view-backup.component';
 import { RoutesService } from 'src/app/services/routes.service';
 import { ActionDialogUtils } from 'src/app/modules/action-dialog/utils';
-// -----------------------------------------------------------------------------
-// Copyright (c) Microsoft Corporation.  All rights reserved.
-// Licensed under the MIT License. See License file under the project root for license information.
-// -----------------------------------------------------------------------------
 
 export class Application extends DataModelBase<IRawApplication> {
     public decorators: IDecorators = {

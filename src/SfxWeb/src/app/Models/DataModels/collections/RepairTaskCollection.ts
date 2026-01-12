@@ -1,3 +1,8 @@
+// -----------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// Licensed under the MIT License. See License file under the project root for license information.
+// -----------------------------------------------------------------------------
+
 import { forkJoin, Observable, of } from 'rxjs';
 import { defaultIfEmpty, map } from 'rxjs/operators';
 import { RepairTaskMessages, StatusWarningLevel } from 'src/app/Common/Constants';

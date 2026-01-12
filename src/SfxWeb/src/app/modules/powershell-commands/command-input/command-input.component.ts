@@ -1,3 +1,8 @@
+// -----------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// Licensed under the MIT License. See License file under the project root for license information.
+// -----------------------------------------------------------------------------
+
 import { Component, Input, OnInit } from '@angular/core';
 import { ControlContainer, UntypedFormControl, UntypedFormGroup, NgForm } from '@angular/forms';
 import { PowershellCommandParameter, CommandParamTypes } from 'src/app/Models/PowershellCommand';

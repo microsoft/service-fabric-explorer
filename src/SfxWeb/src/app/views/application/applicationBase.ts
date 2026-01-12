@@ -1,3 +1,8 @@
+// -----------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// Licensed under the MIT License. See License file under the project root for license information.
+// -----------------------------------------------------------------------------
+
 import { Application } from 'src/app/Models/DataModels/Application';
 import { DataService } from 'src/app/services/data.service';
 import { Injector, Directive } from '@angular/core';

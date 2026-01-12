@@ -1,10 +1,11 @@
-import { NodeStatusConstants, HealthStateConstants } from '../Common/Constants';
-import { Node } from './DataModels/Node';
-
 // -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
 // -----------------------------------------------------------------------------
+
+import { NodeStatusConstants, HealthStateConstants } from '../Common/Constants';
+import { Node } from './DataModels/Node';
+
 export interface IRawCollection<T> {
         ContinuationToken: string;
         Items: T[];

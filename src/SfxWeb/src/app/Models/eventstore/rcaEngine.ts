@@ -1,3 +1,8 @@
+// -----------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// Licensed under the MIT License. See License file under the project root for license information.
+// -----------------------------------------------------------------------------
+
 import { Transforms } from "src/app/Utils/Transforms";
 import { Utils } from "src/app/Utils/Utils";
 import { IEventPropertiesCollection } from "./Events";
