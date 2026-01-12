@@ -4,7 +4,7 @@
 // -----------------------------------------------------------------------------
 
 import { HealthStateConstants } from 'src/app/Common/Constants';
-import { IRawHealthEvaluation, IRawHealthEvent } from '../RawDataTypes';
+import { IRawHealthEvaluation } from '../RawDataTypes';
 
 /**
  * Represents the possible health states for Service Fabric entities.
