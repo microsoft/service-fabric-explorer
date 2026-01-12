@@ -1,10 +1,10 @@
-import { HealthStateConstants } from 'src/app/Common/Constants';
-import { IRawHealthEvaluation, IRawHealthEvent } from '../RawDataTypes';
-
 // -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
 // -----------------------------------------------------------------------------
+
+import { HealthStateConstants } from 'src/app/Common/Constants';
+import { IRawHealthEvaluation, IRawHealthEvent } from '../RawDataTypes';
 
 /**
  * Represents the possible health states for Service Fabric entities.
@@ -98,6 +98,7 @@ export class HealthState {
 
     /**
      * Returns true if there are any unhealthy evaluations.
+     * Note: The double negation (!!) ensures null evaluations returns false, not null.
      */
     public get hasUnhealthyEvaluations(): boolean {
         return !!(this.evaluations && this.evaluations.length > 0);

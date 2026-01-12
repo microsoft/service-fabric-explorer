@@ -1,9 +1,9 @@
-import { HealthState, HealthStateUtils, IHealthAware } from './HealthState';
-
 // -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
 // -----------------------------------------------------------------------------
+
+import { HealthState, HealthStateUtils, IHealthAware } from './HealthState';
 
 describe('HealthState', () => {
     describe('constructor', () => {
