@@ -2,7 +2,7 @@ import { IClusterHealthChunk, IDeployedServicePackageHealthStateChunk } from '..
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Observable, of, throwError } from 'rxjs';
 import { ValueResolver, ITextAndBadge } from 'src/app/Utils/ValueResolver';
-import { IRawDeployedServicePackage, IRawBackupPolicy, IRawBackupConfigurationInfo, IRawPartitionBackup, IRawApplicationBackupConfigurationInfo, IRawServiceBackupConfigurationInfo } from '../../RawDataTypes';
+import { IRawDeployedServicePackage, IRawBackupPolicy, IRawPartitionBackup, IRawApplicationBackupConfigurationInfo, IRawServiceBackupConfigurationInfo } from '../../RawDataTypes';
 import { IdGenerator } from 'src/app/Utils/IdGenerator';
 import { DataService } from 'src/app/services/data.service';
 import { HealthStateConstants } from 'src/app/Common/Constants';
