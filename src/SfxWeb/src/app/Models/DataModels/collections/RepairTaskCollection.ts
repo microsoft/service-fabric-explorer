@@ -82,14 +82,17 @@ export class RepairTaskCollection extends DataModelCollectionBase<RepairTask> {
             if (messageType in stuckJobTypeMap) {
               console.log(RepairTaskMessages.messageMap)
               const jobs = stuckJobTypeMap[messageType].map(job => job.raw.TaskId);
-              const repairJobPrefix = `The repair job${jobs.length > 1 ? 's' : ''} ${jobs.join()} ${jobs.length > 1 ? 'are' : 'is'}
-                                            potentially stuck. ${RepairTaskMessages.messageMap(messageType)}`;
+              const firstJobId = jobs[0];
+              const additionalCount = jobs.length - 1;
+              const repairJobPrefix = additionalCount > 0
+                ? `The repair job ${firstJobId} (and ${additionalCount} more) ${jobs.length > 1 ? 'are' : 'is'} potentially stuck. ${RepairTaskMessages.messageMap(messageType)}`
+                : `The repair job ${firstJobId} is potentially stuck. ${RepairTaskMessages.messageMap(messageType)}`;
               this.data.warnings.addOrUpdateNotification({
                 message: repairJobPrefix,
                 level: StatusWarningLevel.Warning,
                 priority: 4,
                 id: messageType,
-              }, true);
+              }, false);
             } else {
               this.data.warnings.removeNotificationById(messageType);
             }
