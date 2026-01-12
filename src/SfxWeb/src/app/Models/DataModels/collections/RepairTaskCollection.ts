@@ -84,8 +84,8 @@ export class RepairTaskCollection extends DataModelCollectionBase<RepairTask> {
               const jobs = stuckJobTypeMap[messageType].map(job => job.raw.TaskId);
               const firstJobId = jobs[0];
               const additionalCount = jobs.length - 1;
-              const repairJobPrefix = additionalCount > 0
-                ? `The repair job ${firstJobId} (and ${additionalCount} more) ${jobs.length > 1 ? 'are' : 'is'} potentially stuck. ${RepairTaskMessages.messageMap(messageType)}`
+              const repairJobPrefix = jobs.length > 1
+                ? `The repair job ${firstJobId} (and ${additionalCount} more) are potentially stuck. ${RepairTaskMessages.messageMap(messageType)}`
                 : `The repair job ${firstJobId} is potentially stuck. ${RepairTaskMessages.messageMap(messageType)}`;
               this.data.warnings.addOrUpdateNotification({
                 message: repairJobPrefix,
