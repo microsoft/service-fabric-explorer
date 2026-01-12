@@ -1,11 +1,11 @@
-import { IRawReplicaOnPartition, IRawReplicaHealth } from '../RawDataTypes';
+import { IRawReplicaOnPartition, IRawReplicaHealth, isStatefulService, isStatelessService, isSelfReconfiguringService } from '../RawDataTypes';
 import { IDecorators, DataModelBase } from './Base';
 import { HtmlUtils } from 'src/app/Utils/HtmlUtils';
 import { DeployedReplicaDetail } from './DeployedReplica';
 import { DataService } from 'src/app/services/data.service';
 import { Partition } from './Partition';
 import { HealthStateFilterFlags } from '../HealthChunkRawDataTypes';
-import { ServiceKindRegexes, SortPriorities, UnicodeConstants } from 'src/app/Common/Constants';
+import { SortPriorities, UnicodeConstants } from 'src/app/Common/Constants';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { HealthBase } from './HealthEvent';
@@ -58,15 +58,15 @@ export class ReplicaOnPartition extends DataModelBase<IRawReplicaOnPartition> {
     }
 
     public get isStatefulService(): boolean {
-        return ServiceKindRegexes.Stateful.test(this.raw.ServiceKind);
+        return isStatefulService(this.raw);
     }
 
     public get isStatelessService(): boolean {
-        return ServiceKindRegexes.Stateless.test(this.raw.ServiceKind);
+        return isStatelessService(this.raw);
     }
 
     public get isSelfReconfiguringService(): boolean {
-        return ServiceKindRegexes.SelfReconfiguring.test(this.raw.ServiceKind);
+        return isSelfReconfiguringService(this.raw);
     }
 
     public get id(): string {

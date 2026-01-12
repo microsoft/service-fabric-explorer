@@ -1,12 +1,13 @@
 import { DataModelBase, IDecorators } from './Base';
 import {
     IRawService, IRawUpdateServiceDescription, IRawServiceHealth, IRawServiceDescription, IRawServiceType, IRawServiceManifest,
-    IRawCreateServiceDescription, IRawServiceBackupConfigurationInfo, IRawCreateServiceFromTemplateDescription
+    IRawCreateServiceDescription, IRawServiceBackupConfigurationInfo, IRawCreateServiceFromTemplateDescription,
+    isStatefulService, isStatelessService, isSelfReconfiguringService
 } from '../RawDataTypes';
 import { PartitionCollection, ServiceBackupConfigurationInfoCollection } from './collections/Collections';
 import { DataService } from 'src/app/services/data.service';
 import { HealthStateFilterFlags, IClusterHealthChunkQueryDescription, IServiceHealthStateFilter } from '../HealthChunkRawDataTypes';
-import { ServiceKindRegexes, Constants, FabricEnumValues } from 'src/app/Common/Constants';
+import { Constants, FabricEnumValues } from 'src/app/Common/Constants';
 import { Utils } from 'src/app/Utils/Utils';
 import { DeployedServicePackage } from './DeployedServicePackage';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
@@ -59,21 +60,21 @@ export class Service extends DataModelBase<IRawService> {
     }
 
     public get isStatefulService(): boolean {
-        return ServiceKindRegexes.Stateful.test(this.raw.ServiceKind);
+        return isStatefulService(this.raw);
     }
 
     public get isStatelessService(): boolean {
-        return ServiceKindRegexes.Stateless.test(this.raw.ServiceKind);
+        return isStatelessService(this.raw);
     }
 
     public get isSelfReconfiguringService(): boolean {
-        return ServiceKindRegexes.SelfReconfiguring.test(this.raw.ServiceKind);
+        return isSelfReconfiguringService(this.raw);
     }
 
     public get serviceKindInNumber(): number {
-        if (this.raw.ServiceKind == Constants.ServiceKindStateless) {
+        if (isStatelessService(this.raw)) {
             return 1;
-        } else if (this.raw.ServiceKind == Constants.ServiceKindStateful) {
+        } else if (isStatefulService(this.raw)) {
             return 2;
         } else {
             return 3; // SelfReconfiguring

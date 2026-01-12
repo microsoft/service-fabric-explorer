@@ -1,9 +1,9 @@
 import { DataModelBase, IDecorators } from './Base';
-import { IRawDeployedReplica, IRawPartition, IRawDeployedReplicaDetail, IRawLoadMetricReport, IRawReplicatorStatus, IRawRemoteReplicatorStatus, IRawReplicaInfo, IRawInstanceInfo } from '../RawDataTypes';
+import { IRawDeployedReplica, IRawPartition, IRawDeployedReplicaDetail, IRawLoadMetricReport, IRawReplicatorStatus, IRawRemoteReplicatorStatus, IRawReplicaInfo, IRawInstanceInfo, isStatefulService, isStatelessService, isSelfReconfiguringService } from '../RawDataTypes';
 import { DataService } from 'src/app/services/data.service';
 import { DeployedServicePackage } from './DeployedServicePackage';
 import { IdUtils } from 'src/app/Utils/IdUtils';
-import { ServiceKindRegexes, SortPriorities, UnicodeConstants } from 'src/app/Common/Constants';
+import { SortPriorities, UnicodeConstants } from 'src/app/Common/Constants';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { IResponseMessageHandler, ResponseMessageHandlers } from 'src/app/Common/ResponseMessageHandlers';
 import { HtmlUtils } from 'src/app/Utils/HtmlUtils';
@@ -53,11 +53,11 @@ export class DeployedReplica extends DataModelBase<IRawDeployedReplica> {
     }
 
     public get isStatefulService(): boolean {
-        return ServiceKindRegexes.Stateful.test(this.raw.ServiceKind);
+        return isStatefulService(this.raw);
     }
 
     public get isStatelessService(): boolean {
-        return ServiceKindRegexes.Stateless.test(this.raw.ServiceKind);
+        return isStatelessService(this.raw);
     }
 
     public get uniqueId(): string {
@@ -75,7 +75,7 @@ export class DeployedReplica extends DataModelBase<IRawDeployedReplica> {
     public get role(): string {
         const { ReconfigurationInformation, ReplicaRole, InstanceRole } = this.raw;
 
-        if( ServiceKindRegexes.SelfReconfiguring.test(this.raw.ServiceKind)) {
+        if( isSelfReconfiguringService(this.raw)) {
             if (!this.partition || this.partition.PartitionStatus !== 'Reconfiguring') {
                 return InstanceRole;
             }
@@ -102,7 +102,7 @@ export class DeployedReplica extends DataModelBase<IRawDeployedReplica> {
     }
 
     public get activationState(): string {
-        if (!ServiceKindRegexes.SelfReconfiguring.test(this.raw.ServiceKind)) {
+        if (!isSelfReconfiguringService(this.raw)) {
             return 'N/A';
         }
 
