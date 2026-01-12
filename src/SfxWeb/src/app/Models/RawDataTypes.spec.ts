@@ -4,14 +4,16 @@ import {
     IRawSelfReconfiguringService,
     isStatefulService,
     isStatelessService,
-    isSelfReconfiguringService
+    isSelfReconfiguringService,
+    IRawPartition,
+    IRawReplicaOnPartition
 } from './RawDataTypes';
 
 describe('ServiceKind Type Guards', () => {
 
     describe('isStatefulService', () => {
 
-        fit('should return true for Stateful service', () => {
+        it('should return true for Stateful service', () => {
             const service: IRawStatefulService = {
                 Id: 'test-service-1',
                 ServiceKind: 'Stateful',
@@ -26,7 +28,7 @@ describe('ServiceKind Type Guards', () => {
             expect(isStatefulService(service)).toBe(true);
         });
 
-        fit('should return false for Stateless service', () => {
+        it('should return false for Stateless service', () => {
             const service: IRawStatelessService = {
                 Id: 'test-service-2',
                 ServiceKind: 'Stateless',
@@ -40,7 +42,7 @@ describe('ServiceKind Type Guards', () => {
             expect(isStatefulService(service)).toBe(false);
         });
 
-        fit('should return false for SelfReconfiguring service', () => {
+        it('should return false for SelfReconfiguring service', () => {
             const service: IRawSelfReconfiguringService = {
                 Id: 'test-service-3',
                 ServiceKind: 'SelfReconfiguring',
@@ -57,7 +59,7 @@ describe('ServiceKind Type Guards', () => {
 
     describe('isStatelessService', () => {
 
-        fit('should return false for Stateful service', () => {
+        it('should return false for Stateful service', () => {
             const service: IRawStatefulService = {
                 Id: 'test-service-1',
                 ServiceKind: 'Stateful',
@@ -72,7 +74,7 @@ describe('ServiceKind Type Guards', () => {
             expect(isStatelessService(service)).toBe(false);
         });
 
-        fit('should return true for Stateless service', () => {
+        it('should return true for Stateless service', () => {
             const service: IRawStatelessService = {
                 Id: 'test-service-2',
                 ServiceKind: 'Stateless',
@@ -86,7 +88,7 @@ describe('ServiceKind Type Guards', () => {
             expect(isStatelessService(service)).toBe(true);
         });
 
-        fit('should return false for SelfReconfiguring service', () => {
+        it('should return false for SelfReconfiguring service', () => {
             const service: IRawSelfReconfiguringService = {
                 Id: 'test-service-3',
                 ServiceKind: 'SelfReconfiguring',
@@ -103,7 +105,7 @@ describe('ServiceKind Type Guards', () => {
 
     describe('isSelfReconfiguringService', () => {
 
-        fit('should return false for Stateful service', () => {
+        it('should return false for Stateful service', () => {
             const service: IRawStatefulService = {
                 Id: 'test-service-1',
                 ServiceKind: 'Stateful',
@@ -118,7 +120,7 @@ describe('ServiceKind Type Guards', () => {
             expect(isSelfReconfiguringService(service)).toBe(false);
         });
 
-        fit('should return false for Stateless service', () => {
+        it('should return false for Stateless service', () => {
             const service: IRawStatelessService = {
                 Id: 'test-service-2',
                 ServiceKind: 'Stateless',
@@ -132,7 +134,7 @@ describe('ServiceKind Type Guards', () => {
             expect(isSelfReconfiguringService(service)).toBe(false);
         });
 
-        fit('should return true for SelfReconfiguring service', () => {
+        it('should return true for SelfReconfiguring service', () => {
             const service: IRawSelfReconfiguringService = {
                 Id: 'test-service-3',
                 ServiceKind: 'SelfReconfiguring',
@@ -149,7 +151,7 @@ describe('ServiceKind Type Guards', () => {
 
     describe('Type guards work with IRawPartition', () => {
 
-        fit('should correctly identify stateful partition', () => {
+        it('should correctly identify stateful partition', () => {
             const partition: IRawPartition = {
                 ServiceKind: 'Stateful',
                 PartitionInformation: {
@@ -178,7 +180,7 @@ describe('ServiceKind Type Guards', () => {
             expect(isSelfReconfiguringService(partition)).toBe(false);
         });
 
-        fit('should correctly identify stateless partition', () => {
+        it('should correctly identify stateless partition', () => {
             const partition: IRawPartition = {
                 ServiceKind: 'Stateless',
                 PartitionInformation: {
@@ -210,7 +212,7 @@ describe('ServiceKind Type Guards', () => {
 
     describe('Type guards work with IRawReplicaOnPartition', () => {
 
-        fit('should correctly identify stateful replica', () => {
+        it('should correctly identify stateful replica', () => {
             const replica: IRawReplicaOnPartition = {
                 ServiceKind: 'Stateful',
                 Address: '',
