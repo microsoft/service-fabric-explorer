@@ -1,5 +1,5 @@
 import { DataModelBase, IDecorators } from './Base';
-import { IRawDeployedReplica, IRawPartition, IRawDeployedReplicaDetail, IRawLoadMetricReport, IRawReplicatorStatus, IRawRemoteReplicatorStatus, IRawReplicaInfo, IRawInstanceInfo, isStatefulService, isStatelessService, isSelfReconfiguringService } from '../RawDataTypes';
+import { IRawDeployedReplica, IRawPartition, IRawDeployedReplicaDetail, IRawReplicatorStatus, IRawRemoteReplicatorStatus, IRawReplicaInfo, IRawInstanceInfo, isStatefulService, isStatelessService, isSelfReconfiguringService } from '../RawDataTypes';
 import { DataService } from 'src/app/services/data.service';
 import { DeployedServicePackage } from './DeployedServicePackage';
 import { IdUtils } from 'src/app/Utils/IdUtils';
