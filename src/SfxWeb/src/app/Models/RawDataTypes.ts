@@ -771,15 +771,16 @@ export interface IHasServiceKind {
 }
 
 // Type guards for service kinds - works with any object that has a ServiceKind property
-export function isStatefulService<T extends IHasServiceKind>(service: T): boolean {
+// Using proper TypeScript type predicates for type narrowing
+export function isStatefulService<T extends IHasServiceKind>(service: T): service is T & { ServiceKind: 'Stateful' } {
     return service.ServiceKind === 'Stateful';
 }
 
-export function isStatelessService<T extends IHasServiceKind>(service: T): boolean {
+export function isStatelessService<T extends IHasServiceKind>(service: T): service is T & { ServiceKind: 'Stateless' } {
     return service.ServiceKind === 'Stateless';
 }
 
-export function isSelfReconfiguringService<T extends IHasServiceKind>(service: T): boolean {
+export function isSelfReconfiguringService<T extends IHasServiceKind>(service: T): service is T & { ServiceKind: 'SelfReconfiguring' } {
     return service.ServiceKind === 'SelfReconfiguring';
 }
 
