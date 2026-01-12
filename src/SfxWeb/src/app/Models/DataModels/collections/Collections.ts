@@ -2,7 +2,7 @@ import { IClusterHealthChunk, IDeployedServicePackageHealthStateChunk } from '..
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Observable, of, throwError } from 'rxjs';
 import { ValueResolver, ITextAndBadge } from 'src/app/Utils/ValueResolver';
-import { IRawDeployedServicePackage, IRawBackupPolicy, IRawBackupConfigurationInfo, IRawPartitionBackup } from '../../RawDataTypes';
+import { IRawDeployedServicePackage, IRawBackupPolicy, IRawBackupConfigurationInfo, IRawPartitionBackup, IRawApplicationBackupConfigurationInfo, IRawServiceBackupConfigurationInfo } from '../../RawDataTypes';
 import { IdGenerator } from 'src/app/Utils/IdGenerator';
 import { DataService } from 'src/app/services/data.service';
 import { HealthStateConstants } from 'src/app/Common/Constants';
@@ -142,7 +142,7 @@ export class ApplicationTypeGroupCollection extends DataModelCollectionBase<Appl
  * ApplicationBackupConfigurationInfoCollection using generic SimpleCollectionWithParent pattern.
  * Fetches application backup configuration info from REST API and maps to model instances.
  */
-export class ApplicationBackupConfigurationInfoCollection extends SimpleCollectionWithParent<ApplicationBackupConfigurationInfo, IRawBackupConfigurationInfo, Application> {
+export class ApplicationBackupConfigurationInfoCollection extends SimpleCollectionWithParent<ApplicationBackupConfigurationInfo, IRawApplicationBackupConfigurationInfo, Application> {
     constructor(data: DataService, parent: Application) {
         super(data, parent, ApplicationBackupConfigurationInfo,
             (dataService, parentApp, messageHandler) => dataService.restClient.getApplicationBackupConfigurationInfoCollection(parentApp.id, messageHandler));
@@ -153,7 +153,7 @@ export class ApplicationBackupConfigurationInfoCollection extends SimpleCollecti
  * ServiceBackupConfigurationInfoCollection using generic SimpleCollectionWithParent pattern.
  * Fetches service backup configuration info from REST API and maps to model instances.
  */
-export class ServiceBackupConfigurationInfoCollection extends SimpleCollectionWithParent<ServiceBackupConfigurationInfo, IRawBackupConfigurationInfo, Service> {
+export class ServiceBackupConfigurationInfoCollection extends SimpleCollectionWithParent<ServiceBackupConfigurationInfo, IRawServiceBackupConfigurationInfo, Service> {
     constructor(data: DataService, parent: Service) {
         super(data, parent, ServiceBackupConfigurationInfo,
             (dataService, parentService, messageHandler) => dataService.restClient.getServiceBackupConfigurationInfoCollection(parentService.id, messageHandler));

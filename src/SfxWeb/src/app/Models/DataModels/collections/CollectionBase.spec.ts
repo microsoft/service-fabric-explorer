@@ -1,7 +1,7 @@
 import { of, Observable } from 'rxjs';
 import { DataService } from 'src/app/services/data.service';
 import { RestClientService } from 'src/app/services/rest-client.service';
-import { DataModelBase, IDataModel } from '../Base';
+import { DataModelBase } from '../Base';
 import { SimpleCollection, SimpleCollectionWithParent } from './CollectionBase';
 
 // Mock raw data type
