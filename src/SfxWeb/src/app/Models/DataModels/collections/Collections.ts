@@ -2,7 +2,7 @@ import { IClusterHealthChunk, IDeployedServicePackageHealthStateChunk } from '..
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Observable, of, throwError } from 'rxjs';
 import { ValueResolver, ITextAndBadge } from 'src/app/Utils/ValueResolver';
-import { IRawDeployedServicePackage, IRawBackupPolicy, IRawPartitionBackup, IRawApplicationBackupConfigurationInfo, IRawServiceBackupConfigurationInfo } from '../../RawDataTypes';
+import { IRawDeployedServicePackage, IRawBackupPolicy, IRawPartitionBackup, IRawApplicationBackupConfigurationInfo, IRawServiceBackupConfigurationInfo, IRawPartition, IRawReplicaOnPartition, IRawService } from '../../RawDataTypes';
 import { IdGenerator } from 'src/app/Utils/IdGenerator';
 import { DataService } from 'src/app/services/data.service';
 import { HealthStateConstants } from 'src/app/Common/Constants';
@@ -211,9 +211,14 @@ export class ServiceTypeCollection extends DataModelCollectionBase<ServiceType> 
     }
 }
 
-export class PartitionCollection extends DataModelCollectionBase<Partition> {
-    public constructor(data: DataService, public parent: Service) {
-        super(data, parent);
+/**
+ * PartitionCollection using generic SimpleCollectionWithParent pattern.
+ * Extends with mergeClusterHealthStateChunk for health state management.
+ */
+export class PartitionCollection extends SimpleCollectionWithParent<Partition, IRawPartition, Service> {
+    constructor(data: DataService, parent: Service) {
+        super(data, parent, Partition,
+            (dataService, parentService, messageHandler) => dataService.restClient.getPartitions(parentService.parent.id, parentService.id, messageHandler));
     }
 
     public mergeClusterHealthStateChunk(clusterHealthChunk: IClusterHealthChunk): Observable<any> {
@@ -226,18 +231,17 @@ export class PartitionCollection extends DataModelCollectionBase<Partition> {
         }
         return of(true);
     }
-
-    protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): Observable<any> {
-        return this.data.restClient.getPartitions(this.parent.parent.id, this.parent.id, messageHandler)
-            .pipe(map(items => {
-                return items.map(raw => new Partition(this.data, raw, this.parent));
-            }));
-    }
 }
 
-export class ReplicaOnPartitionCollection extends DataModelCollectionBase<ReplicaOnPartition> {
-    public constructor(data: DataService, public parent: Partition) {
-        super(data, parent);
+/**
+ * ReplicaOnPartitionCollection using generic SimpleCollectionWithParent pattern.
+ * Extends with additional getters for service type information.
+ */
+export class ReplicaOnPartitionCollection extends SimpleCollectionWithParent<ReplicaOnPartition, IRawReplicaOnPartition, Partition> {
+    constructor(data: DataService, parent: Partition) {
+        super(data, parent, ReplicaOnPartition,
+            (dataService, parentPartition, messageHandler) => dataService.restClient.getReplicasOnPartition(
+                parentPartition.parent.parent.id, parentPartition.parent.id, parentPartition.id, messageHandler));
     }
 
     public get isStatefulService(): boolean {
@@ -246,13 +250,6 @@ export class ReplicaOnPartitionCollection extends DataModelCollectionBase<Replic
 
     public get isStatelessService(): boolean {
         return this.parent.isStatelessService;
-    }
-
-    protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): Observable<any> {
-        return this.data.restClient.getReplicasOnPartition(this.parent.parent.parent.id, this.parent.parent.id, this.parent.id, messageHandler)
-            .pipe(map(items => {
-                return items.map(raw => new ReplicaOnPartition(this.data, raw, this.parent));
-            }));
     }
 }
 
