@@ -2,7 +2,7 @@ import { DataModelBase, IDecorators } from './Base';
 import {
     IRawService, IRawUpdateServiceDescription, IRawServiceHealth, IRawServiceDescription, IRawServiceType, IRawServiceManifest,
     IRawCreateServiceDescription, IRawServiceBackupConfigurationInfo, IRawCreateServiceFromTemplateDescription,
-    isStatefulService, isStatelessService, isSelfReconfiguringService
+    IHasServiceKind
 } from '../RawDataTypes';
 import { PartitionCollection, ServiceBackupConfigurationInfoCollection } from './collections/Collections';
 import { DataService } from 'src/app/services/data.service';
@@ -28,6 +28,20 @@ import { ActionDialogUtils } from 'src/app/modules/action-dialog/utils';
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
 // -----------------------------------------------------------------------------
+
+// Type guards for service kinds - works with any object that has a ServiceKind property
+// Using proper TypeScript type predicates for type narrowing
+export function isStatefulService<T extends IHasServiceKind>(service: T): service is T & { ServiceKind: 'Stateful' } {
+    return service.ServiceKind === 'Stateful';
+}
+
+export function isStatelessService<T extends IHasServiceKind>(service: T): service is T & { ServiceKind: 'Stateless' } {
+    return service.ServiceKind === 'Stateless';
+}
+
+export function isSelfReconfiguringService<T extends IHasServiceKind>(service: T): service is T & { ServiceKind: 'SelfReconfiguring' } {
+    return service.ServiceKind === 'SelfReconfiguring';
+}
 
 export class Service extends DataModelBase<IRawService> {
     public decorators: IDecorators = {

@@ -1,4 +1,4 @@
-import { IRawReplicaOnPartition, IRawReplicaHealth, isStatefulService, isStatelessService, isSelfReconfiguringService } from '../RawDataTypes';
+import { IRawReplicaOnPartition, IRawReplicaHealth } from '../RawDataTypes';
 import { IDecorators, DataModelBase } from './Base';
 import { HtmlUtils } from 'src/app/Utils/HtmlUtils';
 import { DeployedReplicaDetail } from './DeployedReplica';
@@ -14,6 +14,7 @@ import { map, mergeMap } from 'rxjs/operators';
 import { ActionWithConfirmationDialog } from '../Action';
 import { RoutesService } from 'src/app/services/routes.service';
 import { ActionDialogUtils } from 'src/app/modules/action-dialog/utils';
+import { isStatefulService, isStatelessService, isSelfReconfiguringService } from './Service';
 
 // -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.

@@ -2,12 +2,10 @@ import {
     IRawStatefulService,
     IRawStatelessService,
     IRawSelfReconfiguringService,
-    isStatefulService,
-    isStatelessService,
-    isSelfReconfiguringService,
     IRawPartition,
     IRawReplicaOnPartition
 } from './RawDataTypes';
+import { isStatefulService, isStatelessService, isSelfReconfiguringService } from './DataModels/Service';
 
 describe('ServiceKind Type Guards', () => {
 

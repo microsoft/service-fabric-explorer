@@ -1,5 +1,5 @@
 import { DataModelBase, IDecorators } from './Base';
-import { IRawDeployedReplica, IRawPartition, IRawDeployedReplicaDetail, IRawReplicatorStatus, IRawRemoteReplicatorStatus, IRawReplicaInfo, IRawInstanceInfo, isStatefulService, isStatelessService, isSelfReconfiguringService } from '../RawDataTypes';
+import { IRawDeployedReplica, IRawPartition, IRawDeployedReplicaDetail, IRawReplicatorStatus, IRawRemoteReplicatorStatus, IRawReplicaInfo, IRawInstanceInfo } from '../RawDataTypes';
 import { DataService } from 'src/app/services/data.service';
 import { DeployedServicePackage } from './DeployedServicePackage';
 import { IdUtils } from 'src/app/Utils/IdUtils';
@@ -13,6 +13,7 @@ import { ReplicaOnPartition } from './Replica';
 import { LoadMetricReport } from './Partition';
 import { ActionWithConfirmationDialog } from '../Action';
 import { RoutesService } from 'src/app/services/routes.service';
+import { isStatefulService, isStatelessService, isSelfReconfiguringService } from './Service';
 
 // -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.

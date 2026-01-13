@@ -1,8 +1,8 @@
-import { IRawPartition, IRawPartitionHealth, IRawPartitionInformation, IRawPartitionLoadInformation, IRawLoadMetricReport, isStatefulService, isStatelessService, isSelfReconfiguringService } from '../RawDataTypes';
+import { IRawPartition, IRawPartitionHealth, IRawPartitionInformation, IRawPartitionLoadInformation, IRawLoadMetricReport } from '../RawDataTypes';
 import { DataModelBase, IDecorators } from './Base';
 import { ReplicaOnPartitionCollection } from './collections/Collections';
 import { DataService } from 'src/app/services/data.service';
-import { Service } from './Service';
+import { Service, isStatefulService, isStatelessService, isSelfReconfiguringService } from './Service';
 import { HealthStateFilterFlags } from '../HealthChunkRawDataTypes';
 import { ServicePartitionKindRegexes } from 'src/app/Common/Constants';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
