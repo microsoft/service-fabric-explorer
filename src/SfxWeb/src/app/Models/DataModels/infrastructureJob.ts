@@ -24,17 +24,14 @@ export class InfrastructureJob extends DataModelBase<IRawInfrastructureJob> {
        const repairTaskActual = this.data.repairCollection.collection.find(rt => rt.id === this.RepairTask.TaskId);
        this.VmImpact = [];
        this.NodeImpact = [];
-       if (repairTaskActual != null && repairTaskActual.raw.Impact !== null && repairTaskActual.raw.Impact !== undefined && repairTaskActual.raw.Impact.Kind === 'Node') {
-           const impact = repairTaskActual.raw.Impact as IRawNodeRepairImpactDescription;
-           if (Array.isArray(impact.NodeImpactList)) {
-               impact.NodeImpactList.forEach(nt => this.NodeImpact.push(nt.NodeName + ':' + nt.ImpactLevel));
-           }
-       }
+       if (repairTaskActual?.hasNodeImpact()) {
+            repairTaskActual.getNodeImpactList().forEach(nt => this.NodeImpact.push(nt.NodeName + ':' + nt.ImpactLevel));
+        }
        if (this.RepairTask.State === 'Approved' || this.RepairTask.State === 'Executing' || this.RepairTask.State === 'Completed')
        {
            this.raw.AcknowledgementStatus = 'Acknowledged';
        }
-       this.raw.CurrentlyImpactedRoleInstances.forEach( nodeimpact => this.VmImpact.push(nodeimpact.Name + ':' + nodeimpact.ImpactTypes.toString()) );
+       this.raw.CurrentlyImpactedRoleInstances.forEach(nodeimpact => this.VmImpact.push(nodeimpact.Name + ':' + nodeimpact.ImpactTypes.toString()));
        return of(null);
    }
 }

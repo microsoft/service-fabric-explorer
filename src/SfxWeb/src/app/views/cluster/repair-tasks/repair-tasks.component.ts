@@ -77,7 +77,7 @@ export class RepairTasksComponent extends BaseControllerDirective {
 
       const counter = new Counter();
       this.repairTaskCollection.collection.forEach(task => {
-        if (!task.raw.Action.startsWith('External.')) {
+        if (task.raw.Action && !task.raw.Action.startsWith('External.')) {
           counter.add(task.raw.Action);
         }
       });

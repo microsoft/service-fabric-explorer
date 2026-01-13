@@ -60,7 +60,7 @@ export class RepairTaskViewComponent implements OnInit, DetailBaseComponent, OnD
   }
 
   updateNodesList() {
-    const targetNodeNames: string[] = (this.item.raw.Target && this.item.raw.Target !== undefined && this.item.raw.Target.Kind === 'Node' && Array.isArray((this.item.raw.Target as IRawNodeRepairTargetDescription).NodeNames))
+    const targetNodeNames: string[] = (this.item.raw.Target && this.item.raw.Target.Kind === 'Node' && Array.isArray((this.item.raw.Target as IRawNodeRepairTargetDescription).NodeNames))
       ? (this.item.raw.Target as IRawNodeRepairTargetDescription).NodeNames
       : [];
 

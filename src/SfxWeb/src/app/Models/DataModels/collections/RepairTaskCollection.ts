@@ -22,6 +22,10 @@ export class RepairTaskCollection extends DataModelCollectionBase<RepairTask> {
         super(data, parent);
     }
 
+    private get nodeRepairTasks(): RepairTask[] {
+        return this.collection.filter(task => task.isNodeTargeted());
+    }
+
     protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): Observable<any> {
         return this.data.restClient.getRepairTasks(messageHandler)
             .pipe(map(items => {
@@ -36,8 +40,8 @@ export class RepairTaskCollection extends DataModelCollectionBase<RepairTask> {
         this.repairTasks = [];
         this.completedRepairTasks = [];
 
-        this.collection.forEach(task => {
-            if (task.inProgress && task.raw.Target && task.raw.Target !== undefined && task.raw.Target.Kind === 'Node') {
+        this.nodeRepairTasks.forEach(task => {
+            if (task.inProgress) {
                 this.repairTasks.push(task);
                 const executingPhase = task.getPhase('Executing');
                 const approving = task.getPhase('Approved');
@@ -56,9 +60,7 @@ export class RepairTaskCollection extends DataModelCollectionBase<RepairTask> {
                             longRunningExecutingRepairTask = task;
                 }
             } else {
-              if (task.raw.Target && task.raw.Target !== undefined && task.raw.Target.Kind === 'Node') {
                 this.completedRepairTasks.push(task);
-              }
             }
         });
 
@@ -100,14 +102,10 @@ export class RepairTaskCollection extends DataModelCollectionBase<RepairTask> {
         } catch (e) {
           console.error(e)
         }
-
       }));
     }
 
     public getRepairJobsForANode(nodeName: string) {
-      return this.collection.filter(task => {
-        const targetNodeNames = (task.raw.Target && task.raw.Target !== undefined && task.raw.Target.Kind === 'Node' && (task.raw.Target as IRawNodeRepairTargetDescription).NodeNames) ? (task.raw.Target as IRawNodeRepairTargetDescription).NodeNames : [];
-        return targetNodeNames.includes(nodeName) || task.impactedNodes.includes(nodeName);
-      });
+      return this.collection.filter(task => task.affectsNode(nodeName));
     }
 }
