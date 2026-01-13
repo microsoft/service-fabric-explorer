@@ -258,6 +258,72 @@ describe('HealthState', () => {
             expect(new HealthState('Error').toString()).toBe('Error');
         });
     });
+
+    describe('hasWarningsOrErrors', () => {
+        it('should return false for Ok state', () => {
+            const state = new HealthState('Ok');
+            expect(state.hasWarningsOrErrors).toBe(false);
+        });
+
+        it('should return true for Warning state', () => {
+            const state = new HealthState('Warning');
+            expect(state.hasWarningsOrErrors).toBe(true);
+        });
+
+        it('should return true for Error state', () => {
+            const state = new HealthState('Error');
+            expect(state.hasWarningsOrErrors).toBe(true);
+        });
+
+        it('should return false for Unknown state', () => {
+            const state = new HealthState('Unknown');
+            expect(state.hasWarningsOrErrors).toBe(false);
+        });
+    });
+
+    describe('bannerClass', () => {
+        it('should return banner-green for Ok state', () => {
+            const state = new HealthState('Ok');
+            expect(state.bannerClass).toBe('banner-green');
+        });
+
+        it('should return banner-yellow for Warning state', () => {
+            const state = new HealthState('Warning');
+            expect(state.bannerClass).toBe('banner-yellow');
+        });
+
+        it('should return banner-red for Error state', () => {
+            const state = new HealthState('Error');
+            expect(state.bannerClass).toBe('banner-red');
+        });
+
+        it('should return banner-gray for Unknown state', () => {
+            const state = new HealthState('Unknown');
+            expect(state.bannerClass).toBe('banner-gray');
+        });
+    });
+
+    describe('badgeClass', () => {
+        it('should return badge-ok for Ok state', () => {
+            const state = new HealthState('Ok');
+            expect(state.badgeClass).toBe('badge-ok');
+        });
+
+        it('should return badge-warning for Warning state', () => {
+            const state = new HealthState('Warning');
+            expect(state.badgeClass).toBe('badge-warning');
+        });
+
+        it('should return badge-error for Error state', () => {
+            const state = new HealthState('Error');
+            expect(state.badgeClass).toBe('badge-error');
+        });
+
+        it('should return badge-unknown for Unknown state', () => {
+            const state = new HealthState('Unknown');
+            expect(state.badgeClass).toBe('badge-unknown');
+        });
+    });
 });
 
 describe('HealthStateUtils', () => {
@@ -339,6 +405,80 @@ describe('HealthStateUtils', () => {
             ];
             const result = HealthStateUtils.countByHealthState(entities);
             expect(result).toEqual({ ok: 1, warning: 0, error: 0, unknown: 1 });
+        });
+    });
+
+    describe('filterUnhealthy', () => {
+        it('should return empty array for null input', () => {
+            const result = HealthStateUtils.filterUnhealthy(null);
+            expect(result).toEqual([]);
+        });
+
+        it('should return empty array for empty input', () => {
+            const result = HealthStateUtils.filterUnhealthy([]);
+            expect(result).toEqual([]);
+        });
+
+        it('should filter entities with warnings or errors', () => {
+            const entities: IHealthAware[] = [
+                { healthStateValue: new HealthState('Ok'), isHealthy: true },
+                { healthStateValue: new HealthState('Warning'), isHealthy: false },
+                { healthStateValue: new HealthState('Error'), isHealthy: false },
+                { healthStateValue: new HealthState('Unknown'), isHealthy: false }
+            ];
+            const result = HealthStateUtils.filterUnhealthy(entities);
+            expect(result.length).toBe(2);
+            expect(result[0].healthStateValue.state).toBe('Warning');
+            expect(result[1].healthStateValue.state).toBe('Error');
+        });
+    });
+
+    describe('filterHealthy', () => {
+        it('should return empty array for null input', () => {
+            const result = HealthStateUtils.filterHealthy(null);
+            expect(result).toEqual([]);
+        });
+
+        it('should filter only healthy entities', () => {
+            const entities: IHealthAware[] = [
+                { healthStateValue: new HealthState('Ok'), isHealthy: true },
+                { healthStateValue: new HealthState('Warning'), isHealthy: false },
+                { healthStateValue: new HealthState('Ok'), isHealthy: true }
+            ];
+            const result = HealthStateUtils.filterHealthy(entities);
+            expect(result.length).toBe(2);
+            expect(result[0].healthStateValue.state).toBe('Ok');
+            expect(result[1].healthStateValue.state).toBe('Ok');
+        });
+    });
+
+    describe('hasAnyUnhealthy', () => {
+        it('should return false for null input', () => {
+            const result = HealthStateUtils.hasAnyUnhealthy(null);
+            expect(result).toBe(false);
+        });
+
+        it('should return false for empty array', () => {
+            const result = HealthStateUtils.hasAnyUnhealthy([]);
+            expect(result).toBe(false);
+        });
+
+        it('should return true if any entity has warnings or errors', () => {
+            const entities: IHealthAware[] = [
+                { healthStateValue: new HealthState('Ok'), isHealthy: true },
+                { healthStateValue: new HealthState('Warning'), isHealthy: false }
+            ];
+            const result = HealthStateUtils.hasAnyUnhealthy(entities);
+            expect(result).toBe(true);
+        });
+
+        it('should return false if all entities are healthy', () => {
+            const entities: IHealthAware[] = [
+                { healthStateValue: new HealthState('Ok'), isHealthy: true },
+                { healthStateValue: new HealthState('Ok'), isHealthy: true }
+            ];
+            const result = HealthStateUtils.hasAnyUnhealthy(entities);
+            expect(result).toBe(false);
         });
     });
 });

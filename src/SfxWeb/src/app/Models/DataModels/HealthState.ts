@@ -165,6 +165,50 @@ export class HealthState {
     public toString(): string {
         return this.state;
     }
+
+    /**
+     * Returns true if the health state is Warning or Error.
+     * Common check used throughout the application.
+     */
+    public get hasWarningsOrErrors(): boolean {
+        return this.hasWarnings || this.hasErrors;
+    }
+
+    /**
+     * Returns the banner color class based on health state.
+     * Useful for UI components that need to display a colored banner.
+     * @returns A banner color class string (e.g., 'banner-green', 'banner-yellow', 'banner-red', 'banner-gray')
+     */
+    public get bannerClass(): string {
+        switch (this.state) {
+            case 'Ok':
+                return 'banner-green';
+            case 'Warning':
+                return 'banner-yellow';
+            case 'Error':
+                return 'banner-red';
+            default:
+                return 'banner-gray';
+        }
+    }
+
+    /**
+     * Returns the badge CSS class based on health state.
+     * Useful for UI components that need to display a health badge.
+     * @returns A badge class string (e.g., 'badge-ok', 'badge-warning', 'badge-error', 'badge-unknown')
+     */
+    public get badgeClass(): string {
+        switch (this.state) {
+            case 'Ok':
+                return 'badge-ok';
+            case 'Warning':
+                return 'badge-warning';
+            case 'Error':
+                return 'badge-error';
+            default:
+                return 'badge-unknown';
+        }
+    }
 }
 
 /**
@@ -255,5 +299,41 @@ export class HealthStateUtils {
         });
 
         return counts;
+    }
+
+    /**
+     * Filters entities that have warnings or errors.
+     * @param entities Array of health-aware entities
+     * @returns Array of entities with warning or error health state
+     */
+    public static filterUnhealthy(entities: IHealthAware[]): IHealthAware[] {
+        if (!entities) {
+            return [];
+        }
+        return entities.filter(entity => entity.healthStateValue?.hasWarningsOrErrors);
+    }
+
+    /**
+     * Filters entities that are healthy (OK state).
+     * @param entities Array of health-aware entities
+     * @returns Array of entities with OK health state
+     */
+    public static filterHealthy(entities: IHealthAware[]): IHealthAware[] {
+        if (!entities) {
+            return [];
+        }
+        return entities.filter(entity => entity.healthStateValue?.isHealthy);
+    }
+
+    /**
+     * Checks if any entity in the collection has warnings or errors.
+     * @param entities Array of health-aware entities
+     * @returns true if any entity has warnings or errors
+     */
+    public static hasAnyUnhealthy(entities: IHealthAware[]): boolean {
+        if (!entities || entities.length === 0) {
+            return false;
+        }
+        return entities.some(entity => entity.healthStateValue?.hasWarningsOrErrors);
     }
 }

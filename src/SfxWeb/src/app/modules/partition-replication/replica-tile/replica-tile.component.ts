@@ -1,5 +1,4 @@
 import { Component, Input, OnChanges, OnInit, Output, EventEmitter } from '@angular/core';
-import { HealthStateConstants } from 'src/app/Common/Constants';
 import { ReplicaOnPartition } from 'src/app/Models/DataModels/Replica';
 import { IRawRemoteReplicatorStatus } from 'src/app/Models/RawDataTypes';
 import { IEssentialListItem } from '../../charts/essential-health-tile/essential-health-tile.component';
@@ -55,17 +54,8 @@ export class ReplicaTileComponent implements OnChanges {
       displaySelector: true
     };
 
-    let bannerColor = '';
-    if (this.replica.healthState.text === HealthStateConstants.OK) {
-      bannerColor = 'green';
-    } else if (this.replica.healthState.text === HealthStateConstants.Warning) {
-      bannerColor = 'yellow';
-    } else if (this.replica.healthState.text === HealthStateConstants.Error) {
-      bannerColor = 'red';
-    } else {
-      bannerColor = 'gray';
-    }
-    this.leftBannerColor = 'banner-' + bannerColor;
+    // Use the unified HealthState.bannerClass for consistent banner color mapping
+    this.leftBannerColor = this.replica.healthStateValue.bannerClass;
   }
 
   changeReplication() {
