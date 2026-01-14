@@ -1061,7 +1061,8 @@ export interface IRawClusterVersion {
 
 export interface IRawNodeImpact {
         NodeName: string;
-        ImpactLevel	?: number;
+        // Service Fabric APIs have historically returned either numeric enums or string names.
+        ImpactLevel?: string | number;
     }
 
 export interface IRawNodeRepairImpactDescription {
@@ -1069,10 +1070,42 @@ export interface IRawNodeRepairImpactDescription {
         NodeImpactList: IRawNodeImpact[];
     }
 
+export interface IRawExternalImpactInfo {
+        ImpactLevel?: string | number;
+        [key: string]: any;
+    }
+
+export interface IRawExternalRepairImpactDescription {
+        Kind: 'External' | string;
+        ExternalImpactInfo?: IRawExternalImpactInfo;
+        [key: string]: any;
+    }
+
+export type IRawRepairImpactDescription =
+    IRawNodeRepairImpactDescription |
+    IRawExternalRepairImpactDescription |
+    { Kind: string; [key: string]: any };
+
 export interface IRawNodeRepairTargetDescription {
         Kind: string;
         NodeNames: string[];
     }
+
+export interface IRawExternalRepairTargetDescription {
+        Kind: 'External' | string;
+        [key: string]: any;
+    }
+
+export type IRawRepairTargetDescription =
+    IRawNodeRepairTargetDescription |
+    IRawExternalRepairTargetDescription |
+    { Kind: string; [key: string]: any };
+
+export interface IRawRepairTaskScopeDescription {
+        Kind: string;
+        [key: string]: any;
+    }
+
 export interface IRawRepairTaskHistory {
         CreatedUtcTimestamp ?: string;
         ClaimedUtcTimestamp ?: string;
@@ -1094,10 +1127,10 @@ export interface IRawRepairTask {
         State: string;
         Flags?: number;
         Action: string;
-        Target?: IRawNodeRepairTargetDescription;
+        Target?: IRawRepairTargetDescription;
         Executor?: string;
         ExecutorData?: string;
-        Impact?: IRawNodeRepairImpactDescription;
+        Impact?: IRawRepairImpactDescription;
         ResultStatus?: string;
         ResultCode?: number;
         ResultDetail?: string;
@@ -1106,6 +1139,8 @@ export interface IRawRepairTask {
         RestoringHealthCheckState?: string;
         PerformPreparingHealthCheck?: boolean;
         PerformRestoringHealthCheck?: boolean;
+        // Some endpoints return `Scope` while older code paths used `scope`.
+        Scope?: IRawRepairTaskScopeDescription;
         scope?: any;
         ResultDetails?: string;
     }
