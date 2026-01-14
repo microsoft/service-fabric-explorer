@@ -1101,29 +1101,29 @@ export interface IRawRepairTask {
 export interface IRawInfrastructureDocument {
         Incarnation: string;
         JobDocumentIncarnation: number;
-        Jobs: IJob[];
-        JobSetsRequiringApproval: IJobSetsRequiringApproval[];
+        Jobs: IRawJob[];
+        JobSetsRequiringApproval: IRawJobSetsRequiringApproval[];
         RoleInstanceHealthInfoIncarnation: string;
         RoleInstanceHealthInfoTimestamp: string;
-        RoleInstanceHealthInfos: IRoleInstanceHealthInfo[];
-        PendingUpdatesOnRoleInstances: IRoleInstancePendingUpdate[];
+        RoleInstanceHealthInfos: IRawRoleInstanceHealthInfo[];
+        PendingUpdatesOnRoleInstances: IRawRoleInstancePendingUpdate[];
         MRConversationId: string;
         CoordinationGroupId: string;
-        RoleInstanceToNodeIDHashList: IRoleInstanceToNodeIDHashWrapper[];
+        RoleInstanceToNodeIDHashList: IRawRoleInstanceToNodeIDHashWrapper[];
     }
 
-export interface IRoleInstanceToNodeIDHashWrapper {
+export interface IRawRoleInstanceToNodeIDHashWrapper {
         RoleInstanceName: string;
         NodeIdHash: string;
     }
 
-export interface IRoleInstancePendingUpdate {
+export interface IRawRoleInstancePendingUpdate {
         RoleInstanceName: string;
         UpdateTypes: string[];
-        ExpectedImpact: IAffectedResourceImpact;
+        ExpectedImpact: IRawAffectedResourceImpact;
     }
 
-export interface IAffectedResourceImpact {
+export interface IRawAffectedResourceImpact {
         ListOfImpactTypes: string[];
         DiskImpact: string;
         ComputeImpact: string;
@@ -1133,34 +1133,34 @@ export interface IAffectedResourceImpact {
         EstimatedImpactDurationInSeconds: number;
     }
 
-export interface IRoleInstanceHealthInfo {
+export interface IRawRoleInstanceHealthInfo {
         RoleInstanceName: string;
         Health: string;
         NodeHealthIndex: number;
     }
 
-export interface IJobSetsRequiringApproval {
+export interface IRawJobSetsRequiringApproval {
         Jobset: string[];
     }
 
-export interface IJob {
+export interface IRawJob {
         Id: string;
         JobStatus: string;
         RoleInstancesToBeImpacted: string[];
         ContextStringGivenByTenant: string;
-        JobStep: IJobStep;
-        ImpactDetail: IImpactDetail;
+        JobStep: IRawJobStep;
+        ImpactDetail: IRawImpactDetail;
         CorrelationId: string;
         IsCriticalRollout: boolean;
         SafeFlyId: string;
     }
 
-export interface IImpactDetail {
+export interface IRawImpactDetail {
         ImpactAction: string;
-        ImpactedResources: IImpactedResources;
+        ImpactedResources: IRawImpactedResources;
     }
 
-export interface IImpactedResources {
+export interface IRawImpactedResources {
         ListOfImpactTypes: string[];
         DiskImpact: string;
         ComputeImpact: string;
@@ -1170,21 +1170,21 @@ export interface IImpactedResources {
         EstimatedImpactDurationInSeconds: number;
     }
 
-export interface IJobStep {
+export interface IRawJobStep {
         ImpactStep: string;
         AcknowledgementStatus: string;
         DeadlineForResponse: string;
-        CurrentlyImpactedRoleInstances: IInstanceImpact[];
+        CurrentlyImpactedRoleInstances: IRawInstanceImpact[];
         ActionStatus: string;
     }
 
-export interface IInstanceImpact {
+export interface IRawInstanceImpact {
         RoleInstanceName: string;
         UpdateDomain: string;
-        ExpectedImpact: IExpectedImpact;
+        ExpectedImpact: IRawExpectedImpact;
     }
 
-export interface IExpectedImpact {
+export interface IRawExpectedImpact {
         ListOfImpactTypes: string[];
         DiskImpact: string;
         ComputeImpact: string;
