@@ -8,7 +8,7 @@ import { NgbNavModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { StripPrefixPipe } from './strip-prefix.pipe';
 import { RepairTasksModule } from '../repair-tasks/repair-tasks.module';
 import { InfrastructureOverviewComponent } from './infrastructure-overview/infrastructure-overview.component';
-import { InfrastructureDocsComponent } from './Infrastructure-docs/Infrastructure-docs.component';
+import { InfrastructureDocsComponent } from './infrastructure-docs/infrastructure-docs.component';
 import { ChartsModule } from '../charts/charts.module';
 
 @NgModule({
