@@ -518,7 +518,7 @@ export interface IRawParameter {
     }
 
 export interface IRawPartition {
-        ServiceKind: string;
+        ServiceKind: ServiceKind;
         PartitionInformation: IRawPartitionInformation;
         TargetReplicaSetSize: number;
         MinReplicaSetSize: number;
@@ -603,7 +603,7 @@ export interface IRawDeployedReplica {
     ReconfigurationInformation: IReconfigurationInformation;
     ReplicaRole: string;
     ReplicaStatus: string;
-    ServiceKind: string;
+    ServiceKind: ServiceKind;
     ServiceManifestVersion: string;
     ServiceName: string;
     ServiceTypeName: string;
@@ -716,7 +716,7 @@ export interface IRawReplicaOnPartition {
         LastInBuildDurationInSeconds: string;
         NodeName: string;
         ReplicaStatus: string;
-        ServiceKind: string;
+        ServiceKind: ServiceKind;
         ToBeRemovedReplicaExpirationTimeUtc: string;
         InstanceRole: string;
         PreviousSelfReconfiguringInstanceRole: string;
@@ -725,24 +725,50 @@ export interface IRawReplicaOnPartition {
     }
 
 export interface IRawReplicaHealthState {
-        ServiceKind: string;
+        ServiceKind: ServiceKind;
         PartitionId: string;
         ReplicaId: string;
         AggregatedHealthState: string;
     }
 
-export interface IRawService {
+// ServiceKind discriminated union types
+export type ServiceKind = 'Stateful' | 'Stateless' | 'SelfReconfiguring';
+
+// Base interface with common properties
+export interface IRawServiceBase {
         Id: string;
-        ServiceKind: string;
         Name: string;
         TypeName: string;
         ManifestVersion: string;
         ServiceStatus: string;
-        HasPersistedState: boolean; // Only shows up when this is a stateful service.
         HealthState: string;
         IsServiceGroup: boolean;
         ServiceMetadata?: IRawServiceMetadata
     }
+
+// Stateful service specific interface
+export interface IRawStatefulService extends IRawServiceBase {
+        ServiceKind: 'Stateful';
+        HasPersistedState: boolean;
+    }
+
+// Stateless service specific interface
+export interface IRawStatelessService extends IRawServiceBase {
+        ServiceKind: 'Stateless';
+    }
+
+// SelfReconfiguring service specific interface
+export interface IRawSelfReconfiguringService extends IRawServiceBase {
+        ServiceKind: 'SelfReconfiguring';
+    }
+
+// Union type for all service kinds
+export type IRawService = IRawStatefulService | IRawStatelessService | IRawSelfReconfiguringService;
+
+// Interface for any object with ServiceKind property (used for type guards)
+export interface IHasServiceKind {
+    ServiceKind: ServiceKind;
+}
 
 export interface IRawServiceCorrelationDescription {
         ServiceName: string;
