@@ -8,7 +8,7 @@ import { NgbNavModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { StripPrefixPipe } from './strip-prefix.pipe';
 import { RepairTasksModule } from '../repair-tasks/repair-tasks.module';
 import { InfrastructureOverviewComponent } from './infrastructure-overview/infrastructure-overview.component';
-import { infrastructureDocssComponent } from './infrastructure-docss/infrastructure-docss.component';
+import { InfrastructureDocsComponent } from './infrastructure-docs/infrastructure-docs.component';
 import { ChartsModule } from '../charts/charts.module';
 
 @NgModule({
@@ -16,7 +16,7 @@ import { ChartsModule } from '../charts/charts.module';
     InfrastructureJobTileComponent,
     StripPrefixPipe,
     InfrastructureOverviewComponent,
-    infrastructureDocssComponent
+    InfrastructureDocsComponent
   ],
   imports: [
     CommonModule,
@@ -32,7 +32,7 @@ import { ChartsModule } from '../charts/charts.module';
     InfrastructureJobTileComponent,
     StripPrefixPipe,
     InfrastructureOverviewComponent,
-    infrastructureDocssComponent
+    InfrastructureDocsComponent
   ]
 })
 export class InfrastructureJobModule { }
