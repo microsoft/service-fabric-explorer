@@ -1,4 +1,4 @@
-import { IRawInfrastructureJob, InfraRepairTask } from '../RawDataTypes';
+import { IRawInfrastructureJob, IRawNodeRepairImpactDescription, InfraRepairTask } from '../RawDataTypes';
 import { DataModelBase } from './Base';
 import { DataService } from 'src/app/services/data.service';
 import { of } from 'rxjs';
@@ -24,15 +24,14 @@ export class InfrastructureJob extends DataModelBase<IRawInfrastructureJob> {
        const repairTaskActual = this.data.repairCollection.collection.find(rt => rt.id === this.RepairTask.TaskId);
        this.VmImpact = [];
        this.NodeImpact = [];
-       if (repairTaskActual != null && repairTaskActual.raw.Impact !== null)
-       {
-           repairTaskActual.raw.Impact.NodeImpactList.forEach(nt => this.NodeImpact.push(nt.NodeName + ':' + nt.ImpactLevel) );
-       }
+       if (repairTaskActual?.hasNodeImpact()) {
+            repairTaskActual.getNodeImpactList().forEach(nt => this.NodeImpact.push(nt.NodeName + ':' + nt.ImpactLevel));
+        }
        if (this.RepairTask.State === 'Approved' || this.RepairTask.State === 'Executing' || this.RepairTask.State === 'Completed')
        {
            this.raw.AcknowledgementStatus = 'Acknowledged';
        }
-       this.raw.CurrentlyImpactedRoleInstances.forEach( nodeimpact => this.VmImpact.push(nodeimpact.Name + ':' + nodeimpact.ImpactTypes.toString()) );
+       this.raw.CurrentlyImpactedRoleInstances.forEach(nodeimpact => this.VmImpact.push(nodeimpact.Name + ':' + nodeimpact.ImpactTypes.toString()));
        return of(null);
    }
 }

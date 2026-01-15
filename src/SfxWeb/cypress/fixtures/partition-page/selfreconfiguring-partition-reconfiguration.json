@@ -1,0 +1,18 @@
+{
+    "ServiceKind": "SelfReconfiguring",
+    "PartitionInformation": {
+        "ServicePartitionKind": "Singleton",
+        "Id": "79dd3bba-966d-42c2-89b1-baa4580b462c"
+    },
+    "InstanceCount": 2,
+    "MinInstanceCount": 2,
+    "HealthState": "Ok",
+    "PartitionStatus": "Reconfiguring",
+    "ConfigurationRequestId": {
+        "GenerationNumber": "134090569650281326",
+        "SequenceNumber": "27"
+    },
+    "ConfigurationReportId": {
+        "SequenceNumber": "26"
+    }
+}

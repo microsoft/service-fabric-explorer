@@ -1,4 +1,4 @@
-import { IRawRepairTask } from '../RawDataTypes';
+import { IRawNodeImpact, IRawNodeRepairImpactDescription, IRawNodeRepairTargetDescription, IRawRepairTask } from '../RawDataTypes';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { DataModelBase } from './Base';
 import { DataService } from 'src/app/services/data.service';
@@ -53,7 +53,6 @@ export interface IConcerningJobInfo {
   description: string;
   helpLink?: string;
 }
-
 
 export class RepairTask extends DataModelBase<IRawRepairTask> implements IRCAItem {
     public static readonly ExecutingStatus = 'Executing';
@@ -168,7 +167,6 @@ export class RepairTask extends DataModelBase<IRawRepairTask> implements IRCAIte
             };
         });
     }
-
 
     private generateHistoryPhase(name: string, phases: IRepairTaskHistoryPhase[]): IRepairTaskPhase {
 
@@ -290,15 +288,16 @@ export class RepairTask extends DataModelBase<IRawRepairTask> implements IRCAIte
   }
 
     updateInternal(): Observable<any> {
-        if (this.raw.Impact) {
-            this.impactedNodes = this.raw.Impact.NodeImpactList.map(node => node.NodeName);
-            this.impactedNodesWithImpact = this.raw.Impact.NodeImpactList.map(node => {
+        if (this.raw.Impact && this.raw.Impact.Kind === 'Node' && Array.isArray((this.raw.Impact as IRawNodeRepairImpactDescription).NodeImpactList)) {
+            const nodeImpactList = (this.raw.Impact as IRawNodeRepairImpactDescription).NodeImpactList;
+            this.impactedNodes = nodeImpactList.map(node => node.NodeName);
+            this.impactedNodesWithImpact = nodeImpactList.map(node => {
               let name = node.NodeName;
-              if(node.ImpactLevel) {
-                name += ":" + node.ImpactLevel
+              if (node.ImpactLevel !== undefined && node.ImpactLevel !== null && node.ImpactLevel !== '') {
+                name += ":" + node.ImpactLevel;
               }
               return name;
-            })
+            });
         }
         this.timeStamp = new Date(this.raw.History.CreatedUtcTimestamp).toISOString();
         this.inProgress = this.raw.State !== 'Completed';
@@ -371,5 +370,48 @@ export class RepairTask extends DataModelBase<IRawRepairTask> implements IRCAIte
     public changePhaseCollapse(phase: string, state: boolean) {
       this.getHistoryPhase(phase).startCollapsed = state;
       this.timeStampsCollapses[phase] = state;
+    }
+    
+    /**
+     * Returns true if this repair task targets specific nodes (vs external resources)
+     */
+    public isNodeTargeted(): boolean {
+        return this.raw.Target?.Kind === 'Node';
+    }
+
+    /**
+     * Returns true if this repair task has node-level impact information
+     */
+    public hasNodeImpact(): boolean {
+        return this.raw.Impact?.Kind === 'Node' && 
+            Array.isArray((this.raw.Impact as IRawNodeRepairImpactDescription).NodeImpactList);
+    }
+
+    /**
+     * Returns the target node names if this is a node-targeted repair task
+     */
+    public getTargetNodeNames(): string[] {
+        if (this.isNodeTargeted()) {
+            return (this.raw.Target as IRawNodeRepairTargetDescription).NodeNames || [];
+        }
+        return [];
+    }
+
+    /**
+     * Returns the node impact list for Node repair task
+     */
+    public getNodeImpactList(): IRawNodeImpact[] {
+        if (this.hasNodeImpact()) {
+            return (this.raw.Impact as IRawNodeRepairImpactDescription).NodeImpactList;
+        }
+        return [];
+    }
+
+    /**
+     * Checks if this repair task affects a specific node
+     */
+    public affectsNode(nodeName: string): boolean {
+        return this.getTargetNodeNames().includes(nodeName) || 
+            this.impactedNodes.includes(nodeName);
     }
 }
