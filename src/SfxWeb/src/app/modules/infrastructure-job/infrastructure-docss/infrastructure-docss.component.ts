@@ -3,11 +3,11 @@ import { Component, Input } from '@angular/core';
 import { InfrastructureDocumentCollection } from 'src/app/Models/DataModels/collections/InfrastructureDocCollection';
 
 @Component({
-  selector: 'app-infrastructure-docs',
-  templateUrl: './Infrastructure-docs.component.html',
-  styleUrls: ['./Infrastructure-docs.component.scss']
+  selector: 'app-infrastructure-docss',
+  templateUrl: './infrastructure-docss.component.html',
+  styleUrls: ['./infrastructure-docss.component.scss']
 })
-export class InfrastructureDocsComponent  {
+export class infrastructureDocssComponent  {
   @Input() infrastructureDocumentCollection: InfrastructureDocumentCollection;
   selectedInfrastructureService: any = "None" ;
 
