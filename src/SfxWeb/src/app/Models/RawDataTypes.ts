@@ -1183,8 +1183,8 @@ export interface IRawArmMetadata{
     ArmResourceId?: string;
 }
 
-export interface IRawFMMLocation {
+export interface IRawFailoverManagerManagerInformation {
     NodeName: string;
     NodeId: IRawId;
-    InstanceId: string;
+    NodeInstanceId: string;
 }

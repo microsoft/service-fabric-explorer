@@ -13,7 +13,7 @@ import { IRawCollection, IRawClusterManifest, IRawClusterHealth, IRawClusterUpgr
          IRawServiceHealth, IRawApplicationUpgradeProgress, IRawCreateComposeDeploymentDescription, IRawPartition, IRawPartitionHealth, IRawPartitionLoadInformation,
          IRawReplicaOnPartition, IRawReplicaHealth, IRawImageStoreContent, IRawStoreFolderSize, IRawClusterVersion, IRawList, IRawAadMetadata, IRawStorage, IRawRepairTask,
          IRawServiceNameInfo, IRawApplicationNameInfo, IRawBackupEntity, IRawInfrastructureJob, IRawInfraRepairTask, IRawRoleInstanceImpact, 
-         IRawFMMLocation} from '../Models/RawDataTypes';
+         IRawFailoverManagerManagerInformation} from '../Models/RawDataTypes';
 import { mergeMap, map, catchError, finalize, skip } from 'rxjs/operators';
 import { Application } from '../Models/DataModels/Application';
 import { Service } from '../Models/DataModels/Service';
@@ -783,10 +783,10 @@ export class RestClientService {
       return this.get(this.getApiUrl(url, RestClientService.apiVersion64), 'Get cluster version', messageHandler);
   }
 
-  public getFMMLocation(messageHandler?: IResponseMessageHandler): Observable<IRawFMMLocation> {
-    const url = `$/GetFmmLocation`;
+  public getFailoverManagerManagerInformation(messageHandler?: IResponseMessageHandler): Observable<IRawFailoverManagerManagerInformation> {
+    const url = `$/GetFailoverManagerManagerInformation`;
 
-    return this.get(this.getApiUrl(url, RestClientService.apiVersion64), 'Get FMM location', messageHandler);
+    return this.get(this.getApiUrl(url, RestClientService.apiVersion64), 'Get Failover Manager Manager (FMM) information', messageHandler);
   }
 
   private getEvents<T extends FabricEventBase>(eventType: new () => T, url: string, startTime: Date, endTime: Date, eventsTypesFilter: string[], messageHandler?: IResponseMessageHandler, apiVersion?: string): Observable<T[]> {

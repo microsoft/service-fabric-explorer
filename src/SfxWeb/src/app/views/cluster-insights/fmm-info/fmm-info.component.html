@@ -1,7 +1,7 @@
 <app-dashboard-text-scale-tile>
   <div style="display: flex; flex-direction: column">
     <h2 class="title-wrapper top-seperator">
-      FMM Location
+      FMM Information
       <span class="mif-loop2 rotate" *ngIf="isLoading"></span>
     </h2>
     
@@ -9,25 +9,25 @@
       <div class="flex-center line-item-seperator">
         <div class="fmm-label">Node Name</div>
         <div class="fmm-value">
-          {{ fmmLocation?.NodeName }}
+          {{ fmmInfo?.NodeName }}
         </div>
-        <app-clip-board [text]="fmmLocation?.NodeName" *ngIf="fmmLocation?.NodeName" [name]="'Node Name'"></app-clip-board>
+        <app-clip-board [text]="fmmInfo?.NodeName" *ngIf="fmmInfo?.NodeName" [name]="'Node Name'"></app-clip-board>
       </div>
       
       <div class="flex-center line-item-seperator">
         <div class="fmm-label">Node ID</div>
         <div class="fmm-value">
-          {{ fmmLocation?.NodeId?.Id }}
+          {{ fmmInfo?.NodeId?.Id }}
         </div>
-        <app-clip-board [text]="fmmLocation?.NodeId?.Id" *ngIf="fmmLocation?.NodeId?.Id" [name]="'Node ID'"></app-clip-board>
+        <app-clip-board [text]="fmmInfo?.NodeId?.Id" *ngIf="fmmInfo?.NodeId?.Id" [name]="'Node ID'"></app-clip-board>
       </div>
       
       <div class="flex-center line-item-seperator">
         <div class="fmm-label">Node Instance ID</div>
         <div class="fmm-value">
-          {{ fmmLocation?.InstanceId }}
+          {{ fmmInfo?.NodeInstanceId }}
         </div>
-        <app-clip-board [text]="fmmLocation?.InstanceId" *ngIf="fmmLocation?.InstanceId" [name]="'Instance ID'"></app-clip-board>
+        <app-clip-board [text]="fmmInfo?.NodeInstanceId" *ngIf="fmmInfo?.NodeInstanceId" [name]="'Node Instance ID'"></app-clip-board>
       </div>
     </div>
   </div>
