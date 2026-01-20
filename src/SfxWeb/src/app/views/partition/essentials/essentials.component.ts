@@ -29,25 +29,34 @@ export class EssentialsComponent extends PartitionBaseControllerDirective {
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
     this.setEssentialData();
-
-    if (!this.listSettings) {
-        let defaultSortProperties = ['replicaRoleSortPriority', 'raw.NodeName'];
-        const columnSettings = [
-            new ListColumnSettingForLink('id', 'Id', item => item.viewPath),
-            new ListColumnSetting('raw.NodeName', 'Node Name'),
-            new ListColumnSettingWithFilter('role', 'Replica Role', {sortPropertyPaths: defaultSortProperties}),
-            new ListColumnSettingForBadge('healthState', 'Health State'),
-            new ListColumnSettingWithFilter('raw.ReplicaStatus', 'Status')
-        ];
-
-        if (this.partition.isStatelessService) {
-            columnSettings.splice(2, 1); // Remove replica role column
-            defaultSortProperties = ['raw.NodeName'];
-        }
-
-        // Keep the sort properties in sync with the sortBy for ClusterTreeService.getDeployedReplicas
-        this.listSettings = this.settings.getNewOrExistingListSettings('replicas', defaultSortProperties, columnSettings);
+    
+    let defaultSortProperties = ['replicaRoleSortPriority', 'raw.NodeName'];
+    const columnSettings = [
+        new ListColumnSettingForLink('id', 'Id', item => item.viewPath),
+        new ListColumnSetting('raw.NodeName', 'Node Name'),
+        new ListColumnSettingWithFilter('role', 'Replica Role', {sortPropertyPaths: defaultSortProperties}),
+        new ListColumnSettingForBadge('healthState', 'Health State'),
+        new ListColumnSettingWithFilter('raw.ReplicaStatus', 'Status')
+    ];
+    
+    if (this.partition.isStatelessService) {
+        columnSettings.splice(2, 1); // Remove replica role column
+        defaultSortProperties = ['raw.NodeName'];
     }
+    
+    // Add Activation State column for Self Reconfiguring Services
+    if (this.partition.isSelfReconfiguringService) {
+        columnSettings.splice(3, 0, new ListColumnSetting('activationState', 'Activation State'));
+    }
+    
+    // ListSettings persists across navigation, so we need to use different settings name, so they can have different column configurations
+    const settingsName = this.partition.isSelfReconfiguringService ? 'replicas-selfreconfiguring' 
+                    : this.partition.isStatelessService ? 'replicas-stateless'
+                    : 'replicas-stateful';
+    
+    // Keep the sort properties in sync with the sortBy for ClusterTreeService.getDeployedReplicas
+    this.listSettings = this.settings.getNewOrExistingListSettings(settingsName, defaultSortProperties, columnSettings);
+    
 
     return forkJoin([
       this.partition.health.refresh(messageHandler),

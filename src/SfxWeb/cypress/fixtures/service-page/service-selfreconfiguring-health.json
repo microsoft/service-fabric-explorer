@@ -1,0 +1,44 @@
+{
+    "HealthEvents": [
+        {
+            "SourceId": "System.FM",
+            "Property": "State",
+            "HealthState": "Ok",
+            "TimeToLiveInMilliSeconds": "P10675199DT2H48M5.4775807S",
+            "Description": "Service has been created.",
+            "SequenceNumber": "11",
+            "RemoveWhenExpired": false,
+            "HealthReportId": "FM_7.0_1008",
+            "SourceUtcTimestamp": "2025-12-02T13:56:39.621Z",
+            "LastModifiedUtcTimestamp": "2025-12-02T13:56:44.017Z",
+            "IsExpired": false,
+            "LastOkTransitionAt": "2025-12-02T13:56:44.017Z",
+            "LastWarningTransitionAt": "0001-01-01T00:00:00.000Z",
+            "LastErrorTransitionAt": "0001-01-01T00:00:00.000Z"
+        }
+    ],
+    "AggregatedHealthState": "Ok",
+    "UnhealthyEvaluations": [],
+    "HealthStatistics": {
+        "HealthStateCountList": [
+            {
+                "EntityKind": "Replica",
+                "HealthStateCount": {
+                    "OkCount": 2,
+                    "ErrorCount": 0,
+                    "WarningCount": 0
+                }
+            },
+            {
+                "EntityKind": "Partition",
+                "HealthStateCount": {
+                    "OkCount": 1,
+                    "ErrorCount": 0,
+                    "WarningCount": 0
+                }
+            }
+        ]
+    },
+    "Name": "fabric:/VisualObjectsApplicationType/VisualObjects.SelfReconfiguringService",
+    "PartitionHealthStates": []
+}

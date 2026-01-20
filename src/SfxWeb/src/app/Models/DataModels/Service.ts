@@ -1,12 +1,13 @@
 import { DataModelBase, IDecorators } from './Base';
 import {
     IRawService, IRawUpdateServiceDescription, IRawServiceHealth, IRawServiceDescription, IRawServiceType, IRawServiceManifest,
-    IRawCreateServiceDescription, IRawServiceBackupConfigurationInfo, IRawCreateServiceFromTemplateDescription
+    IRawCreateServiceDescription, IRawServiceBackupConfigurationInfo, IRawCreateServiceFromTemplateDescription,
+    IHasServiceKind
 } from '../RawDataTypes';
 import { PartitionCollection, ServiceBackupConfigurationInfoCollection } from './collections/Collections';
 import { DataService } from 'src/app/services/data.service';
 import { HealthStateFilterFlags, IClusterHealthChunkQueryDescription, IServiceHealthStateFilter } from '../HealthChunkRawDataTypes';
-import { ServiceKindRegexes, Constants, FabricEnumValues } from 'src/app/Common/Constants';
+import { Constants, FabricEnumValues } from 'src/app/Common/Constants';
 import { Utils } from 'src/app/Utils/Utils';
 import { DeployedServicePackage } from './DeployedServicePackage';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
@@ -27,6 +28,20 @@ import { ActionDialogUtils } from 'src/app/modules/action-dialog/utils';
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
 // -----------------------------------------------------------------------------
+
+// Type guards for service kinds - works with any object that has a ServiceKind property
+// Using proper TypeScript type predicates for type narrowing
+export function isStatefulService<T extends IHasServiceKind>(service: T): service is T & { ServiceKind: 'Stateful' } {
+    return service.ServiceKind === 'Stateful';
+}
+
+export function isStatelessService<T extends IHasServiceKind>(service: T): service is T & { ServiceKind: 'Stateless' } {
+    return service.ServiceKind === 'Stateless';
+}
+
+export function isSelfReconfiguringService<T extends IHasServiceKind>(service: T): service is T & { ServiceKind: 'SelfReconfiguring' } {
+    return service.ServiceKind === 'SelfReconfiguring';
+}
 
 export class Service extends DataModelBase<IRawService> {
     public decorators: IDecorators = {
@@ -59,15 +74,25 @@ export class Service extends DataModelBase<IRawService> {
     }
 
     public get isStatefulService(): boolean {
-        return ServiceKindRegexes.Stateful.test(this.raw.ServiceKind);
+        return isStatefulService(this.raw);
     }
 
     public get isStatelessService(): boolean {
-        return ServiceKindRegexes.Stateless.test(this.raw.ServiceKind);
+        return isStatelessService(this.raw);
+    }
+
+    public get isSelfReconfiguringService(): boolean {
+        return isSelfReconfiguringService(this.raw);
     }
 
     public get serviceKindInNumber(): number {
-        return this.raw.ServiceKind === Constants.ServiceKindStateful ? 2 : 1;
+        if (isStatelessService(this.raw)) {
+            return 1;
+        } else if (isStatefulService(this.raw)) {
+            return 2;
+        } else {
+            return 3; // SelfReconfiguring
+        }
     }
 
     public get viewPath(): string {
@@ -222,7 +247,7 @@ export class ServiceType extends DataModelBase<IRawServiceType> {
     }
 
     public get serviceKind(): string {
-        return this.raw.ServiceTypeDescription.IsStateful ? Constants.ServiceKindStateful : Constants.ServiceKindStateless;
+        return this.raw.ServiceTypeDescription.Kind;
     }
 
     public get serviceKindInNumber(): number {
