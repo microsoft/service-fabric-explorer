@@ -89,7 +89,7 @@ const proxyRequest = async (req) => {
     }
 
     try {
-        res = await axios(conf)
+        res = await axios(conf) // CodeQL [SM04580] same as above
         return res;
     }
     //handle axios throwing an error(like 400 level issues) which should just be passed through
