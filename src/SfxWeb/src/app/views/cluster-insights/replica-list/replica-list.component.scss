@@ -39,12 +39,12 @@
     gap: 0;
   }
 
-  &.success-box {
+  &.Ready {
     border-color: var(--badge-ok);
     background: rgba(0, 255, 0, 0.08);
   }
 
-  &.warning-box {
+  &.InQuorumLoss {
     border-color: var(--badge-error);
     background: rgba(255, 0, 0, 0.08);
   }
@@ -60,11 +60,11 @@
     font-weight: 600;
     color: var(--text-primary);
 
-    &.quorum-loss {
+    &.InQuorumLoss {
       color: var(--badge-error);
     }
 
-    &.quorum-met {
+    &.Ready {
       color: var(--badge-ok);
     }
   }

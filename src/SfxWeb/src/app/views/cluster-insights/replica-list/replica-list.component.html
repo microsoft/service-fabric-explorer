@@ -25,34 +25,30 @@
             </div>
 
             <div class="stat-box"
-                [class.success-box]="failoverManagerState.partitionStatus === PartitionStatus.Ready"
-                [class.warning-box]="failoverManagerState.partitionStatus === PartitionStatus.InQuorumLoss">
+                [ngClass]="failoverManagerState.partitionStatus">
               <div class="stat-label">Partition Status</div>
               <div class="stat-value" 
-                  [class.quorum-loss]="failoverManagerState.partitionStatus === PartitionStatus.InQuorumLoss"
-                  [class.quorum-met]="failoverManagerState.partitionStatus === PartitionStatus.Ready">
+                  [ngClass]="failoverManagerState.partitionStatus">
                 {{ failoverManagerState.partitionStatus }}
               </div>
             </div>
 
             <div class="stat-box" 
-                 [class.warning-box]="failoverManagerState.partitionStatus === PartitionStatus.InQuorumLoss"
-                 [class.success-box]="failoverManagerState.partitionStatus !== PartitionStatus.InQuorumLoss && failoverManagerState.writeQuorum > 0">
+                 [ngClass]="failoverManagerState.partitionStatus">
               <div class="stat-label">
                 <span *ngIf="failoverManagerState.partitionStatus === PartitionStatus.InQuorumLoss" class="not-met-label">Expected</span>
                 <span *ngIf="failoverManagerState.partitionStatus !== PartitionStatus.InQuorumLoss" class="met-label">Current</span>
                 Write Quorum
               </div>
               <div class="stat-value" 
-                   [class.quorum-loss]="failoverManagerState.partitionStatus === PartitionStatus.InQuorumLoss"
-                   [class.quorum-met]="failoverManagerState.partitionStatus !== PartitionStatus.InQuorumLoss && failoverManagerState.writeQuorum > 0">
+                   [ngClass]="failoverManagerState.partitionStatus">
                 {{ failoverManagerState.writeQuorum }}
               </div>
             </div>
 
-            <div class="stat-box" *ngIf="failoverManagerState.partitionStatus === PartitionStatus.InQuorumLoss" [class.warning-box]="true">
+            <div class="stat-box" *ngIf="failoverManagerState.partitionStatus === PartitionStatus.InQuorumLoss" [ngClass]="failoverManagerState.partitionStatus">
               <div class="stat-label">Quorum Loss Duration</div>
-              <div class="stat-value quorum-loss">{{ failoverManagerState.lastQuorumLossDuration }}</div>
+              <div class="stat-value">{{ failoverManagerState.lastQuorumLossDuration }}</div>
             </div>
           </div>
 
@@ -86,34 +82,30 @@
             </div>
 
             <div class="stat-box"
-                [class.success-box]="clusterManagerState.partitionStatus === PartitionStatus.Ready"
-                [class.warning-box]="clusterManagerState.partitionStatus === PartitionStatus.InQuorumLoss">
+                [ngClass]="clusterManagerState.partitionStatus">
               <div class="stat-label">Partition Status</div>
               <div class="stat-value" 
-                  [class.quorum-loss]="clusterManagerState.partitionStatus === PartitionStatus.InQuorumLoss"
-                  [class.quorum-met]="clusterManagerState.partitionStatus === PartitionStatus.Ready">
+                  [ngClass]="clusterManagerState.partitionStatus">
                 {{ clusterManagerState.partitionStatus }}
               </div>
             </div>
 
             <div class="stat-box" 
-                 [class.warning-box]="clusterManagerState.partitionStatus === PartitionStatus.InQuorumLoss"
-                 [class.success-box]="clusterManagerState.partitionStatus !== PartitionStatus.InQuorumLoss && clusterManagerState.writeQuorum > 0">
+                 [ngClass]="clusterManagerState.partitionStatus">
               <div class="stat-label">
                 <span *ngIf="clusterManagerState.partitionStatus === PartitionStatus.InQuorumLoss" class="not-met-label">Expected</span>
                 <span *ngIf="clusterManagerState.partitionStatus !== PartitionStatus.InQuorumLoss" class="met-label">Current</span>
                 Write Quorum
               </div>
               <div class="stat-value" 
-                   [class.quorum-loss]="clusterManagerState.partitionStatus === PartitionStatus.InQuorumLoss"
-                   [class.quorum-met]="clusterManagerState.partitionStatus !== PartitionStatus.InQuorumLoss && clusterManagerState.writeQuorum > 0">
+                   [ngClass]="clusterManagerState.partitionStatus">
                 {{ clusterManagerState.writeQuorum }}
               </div>
             </div>
 
-            <div class="stat-box" *ngIf="clusterManagerState.partitionStatus === PartitionStatus.InQuorumLoss" [class.warning-box]="true">
+            <div class="stat-box" *ngIf="clusterManagerState.partitionStatus === PartitionStatus.InQuorumLoss" [ngClass]="clusterManagerState.partitionStatus">
               <div class="stat-label">Quorum Loss Duration</div>
-              <div class="stat-value quorum-loss">{{ clusterManagerState.lastQuorumLossDuration }}</div>
+              <div class="stat-value">{{ clusterManagerState.lastQuorumLossDuration }}</div>
             </div>
           </div>
 
