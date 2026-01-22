@@ -117,13 +117,13 @@ export class RecoveryProgressComponent implements OnInit {
   }
 
   private calculateWriteQuorum(replicas: IRawReplicaOnPartition[]): number {
-    // If previous configuration (PC) role for all replicas are none, then the partition is not in reconfiguration.
+    // If the previous configuration (PC) role is 'None' for all replicas, then the partition is not in reconfiguration.
     const isNotInReconfiguration = replicas.every(replica => 
       replica.PreviousReplicaRole === 'None'
     );
 
-    // If partition is not in reconfiguration, write quorum is calculated using current configuration (CC) role. 
-    // Otherwise, it is calculated using PC role.
+    // If the partition is not in reconfiguration, write quorum is calculated using the current configuration (CC) role.
+    // Otherwise, it is calculated using the PC role.
     const activeReplicas = isNotInReconfiguration
       ? replicas.filter(replica => this.isActiveReplica(replica.ReplicaRole))
       : replicas.filter(replica => this.isActiveReplica(replica.PreviousReplicaRole));
@@ -166,14 +166,10 @@ export class RecoveryProgressComponent implements OnInit {
 
   private checkNodesStatus(rawNodes: IRawNode[]): void {
     const totalNodes = rawNodes.length;
-    const upNodes = rawNodes.filter(node => node.NodeStatus === NodeStatus.Up).length;
     const disabledNodes = rawNodes.filter(node => 
       node.NodeStatus === NodeStatus.Disabled || node.NodeStatus === NodeStatus.Disabling
     );
     const downNodes = rawNodes.filter(node => node.NodeStatus === NodeStatus.Down);
-    const seedNodeCount = rawNodes.filter(node => node.IsSeedNode).length;
-    const minRequiredNodes = seedNodeCount;
-    const hasMinimumNodes = upNodes >= minRequiredNodes;
 
     let status: RecoveryStep['status'];
     let tooltip: string;

@@ -76,7 +76,7 @@
   padding: 1rem 1.5rem;
   border-radius: var(--primary-border-radius);
   font-size: var(--font-size-default);
-  color: var (--font-primary-color);
+  color: var(--font-primary-color);
   display: flex;
 
   strong {
@@ -107,7 +107,7 @@
   }
 }
 
-.line-item-seperator {
+.line-item-separator {
   border-bottom: 1px solid var(--accent-underline);
   padding-bottom: 3px;
   margin-bottom: 3px;

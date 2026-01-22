@@ -1,12 +1,12 @@
 <app-dashboard-text-scale-tile>
   <div style="display: flex; flex-direction: column">
-    <h2 class="title-wrapper top-seperator">
+    <h2 class="title-wrapper top-separator">
       FMM Information
       <span class="mif-loop2 rotate" *ngIf="isLoading"></span>
     </h2>
     
     <div>
-      <div class="flex-center line-item-seperator">
+      <div class="flex-center line-item-separator">
         <div class="fmm-label">Node Name</div>
         <div class="fmm-value">
           {{ fmmInfo?.NodeName }}
@@ -14,7 +14,7 @@
         <app-clip-board [text]="fmmInfo?.NodeName" *ngIf="fmmInfo?.NodeName" [name]="'Node Name'"></app-clip-board>
       </div>
       
-      <div class="flex-center line-item-seperator">
+      <div class="flex-center line-item-separator">
         <div class="fmm-label">Node ID</div>
         <div class="fmm-value">
           {{ fmmInfo?.NodeId?.Id }}
@@ -22,7 +22,7 @@
         <app-clip-board [text]="fmmInfo?.NodeId?.Id" *ngIf="fmmInfo?.NodeId?.Id" [name]="'Node ID'"></app-clip-board>
       </div>
       
-      <div class="flex-center line-item-seperator">
+      <div class="flex-center line-item-separator">
         <div class="fmm-label">Node Instance ID</div>
         <div class="fmm-value">
           {{ fmmInfo?.NodeInstanceId }}
