@@ -145,7 +145,9 @@ export class ReplicaListComponent implements OnInit, OnDestroy {
       columnSettings, 
       secondRowColumnSettings, 
       true, 
-      (item) => item.isClickable && item.deployedReplicaDetails !== null
+      (item) => item.isClickable && item.deployedReplicaDetails !== null,
+      true,  // searchable
+      false  // showRowExpander
     );
 
     if (service === ServiceName.FailoverManager) {

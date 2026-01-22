@@ -82,6 +82,7 @@ export class ListSettings {
      *                                (e.g. description takes the second line)
      *                                But the columns for the second line have no filters/sort capabilities.
      * @param secondRowCollapsible If set to true, the second row can be collapsed by clicking the expand icon in the first column.
+     * @param showRowExpander If set to false, the row expander button will not be displayed.
      */
     public constructor(
         public limit: number,
@@ -91,7 +92,8 @@ export class ListSettings {
         public secondRowColumnSettings: ListColumnSetting[] = [],
         public secondRowCollapsible: boolean = false,
         public showSecondRow: (item) => boolean = (item) => true,
-        public searchable: boolean = true) {
+        public searchable: boolean = true,
+        public showRowExpander: boolean = true) {
 
         this.sortPropertyPaths = defaultSortPropertyPaths;
     }

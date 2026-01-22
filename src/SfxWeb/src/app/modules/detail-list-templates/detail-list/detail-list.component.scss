@@ -40,10 +40,6 @@ table {
   align-items: center;
 }
 
-tbody .row-expander {
-  display: none;
-}
-
 // Row highlighting
 tbody tr.highlighted-row {
   background-color: rgba(241, 157, 3, 0.15) !important;

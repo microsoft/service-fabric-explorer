@@ -59,7 +59,7 @@
                                 <button
                                     class="row-expander {{item.isSecondRowCollapsed ? 'mif-chevron-thin-down' : 'mif-chevron-thin-up' }} flat-button"
                                     (click)="handleClickRow(item, $event)"
-                                    *ngIf="i === 0 && listSettings.secondRowCollapsible && listSettings.showSecondRow(item)"
+                                    *ngIf="i === 0 && listSettings.secondRowCollapsible && listSettings.showSecondRow(item) && listSettings.showRowExpander"
                                     [attr.aria-expanded]="!item.isSecondRowCollapsed"
                                     [title]="item.isSecondRowCollapsed ? 'Expand the row' : 'Collapse the row'"></button>
 
