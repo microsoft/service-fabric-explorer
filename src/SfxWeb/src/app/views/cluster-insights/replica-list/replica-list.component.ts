@@ -33,6 +33,19 @@ enum ServiceName {
   ClusterManager = 'cluster-manager'
 }
 
+enum PartitionStatus {
+  Ready = 'Ready',
+  InQuorumLoss = 'InQuorumLoss',
+  Reconfiguring = 'Reconfiguring'
+}
+
+enum ReplicaRole {
+  Primary = 'Primary',
+  ActiveSecondary = 'ActiveSecondary',
+  IdleSecondary = 'IdleSecondary',
+  None = 'None'
+}
+
 @Component({
   selector: 'app-replica-list',
   templateUrl: './replica-list.component.html',
@@ -40,6 +53,8 @@ enum ServiceName {
 })
 export class ReplicaListComponent implements OnInit, OnDestroy {
   public readonly ServiceName = ServiceName;
+  public readonly PartitionStatus = PartitionStatus;
+  public readonly ReplicaRole = ReplicaRole;
 
   private readonly FAILOVER_MANAGER_CONFIG: ServiceConfig = {
     name: 'Failover Manager',
@@ -265,10 +280,10 @@ export class ReplicaListComponent implements OnInit, OnDestroy {
         isSecondRowCollapsed: !isExpanded,
         deployedReplicaDetails: null,
         lastSequenceNumber: replica.ReplicaStatus === 'Down' ? 'N/A' : 'Loading...',
-        isPrimary: replica.ReplicaRole === 'Primary',
+        isPrimary: replica.ReplicaRole === ReplicaRole.Primary,
         isClickable: replica.ReplicaStatus !== 'Down',
         countsTowardWriteQuorum: countsTowardWriteQuorum,
-        cssClass: (partitionStatus === 'InQuorumLoss' && shouldHighlight) ? 'highlighted-row' : ''
+        cssClass: (partitionStatus === PartitionStatus.InQuorumLoss && shouldHighlight) ? 'highlighted-row' : ''
       };
     });
 
@@ -343,12 +358,12 @@ export class ReplicaListComponent implements OnInit, OnDestroy {
 
   private updateRefreshInterval(): void {
     const failoverManagerInQuorumLoss = 
-      this.failoverManagerState.partitionStatus === 'InQuorumLoss' || 
-      this.failoverManagerState.partitionStatus === 'Reconfiguring';
+      this.failoverManagerState.partitionStatus === PartitionStatus.InQuorumLoss || 
+      this.failoverManagerState.partitionStatus === PartitionStatus.Reconfiguring;
     
     const clusterManagerInQuorumLoss =
-      this.clusterManagerState.partitionStatus === 'InQuorumLoss' || 
-      this.clusterManagerState.partitionStatus === 'Reconfiguring';
+      this.clusterManagerState.partitionStatus === PartitionStatus.InQuorumLoss || 
+      this.clusterManagerState.partitionStatus === PartitionStatus.Reconfiguring;
 
     let newInterval = this.REFRESH_INTERVAL_NORMAL;
     
@@ -365,7 +380,7 @@ export class ReplicaListComponent implements OnInit, OnDestroy {
   private calculateWriteQuorum(replicas: any[]): { isInReconfiguration: boolean; writeQuorum: number; quorumReplicas: Set<string> } {
     // If previous configuration (PC) role for all replicas are not none, then the partition is in reconfiguration.
     const isInReconfiguration = !replicas.every(replica => 
-      replica.PreviousReplicaRole === 'None'
+      replica.PreviousReplicaRole === ReplicaRole.None
     );
 
     const writeQuorumReplicaIds = new Set<string>();
@@ -375,8 +390,8 @@ export class ReplicaListComponent implements OnInit, OnDestroy {
     // Otherwise, it is calculated using current configuration (CC) role.
     replicas.forEach(replica => {
       const countsTowardWriteQuorum = isInReconfiguration
-        ? replica.PreviousReplicaRole === 'ActiveSecondary' || replica.PreviousReplicaRole === 'Primary'
-        : replica.ReplicaRole === 'ActiveSecondary' || replica.ReplicaRole === 'Primary';
+        ? replica.PreviousReplicaRole === ReplicaRole.ActiveSecondary || replica.PreviousReplicaRole === ReplicaRole.Primary
+        : replica.ReplicaRole === ReplicaRole.ActiveSecondary || replica.ReplicaRole === ReplicaRole.Primary;
 
       if (countsTowardWriteQuorum) {
         writeQuorumReplicaIds.add(replica.ReplicaId);
@@ -391,10 +406,10 @@ export class ReplicaListComponent implements OnInit, OnDestroy {
 
   private sortReplicasByRole(replicas: any[]): any[] {
     const roleOrder: { [key: string]: number } = {
-      'Primary': 1,
-      'ActiveSecondary': 2,
-      'IdleSecondary': 3,
-      'None': 4
+      [ReplicaRole.Primary]: 1,
+      [ReplicaRole.ActiveSecondary]: 2,
+      [ReplicaRole.IdleSecondary]: 3,
+      [ReplicaRole.None]: 4
     };
 
     return replicas.sort((a, b) => {
@@ -405,8 +420,8 @@ export class ReplicaListComponent implements OnInit, OnDestroy {
   }
 
   private detectQuorumLossTransitions(): void {
-    const failoverManagerInQuorumLoss = this.failoverManagerState.partitionStatus === 'InQuorumLoss';
-    const clusterManagerInQuorumLoss = this.clusterManagerState.partitionStatus === 'InQuorumLoss';
+    const failoverManagerInQuorumLoss = this.failoverManagerState.partitionStatus === PartitionStatus.InQuorumLoss;
+    const clusterManagerInQuorumLoss = this.clusterManagerState.partitionStatus === PartitionStatus.InQuorumLoss;
 
     // Reload the whole page after CM and/or FM is out of QL
     if (this.previousFailoverManagerInQuorumLoss && !failoverManagerInQuorumLoss) {
