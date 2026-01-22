@@ -24,22 +24,6 @@ export class ColoredNodeNameComponent implements OnInit, DetailBaseComponent {
     return this.item?.raw?.NodeStatus || '';
   }
 
-  getColor(): string {
-    const status = this.getNodeStatus();
-    if (status === 'Up') {
-      return 'var(--badge-ok)';
-    }
-    else if (status === 'Down') {
-      return 'var(--badge-error)';
-    } 
-    else if (status === 'Disabled' || status === 'Disabling') { 
-      return 'var(--badge-warning)';
-    }
-    else {
-      return 'white';
-    }
-  }
-
   isSeedNode(): boolean {
     return this.item?.raw?.IsSeedNode === true;
   }

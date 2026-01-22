@@ -4,7 +4,7 @@ import { ListSettings, ListColumnSettingWithFilter, ListColumnSettingForColoredN
 import { forkJoin, interval, Subscription, of, Observable } from 'rxjs';
 import { switchMap, startWith, catchError } from 'rxjs/operators';
 import { ListColumnSettingWithExpandableLink } from '../replica-id-link/replica-id-link.component';
-import { ListColumnSettingForExpandedDetails } from '../replica-details-html/replica-details-html.component';
+import { ListColumnSettingForExpandedDetails } from '../replica-details/replica-details.component';
 
 interface ServiceConfig {
   name: string;

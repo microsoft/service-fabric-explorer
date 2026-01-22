@@ -11,7 +11,7 @@ import { FailoverManagerManagerInformationComponent } from './fmm-info/fmm-info.
 import { NodesComponent } from './nodes/nodes.component';
 import { RecoveryProgressComponent } from './recovery-progress/recovery-progress.component';
 import { ExpandableLinkComponent } from './replica-id-link/replica-id-link.component';
-import { ReplicaDetailsComponent } from './replica-details-html/replica-details-html.component';
+import { ReplicaDetailsComponent } from './replica-details/replica-details.component';
 
 @NgModule({
   declarations: [

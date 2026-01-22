@@ -1,3 +1,21 @@
+.colored-node-name {
+  font-weight: 500;
+  color: white;
+
+  &.Up {
+    color: var(--badge-ok);
+  }
+
+  &.Down {
+    color: var(--badge-error);
+  }
+
+  &.Disabled,
+  &.Disabling {
+    color: var(--badge-warning);
+  }
+}
+
 .seed-indicator {
   margin-left: 4px;
   font-size: 1em;

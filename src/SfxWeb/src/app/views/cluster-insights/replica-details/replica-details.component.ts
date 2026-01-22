@@ -3,8 +3,8 @@ import { DetailBaseComponent } from 'src/app/ViewModels/detail-table-base.compon
 import { ListColumnSetting } from 'src/app/Models/ListSettings';
 
 @Component({
-  selector: 'app-replica-details-html',
-  templateUrl: './replica-details-html.component.html'
+  selector: 'app-replica-details',
+  templateUrl: './replica-details.component.html'
 })
 export class ReplicaDetailsComponent implements OnInit, DetailBaseComponent {
   item: any;
