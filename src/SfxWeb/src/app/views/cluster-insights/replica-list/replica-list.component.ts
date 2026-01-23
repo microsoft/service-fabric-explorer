@@ -177,10 +177,21 @@ export class ReplicaListComponent implements OnInit, OnDestroy {
       .pipe(
         startWith(0),
         switchMap(() => {
-          return forkJoin({
-            failoverManager: this.fetchServiceData(this.FAILOVER_MANAGER_CONFIG, ServiceName.FailoverManager),
-            clusterManager: this.fetchServiceData(this.CLUSTER_MANAGER_CONFIG, ServiceName.ClusterManager)
-          });
+          return this.restClientService.getNodes().pipe(
+            switchMap((nodes) => {
+              return forkJoin({
+                failoverManager: this.fetchServiceData(this.FAILOVER_MANAGER_CONFIG, ServiceName.FailoverManager, nodes),
+                clusterManager: this.fetchServiceData(this.CLUSTER_MANAGER_CONFIG, ServiceName.ClusterManager, nodes)
+              });
+            }),
+            catchError(() => {
+              // If getNodes fails, still try to fetch service data
+              return forkJoin({
+                failoverManager: this.fetchServiceData(this.FAILOVER_MANAGER_CONFIG, ServiceName.FailoverManager, []),
+                clusterManager: this.fetchServiceData(this.CLUSTER_MANAGER_CONFIG, ServiceName.ClusterManager, [])
+              });
+            })
+          );
         })
       )
       .subscribe(() => {
@@ -200,7 +211,7 @@ export class ReplicaListComponent implements OnInit, OnDestroy {
     }
   }
 
-  private fetchServiceData(config: ServiceConfig, service: ServiceName): Observable<any> {
+  private fetchServiceData(config: ServiceConfig, service: ServiceName, nodes: any[]): Observable<any> {
     if (service === ServiceName.FailoverManager) {
       this.failoverManagerState.isLoading = true;
     } else {
@@ -209,7 +220,6 @@ export class ReplicaListComponent implements OnInit, OnDestroy {
 
     return forkJoin({
       replicas: this.restClientService.getReplicasOnPartition(config.applicationId, config.serviceId, config.partitionId),
-      nodes: this.restClientService.getNodes(),
       partition: this.restClientService.getPartition(config.applicationId, config.serviceId, config.partitionId)
     }).pipe(
       catchError(() => {
@@ -225,7 +235,7 @@ export class ReplicaListComponent implements OnInit, OnDestroy {
           return of(null);
         }
 
-        const { replicas, nodes, partition } = result;
+        const { replicas, partition } = result;
         this.processServiceReplicas(config, service, replicas, nodes, partition);
 
         if (service === ServiceName.FailoverManager) {
@@ -352,7 +362,7 @@ export class ReplicaListComponent implements OnInit, OnDestroy {
         return;
       }
       
-        this.loadDeployedReplicaDetails(replicaItem, partitionId);
+      this.loadDeployedReplicaDetails(replicaItem, partitionId);
     });
   }
 

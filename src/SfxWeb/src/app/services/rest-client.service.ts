@@ -40,6 +40,7 @@ export class RestClientService {
   private static apiVersion72 = '7.2';
   private static apiVersion80 = '8.0';
   private static apiVersion82 = '8.2';
+  private static apiVersion114 = '11.4';
 
   private cacheAllowanceToken: number = Date.now().valueOf();
 
@@ -791,7 +792,7 @@ export class RestClientService {
   public getFailoverManagerManagerInformation(messageHandler?: IResponseMessageHandler): Observable<IRawFailoverManagerManagerInformation> {
     const url = `$/GetFailoverManagerManagerInformation`;
 
-    return this.get(this.getApiUrl(url, RestClientService.apiVersion64), 'Get Failover Manager Manager (FMM) information', messageHandler);
+    return this.get(this.getApiUrl(url, RestClientService.apiVersion114), 'Get Failover Manager Manager (FMM) information', messageHandler);
   }
 
   private getEvents<T extends FabricEventBase>(eventType: new () => T, url: string, startTime: Date, endTime: Date, eventsTypesFilter: string[], messageHandler?: IResponseMessageHandler, apiVersion?: string): Observable<T[]> {

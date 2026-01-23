@@ -48,7 +48,7 @@
 
             <div class="stat-box" *ngIf="failoverManagerState.partitionStatus === PartitionStatus.InQuorumLoss" [ngClass]="failoverManagerState.partitionStatus">
               <div class="stat-label">Quorum Loss Duration</div>
-              <div class="stat-value">{{ failoverManagerState.lastQuorumLossDuration }}</div>
+              <div class="stat-value" [ngClass]="failoverManagerState.partitionStatus">{{ failoverManagerState.lastQuorumLossDuration }}</div>
             </div>
           </div>
 
@@ -105,7 +105,7 @@
 
             <div class="stat-box" *ngIf="clusterManagerState.partitionStatus === PartitionStatus.InQuorumLoss" [ngClass]="clusterManagerState.partitionStatus">
               <div class="stat-label">Quorum Loss Duration</div>
-              <div class="stat-value">{{ clusterManagerState.lastQuorumLossDuration }}</div>
+              <div class="stat-value" [ngClass]="clusterManagerState.partitionStatus">{{ clusterManagerState.lastQuorumLossDuration }}</div>
             </div>
           </div>
 
