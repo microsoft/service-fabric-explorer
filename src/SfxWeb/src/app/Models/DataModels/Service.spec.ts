@@ -2,7 +2,6 @@ import { Service, isStatefulService, isStatelessService, isSelfReconfiguringServ
 import { DataService } from 'src/app/services/data.service';
 import { Application } from './Application';
 import { createMockService, createMockApplication, createMockDataService } from 'src/app/testing';
-import { ServiceKind } from '../RawDataTypes';
 
 // -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -39,7 +38,7 @@ describe('Service', () => {
 
     describe('service kind type guards', () => {
         it('should identify stateful services', () => {
-            const rawService = createMockService({ ServiceKind: ServiceKind.Stateful });
+            const rawService = createMockService({ ServiceKind: 'Stateful' });
             
             expect(isStatefulService(rawService)).toBe(true);
             expect(isStatelessService(rawService)).toBe(false);
@@ -47,7 +46,7 @@ describe('Service', () => {
         });
 
         it('should identify stateless services', () => {
-            const rawService = createMockService({ ServiceKind: ServiceKind.Stateless });
+            const rawService = createMockService({ ServiceKind: 'Stateless' });
             
             expect(isStatefulService(rawService)).toBe(false);
             expect(isStatelessService(rawService)).toBe(true);
@@ -55,7 +54,7 @@ describe('Service', () => {
         });
 
         it('should identify self-reconfiguring services', () => {
-            const rawService = createMockService({ ServiceKind: 'SelfReconfiguring' as any });
+            const rawService = createMockService({ ServiceKind: 'SelfReconfiguring' });
             
             expect(isStatefulService(rawService)).toBe(false);
             expect(isStatelessService(rawService)).toBe(false);
@@ -65,14 +64,14 @@ describe('Service', () => {
 
     describe('isStatefulService', () => {
         it('should return true for stateful services', () => {
-            const rawService = createMockService({ ServiceKind: ServiceKind.Stateful });
+            const rawService = createMockService({ ServiceKind: 'Stateful' });
             const service = new Service(mockDataService, rawService, mockApplication);
 
             expect(service.isStatefulService).toBe(true);
         });
 
         it('should return false for stateless services', () => {
-            const rawService = createMockService({ ServiceKind: ServiceKind.Stateless });
+            const rawService = createMockService({ ServiceKind: 'Stateless' });
             const service = new Service(mockDataService, rawService, mockApplication);
 
             expect(service.isStatefulService).toBe(false);
@@ -81,14 +80,14 @@ describe('Service', () => {
 
     describe('isStatelessService', () => {
         it('should return true for stateless services', () => {
-            const rawService = createMockService({ ServiceKind: ServiceKind.Stateless });
+            const rawService = createMockService({ ServiceKind: 'Stateless' });
             const service = new Service(mockDataService, rawService, mockApplication);
 
             expect(service.isStatelessService).toBe(true);
         });
 
         it('should return false for stateful services', () => {
-            const rawService = createMockService({ ServiceKind: ServiceKind.Stateful });
+            const rawService = createMockService({ ServiceKind: 'Stateful' });
             const service = new Service(mockDataService, rawService, mockApplication);
 
             expect(service.isStatelessService).toBe(false);
@@ -104,7 +103,7 @@ describe('Service', () => {
         });
 
         it('should return false for other service kinds', () => {
-            const rawService = createMockService({ ServiceKind: ServiceKind.Stateful });
+            const rawService = createMockService({ ServiceKind: 'Stateful' });
             const service = new Service(mockDataService, rawService, mockApplication);
 
             expect(service.isSelfReconfiguringService).toBe(false);
@@ -113,14 +112,14 @@ describe('Service', () => {
 
     describe('serviceKindInNumber', () => {
         it('should return 1 for stateless services', () => {
-            const rawService = createMockService({ ServiceKind: ServiceKind.Stateless });
+            const rawService = createMockService({ ServiceKind: 'Stateless' });
             const service = new Service(mockDataService, rawService, mockApplication);
 
             expect(service.serviceKindInNumber).toBe(1);
         });
 
         it('should return 2 for stateful services', () => {
-            const rawService = createMockService({ ServiceKind: ServiceKind.Stateful });
+            const rawService = createMockService({ ServiceKind: 'Stateful' });
             const service = new Service(mockDataService, rawService, mockApplication);
 
             expect(service.serviceKindInNumber).toBe(2);

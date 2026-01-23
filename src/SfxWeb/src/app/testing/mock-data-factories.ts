@@ -8,7 +8,6 @@ import {
     IRawHealthEvent,
     IRawId,
     IRawNodeDeactivationInfo,
-    ServiceKind,
     IRawPartitionInformation,
     IRawServiceDescription
 } from '../Models/RawDataTypes';
@@ -99,7 +98,7 @@ export function createMockService(overrides: Partial<IRawService> = {}): IRawSer
         Name: 'fabric:/MyApp/MyService',
         TypeName: 'MyServiceType',
         ManifestVersion: '1.0.0',
-        ServiceKind: ServiceKind.Stateful,
+        ServiceKind: 'Stateful',
         ServiceStatus: 'Active',
         HealthState: 'Ok',
         IsServiceGroup: false,
@@ -168,7 +167,7 @@ export function createMockPartition(overrides: Partial<IRawPartition> = {}): IRa
             ConfigurationVersion: 1,
             DataLossVersion: 1
         },
-        ServiceKind: ServiceKind.Stateful,
+        ServiceKind: 'Stateful',
         ...overrides,
         PartitionInformation: overrides.PartitionInformation 
             ? { ...defaultPartitionInfo, ...overrides.PartitionInformation }
@@ -198,7 +197,7 @@ export function createMockReplica(overrides: Partial<IRawReplica> = {}): IRawRep
         Address: '{"Endpoints":{"":"http://localhost:8080"}}',
         NodeName: 'Node_0',
         LastInBuildDurationInSeconds: '0',
-        ServiceKind: ServiceKind.Stateful,
+        ServiceKind: 'Stateful',
         ...overrides
     } as IRawReplica;
 }
@@ -285,7 +284,7 @@ export function createMockId(id?: string): IRawId {
  */
 export function createMockServiceDescription(overrides: Partial<IRawServiceDescription> = {}): IRawServiceDescription {
     return {
-        ServiceKind: ServiceKind.Stateful,
+        ServiceKind: 'Stateful',
         ServiceName: 'fabric:/MyApp/MyService',
         ServiceTypeName: 'MyServiceType',
         ApplicationName: 'fabric:/MyApp',
