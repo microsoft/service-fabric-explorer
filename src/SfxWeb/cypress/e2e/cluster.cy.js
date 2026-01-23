@@ -1151,6 +1151,48 @@ context('Cluster page', () => {
         })
       });
     })
+
+    it('filters external repair tasks from action counter and tables', () => {
+      setup('cluster-page/repair-jobs/mixed-node-external.json')
+
+      // Verify that only Node repair tasks appear in the Most Common Actions
+      cy.get('[data-cy=top]').within(() => {
+        // Should show 3 Node-based actions: 2 PlatformUpdate and 1 TenantUpdate
+        cy.contains('System.Azure.Job.PlatformUpdate')
+        cy.contains('System.Azure.Job.TenantUpdate')
+        // Should NOT show External actions
+        cy.contains('External.RestartNode').should('not.exist')
+        cy.contains('External.ApplicationUpgrade').should('not.exist')
+      })
+
+      // Verify only Node repair tasks appear in pending jobs table
+      cy.get('[data-cy=pendingjobs]').within(() => {
+        cy.get('tbody > tr').first().within(() => {
+          cy.get('button').first().click();
+        });
+
+        cy.get('[data-cy=history]').within(() => {
+          cy.contains('Preparing : Done');
+          cy.contains('Executing : In Progress');
+          cy.contains('Restoring : Not Started');
+          cy.contains('2020-09-20T00:30:59.740Z');
+        })
+      });
+
+      // Verify only Node repair tasks appear in completed jobs table
+      cy.get('[data-cy=completedjobs]').within(() => {
+        cy.contains('Completed Repair Tasks').click()
+        cy.contains('Azure/PlatformUpdate/00065b20-aa83-4199-877b-a4b51efa8de6/3/616')
+        cy.contains('Azure/TenantUpdate/46df1c03-5212-4b8f-98b0-47dfb70744b6/2/612')
+        // Should NOT show External repair tasks (neither Action strings nor TaskIds)
+        cy.contains('External.RestartNode').should('not.exist')
+        cy.contains('IM/Node/').should('not.exist')
+        cy.contains('IM/ApplicationUpgrade/').should('not.exist')
+      })
+
+      // Verify timeline only shows Node repair tasks
+      cy.get('[data-cy=timeline]').should('exist')
+    })
   })
 
   describe("systemService - infraservice", () => {
@@ -1237,7 +1279,19 @@ context('Cluster page', () => {
           cy.contains(bannerText)
         })
       })
-
+        describe('Infrastructure Service Document', () => {
+        beforeEach(() => {
+          addRoute(FIXTURE_REF_SYSTEMAPPS, 'system-service/coordinated-infra-guid.json', systemApps_route)
+          addRoute("infrastructure-service-document-data", "system-service/GetCurrentDocFromIS_Response.json", apiUrl(`/$/InvokeInfrastructureQuery?api-version=6.0&Command=GetCurrentDocFromIS&ServiceId=System/InfrastructureService/Coordinated_43c17f19-8f43-4afc-56ca-38e81f6c844b*`))
+        })
+          it('Infrastructure Service Document test', () => {
+          cy.visit(`/#/infrastructure`)
+          cy.get('app-infrastructure-docs').find('select.detail-pane').select('fabric:/System/InfrastructureService/Coordinated_43c17f19-8f43-4afc-56ca-38e81f6c844b')
+          cy.contains('Received Document').should('be.visible') 
+          cy.get('app-infrastructure-docs').find('select.detail-pane').select('None')
+          cy.contains('Received Document').should('not.exist') 
+          })
+      })
     })
   })
 

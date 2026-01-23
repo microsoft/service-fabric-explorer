@@ -4,7 +4,7 @@
 // -----------------------------------------------------------------------------
 
 import { RepairTask, Status } from './repairTask';
-import { IRawRepairTask } from '../RawDataTypes';
+import { IRawNodeRepairImpactDescription, IRawRepairTask } from '../RawDataTypes';
 import { DataService } from 'src/app/services/data.service';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { of } from 'rxjs';
@@ -80,7 +80,7 @@ describe('RepairTask', () => {
 
     fit('validate in progress repairTask', () => {
         testData.State = 'Executing';
-        testData.Impact.NodeImpactList = [
+        (testData.Impact as IRawNodeRepairImpactDescription).NodeImpactList = [
             {
                 NodeName: '_NodeType0_6',
                 ImpactLevel: 2
@@ -91,6 +91,21 @@ describe('RepairTask', () => {
         expect(task.couldParseExecutorData).toBe(true);
         expect(task.impactedNodes).toEqual(['_NodeType0_6']);
         expect(task.inProgress).toBe(true);
+    });
+
+    fit('validate external repair impact', () => {
+        testData.State = 'Executing';
+        testData.Impact = {
+            Kind: 'External',
+            ExternalImpactInfo: {
+                ImpactLevel: 'High'
+            }
+        };
+        const task = new RepairTask(dataService, testData);
+
+        expect(task.couldParseExecutorData).toBe(true);
+        expect(task.inProgress).toBe(true);
+        expect(task.impactedNodes).toEqual([]);
     });
 
     fit('validate repairTask history in executing', () => {
@@ -182,7 +197,7 @@ describe('RepairTask', () => {
             RestoringHealthCheckStartUtcTimestamp: '0001-01-01T00:00:00.000Z',
             RestoringHealthCheckEndUtcTimestamp: '0001-01-01T00:00:00.000Z'
         };
-        testData.Impact.NodeImpactList = [{
+        (testData.Impact as IRawNodeRepairImpactDescription).NodeImpactList = [{
           NodeName: 'testnode'
         }]
         const task = new RepairTask(dataService, testData);
@@ -218,7 +233,7 @@ describe('RepairTask', () => {
             RestoringHealthCheckStartUtcTimestamp: '0001-01-01T00:00:00.000Z',
             RestoringHealthCheckEndUtcTimestamp: '0001-01-01T00:00:00.000Z'
         };
-        testData.Impact.NodeImpactList = [{
+        (testData.Impact as IRawNodeRepairImpactDescription).NodeImpactList = [{
           NodeName: 'testnode'
         }]
         const task = new RepairTask(dataService, testData);
@@ -255,5 +270,163 @@ describe('RepairTask', () => {
 
     })
 
+    describe("repair task targeting and impact methods", () => {
+      fit("isNodeTargeted returns true for Node target", () => {
+        testData.Target = {
+          Kind: 'Node',
+          NodeNames: ['_nt_0', '_nt_1']
+        };
+        const task = new RepairTask(dataService, testData);
+        expect(task.isNodeTargeted()).toBe(true);
+      });
+
+      fit("isNodeTargeted returns false for External target", () => {
+        testData.Target = {
+          Kind: 'External'
+        };
+        const task = new RepairTask(dataService, testData);
+        expect(task.isNodeTargeted()).toBe(false);
+      });
+
+      fit("hasNodeImpact returns true for Node impact with NodeImpactList", () => {
+        testData.Impact = {
+          Kind: 'Node',
+          NodeImpactList: [
+            { NodeName: '_nt_0', ImpactLevel: 'Restart' }
+          ]
+        };
+        const task = new RepairTask(dataService, testData);
+        expect(task.hasNodeImpact()).toBe(true);
+      });
+
+      fit("hasNodeImpact returns false for External impact", () => {
+        testData.Impact = {
+          Kind: 'External',
+          ExternalImpactInfo: {
+            ImpactLevel: 'High'
+          }
+        };
+        const task = new RepairTask(dataService, testData);
+        expect(task.hasNodeImpact()).toBe(false);
+      });
+
+      fit("hasNodeImpact returns false for Node impact without NodeImpactList", () => {
+        testData.Impact = {
+          Kind: 'Node',
+          NodeImpactList: null
+        };
+        const task = new RepairTask(dataService, testData);
+        expect(task.hasNodeImpact()).toBe(false);
+      });
+
+      fit("getTargetNodeNames returns node names for Node target", () => {
+        testData.Target = {
+          Kind: 'Node',
+          NodeNames: ['_nt_0', '_nt_1', '_nt_2']
+        };
+        const task = new RepairTask(dataService, testData);
+        expect(task.getTargetNodeNames()).toEqual(['_nt_0', '_nt_1', '_nt_2']);
+      });
+
+      fit("getTargetNodeNames returns empty array for External target", () => {
+        testData.Target = {
+          Kind: 'External'
+        };
+        const task = new RepairTask(dataService, testData);
+        expect(task.getTargetNodeNames()).toEqual([]);
+      });
+
+      fit("getTargetNodeNames returns empty array when NodeNames is undefined", () => {
+        testData.Target = {
+          Kind: 'Node',
+          NodeNames: undefined
+        };
+        const task = new RepairTask(dataService, testData);
+        expect(task.getTargetNodeNames()).toEqual([]);
+      });
+
+      fit("getNodeImpactList returns impact list for Node impact", () => {
+        const impactList = [
+          { NodeName: '_nt_0', ImpactLevel: 'Restart' },
+          { NodeName: '_nt_1', ImpactLevel: 'RemoveNode' }
+        ];
+        testData.Impact = {
+          Kind: 'Node',
+          NodeImpactList: impactList
+        };
+        const task = new RepairTask(dataService, testData);
+        expect(task.getNodeImpactList()).toEqual(impactList);
+      });
+
+      fit("getNodeImpactList returns empty array for External impact", () => {
+        testData.Impact = {
+          Kind: 'External',
+          ExternalImpactInfo: {
+            ImpactLevel: 'RestartNode'
+          }
+        };
+        const task = new RepairTask(dataService, testData);
+        expect(task.getNodeImpactList()).toEqual([]);
+      });
+
+      fit("affectsNode returns true when node is in target", () => {
+        testData.Target = {
+          Kind: 'Node',
+          NodeNames: ['_nt_0', '_nt_1']
+        };
+        testData.Impact = {
+          Kind: 'Node',
+          NodeImpactList: []
+        };
+        const task = new RepairTask(dataService, testData);
+        
+        expect(task.affectsNode('_nt_0')).toBe(true);
+        expect(task.affectsNode('_nt_1')).toBe(true);
+      });
+
+      fit("affectsNode returns true when node is in impacted nodes", () => {
+        testData.Target = {
+          Kind: 'Node',
+          NodeNames: ['_nt_0']
+        };
+        testData.Impact = {
+          Kind: 'Node',
+          NodeImpactList: [
+            { NodeName: '_nt_1', ImpactLevel: 3 }
+          ]
+        };
+        const task = new RepairTask(dataService, testData);
+        expect(task.affectsNode('_nt_1')).toBe(true);
+      });
+
+      fit("affectsNode returns false when node is not affected", () => {
+        testData.Target = {
+          Kind: 'Node',
+          NodeNames: ['_nt_0']
+        };
+        testData.Impact = {
+          Kind: 'Node',
+          NodeImpactList: [
+            { NodeName: '_nt_1', ImpactLevel: 3 }
+          ]
+        };
+        const task = new RepairTask(dataService, testData);
+        expect(task.affectsNode('_nt_2')).toBe(false);
+      });
+
+      fit("affectsNode returns false for External repair task", () => {
+        testData.Target = {
+          Kind: 'External'
+        };
+        testData.Impact = {
+          Kind: 'External',
+          ExternalImpactInfo: {
+            ImpactLevel: 'RestartNode'
+          }
+        };
+        const task = new RepairTask(dataService, testData);
+        expect(task.affectsNode('_nt_0')).toBe(false);
+      });
+    });
 });
 

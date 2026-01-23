@@ -12,6 +12,7 @@ import { forkJoin, of, Subscription } from 'rxjs';
 import { RefreshService } from 'src/app/services/refresh.service';
 import { catchError, map } from 'rxjs/operators';
 import { IEssentialListItem } from '../../charts/essential-health-tile/essential-health-tile.component';
+import { IRawNodeRepairTargetDescription } from 'src/app/Models/RawDataTypes';
 
 @Component({
   selector: 'app-repair-task-view',
@@ -64,7 +65,13 @@ export class RepairTaskViewComponent implements OnInit, DetailBaseComponent, OnD
   }
 
   updateNodesList() {
-    return forkJoin(Array.from(new Set(this.item.raw.Target.NodeNames.concat(this.item.impactedNodes))).map(id => {
+    const targetNodeNames: string[] = (this.item.raw.Target && this.item.raw.Target.Kind === 'Node' && Array.isArray((this.item.raw.Target as IRawNodeRepairTargetDescription).NodeNames))
+      ? (this.item.raw.Target as IRawNodeRepairTargetDescription).NodeNames
+      : [];
+
+    const nodeIds = Array.from(new Set<string>([...targetNodeNames, ...this.item.impactedNodes]));
+
+    return forkJoin(nodeIds.map(id => {
       return this.dataService.getNode(id, true).pipe(catchError(err => of(null)));
     })).pipe(map(data => {
       this.nodes = data.filter(node => node);

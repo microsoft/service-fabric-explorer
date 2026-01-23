@@ -7,9 +7,9 @@ import { IRawPartition, IRawPartitionHealth, IRawPartitionInformation, IRawParti
 import { DataModelBase, IDecorators } from './Base';
 import { ReplicaOnPartitionCollection } from './collections/Collections';
 import { DataService } from 'src/app/services/data.service';
-import { Service } from './Service';
+import { Service, isStatefulService, isStatelessService, isSelfReconfiguringService } from './Service';
 import { HealthStateFilterFlags } from '../HealthChunkRawDataTypes';
-import { ServiceKindRegexes, Constants, ServicePartitionKindRegexes } from 'src/app/Common/Constants';
+import { ServicePartitionKindRegexes } from 'src/app/Common/Constants';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { HealthBase } from './HealthEvent';
@@ -35,15 +35,15 @@ export class Partition extends DataModelBase<IRawPartition> {
     }
 
     public get isStatefulService(): boolean {
-        return ServiceKindRegexes.Stateful.test(this.raw.ServiceKind);
+        return isStatefulService(this.raw);
     }
 
     public get isStatelessService(): boolean {
-        return ServiceKindRegexes.Stateless.test(this.raw.ServiceKind);
+        return isStatelessService(this.raw);
     }
 
     public get isSelfReconfiguringService(): boolean {
-        return ServiceKindRegexes.SelfReconfiguring.test(this.raw.ServiceKind);
+        return isSelfReconfiguringService(this.raw);
     }
 
     public get id(): string {

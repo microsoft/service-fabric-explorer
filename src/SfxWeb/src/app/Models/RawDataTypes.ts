@@ -519,7 +519,7 @@ export interface IRawParameter {
     }
 
 export interface IRawPartition {
-        ServiceKind: string;
+        ServiceKind: ServiceKind;
         PartitionInformation: IRawPartitionInformation;
         TargetReplicaSetSize: number;
         MinReplicaSetSize: number;
@@ -604,7 +604,7 @@ export interface IRawDeployedReplica {
     ReconfigurationInformation: IReconfigurationInformation;
     ReplicaRole: string;
     ReplicaStatus: string;
-    ServiceKind: string;
+    ServiceKind: ServiceKind;
     ServiceManifestVersion: string;
     ServiceName: string;
     ServiceTypeName: string;
@@ -717,7 +717,7 @@ export interface IRawReplicaOnPartition {
         LastInBuildDurationInSeconds: string;
         NodeName: string;
         ReplicaStatus: string;
-        ServiceKind: string;
+        ServiceKind: ServiceKind;
         ToBeRemovedReplicaExpirationTimeUtc: string;
         InstanceRole: string;
         PreviousSelfReconfiguringInstanceRole: string;
@@ -726,24 +726,50 @@ export interface IRawReplicaOnPartition {
     }
 
 export interface IRawReplicaHealthState {
-        ServiceKind: string;
+        ServiceKind: ServiceKind;
         PartitionId: string;
         ReplicaId: string;
         AggregatedHealthState: string;
     }
 
-export interface IRawService {
+// ServiceKind discriminated union types
+export type ServiceKind = 'Stateful' | 'Stateless' | 'SelfReconfiguring';
+
+// Base interface with common properties
+export interface IRawServiceBase {
         Id: string;
-        ServiceKind: string;
         Name: string;
         TypeName: string;
         ManifestVersion: string;
         ServiceStatus: string;
-        HasPersistedState: boolean; // Only shows up when this is a stateful service.
         HealthState: string;
         IsServiceGroup: boolean;
         ServiceMetadata?: IRawServiceMetadata
     }
+
+// Stateful service specific interface
+export interface IRawStatefulService extends IRawServiceBase {
+        ServiceKind: 'Stateful';
+        HasPersistedState: boolean;
+    }
+
+// Stateless service specific interface
+export interface IRawStatelessService extends IRawServiceBase {
+        ServiceKind: 'Stateless';
+    }
+
+// SelfReconfiguring service specific interface
+export interface IRawSelfReconfiguringService extends IRawServiceBase {
+        ServiceKind: 'SelfReconfiguring';
+    }
+
+// Union type for all service kinds
+export type IRawService = IRawStatefulService | IRawStatelessService | IRawSelfReconfiguringService;
+
+// Interface for any object with ServiceKind property (used for type guards)
+export interface IHasServiceKind {
+    ServiceKind: ServiceKind;
+}
 
 export interface IRawServiceCorrelationDescription {
         ServiceName: string;
@@ -1062,7 +1088,8 @@ export interface IRawClusterVersion {
 
 export interface IRawNodeImpact {
         NodeName: string;
-        ImpactLevel	?: number;
+        // Service Fabric APIs have historically returned either numeric enums or string names.
+        ImpactLevel?: string | number;
     }
 
 export interface IRawNodeRepairImpactDescription {
@@ -1070,10 +1097,42 @@ export interface IRawNodeRepairImpactDescription {
         NodeImpactList: IRawNodeImpact[];
     }
 
+export interface IRawExternalImpactInfo {
+        ImpactLevel?: string | number;
+        [key: string]: any;
+    }
+
+export interface IRawExternalRepairImpactDescription {
+        Kind: 'External' | string;
+        ExternalImpactInfo?: IRawExternalImpactInfo;
+        [key: string]: any;
+    }
+
+export type IRawRepairImpactDescription =
+    IRawNodeRepairImpactDescription |
+    IRawExternalRepairImpactDescription |
+    { Kind: string; [key: string]: any };
+
 export interface IRawNodeRepairTargetDescription {
         Kind: string;
         NodeNames: string[];
     }
+
+export interface IRawExternalRepairTargetDescription {
+        Kind: 'External' | string;
+        [key: string]: any;
+    }
+
+export type IRawRepairTargetDescription =
+    IRawNodeRepairTargetDescription |
+    IRawExternalRepairTargetDescription |
+    { Kind: string; [key: string]: any };
+
+export interface IRawRepairTaskScopeDescription {
+        Kind: string;
+        [key: string]: any;
+    }
+
 export interface IRawRepairTaskHistory {
         CreatedUtcTimestamp ?: string;
         ClaimedUtcTimestamp ?: string;
@@ -1095,10 +1154,10 @@ export interface IRawRepairTask {
         State: string;
         Flags?: number;
         Action: string;
-        Target?: IRawNodeRepairTargetDescription;
+        Target?: IRawRepairTargetDescription;
         Executor?: string;
         ExecutorData?: string;
-        Impact?: IRawNodeRepairImpactDescription;
+        Impact?: IRawRepairImpactDescription;
         ResultStatus?: string;
         ResultCode?: number;
         ResultDetail?: string;
@@ -1107,10 +1166,107 @@ export interface IRawRepairTask {
         RestoringHealthCheckState?: string;
         PerformPreparingHealthCheck?: boolean;
         PerformRestoringHealthCheck?: boolean;
+        // Some endpoints return `Scope` while older code paths used `scope`.
+        Scope?: IRawRepairTaskScopeDescription;
         scope?: any;
         ResultDetails?: string;
     }
 
+export interface IRawInfrastructureDocument {
+        Incarnation: string;
+        JobDocumentIncarnation: number;
+        Jobs: IRawJob[];
+        JobSetsRequiringApproval: IRawJobSetsRequiringApproval[];
+        RoleInstanceHealthInfoIncarnation: string;
+        RoleInstanceHealthInfoTimestamp: string;
+        RoleInstanceHealthInfos: IRawRoleInstanceHealthInfo[];
+        PendingUpdatesOnRoleInstances: IRawRoleInstancePendingUpdate[];
+        MRConversationId: string;
+        CoordinationGroupId: string;
+        RoleInstanceToNodeIDHashList: IRawRoleInstanceToNodeIDHashWrapper[];
+    }
+
+export interface IRawRoleInstanceToNodeIDHashWrapper {
+        RoleInstanceName: string;
+        NodeIdHash: string;
+    }
+
+export interface IRawRoleInstancePendingUpdate {
+        RoleInstanceName: string;
+        UpdateTypes: string[];
+        ExpectedImpact: IRawAffectedResourceImpact;
+    }
+
+export interface IRawAffectedResourceImpact {
+        ListOfImpactTypes: string[];
+        DiskImpact: string;
+        ComputeImpact: string;
+        OSImpact: string;
+        NetworkImpact: string;
+        ApplicationConfigImpact: string;
+        EstimatedImpactDurationInSeconds: number;
+    }
+
+export interface IRawRoleInstanceHealthInfo {
+        RoleInstanceName: string;
+        Health: string;
+        NodeHealthIndex: number;
+    }
+
+export interface IRawJobSetsRequiringApproval {
+        Jobset: string[];
+    }
+
+export interface IRawJob {
+        Id: string;
+        JobStatus: string;
+        RoleInstancesToBeImpacted: string[];
+        ContextStringGivenByTenant: string;
+        JobStep: IRawJobStep;
+        ImpactDetail: IRawImpactDetail;
+        CorrelationId: string;
+        IsCriticalRollout: boolean;
+        SafeFlyId: string;
+    }
+
+export interface IRawImpactDetail {
+        ImpactAction: string;
+        ImpactedResources: IRawImpactedResources;
+    }
+
+export interface IRawImpactedResources {
+        ListOfImpactTypes: string[];
+        DiskImpact: string;
+        ComputeImpact: string;
+        OSImpact: string;
+        NetworkImpact: string;
+        ApplicationConfigImpact: string;
+        EstimatedImpactDurationInSeconds: number;
+    }
+
+export interface IRawJobStep {
+        ImpactStep: string;
+        AcknowledgementStatus: string;
+        DeadlineForResponse: string;
+        CurrentlyImpactedRoleInstances: IRawInstanceImpact[];
+        ActionStatus: string;
+    }
+
+export interface IRawInstanceImpact {
+        RoleInstanceName: string;
+        UpdateDomain: string;
+        ExpectedImpact: IRawExpectedImpact;
+    }
+
+export interface IRawExpectedImpact {
+        ListOfImpactTypes: string[];
+        DiskImpact: string;
+        ComputeImpact: string;
+        OSImpact: string;
+        NetworkImpact: string;
+        ApplicationConfigImpact: string;
+        EstimatedImpactDurationInSeconds: number;
+    }
 export interface IRawInfrastructureJob {
     Id: string;
     IsActive: string;
