@@ -3,7 +3,7 @@ import {
     IRawService, 
     IRawApplication, 
     IRawPartition, 
-    IRawReplica,
+    IRawReplicaOnPartition,
     IRawHealthEvent 
 } from '../Models/RawDataTypes';
 import { 
@@ -37,7 +37,7 @@ export class TestDataBuilder {
     private application: IRawApplication | null = null;
     private service: IRawService | null = null;
     private partitions: IRawPartition[] = [];
-    private replicas: IRawReplica[] = [];
+    private replicas: IRawReplicaOnPartition[] = [];
     private nodes: IRawNode[] = [];
     private healthEvents: IRawHealthEvent[] = [];
 
@@ -110,7 +110,7 @@ export class TestDataBuilder {
      * @param overrides - Property overrides for the replica
      * @returns This builder for chaining
      */
-    withReplica(overrides: Partial<IRawReplica> = {}): this {
+    withReplica(overrides: Partial<IRawReplicaOnPartition> = {}): this {
         this.replicas.push(createMockReplica(overrides));
         return this;
     }

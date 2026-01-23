@@ -32,7 +32,6 @@ export {
     createMockApplication,
     createMockPartition,
     createMockReplica,
-    createMockCluster,
     createMockHealthEvent,
     createMockId,
     createMockServiceDescription

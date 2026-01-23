@@ -3,8 +3,7 @@ import {
     IRawService, 
     IRawApplication, 
     IRawPartition, 
-    IRawReplica,
-    IRawCluster,
+    IRawReplicaOnPartition,
     IRawHealthEvent,
     IRawId,
     IRawNodeDeactivationInfo,
@@ -176,11 +175,11 @@ export function createMockPartition(overrides: Partial<IRawPartition> = {}): IRa
 }
 
 /**
- * Creates a mock IRawReplica with sensible defaults.
+ * Creates a mock IRawReplicaOnPartition with sensible defaults.
  * Override any properties by passing them in the overrides parameter.
  * 
- * @param overrides - Partial IRawReplica to override default values
- * @returns A complete mock IRawReplica object
+ * @param overrides - Partial IRawReplicaOnPartition to override default values
+ * @returns A complete mock IRawReplicaOnPartition object
  * 
  * @example
  * const replica = createMockReplica({ 
@@ -188,10 +187,12 @@ export function createMockPartition(overrides: Partial<IRawPartition> = {}): IRa
  *   ReplicaStatus: 'Ready'
  * });
  */
-export function createMockReplica(overrides: Partial<IRawReplica> = {}): IRawReplica {
+export function createMockReplica(overrides: Partial<IRawReplicaOnPartition> = {}): IRawReplicaOnPartition {
     return {
-        Id: '123456789',
+        ReplicaId: '123456789',
+        InstanceId: '123456789',
         ReplicaRole: 'Primary',
+        PreviousReplicaRole: 'None',
         ReplicaStatus: 'Ready',
         HealthState: 'Ok',
         Address: '{"Endpoints":{"":"http://localhost:8080"}}',
@@ -199,30 +200,7 @@ export function createMockReplica(overrides: Partial<IRawReplica> = {}): IRawRep
         LastInBuildDurationInSeconds: '0',
         ServiceKind: 'Stateful',
         ...overrides
-    } as IRawReplica;
-}
-
-/**
- * Creates a mock IRawCluster with sensible defaults.
- * Override any properties by passing them in the overrides parameter.
- * 
- * @param overrides - Partial IRawCluster to override default values
- * @returns A complete mock IRawCluster object
- * 
- * @example
- * const cluster = createMockCluster({ 
- *   Name: 'MyCluster',
- *   ClusterVersion: '7.0.0.0'
- * });
- */
-export function createMockCluster(overrides: Partial<IRawCluster> = {}): IRawCluster {
-    return {
-        Name: 'TestCluster',
-        ClusterManifestVersion: '1.0',
-        HealthState: 'Ok',
-        ClusterVersion: '7.0.0.0',
-        ...overrides
-    } as IRawCluster;
+    } as IRawReplicaOnPartition;
 }
 
 /**
