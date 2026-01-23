@@ -208,15 +208,17 @@ context('partition', () => {
         })
 
         it('reconfiguration information', () => {
-          addRoute("partitions-reconfig","partition-page/selfreconfiguring-partitions-reconfiguration.json", apiUrl(`${routeFormatter(appName, selfReconfiguringServiceName)}?*`));
-          addRoute("partitionInfo-reconfig","partition-page/selfreconfiguring-partition-reconfiguration.json", apiUrl(`${routeFormatter(appName, selfReconfiguringServiceName)}/${selfreconfiguringPartitionId}?*`));
-          addRoute("replica-reconfig", "partition-page/selfreconfiguring-replica-reconfiguration.json", apiUrl(`${routeFormatter(appName, selfReconfiguringServiceName)}/${selfreconfiguringPartitionId}/$/GetReplicas?*`));
+          // Override the routes from beforeEach with reconfiguration data
+          // Using the same route names ensures these intercepts replace the previous ones
+          addRoute("partitions","partition-page/selfreconfiguring-partitions-reconfiguration.json", apiUrl(`${routeFormatter(appName, selfReconfiguringServiceName)}?*`));
+          addRoute("partitionInfo","partition-page/selfreconfiguring-partition-reconfiguration.json", apiUrl(`${routeFormatter(appName, selfReconfiguringServiceName)}/${selfreconfiguringPartitionId}?*`));
+          addRoute("replicasList", "partition-page/selfreconfiguring-replica-reconfiguration.json", apiUrl(`${routeFormatter(appName, selfReconfiguringServiceName)}/${selfreconfiguringPartitionId}/$/GetReplicas?*`));
 
-          // Trigger a refresh to fetch the new mocked data
+          // Trigger a refresh to fetch the new mocked reconfiguration data
           refresh();
 
-          // Wait for all three intercepted routes to complete before making assertions
-          cy.wait(['@getpartitions-reconfig', '@getpartitionInfo-reconfig', '@getreplica-reconfig']);
+          // Wait for the intercepted routes to complete before making assertions
+          cy.wait(['@getpartitions', '@getpartitionInfo', '@getreplicasList']);
           
           // Additional wait to ensure UI has been updated with the new data
           cy.wait(500);
