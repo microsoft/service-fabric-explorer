@@ -18,6 +18,13 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { RepairTask } from 'src/app/Models/DataModels/repairTask';
 import { RepairTaskCollection } from 'src/app/Models/DataModels/collections/RepairTaskCollection';
 import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
+import { SharedModule } from 'src/app/shared/shared.module';
+import { ChartsModule } from 'src/app/modules/charts/charts.module';
+import { DetailListTemplatesModule } from 'src/app/modules/detail-list-templates/detail-list-templates.module';
+import { RepairTasksModule } from 'src/app/modules/repair-tasks/repair-tasks.module';
+import { EventStoreModule } from 'src/app/modules/event-store/event-store.module';
+import { MatDialogModule } from '@angular/material/dialog';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 describe('RepairTasksComponent', () => {
   let component: RepairTasksComponent;
@@ -128,7 +135,17 @@ describe('RepairTasksComponent', () => {
       providers: [SettingsService,
                   {provide: DataService, useValue: dataServiceStub },
                   RefreshService],
-      imports: [RouterTestingModule, NgbNavModule]
+      imports: [
+        RouterTestingModule,
+        NgbNavModule,
+        SharedModule,
+        ChartsModule,
+        DetailListTemplatesModule,
+        RepairTasksModule,
+        EventStoreModule,
+        MatDialogModule,
+        NoopAnimationsModule
+      ]
     })
     .compileComponents();
   }));
