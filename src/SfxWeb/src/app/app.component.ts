@@ -1,3 +1,8 @@
+// -----------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// Licensed under the MIT License. See License file under the project root for license information.
+// -----------------------------------------------------------------------------
+
 import { Component, OnInit, HostListener, ViewChild, ElementRef } from '@angular/core';
 import { TreeService } from './services/tree.service';
 import { RefreshService } from './services/refresh.service';

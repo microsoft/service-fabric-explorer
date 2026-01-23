@@ -1,3 +1,8 @@
+// -----------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// Licensed under the MIT License. See License file under the project root for license information.
+// -----------------------------------------------------------------------------
+
 /// <reference types="cypress" />
 import { addDefaultFixtures, apiUrl, FIXTURE_REF_MANIFEST, EMPTY_LIST_TEXT, addRoute, aad_route,
         checkCommand, xssPrefix, watchForAlert, plaintextXSS2, plaintextXSS, xssEncoded, windowAlertText } from './util.cy';

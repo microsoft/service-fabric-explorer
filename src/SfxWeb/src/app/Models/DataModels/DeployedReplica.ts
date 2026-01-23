@@ -1,3 +1,8 @@
+// -----------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// Licensed under the MIT License. See License file under the project root for license information.
+// -----------------------------------------------------------------------------
+
 import { DataModelBase, IDecorators } from './Base';
 import { IRawDeployedReplica, IRawPartition, IRawDeployedReplicaDetail, IRawReplicatorStatus, IRawRemoteReplicatorStatus, IRawReplicaInfo, IRawInstanceInfo } from '../RawDataTypes';
 import { DataService } from 'src/app/services/data.service';
@@ -14,11 +19,6 @@ import { LoadMetricReport } from './Partition';
 import { ActionWithConfirmationDialog } from '../Action';
 import { RoutesService } from 'src/app/services/routes.service';
 import { isStatefulService, isStatelessService, isSelfReconfiguringService } from './Service';
-
-// -----------------------------------------------------------------------------
-// Copyright (c) Microsoft Corporation.  All rights reserved.
-// Licensed under the MIT License. See License file under the project root for license information.
-// -----------------------------------------------------------------------------
 
 export class DeployedReplica extends DataModelBase<IRawDeployedReplica> {
     public decorators: IDecorators = {

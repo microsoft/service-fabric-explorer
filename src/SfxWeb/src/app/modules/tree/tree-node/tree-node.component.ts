@@ -1,3 +1,8 @@
+// -----------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// Licensed under the MIT License. See License file under the project root for license information.
+// -----------------------------------------------------------------------------
+
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { PaginationId, TreeNodeGroupViewModel } from 'src/app/ViewModels/TreeNodeGroupViewModel';
 import { TreeService } from 'src/app/services/tree.service';

@@ -1,3 +1,8 @@
+// -----------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// Licensed under the MIT License. See License file under the project root for license information.
+// -----------------------------------------------------------------------------
+
 import { ITreeNode } from './TreeTypes';
 import { TreeViewModel } from './TreeViewModel';
 import { IClusterHealthChunkQueryDescription, IClusterHealthChunk } from '../Models/HealthChunkRawDataTypes';
@@ -10,11 +15,6 @@ import { ActionCollection } from '../Models/ActionCollection';
 import { ITextAndBadge } from '../Utils/ValueResolver';
 import orderBy from 'lodash/orderBy';
 import { HealthUtils } from '../Utils/healthUtils';
-
-// -----------------------------------------------------------------------------
-// Copyright (c) Microsoft Corporation.  All rights reserved.
-// Licensed under the MIT License. See License file under the project root for license information.
-// -----------------------------------------------------------------------------
 
 export const PaginationId = {
     prevPage: 'prevPage',

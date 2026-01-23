@@ -1,3 +1,8 @@
+// -----------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// Licensed under the MIT License. See License file under the project root for license information.
+// -----------------------------------------------------------------------------
+
 import { PartitionBackupCollection, SinglePartitionBackupCollection } from './collections/Collections';
 import { IRawStorage, IRawPartitionBackupConfigurationInfo, IRawBackupProgressInfo, IRawRestoreProgressInfo, IRawPartitionBackup } from '../RawDataTypes';
 import { DataService } from 'src/app/services/data.service';
@@ -7,11 +12,6 @@ import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers'
 import { Observable } from 'rxjs';
 import { IsolatedAction } from '../Action';
 import { BackupinfoComponent } from 'src/app/views/partition/backupinfo/backupinfo.component';
-
-// -----------------------------------------------------------------------------
-// Copyright (c) Microsoft Corporation.  All rights reserved.
-// Licensed under the MIT License. See License file under the project root for license information.
-// -----------------------------------------------------------------------------
 
 export class PartitionBackupInfo {
     public partitionBackupConfigurationInfo: PartitionBackupConfigurationInfo;

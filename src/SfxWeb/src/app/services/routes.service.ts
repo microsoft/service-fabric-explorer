@@ -1,3 +1,8 @@
+// -----------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// Licensed under the MIT License. See License file under the project root for license information.
+// -----------------------------------------------------------------------------
+
 import { Injectable, Component } from '@angular/core';
 import { Location } from '@angular/common';
 import { Router, ActivationEnd, NavigationEnd, ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';

@@ -1,12 +1,12 @@
-import { IClusterHealthChunkQueryDescription, IClusterHealthChunk } from '../Models/HealthChunkRawDataTypes';
-import { TreeNodeGroupViewModel } from './TreeNodeGroupViewModel';
-import { ITreeNode } from './TreeTypes';
-import { Observable } from 'rxjs';
-
 // -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
 // -----------------------------------------------------------------------------
+
+import { IClusterHealthChunkQueryDescription, IClusterHealthChunk } from '../Models/HealthChunkRawDataTypes';
+import { TreeNodeGroupViewModel } from './TreeNodeGroupViewModel';
+import { ITreeNode } from './TreeTypes';
+import { Observable } from 'rxjs';
 
 export class TreeViewModel {
     public childGroupViewModel: TreeNodeGroupViewModel;

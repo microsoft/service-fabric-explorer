@@ -1,13 +1,12 @@
-import { Constants } from '../Common/Constants';
-import { Utils } from './Utils';
-import dayjs from 'dayjs';
-import { Duration } from 'luxon';
-
 // -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
 // -----------------------------------------------------------------------------
 
+import { Constants } from '../Common/Constants';
+import { Utils } from './Utils';
+import dayjs from 'dayjs';
+import { Duration } from 'luxon';
 
 export class TimeUtils {
     // Per email thread, this is:

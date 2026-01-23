@@ -1,11 +1,11 @@
-import { IRawHealthStateCount } from '../Models/RawDataTypes';
-import { RoutesService } from '../services/routes.service';
-import { ValueResolver, ITextAndBadge } from '../Utils/ValueResolver';
-
 // -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
 // -----------------------------------------------------------------------------
+
+import { IRawHealthStateCount } from '../Models/RawDataTypes';
+import { RoutesService } from '../services/routes.service';
+import { ValueResolver, ITextAndBadge } from '../Utils/ValueResolver';
 
 export interface IDashboardViewModel {
     displayTitle: string;

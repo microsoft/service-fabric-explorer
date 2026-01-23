@@ -1,3 +1,8 @@
+// -----------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// Licensed under the MIT License. See License file under the project root for license information.
+// -----------------------------------------------------------------------------
+
 import { Injectable } from '@angular/core';
 import { ClusterTimelineGenerator, NodeTimelineGenerator, ApplicationTimelineGenerator, PartitionTimelineGenerator, RepairTaskTimelineGenerator, TimeLineGeneratorBase, ReplicaTimelineGenerator } from '../Models/eventstore/timelineGenerators';
 import { EventType } from '../modules/event-store/event-store/event-store.component';

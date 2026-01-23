@@ -1,3 +1,8 @@
+// -----------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// Licensed under the MIT License. See License file under the project root for license information.
+// -----------------------------------------------------------------------------
+
 import { Component, ElementRef, OnInit } from '@angular/core';
 import { IdGenerator } from 'src/app/Utils/IdGenerator';
 import { TreeService } from 'src/app/services/tree.service';

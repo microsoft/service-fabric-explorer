@@ -1,3 +1,8 @@
+// -----------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// Licensed under the MIT License. See License file under the project root for license information.
+// -----------------------------------------------------------------------------
+
 import { Component, Input, OnChanges } from '@angular/core';
 import { ApplicationType } from 'src/app/Models/DataModels/ApplicationType';
 import { ListSettings } from 'src/app/Models/ListSettings';

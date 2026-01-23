@@ -1,3 +1,8 @@
+// -----------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// Licensed under the MIT License. See License file under the project root for license information.
+// -----------------------------------------------------------------------------
+
 import { ITimedReplication } from './replica-status-container/replica-status-container.component';
 import { generateReplicationDeltas } from './replication-utils';
 

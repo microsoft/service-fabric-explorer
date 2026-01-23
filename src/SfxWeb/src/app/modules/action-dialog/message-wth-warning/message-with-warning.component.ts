@@ -1,3 +1,8 @@
+// -----------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// Licensed under the MIT License. See License file under the project root for license information.
+// -----------------------------------------------------------------------------
+
 import { AfterViewInit, Component, EventEmitter, Input, OnDestroy, Output, Type, ViewChild } from '@angular/core';
 import { Observable, Subscription, of } from 'rxjs';
 import { DialogBodyDirective } from '../dialog-body.directive';

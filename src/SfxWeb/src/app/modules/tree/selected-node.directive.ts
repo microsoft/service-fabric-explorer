@@ -1,3 +1,8 @@
+// -----------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// Licensed under the MIT License. See License file under the project root for license information.
+// -----------------------------------------------------------------------------
+
 import { Directive, ElementRef, Input, OnChanges } from '@angular/core';
 import { FocusService } from 'src/app/services/focus.service';
 import { TreeService } from 'src/app/services/tree.service';

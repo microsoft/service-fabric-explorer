@@ -1,3 +1,8 @@
+// -----------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// Licensed under the MIT License. See License file under the project root for license information.
+// -----------------------------------------------------------------------------
+
 import { OnDestroy, OnInit, Injector, Directive } from '@angular/core';
 import { Observable, Subscription, of } from 'rxjs';
 import { IResponseMessageHandler } from '../Common/ResponseMessageHandlers';

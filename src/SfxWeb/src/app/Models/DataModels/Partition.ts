@@ -1,3 +1,8 @@
+// -----------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// Licensed under the MIT License. See License file under the project root for license information.
+// -----------------------------------------------------------------------------
+
 import { IRawPartition, IRawPartitionHealth, IRawPartitionInformation, IRawPartitionLoadInformation, IRawLoadMetricReport } from '../RawDataTypes';
 import { DataModelBase, IDecorators } from './Base';
 import { ReplicaOnPartitionCollection } from './collections/Collections';
@@ -11,11 +16,6 @@ import { HealthBase } from './HealthEvent';
 import { PartitionBackupInfo } from './PartitionBackupInfo';
 import { Observable } from 'rxjs';
 import { RoutesService } from 'src/app/services/routes.service';
-
-// -----------------------------------------------------------------------------
-// Copyright (c) Microsoft Corporation.  All rights reserved.
-// Licensed under the MIT License. See License file under the project root for license information.
-// -----------------------------------------------------------------------------
 
 export class Partition extends DataModelBase<IRawPartition> {
     public partitionInformation: PartitionInformation;

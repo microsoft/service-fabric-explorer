@@ -1,3 +1,8 @@
+// -----------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// Licensed under the MIT License. See License file under the project root for license information.
+// -----------------------------------------------------------------------------
+
 import { Utils } from '../Utils/Utils';
 import { HyperLinkComponent } from '../modules/detail-list-templates/hyper-link/hyper-link.component';
 import { CopyTextComponent } from '../modules/detail-list-templates/copy-text/copy-text.component';
@@ -11,11 +16,6 @@ import { ShortenComponent } from '../modules/detail-list-templates/shorten/short
 import { HealthbadgeComponent } from '../modules/detail-list-templates/healthbadge/healthbadge.component';
 import { IConcurrentEvents } from './eventstore/rcaEngine';
 import { ArmManagedComponent } from '../modules/detail-list-templates/arm-managed/arm-managed.component';
-
-// -----------------------------------------------------------------------------
-// Copyright (c) Microsoft Corporation.  All rights reserved.
-// Licensed under the MIT License. See License file under the project root for license information.
-// -----------------------------------------------------------------------------
 
 export class ListSettings {
     public search = '';

@@ -1,13 +1,13 @@
+// -----------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// Licensed under the MIT License. See License file under the project root for license information.
+// -----------------------------------------------------------------------------
+
 import { ITextAndBadge } from '../Utils/ValueResolver';
 import { ListSettings } from '../Models/ListSettings';
 import { IClusterHealthChunkQueryDescription, IClusterHealthChunk } from '../Models/HealthChunkRawDataTypes';
 import { Observable } from 'rxjs';
 import { ActionCollection } from '../Models/ActionCollection';
-
-// -----------------------------------------------------------------------------
-// Copyright (c) Microsoft Corporation.  All rights reserved.
-// Licensed under the MIT License. See License file under the project root for license information.
-// -----------------------------------------------------------------------------
 
 export interface ITreeNode {
     displayName: () => string;
