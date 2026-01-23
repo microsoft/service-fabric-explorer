@@ -72,7 +72,12 @@ export function createMockDataService(overrides: Partial<DataService> = {}): Dat
  */
 export function createMockRestClientService(overrides: Partial<RestClientService> = {}): RestClientService {
     const mock: Partial<RestClientService> = {
-        getClusterHealth: (messageHandler?: IResponseMessageHandler) => of({
+        getClusterHealth: (
+            eventsHealthStateFilter?: number,
+            nodesHealthStateFilter?: number,
+            applicationsHealthStateFilter?: number,
+            messageHandler?: IResponseMessageHandler
+        ) => of({
             AggregatedHealthState: 'Ok',
             HealthEvents: [],
             UnhealthyEvaluations: [],
@@ -90,7 +95,7 @@ export function createMockRestClientService(overrides: Partial<RestClientService
             Items: []
         } as any),
         getNode: (nodeName: string, messageHandler?: IResponseMessageHandler) => of(null as any),
-        getApplications: (messageHandler?: IResponseMessageHandler) => of({
+        getApplications: (excludeParams?: boolean, messageHandler?: IResponseMessageHandler) => of({
             ContinuationToken: '',
             Items: []
         } as any),
