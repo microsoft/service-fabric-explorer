@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-import { addDefaultFixtures, apiUrl, checkTableSize, EMPTY_LIST_TEXT, FIXTURE_REF_MANIFEST, addRoute, checkCommand } from './util.cy';
+import { addDefaultFixtures, apiUrl, checkTableSize, EMPTY_LIST_TEXT, FIXTURE_REF_MANIFEST, addRoute, checkCommand, refresh } from './util.cy';
 
 const serviceName = "VisualObjects.ActorService";
 const partitionId = "28bfaf73-37b0-467d-9d47-d011b0aedbc0";
@@ -211,6 +211,9 @@ context('partition', () => {
           addRoute("partitions-reconfig","partition-page/selfreconfiguring-partitions-reconfiguration.json", apiUrl(`${routeFormatter(appName, selfReconfiguringServiceName)}?*`));
           addRoute("partitionInfo-reconfig","partition-page/selfreconfiguring-partition-reconfiguration.json", apiUrl(`${routeFormatter(appName, selfReconfiguringServiceName)}/${selfreconfiguringPartitionId}?*`));
           addRoute("replica-reconfig", "partition-page/selfreconfiguring-replica-reconfiguration.json", apiUrl(`${routeFormatter(appName, selfReconfiguringServiceName)}/${selfreconfiguringPartitionId}/$/GetReplicas?*`));
+
+          // Trigger a refresh to fetch the new mocked data
+          refresh();
 
           // Wait for all three intercepted routes to complete before making assertions
           cy.wait(['@getpartitions-reconfig', '@getpartitionInfo-reconfig', '@getreplica-reconfig']);
