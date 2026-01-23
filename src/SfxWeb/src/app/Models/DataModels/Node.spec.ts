@@ -116,7 +116,8 @@ describe('Node', () => {
                     NodeDeactivationIntent: 'Pause',
                     NodeDeactivationTask: [{
                         NodeDeactivationTaskId: {
-                            Id: 'task1'
+                            Id: 'task1',
+                            NodeDeactivationTaskType: 'Infrastructure'
                         },
                         NodeDeactivationIntent: 'Pause',
                         NodeDeactivationDescription: 'Test deactivation'
@@ -152,7 +153,8 @@ describe('Node', () => {
                     NodeDeactivationIntent: 'Pause',
                     NodeDeactivationTask: [{
                         NodeDeactivationTaskId: {
-                            Id: 'task1'
+                            Id: 'task1',
+                            NodeDeactivationTaskType: 'Infrastructure'
                         },
                         NodeDeactivationIntent: 'Pause'
                     }],
@@ -171,7 +173,8 @@ describe('Node', () => {
                     NodeDeactivationIntent: 'Pause',
                     NodeDeactivationTask: [{
                         NodeDeactivationTaskId: {
-                            Id: 'task1'
+                            Id: 'task1',
+                            NodeDeactivationTaskType: 'Infrastructure'
                         },
                         NodeDeactivationIntent: 'Pause',
                         NodeDeactivationDescription: 'Deactivating for maintenance'
