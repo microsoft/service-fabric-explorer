@@ -212,7 +212,13 @@ context('partition', () => {
           addRoute("partitionInfo-reconfig","partition-page/selfreconfiguring-partition-reconfiguration.json", apiUrl(`${routeFormatter(appName, selfReconfiguringServiceName)}/${selfreconfiguringPartitionId}?*`));
           addRoute("replica-reconfig", "partition-page/selfreconfiguring-replica-reconfiguration.json", apiUrl(`${routeFormatter(appName, selfReconfiguringServiceName)}/${selfreconfiguringPartitionId}/$/GetReplicas?*`));
 
-          cy.get('[data-cy=replicas]').within(() => {
+          // Wait for all three intercepted routes to complete before making assertions
+          cy.wait(['@getpartitions-reconfig', '@getpartitionInfo-reconfig', '@getreplica-reconfig']);
+          
+          // Additional wait to ensure UI has been updated with the new data
+          cy.wait(500);
+
+          cy.get('[data-cy=replicas]', { timeout: 10000 }).within(() => {
             cy.contains('Down');
             cy.contains('Reconfiguring: SelfReconfiguringMember ➜ SelfReconfiguringMember');
             cy.contains('Reconfiguring: Deactivated ➜ Activated');
