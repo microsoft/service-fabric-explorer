@@ -271,6 +271,8 @@ context('service', () => {
         cy.get('[data-cy=state-data]').within(() => {
           cy.contains("Stateless")
           cy.contains("Instance Count")
+          cy.contains("Minimum Instance Count")
+          cy.contains("Minimum Instance Percentage")
         })
 
         cy.get("[data-cy=placementconstraints]").within(() => {
@@ -357,6 +359,7 @@ context('service', () => {
           cy.contains("SelfReconfiguring")
           cy.contains("Instance Count")
           cy.contains("Minimum Instance Count")
+          cy.contains("Minimum Instance Percentage")
         })
       })
     })

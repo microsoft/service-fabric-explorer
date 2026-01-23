@@ -9,6 +9,7 @@
             },
             "InstanceCount": 2,
             "MinInstanceCount": 2,
+            "MinInstancePercentage": 0,
             "HealthState": "Ok",
             "PartitionStatus": "Ready",
             "ConfigurationRequestId": {
