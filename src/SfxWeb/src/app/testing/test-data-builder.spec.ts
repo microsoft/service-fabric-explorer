@@ -123,8 +123,8 @@ describe('TestDataBuilder Examples', () => {
         it('should create a full application deployment scenario', () => {
             const scenario = new TestDataBuilder()
                 .withApplication('fabric:/WebApp', { TypeVersion: '2.0.0' })
-                .withService('fabric:/WebApp/Frontend', { ServiceKind: 1 }) // Stateless
-                .withService('fabric:/WebApp/Backend', { ServiceKind: 2 }) // Stateful
+                .withService('fabric:/WebApp/Frontend', { ServiceKind: 'Stateless' })
+                .withService('fabric:/WebApp/Backend', { ServiceKind: 'Stateful' })
                 .withNodes(5, 'WebNodeType')
                 .withHealthyReplicas(3)
                 .withHealthEvent({ HealthState: 'Ok', Description: 'Deployment successful' })
