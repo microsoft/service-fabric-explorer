@@ -210,8 +210,8 @@ context('partition', () => {
         it('reconfiguration information', () => {
           // Override the routes from beforeEach with reconfiguration data
           // Using the same route names ensures these intercepts replace the previous ones
-          addRoute("partitions","partition-page/selfreconfiguring-partitions-reconfiguration.json", apiUrl(`${routeFormatter(appName, selfReconfiguringServiceName)}?*`));
-          addRoute("partitionInfo","partition-page/selfreconfiguring-partition-reconfiguration.json", apiUrl(`${routeFormatter(appName, selfReconfiguringServiceName)}/${selfreconfiguringPartitionId}?*`));
+          addRoute("partitions", "partition-page/selfreconfiguring-partitions-reconfiguration.json", apiUrl(`${routeFormatter(appName, selfReconfiguringServiceName)}?*`));
+          addRoute("partitionInfo", "partition-page/selfreconfiguring-partition-reconfiguration.json", apiUrl(`${routeFormatter(appName, selfReconfiguringServiceName)}/${selfreconfiguringPartitionId}?*`));
           addRoute("replicasList", "partition-page/selfreconfiguring-replica-reconfiguration.json", apiUrl(`${routeFormatter(appName, selfReconfiguringServiceName)}/${selfreconfiguringPartitionId}/$/GetReplicas?*`));
 
           // Trigger a refresh to fetch the new mocked reconfiguration data
