@@ -61,9 +61,7 @@ export function createMockNode(overrides: Partial<IRawNode> = {}): IRawNode {
         IsSeedNode: true,
         UpgradeDomain: 'UD0',
         FaultDomain: 'fd:/0',
-        Id: defaultId,
         InstanceId: '1234567890',
-        NodeDeactivationInfo: defaultDeactivationInfo,
         IsStopped: false,
         NodeDownTimeInSeconds: '0',
         NodeUpAt: new Date().toISOString(),
@@ -155,7 +153,6 @@ export function createMockPartition(overrides: Partial<IRawPartition> = {}): IRa
     };
 
     return {
-        PartitionInformation: defaultPartitionInfo,
         InstanceId: '1',
         TargetReplicaSetSize: 3,
         MinReplicaSetSize: 2,
