@@ -1,7 +1,8 @@
 <app-dashboard-text-scale-tile>
   <div style="display: flex; flex-direction: column">
     <h2 class="title-wrapper top-separator">
-      FMM Information
+      {{ isFmmEstimate ? 'FMM Information (Estimated)' : 'FMM Information' }}
+      <span class="mif-info" title="This is the node location of the Failover Manager Manager."></span>
       <span class="mif-loop2 rotate" *ngIf="isLoading"></span>
     </h2>
     
