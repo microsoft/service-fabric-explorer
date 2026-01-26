@@ -14,7 +14,7 @@ interface NodeDisplay {
 }
 
 @Component({
-  selector: 'app-fmm-nodes',
+  selector: 'app-nodes',
   templateUrl: './nodes.component.html',
   styleUrls: ['./nodes.component.scss']
 })

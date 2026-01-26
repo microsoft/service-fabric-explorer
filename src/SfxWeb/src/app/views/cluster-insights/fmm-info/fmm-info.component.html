@@ -1,4 +1,4 @@
-<app-dashboard-text-scale-tile>
+<app-dashboard-text-scale-tile data-cy="fmm-info">
   <div style="display: flex; flex-direction: column">
     <h2 class="title-wrapper top-separator">
       {{ isFmmEstimate ? 'FMM Information (Estimated)' : 'FMM Information' }}
@@ -9,7 +9,7 @@
     <div>
       <div class="flex-center line-item-separator">
         <div class="fmm-label">Node Name</div>
-        <div class="fmm-value">
+        <div class="fmm-value" data-cy="fmm-node-name">
           {{ fmmInfo?.NodeName }}
         </div>
         <app-clip-board [text]="fmmInfo?.NodeName" *ngIf="fmmInfo?.NodeName" [name]="'Node Name'"></app-clip-board>
@@ -17,7 +17,7 @@
       
       <div class="flex-center line-item-separator">
         <div class="fmm-label">Node ID</div>
-        <div class="fmm-value">
+        <div class="fmm-value" data-cy="fmm-node-id">
           {{ fmmInfo?.NodeId?.Id }}
         </div>
         <app-clip-board [text]="fmmInfo?.NodeId?.Id" *ngIf="fmmInfo?.NodeId?.Id" [name]="'Node ID'"></app-clip-board>
@@ -25,7 +25,7 @@
       
       <div class="flex-center line-item-separator">
         <div class="fmm-label">Node Instance ID</div>
-        <div class="fmm-value">
+        <div class="fmm-value" data-cy="fmm-node-instance-id">
           {{ fmmInfo?.NodeInstanceId }}
         </div>
         <app-clip-board [text]="fmmInfo?.NodeInstanceId" *ngIf="fmmInfo?.NodeInstanceId" [name]="'Node Instance ID'"></app-clip-board>
