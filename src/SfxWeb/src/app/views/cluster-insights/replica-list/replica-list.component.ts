@@ -71,8 +71,7 @@ export class ReplicaListComponent implements OnInit, OnDestroy {
   };
 
   private readonly REFRESH_INTERVAL_NORMAL = 180000; // 3 minutes
-  private readonly REFRESH_INTERVAL_FM_QUORUM_LOSS = 30000; // 30 seconds
-  private readonly REFRESH_INTERVAL_CM_QUORUM_LOSS = 60000; // 1 minute (slower than FM QL rate because APIs are slow during CM QL)
+  private readonly REFRESH_INTERVAL_QUORUM_LOSS = 90000; // 90 seconds
 
   public activeTab: ServiceName = ServiceName.FailoverManager;
   
@@ -378,10 +377,8 @@ export class ReplicaListComponent implements OnInit, OnDestroy {
     let newInterval = this.REFRESH_INTERVAL_NORMAL;
     
     // Refresh faster when in quorum loss to see replica data changes
-    if (failoverManagerInQuorumLoss) {
-      newInterval = this.REFRESH_INTERVAL_FM_QUORUM_LOSS;
-    } else if (clusterManagerInQuorumLoss) {
-      newInterval = this.REFRESH_INTERVAL_CM_QUORUM_LOSS;
+    if (failoverManagerInQuorumLoss || clusterManagerInQuorumLoss) {
+      newInterval = this.REFRESH_INTERVAL_QUORUM_LOSS;
     }
 
     this.restartAutoRefreshWithNewInterval(newInterval);
