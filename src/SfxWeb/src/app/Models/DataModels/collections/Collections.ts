@@ -427,6 +427,13 @@ export abstract class EventListBase<T extends FabricEventBase> extends DataModel
             [
                 new ListColumnSettingWithEventStoreRowDisplay(),
             new ListColumnSetting(
+                'eventStatus',
+                'Status',
+                {
+                    enableFilter: true,
+                    sortPropertyPaths: ['eventStatus']
+                }),
+            new ListColumnSetting(
                 'raw.category',
                 'Event Category',
                 {
