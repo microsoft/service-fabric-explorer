@@ -213,3 +213,70 @@ export class DataModelCollectionBase<T extends IDataModel<any>> implements IData
         return null;
     }
 }
+
+/**
+ * Type definition for a model constructor that takes DataService and raw data only.
+ */
+export type ModelConstructorNoParent<T, R> = new (data: DataService, raw: R) => T;
+
+/**
+ * Type definition for a model constructor that takes DataService, raw data, and a parent.
+ */
+export type ModelConstructorWithParent<T, R, P> = new (data: DataService, raw: R, parent: P) => T;
+
+/**
+ * A generic collection class that reduces boilerplate for simple collections without a parent.
+ *
+ * This class handles the common pattern of fetching data via REST API and mapping to model instances.
+ *
+ * @example
+ * class MyCollection extends SimpleCollection<MyModel, IRawItem> {
+ *     constructor(data: DataService) {
+ *         super(data, MyModel, (data, messageHandler) => data.restClient.getItems(messageHandler));
+ *     }
+ * }
+ */
+export class SimpleCollection<T extends IDataModel<R>, R> extends DataModelCollectionBase<T> {
+    constructor(
+        data: DataService,
+        protected modelClass: ModelConstructorNoParent<T, R>,
+        protected fetchFn: (data: DataService, messageHandler?: IResponseMessageHandler) => Observable<R[]>
+    ) {
+        super(data);
+    }
+
+    protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): Observable<T[]> {
+        return this.fetchFn(this.data, messageHandler).pipe(
+            map(rawItems => rawItems.map(raw => new this.modelClass(this.data, raw)))
+        );
+    }
+}
+
+/**
+ * A generic collection class that reduces boilerplate for simple collections with a parent.
+ *
+ * This class handles the common pattern of fetching data via REST API and mapping to model instances.
+ *
+ * @example
+ * class MyCollection extends SimpleCollectionWithParent<MyModel, IRawItem, ParentType> {
+ *     constructor(data: DataService, parent: ParentType) {
+ *         super(data, parent, MyModel, (data, parent, messageHandler) => data.restClient.getItems(parent.id, messageHandler));
+ *     }
+ * }
+ */
+export class SimpleCollectionWithParent<T extends IDataModel<R>, R, P> extends DataModelCollectionBase<T> {
+    constructor(
+        data: DataService,
+        public parent: P,
+        protected modelClass: ModelConstructorWithParent<T, R, P>,
+        protected fetchFn: (data: DataService, parent: P, messageHandler?: IResponseMessageHandler) => Observable<R[]>
+    ) {
+        super(data, parent);
+    }
+
+    protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): Observable<T[]> {
+        return this.fetchFn(this.data, this.parent, messageHandler).pipe(
+            map(rawItems => rawItems.map(raw => new this.modelClass(this.data, raw, this.parent)))
+        );
+    }
+}
