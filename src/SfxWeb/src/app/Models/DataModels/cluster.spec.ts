@@ -5,18 +5,20 @@ import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers'
 import { of, Observable } from 'rxjs';
 import { IRawClusterManifest, IRawClusterUpgradeProgress } from '../RawDataTypes';
 import { RestClientService } from 'src/app/services/rest-client.service';
+import { createMockDataService, createMockRestClientService } from 'src/app/testing';
 
 
 describe('Cluster', () => {
 
-    const restClientMock: RestClientService = {} as RestClientService;
+    let restClientMock: RestClientService;
+    let mockDataService: DataService;
 
-    const mockDataService: DataService = {
-        restClient: restClientMock,
-        apps: {
-            ensureInitialized: () => of(null)
-        }
-    } as DataService;
+    beforeEach(() => {
+        restClientMock = createMockRestClientService();
+        mockDataService = createMockDataService({
+            restClient: restClientMock
+        });
+    });
 
     describe('manifest', () => {
 
