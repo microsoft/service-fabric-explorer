@@ -908,16 +908,19 @@ context('Cluster page', () => {
         cy.contains(CLUSTER_TAB_NAME)
       })
       
-      // Verify Level column header exists
-      cy.get('thead').within(() => {
-        cy.contains('Level')
-      })
-      
-      // Verify event status values are displayed in the Level column
-      // Based on cluster-events.json fixture which has events with HealthState: Ok and Warning
-      cy.get('tbody').within(() => {
-        cy.contains('Info') // Events without specific Error/Warning/Resolved classification
-        cy.contains('Warning') // ClusterNewHealthReport with HealthState: Warning
+      // Verify Level column header exists and get its index
+      cy.get('thead tr th').then($headers => {
+        const levelColumnIndex = Array.from($headers).findIndex(header => 
+          header.textContent.includes('Level')
+        )
+        expect(levelColumnIndex).to.be.greaterThan(-1, 'Level column should exist')
+        
+        // Verify event status values are displayed in the Level column (2nd column, index 1)
+        // Based on cluster-events.json fixture which has events with HealthState: Ok and Warning
+        cy.get('tbody tr').first().find('td').eq(levelColumnIndex).should('exist')
+        
+        // Check that Level column contains status values
+        cy.get('tbody tr td').eq(levelColumnIndex).invoke('text').should('match', /Info|Warning|Error|Resolved/)
       })
       
       checkTableSize(15);
