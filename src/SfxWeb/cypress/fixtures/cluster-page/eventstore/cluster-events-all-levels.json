@@ -1,0 +1,58 @@
+[
+    {
+        "SourceId": "System.FM",
+        "Property": "State",
+        "HealthState": "Error",
+        "TimeToLiveMs": 922337203685477,
+        "SequenceNumber": 132677135856836820,
+        "Description": "Node is down.",
+        "RemoveWhenExpired": true,
+        "SourceUtcTimestamp": "2021-06-09T11:59:45Z",
+        "Kind": "NodeDown",
+        "NodeName": "_backendnt_2",
+        "NodeInstance": "132677135856836820",
+        "EventInstanceId": "error-event-12345",
+        "TimeStamp": "2021-06-09T11:59:48.9641494Z",
+        "Category": "StateTransition",
+        "HasCorrelatedEvents": false
+    },
+    {
+        "SourceId": "System.FM",
+        "Property": "SeedNodeStatus",
+        "HealthState": "Warning",
+        "TimeToLiveMs": 922337203685477,
+        "SequenceNumber": 132677135856836821,
+        "Description": "Some seed nodes are unhealthy.",
+        "RemoveWhenExpired": true,
+        "SourceUtcTimestamp": "2021-06-09T11:59:45Z",
+        "Kind": "ClusterNewHealthReport",
+        "EventInstanceId": "warning-event-67890",
+        "TimeStamp": "2021-06-09T11:59:49.9641494Z",
+        "Category": "Health",
+        "HasCorrelatedEvents": false
+    },
+    {
+        "SourceId": "System.FM",
+        "Property": "SeedNodeStatus",
+        "HealthState": "Ok",
+        "TimeToLiveMs": 1000,
+        "SequenceNumber": 132677135921837760,
+        "Description": "All seed nodes are healthy.",
+        "RemoveWhenExpired": true,
+        "SourceUtcTimestamp": "2021-06-09T11:59:52Z",
+        "Kind": "ClusterNewHealthReport",
+        "EventInstanceId": "resolved-event-11111",
+        "TimeStamp": "2021-06-09T12:00:18.9628776Z",
+        "Category": "Health",
+        "HasCorrelatedEvents": false
+    },
+    {
+        "TargetClusterVersion": "8.0.521.9590:38",
+        "OverallUpgradeElapsedTimeInMs": 5166072.5517,
+        "Kind": "ClusterUpgradeCompleted",
+        "EventInstanceId": "info-event-22222",
+        "TimeStamp": "2021-06-08T17:43:18.5713173Z",
+        "Category": "Upgrade",
+        "HasCorrelatedEvents": false
+    }
+]

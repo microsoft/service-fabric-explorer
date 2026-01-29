@@ -902,7 +902,12 @@ context('Cluster page', () => {
     })
 
     it("event level column displays status", () => {
-      setup('cluster-page/eventstore/cluster-events.json', 'empty-list.json')
+      // Use fixture with events of all levels: Error, Warning, Resolved, Info
+      addRoute('events', 'cluster-page/eventstore/cluster-events-all-levels.json', apiUrl(`/EventsStore/Cluster/Events?*`))
+      addRoute('repairs', 'empty-list.json', repairTask_route)
+
+      cy.visit('/#/events')
+      cy.wait(['@getevents', '@getrepairs'])
 
       cy.get(EVENT_TABS).within(() => {
         cy.contains(CLUSTER_TAB_NAME)
@@ -915,15 +920,22 @@ context('Cluster page', () => {
         )
         expect(levelColumnIndex).to.be.greaterThan(-1, 'Level column should exist')
         
-        // Verify event status values are displayed in the Level column (2nd column, index 1)
-        // Based on cluster-events.json fixture which has events with HealthState: Ok and Warning
-        cy.get('tbody tr').first().find('td').eq(levelColumnIndex).should('exist')
+        // Verify we have 4 events (one for each level)
+        cy.get('tbody tr').should('have.length', 4)
         
-        // Check that Level column contains status values
-        cy.get('tbody tr td').eq(levelColumnIndex).invoke('text').should('match', /Info|Warning|Error|Resolved/)
+        // Check each row for the correct level value
+        // Row 1: NodeDown event should show "Error"
+        cy.get('tbody tr').eq(0).find('td').eq(levelColumnIndex).should('contain.text', 'Error')
+        
+        // Row 2: ClusterNewHealthReport with Warning HealthState should show "Warning"
+        cy.get('tbody tr').eq(1).find('td').eq(levelColumnIndex).should('contain.text', 'Warning')
+        
+        // Row 3: ClusterNewHealthReport with Ok HealthState should show "Resolved"
+        cy.get('tbody tr').eq(2).find('td').eq(levelColumnIndex).should('contain.text', 'Resolved')
+        
+        // Row 4: ClusterUpgradeCompleted (no Error/Warning/Resolved classification) should show "Info"
+        cy.get('tbody tr').eq(3).find('td').eq(levelColumnIndex).should('contain.text', 'Info')
       })
-      
-      checkTableSize(15);
     })
 
     it("all events", () => {
