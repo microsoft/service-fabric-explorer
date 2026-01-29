@@ -901,6 +901,28 @@ context('Cluster page', () => {
       checkTableSize(15);
     })
 
+    it("event level column displays status", () => {
+      setup('cluster-page/eventstore/cluster-events.json', 'empty-list.json')
+
+      cy.get(EVENT_TABS).within(() => {
+        cy.contains(CLUSTER_TAB_NAME)
+      })
+      
+      // Verify Level column header exists
+      cy.get('thead').within(() => {
+        cy.contains('Level')
+      })
+      
+      // Verify event status values are displayed in the Level column
+      // Based on cluster-events.json fixture which has events with HealthState: Ok and Warning
+      cy.get('tbody').within(() => {
+        cy.contains('Info') // Events without specific Error/Warning/Resolved classification
+        cy.contains('Warning') // ClusterNewHealthReport with HealthState: Warning
+      })
+      
+      checkTableSize(15);
+    })
+
     it("all events", () => {
       setup('cluster-page/eventstore/cluster-events.json', 'cluster-page/repair-jobs/simple.json')
 
