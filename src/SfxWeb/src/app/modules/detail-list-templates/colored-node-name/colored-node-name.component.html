@@ -1,0 +1,4 @@
+<span [ngClass]="['colored-node-name', getNodeStatus()]">
+  {{ value }}
+  <img *ngIf="isSeedNode()" [src]="assetBase + 'assets/seed.svg'" alt="seed node" class="seed-indicator" title="Seed Node">
+</span>
