@@ -96,7 +96,7 @@ export class RepairTaskCollection extends DataModelCollectionBase<RepairTask> {
                 level: StatusWarningLevel.Warning,
                 priority: 4,
                 id: messageType,
-              }, false);
+              }, true);
             } else {
               this.data.warnings.removeNotificationById(messageType);
             }
