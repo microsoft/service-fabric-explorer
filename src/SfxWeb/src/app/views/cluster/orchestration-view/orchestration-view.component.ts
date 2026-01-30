@@ -1,3 +1,8 @@
+// -----------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// Licensed under the MIT License. See License file under the project root for license information.
+// -----------------------------------------------------------------------------
+
 import { AfterViewInit, ChangeDetectorRef, Component, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
 import { PartitionEventList } from "src/app/Models/DataModels/collections/Collections";

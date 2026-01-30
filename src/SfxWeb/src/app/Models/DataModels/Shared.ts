@@ -1,3 +1,8 @@
+// -----------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// Licensed under the MIT License. See License file under the project root for license information.
+// -----------------------------------------------------------------------------
+
 import { DataModelBase, IDecorators } from './Base';
 import { IRawHealthEvaluation, IRawLoadMetricInformation, IRawUpgradeDescription, IRawMonitoringPolicy, IRawUpgradeDomain, IRawClusterUpgradeDescription, IUpgradeUnitInfo } from '../RawDataTypes';
 import { DataService } from 'src/app/services/data.service';
@@ -5,11 +10,6 @@ import { UpgradeDomainStateRegexes, UpgradeDomainStateNames, BadgeConstants } fr
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { checkForJson } from 'src/app/Utils/healthUtils';
 import { Utils } from 'src/app/Utils/Utils';
-
-// -----------------------------------------------------------------------------
-// Copyright (c) Microsoft Corporation.  All rights reserved.
-// Licensed under the MIT License. See License file under the project root for license information.
-// -----------------------------------------------------------------------------
 
 export class HealthEvaluation extends DataModelBase<IRawHealthEvaluation> {
     public viewPathUrl = '';

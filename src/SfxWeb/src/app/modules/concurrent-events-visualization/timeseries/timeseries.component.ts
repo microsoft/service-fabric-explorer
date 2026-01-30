@@ -1,3 +1,8 @@
+// -----------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// Licensed under the MIT License. See License file under the project root for license information.
+// -----------------------------------------------------------------------------
+
 import { Component, Input, OnChanges, OnDestroy, ViewChildren, ElementRef, AfterViewInit, QueryList, ViewChild, OnInit } from '@angular/core';
 import { Chart, Options, chart, SeriesOptionsType, Pointer, PointOptionsObject, YAxisOptions, XAxisOptions } from 'highcharts';
 import { debounceTime } from 'rxjs/operators';

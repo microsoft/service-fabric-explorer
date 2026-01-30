@@ -1,3 +1,8 @@
+// -----------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// Licensed under the MIT License. See License file under the project root for license information.
+// -----------------------------------------------------------------------------
+
 import { Utils } from '../Utils/Utils';
 import { HyperLinkComponent } from '../modules/detail-list-templates/hyper-link/hyper-link.component';
 import { CopyTextComponent } from '../modules/detail-list-templates/copy-text/copy-text.component';
@@ -12,11 +17,6 @@ import { HealthbadgeComponent } from '../modules/detail-list-templates/healthbad
 import { IConcurrentEvents } from './eventstore/rcaEngine';
 import { ArmManagedComponent } from '../modules/detail-list-templates/arm-managed/arm-managed.component';
 import { ColoredNodeNameComponent } from '../modules/detail-list-templates/colored-node-name/colored-node-name.component';
-
-// -----------------------------------------------------------------------------
-// Copyright (c) Microsoft Corporation.  All rights reserved.
-// Licensed under the MIT License. See License file under the project root for license information.
-// -----------------------------------------------------------------------------
 
 export class ListSettings {
     public search = '';

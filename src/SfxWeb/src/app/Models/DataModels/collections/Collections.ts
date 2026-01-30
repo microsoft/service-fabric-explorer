@@ -1,3 +1,8 @@
+// -----------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// Licensed under the MIT License. See License file under the project root for license information.
+// -----------------------------------------------------------------------------
+
 import { IClusterHealthChunk, IDeployedServicePackageHealthStateChunk } from '../../HealthChunkRawDataTypes';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Observable, of, throwError } from 'rxjs';
@@ -25,10 +30,6 @@ import { PartitionBackup, PartitionBackupInfo } from '../PartitionBackupInfo';
 import { DataModelCollectionBase, IDataModelCollection } from './CollectionBase';
 import groupBy from 'lodash/groupBy';
 import { RoutesService } from 'src/app/services/routes.service';
-// -----------------------------------------------------------------------------
-// Copyright (c) Microsoft Corporation.  All rights reserved.
-// Licensed under the MIT License. See License file under the project root for license information.
-// -----------------------------------------------------------------------------
 
 export class BackupPolicyCollection extends DataModelCollectionBase<BackupPolicy> {
     protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): Observable<any> {

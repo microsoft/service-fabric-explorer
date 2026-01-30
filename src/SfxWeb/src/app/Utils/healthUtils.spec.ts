@@ -1,3 +1,8 @@
+// -----------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// Licensed under the MIT License. See License file under the project root for license information.
+// -----------------------------------------------------------------------------
+
 import { HealthUtils, HealthStatisticsEntityKind } from './healthUtils';
 import { IRawHealthEvaluation, IRawDeployedServicePackageHealthEvaluation, IRawNodeHealthEvluation, IRawApplicationHealthEvluation,
          IRawServiceHealthEvaluation, IRawPartitionHealthEvaluation, IRawReplicaHealthEvaluation } from '../Models/RawDataTypes';

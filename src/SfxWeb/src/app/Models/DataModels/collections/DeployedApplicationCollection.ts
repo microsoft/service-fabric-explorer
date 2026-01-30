@@ -1,3 +1,8 @@
+// -----------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// Licensed under the MIT License. See License file under the project root for license information.
+// -----------------------------------------------------------------------------
+
 import { DeployedApplication } from '../DeployedApplication';
 import { DataService } from 'src/app/services/data.service';
 import { IClusterHealthChunk, IDeployedApplicationHealthStateChunk } from '../../HealthChunkRawDataTypes';

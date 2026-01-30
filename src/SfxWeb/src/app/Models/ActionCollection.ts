@@ -1,11 +1,11 @@
-import { TelemetryService } from '../services/telemetry.service';
-import { Action } from './Action';
-import { of, throwError, Observable } from 'rxjs';
-
 // -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
 // -----------------------------------------------------------------------------
+
+import { TelemetryService } from '../services/telemetry.service';
+import { Action } from './Action';
+import { of, throwError, Observable } from 'rxjs';
 
 export class ActionCollection {
     public collection: Action[] = [];

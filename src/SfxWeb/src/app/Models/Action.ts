@@ -1,3 +1,8 @@
+// -----------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// Licensed under the MIT License. See License file under the project root for license information.
+// -----------------------------------------------------------------------------
+
 import { Observable, of } from 'rxjs';
 import { mergeMap, finalize, map } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
@@ -6,11 +11,6 @@ import { ComponentType } from '@angular/cdk/portal';
 import { IModalBody, IModalData, IModalTitle } from '../ViewModels/Modal';
 import { Type } from '@angular/core';
 import { DialogBodyComponent } from '../modules/action-dialog/DialogBodyComponent';
-
-// -----------------------------------------------------------------------------
-// Copyright (c) Microsoft Corporation.  All rights reserved.
-// Licensed under the MIT License. See License file under the project root for license information.
-// -----------------------------------------------------------------------------
 
 export class Action {
     public running: boolean;

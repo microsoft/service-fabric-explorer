@@ -1,3 +1,8 @@
+// -----------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// Licensed under the MIT License. See License file under the project root for license information.
+// -----------------------------------------------------------------------------
+
 import { Component, OnChanges, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
 import { chart, Chart, Options, SeriesOptionsType, SeriesSankeyNodesOptionsObject } from 'highcharts';
 import { DetailBaseComponent } from 'src/app/ViewModels/detail-table-base.component';

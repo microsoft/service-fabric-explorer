@@ -1,3 +1,8 @@
+// -----------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// Licensed under the MIT License. See License file under the project root for license information.
+// -----------------------------------------------------------------------------
+
 import { Component, ViewChild, ElementRef, Output, EventEmitter, DoCheck, Input, AfterViewInit } from '@angular/core';
 import { TreeService } from 'src/app/services/tree.service';
 import { LiveAnnouncer } from '@angular/cdk/a11y';

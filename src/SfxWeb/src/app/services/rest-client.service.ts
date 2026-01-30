@@ -1,3 +1,8 @@
+// -----------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// Licensed under the MIT License. See License file under the project root for license information.
+// -----------------------------------------------------------------------------
+
 import { Injectable } from '@angular/core';
 import { MessageService, MessageSeverity } from './message.service';
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';

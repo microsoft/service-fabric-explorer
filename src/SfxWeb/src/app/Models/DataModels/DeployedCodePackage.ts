@@ -1,3 +1,8 @@
+// -----------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// Licensed under the MIT License. See License file under the project root for license information.
+// -----------------------------------------------------------------------------
+
 import { DataModelBase } from './Base';
 import { IRawDeployedCodePackage, IRawCodePackageEntryPoint, IRawCodePackageEntryPointStatistics, IRawContainerLogs } from '../RawDataTypes';
 import { IdGenerator } from 'src/app/Utils/IdGenerator';
@@ -9,11 +14,6 @@ import { map } from 'rxjs/operators';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { ActionWithConfirmationDialog } from '../Action';
 import { RoutesService } from 'src/app/services/routes.service';
-
-// -----------------------------------------------------------------------------
-// Copyright (c) Microsoft Corporation.  All rights reserved.
-// Licensed under the MIT License. See License file under the project root for license information.
-// -----------------------------------------------------------------------------
 
 export class DeployedCodePackage extends DataModelBase<IRawDeployedCodePackage> {
     public mainEntryPoint: CodePackageEntryPoint;

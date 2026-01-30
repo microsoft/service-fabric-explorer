@@ -1,13 +1,13 @@
+// -----------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// Licensed under the MIT License. See License file under the project root for license information.
+// -----------------------------------------------------------------------------
+
 import { FabricEventBase } from '../Models/eventstore/Events';
 import { Constants } from '../Common/Constants';
 import { ITextAndBadge } from './ValueResolver';
 import { Utils } from './Utils';
 import { environment } from 'src/environments/environment';
-
-// -----------------------------------------------------------------------------
-// Copyright (c) Microsoft Corporation.  All rights reserved.
-// Licensed under the MIT License. See License file under the project root for license information.
-// -----------------------------------------------------------------------------
 
 export class EventTypesUtil {
     private WarningEventTypes = Utils.keyByFromFunction( [

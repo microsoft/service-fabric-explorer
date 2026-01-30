@@ -1,3 +1,8 @@
+// -----------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// Licensed under the MIT License. See License file under the project root for license information.
+// -----------------------------------------------------------------------------
+
 import { DataModelBase, IDecorators } from './Base';
 import { IRawDeployedApplication, IRawApplicationHealth } from '../RawDataTypes';
 import { HtmlUtils } from 'src/app/Utils/HtmlUtils';
@@ -9,11 +14,6 @@ import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers'
 import { Observable } from 'rxjs';
 import { HealthBase } from './HealthEvent';
 import { RoutesService } from 'src/app/services/routes.service';
-
-// -----------------------------------------------------------------------------
-// Copyright (c) Microsoft Corporation.  All rights reserved.
-// Licensed under the MIT License. See License file under the project root for license information.
-// -----------------------------------------------------------------------------
 
 export class DeployedApplication extends DataModelBase<IRawDeployedApplication> {
     public decorators: IDecorators = {
