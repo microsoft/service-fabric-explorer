@@ -85,10 +85,12 @@ export class RepairTaskCollection extends DataModelCollectionBase<RepairTask> {
           //loop over each type of stuck job to set or clear if there is a message
           messageTypes.forEach(messageType => {
             if (messageType in stuckJobTypeMap) {
-              console.log(RepairTaskMessages.messageMap)
               const jobs = stuckJobTypeMap[messageType].map(job => job.raw.TaskId);
-              const repairJobPrefix = `The repair job${jobs.length > 1 ? 's' : ''} ${jobs.join()} ${jobs.length > 1 ? 'are' : 'is'}
-                                            potentially stuck. ${RepairTaskMessages.messageMap(messageType)}`;
+              const firstJobId = jobs[0];
+              const additionalCount = jobs.length - 1;
+              const repairJobPrefix = jobs.length > 1
+                ? `The repair job ${firstJobId} (and ${additionalCount} more) are potentially stuck. ${RepairTaskMessages.messageMap(messageType)}`
+                : `The repair job ${firstJobId} is potentially stuck. ${RepairTaskMessages.messageMap(messageType)}`;
               this.data.warnings.addOrUpdateNotification({
                 message: repairJobPrefix,
                 level: StatusWarningLevel.Warning,
