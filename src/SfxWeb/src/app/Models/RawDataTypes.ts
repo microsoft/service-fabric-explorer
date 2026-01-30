@@ -528,6 +528,7 @@ export interface IRawPartition {
         PartitionStatus: string;
         CurrentConfigurationEpoch: IRawConfigurationEpoch;
         MinInstanceCount: number;
+        MinInstancePercentage: number;
         SelfReconfiguringInstanceCount: number;
         SelfReconfiguringMinInstanceCount: number;
         LastQuorumLossDurationInSeconds: number;
