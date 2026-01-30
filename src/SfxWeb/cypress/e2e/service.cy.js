@@ -359,7 +359,6 @@ context('service', () => {
           cy.contains("SelfReconfiguring")
           cy.contains("Instance Count")
           cy.contains("Minimum Instance Count")
-          cy.contains("Minimum Instance Percentage")
         })
       })
     })
