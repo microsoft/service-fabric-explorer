@@ -12,7 +12,8 @@ import { IRawCollection, IRawClusterManifest, IRawClusterHealth, IRawClusterUpgr
          IRawApplication, IRawService, IRawCreateServiceDescription, IRawCreateServiceFromTemplateDescription, IRawUpdateServiceDescription, IRawServiceDescription,
          IRawServiceHealth, IRawApplicationUpgradeProgress, IRawCreateComposeDeploymentDescription, IRawPartition, IRawPartitionHealth, IRawPartitionLoadInformation,
          IRawReplicaOnPartition, IRawReplicaHealth, IRawImageStoreContent, IRawStoreFolderSize, IRawClusterVersion, IRawList, IRawAadMetadata, IRawStorage, IRawRepairTask,
-         IRawServiceNameInfo, IRawApplicationNameInfo, IRawBackupEntity, IRawInfrastructureJob, IRawInfraRepairTask, IRawRoleInstanceImpact } from '../Models/RawDataTypes';
+         IRawServiceNameInfo, IRawApplicationNameInfo, IRawBackupEntity, IRawInfrastructureJob, IRawInfraRepairTask, IRawRoleInstanceImpact,
+         IRawInfrastructureDocument, IRawFailoverManagerManagerInformation} from '../Models/RawDataTypes';
 import { mergeMap, map, catchError, finalize, skip } from 'rxjs/operators';
 import { Application } from '../Models/DataModels/Application';
 import { Service } from '../Models/DataModels/Service';
@@ -39,6 +40,7 @@ export class RestClientService {
   private static apiVersion72 = '7.2';
   private static apiVersion80 = '8.0';
   private static apiVersion82 = '8.2';
+  private static apiVersion114 = '11.4';
 
   private cacheAllowanceToken: number = Date.now().valueOf();
 
@@ -770,6 +772,11 @@ export class RestClientService {
         return this.get(this.getApiUrl(url), 'Get Infrastructure  Jobs', messageHandler);
     }
 
+    public getInfrastructureDocs(serviceId: string, messageHandler?: IResponseMessageHandler): Observable<IRawInfrastructureDocument[]> {
+        const url = `$/InvokeInfrastructureQuery?api-version=6.0&Command=GetCurrentDocFromIS&ServiceId=` + serviceId;
+
+        return this.get(this.getApiUrl(url), 'Get Infrastructure Documents', messageHandler);
+    }
   public restartReplica(nodeName: string, partitionId: string, replicaId: string, messageHandler?: IResponseMessageHandler): Observable<{}> {
       const url = `Nodes/${nodeName}/$/GetPartitions/${partitionId}/$/GetReplicas/${replicaId}/$/Restart`;
 
@@ -780,6 +787,12 @@ export class RestClientService {
       const url = `$/GetClusterVersion`;
 
       return this.get(this.getApiUrl(url, RestClientService.apiVersion64), 'Get cluster version', messageHandler);
+  }
+
+  public getFailoverManagerManagerInformation(messageHandler?: IResponseMessageHandler): Observable<IRawFailoverManagerManagerInformation> {
+    const url = `$/GetFailoverManagerManagerInformation`;
+
+    return this.get(this.getApiUrl(url, RestClientService.apiVersion114), 'Get Failover Manager Manager (FMM) information', messageHandler);
   }
 
   private getEvents<T extends FabricEventBase>(eventType: new () => T, url: string, startTime: Date, endTime: Date, eventsTypesFilter: string[], messageHandler?: IResponseMessageHandler, apiVersion?: string): Observable<T[]> {

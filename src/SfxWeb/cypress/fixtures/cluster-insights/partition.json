@@ -1,0 +1,16 @@
+{
+  "ServiceKind": "Stateful",
+  "PartitionInformation": {
+    "ServicePartitionKind": "Singleton",
+    "Id": "00000000-0000-0000-0000-000000000001"
+  },
+  "TargetReplicaSetSize": 3,
+  "MinReplicaSetSize": 3,
+  "HealthState": "Ok",
+  "PartitionStatus": "Ready",
+  "LastQuorumLossDurationInSeconds": "315",
+  "CurrentConfigurationEpoch": {
+    "ConfigurationVersion": "51539607552",
+    "DataLossVersion": "134133998643835572"
+  }
+}

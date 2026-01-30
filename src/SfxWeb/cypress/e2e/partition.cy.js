@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-import { addDefaultFixtures, apiUrl, checkTableSize, EMPTY_LIST_TEXT, FIXTURE_REF_MANIFEST, addRoute, checkCommand } from './util.cy';
+import { addDefaultFixtures, apiUrl, checkTableSize, EMPTY_LIST_TEXT, FIXTURE_REF_MANIFEST, addRoute, checkCommand, refresh } from './util.cy';
 
 const serviceName = "VisualObjects.ActorService";
 const partitionId = "28bfaf73-37b0-467d-9d47-d011b0aedbc0";
@@ -208,11 +208,22 @@ context('partition', () => {
         })
 
         it('reconfiguration information', () => {
-          addRoute("partitions-reconfig","partition-page/selfreconfiguring-partitions-reconfiguration.json", apiUrl(`${routeFormatter(appName, selfReconfiguringServiceName)}?*`));
-          addRoute("partitionInfo-reconfig","partition-page/selfreconfiguring-partition-reconfiguration.json", apiUrl(`${routeFormatter(appName, selfReconfiguringServiceName)}/${selfreconfiguringPartitionId}?*`));
-          addRoute("replica-reconfig", "partition-page/selfreconfiguring-replica-reconfiguration.json", apiUrl(`${routeFormatter(appName, selfReconfiguringServiceName)}/${selfreconfiguringPartitionId}/$/GetReplicas?*`));
+          // Override the routes from beforeEach with reconfiguration data
+          // Using the same route names ensures these intercepts replace the previous ones
+          addRoute("partitions", "partition-page/selfreconfiguring-partitions-reconfiguration.json", apiUrl(`${routeFormatter(appName, selfReconfiguringServiceName)}?*`));
+          addRoute("partitionInfo", "partition-page/selfreconfiguring-partition-reconfiguration.json", apiUrl(`${routeFormatter(appName, selfReconfiguringServiceName)}/${selfreconfiguringPartitionId}?*`));
+          addRoute("replicasList", "partition-page/selfreconfiguring-replica-reconfiguration.json", apiUrl(`${routeFormatter(appName, selfReconfiguringServiceName)}/${selfreconfiguringPartitionId}/$/GetReplicas?*`));
 
-          cy.get('[data-cy=replicas]').within(() => {
+          // Trigger a refresh to fetch the new mocked reconfiguration data
+          refresh();
+
+          // Wait for the intercepted routes to complete before making assertions
+          cy.wait(['@getpartitions', '@getpartitionInfo', '@getreplicasList']);
+          
+          // Additional wait to ensure UI has been updated with the new data
+          cy.wait(500);
+
+          cy.get('[data-cy=replicas]', { timeout: 10000 }).within(() => {
             cy.contains('Down');
             cy.contains('Reconfiguring: SelfReconfiguringMember ➜ SelfReconfiguringMember');
             cy.contains('Reconfiguring: Deactivated ➜ Activated');

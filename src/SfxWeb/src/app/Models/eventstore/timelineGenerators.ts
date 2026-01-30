@@ -811,19 +811,21 @@ export class RepairTaskTimelineGenerator extends TimeLineGeneratorBase<RepairTas
       const groups = new DataSet<DataGroup>();
 
         tasks.forEach((task, index) => {
-            items.add({
-                id: `${index}---${task.raw.TaskId}`,
-                content: task.raw.TaskId,
-                start: task.startTime ,
-                end: task.inProgress ? new Date() : new Date(task.raw.History.CompletedUtcTimestamp),
-                type: 'range',
-                kind: "RepairJob",
-                group: 'job',
-                subgroup: 'stack',
-                className: task.inProgress ? 'blue' : task.raw.ResultStatus === 'Succeeded' ? 'green' : 'red',
-                title: EventStoreUtils.tooltipFormat(task.raw, new Date(task.raw.History.ExecutingUtcTimestamp).toLocaleString(),
-                                                            new Date(task.raw.History.CompletedUtcTimestamp).toLocaleString()),
-            });
+            if (task.raw.Target && task.raw.Target !== undefined && task.raw.Target.Kind === 'Node') {
+                items.add({
+                    id: `${index}---${task.raw.TaskId}`,
+                    content: task.raw.TaskId,
+                    start: task.startTime ,
+                    end: task.inProgress ? new Date() : new Date(task.raw.History.CompletedUtcTimestamp),
+                    type: 'range',
+                    kind: "RepairJob",
+                    group: 'job',
+                    subgroup: 'stack',
+                    className: task.inProgress ? 'blue' : task.raw.ResultStatus === 'Succeeded' ? 'green' : 'red',
+                    title: EventStoreUtils.tooltipFormat(task.raw, new Date(task.raw.History.ExecutingUtcTimestamp).toLocaleString(),
+                                                                new Date(task.raw.History.CompletedUtcTimestamp).toLocaleString()),
+                });
+            }
         });
         groups.add({
             id: 'job',

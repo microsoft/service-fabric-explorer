@@ -44,6 +44,8 @@ const routes: Routes = [
   { path: 'nodes', loadChildren: () => import(`./views/nodes/nodes.module`).then(m => m.NodesModule) },
 
   { path: 'networking', loadChildren: () => import(`./views/debugging/debugging.module`).then(m => m.DebuggingModule) },
+  
+  { path: 'cluster-insights', loadChildren: () => import(`./views/cluster-insights/cluster-insights.module`).then(m => m.ClusterInsightsModule) },
 
   // system section(shares some routes with application)
   // { path: 'network/:networkName', loadChildren: () => import(`./views/node/node.module`).then(m => m.NodeModule) },
