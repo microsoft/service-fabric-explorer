@@ -1,0 +1,41 @@
+{
+  "ContinuationToken": "",
+  "Items": [
+    {
+      "ServiceKind": "Stateful",
+      "ReplicaId": "134133998955937830",
+      "ReplicaRole": "ActiveSecondary",
+      "ReplicaStatus": "Ready",
+      "HealthState": "Ok",
+      "Address": "6e2511564401fd0a01946e1a6cdeb61:134133997753708521",
+      "NodeName": "_nt1_0",
+      "LastInBuildDurationInSeconds": "3",
+      "PreviousReplicaRole": "None",
+      "ToBeRemovedReplicaExpirationTimeUtc": "2026-01-20T16:34:55.593Z"
+    },
+    {
+      "ServiceKind": "Stateful",
+      "ReplicaId": "134133998973055912",
+      "ReplicaRole": "IdleSecondary",
+      "ReplicaStatus": "Ready",
+      "HealthState": "Ok",
+      "Address": "96aa35826d99b860ca69e40a345c6b1b:134133997665805060",
+      "NodeName": "_nt1_4",
+      "LastInBuildDurationInSeconds": "3",
+      "PreviousReplicaRole": "None",
+      "ToBeRemovedReplicaExpirationTimeUtc": "2026-01-20T16:34:57.305Z"
+    },
+    {
+      "ServiceKind": "Stateful",
+      "ReplicaId": "134133998973055913",
+      "ReplicaRole": "ActiveSecondary",
+      "ReplicaStatus": "Ready",
+      "HealthState": "Ok",
+      "Address": "b2b83c6c4d76653627ae52d9c4b412dc:134133997628778343",
+      "NodeName": "_nt1_3",
+      "LastInBuildDurationInSeconds": "1",
+      "PreviousReplicaRole": "None",
+      "ToBeRemovedReplicaExpirationTimeUtc": "2026-01-20T16:34:57.305Z"
+    }
+  ]
+}

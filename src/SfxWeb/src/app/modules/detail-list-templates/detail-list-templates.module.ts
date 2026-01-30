@@ -23,12 +23,13 @@ import { CustomTrackByPipe } from './custom-track-by.pipe';
 import { HealthbadgeComponent } from './healthbadge/healthbadge.component';
 import { FullDescriptionComponent } from './full-description/full-description.component';
 import { ArmManagedComponent } from './arm-managed/arm-managed.component';
+import { ColoredNodeNameComponent } from './colored-node-name/colored-node-name.component';
 
 
 
 @NgModule({
   declarations: [HyperLinkComponent, DetailTableResolverComponent, ResolverDirective, CopyTextComponent, ResolverDirective, FullDescriptionComponent,
-                 DetailListComponent, PagerComponent, UtcTimestampComponent, ExportModalComponent, QuestionToolTipComponent, ShortenComponent, CustomTrackByPipe, HealthbadgeComponent, ArmManagedComponent],
+                 DetailListComponent, PagerComponent, UtcTimestampComponent, ExportModalComponent, QuestionToolTipComponent, ShortenComponent, CustomTrackByPipe, HealthbadgeComponent, ArmManagedComponent, ColoredNodeNameComponent],
   imports: [
     CommonModule,
     RouterModule,

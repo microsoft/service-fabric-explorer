@@ -531,6 +531,7 @@ export interface IRawPartition {
         MinInstanceCount: number;
         SelfReconfiguringInstanceCount: number;
         SelfReconfiguringMinInstanceCount: number;
+        LastQuorumLossDurationInSeconds: number;
     }
 
 export interface IRawPartitionDescription {
@@ -1044,6 +1045,12 @@ export interface IRawHealthStateCount {
         WarningCount: number;
     }
 
+export interface IRawNodeStatusCount {
+    UpCount: number;
+    DisabledCount: number;
+    DownCount: number;
+}
+
 export interface IRawRepositoryCredential {
         RepositoryUserName?: string;
         RepositoryPassword?: string;
@@ -1343,4 +1350,10 @@ export interface IRawServiceMetadata{
 }
 export interface IRawArmMetadata{
     ArmResourceId?: string;
+}
+
+export interface IRawFailoverManagerManagerInformation {
+    NodeName: string;
+    NodeId: IRawId;
+    NodeInstanceId: string;
 }

@@ -50,6 +50,25 @@ export class DashboardViewModel implements IDashboardViewModel {
         return data;
     }
 
+    public static fromNodeStatusCount(
+        title: string,
+        titleInSingular: string,
+        largeTile: boolean,
+        nodeStatusCount: IRawNodeStatusCount,
+        routes?: RoutesService,
+        viewPath?: string) {
+
+        const dps: DashboardDataPointViewModel[] = [];
+ 
+        dps.push(new DashboardDataPointViewModel('Down', nodeStatusCount.DownCount, ValueResolver.healthStatuses[3]));
+        dps.push(new DashboardDataPointViewModel('Disabled', nodeStatusCount.DisabledCount, ValueResolver.healthStatuses[2]));
+        dps.push(new DashboardDataPointViewModel('Up', nodeStatusCount.UpCount, ValueResolver.healthStatuses[1]));
+
+        const data = new DashboardViewModel(title, titleInSingular, dps, largeTile, routes, viewPath);
+        
+        return data;
+    }
+
     constructor(
         private title: string,
         private titleInSingular: string,

@@ -1,0 +1,65 @@
+{
+  "ServiceKind": "Stateful",
+  "ServiceName": "fabric:/System/FailoverManagerService",
+  "PartitionId": "00000000-0000-0000-0000-000000000001",
+  "CurrentServiceOperation": "None",
+  "CurrentServiceOperationStartTimeUtc": "2026-01-23T01:36:18.188Z",
+  "ReportedLoad": [],
+  "ReplicaId": "134133998973055912",
+  "CurrentReplicatorOperation": "None",
+  "ReadStatus": "NotPrimary",
+  "WriteStatus": "NotPrimary",
+  "ReplicatorStatus": {
+    "Kind": "ActiveSecondary",
+    "ReplicationQueueStatus": {
+      "QueueUtilizationPercentage": 0,
+      "QueueMemorySize": "0",
+      "FirstSequenceNumber": "0",
+      "CompletedSequenceNumber": "168",
+      "CommittedSequenceNumber": "168",
+      "LastSequenceNumber": "168"
+    },
+    "LastReplicationOperationReceivedTimeUtc": "0001-01-01T00:00:00.000Z",
+    "IsInBuild": false,
+    "CopyQueueStatus": {
+      "QueueUtilizationPercentage": 0,
+      "QueueMemorySize": "0",
+      "FirstSequenceNumber": "-1",
+      "CompletedSequenceNumber": "-1",
+      "CommittedSequenceNumber": "-1",
+      "LastSequenceNumber": "-1"
+    },
+    "LastCopyOperationReceivedTimeUtc": "2026-01-23T01:36:16.578Z",
+    "LastAcknowledgementSentTimeUtc": "2026-01-23T01:36:16.640Z"
+  },
+  "ReplicaStatus": {
+    "Kind": "KeyValueStore",
+    "DatabaseRowCountEstimate": "169",
+    "DatabaseLogicalSizeEstimate": "409600",
+    "DatabasePhysicalSizeEstimateInBytes": "2080768",
+    "StatusDetails": "",
+    "ProviderKind": "ESE"
+  },
+  "DeployedServiceReplica": {
+    "ServiceKind": "Stateful",
+    "ServiceName": "fabric:/System/FailoverManagerService",
+    "ServiceTypeName": "FMServiceType",
+    "ServiceManifestVersion": "",
+    "ServiceManifestName": "",
+    "CodePackageName": "",
+    "PartitionId": "00000000-0000-0000-0000-000000000001",
+    "ReplicaId": "134133998973055912",
+    "ReplicaRole": "ActiveSecondary",
+    "ReplicaStatus": "Ready",
+    "Address": "96aa35826d99b860ca69e40a345c6b1b:134133997665805060",
+    "ServicePackageActivationId": "",
+    "HostProcessId": "3996",
+    "ReconfigurationInformation": {
+      "PreviousConfigurationRole": "None",
+      "PreviousSelfReconfiguringConfigurationRole": "SelfReconfiguringNone",
+      "ReconfigurationPhase": "None",
+      "ReconfigurationType": "None",
+      "ReconfigurationStartTimeUtc": "0001-01-01T00:00:00.000Z"
+    }
+  }
+}

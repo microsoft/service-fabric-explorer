@@ -1,0 +1,124 @@
+.nav-wrapper {
+  .nav-link {
+    font-size: 1rem;
+  }
+}
+
+.essen-pane {
+  h4 {
+    margin-bottom: 0.8rem;
+  }
+}
+
+.replica-stats-container {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.stat-box {
+  width: 180px;
+  padding: 0.75rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--accent-underline);
+  border-radius: var(--primary-border-radius);
+  box-shadow: var(--primary-box-shadow);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.4rem;
+
+  &.replica-set-box {
+    width: 180px;
+    padding: 0.35rem 0.5rem;
+    align-items: stretch;
+    text-align: left;
+    gap: 0;
+  }
+
+  &.Ready {
+    border-color: var(--badge-ok);
+    background: rgba(0, 255, 0, 0.08);
+  }
+
+  &.InQuorumLoss {
+    border-color: var(--badge-error);
+    background: rgba(255, 0, 0, 0.08);
+  }
+
+  .stat-label {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    font-weight: 400;
+  }
+
+  .stat-value {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--text-primary);
+
+    &.InQuorumLoss {
+      color: var(--badge-error);
+    }
+
+    &.Ready {
+      color: var(--badge-ok);
+    }
+  }
+}
+
+.quorum-loss-message {
+  background-color: rgba(241, 157, 3, 0.15);
+  border-left: 4px solid var(--badge-warning);
+  padding: 1rem 1.5rem;
+  border-radius: var(--primary-border-radius);
+  font-size: var(--font-size-default);
+  color: var(--font-primary-color);
+  display: flex;
+
+  strong {
+    color: var(--badge-warning);
+    font-weight: var(--font-weight-semibold);
+  }
+}
+
+.flex-center {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.line-item {
+  line-height: 0.9;
+  margin-right: 3px;
+
+  &-small {
+    @extend .line-item;
+    font-size: 18px;
+    width: 22px;
+    text-align: end;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+}
+
+.line-item-separator {
+  border-bottom: 1px solid var(--accent-underline);
+  padding-bottom: 3px;
+  margin-bottom: 3px;
+}
+
+.replica-id-link {
+  color: var(--accent-lightblue);
+  cursor: pointer;
+}
+
+.non-replica-id-link {
+  color: var(--font-primary-color);
+  cursor: default;
+}

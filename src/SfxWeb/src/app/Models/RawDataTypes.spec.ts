@@ -176,7 +176,8 @@ describe('ServiceKind Type Guards', () => {
                 },
                 MinInstanceCount: 0,
                 SelfReconfiguringInstanceCount: 0,
-                SelfReconfiguringMinInstanceCount: 0
+                SelfReconfiguringMinInstanceCount: 0,
+                LastQuorumLossDurationInSeconds: 0
             };
             expect(isStatefulService(partition)).toBe(true);
             expect(isStatelessService(partition)).toBe(false);
@@ -205,7 +206,8 @@ describe('ServiceKind Type Guards', () => {
                 },
                 MinInstanceCount: 1,
                 SelfReconfiguringInstanceCount: 0,
-                SelfReconfiguringMinInstanceCount: 0
+                SelfReconfiguringMinInstanceCount: 0,
+                LastQuorumLossDurationInSeconds: 0
             };
             expect(isStatefulService(partition)).toBe(false);
             expect(isStatelessService(partition)).toBe(true);
@@ -234,7 +236,8 @@ describe('ServiceKind Type Guards', () => {
                 },
                 MinInstanceCount: 0,
                 SelfReconfiguringInstanceCount: 3,
-                SelfReconfiguringMinInstanceCount: 1
+                SelfReconfiguringMinInstanceCount: 1,
+                LastQuorumLossDurationInSeconds: 0
             };
             expect(isStatefulService(partition)).toBe(false);
             expect(isStatelessService(partition)).toBe(false);
