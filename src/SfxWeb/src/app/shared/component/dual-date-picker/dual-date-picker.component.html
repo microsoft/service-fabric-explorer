@@ -43,6 +43,8 @@
                 name="dpFromDate"
                 [value]="formatter.format(fromDate)"
                 (input)="fromDate = validateInput(fromDate, dpFromDate.value)"
+                (blur)="onDateInputChange()"
+                (keyup.enter)="onDateInputChange()"
                 aria-label="set start date">
         <div class="input-group-append">
             <button class="mif-calendar simple-button-calendar" (click)="datepicker.toggle()" type="button" aria-label="Toggle start date calender date picker" style="margin-right: 8px"></button>
@@ -67,6 +69,8 @@
                 name="dpToDate"
                 [value]="formatter.format(toDate)"
                 (input)="toDate = validateInput(toDate, dpToDate.value)"
+                (blur)="onDateInputChange()"
+                (keyup.enter)="onDateInputChange()"
                 aria-label="set end date">
         <div class="input-group-append">
             <button class="mif-calendar simple-button-calendar" (click)="datepicker.toggle()" type="button" aria-label="Toggle end date calender date picker" style="margin-right: 8px"></button>

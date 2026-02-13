@@ -99,6 +99,12 @@ export class DualDatePickerComponent implements OnInit, OnChanges {
     return parsed && this.calendar.isValid(NgbDate.from(parsed)) ? NgbDate.from(parsed) : currentValue;
   }
 
+  onDateInputChange() {
+    if (this.fromDate && this.toDate) {
+      this.emitState();
+    }
+  }
+
   isDisabled = (date: NgbDate, current: {month: number}) => {
     return date.before(this.internalMinDate) || date.after(this.internalMaxDate);
   }
