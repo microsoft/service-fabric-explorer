@@ -2,7 +2,5 @@
     <h2>
         <span id="clusterManifestName">{{manifestName}}</span>
     </h2>
-    <code [attr.aria-label]="'manifest of ' + manifestName">
-        <code *ngFor="let line of manifestLines">{{line}}</code>
-    </code>
+    <pre class="hljs" [attr.aria-label]="'manifest of ' + manifestName"><code [innerHtml]="highlightedManifest"></code></pre>
 </div>

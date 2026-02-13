@@ -1,4 +1,8 @@
 import { Component, OnInit, Input } from '@angular/core';
+import hljs from 'highlight.js/lib/core';
+import xml from 'highlight.js/lib/languages/xml';
+
+hljs.registerLanguage('xml', xml);
 
 @Component({
   selector: 'app-manifest-viewer',
@@ -10,11 +14,11 @@ export class ManifestComponent implements OnInit {
   @Input() manifestName = '';
   @Input() manifest = '';
 
-  manifestLines: Array<string> = [];
+  highlightedManifest = '';
   constructor() { }
 
   ngOnInit() {
-    this.manifestLines = this.manifest.split(/\r?\n/).map(line => line + '\n');
+    this.highlightedManifest = hljs.highlight(this.manifest, { language: 'xml' }).value;
   }
 
 }

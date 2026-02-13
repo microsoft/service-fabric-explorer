@@ -30,6 +30,7 @@
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "node_modules/vis-timeline/dist/vis-timeline-graph2d.min.css",
               "node_modules/nouislider/dist/nouislider.min.css",
+              "node_modules/highlight.js/styles/vs2015.min.css",
               "src/mif/icons.min.css",
               "src/styles.scss"
             ],
@@ -38,7 +39,8 @@
               "nouislider",
               "highcharts",
               "dayjs",
-              "adal-angular"
+              "adal-angular",
+              "highlight.js"
             ],
             "scripts": [],
             "stylePreprocessorOptions": {
