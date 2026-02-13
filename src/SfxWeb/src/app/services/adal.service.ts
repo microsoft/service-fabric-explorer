@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { RestClientService } from './rest-client.service';
 import { Observable, Subscriber, of, from } from 'rxjs';
 import { retry, map, switchMap } from 'rxjs/operators';
-import { AadMetadata } from '../Models/DataModels/Aad';
-import { PublicClientApplication, Configuration, AccountInfo, SilentRequest, RedirectRequest } from '@azure/msal-browser';
+import { AadMetadata, AuthenticationBootstrapConstants } from '../Models/DataModels/Aad';
+import { PublicClientApplication, Configuration, AccountInfo, SilentRequest, RedirectRequest, InteractionRequiredAuthError } from '@azure/msal-browser';
 import { StringUtils } from '../Utils/StringUtils';
 
 @Injectable({
@@ -37,7 +37,7 @@ export class AdalService {
               redirectUri: window.location.origin + window.location.pathname,
             },
             cache: {
-              cacheLocation: 'localStorage'
+              cacheLocation: AuthenticationBootstrapConstants.CacheType
             }
           };
 
@@ -96,6 +96,12 @@ export class AdalService {
       account
     };
 
-    return from(this.context.acquireTokenSilent(silentRequest).then(response => response.accessToken)).pipe(retry(3));
+    return from(this.context.acquireTokenSilent(silentRequest).then(response => response.accessToken).catch(error => {
+      if (error instanceof InteractionRequiredAuthError) {
+        this.context.acquireTokenRedirect({ scopes: this.scopes });
+        return null;
+      }
+      throw error;
+    })).pipe(retry(3));
   }
 }
