@@ -489,21 +489,43 @@ export class NodeEventList extends EventListBase<NodeEvent> {
         super(data);
         this.nodeName = nodeName;
         if (!this.nodeName) {
-            // Show NodeName as the second column.
+            // Show NodeName and NodeType columns when viewing all node events.
             this.settings.columnSettings.splice(
                 this.optionalColsStartIndex,
                 0,
                 new ListColumnSettingWithFilter(
                     'raw.nodeName',
-                    'Node Name'));
+                    'Node Name'),
+                new ListColumnSettingWithFilter(
+                    'raw.nodeType',
+                    'Node Type'));
         }
     }
 
     protected retrieveEvents(messageHandler?: IResponseMessageHandler): Observable<FabricEventInstanceModel<NodeEvent>[]> {
-        return this.data.restClient.getNodeEvents(this.queryStartDate, this.queryEndDate, this.nodeName, this.eventsTypesFilter, messageHandler)
-            .pipe(map(result => {
+        const getEvents = this.data.restClient.getNodeEvents(this.queryStartDate, this.queryEndDate, this.nodeName, this.eventsTypesFilter, messageHandler);
+
+        if (this.nodeName) {
+            return getEvents.pipe(map(result => {
                 return result.map(event => new FabricEventInstanceModel<NodeEvent>(this.data, event));
             }));
+        }
+
+        // When viewing all node events, enrich events with node type information.
+        return this.data.getNodes().pipe(mergeMap(nodes => {
+            const nodeNameToType: Record<string, string> = {};
+            nodes.collection.forEach(node => {
+                nodeNameToType[node.name] = node.raw.Type;
+            });
+            return getEvents.pipe(map(result => {
+                return result.map(event => {
+                    if (event.nodeName && nodeNameToType[event.nodeName]) {
+                        event.raw.nodeType = nodeNameToType[event.nodeName];
+                    }
+                    return new FabricEventInstanceModel<NodeEvent>(this.data, event);
+                });
+            }));
+        }));
     }
 }
 
