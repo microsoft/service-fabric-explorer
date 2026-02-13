@@ -18,7 +18,19 @@ export class ManifestComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    this.highlightedManifest = hljs.highlight(this.manifest, { language: 'xml' }).value;
+    if (this.manifest) {
+      try {
+        this.highlightedManifest = hljs.highlight(this.manifest, { language: 'xml' }).value;
+      } catch {
+        this.highlightedManifest = this.escapeHtml(this.manifest);
+      }
+    }
+  }
+
+  private escapeHtml(text: string): string {
+    const div = document.createElement('div');
+    div.appendChild(document.createTextNode(text));
+    return div.innerHTML;
   }
 
 }

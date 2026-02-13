@@ -28,4 +28,11 @@ describe('ManifestComponent', () => {
     expect(component.highlightedManifest).toContain('hljs-tag');
     expect(component.highlightedManifest).toContain('hljs-attr');
   });
+
+  it('should handle empty manifest', () => {
+    const emptyFixture = TestBed.createComponent(ManifestComponent);
+    const emptyComponent = emptyFixture.componentInstance;
+    emptyFixture.detectChanges();
+    expect(emptyComponent.highlightedManifest).toBe('');
+  });
 });
