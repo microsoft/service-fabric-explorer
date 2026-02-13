@@ -102,42 +102,42 @@ export class RestClientService {
 
 
   public getBackupPolicies(messageHandler?: IResponseMessageHandler): Observable<IRawBackupPolicy[]> {
-      return this.getFullCollection<IRawBackupPolicy>('BackupRestore/BackupPolicies/', 'Get backup Policies', RestClientService.apiVersion64);
+      return this.getFullCollection<IRawBackupPolicy>('BackupRestore/BackupPolicies/', 'Get backup Policies', RestClientService.apiVersion64, messageHandler || ResponseMessageHandlers.backupRestoreResponseMessageHandler);
   }
 
   public getApplicationBackupConfigurationInfoCollection(applicationId: string, messageHandler?: IResponseMessageHandler): Observable<IRawApplicationBackupConfigurationInfo[]> {
-      return this.getFullCollection<IRawApplicationBackupConfigurationInfo>('Applications/' + encodeURIComponent(applicationId) + '/$/GetBackupConfigurationInfo', 'Gets the application backup configuration information', RestClientService.apiVersion64, messageHandler);
+      return this.getFullCollection<IRawApplicationBackupConfigurationInfo>('Applications/' + encodeURIComponent(applicationId) + '/$/GetBackupConfigurationInfo', 'Gets the application backup configuration information', RestClientService.apiVersion64, messageHandler || ResponseMessageHandlers.backupRestoreResponseMessageHandler);
   }
 
   public getServiceBackupConfigurationInfoCollection(serviceId: string, messageHandler?: IResponseMessageHandler): Observable<IRawServiceBackupConfigurationInfo[]> {
-      return this.getFullCollection<IRawServiceBackupConfigurationInfo>('Services/' + encodeURIComponent(serviceId) + '/$/GetBackupConfigurationInfo', 'Gets the application backup configuration information', RestClientService.apiVersion64, messageHandler);
+      return this.getFullCollection<IRawServiceBackupConfigurationInfo>('Services/' + encodeURIComponent(serviceId) + '/$/GetBackupConfigurationInfo', 'Gets the application backup configuration information', RestClientService.apiVersion64, messageHandler || ResponseMessageHandlers.backupRestoreResponseMessageHandler);
   }
 
   public getPartitionBackupProgress(partitionId: string, messageHandler?: IResponseMessageHandler): Observable<IRawBackupProgressInfo> {
-      return this.get(this.getApiUrl('Partitions/' + encodeURIComponent(partitionId) + '/$/GetBackupProgress', RestClientService.apiVersion64), 'Gets the partition backup progress', messageHandler);
+      return this.get(this.getApiUrl('Partitions/' + encodeURIComponent(partitionId) + '/$/GetBackupProgress', RestClientService.apiVersion64), 'Gets the partition backup progress', messageHandler || ResponseMessageHandlers.backupRestoreResponseMessageHandler);
   }
 
   public getPartitionRestoreProgress(partitionId: string, messageHandler?: IResponseMessageHandler): Observable<IRawRestoreProgressInfo> {
-      return this.get(this.getApiUrl('Partitions/' + encodeURIComponent(partitionId) + '/$/GetRestoreProgress', RestClientService.apiVersion64), 'Gets the partition restore progress', messageHandler);
+      return this.get(this.getApiUrl('Partitions/' + encodeURIComponent(partitionId) + '/$/GetRestoreProgress', RestClientService.apiVersion64), 'Gets the partition restore progress', messageHandler || ResponseMessageHandlers.backupRestoreResponseMessageHandler);
   }
 
   public getPartitionBackupConfigurationInfo(partitionId: string, messageHandler?: IResponseMessageHandler): Observable<IRawPartitionBackupConfigurationInfo> {
-      return this.get(this.getApiUrl('Partitions/' + encodeURIComponent(partitionId) + '/$/GetBackupConfigurationInfo', RestClientService.apiVersion64), 'Gets the partition backup configuration information', messageHandler);
+      return this.get(this.getApiUrl('Partitions/' + encodeURIComponent(partitionId) + '/$/GetBackupConfigurationInfo', RestClientService.apiVersion64), 'Gets the partition backup configuration information', messageHandler || ResponseMessageHandlers.backupRestoreResponseMessageHandler);
   }
 
   public getLatestPartitionBackup(partitionId: string, messageHandler?: IResponseMessageHandler): Observable<IRawPartitionBackup[]> {
       return this.getFullCollection2<IRawPartitionBackup>('Partitions/' + encodeURIComponent(partitionId) + '/$/GetBackups', 'Gets the latest partition backup',
-                                                          RestClientService.apiVersion64, messageHandler, undefined, undefined, undefined, undefined, true);
+                                                          RestClientService.apiVersion64, messageHandler || ResponseMessageHandlers.backupRestoreResponseMessageHandler, undefined, undefined, undefined, undefined, true);
   }
 
   public getPartitionBackupList(partitionId: string, messageHandler?: IResponseMessageHandler, startDate?: Date, endDate?: Date, maxResults?: number): Observable<IRawPartitionBackup[]> {
       return this.getFullCollection2<IRawPartitionBackup>('Partitions/' + encodeURIComponent(partitionId) + '/$/GetBackups', 'Gets the partition backup list', RestClientService.apiVersion64,
-                                                          messageHandler, undefined, startDate, endDate, maxResults);
+                                                          messageHandler || ResponseMessageHandlers.backupRestoreResponseMessageHandler, undefined, startDate, endDate, maxResults);
   }
 
   public getBackupPolicy(backupName: string, messageHandler?: IResponseMessageHandler): Observable<IRawBackupPolicy> {
       const url = 'BackupRestore/BackupPolicies/' + encodeURIComponent(backupName) + '/';
-      return this.get(this.getApiUrl(url, RestClientService.apiVersion64), 'Get backup policy', messageHandler);
+      return this.get(this.getApiUrl(url, RestClientService.apiVersion64), 'Get backup policy', messageHandler || ResponseMessageHandlers.backupRestoreResponseMessageHandler);
   }
 
   public getNodeHealth(nodeName: string,
@@ -415,78 +415,78 @@ export class RestClientService {
 
   public enableApplicationBackup(application: Application, policyName: string, messageHandler?: IResponseMessageHandler): Observable<{}> {
       const url = 'Applications/' + encodeURIComponent(application.id) + '/$/EnableBackup';
-      return this.post(this.getApiUrl(url, RestClientService.apiVersion64), 'Enable Application Backup', { BackupPolicyName: policyName }, messageHandler);
+      return this.post(this.getApiUrl(url, RestClientService.apiVersion64), 'Enable Application Backup', { BackupPolicyName: policyName }, messageHandler || ResponseMessageHandlers.backupRestoreResponseMessageHandler);
   }
 
   public disableApplicationBackup(application: Application, cleanBackup: boolean, messageHandler?: IResponseMessageHandler): Observable<{}> {
       const url = 'Applications/' + encodeURIComponent(application.id) + '/$/DisableBackup';
-      return this.post(this.getApiUrl(url, RestClientService.apiVersion64), 'Disable Application Backup', { CleanBackup: cleanBackup }, messageHandler);
+      return this.post(this.getApiUrl(url, RestClientService.apiVersion64), 'Disable Application Backup', { CleanBackup: cleanBackup }, messageHandler || ResponseMessageHandlers.backupRestoreResponseMessageHandler);
   }
 
   public enableServiceBackup(service: Service, backupPolicyName: string, messageHandler?: IResponseMessageHandler): Observable<{}> {
       const url = 'Services/' + encodeURIComponent(service.id) + '/$/EnableBackup';
-      return this.post(this.getApiUrl(url, RestClientService.apiVersion64), 'Enable Service Backup', { BackupPolicyName: backupPolicyName }, messageHandler);
+      return this.post(this.getApiUrl(url, RestClientService.apiVersion64), 'Enable Service Backup', { BackupPolicyName: backupPolicyName }, messageHandler || ResponseMessageHandlers.backupRestoreResponseMessageHandler);
   }
 
   public disableServiceBackup(service: Service, cleanBackup: boolean, messageHandler?: IResponseMessageHandler): Observable<{}> {
       const url = 'Services/' + encodeURIComponent(service.id) + '/$/DisableBackup';
-      return this.post(this.getApiUrl(url, RestClientService.apiVersion64), 'Disable Service Backup', { CleanBackup: cleanBackup }, messageHandler);
+      return this.post(this.getApiUrl(url, RestClientService.apiVersion64), 'Disable Service Backup', { CleanBackup: cleanBackup }, messageHandler || ResponseMessageHandlers.backupRestoreResponseMessageHandler);
   }
 
   public enablePartitionBackup(partition: Partition, backupPolicyName: string, messageHandler?: IResponseMessageHandler): Observable<{}> {
       const url = 'Partitions/' + encodeURIComponent(partition.id) + '/$/EnableBackup';
-      return this.post(this.getApiUrl(url, RestClientService.apiVersion64), 'Enable Service Backup', { BackupPolicyName: backupPolicyName }, messageHandler);
+      return this.post(this.getApiUrl(url, RestClientService.apiVersion64), 'Enable Service Backup', { BackupPolicyName: backupPolicyName }, messageHandler || ResponseMessageHandlers.backupRestoreResponseMessageHandler);
   }
 
   public disablePartitionBackup(partition: Partition, cleanBackup: boolean, messageHandler?: IResponseMessageHandler): Observable<{}> {
       const url = 'Partitions/' + encodeURIComponent(partition.id) + '/$/DisableBackup';
-      return this.post(this.getApiUrl(url, RestClientService.apiVersion64), 'Disable Service Backup', { CleanBackup: cleanBackup }, messageHandler);
+      return this.post(this.getApiUrl(url, RestClientService.apiVersion64), 'Disable Service Backup', { CleanBackup: cleanBackup }, messageHandler || ResponseMessageHandlers.backupRestoreResponseMessageHandler);
   }
 
   public suspendApplicationBackup(applicationId: string, messageHandler?: IResponseMessageHandler): Observable<{}> {
       const url = 'Applications/' + encodeURIComponent(applicationId) + '/$/SuspendBackup';
-      return this.post(this.getApiUrl(url, RestClientService.apiVersion64), 'Suspend Application Backup', null, messageHandler);
+      return this.post(this.getApiUrl(url, RestClientService.apiVersion64), 'Suspend Application Backup', null, messageHandler || ResponseMessageHandlers.backupRestoreResponseMessageHandler);
   }
 
   public resumeApplicationBackup(applicationId: string, messageHandler?: IResponseMessageHandler): Observable<{}> {
       const url = 'Applications/' + encodeURIComponent(applicationId) + '/$/ResumeBackup';
-      return this.post(this.getApiUrl(url, RestClientService.apiVersion64), 'Resume Application Backup', null, messageHandler);
+      return this.post(this.getApiUrl(url, RestClientService.apiVersion64), 'Resume Application Backup', null, messageHandler || ResponseMessageHandlers.backupRestoreResponseMessageHandler);
   }
 
   public suspendServiceBackup(serviceId: string, messageHandler?: IResponseMessageHandler): Observable<{}> {
       const url = 'Services/' + encodeURIComponent(serviceId) + '/$/SuspendBackup';
-      return this.post(this.getApiUrl(url, RestClientService.apiVersion64), 'Suspend Service Backup', null, messageHandler);
+      return this.post(this.getApiUrl(url, RestClientService.apiVersion64), 'Suspend Service Backup', null, messageHandler || ResponseMessageHandlers.backupRestoreResponseMessageHandler);
   }
 
   public resumeServiceBackup(serviceId: string, messageHandler?: IResponseMessageHandler): Observable<{}> {
       const url = 'Services/' + encodeURIComponent(serviceId) + '/$/ResumeBackup';
-      return this.post(this.getApiUrl(url, RestClientService.apiVersion64), 'Resume Service Backup', null, messageHandler);
+      return this.post(this.getApiUrl(url, RestClientService.apiVersion64), 'Resume Service Backup', null, messageHandler || ResponseMessageHandlers.backupRestoreResponseMessageHandler);
   }
 
   public suspendPartitionBackup(partitionId: string, messageHandler?: IResponseMessageHandler): Observable<{}> {
       const url = 'Partitions/' + encodeURIComponent(partitionId) + '/$/SuspendBackup';
-      return this.post(this.getApiUrl(url, RestClientService.apiVersion64), 'Suspend Partition Backup', null, messageHandler);
+      return this.post(this.getApiUrl(url, RestClientService.apiVersion64), 'Suspend Partition Backup', null, messageHandler || ResponseMessageHandlers.backupRestoreResponseMessageHandler);
   }
 
   public resumePartitionBackup(partitionId: string, messageHandler?: IResponseMessageHandler): Observable<{}> {
       const url = 'Partitions/' + encodeURIComponent(partitionId) + '/$/ResumeBackup';
-      return this.post(this.getApiUrl(url, RestClientService.apiVersion64), 'Resume Partition Backup', null, messageHandler);
+      return this.post(this.getApiUrl(url, RestClientService.apiVersion64), 'Resume Partition Backup', null, messageHandler || ResponseMessageHandlers.backupRestoreResponseMessageHandler);
   }
 
 
   public deleteBackupPolicy(backupPolicyName: string, messageHandler?: IResponseMessageHandler): Observable<{}> {
       const url = 'BackupRestore/BackupPolicies/' + encodeURIComponent(backupPolicyName) + '/$/Delete';
-      return this.post(this.getApiUrl(url, RestClientService.apiVersion64), 'Backup Policy deletion', null, messageHandler);
+      return this.post(this.getApiUrl(url, RestClientService.apiVersion64), 'Backup Policy deletion', null, messageHandler || ResponseMessageHandlers.backupRestoreResponseMessageHandler);
   }
 
   public updateBackupPolicy(backupPolicy: IRawBackupPolicy, messageHandler?: IResponseMessageHandler): Observable<{}> {
       const url = 'BackupRestore/BackupPolicies/' + encodeURIComponent(backupPolicy.Name) + '/$/Update';
-      return this.post(this.getApiUrl(url, RestClientService.apiVersion64) + '&validateConnection=true', 'Backup Policy updation', backupPolicy, messageHandler);
+      return this.post(this.getApiUrl(url, RestClientService.apiVersion64) + '&validateConnection=true', 'Backup Policy updation', backupPolicy, messageHandler || ResponseMessageHandlers.backupRestoreResponseMessageHandler);
   }
 
   public createBackupPolicy(backupPolicy: IRawBackupPolicy, messageHandler?: IResponseMessageHandler): Observable<{}> {
       const url = 'BackupRestore/BackupPolicies/$/Create';
-      return this.post(this.getApiUrl(url, RestClientService.apiVersion64) + '&validateConnection=true', 'Backup Policy creation', backupPolicy, messageHandler);
+      return this.post(this.getApiUrl(url, RestClientService.apiVersion64) + '&validateConnection=true', 'Backup Policy creation', backupPolicy, messageHandler || ResponseMessageHandlers.backupRestoreResponseMessageHandler);
   }
 
   public triggerPartitionBackup(partition: Partition, timeOut: number, storage: IRawStorage,  messageHandler?: IResponseMessageHandler): Observable<{}> {
@@ -494,7 +494,7 @@ export class RestClientService {
       if (timeOut) {
           url += '?BackupTimeout=' + timeOut.toString();
       }
-      return this.post(this.getApiUrl(url, RestClientService.apiVersion64), 'Partition Backup trigger', { BackupStorage: storage }, messageHandler);
+      return this.post(this.getApiUrl(url, RestClientService.apiVersion64), 'Partition Backup trigger', { BackupStorage: storage }, messageHandler || ResponseMessageHandlers.backupRestoreResponseMessageHandler);
   }
 
   public restorePartitionBackup(partitionId: string, storage: IRawStorage, timeOut: number, backupId: string, backupLocation: string, messageHandler?: IResponseMessageHandler): Observable<{}> {
@@ -504,12 +504,12 @@ export class RestClientService {
       }
       return this.post(this.getApiUrl(url, RestClientService.apiVersion64), 'Partition Backup restore', { BackupId: backupId,
                                                                                                           BackupStorage: storage,
-                                                                                                          BackupLocation: backupLocation }, messageHandler);
+                                                                                                          BackupLocation: backupLocation }, messageHandler || ResponseMessageHandlers.backupRestoreResponseMessageHandler);
   }
 
   public getBackupEnabledEntities(backupPolicyName: string, messageHandler?: IResponseMessageHandler): Observable<IRawBackupEntity[]> {
       const url = 'BackupRestore/BackupPolicies/' + encodeURIComponent(backupPolicyName) + '/$/GetBackupEnabledEntities';
-      return this.getFullCollection<IRawBackupEntity>(url, 'Get Backup Enabled Entities', RestClientService.apiVersion64, messageHandler);
+      return this.getFullCollection<IRawBackupEntity>(url, 'Get Backup Enabled Entities', RestClientService.apiVersion64, messageHandler || ResponseMessageHandlers.backupRestoreResponseMessageHandler);
   }
   public getServiceDescription(applicationId: string, serviceId: string, messageHandler?: IResponseMessageHandler): Observable<IRawServiceDescription> {
       const url = 'Applications/' + encodeURIComponent(applicationId)

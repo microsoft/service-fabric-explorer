@@ -81,6 +81,7 @@ export class ResponseMessageHandlers {
     public static putResponseMessageHandler: IResponseMessageHandler = new PostResponseMessageHandler();
     public static silentResponseMessageHandler: IResponseMessageHandler = new SilentResponseMessageHandler();
     public static deleteResponseMessageHandler: IResponseMessageHandler = new DeleteResponseMessageHandler();
+    public static backupRestoreResponseMessageHandler: IResponseMessageHandler = new BackupRestoreResponseMessageHandler();
 }
 
 export class EventsStoreResponseMessageHandler implements IResponseMessageHandler {
@@ -113,4 +114,23 @@ export class EventsStoreResponseMessageHandler implements IResponseMessageHandle
         return handler.getErrorMessage(apiDesc, response);
     }
 }
+
+export class BackupRestoreResponseMessageHandler extends GetResponseMessageHandler {
+    public getErrorMessage(apiDesc: string, response: HttpErrorResponse): string {
+        // Handle the known issue with API version parsing on non-English systems
+        // See: https://github.com/microsoft/service-fabric/issues/1551
+        if (response.status === 400 && 
+            response.error?.Error?.Code === 'E_INVALIDARG' && 
+            response.error?.Error?.Message?.includes('Invalid API Version')) {
+            return `${apiDesc} failed.\r\n` +
+                   `Code: ${response.error.Error.Code}\r\n` +
+                   `Message: ${response.error.Error.Message}\r\n\r\n` +
+                   `This error may occur on non-English systems due to a known issue in BackupRestoreService.\r\n` +
+                   `The service uses culture-specific number parsing instead of invariant culture.\r\n` +
+                   `Please update Service Fabric runtime to a version with the fix, or ensure the cluster is running with English (US) locale.`;
+        }
+        return this.getErrorMessageInternal(apiDesc, response);
+    }
+}
+
 
