@@ -93,6 +93,13 @@ describe('Http interceptors', () => {
         expect(requests[0].request.headers.get('sfx-build')).toBe(environment.version);
     });
 
+    fit('Accept-Language header sent', async () => {
+        httpClient.get('/test').subscribe();
+
+        const requests = httpMock.match({ method: 'get' });
+        expect(requests[0].request.headers.get('Accept-Language')).toBe('en-US');
+    });
+
     fit('aad auth not enabled', async () => {
         adalService.aadEnabled = false;
 
