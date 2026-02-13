@@ -85,9 +85,11 @@ export class BackupRestoreResponseMessageHandler extends GetResponseMessageHandl
             return `${apiDesc} failed.\r\n` +
                    `Code: ${response.error.Error.Code}\r\n` +
                    `Message: ${response.error.Error.Message}\r\n\r\n` +
-                   `This error may occur on non-English systems due to a known issue in BackupRestoreService.\r\n` +
-                   `The service uses culture-specific number parsing instead of invariant culture.\r\n` +
-                   `Please update Service Fabric runtime to a version with the fix, or ensure the cluster is running with English (US) locale.`;
+                   `This error occurs on systems where the decimal separator is a comma (e.g., Polish, German locales)\r\n` +
+                   `due to a known issue in BackupRestoreService. The service uses culture-specific number parsing\r\n` +
+                   `instead of invariant culture when parsing API versions.\r\n\r\n` +
+                   `Resolution: Update Service Fabric runtime to a version with the fix.\r\n` +
+                   `See: https://github.com/microsoft/service-fabric/issues/1551`;
         }
         return this.getErrorMessageInternal(apiDesc, response);
     }
