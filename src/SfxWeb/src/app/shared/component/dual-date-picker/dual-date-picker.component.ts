@@ -100,8 +100,12 @@ export class DualDatePickerComponent implements OnInit, OnChanges {
   }
 
   onDateInputChange() {
+    // Check if both dates are valid
     if (this.fromDate && this.toDate) {
-      this.emitState();
+      // Validate that fromDate is not after toDate
+      if (!this.toDate.before(this.fromDate)) {
+        this.emitState();
+      }
     }
   }
 
