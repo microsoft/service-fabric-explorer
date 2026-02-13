@@ -23,7 +23,7 @@ describe('AdalService', () => {
       return of(new AadMetadata({
         type: 'aad',
         metadata: {
-          login: 'login',
+          login: 'https://login.microsoftonline.com/',
           authority: 'auth',
           client: 'client-id',
           cluster: 'cluster-id',
