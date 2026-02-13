@@ -78,16 +78,26 @@ export class SilentResponseMessageHandler implements IResponseMessageHandler {
 /**
  * Response message handler for BackupRestore API endpoints.
  * 
- * Provides enhanced error handling for the known issue where BackupRestoreService
- * fails to parse API versions on systems using comma as decimal separator.
- * The service uses culture-specific number parsing (double.Parse() without 
- * CultureInfo.InvariantCulture), causing "6.4" to fail on Polish, German, etc. systems.
+ * Handles responses from BackupRestore API endpoints with specialized error messages
+ * for known issues.
+ * 
+ * Currently addresses the culture-specific API version parsing issue where 
+ * BackupRestoreService fails to parse API versions on systems using comma as 
+ * decimal separator. The service uses culture-specific number parsing 
+ * (double.Parse() without CultureInfo.InvariantCulture), causing "6.4" to fail 
+ * on Polish, German, etc. systems.
  * 
  * @see https://github.com/microsoft/service-fabric/issues/1551
  */
 export class BackupRestoreResponseMessageHandler extends GetResponseMessageHandler {
     private static readonly INVALID_API_VERSION_ERROR_CODE = 'E_INVALIDARG';
     private static readonly INVALID_API_VERSION_MESSAGE_PATTERN = /Invalid API Version/i;
+    private static readonly CULTURE_LOCALE_ERROR_GUIDANCE = 
+        `This error occurs on systems where the decimal separator is a comma (e.g., Polish, German locales)\r\n` +
+        `due to a known issue in BackupRestoreService. The service uses culture-specific number parsing\r\n` +
+        `instead of invariant culture when parsing API versions.\r\n\r\n` +
+        `Resolution: Update Service Fabric runtime to a version with the fix.\r\n` +
+        `See: https://github.com/microsoft/service-fabric/issues/1551`;
 
     public getErrorMessage(apiDesc: string, response: HttpErrorResponse): string {
         // Handle the known issue with API version parsing on non-English systems
@@ -98,11 +108,7 @@ export class BackupRestoreResponseMessageHandler extends GetResponseMessageHandl
             return `${apiDesc} failed.\r\n` +
                    `Code: ${response.error.Error.Code}\r\n` +
                    `Message: ${response.error.Error.Message}\r\n\r\n` +
-                   `This error occurs on systems where the decimal separator is a comma (e.g., Polish, German locales)\r\n` +
-                   `due to a known issue in BackupRestoreService. The service uses culture-specific number parsing\r\n` +
-                   `instead of invariant culture when parsing API versions.\r\n\r\n` +
-                   `Resolution: Update Service Fabric runtime to a version with the fix.\r\n` +
-                   `See: https://github.com/microsoft/service-fabric/issues/1551`;
+                   BackupRestoreResponseMessageHandler.CULTURE_LOCALE_ERROR_GUIDANCE;
         }
         return this.getErrorMessageInternal(apiDesc, response);
     }
