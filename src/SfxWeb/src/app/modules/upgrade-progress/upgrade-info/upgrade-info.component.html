@@ -16,8 +16,8 @@
       <div class="overview-container" data-cy="failureoverview" *ngIf="upgradeProgress.raw.UpgradeFailureDetails.length > 0">
         <h3>Upgrade Failure Details</h3>
         <div style="text-align: center;">
-          {{upgradeProgress.raw.UpgradeFailureDetails}}
-            <app-clip-board [text]="upgradeProgress.raw.UpgradeFailureDetails"></app-clip-board>
+          {{upgradeProgress.raw.UpgradeStatusDetails}}
+            <app-clip-board [text]="upgradeProgress.raw.UpgradeStatusDetails"></app-clip-board>
       </div>
       </div>
     </div>
@@ -70,13 +70,6 @@
         <app-essential-item *ngFor="let item of healthPolicy; let l = last" [item]="item" [underline]="false">
         </app-essential-item>
       </div>
-        <div class="overview-container" *ngIf="upgradeProgress.raw.UpgradeStatusDetails.length > 0">
-        <h3>UpgradeStatusDetails</h3>
-        <div style="text-align: center;">
-          {{upgradeProgress.raw.UpgradeStatusDetails}}
-            <app-clip-board [text]="upgradeProgress.raw.UpgradeStatusDetails"></app-clip-board>
-      </div>
-      </div>
     </div>
     <div class="node-list" style="flex: 1;" data-cy="healthmonitoring"
         *ngIf="upgradeProgress.isUpgrading && upgradeProgress.isAtHealthCheckPhase && upgradeProgress.nodesInProgress?.NodeUpgradeProgressList.length === 0">
@@ -90,11 +83,6 @@
       <app-upgrade-domain-progress [upgradeDomain]="upgradeProgress.nodesInProgress">
       </app-upgrade-domain-progress>
     </div>
-  </div>
-    <div class="detail-pane" *ngIf="upgradeProgress.healthSnapshotAtRollback.length > 0 && upgradeProgress.unhealthyEvaluations.length < 0" data-cy="upgradeHealthEvents" style="margin-top: 10px;">
-    <h3>Health Snapshot At Rollback</h3>
-    <app-detail-list [list]="upgradeProgress.healthSnapshotAtRollback"
-      [listSettings]="upgradeProgressUnhealthyEvaluationsListSettings"></app-detail-list>
   </div>
   <div class="detail-pane" *ngIf="upgradeProgress.unhealthyEvaluations.length > 0" data-cy="upgradeHealthEvents" style="margin-top: 10px;">
     <h3>Unhealthy Evaluations (Upgrade)</h3>
