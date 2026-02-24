@@ -45,6 +45,7 @@ describe('Cluster', () => {
             expect(clusterManifest.isBackupRestoreEnabled).toBe(false);
             expect(clusterManifest.isRepairManagerEnabled).toBe(false);
             expect(clusterManifest.isSfrpCluster).toBe(false);
+            expect(clusterManifest.isSfmcCluster).toBe(false);
             expect(clusterManifest.isEventStoreEnabled).toBe(false);
         });
 
@@ -169,6 +170,30 @@ describe('Cluster', () => {
             await clusterManifest.ensureInitialized().toPromise();
 
             expect(clusterManifest.isEventStoreEnabled).toBeTruthy();
+        });
+
+        fit('SFMC cluster is detected from paas armResourceId', async () => {
+            restClientMock.getClusterManifest = (messageHandler?: IResponseMessageHandler): Observable<IRawClusterManifest> =>
+            of({
+                Manifest: `<ClusterManifest xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                Name="WRP_Generated_ClusterManifest" Version="37" Description="This is a generated file. Do not modify."
+                xmlns="http://schemas.microsoft.com/2011/01/fabric">
+                <FabricSettings>
+                    <Section Name="UpgradeService">
+                        <Parameter Name="CoordinatorType" Value="Paas" />
+                    </Section>
+                    <Section Name="Paas">
+                        <Parameter Name="armResourceId" Value="/subscriptions/test/resourceGroups/test/providers/Microsoft.ServiceFabric/managedClusters/test-cluster" />
+                    </Section>
+                </FabricSettings>
+            </ClusterManifest>
+                `
+            });
+
+            await clusterManifest.ensureInitialized().toPromise();
+
+            expect(clusterManifest.isSfrpCluster).toBe(true);
+            expect(clusterManifest.isSfmcCluster).toBe(true);
         });
     });
 
@@ -346,4 +371,3 @@ describe('Cluster', () => {
     });
 
   });
-

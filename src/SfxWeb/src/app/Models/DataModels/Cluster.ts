@@ -131,6 +131,7 @@ export class ClusterManifest extends DataModelBase<IRawClusterManifest> {
     public clusterManifestName: string;
 
     public isSfrpCluster = false;
+    public isSfmcCluster = false;
 
     public imageStoreConnectionString = '';
     public isNetworkInventoryManagerEnabled = false;
@@ -154,6 +155,18 @@ export class ClusterManifest extends DataModelBase<IRawClusterManifest> {
             const item = params.item(i);
             if (item.getAttribute('Name') === 'ImageStoreConnectionString'){
                 this.imageStoreConnectionString = item.getAttribute('Value');
+                break;
+            }
+        }
+    }
+
+    private checkSFMCCluster(element: Element): void {
+        const params = element.getElementsByTagName('Parameter');
+        for (let i = 0; i < params.length; i ++) {
+            const item = params.item(i);
+            if (item.getAttribute('Name') === 'armResourceId' &&
+                item.getAttribute('Value').includes('Microsoft.ServiceFabric/managedClusters/')) {
+                this.isSfmcCluster = true;
                 break;
             }
         }
@@ -211,6 +224,8 @@ export class ClusterManifest extends DataModelBase<IRawClusterManifest> {
                 this.isBackupRestoreEnabled = true;
             }else if (item.getAttribute('Name') === 'UpgradeService'){
                 this.isSfrpCluster = true;
+            }else if (item.getAttribute('Name') === 'Paas') {
+                this.checkSFMCCluster(item);
             }else if (item.getAttribute('Name') === 'RepairManager'){
                 this.isRepairManagerEnabled = true;
             }else if (item.getAttribute('Name') === 'EventStoreService'){
@@ -397,4 +412,3 @@ export class BackupPolicy extends DataModelBase<IRawBackupPolicy> {
         return this.raw.Name;
     }
 }
-
