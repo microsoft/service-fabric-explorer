@@ -172,7 +172,7 @@ describe('Cluster', () => {
             expect(clusterManifest.isEventStoreEnabled).toBeTruthy();
         });
 
-        fit('SFMC cluster is detected from paas armResourceId', async () => {
+        fit('SFMC cluster is detected from paas ArmResourceId', async () => {
             restClientMock.getClusterManifest = (messageHandler?: IResponseMessageHandler): Observable<IRawClusterManifest> =>
             of({
                 Manifest: `<ClusterManifest xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -183,7 +183,7 @@ describe('Cluster', () => {
                         <Parameter Name="CoordinatorType" Value="Paas" />
                     </Section>
                     <Section Name="Paas">
-                        <Parameter Name="armResourceId" Value="/subscriptions/test/resourceGroups/test/providers/Microsoft.ServiceFabric/managedClusters/test-cluster" />
+                        <Parameter Name="ArmResourceId" Value="/subscriptions/test/resourceGroups/test/providers/MICROSOFT.servicefabric/MANAGEDCLUSTERS/test-cluster" />
                     </Section>
                 </FabricSettings>
             </ClusterManifest>

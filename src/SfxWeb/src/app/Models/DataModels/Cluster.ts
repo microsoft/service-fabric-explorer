@@ -162,12 +162,13 @@ export class ClusterManifest extends DataModelBase<IRawClusterManifest> {
 
     private checkSFMCCluster(element: Element): void {
         const params = element.getElementsByTagName('Parameter');
+        const sfmcResourceIdSegment = 'microsoft.servicefabric/managedclusters/';
         for (let i = 0; i < params.length; i ++) {
             const item = params.item(i);
             const armResourceId = item.getAttribute('Value');
-            if (item.getAttribute('Name') === 'armResourceId' &&
+            if (item.getAttribute('Name') === 'ArmResourceId' &&
                 armResourceId &&
-                armResourceId.includes('Microsoft.ServiceFabric/managedClusters/')) {
+                armResourceId.toLowerCase().includes(sfmcResourceIdSegment)) {
                 this.isSfmcCluster = true;
                 break;
             }
