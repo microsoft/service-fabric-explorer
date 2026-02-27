@@ -520,7 +520,7 @@ export class NodeEventList extends EventListBase<NodeEvent> {
             return getEvents.pipe(map(result => {
                 return result.map(event => {
                     if (event.nodeName && nodeNameToType[event.nodeName]) {
-                        event.raw.nodeType = nodeNameToType[event.nodeName];
+                        event.nodeType = nodeNameToType[event.nodeName];
                     }
                     return new FabricEventInstanceModel<NodeEvent>(this.data, event);
                 });
