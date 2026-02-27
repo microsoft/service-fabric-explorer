@@ -56,9 +56,10 @@ context('nodes list page', () => {
 
             checkTableSize(3);
 
-            // Verify Node Type column header is present
+            // Verify Node Type column header is present with filter button
             cy.get('thead').within(() => {
                 cy.contains('Node Type');
+                cy.contains('Node Type').parents('th').find('button[ngbdropdowntoggle]').should('exist');
             })
 
             // Verify node type values appear in the table
@@ -93,6 +94,12 @@ context('nodes list page', () => {
 
             // After unchecking BackEnd, only FrontEnd events should show (2 rows)
             checkTableSize(2);
+
+            // Verify no BackEnd values remain in filtered table
+            cy.get('tbody').within(() => {
+                cy.contains('BackEnd').should('not.exist');
+                cy.contains('FrontEnd');
+            })
         })
     })
 
