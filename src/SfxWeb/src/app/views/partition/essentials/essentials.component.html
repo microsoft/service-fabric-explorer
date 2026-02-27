@@ -8,7 +8,7 @@
   </app-essential-health-tile>
 
     <app-tile-wrapper *ngIf="partition?.raw">
-      <app-state-info [stateful]="!partition.isStatelessService" [data]="partition.raw"></app-state-info>
+      <app-state-info [stateful]="partition.isStatefulService" [data]="partition.raw"></app-state-info>
     </app-tile-wrapper>
   </div>
 

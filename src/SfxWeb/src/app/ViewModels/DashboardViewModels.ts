@@ -1,4 +1,4 @@
-import { IRawHealthStateCount } from '../Models/RawDataTypes';
+import { IRawHealthStateCount, IRawNodeStatusCount } from '../Models/RawDataTypes';
 import { RoutesService } from '../services/routes.service';
 import { ValueResolver, ITextAndBadge } from '../Utils/ValueResolver';
 
@@ -47,6 +47,25 @@ export class DashboardViewModel implements IDashboardViewModel {
         const data = new DashboardViewModel(title, titleInSingular, dps, largeTile, routes, viewPath);
 
 
+        return data;
+    }
+
+    public static fromNodeStatusCount(
+        title: string,
+        titleInSingular: string,
+        largeTile: boolean,
+        nodeStatusCount: IRawNodeStatusCount,
+        routes?: RoutesService,
+        viewPath?: string) {
+
+        const dps: DashboardDataPointViewModel[] = [];
+ 
+        dps.push(new DashboardDataPointViewModel('Down', nodeStatusCount.DownCount, ValueResolver.healthStatuses[3]));
+        dps.push(new DashboardDataPointViewModel('Disabled', nodeStatusCount.DisabledCount, ValueResolver.healthStatuses[2]));
+        dps.push(new DashboardDataPointViewModel('Up', nodeStatusCount.UpCount, ValueResolver.healthStatuses[1]));
+
+        const data = new DashboardViewModel(title, titleInSingular, dps, largeTile, routes, viewPath);
+        
         return data;
     }
 

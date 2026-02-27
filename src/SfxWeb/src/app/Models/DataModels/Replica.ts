@@ -5,7 +5,7 @@ import { DeployedReplicaDetail } from './DeployedReplica';
 import { DataService } from 'src/app/services/data.service';
 import { Partition } from './Partition';
 import { HealthStateFilterFlags } from '../HealthChunkRawDataTypes';
-import { ServiceKindRegexes, SortPriorities, UnicodeConstants } from 'src/app/Common/Constants';
+import { SortPriorities, UnicodeConstants } from 'src/app/Common/Constants';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { HealthBase } from './HealthEvent';
@@ -14,6 +14,7 @@ import { map, mergeMap } from 'rxjs/operators';
 import { ActionWithConfirmationDialog } from '../Action';
 import { RoutesService } from 'src/app/services/routes.service';
 import { ActionDialogUtils } from 'src/app/modules/action-dialog/utils';
+import { isStatefulService, isStatelessService, isSelfReconfiguringService } from './Service';
 
 // -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -58,11 +59,15 @@ export class ReplicaOnPartition extends DataModelBase<IRawReplicaOnPartition> {
     }
 
     public get isStatefulService(): boolean {
-        return ServiceKindRegexes.Stateful.test(this.raw.ServiceKind);
+        return isStatefulService(this.raw);
     }
 
     public get isStatelessService(): boolean {
-        return ServiceKindRegexes.Stateless.test(this.raw.ServiceKind);
+        return isStatelessService(this.raw);
+    }
+
+    public get isSelfReconfiguringService(): boolean {
+        return isSelfReconfiguringService(this.raw);
     }
 
     public get id(): string {
@@ -76,10 +81,23 @@ export class ReplicaOnPartition extends DataModelBase<IRawReplicaOnPartition> {
     public get role(): string {
         const { PartitionStatus } = this.parent.raw;
         const { PreviousReplicaRole, ReplicaRole, ReplicaStatus} = this.raw;
+        const { PreviousSelfReconfiguringInstanceRole, InstanceRole } = this.raw;
 
         if (ReplicaStatus == 'ToBeRemoved')
         {
             return `ToBeRemoved`;
+        }
+
+        if (this.isSelfReconfiguringService) {
+            if (PartitionStatus !== 'Reconfiguring') {
+                return InstanceRole;
+            }
+
+            if(!PreviousSelfReconfiguringInstanceRole || PreviousSelfReconfiguringInstanceRole === 'None') {
+                return `Reconfiguring - Target Role: ${InstanceRole}`;
+            }
+
+            return `Reconfiguring: ${PreviousSelfReconfiguringInstanceRole} ${UnicodeConstants.RightArrow} ${InstanceRole}`;
         }
 
         if (PartitionStatus !== 'Reconfiguring') {
@@ -93,13 +111,45 @@ export class ReplicaOnPartition extends DataModelBase<IRawReplicaOnPartition> {
         return `Reconfiguring: ${PreviousReplicaRole} ${UnicodeConstants.RightArrow} ${ReplicaRole}`;
     }
 
-    public get currentRole(): string {
+    public get activationState(): string {
+        if (!this.isSelfReconfiguringService) {
+            return 'N/A';
+        }
+
+        const { PartitionStatus } = this.parent.raw;
+        const currentState = this.raw.SelfReconfiguringInstanceActivationState;
+        const previousState = this.raw.PreviousSelfReconfiguringInstanceActivationState;
+
+        if (PartitionStatus !== 'Reconfiguring') {
+            return currentState;
+        }
+
+        if (!previousState || previousState === 'None') {
+            return `Reconfiguring - Target State: ${currentState}`;
+        }
+
+        return `Reconfiguring: ${previousState} ${UnicodeConstants.RightArrow} ${currentState}`;
+    }
+
+    public get currentStatefulReplicaRole(): string {
         return this.raw.ReplicaRole;
     }
 
-    public get previousRole(): string {
+    public get currentSelfReconfiguringInstanceRole(): string {
+        return this.raw.InstanceRole;
+    }
+
+    public get previousStatefulReplicaRole(): string {
         if (this.parent.raw.PartitionStatus === 'Reconfiguring' && this.raw.PreviousReplicaRole) {
             return this.raw.PreviousReplicaRole;
+        }
+
+        return 'None';
+    }
+
+    public get previousSelfReconfiguringInstanceRole(): string {
+        if (this.parent.raw.PartitionStatus === 'Reconfiguring' && this.raw.PreviousSelfReconfiguringInstanceRole) {
+            return this.raw.PreviousSelfReconfiguringInstanceRole;
         }
 
         return 'None';

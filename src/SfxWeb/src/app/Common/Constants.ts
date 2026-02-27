@@ -60,6 +60,7 @@ export class Constants {
 
     public static ServiceKindStateful = 'Stateful';
     public static ServiceKindStateless = 'Stateless';
+    public static ServiceKindSelfReconfiguring = 'SelfReconfiguring';
 
     public static ComposeApplicationDefinitionKind = 'Compose';
 
@@ -175,6 +176,7 @@ export class ServicePartitionKindRegexes {
 export class ServiceKindRegexes {
     public static Stateless: RegExp = /Stateless/i;
     public static Stateful: RegExp = /Stateful/i;
+    public static SelfReconfiguring: RegExp = /SelfReconfiguring/i;
 }
 
 export class UpgradeDomainStateRegexes {

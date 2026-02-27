@@ -1,0 +1,31 @@
+{
+    "ServiceKind": "SelfReconfiguring",
+    "ServiceName": "fabric:/SelfReconfigTestApp/SelfReconfigTestService",
+    "PartitionId": "79dd3bba-966d-42c2-89b1-baa4580b462c",
+    "CurrentServiceOperation": "None",
+    "CurrentServiceOperationStartTimeUtc": "2025-12-23T10:08:59.383Z",
+    "ReportedLoad": [],
+    "InstanceId": "2",
+    "DeployedServiceReplicaInstance": {
+        "ServiceKind": "SelfReconfiguring",
+        "ServiceName": "fabric:/SelfReconfigTestApp/SelfReconfigTestService",
+        "ServiceTypeName": "SelfReconfigTestServiceType",
+        "ServiceManifestVersion": "",
+        "ServiceManifestName": "SelfReconfigTestService",
+        "CodePackageName": "Code",
+        "PartitionId": "79dd3bba-966d-42c2-89b1-baa4580b462c",
+        "InstanceRole": "SelfReconfiguringMember",
+        "InstanceId": "2",
+        "ReplicaStatus": "Ready",
+        "Address": "address_2",
+        "ServicePackageActivationId": "f9bacd44-6490-4667-aa7c-581872a4e7f7",
+        "HostProcessId": "480",
+        "SelfReconfiguringReconfigurationInformation": {
+            "PreviousConfigurationRole": "None",
+            "PreviousSelfReconfiguringConfigurationRole": "SelfReconfiguringNone",
+            "ReconfigurationPhase": "Invalid",
+            "ReconfigurationType": "Invalid",
+            "ReconfigurationStartTimeUtc": "0001-01-01T00:00:00.000Z"
+        }
+    }
+}

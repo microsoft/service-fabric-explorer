@@ -5,6 +5,7 @@ import { addDefaultFixtures, apiUrl, FIXTURE_REF_MANIFEST, addRoute, checkComman
 const appName = "VisualObjectsApplicationType";
 const serviceName = "VisualObjects.ActorService";
 const statelessServiceName = "VisualObjects.WebService";
+const selfReconfiguringServiceName = "VisualObjects.SelfReconfiguringService";
 const waitRequest = "@getserviceInfo";
 
 /*
@@ -333,6 +334,32 @@ context('service', () => {
         })
       })
     })
+
+    describe("self-reconfiguring", () => {
+
+      beforeEach(() => {
+        addDefaultFixtures();
+        //setupStatefulService(appName, selfReconfiguringServiceName);
+        cy.intercept(apiUrl(`/Applications/${appName}/$/GetServices?*`), { fixture: "app-page/services.json" }).as("services")
+
+        addRoute("description", "service-page/service-selfreconfiguring-description.json", apiUrl(`${routeFormatter(appName, selfReconfiguringServiceName)}/$/GetDescription?*`))
+        addRoute("serviceInfo", "service-page/service-selfreconfiguring-info.json", apiUrl(`${routeFormatter(appName, selfReconfiguringServiceName)}?*`))
+        addRoute("partitions", "service-page/service-selfreconfiguring-partitions.json", apiUrl(`${routeFormatter(appName, selfReconfiguringServiceName)}/$/GetPartitions?*`))
+        addRoute("health", "service-page/service-selfreconfiguring-health.json", apiUrl(`${routeFormatter(appName, selfReconfiguringServiceName)}/$/GetHealth?*`))
+
+        cy.visit(urlFormatter(appName, selfReconfiguringServiceName))
+      })
+
+      it('self-reconfiguring information', () => {
+        cy.wait(waitRequest);
+
+        cy.get('[data-cy=state-data]').within(() => {
+          cy.contains("SelfReconfiguring")
+          cy.contains("Instance Count")
+          cy.contains("Minimum Instance Count")
+        })
+      })
+    })
   })
 
   describe("xss", () => {
@@ -361,4 +388,4 @@ context('service', () => {
       })
     })
   })
-})
+}) 

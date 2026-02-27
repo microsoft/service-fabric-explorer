@@ -21,6 +21,16 @@
             "ServiceStatus": "Disabling",
             "IsServiceGroup": false,
             "Id": "VisualObjectsApplicationType/VisualObjects.WebService"
+        },
+        {
+            "ServiceKind": "SelfReconfiguring",
+            "Name": "fabric:/VisualObjectsApplicationType/VisualObjects.SelfReconfiguringService",
+            "TypeName": "VisualObjects.SelfReconfiguringServiceType",
+            "ManifestVersion": "1.0.0",
+            "HealthState": "Warning",
+            "ServiceStatus": "Disabling",
+            "IsServiceGroup": false,
+            "Id": "VisualObjectsApplicationType/VisualObjects.SelfReconfiguringService"
         }
     ]
 } 

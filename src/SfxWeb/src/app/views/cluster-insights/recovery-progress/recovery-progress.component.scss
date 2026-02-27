@@ -1,0 +1,65 @@
+.recovery-progress-container {
+  padding: 1rem;
+
+  h4 {
+    margin-bottom: 1rem;
+  }
+}
+
+.progress-steps {
+  display: flex;
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 15px;
+    left: 30px;
+    right: 30px;
+    height: 3px;
+    background-color: #c9c9c9;
+  }
+}
+
+.progress-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  position: relative;
+  z-index: 1;
+
+  .step-indicator {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 3px solid var(--accent-underline);
+    margin-bottom: 0.5rem;
+  }
+
+  .step-label {
+    text-align: center;
+    max-width: 80px;
+    word-wrap: break-word;
+  }
+
+  &.success .step-indicator {
+    background-color: var(--badge-ok);
+    border-color: var(--badge-ok);
+  }
+
+  &.error .step-indicator {
+    background-color: var(--badge-error);
+    border-color: var(--badge-error);
+  }
+
+  &.warning .step-indicator {
+    background-color: var(--badge-warning);
+    border-color: var(--badge-warning);
+  }
+
+  &.pending .step-indicator {
+    background-color: var(--primary-background-color);
+    border-color: #c9c9c9;
+  }
+}

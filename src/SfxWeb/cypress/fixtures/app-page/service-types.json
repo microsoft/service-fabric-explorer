@@ -33,5 +33,20 @@
         "ServiceManifestVersion": "12.0.0",
         "ServiceManifestName": "VisualObjects.WebServicePkg",
         "IsServiceGroup": false
+    },
+    {
+        "ServiceTypeDescription": {
+            "Kind": "SelfReconfiguring",
+            "IsStateful": false,
+            "ServiceTypeName": "VisualObjects.SelfReconfiguringServiceType",
+            "PlacementConstraints": "",
+            "UseImplicitHost": false,
+            "Extensions": [],
+            "LoadMetrics": [],
+            "ServicePlacementPolicies": []
+        },
+        "ServiceManifestVersion": "1.0.0",
+        "ServiceManifestName": "VisualObjects.SelfReconfiguringServicePkg",
+        "IsServiceGroup": false
     }
 ]

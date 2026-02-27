@@ -1,0 +1,220 @@
+[
+    {
+        "Scope": {
+            "Kind": "Cluster"
+        },
+        "TaskId": "Azure/PlatformUpdate/00065b20-aa83-4199-877b-a4b51efa8de6/3/616",
+        "Version": "132450185229614560",
+        "Description": "",
+        "State": "Completed",
+        "Flags": 0,
+        "Action": "System.Azure.Job.PlatformUpdate",
+        "Target": {
+            "Kind": "Node",
+            "NodeNames": [
+                "_nt_3"
+            ]
+        },
+        "Executor": "fabric:/System/InfrastructureService/nt",
+        "ExecutorData": "{\r\n  \"JobId\": \"00065b20-aa83-4199-877b-a4b51efa8de6\",\r\n  \"UD\": 3,\r\n  \"StepId\": \"_nt_3\"\r\n}",
+        "Impact": {
+            "Kind": "Node",
+            "NodeImpactList": []
+        },
+        "ResultStatus": "Succeeded",
+        "ResultCode": 0,
+        "ResultDetails": "Job step completed with status Executed",
+        "History": {
+            "CreatedUtcTimestamp": "2020-09-19T19:48:42.961Z",
+            "ClaimedUtcTimestamp": "2020-09-19T19:48:42.961Z",
+            "PreparingUtcTimestamp": "2020-09-19T19:48:42.961Z",
+            "ApprovedUtcTimestamp": "2020-09-19T19:48:43.148Z",
+            "ExecutingUtcTimestamp": "2020-09-19T19:48:58.075Z",
+            "RestoringUtcTimestamp": "2020-09-19T20:05:51.067Z",
+            "CompletedUtcTimestamp": "2020-09-19T20:05:51.257Z",
+            "PreparingHealthCheckStartUtcTimestamp": "2020-09-19T19:48:43.039Z",
+            "PreparingHealthCheckEndUtcTimestamp": "2020-09-19T19:48:43.086Z",
+            "RestoringHealthCheckStartUtcTimestamp": "2020-09-19T20:05:51.147Z",
+            "RestoringHealthCheckEndUtcTimestamp": "2020-09-19T20:05:51.194Z"
+        },
+        "PreparingHealthCheckState": "Skipped",
+        "RestoringHealthCheckState": "Skipped",
+        "PerformPreparingHealthCheck": true,
+        "PerformRestoringHealthCheck": false
+    },
+    {
+        "Scope": {
+            "Kind": "Cluster"
+        },
+        "TaskId": "IM/Node/12345678-abcd-4199-877b-a4b51efa8de6/1/100",
+        "Version": "132450185229614561",
+        "Description": "External repair task for testing",
+        "State": "Completed",
+        "Flags": 0,
+        "Action": "External.RestartNode",
+        "Target": {
+            "Kind": "External"
+        },
+        "Executor": "fabric:/System/CustomService",
+        "ExecutorData": "{\"Metadata\":\"{\\\"ParentTaskId\\\":\\\"b2b83c6c4d76653627ae52d9c4b412dc\\\"}\",\"CompressionAlgo\":\"Deflate\",\"Data\":\"ZcyxCsIwFEDRf8lssC9Nounm2KWIdRMpL8lrCWhS0uAi\/rsVdHK9cO7lyXrKj+Cowzuxho1oc3DNtqfbeCKX4himMy3lMM9\/7SvZhnXJ\/wZDLDDUaztiLqGEFFu\/Zq9wD0YhN+CBS6+BG1MBB2uQrK1AkVpRG5eC0dHHQC1BSCmkkjujhRbqdX0D\"}",
+        "Impact": {
+            "Kind": "External",
+            "ExternalImpactInfo": {
+                "ImpactLevel": "RestartNode"
+            }
+        },
+        "ResultStatus": "Succeeded",
+        "ResultCode": 0,
+        "ResultDetails": "External operation completed",
+        "History": {
+            "CreatedUtcTimestamp": "2020-09-19T19:50:42.961Z",
+            "ClaimedUtcTimestamp": "2020-09-19T19:50:42.961Z",
+            "PreparingUtcTimestamp": "2020-09-19T19:50:42.961Z",
+            "ApprovedUtcTimestamp": "2020-09-19T19:50:43.148Z",
+            "ExecutingUtcTimestamp": "2020-09-19T19:50:58.075Z",
+            "RestoringUtcTimestamp": "2020-09-19T20:07:51.067Z",
+            "CompletedUtcTimestamp": "2020-09-19T20:07:51.257Z",
+            "PreparingHealthCheckStartUtcTimestamp": "2020-09-19T19:50:43.039Z",
+            "PreparingHealthCheckEndUtcTimestamp": "2020-09-19T19:50:43.086Z",
+            "RestoringHealthCheckStartUtcTimestamp": "2020-09-19T20:07:51.147Z",
+            "RestoringHealthCheckEndUtcTimestamp": "2020-09-19T20:07:51.194Z"
+        },
+        "PreparingHealthCheckState": "Skipped",
+        "RestoringHealthCheckState": "Skipped",
+        "PerformPreparingHealthCheck": false,
+        "PerformRestoringHealthCheck": false
+    },
+    {
+        "Scope": {
+            "Kind": "Cluster"
+        },
+        "TaskId": "Azure/TenantUpdate/46df1c03-5212-4b8f-98b0-47dfb70744b6/2/612",
+        "Version": "132449998154141519",
+        "Description": "",
+        "State": "Completed",
+        "Flags": 0,
+        "Action": "System.Azure.Job.TenantUpdate",
+        "Target": {
+            "Kind": "Node",
+            "NodeNames": [
+                "_nt_2"
+            ]
+        },
+        "Executor": "fabric:/System/InfrastructureService/nt",
+        "ExecutorData": "{\r\n  \"JobId\": \"46df1c03-5212-4b8f-98b0-47dfb70744b6\",\r\n  \"UD\": 2,\r\n  \"StepId\": \"_nt_2\"\r\n}",
+        "Impact": {
+            "Kind": "Node",
+            "NodeImpactList": []
+        },
+        "ResultStatus": "Succeeded",
+        "ResultCode": 0,
+        "ResultDetails": "Job step completed with status Executed",
+        "History": {
+            "CreatedUtcTimestamp": "2020-09-19T14:36:55.414Z",
+            "ClaimedUtcTimestamp": "2020-09-19T14:36:55.414Z",
+            "PreparingUtcTimestamp": "2020-09-19T14:36:55.414Z",
+            "ApprovedUtcTimestamp": "2020-09-19T14:36:55.606Z",
+            "ExecutingUtcTimestamp": "2020-09-19T14:37:10.510Z",
+            "RestoringUtcTimestamp": "2020-09-19T14:54:48.117Z",
+            "CompletedUtcTimestamp": "2020-09-19T14:54:48.310Z",
+            "PreparingHealthCheckStartUtcTimestamp": "2020-09-19T14:36:55.495Z",
+            "PreparingHealthCheckEndUtcTimestamp": "2020-09-19T14:36:55.543Z",
+            "RestoringHealthCheckStartUtcTimestamp": "2020-09-19T14:54:48.201Z",
+            "RestoringHealthCheckEndUtcTimestamp": "2020-09-19T14:54:48.248Z"
+        },
+        "PreparingHealthCheckState": "Skipped",
+        "RestoringHealthCheckState": "Skipped",
+        "PerformPreparingHealthCheck": true,
+        "PerformRestoringHealthCheck": false
+    },
+    {
+        "Scope": {
+            "Kind": "Cluster"
+        },
+        "TaskId": "IM/ApplicationUpgrade/99999999-ffff-4199-877b-a4b51efa8de6/1/200",
+        "Version": "132450185229614562",
+        "Description": "Another external repair task",
+        "State": "Executing",
+        "Flags": 0,
+        "Action": "External.ApplicationUpgrade",
+        "Target": {
+            "Kind": "External"
+        },
+        "Executor": "fabric:/System/MaintenanceService",
+        "ExecutorData": "{\r\n  \"JobId\": \"99999999-ffff-4199-877b-a4b51efa8de6\"\r\n}",
+        "Impact": {
+            "Kind": "External",
+            "ExternalImpactInfo": {
+                "ImpactLevel": "ApplicationUpgrade"
+            }
+        },
+        "ResultStatus": "Pending",
+        "ResultCode": 0,
+        "ResultDetails": "",
+        "History": {
+            "CreatedUtcTimestamp": "2020-09-19T20:00:42.961Z",
+            "ClaimedUtcTimestamp": "2020-09-19T20:00:42.961Z",
+            "PreparingUtcTimestamp": "2020-09-19T20:00:42.961Z",
+            "ApprovedUtcTimestamp": "2020-09-19T20:00:43.148Z",
+            "ExecutingUtcTimestamp": "2020-09-19T20:00:58.075Z",
+            "RestoringUtcTimestamp": "0001-01-01T00:00:00.000Z",
+            "CompletedUtcTimestamp": "0001-01-01T00:00:00.000Z",
+            "PreparingHealthCheckStartUtcTimestamp": "2020-09-19T20:00:43.039Z",
+            "PreparingHealthCheckEndUtcTimestamp": "2020-09-19T20:00:43.086Z",
+            "RestoringHealthCheckStartUtcTimestamp": "0001-01-01T00:00:00.000Z",
+            "RestoringHealthCheckEndUtcTimestamp": "0001-01-01T00:00:00.000Z"
+        },
+        "PreparingHealthCheckState": "Skipped",
+        "RestoringHealthCheckState": "Skipped",
+        "PerformPreparingHealthCheck": false,
+        "PerformRestoringHealthCheck": false
+    },
+    {
+        "Scope": {
+            "Kind": "Cluster"
+        },
+        "TaskId": "Azure/PlatformUpdate/67d9f19b-e150-4261-9d7c-3d6e3576decf/0/628",
+        "Version": "132450354476544813",
+        "Description": "",
+        "State": "Executing",
+        "Flags": 0,
+        "Action": "System.Azure.Job.PlatformUpdate",
+        "Target": {
+            "Kind": "Node",
+            "NodeNames": [
+                "_nt_0"
+            ]
+        },
+        "Executor": "fabric:/System/InfrastructureService/nt",
+        "ExecutorData": "{\r\n  \"JobId\": \"67d9f19b-e150-4261-9d7c-3d6e3576decf\",\r\n  \"UD\": 0,\r\n  \"StepId\": \"_nt_0\"\r\n}",
+        "Impact": {
+            "Kind": "Node",
+            "NodeImpactList": [
+                {
+                    "NodeName": "_nt_0",
+                    "ImpactLevel": "Restart"
+                }
+            ]
+        },
+        "ResultStatus": "Pending",
+        "ResultCode": 0,
+        "ResultDetails": "",
+        "History": {
+            "CreatedUtcTimestamp": "2020-09-20T00:30:44.648Z",
+            "ClaimedUtcTimestamp": "2020-09-20T00:30:44.648Z",
+            "PreparingUtcTimestamp": "2020-09-20T00:30:44.648Z",
+            "ApprovedUtcTimestamp": "2020-09-20T00:30:44.836Z",
+            "ExecutingUtcTimestamp": "2020-09-20T00:30:59.740Z",
+            "RestoringUtcTimestamp": "0001-01-01T00:00:00.000Z",
+            "CompletedUtcTimestamp": "0001-01-01T00:00:00.000Z",
+            "PreparingHealthCheckStartUtcTimestamp": "2020-09-20T00:30:44.726Z",
+            "PreparingHealthCheckEndUtcTimestamp": "2020-09-20T00:30:44.774Z",
+            "RestoringHealthCheckStartUtcTimestamp": "0001-01-01T00:00:00.000Z",
+            "RestoringHealthCheckEndUtcTimestamp": "0001-01-01T00:00:00.000Z"
+        },
+        "PreparingHealthCheckState": "Skipped",
+        "RestoringHealthCheckState": "Skipped",
+        "PerformPreparingHealthCheck": true,
+        "PerformRestoringHealthCheck": false
+    }
+]

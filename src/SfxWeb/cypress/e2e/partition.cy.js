@@ -1,10 +1,12 @@
 /// <reference types="cypress" />
 
-import { addDefaultFixtures, apiUrl, checkTableSize, EMPTY_LIST_TEXT, FIXTURE_REF_MANIFEST, addRoute, checkCommand } from './util.cy';
+import { addDefaultFixtures, apiUrl, checkTableSize, EMPTY_LIST_TEXT, FIXTURE_REF_MANIFEST, addRoute, checkCommand, refresh } from './util.cy';
 
 const serviceName = "VisualObjects.ActorService";
 const partitionId = "28bfaf73-37b0-467d-9d47-d011b0aedbc0";
 const appName = "VisualObjectsApplicationType";
+const selfReconfiguringServiceName = "VisualObjects.SelfReconfiguringService";
+const selfreconfiguringPartitionId = "79dd3bba-966d-42c2-89b1-baa4580b462c";
 
 const primaryReplica = "132429154475414363";
 
@@ -22,6 +24,14 @@ const setup = (partition, replica, prefix="") => {
 
   addRoute("load", "partition-page/replica-detail.json", apiUrl(`/Nodes/_nt_1/$/GetPartitions/${partitionId}/$/GetReplicas/${primaryReplica}/$/GetDetail?*`));
 
+}
+
+const setupSelfReconfiguring = (partition, prefix="") => {
+  addRoute("partitions", prefix + "partition-page/selfreconfiguring-partitions.json", apiUrl(`${routeFormatter(appName, selfReconfiguringServiceName)}?*`));
+  addRoute("partitionInfo", prefix + "partition-page/selfreconfiguring-partition-info.json", apiUrl(`${routeFormatter(appName, selfReconfiguringServiceName)}/${selfreconfiguringPartitionId}?*`));
+  addRoute("replicasList", prefix + "partition-page/selfreconfiguring-replicas.json", apiUrl(`${routeFormatter(appName, selfReconfiguringServiceName)}/${selfreconfiguringPartitionId}/$/GetReplicas?*`));
+  addRoute("health", prefix + "partition-page/selfreconfiguring-health.json", apiUrl(`${routeFormatter(appName, selfReconfiguringServiceName)}/${selfreconfiguringPartitionId}/$/GetHealth?*`));
+  addRoute("load", prefix + "partition-page/selfreconfiguring-replica-detail.json", apiUrl(`/Nodes/_nt1_1/$/GetPartitions/${selfreconfiguringPartitionId}/$/GetReplicas/1/$/GetDetail?*`));
 }
 
 context('partition', () => {
@@ -175,4 +185,49 @@ context('partition', () => {
     })
 
   })
+
+  describe("selfreconfiguring", () => {
+        beforeEach(() => {
+            setupSelfReconfiguring(selfreconfiguringPartitionId)
+            
+            cy.visit(urlFormatter(appName, selfReconfiguringServiceName, selfreconfiguringPartitionId))
+        })
+
+        it('replicas', () => {
+          cy.get('[data-cy=replicas]').within(() => {
+              // cy.contains('events').click();
+              checkTableSize(2)
+              // Check column headers
+              cy.contains('th', 'Activation State');
+              
+              cy.contains('SelfReconfiguringMember');
+              cy.contains('_nt1_1');
+              cy.contains('Ready');
+              cy.contains('Activated');
+          })
+        })
+
+        it('reconfiguration information', () => {
+          // Override the routes from beforeEach with reconfiguration data
+          // Using the same route names ensures these intercepts replace the previous ones
+          addRoute("partitions", "partition-page/selfreconfiguring-partitions-reconfiguration.json", apiUrl(`${routeFormatter(appName, selfReconfiguringServiceName)}?*`));
+          addRoute("partitionInfo", "partition-page/selfreconfiguring-partition-reconfiguration.json", apiUrl(`${routeFormatter(appName, selfReconfiguringServiceName)}/${selfreconfiguringPartitionId}?*`));
+          addRoute("replicasList", "partition-page/selfreconfiguring-replica-reconfiguration.json", apiUrl(`${routeFormatter(appName, selfReconfiguringServiceName)}/${selfreconfiguringPartitionId}/$/GetReplicas?*`));
+
+          // Trigger a refresh to fetch the new mocked reconfiguration data
+          refresh();
+
+          // Wait for the intercepted routes to complete before making assertions
+          cy.wait(['@getpartitions', '@getpartitionInfo', '@getreplicasList']);
+          
+          // Additional wait to ensure UI has been updated with the new data
+          cy.wait(500);
+
+          cy.get('[data-cy=replicas]', { timeout: 10000 }).within(() => {
+            cy.contains('Down');
+            cy.contains('Reconfiguring: SelfReconfiguringMember ➜ SelfReconfiguringMember');
+            cy.contains('Reconfiguring: Deactivated ➜ Activated');
+          })
+        })
+    })
 })

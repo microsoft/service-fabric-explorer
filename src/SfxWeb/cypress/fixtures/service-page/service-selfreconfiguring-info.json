@@ -1,0 +1,10 @@
+{
+    "ServiceKind": "SelfReconfiguring",
+    "Id": "VisualObjectsApplicationType/VisualObjects.SelfReconfiguringService",
+    "Name": "fabric:/VisualObjectsApplicationType/VisualObjects.SelfReconfiguringService",
+    "TypeName": "SelfReconfiguringServiceType",
+    "ManifestVersion": "1.0",
+    "ServiceStatus": "Active",
+    "HealthState": "Ok",
+    "IsServiceGroup": false
+}

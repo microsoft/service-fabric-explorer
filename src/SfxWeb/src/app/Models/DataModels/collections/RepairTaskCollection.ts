@@ -5,6 +5,7 @@ import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers'
 import { DataService } from 'src/app/services/data.service';
 import { RepairTask, StatusCSS } from '../repairTask';
 import { DataModelCollectionBase } from './CollectionBase';
+import { IRawNodeRepairTargetDescription } from '../../RawDataTypes';
 
 export class RepairTaskCollection extends DataModelCollectionBase<RepairTask> {
     static readonly minDurationApprovalbanner = 1000 * 60 * 15; // 15 minutes
@@ -21,6 +22,10 @@ export class RepairTaskCollection extends DataModelCollectionBase<RepairTask> {
         super(data, parent);
     }
 
+    private get nodeRepairTasks(): RepairTask[] {
+        return this.collection.filter(task => task.isNodeTargeted());
+    }
+
     protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): Observable<any> {
         return this.data.restClient.getRepairTasks(messageHandler)
             .pipe(map(items => {
@@ -35,7 +40,7 @@ export class RepairTaskCollection extends DataModelCollectionBase<RepairTask> {
         this.repairTasks = [];
         this.completedRepairTasks = [];
 
-        this.collection.forEach(task => {
+        this.nodeRepairTasks.forEach(task => {
             if (task.inProgress) {
                 this.repairTasks.push(task);
                 const executingPhase = task.getPhase('Executing');
@@ -95,13 +100,12 @@ export class RepairTaskCollection extends DataModelCollectionBase<RepairTask> {
             }
           })
         } catch (e) {
-          console.log(e)
+          console.error(e)
         }
-
       }));
     }
 
     public getRepairJobsForANode(nodeName: string) {
-      return this.collection.filter(task => task.raw.Target.NodeNames.includes(nodeName) || task.impactedNodes.includes(nodeName));
+      return this.collection.filter(task => task.affectsNode(nodeName));
     }
 }

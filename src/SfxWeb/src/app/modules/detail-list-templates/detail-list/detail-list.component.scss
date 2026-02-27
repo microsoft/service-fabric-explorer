@@ -39,3 +39,13 @@ table {
   flex-direction: row;
   align-items: center;
 }
+
+// Row highlighting
+tbody tr.highlighted-row {
+  background-color: rgba(241, 157, 3, 0.15) !important;
+  border-left: 4px solid var(--badge-warning) !important;
+
+  &:hover {
+    background-color: rgba(241, 157, 3, 0.25) !important;
+  }
+}

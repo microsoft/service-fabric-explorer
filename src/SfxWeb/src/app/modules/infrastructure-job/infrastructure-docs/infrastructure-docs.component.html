@@ -1,0 +1,25 @@
+
+<div class="detail-pane">
+    <h2>Infrastructure Service Documents</h2>
+      <br>
+  <label class="detail-pane"><strong>Select Infrastructure Service For the Documents</strong></label>
+  <select class="detail-pane" [(ngModel)]="selectedInfrastructureService">
+    <option [ngValue]="'None'">None</option>
+    <option *ngFor="let Service of infrastructureDocumentCollection.InfrastructureServiceList" [ngValue]="Service">
+      {{ Service }}
+    </option>
+  </select>
+</div>
+<div class="detail-pane">
+  <div *ngIf="(infrastructureDocumentCollection.InfrastructureServiceNameToDocumentsMap.get(selectedInfrastructureService)?.length)">
+  <strong>Received Documents</strong> :
+    <div *ngFor="let doc of infrastructureDocumentCollection.InfrastructureServiceNameToDocumentsMap.get(selectedInfrastructureService)">
+      <div>
+        <pre>{{ JsonParsedDocument(doc) | json }}</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+    

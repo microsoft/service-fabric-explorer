@@ -1,0 +1,31 @@
+{
+    "ContinuationToken": "",
+    "Items": [
+        {
+            "ServiceKind": "SelfReconfiguring",
+            "InstanceRole": "SelfReconfiguringMember",
+            "InstanceId": "1",
+            "ReplicaStatus": "Ready",
+            "HealthState": "Ok",
+            "Address": "address_1",
+            "NodeName": "_nt1_2",
+            "LastInBuildDurationInSeconds": "310",
+            "PreviousSelfReconfiguringInstanceRole": "SelfReconfiguringNone",
+            "SelfReconfiguringInstanceActivationState": "Activated",
+            "PreviousSelfReconfiguringInstanceActivationState": "Invalid"
+        },
+        {
+            "ServiceKind": "SelfReconfiguring",
+            "InstanceRole": "SelfReconfiguringMember",
+            "InstanceId": "2",
+            "ReplicaStatus": "Ready",
+            "HealthState": "Ok",
+            "Address": "address_2",
+            "NodeName": "_nt1_1",
+            "LastInBuildDurationInSeconds": "309",
+            "PreviousSelfReconfiguringInstanceRole": "SelfReconfiguringNone",
+            "SelfReconfiguringInstanceActivationState": "Activated",
+            "PreviousSelfReconfiguringInstanceActivationState": "Invalid"
+        }
+    ]
+}

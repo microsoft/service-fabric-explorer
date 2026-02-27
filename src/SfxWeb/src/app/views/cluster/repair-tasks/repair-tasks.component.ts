@@ -76,7 +76,11 @@ export class RepairTasksComponent extends BaseControllerDirective {
     return this.repairTaskCollection.refresh(messageHandler).pipe(map(() => {
 
       const counter = new Counter();
-      this.repairTaskCollection.collection.forEach(task => counter.add(task.raw.Action));
+      this.repairTaskCollection.collection.forEach(task => {
+        if (task.raw.Action && !task.raw.Action.startsWith('External.')) {
+          counter.add(task.raw.Action);
+        }
+      });
       this.MostCommonActions = counter.mostCommon().slice(0, 3);
 
       this.longestRunning = [];

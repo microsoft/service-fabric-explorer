@@ -48,12 +48,13 @@ context('app', () => {
             cy.get('[data-cy=serviceTypes]').within(() => {
                 cy.contains("VisualObjects.WebServiceType");
                 cy.contains("VisualObjects.ActorServiceType");
-
+                cy.contains("VisualObjects.SelfReconfiguringServiceType");
             })
 
             cy.get('[data-cy=services]').within(() => {
                 cy.contains("fabric:/VisualObjectsApplicationType/VisualObjects.WebService");
                 cy.contains("fabric:/VisualObjectsApplicationType/VisualObjects.ActorService");
+                cy.contains("fabric:/VisualObjectsApplicationType/VisualObjects.SelfReconfiguringService");
             })
 
             cy.contains("ApplicationProcessExited - 1 Events")

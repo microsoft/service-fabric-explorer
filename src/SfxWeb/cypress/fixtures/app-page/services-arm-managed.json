@@ -31,6 +31,21 @@
                     "ArmResourceId": "\/subscriptions\/13ad2c84-84fa-4798-ad71-e70c07af873f\/resourcegroups\/sfmc\/providers\/Microsoft.ServiceFabric\/managedClusters\/luslevinsfmc10\/applicationTypes\/VotingType\/versions\/1.0.0"
                 }
             }
+        },
+        {
+            "ServiceKind": "SelfReconfiguring",
+            "Name": "fabric:/VisualObjectsApplicationType/VisualObjects.SelfReconfiguringService",
+            "TypeName": "VisualObjects.SelfReconfiguringServiceType",
+            "ManifestVersion": "1.0.0",
+            "HealthState": "Ok",
+            "ServiceStatus": "Active",
+            "IsServiceGroup": false,
+            "Id": "VisualObjectsApplicationType/VisualObjects.SelfReconfiguringService",
+            "ServiceMetadata": {
+                "ArmMetadata": {
+                    "ArmResourceId": "\/subscriptions\/13ad2c84-84fa-4798-ad71-e70c07af873f\/resourcegroups\/sfmc\/providers\/Microsoft.ServiceFabric\/managedClusters\/luslevinsfmc10\/applicationTypes\/VotingType\/versions\/1.0.0"
+                }
+            }
         }
     ]
 }

@@ -1,0 +1,138 @@
+[
+  {
+    "Incarnation": "UD2629-JOB2629-HEALTH639013950632207923",
+    "JobDocumentIncarnation": 2629,
+    "Jobs": [
+      {
+        "Id": "1987f1f7-dba6-429b-8d75-b46ef951922f",
+        "JobStatus": "Executing",
+        "RoleInstancesToBeImpacted": [
+          "_nt1_7"
+        ],
+        "ContextStringGivenByTenant": "",
+        "JobStep": {
+          "ImpactStep": "ImpactStart",
+          "AcknowledgementStatus": "Acknowledged",
+          "DeadlineForResponse": "Fri, 31 Dec 9999 23:59:59 GMT",
+          "CurrentlyImpactedRoleInstances": [
+            {
+              "RoleInstanceName": "_nt1_7",
+              "UpdateDomain": 2,
+              "ExpectedImpact": {
+                "ListOfImpactTypes": [
+                  "Reboot"
+                ],
+                "DiskImpact": "Freeze",
+                "ComputeImpact": "Reset",
+                "OSImpact": "Freeze",
+                "NetworkImpact": "Reset",
+                "ApplicationConfigImpact": "None",
+                "EstimatedImpactDurationInSeconds": 0
+              }
+            }
+          ],
+          "ActionStatus": "NotExecuted"
+        },
+        "ImpactDetail": {
+          "ImpactAction": "TenantMaintenance",
+          "ImpactedResources": {
+            "ListOfImpactTypes": [
+              "Reboot"
+            ],
+            "DiskImpact": "Freeze",
+            "ComputeImpact": "Reset",
+            "OSImpact": "Freeze",
+            "NetworkImpact": "Reset",
+            "ApplicationConfigImpact": "None",
+            "EstimatedImpactDurationInSeconds": 0
+          }
+        },
+        "CorrelationId": "1pzmUzO43DBGZBmDTOi7J2Y+JY1Wt3qi3prV09WZViI=",
+        "IsCriticalRollout": false,
+        "SafeFlyId": ""
+      }
+    ],
+    "JobSetsRequiringApproval": [],
+    "RoleInstanceHealthInfoIncarnation": 639013950632207900,
+    "RoleInstanceHealthInfoTimestamp": "Mon, 15 Dec 2025 11:31:03 GMT",
+    "RoleInstanceHealthInfos": [
+      {
+        "RoleInstanceName": "_nt1_1",
+        "Health": "ReadyRole",
+        "NodeHealthIndex": 0
+      },
+      {
+        "RoleInstanceName": "_nt1_4",
+        "Health": "ReadyRole",
+        "NodeHealthIndex": 0
+      },
+      {
+        "RoleInstanceName": "_nt1_7",
+        "Health": "ReadyRole",
+        "NodeHealthIndex": 0
+      }
+    ],
+    "PendingUpdatesOnRoleInstances": [],
+    "MRConversationId": "a8eacd17-3d91-43a3-96be-6101d693db0e",
+    "CoordinationGroupId": "c584d9a6-1e10-4655-8f10-fb63edfed730",
+    "RoleInstanceToNodeIDHashList": []
+  },
+  {
+    "Incarnation": "UD766-JOB766-HEALTH639013947494954319",
+    "JobDocumentIncarnation": 766,
+    "Jobs": [],
+    "JobSetsRequiringApproval": [],
+    "RoleInstanceHealthInfoIncarnation": 639013947494954400,
+    "RoleInstanceHealthInfoTimestamp": "Mon, 15 Dec 2025 11:25:49 GMT",
+    "RoleInstanceHealthInfos": [
+      {
+        "RoleInstanceName": "_nt1_2",
+        "Health": "ReadyRole",
+        "NodeHealthIndex": 0
+      },
+      {
+        "RoleInstanceName": "_nt1_5",
+        "Health": "ReadyRole",
+        "NodeHealthIndex": 0
+      },
+      {
+        "RoleInstanceName": "_nt1_8",
+        "Health": "ReadyRole",
+        "NodeHealthIndex": 0
+      }
+    ],
+    "PendingUpdatesOnRoleInstances": [],
+    "MRConversationId": "32da3e18-bdf1-4629-93e9-2e76905b815f",
+    "CoordinationGroupId": "c584d9a6-1e10-4655-8f10-fb63edfed730",
+    "RoleInstanceToNodeIDHashList": []
+  },
+  {
+    "Incarnation": "UD440-JOB440-HEALTH639013948513175080",
+    "JobDocumentIncarnation": 440,
+    "Jobs": [],
+    "JobSetsRequiringApproval": [],
+    "RoleInstanceHealthInfoIncarnation": 639013948513175000,
+    "RoleInstanceHealthInfoTimestamp": "Mon, 15 Dec 2025 11:27:31 GMT",
+    "RoleInstanceHealthInfos": [
+      {
+        "RoleInstanceName": "_nt1_0",
+        "Health": "ReadyRole",
+        "NodeHealthIndex": 0
+      },
+      {
+        "RoleInstanceName": "_nt1_3",
+        "Health": "ReadyRole",
+        "NodeHealthIndex": 0
+      },
+      {
+        "RoleInstanceName": "_nt1_6",
+        "Health": "ReadyRole",
+        "NodeHealthIndex": 0
+      }
+    ],
+    "PendingUpdatesOnRoleInstances": [],
+    "MRConversationId": "7e607a8d-e16e-4255-b348-098188e82605",
+    "CoordinationGroupId": "c584d9a6-1e10-4655-8f10-fb63edfed730",
+    "RoleInstanceToNodeIDHashList": []
+  }
+]

@@ -1,0 +1,127 @@
+<div class="essen-pane detail-pane nav-wrapper">
+  <h4>System Services</h4>
+  <div class="nav-wrapper">
+    <ul ngbNav #nav="ngbNav" class="nav-wrapper" [(activeId)]="activeTab" (activeIdChange)="onTabChange($event)">
+      <li [ngbNavItem]="ServiceName.FailoverManager">
+        <a ngbNavLink class="nav-link">
+          Failover Manager
+          <span class="mif-loop2 rotate" *ngIf="failoverManagerState.isLoading && failoverManagerState.replicaData.length === 0"></span>
+        </a>
+        <ng-template ngbNavContent>
+          <div class="replica-stats-container">
+            <div class="stat-box replica-set-box">
+              <div class="flex-center line-item-separator">
+                <div class="line-item-small">{{ failoverManagerState.minReplicaSetSize }}</div>
+                <div>Min Replica Set Size</div>
+              </div>
+              <div class="flex-center line-item-separator">
+                <div class="line-item-small">{{ failoverManagerState.targetReplicaSetSize }}</div>
+                <div>Target Replica Set Size</div>
+              </div>
+              <div class="flex-center">
+                <div class="line-item-small">{{ failoverManagerState.currentReplicaSetSize }}</div>
+                <div>Current Replica Set Size</div>
+              </div>
+            </div>
+
+            <div class="stat-box"
+                [ngClass]="failoverManagerState.partitionStatus">
+              <div class="stat-label">Partition Status</div>
+              <div class="stat-value" 
+                  [ngClass]="failoverManagerState.partitionStatus">
+                {{ failoverManagerState.partitionStatus }}
+              </div>
+            </div>
+
+            <div class="stat-box" 
+                 [ngClass]="failoverManagerState.partitionStatus">
+              <div class="stat-label">
+                <span *ngIf="failoverManagerState.partitionStatus === PartitionStatus.InQuorumLoss" class="not-met-label">Expected</span>
+                <span *ngIf="failoverManagerState.partitionStatus !== PartitionStatus.InQuorumLoss" class="met-label">Current</span>
+                Write Quorum
+              </div>
+              <div class="stat-value" 
+                   [ngClass]="failoverManagerState.partitionStatus">
+                {{ failoverManagerState.writeQuorum }}
+              </div>
+            </div>
+
+            <div class="stat-box" *ngIf="failoverManagerState.partitionStatus === PartitionStatus.InQuorumLoss" [ngClass]="failoverManagerState.partitionStatus">
+              <div class="stat-label">Quorum Loss Duration</div>
+              <div class="stat-value" [ngClass]="failoverManagerState.partitionStatus">{{ failoverManagerState.lastQuorumLossDuration }}</div>
+            </div>
+          </div>
+
+          <div *ngIf="failoverManagerState.partitionStatus === PartitionStatus.InQuorumLoss" class="quorum-loss-message">
+            <span>You need to have any <strong>{{ failoverManagerState.quorumNeeded }}</strong> of the below <strong>{{ failoverManagerState.highlightedReplicaCount }}</strong> highlighted replicas ready to be out of quorum loss.</span>
+          </div>
+
+          <app-detail-list [list]="failoverManagerState.replicaData" [listSettings]="failoverManagerState.listSettings"></app-detail-list>
+        </ng-template>
+      </li>
+      <li [ngbNavItem]="ServiceName.ClusterManager">
+        <a ngbNavLink class="nav-link">
+          Cluster Manager
+          <span class="mif-loop2 rotate" *ngIf="clusterManagerState.isLoading && clusterManagerState.replicaData.length === 0"></span>
+        </a>
+        <ng-template ngbNavContent>
+          <div class="replica-stats-container">
+            <div class="stat-box replica-set-box">
+              <div class="flex-center line-item-separator">
+                <div class="line-item-small">{{ clusterManagerState.minReplicaSetSize }}</div>
+                <div>Min Replica Set Size</div>
+              </div>
+              <div class="flex-center line-item-separator">
+                <div class="line-item-small">{{ clusterManagerState.targetReplicaSetSize }}</div>
+                <div>Target Replica Set Size</div>
+              </div>
+              <div class="flex-center">
+                <div class="line-item-small">{{ clusterManagerState.currentReplicaSetSize }}</div>
+                <div>Current Replica Set Size</div>
+              </div>
+            </div>
+
+            <div class="stat-box"
+                [ngClass]="clusterManagerState.partitionStatus">
+              <div class="stat-label">Partition Status</div>
+              <div class="stat-value" 
+                  [ngClass]="clusterManagerState.partitionStatus">
+                {{ clusterManagerState.partitionStatus }}
+              </div>
+            </div>
+
+            <div class="stat-box" 
+                 [ngClass]="clusterManagerState.partitionStatus">
+              <div class="stat-label">
+                <span *ngIf="clusterManagerState.partitionStatus === PartitionStatus.InQuorumLoss" class="not-met-label">Expected</span>
+                <span *ngIf="clusterManagerState.partitionStatus !== PartitionStatus.InQuorumLoss" class="met-label">Current</span>
+                Write Quorum
+              </div>
+              <div class="stat-value" 
+                   [ngClass]="clusterManagerState.partitionStatus">
+                {{ clusterManagerState.writeQuorum }}
+              </div>
+            </div>
+
+            <div class="stat-box" *ngIf="clusterManagerState.partitionStatus === PartitionStatus.InQuorumLoss" [ngClass]="clusterManagerState.partitionStatus">
+              <div class="stat-label">Quorum Loss Duration</div>
+              <div class="stat-value" [ngClass]="clusterManagerState.partitionStatus">{{ clusterManagerState.lastQuorumLossDuration }}</div>
+            </div>
+          </div>
+
+          <div *ngIf="failoverManagerState.partitionStatus === PartitionStatus.InQuorumLoss && clusterManagerState.replicaData.length === 0" class="quorum-loss-message">
+            <span><strong>Warning:</strong> Cluster Manager data will not load when Failover Manager is in quorum loss.</span>
+          </div>
+
+          <div *ngIf="clusterManagerState.partitionStatus === PartitionStatus.InQuorumLoss" class="quorum-loss-message">
+            <i class="bowtie-icon bowtie-status-warning"></i>
+            <span>You need to have any <strong>{{ clusterManagerState.quorumNeeded }}</strong> of the below <strong>{{ clusterManagerState.highlightedReplicaCount }}</strong> highlighted replicas ready to be out of quorum loss.</span>
+          </div>
+
+          <app-detail-list [list]="clusterManagerState.replicaData" [listSettings]="clusterManagerState.listSettings"></app-detail-list>
+        </ng-template>
+      </li>
+    </ul>
+  </div>
+  <div [ngbNavOutlet]="nav"></div>
+</div>
