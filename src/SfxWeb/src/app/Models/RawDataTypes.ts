@@ -278,8 +278,7 @@ export interface IRawApplicationUpgradeProgress {
         HealthCheckElapsedTime?: number;
         HealthCheckRetryFlips?: number;
 
-        HealthSnapshotAtRollback: IRawUnhealthyEvaluation[];
-        UpgradeFailureClassification: string;
+        FailureClassification: string;
     }
 
 export interface IRawClusterHealth extends IRawHealth {
@@ -324,8 +323,7 @@ export interface IRawClusterUpgradeProgress {
         HealthCheckElapsedTime?: number;
         HealthCheckRetryFlips?: number;
         UpgradeStatusDetails: string;
-        UpgradeFailureClassification: string;
-        HealthSnapshotAtRollback: IRawUnhealthyEvaluation[];
+        FailureClassification: string;
     }
 
 export interface IRawClusterLoadInformation {

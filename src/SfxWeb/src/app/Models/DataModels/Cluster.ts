@@ -232,8 +232,7 @@ export class ClusterUpgradeProgress extends DataModelBase<IRawClusterUpgradeProg
     public decorators: IDecorators = {
         hideList: [
             // Unhealthy evaluations are displayed in separate section in app detail page
-            'UnhealthyEvaluations',
-            "HealthSnapshotAtRollback",
+            'UnhealthyEvaluations'
         ],
         decorators: {
             UpgradeDurationInMilliseconds: {
@@ -248,7 +247,6 @@ export class ClusterUpgradeProgress extends DataModelBase<IRawClusterUpgradeProg
     };
 
     public unhealthyEvaluations: HealthEvaluation[] = [];
-    public healthSnapshotAtRollback: HealthEvaluation[] = [];
     public upgradeDomains: UpgradeDomain[] = [];
     public upgradeDescription: UpgradeDescription;
 
@@ -324,7 +322,6 @@ export class ClusterUpgradeProgress extends DataModelBase<IRawClusterUpgradeProg
 
     protected updateInternal(): Observable<any> | void {
         this.unhealthyEvaluations = HealthUtils.getParsedHealthEvaluations(this.raw.UnhealthyEvaluations, null, null, this.data);
-        this.healthSnapshotAtRollback = HealthUtils.getParsedHealthEvaluations(this.raw.HealthSnapshotAtRollback, null, null, this.data);
         const upgradeUnits = this.isUDUpgrade ? this.raw.UpgradeDomains : this.raw.UpgradeUnits;
         const domains = upgradeUnits.map(ud => new UpgradeDomain(this.data, ud, !this.isUDUpgrade));
 
