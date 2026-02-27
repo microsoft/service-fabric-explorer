@@ -56,9 +56,9 @@ export class UpgradeInfoComponent implements OnChanges, OnInit {
           displayText: this.upgradeProgress.raw.FailureReason,
         },
         {
-          descriptionName: 'Failure Type',
-          copyTextValue: this.upgradeProgress.raw.UpgradeFailureDetails,
-          displayText: this.upgradeProgress.raw.UpgradeFailureDetails,
+          descriptionName: 'Failure Classification',
+          copyTextValue: this.upgradeProgress.raw.UpgradeFailureClassification,
+          displayText: this.upgradeProgress.raw.UpgradeFailureClassification,
         },
         {
           descriptionName: 'Failure Timestamp',

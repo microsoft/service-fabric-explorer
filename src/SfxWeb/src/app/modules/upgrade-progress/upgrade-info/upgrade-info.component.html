@@ -13,7 +13,7 @@
           [upgradeDomain]="upgradeProgress.raw.UpgradeDomainProgressAtFailure">
         </app-upgrade-domain-progress>
       </div>
-      <div class="overview-container" data-cy="failureoverview" *ngIf="upgradeProgress.raw.UpgradeFailureDetails.length > 0">
+      <div class="overview-container" data-cy="failureoverview" *ngIf="upgradeProgress.raw.UpgradeStatusDetails.length > 0">
         <h3>Upgrade Failure Details</h3>
         <div style="text-align: center;">
           {{upgradeProgress.raw.UpgradeStatusDetails}}
