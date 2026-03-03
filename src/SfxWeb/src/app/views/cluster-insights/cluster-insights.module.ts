@@ -10,7 +10,7 @@ import { ReplicaListComponent } from './replica-list/replica-list.component';
 import { FmmInfoComponent } from './fmm-info/fmm-info.component';
 import { NodesComponent } from './nodes/nodes.component';
 import { RecoveryProgressComponent } from './recovery-progress/recovery-progress.component';
-import { ExpandableLinkComponent } from './replica-id-link/replica-id-link.component';
+import { ExpandableLinkComponent } from './expandable-link/expandable-link.component';
 import { ReplicaDetailsComponent } from './replica-details/replica-details.component';
 
 @NgModule({

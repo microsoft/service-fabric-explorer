@@ -1,8 +1,8 @@
 <app-navbar type="Cluster Recovery Insights" [showCopy]="false"></app-navbar>
 
 <div class="alert alert-secondary" >
-  <strong>Note:</strong> This page may display only a partial view of the cluster. Loading may take some time if Cluster Manager Service is in quorum loss.
-  The replica list will reload at most once per minute regardless of the global refresh rate.
+  <strong>Note:</strong> This page may display only a partial view of the cluster. Loading may take longer if the Cluster Manager Service is in quorum loss.
+To ensure APIs can load during Failover Manager or Cluster Manager quorum loss, this page will reload at most once per minute, regardless of the global refresh rate.
 </div>
 
 <app-recovery-progress></app-recovery-progress>

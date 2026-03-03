@@ -5,6 +5,8 @@ import { catchError, map } from 'rxjs/operators';
 import { RestClientService } from 'src/app/services/rest-client.service';
 import { IRawNode, IRawNodeStatusCount } from 'src/app/Models/RawDataTypes';
 import { ListSettings, ListColumnSetting, ListColumnSettingWithFilter, ListColumnSettingForBadge, ListColumnSettingForColoredNodeName } from 'src/app/Models/ListSettings';
+import { ListColumnSettingWithExpandableLink } from '../expandable-link/expandable-link.component';
+import { ListColumnSettingForExpandedDetails } from '../replica-details/replica-details.component';
 import { IDashboardViewModel, DashboardViewModel } from 'src/app/ViewModels/DashboardViewModels';
 import { IEssentialListItem } from 'src/app/modules/charts/essential-health-tile/essential-health-tile.component';
 

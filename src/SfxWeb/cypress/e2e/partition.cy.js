@@ -57,6 +57,10 @@ context('partition', () => {
             cy.get('[data-cy=health]').within(() => {
                 cy.contains(EMPTY_LIST_TEXT).click();
             })
+
+            cy.get('[data-cy=replicas]').within(() => {
+                checkTableSize(3);
+            })
         })
 
         it('quorum loss', () => {

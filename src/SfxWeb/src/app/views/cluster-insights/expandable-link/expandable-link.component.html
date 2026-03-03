@@ -1,0 +1,9 @@
+<span 
+  [class.expandable-link]="item?.isClickable" 
+  [class.non-expandable-link]="!item?.isClickable"
+  [style.color]="getColor()"
+  (click)="onClick()">
+  {{ getDisplayText() }}
+  <img *ngIf="showSeedNodeIndicator && isSeedNode()" [src]="assetBase + 'assets/seed.svg'" alt="seed node" class="seed-indicator" title="Seed Node">
+  <i *ngIf="showIcon" class="mif-info info-icon" [title]="infoMessage"></i>
+</span>
