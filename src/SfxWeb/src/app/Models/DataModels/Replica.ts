@@ -37,6 +37,7 @@ export class ReplicaOnPartition extends DataModelBase<IRawReplicaOnPartition> {
     public health: ReplicaHealth;
     public detail: DeployedReplicaDetail;
     public address: any;
+    public cssClass = '';
 
     public constructor(data: DataService, raw: IRawReplicaOnPartition, public parent: Partition) {
         super(data, raw, parent);

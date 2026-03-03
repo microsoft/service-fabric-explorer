@@ -1,11 +1,13 @@
 import { Component, Injector } from '@angular/core';
-import { ListSettings, ListColumnSettingForLink, ListColumnSetting, ListColumnSettingWithFilter, ListColumnSettingForBadge } from 'src/app/Models/ListSettings';
+import { ListSettings, ListColumnSettingForLink, ListColumnSetting, ListColumnSettingWithFilter, ListColumnSettingForBadge, ListColumnSettingForColoredNodeName } from 'src/app/Models/ListSettings';
 import { DataService } from 'src/app/services/data.service';
 import { SettingsService } from 'src/app/services/settings.service';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
-import { Observable, forkJoin, of } from 'rxjs';
+import { Observable, forkJoin } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { PartitionBaseControllerDirective } from '../PartitionBase';
 import { IEssentialListItem } from 'src/app/modules/charts/essential-health-tile/essential-health-tile.component';
+import { ReplicaRoles } from 'src/app/Common/Constants';
 
 @Component({
   selector: 'app-essentials',
@@ -18,6 +20,11 @@ export class EssentialsComponent extends PartitionBaseControllerDirective {
   listSettings: ListSettings;
 
   essentialItems: IEssentialListItem[] = [];
+  writeQuorum = 0;
+  quorumNeeded = 0;
+  isInReconfiguration = false;
+  quorumLossDuration = '';
+  highlightedReplicaCount = 0;
 
   constructor(protected data: DataService, injector: Injector, private settings: SettingsService) {
     super(data, injector);
@@ -33,7 +40,7 @@ export class EssentialsComponent extends PartitionBaseControllerDirective {
     let defaultSortProperties = ['replicaRoleSortPriority', 'raw.NodeName'];
     const columnSettings = [
         new ListColumnSettingForLink('id', 'Id', item => item.viewPath),
-        new ListColumnSetting('raw.NodeName', 'Node Name'),
+        new ListColumnSettingForColoredNodeName('raw.NodeName', 'Node Name'),
         new ListColumnSettingWithFilter('role', 'Replica Role', {sortPropertyPaths: defaultSortProperties}),
         new ListColumnSettingForBadge('healthState', 'Health State'),
         new ListColumnSettingWithFilter('raw.ReplicaStatus', 'Status')
@@ -43,10 +50,17 @@ export class EssentialsComponent extends PartitionBaseControllerDirective {
         columnSettings.splice(2, 1); // Remove replica role column
         defaultSortProperties = ['raw.NodeName'];
     }
-    
+
     // Add Activation State column for Self Reconfiguring Services
     if (this.partition.isSelfReconfiguringService) {
         columnSettings.splice(3, 0, new ListColumnSetting('activationState', 'Activation State'));
+    }
+    
+    if (this.partition.isStatefulService) {
+      // Add Previous Replica Role column only when stateful partition is in quorum loss
+      if (this.partition.raw.PartitionStatus === 'InQuorumLoss') {
+        columnSettings.splice(3, 0, new ListColumnSetting('raw.PreviousReplicaRole', 'Previous Replica Role'));
+      }
     }
     
     // ListSettings persists across navigation, so we need to use different settings name, so they can have different column configurations
@@ -56,12 +70,17 @@ export class EssentialsComponent extends PartitionBaseControllerDirective {
     
     // Keep the sort properties in sync with the sortBy for ClusterTreeService.getDeployedReplicas
     this.listSettings = this.settings.getNewOrExistingListSettings(settingsName, defaultSortProperties, columnSettings);
-    
 
     return forkJoin([
       this.partition.health.refresh(messageHandler),
       this.partition.replicas.refresh(messageHandler)
-    ]);
+    ]).pipe(
+      map(() => {
+        if (this.partition.isStatefulService) {
+          this.processStatefulPartitionReplicas();
+        }
+      })
+    );
   }
 
   setEssentialData() {
@@ -112,4 +131,73 @@ export class EssentialsComponent extends PartitionBaseControllerDirective {
     }
 
   }
+
+  private processStatefulPartitionReplicas(): void {
+    if (!this?.partition?.partitionInformation.isInitialized) {
+      return;
+    }
+
+    const quorumReplicas = this.calculateWriteQuorum(this.partition.replicas.collection.map(r => r.raw));
+
+    this.quorumLossDuration = this.formatDuration(this.partition.raw.LastQuorumLossDurationInSeconds || 0);
+
+    const readyReplicasInQuorum = this.partition.replicas.collection.filter(r =>
+      quorumReplicas.has(r.raw.ReplicaId) && r.raw.ReplicaStatus === 'Ready'
+    ).length;
+
+    this.quorumNeeded = this.writeQuorum - readyReplicasInQuorum;
+
+    this.highlightedReplicaCount = this.partition.replicas.collection.filter(r =>
+      quorumReplicas.has(r.raw.ReplicaId) && r.raw.ReplicaStatus !== 'Ready'
+    ).length;
+
+    this.partition.replicas.collection.forEach(replica => {
+      const shouldHighlight = quorumReplicas.has(replica.raw.ReplicaId) && replica.raw.ReplicaStatus !== 'Ready';
+      replica.cssClass = (this.partition.raw.PartitionStatus === 'InQuorumLoss' && shouldHighlight) ? 'highlighted-row' : '';
+    });
+  }
+
+  private calculateWriteQuorum(replicas: any[]): Set<string> {
+    this.isInReconfiguration = !replicas.every(replica =>
+      replica.PreviousReplicaRole === ReplicaRoles.None
+    );
+
+    const writeQuorumReplicaIds = new Set<string>();
+    let count = 0;
+
+    replicas.forEach(replica => {
+      const countsTowardWriteQuorum = this.isInReconfiguration
+        ? replica.PreviousReplicaRole === ReplicaRoles.ActiveSecondary || replica.PreviousReplicaRole === ReplicaRoles.Primary
+        : replica.ReplicaRole === ReplicaRoles.ActiveSecondary || replica.ReplicaRole === ReplicaRoles.Primary;
+
+      if (countsTowardWriteQuorum) {
+        writeQuorumReplicaIds.add(replica.ReplicaId);
+        count++;
+      }
+    });
+
+    this.writeQuorum = Math.floor(count / 2) + 1;
+
+    return writeQuorumReplicaIds;
+  }
+
+  private formatDuration(seconds: number): string {
+    if (seconds === 0) {
+      return '0 seconds';
+    }
+
+    const days = Math.floor(seconds / 86400);
+    const hours = Math.floor((seconds % 86400) / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const sec = seconds % 60;
+
+    const parts: string[] = [];
+    if (days > 0) parts.push(`${days} day${days > 1 ? 's' : ''}`);
+    if (hours > 0) parts.push(`${hours} hour${hours > 1 ? 's' : ''}`);
+    if (minutes > 0) parts.push(`${minutes} minute${minutes > 1 ? 's' : ''}`);
+    if (sec > 0 || parts.length === 0) parts.push(`${seconds} second${seconds !== 1 ? 's' : ''}`);
+
+    return parts.join(', ');
+  }
+
 }

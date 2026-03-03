@@ -43,6 +43,51 @@
         <h2>{{partition.isStatelessService ? "Instances" : "Replicas"}}</h2>
       </div>
       <div collapse-body>
+        <div *ngIf="partition.isStatefulService" class="replica-stats-container">
+          <div class="stat-box replica-set-box">
+            <div class="flex-center line-item-separator">
+              <div class="line-item-small">{{ partition.raw.MinReplicaSetSize }}</div>
+              <div>Min Replica Set Size</div>
+            </div>
+            <div class="flex-center line-item-separator">
+              <div class="line-item-small">{{ partition.raw.TargetReplicaSetSize }}</div>
+              <div>Target Replica Set Size</div>
+            </div>
+            <div class="flex-center">
+              <div class="line-item-small">{{ partition.replicas.collection.length }}</div>
+              <div>Current Replica Set Size</div>
+            </div>
+          </div>
+
+          <div class="stat-box"
+              [ngClass]="partition.raw.PartitionStatus">
+            <div class="stat-label">Partition Status</div>
+            <div class="stat-value" 
+                [ngClass]="partition.raw.PartitionStatus">
+              {{ partition.raw.PartitionStatus }}
+            </div>
+          </div>
+
+          <div class="stat-box" 
+               [ngClass]="partition.raw.PartitionStatus">
+            <div class="stat-label">
+              <span *ngIf="partition.raw.PartitionStatus === 'InQuorumLoss'" class="not-met-label">Expected</span>
+              <span *ngIf="partition.raw.PartitionStatus !== 'InQuorumLoss'" class="met-label">Current</span>
+              Write Quorum
+            </div>
+            <div class="stat-value" 
+                 [ngClass]="partition.raw.PartitionStatus">
+              {{ writeQuorum }}
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="partition.isStatefulService && partition.raw?.PartitionStatus === 'InQuorumLoss'" class="quorum-loss-section">
+          <div class="quorum-loss-message">
+            <span>You need to have any <strong>{{ quorumNeeded }}</strong> of the below <strong>{{ highlightedReplicaCount }}</strong> highlighted replicas ready to be out of quorum loss.</span>
+          </div>
+        </div>
+
         <app-detail-list [list]="partition.replicas.collection" [listSettings]="listSettings"
           *ngIf="partition.replicas.isInitialized"></app-detail-list>
       </div>

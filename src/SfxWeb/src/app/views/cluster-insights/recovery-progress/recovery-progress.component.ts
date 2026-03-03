@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { RestClientService } from 'src/app/services/rest-client.service';
-import { IRawApplicationHealth, IRawNode, IRawReplicaOnPartition } from 'src/app/Models/RawDataTypes';
 import { forkJoin, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+
+import { RestClientService } from 'src/app/services/rest-client.service';
+import { DataService } from 'src/app/services/data.service';
+import { IRawApplicationHealth, IRawNode, IRawReplicaOnPartition } from 'src/app/Models/RawDataTypes';
 
 interface RecoveryStep {
   name: string;
@@ -43,9 +45,10 @@ export class RecoveryProgressComponent implements OnInit {
     { name: RecoveryStepName.UserServices, status: 'pending' }
   ];
 
-  public isLoading = true;
+  isLoading = true;
+  failoverManagerQuorumLoss = false;
 
-  constructor(private restClient: RestClientService) {}
+  constructor(private restClient: RestClientService, private data: DataService) {}
 
   ngOnInit(): void {
     this.checkRecoveryStatus();
@@ -66,17 +69,22 @@ export class RecoveryProgressComponent implements OnInit {
           this.updateStepStatus(RecoveryStepName.SystemServices, 'error', 'Get system services health timed out. Please check if Cluster Manager is unhealthy.');
           return of(null);
         })
+      ),
+      apps: this.data.getApps().pipe(
+        catchError(() => of(null))
       )
     }).subscribe({
       next: (results) => {
         this.checkSeedNodeQuorum(results.nodes);
         const fmHasQuorum = this.checkFailoverManagerStatus(results.failoverManagerReplicas);
+        this.failoverManagerQuorumLoss = !fmHasQuorum;
         
         if (results.systemAppHealth) {
           this.checkSystemServicesStatus(results.systemAppHealth, fmHasQuorum);
         }
         
         this.checkNodesStatus(results.nodes);
+        this.checkUserServicesStatus(results.apps);
         this.isLoading = false;
       },
       error: () => {
@@ -186,5 +194,40 @@ export class RecoveryProgressComponent implements OnInit {
     }
 
     this.updateStepStatus(RecoveryStepName.Nodes, status, tooltip);
+  }
+
+  private checkUserServicesStatus(appsCollection: any): void {
+    if (!appsCollection || !appsCollection.collection) {
+      this.updateStepStatus(RecoveryStepName.UserServices, 'warning', 'Unable to determine user services status');
+      return;
+    }
+
+    const apps = appsCollection.collection;
+    const totalApps = apps.length;
+
+    if (totalApps === 0) {
+      this.updateStepStatus(RecoveryStepName.UserServices, 'success', 'No user applications deployed');
+      return;
+    }
+
+    const healthyApps = apps.filter((app: any) => app.healthState.text === 'Ok').length;
+    const warningApps = apps.filter((app: any) => app.healthState.text === 'Warning').length;
+    const errorApps = apps.filter((app: any) => app.healthState.text === 'Error').length;
+
+    let status: RecoveryStep['status'];
+    let tooltip: string;
+
+    if (errorApps > 0) {
+      status = 'error';
+      tooltip = `${errorApps} application(s) have errors`;
+    } else if (warningApps > 0) {
+      status = 'warning';
+      tooltip = `${warningApps} application(s) have warnings`;
+    } else {
+      status = 'success';
+      tooltip = `All ${totalApps} application(s) are healthy`;
+    }
+
+    this.updateStepStatus(RecoveryStepName.UserServices, status, tooltip);
   }
 }

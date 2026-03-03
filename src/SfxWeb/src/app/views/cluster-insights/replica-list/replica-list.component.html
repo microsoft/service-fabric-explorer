@@ -52,6 +52,10 @@
             </div>
           </div>
 
+          <div class="quorum-loss-message" *ngIf="failoverManagerState.partitionStatus === PartitionStatus.InQuorumLoss">
+            <span class="warning-text">Failover Manager is in quorum loss. All approvals for upgrades, repair jobs, and infrastructure jobs are paused.</span>
+          </div>
+
           <div *ngIf="failoverManagerState.partitionStatus === PartitionStatus.InQuorumLoss" class="quorum-loss-message">
             <span>You need to have any <strong>{{ failoverManagerState.quorumNeeded }}</strong> of the below <strong>{{ failoverManagerState.highlightedReplicaCount }}</strong> highlighted replicas ready to be out of quorum loss.</span>
           </div>

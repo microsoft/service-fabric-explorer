@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { NodeStatusConstants } from 'src/app/Common/Constants';
 import { IRawFailoverManagerManagerInformation } from 'src/app/Models/RawDataTypes';
 import { RestClientService } from 'src/app/services/rest-client.service';
 
@@ -7,7 +8,7 @@ import { RestClientService } from 'src/app/services/rest-client.service';
   templateUrl: './fmm-info.component.html',
   styleUrls: ['./fmm-info.component.scss']
 })
-export class FailoverManagerManagerInformationComponent implements OnInit {
+export class FmmInfoComponent implements OnInit {
   fmmInfo: IRawFailoverManagerManagerInformation = {} as IRawFailoverManagerManagerInformation;
   isLoading = true;
   isFmmEstimate = false;
@@ -36,7 +37,7 @@ export class FailoverManagerManagerInformationComponent implements OnInit {
       next: (nodes) => {
         if (nodes && nodes.length > 0) {
           // FMM is on the up node with the lowest node ID
-          const upNodes = nodes.filter(node => node.NodeStatus === "Up");
+          const upNodes = nodes.filter(node => node.NodeStatus === NodeStatusConstants.Up);
           
           if (upNodes.length > 0) {
             let lowest = upNodes[0];

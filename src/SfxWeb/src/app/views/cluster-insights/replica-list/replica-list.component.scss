@@ -10,6 +10,28 @@
   }
 }
 
+.warning-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  background-color: #fff3cd;
+  border: 1px solid #ffeaa7;
+  border-radius: 4px;
+  color: #856404;
+  font-weight: 500;
+
+  .warning-icon {
+    font-size: 1.2rem;
+    flex-shrink: 0;
+  }
+
+  .warning-text {
+    flex: 1;
+  }
+}
+
 .replica-stats-container {
   display: flex;
   gap: 1rem;
@@ -78,6 +100,7 @@
   font-size: var(--font-size-default);
   color: var(--font-primary-color);
   display: flex;
+  margin-bottom: 1rem;
 
   strong {
     color: var(--badge-warning);

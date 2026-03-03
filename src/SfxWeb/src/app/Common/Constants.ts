@@ -139,6 +139,17 @@ export class NodeStatusConstants {
     public static Unknown = 'Unknown';
 }
 
+export class ReplicaRoles {
+    public static Unknown = "Unknown";
+    public static None = "None";
+    public static Primary = "Primary";
+    public static ActiveSecondary = "ActiveSecondary";
+    public static IdleSecondary = "IdleSecondary";
+    public static PrimaryAuxiliary = "PrimaryAuxiliary";
+    public static ActiveAuxiliary = "ActiveAuxiliary";
+    public static IdleAuxiliary = "IdleAuxiliary";
+}
+
 export class HealthStateConstants {
     public static Invalid = 'Invalid';
     public static OK = 'OK';

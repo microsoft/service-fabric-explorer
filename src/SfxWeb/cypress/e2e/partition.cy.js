@@ -57,10 +57,18 @@ context('partition', () => {
             cy.get('[data-cy=health]').within(() => {
                 cy.contains(EMPTY_LIST_TEXT).click();
             })
+        })
+
+        it('quorum loss', () => {
+            addRoute('partitionInfo', 'partition-page/stateful-partition-in-quorum-loss-info.json', apiUrl(`${routeFormatter(appName, serviceName)}/${partitionId}?*`));
+            addRoute('replicasList', 'partition-page/stateful-replicas-in-quorum-loss.json', apiUrl(`${routeFormatter(appName, serviceName)}/${partitionId}/$/GetReplicas?*`));
+
+            cy.visit(urlFormatter(appName, serviceName, partitionId));
+            cy.wait(waitRequest);
 
             cy.get('[data-cy=replicas]').within(() => {
-                checkTableSize(3);
-            })
+                cy.contains('InQuorumLoss');
+            });
         })
 
         it('view details', () => {
