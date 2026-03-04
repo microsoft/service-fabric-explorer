@@ -139,6 +139,15 @@ export class NodeStatusConstants {
     public static Unknown = 'Unknown';
 }
 
+export class PartitionStatusConstants {
+    public static Invalid = 'Invalid';
+    public static Ready = 'Ready';
+    public static NotReady = 'NotReady';
+    public static InQuorumLoss = 'InQuorumLoss';
+    public static Reconfiguring = 'Reconfiguring';
+    public static Deleting = 'Deleting';
+}
+
 export class ReplicaRoles {
     public static Unknown = "Unknown";
     public static None = "None";

@@ -1,7 +1,7 @@
 <div class="essen-pane detail-pane nav-wrapper">
   <h4>System Services</h4>
   <div class="nav-wrapper">
-    <ul ngbNav #nav="ngbNav" class="nav-wrapper" [(activeId)]="activeTab" (activeIdChange)="onTabChange($event)">
+    <ul ngbNav #nav="ngbNav" class="nav-wrapper" [(activeId)]="activeTab">
       <li [ngbNavItem]="ServiceName.FailoverManager">
         <a ngbNavLink class="nav-link">
           Failover Manager

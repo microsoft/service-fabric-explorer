@@ -6,9 +6,8 @@ import { RestClientService } from 'src/app/services/rest-client.service';
 import { ListSettings, ListColumnSettingWithFilter, ListColumnSettingForColoredNodeName, ListColumnSettingForBadge, ListColumnSetting } from 'src/app/Models/ListSettings';
 import { ListColumnSettingWithExpandableLink } from '../expandable-link/expandable-link.component';
 import { ListColumnSettingForExpandedDetails } from '../replica-details/replica-details.component';
-import { ReplicaRoles, SortPriorities } from 'src/app/Common/Constants';
+import { ReplicaRoles, SortPriorities, PartitionStatusConstants } from 'src/app/Common/Constants';
 import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
-import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 
 interface ServiceConfig {
   name: string;
@@ -22,25 +21,19 @@ interface ServiceState {
   minReplicaSetSize: number;
   targetReplicaSetSize: number;
   currentReplicaSetSize: number;
-  partitionStatus: string;
+  partitionStatus: string; // one of PartitionStatusConstants
   lastQuorumLossDuration: string;
   writeQuorum: number;
   showPreviousReplicaRole: boolean;
   highlightedReplicaCount: number;
   quorumNeeded: number;
   listSettings?: ListSettings;
-  isLoading?: boolean;
+  isLoading: boolean;
 }
 
 enum ServiceName {
   FailoverManager = 'failover-manager',
   ClusterManager = 'cluster-manager'
-}
-
-enum PartitionStatus {
-  Ready = 'Ready',
-  InQuorumLoss = 'InQuorumLoss',
-  Reconfiguring = 'Reconfiguring'
 }
 
 @Component({
@@ -50,8 +43,7 @@ enum PartitionStatus {
 })
 export class ReplicaListComponent extends BaseControllerDirective {
   readonly ServiceName = ServiceName;
-  readonly PartitionStatus = PartitionStatus;
-  readonly ReplicaRole = ReplicaRoles;
+  readonly PartitionStatus = PartitionStatusConstants;
 
   private readonly FAILOVER_MANAGER_CONFIG: ServiceConfig = {
     name: 'Failover Manager',
@@ -85,7 +77,7 @@ export class ReplicaListComponent extends BaseControllerDirective {
     this.setupReplicaList(ServiceName.ClusterManager);
   }
 
-  refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
+  refresh(): Observable<any> {
     return this.restClientService.getNodes().pipe(
       switchMap(nodes => forkJoin({
         failoverManager: this.fetchServiceData(this.FAILOVER_MANAGER_CONFIG, ServiceName.FailoverManager, nodes),
@@ -99,10 +91,6 @@ export class ReplicaListComponent extends BaseControllerDirective {
     );
   }
 
-  onTabChange(tabId: ServiceName): void {
-    this.activeTab = tabId;
-  }
-
   private createDefaultServiceState(): ServiceState {
     return {
       replicaData: [],
@@ -112,7 +100,7 @@ export class ReplicaListComponent extends BaseControllerDirective {
       partitionStatus: '',
       lastQuorumLossDuration: '',
       writeQuorum: 0,
-      showPreviousReplicaRole: true,
+      showPreviousReplicaRole: false,
       highlightedReplicaCount: 0,
       quorumNeeded: 0,
       isLoading: true
@@ -215,7 +203,6 @@ export class ReplicaListComponent extends BaseControllerDirective {
     const showPreviousReplicaRole = isInReconfiguration;
 
     const nodeStatusMap = new Map(nodes.map(node => [node.Name, node.NodeStatus]));
-    const nodeSeedMap = new Map(nodes.map(node => [node.Name, node.IsSeedNode]));
 
     const replicaData = replicas.map(replica => {
       const countsTowardWriteQuorum = quorumReplicas.has(replica.ReplicaId);
@@ -229,8 +216,7 @@ export class ReplicaListComponent extends BaseControllerDirective {
         nodeName: replica.NodeName,
         raw: {
           ...replica,
-          NodeStatus: nodeStatus,
-          IsSeedNode: nodeSeedMap.get(replica.NodeName) || false
+          NodeStatus: nodeStatus
         },
         previousReplicaRole: replica.PreviousReplicaRole,
         role: replica.ReplicaRole,
@@ -248,8 +234,8 @@ export class ReplicaListComponent extends BaseControllerDirective {
         color: isClickable ? 'var(--accent-lightblue)' : 'white',
         countsTowardWriteQuorum: countsTowardWriteQuorum,
         showPotentialMitigation: shouldHighlight,
-        infoMessage: partitionStatus === PartitionStatus.InQuorumLoss ? this.getReplicaInfoMessage({ showPotentialMitigation: shouldHighlight }, nodeStatus) : '',
-        cssClass: (partitionStatus === PartitionStatus.InQuorumLoss && shouldHighlight) ? 'highlighted-row' : ''
+        infoMessage: partitionStatus === PartitionStatusConstants.InQuorumLoss ? this.getReplicaInfoMessage({ showPotentialMitigation: shouldHighlight }, nodeStatus) : '',
+        cssClass: (partitionStatus === PartitionStatusConstants.InQuorumLoss && shouldHighlight) ? 'highlighted-row' : ''
       };
     });
 
@@ -347,8 +333,8 @@ export class ReplicaListComponent extends BaseControllerDirective {
   }
 
   private detectQuorumLossTransitions(): void {
-    const failoverManagerInQuorumLoss = this.failoverManagerState.partitionStatus === PartitionStatus.InQuorumLoss;
-    const clusterManagerInQuorumLoss = this.clusterManagerState.partitionStatus === PartitionStatus.InQuorumLoss;
+    const failoverManagerInQuorumLoss = this.failoverManagerState.partitionStatus === PartitionStatusConstants.InQuorumLoss;
+    const clusterManagerInQuorumLoss = this.clusterManagerState.partitionStatus === PartitionStatusConstants.InQuorumLoss;
 
     // Reload the whole page after CM and/or FM is out of QL
     if (this.previousFailoverManagerInQuorumLoss && !failoverManagerInQuorumLoss) {
