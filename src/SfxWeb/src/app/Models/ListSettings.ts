@@ -83,6 +83,7 @@ export class ListSettings {
      *                                But the columns for the second line have no filters/sort capabilities.
      * @param secondRowCollapsible If set to true, the second row can be collapsed by clicking the expand icon in the first column.
      * @param showRowExpander If set to false, the row expander button will not be displayed.
+     * @param rowClass A callback that returns a CSS class string to apply to a row based on the item, enabling dynamic per-row styling.
      */
     public constructor(
         public limit: number,

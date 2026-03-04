@@ -4,6 +4,8 @@
   [style.color]="getColor()"
   (click)="onClick()">
   {{ getDisplayText() }}
-  <img *ngIf="showSeedNodeIndicator && isSeedNode()" [src]="assetBase + 'assets/seed.svg'" alt="seed node" class="seed-indicator" title="Seed Node">
-  <i *ngIf="showIcon" class="mif-info info-icon" [title]="infoMessage"></i>
+  <ng-container *ngIf="item?.icon as icon">
+    <img [src]="icon.src" alt="seed node" class="icon" title="Seed Node">
+  </ng-container>
+  <i *ngIf="item?.showPotentialMitigation" class="mif-info info-icon" [title]="item?.infoMessage"></i>
 </span>

@@ -68,6 +68,7 @@ export class ReplicaListComponent extends BaseControllerDirective {
   };
 
   activeTab: ServiceName = ServiceName.FailoverManager;
+  protected override get refreshIntervalMs() { return 60_000; } // refresh once per minute
   failoverManagerState: ServiceState = this.createDefaultServiceState();
   clusterManagerState: ServiceState = this.createDefaultServiceState();
 

@@ -1,10 +1,11 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { forkJoin, interval, of, Subject } from 'rxjs';
-import { catchError, startWith, takeUntil } from 'rxjs/operators';
+import { Component, Injector } from '@angular/core';
+import { forkJoin, of, Observable } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 
 import { RestClientService } from 'src/app/services/rest-client.service';
 import { DataService } from 'src/app/services/data.service';
 import { IRawApplicationHealth, IRawNode, IRawReplicaOnPartition } from 'src/app/Models/RawDataTypes';
+import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 
 interface RecoveryStep {
   name: string;
@@ -30,14 +31,12 @@ enum NodeStatus {
 const SYSTEM_APP_NAME = 'System';
 const FAILOVER_MANAGER_SERVICE = 'System/FailoverManagerService';
 const FAILOVER_MANAGER_PARTITION_ID = '00000000-0000-0000-0000-000000000001';
-const REFRESH_INTERVAL_MS = 60000;
-
 @Component({
   selector: 'app-recovery-progress',
   templateUrl: './recovery-progress.component.html',
   styleUrls: ['./recovery-progress.component.scss']
 })
-export class RecoveryProgressComponent implements OnInit, OnDestroy {
+export class RecoveryProgressComponent extends BaseControllerDirective {
   recoverySteps: RecoveryStep[] = [
     { name: RecoveryStepName.SeedNodesQuorum, status: 'pending' },
     { name: RecoveryStepName.FailoverManager, status: 'pending' },
@@ -48,26 +47,15 @@ export class RecoveryProgressComponent implements OnInit, OnDestroy {
 
   isLoading = true;
 
-  private readonly destroy$ = new Subject<void>();
-
-  constructor(private restClient: RestClientService, private data: DataService) {}
-
-  ngOnInit(): void {
-    interval(REFRESH_INTERVAL_MS).pipe(
-      startWith(0),
-      takeUntil(this.destroy$)
-    ).subscribe(() => this.checkRecoveryStatus());
+  constructor(private restClient: RestClientService, private data: DataService, injector: Injector) {
+    super(injector);
   }
 
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
-  }
+  protected override get refreshIntervalMs() { return 60_000; }
 
-  checkRecoveryStatus(): void {
+  refresh(): Observable<any> {
     this.isLoading = true;
-
-    forkJoin({
+    return forkJoin({
       nodes: this.restClient.getNodes(),
       failoverManagerReplicas: this.restClient.getReplicasOnPartition(
         SYSTEM_APP_NAME,
@@ -83,23 +71,24 @@ export class RecoveryProgressComponent implements OnInit, OnDestroy {
       apps: this.data.getApps().pipe(
         catchError(() => of(null))
       )
-    }).subscribe({
-      next: (results) => {
+    }).pipe(
+      map(results => {
         this.checkSeedNodeQuorum(results.nodes);
         const fmHasQuorum = this.checkFailoverManagerStatus(results.failoverManagerReplicas);
-        
+
         if (results.systemAppHealth) {
           this.checkSystemServicesStatus(results.systemAppHealth, fmHasQuorum);
         }
-        
+
         this.checkNodesStatus(results.nodes);
         this.checkUserServicesStatus(results.apps);
         this.isLoading = false;
-      },
-      error: () => {
+      }),
+      catchError(() => {
         this.isLoading = false;
-      }
-    });
+        return of(null);
+      })
+    );
   }
 
   private updateStepStatus(stepName: RecoveryStepName, status: RecoveryStep['status'], tooltip: string): void {

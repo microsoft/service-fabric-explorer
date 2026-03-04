@@ -1,4 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Injector } from '@angular/core';
+import { Observable, of } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
+import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 import { NodeStatusConstants } from 'src/app/Common/Constants';
 import { IRawFailoverManagerManagerInformation } from 'src/app/Models/RawDataTypes';
 import { RestClientService } from 'src/app/services/rest-client.service';
@@ -8,40 +11,37 @@ import { RestClientService } from 'src/app/services/rest-client.service';
   templateUrl: './fmm-info.component.html',
   styleUrls: ['./fmm-info.component.scss']
 })
-export class FmmInfoComponent implements OnInit {
+export class FmmInfoComponent extends BaseControllerDirective {
   fmmInfo: IRawFailoverManagerManagerInformation = {} as IRawFailoverManagerManagerInformation;
   isLoading = true;
   isFmmEstimate = false;
   
-  constructor(private restClientService: RestClientService) {}
-
-  ngOnInit(): void {
-    this.getFailoverManagerManagerInformation();
+  constructor(private restClientService: RestClientService, injector: Injector) {
+    super(injector);
   }
 
-  getFailoverManagerManagerInformation(): void {
+  protected override get refreshIntervalMs() { return 60_000; }
+
+  refresh(): Observable<any> {
     this.isLoading = true;
-    this.restClientService.getFailoverManagerManagerInformation().subscribe({
-      next: (data) => {
+    return this.restClientService.getFailoverManagerManagerInformation().pipe(
+      map(data => {
         this.fmmInfo = data;
         this.isLoading = false;
-      },
-      error: () => {
-        this.estimateFmmNode();
-      }
-    });
+      }),
+      catchError(() => this.estimateFmmNode())
+    );
   }
 
-  private estimateFmmNode(): void {
-    this.restClientService.getNodes().subscribe({
-      next: (nodes) => {
+  private estimateFmmNode(): Observable<any> {
+    return this.restClientService.getNodes().pipe(
+      map(nodes => {
         if (nodes && nodes.length > 0) {
-          // FMM is on the up node with the lowest node ID
           const upNodes = nodes.filter(node => node.NodeStatus === NodeStatusConstants.Up);
-          
+
           if (upNodes.length > 0) {
             let lowest = upNodes[0];
-            
+
             upNodes.forEach(node => {
               if (parseInt(lowest.Id.Id, 16) > parseInt(node.Id.Id, 16)) {
                 lowest = node;
@@ -59,10 +59,11 @@ export class FmmInfoComponent implements OnInit {
           }
         }
         this.isLoading = false;
-      },
-      error: () => {
+      }),
+      catchError(() => {
         this.isLoading = false;
-      }
-    });
+        return of(null);
+      })
+    );
   }
 }
