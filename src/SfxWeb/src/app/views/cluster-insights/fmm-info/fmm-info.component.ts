@@ -20,7 +20,7 @@ export class FmmInfoComponent extends BaseControllerDirective {
     super(injector);
   }
 
-  protected override get refreshIntervalMs() { return 60_000; }
+  override fixedRefreshIntervalMs = 60000; // 60 seconds
 
   refresh(): Observable<any> {
     this.isLoading = true;
