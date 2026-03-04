@@ -151,10 +151,10 @@ export class EssentialsComponent extends PartitionBaseControllerDirective {
       quorumReplicas.has(r.raw.ReplicaId) && r.raw.ReplicaStatus !== 'Ready'
     ).length;
 
-    this.partition.replicas.collection.forEach(replica => {
+    this.listSettings.rowClass = (replica) => {
       const shouldHighlight = quorumReplicas.has(replica.raw.ReplicaId) && replica.raw.ReplicaStatus !== 'Ready';
-      replica.cssClass = (this.partition.raw.PartitionStatus === 'InQuorumLoss' && shouldHighlight) ? 'highlighted-row' : '';
-    });
+      return (this.partition.raw.PartitionStatus === 'InQuorumLoss' && shouldHighlight) ? 'highlighted-row' : '';
+    };
   }
 
   private calculateWriteQuorum(replicas: any[]): Set<string> {

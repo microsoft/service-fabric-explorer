@@ -93,7 +93,8 @@ export class ListSettings {
         public secondRowCollapsible: boolean = false,
         public showSecondRow: (item) => boolean = (item) => true,
         public searchable: boolean = true,
-        public showRowExpander: boolean = true) {
+        public showRowExpander: boolean = true,
+        public rowClass: (item: any) => string = () => '') {
 
         this.sortPropertyPaths = defaultSortPropertyPaths;
     }

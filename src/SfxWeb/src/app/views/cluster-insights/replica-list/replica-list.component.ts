@@ -69,11 +69,8 @@ export class ReplicaListComponent extends BaseControllerDirective {
 
   activeTab: ServiceName = ServiceName.FailoverManager;
   failoverManagerState: ServiceState = this.createDefaultServiceState();
-  clusterManagerState: ServiceState = { ...this.createDefaultServiceState(), isLoading: false };
-  failoverManagerInQuorumLoss = false;
+  clusterManagerState: ServiceState = this.createDefaultServiceState();
 
-  private readonly MIN_REFRESH_INTERVAL_MS = 60000;
-  private lastRefreshTime = 0;
   private previousFailoverManagerInQuorumLoss = false;
   private previousClusterManagerInQuorumLoss = false;
   private expandedReplicasState = new Map<string, boolean>();
@@ -88,12 +85,6 @@ export class ReplicaListComponent extends BaseControllerDirective {
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
-    const now = Date.now();
-    if (now - this.lastRefreshTime < this.MIN_REFRESH_INTERVAL_MS) {
-      return of(null);
-    }
-    this.lastRefreshTime = now;
-
     return this.restClientService.getNodes().pipe(
       switchMap(nodes => forkJoin({
         failoverManager: this.fetchServiceData(this.FAILOVER_MANAGER_CONFIG, ServiceName.FailoverManager, nodes),
@@ -357,8 +348,6 @@ export class ReplicaListComponent extends BaseControllerDirective {
   private detectQuorumLossTransitions(): void {
     const failoverManagerInQuorumLoss = this.failoverManagerState.partitionStatus === PartitionStatus.InQuorumLoss;
     const clusterManagerInQuorumLoss = this.clusterManagerState.partitionStatus === PartitionStatus.InQuorumLoss;
-
-    this.failoverManagerInQuorumLoss = failoverManagerInQuorumLoss;
 
     // Reload the whole page after CM and/or FM is out of QL
     if (this.previousFailoverManagerInQuorumLoss && !failoverManagerInQuorumLoss) {

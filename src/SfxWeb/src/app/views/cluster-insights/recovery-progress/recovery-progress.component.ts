@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
-import { forkJoin, of } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { forkJoin, interval, of, Subject } from 'rxjs';
+import { catchError, startWith, takeUntil } from 'rxjs/operators';
 
 import { RestClientService } from 'src/app/services/rest-client.service';
 import { DataService } from 'src/app/services/data.service';
@@ -30,13 +30,14 @@ enum NodeStatus {
 const SYSTEM_APP_NAME = 'System';
 const FAILOVER_MANAGER_SERVICE = 'System/FailoverManagerService';
 const FAILOVER_MANAGER_PARTITION_ID = '00000000-0000-0000-0000-000000000001';
+const REFRESH_INTERVAL_MS = 60000;
 
 @Component({
   selector: 'app-recovery-progress',
   templateUrl: './recovery-progress.component.html',
   styleUrls: ['./recovery-progress.component.scss']
 })
-export class RecoveryProgressComponent implements OnInit {
+export class RecoveryProgressComponent implements OnInit, OnDestroy {
   recoverySteps: RecoveryStep[] = [
     { name: RecoveryStepName.SeedNodesQuorum, status: 'pending' },
     { name: RecoveryStepName.FailoverManager, status: 'pending' },
@@ -46,12 +47,21 @@ export class RecoveryProgressComponent implements OnInit {
   ];
 
   isLoading = true;
-  failoverManagerQuorumLoss = false;
+
+  private readonly destroy$ = new Subject<void>();
 
   constructor(private restClient: RestClientService, private data: DataService) {}
 
   ngOnInit(): void {
-    this.checkRecoveryStatus();
+    interval(REFRESH_INTERVAL_MS).pipe(
+      startWith(0),
+      takeUntil(this.destroy$)
+    ).subscribe(() => this.checkRecoveryStatus());
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   checkRecoveryStatus(): void {
@@ -77,7 +87,6 @@ export class RecoveryProgressComponent implements OnInit {
       next: (results) => {
         this.checkSeedNodeQuorum(results.nodes);
         const fmHasQuorum = this.checkFailoverManagerStatus(results.failoverManagerReplicas);
-        this.failoverManagerQuorumLoss = !fmHasQuorum;
         
         if (results.systemAppHealth) {
           this.checkSystemServicesStatus(results.systemAppHealth, fmHasQuorum);
