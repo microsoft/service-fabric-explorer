@@ -80,11 +80,16 @@
               {{ writeQuorum }}
             </div>
           </div>
+
+          <div class="stat-box" *ngIf="partition.raw.PartitionStatus === 'InQuorumLoss'" [ngClass]="partition.raw.PartitionStatus">
+            <div class="stat-label">Quorum Loss Duration</div>
+            <div class="stat-value" [ngClass]="partition.raw.PartitionStatus">{{ quorumLossDuration }}</div>
+          </div>
         </div>
 
         <div *ngIf="partition.isStatefulService && partition.raw?.PartitionStatus === 'InQuorumLoss'" class="quorum-loss-section">
           <div class="quorum-loss-message">
-            <span>You need to have any <strong>{{ quorumNeeded }}</strong> of the below <strong>{{ highlightedReplicaCount }}</strong> highlighted replicas ready to be out of quorum loss.</span>
+            <span>You need to have any <strong>{{ quorumNeeded }}</strong> of the below <strong>{{ downReplicasInQuorum }}</strong> highlighted replicas ready to be out of quorum loss.</span>
           </div>
         </div>
 

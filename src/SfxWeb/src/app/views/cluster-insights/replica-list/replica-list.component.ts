@@ -68,14 +68,6 @@ export class ReplicaListComponent extends BaseControllerDirective {
     return service === ServiceName.FailoverManager ? this.failoverManagerState : this.clusterManagerState;
   }
 
-  private setServiceState(service: string, state: ServiceState): void {
-    if (service === ServiceName.FailoverManager) {
-      this.failoverManagerState = state;
-    } else {
-      this.clusterManagerState = state;
-    }
-  }
-
   constructor(private restClientService: RestClientService, injector: Injector) {
     super(injector);
   }
@@ -130,7 +122,7 @@ export class ReplicaListComponent extends BaseControllerDirective {
     }
 
     const secondRowColumnSettings = [
-      new ListColumnSettingForExpandedDetails('deployedReplicaDetails', 'Deployed Replica Details', { colspan: -1 })
+      new ListColumnSettingForExpandedDetails('Deployed Replica Details', { colspan: -1 })
     ];
 
     const listSettings = new ListSettings(
@@ -140,7 +132,7 @@ export class ReplicaListComponent extends BaseControllerDirective {
       columnSettings,
       secondRowColumnSettings,
       true,
-      (item) => item.isClickable && item.deployedReplicaDetails !== null,
+      (item) => item.isClickable && item.expandedDetails !== null,
       true,
       false
     );
@@ -182,16 +174,14 @@ export class ReplicaListComponent extends BaseControllerDirective {
     nodes: any[],
     partition: any
   ): void {
-    const minReplicaSetSize = partition.MinReplicaSetSize ?? 0;
-    const targetReplicaSetSize = partition.TargetReplicaSetSize ?? 0;
+    const state = this.getServiceState(service);
     const partitionStatus = partition.PartitionStatus ?? '';
-    const lastQuorumLossDuration = this.formatDuration(partition.LastQuorumLossDurationInSeconds ?? 0);
 
     const { isInReconfiguration, writeQuorum, quorumReplicas } = this.calculateWriteQuorum(replicas);
 
     const nodeStatusMap = new Map(nodes.map(node => [node.Name, node.NodeStatus]));
 
-    const replicaData = replicas.map(replica => {
+    state.replicaData = replicas.map(replica => {
       const countsTowardWriteQuorum = quorumReplicas.has(replica.ReplicaId);
       const isDownAndCountsTowardQuorum = countsTowardWriteQuorum && replica.ReplicaStatus !== 'Ready';
       const nodeStatus = nodeStatusMap.get(replica.NodeName) ?? NodeStatusConstants.Unknown;
@@ -209,38 +199,31 @@ export class ReplicaListComponent extends BaseControllerDirective {
           badgeClass: replica.ReplicaStatus === 'Ready' ? 'badge-ok' : 'badge-error'
         },
         isSecondRowCollapsed: !(this.expandedReplicasState.get(replica.ReplicaId) ?? false),
-        deployedReplicaDetails: null,
+        expandedDetails: null,
         lastSequenceNumber: replica.ReplicaStatus === 'Down' ? 'N/A' : 'Loading...',
         isClickable: replica.ReplicaStatus !== 'Down',
         isDownAndCountsTowardQuorum,
-        infoMessage: partitionStatus === PartitionStatusConstants.InQuorumLoss && isDownAndCountsTowardQuorum ? this.getReplicaInfoMessage(nodeStatus) : '',
-        cssClass: (partitionStatus === PartitionStatusConstants.InQuorumLoss && isDownAndCountsTowardQuorum) ? 'highlighted-row' : ''
+        infoMessage: partitionStatus === PartitionStatusConstants.InQuorumLoss && isDownAndCountsTowardQuorum ? this.getReplicaInfoMessage(nodeStatus) : ''
       };
     });
 
-    const currentReplicaSetSize = quorumReplicas.size;
-    const downReplicasInQuorum = replicaData.filter(r => r.isDownAndCountsTowardQuorum).length;
-    const quorumNeeded = writeQuorum - (currentReplicaSetSize - downReplicasInQuorum);
-
-    const updatedState = {
-      replicaData,
-      minReplicaSetSize,
-      targetReplicaSetSize,
-      currentReplicaSetSize,
-      partitionStatus,
-      lastQuorumLossDuration,
-      writeQuorum,
-      isInReconfiguration,
-      downReplicasInQuorum,
-      quorumNeeded,
-      isLoading: false
-    };
-
-    this.setServiceState(service, { ...this.getServiceState(service), ...updatedState });
+    state.minReplicaSetSize = partition.MinReplicaSetSize ?? 0;
+    state.targetReplicaSetSize = partition.TargetReplicaSetSize ?? 0;
+    state.currentReplicaSetSize = quorumReplicas.size;
+    state.partitionStatus = partitionStatus;
+    state.lastQuorumLossDuration = this.formatDuration(partition.LastQuorumLossDurationInSeconds ?? 0);
+    state.writeQuorum = writeQuorum;
+    state.isInReconfiguration = isInReconfiguration;
+    state.downReplicasInQuorum = state.replicaData.filter(r => r.isDownAndCountsTowardQuorum).length;
+    state.quorumNeeded = writeQuorum - (state.currentReplicaSetSize - state.downReplicasInQuorum);
+    state.isLoading = false;
 
     this.setupReplicaList(service);
 
-    replicaData.forEach(replicaItem => this.loadDeployedReplicaDetails(replicaItem, config.partitionId));
+    state.listSettings.rowClass = (replica) =>
+      partitionStatus === PartitionStatusConstants.InQuorumLoss && replica.isDownAndCountsTowardQuorum ? 'highlighted-row' : '';
+
+    state.replicaData.forEach(replicaItem => this.loadDeployedReplicaDetails(replicaItem, config.partitionId));
   }
 
   private calculateWriteQuorum(replicas: any[]): { isInReconfiguration: boolean; writeQuorum: number; quorumReplicas: Set<string> } {
@@ -289,11 +272,11 @@ export class ReplicaListComponent extends BaseControllerDirective {
 
   private getReplicaInfoMessage(nodeStatus: string): string {
     if (nodeStatus === NodeStatusConstants.Down) {
-      return 'Node is down, try restarting the node or restarting the vm';
+      return 'Node is down, try to bring it back up';
     } else if (nodeStatus === NodeStatusConstants.Disabling || nodeStatus === NodeStatusConstants.Disabled) {
-      return 'Please check why the node is in deactivated state, enable it if possible';
+      return 'Node is in deactivated state, enable it if possible';
     } else if (nodeStatus === NodeStatusConstants.Up) {
-      return 'The replica is down, try restarting the replica if possible';
+      return 'Node is up but replica is not Ready, try restarting the replica';
     }
 
     return '';
@@ -321,7 +304,7 @@ export class ReplicaListComponent extends BaseControllerDirective {
       next: (details: any) => {
         const deployedServiceReplica = details?.DeployedServiceReplica || {};
         const reconfigInfo = deployedServiceReplica.ReconfigurationInformation || {};
-        replicaItem.deployedReplicaDetails = {
+        replicaItem.expandedDetails = {
           'Host Process ID': deployedServiceReplica.HostProcessId || '',
           'Previous Configuration Role': reconfigInfo.PreviousConfigurationRole || '',
           'Reconfiguration Phase': reconfigInfo.ReconfigurationPhase || '',
@@ -332,7 +315,7 @@ export class ReplicaListComponent extends BaseControllerDirective {
         replicaItem.lastSequenceNumber = lastSeqNum != null ? lastSeqNum.toString() : 'N/A';
       },
       error: () => {
-        replicaItem.deployedReplicaDetails = null;
+        replicaItem.expandedDetails = null;
         replicaItem.lastSequenceNumber = 'Error';
       }
     });

@@ -24,7 +24,7 @@ export class EssentialsComponent extends PartitionBaseControllerDirective {
   quorumNeeded = 0;
   isInReconfiguration = false;
   quorumLossDuration = '';
-  highlightedReplicaCount = 0;
+  downReplicasInQuorum = 0;
 
   constructor(protected data: DataService, injector: Injector, private settings: SettingsService) {
     super(data, injector);
@@ -138,23 +138,18 @@ export class EssentialsComponent extends PartitionBaseControllerDirective {
     }
 
     const quorumReplicas = this.calculateWriteQuorum(this.partition.replicas.collection.map(r => r.raw));
+    const isInQuorumLoss = this.partition.raw.PartitionStatus === 'InQuorumLoss';
 
     this.quorumLossDuration = this.formatDuration(this.partition.raw.LastQuorumLossDurationInSeconds || 0);
 
-    const readyReplicasInQuorum = this.partition.replicas.collection.filter(r =>
-      quorumReplicas.has(r.raw.ReplicaId) && r.raw.ReplicaStatus === 'Ready'
-    ).length;
-
-    this.quorumNeeded = this.writeQuorum - readyReplicasInQuorum;
-
-    this.highlightedReplicaCount = this.partition.replicas.collection.filter(r =>
+    this.downReplicasInQuorum = this.partition.replicas.collection.filter(r =>
       quorumReplicas.has(r.raw.ReplicaId) && r.raw.ReplicaStatus !== 'Ready'
     ).length;
 
-    this.listSettings.rowClass = (replica) => {
-      const shouldHighlight = quorumReplicas.has(replica.raw.ReplicaId) && replica.raw.ReplicaStatus !== 'Ready';
-      return (this.partition.raw.PartitionStatus === 'InQuorumLoss' && shouldHighlight) ? 'highlighted-row' : '';
-    };
+    this.quorumNeeded = this.writeQuorum - (quorumReplicas.size - this.downReplicasInQuorum);
+
+    this.listSettings.rowClass = (replica) =>
+      isInQuorumLoss && quorumReplicas.has(replica.raw.ReplicaId) && replica.raw.ReplicaStatus !== 'Ready' ? 'highlighted-row' : '';
   }
 
   private calculateWriteQuorum(replicas: any[]): Set<string> {
@@ -189,15 +184,16 @@ export class EssentialsComponent extends PartitionBaseControllerDirective {
     const days = Math.floor(seconds / 86400);
     const hours = Math.floor((seconds % 86400) / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
-    const sec = seconds % 60;
+    const secs = seconds % 60;
 
     const parts: string[] = [];
-    if (days > 0) parts.push(`${days} day${days > 1 ? 's' : ''}`);
-    if (hours > 0) parts.push(`${hours} hour${hours > 1 ? 's' : ''}`);
-    if (minutes > 0) parts.push(`${minutes} minute${minutes > 1 ? 's' : ''}`);
-    if (sec > 0 || parts.length === 0) parts.push(`${seconds} second${seconds !== 1 ? 's' : ''}`);
 
-    return parts.join(', ');
+    if (days > 0) parts.push(`${days} d`);
+    if (hours > 0) parts.push(`${hours} hr`);
+    if (minutes > 0) parts.push(`${minutes} m`);
+    if (secs > 0) parts.push(`${secs} s`);
+
+    return parts.join(' ');
   }
 
 }

@@ -123,7 +123,7 @@ export class RecoveryProgressComponent extends BaseControllerDirective {
     return this.calculateQuorum(activeReplicas.length);
   }
 
-  private isActiveReplica(role: string | undefined): boolean {
+  private isActiveReplica(role: string): boolean {
     return role === ReplicaRoles.ActiveSecondary || role === ReplicaRoles.Primary;
   }
 
@@ -149,9 +149,7 @@ export class RecoveryProgressComponent extends BaseControllerDirective {
     const status = isOk ? 'success' : 'error';
     const tooltip = !fmHasQuorum
       ? 'Failover Manager is in quorum loss'
-      : isOk 
-        ? 'System application health is Ok'
-        : `System application health is ${healthState}`;
+      : `System application health is in ${healthState} state`;
 
     this.updateStepStatus(RecoveryStepName.SystemServices, status, tooltip);
   }

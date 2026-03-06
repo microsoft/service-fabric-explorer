@@ -20,7 +20,7 @@ interface NodeDisplay {
   isClickable: boolean;
   isSecondRowCollapsed: boolean;
   systemPrimaryReplicasCount: number;
-  deployedReplicaCounts?: Record<string, string>;
+  expandedDetails?: Record<string, string>;
   icon?: { src: string; alt: string; title: string };
   color: string;
 }
@@ -110,10 +110,10 @@ export class NodesComponent extends BaseControllerDirective {
       isClickable: rawNode.NodeStatus === NodeStatusConstants.Up,
       isSecondRowCollapsed: true,
       systemPrimaryReplicasCount: primaryCount,
-      deployedReplicaCounts: {
+      expandedDetails: {
         'System Services Primary Replicas Count': primaryCount.toString(),
         'System Services ActiveSecondary Replicas Count': activeSecondaryCount.toString(),
-        'User applicationsOnNode Count': applicationsOnNode.length.toString()
+        'User Applications Count': applicationsOnNode.length.toString()
       },
       color: this.getNodeColor(nodeStatus),
       icon: rawNode.IsSeedNode ? { src: 'assets/seed.svg', alt: 'Seed Node', title: 'Seed Node' } : undefined
@@ -137,7 +137,7 @@ export class NodesComponent extends BaseControllerDirective {
     ];
 
     const secondRowColumnSettings = [
-      new ListColumnSettingForExpandedDetails('deployedReplicaCounts', 'Deployed Replicas', { colspan: -1 })
+      new ListColumnSettingForExpandedDetails('Deployed Replicas', { colspan: -1 })
     ];
 
     this.listSettings = new ListSettings(

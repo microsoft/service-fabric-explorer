@@ -15,7 +15,7 @@ export class ExpandedDetailsComponent implements DetailBaseComponent {
 export class ListColumnSettingForExpandedDetails extends ListColumnSetting {
   template = ExpandedDetailsComponent;
 
-  constructor(propertyPath: string, displayName: string, config?: any) {
-    super(propertyPath, displayName, config);
+  constructor(displayName: string, config?: any) {
+    super('expandedDetails', displayName, config);
   }
 }

@@ -9,7 +9,7 @@ import { ListColumnSetting } from 'src/app/Models/ListSettings';
 })
 export class ExpandableLinkComponent implements DetailBaseComponent {
   item: any;
-  listSetting: any;
+  listSetting: ListColumnSettingWithExpandableLink;
 
   onClick(): void {
     if (this.listSetting?.clickHandler) {
