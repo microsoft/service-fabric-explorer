@@ -10,28 +10,6 @@
   }
 }
 
-.warning-banner {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.75rem 1rem;
-  margin-bottom: 1rem;
-  background-color: #fff3cd;
-  border: 1px solid #ffeaa7;
-  border-radius: 4px;
-  color: #856404;
-  font-weight: 500;
-
-  .warning-icon {
-    font-size: 1.2rem;
-    flex-shrink: 0;
-  }
-
-  .warning-text {
-    flex: 1;
-  }
-}
-
 .replica-stats-container {
   display: flex;
   gap: 1rem;
@@ -54,7 +32,6 @@
   gap: 0.4rem;
 
   &.replica-set-box {
-    width: 180px;
     padding: 0.35rem 0.5rem;
     align-items: stretch;
     text-align: left;
@@ -73,14 +50,14 @@
 
   .stat-label {
     font-size: 0.8rem;
-    color: var(--text-secondary);
+    color: var(--font-accent-color);
     font-weight: 400;
   }
 
   .stat-value {
     font-size: 1.15rem;
     font-weight: 600;
-    color: var(--text-primary);
+    color: var(--font-primary-color);
 
     &.InQuorumLoss {
       color: var(--badge-error);
@@ -113,7 +90,7 @@
   align-items: center;
   gap: 0.3rem;
   font-size: 0.75rem;
-  color: var(--text-secondary);
+  color: var(--font-accent-color);
 }
 
 .line-item {
@@ -126,7 +103,7 @@
     width: 22px;
     text-align: end;
     font-weight: 600;
-    color: var(--text-primary);
+    color: var(--font-primary-color);
   }
 }
 
@@ -134,14 +111,4 @@
   border-bottom: 1px solid var(--accent-underline);
   padding-bottom: 3px;
   margin-bottom: 3px;
-}
-
-.replica-id-link {
-  color: var(--accent-lightblue);
-  cursor: pointer;
-}
-
-.non-replica-id-link {
-  color: var(--font-primary-color);
-  cursor: default;
 }

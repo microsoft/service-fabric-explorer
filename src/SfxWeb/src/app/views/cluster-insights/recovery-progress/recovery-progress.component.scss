@@ -10,33 +10,6 @@
   margin-bottom: 1.5rem;
 }
 
-.step-details {
-  margin-top: 1rem;
-  padding-top: 1rem;
-  border-top: 1px solid #e0e0e0;
-}
-
-.warning-banner {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.75rem 1rem;
-  background-color: #fff3cd;
-  border: 1px solid #ffeaa7;
-  border-radius: 4px;
-  color: #856404;
-  font-weight: 500;
-
-  .warning-icon {
-    font-size: 1.2rem;
-    flex-shrink: 0;
-  }
-
-  .warning-text {
-    flex: 1;
-  }
-}
-
 .progress-steps {
   display: flex;
   position: relative;

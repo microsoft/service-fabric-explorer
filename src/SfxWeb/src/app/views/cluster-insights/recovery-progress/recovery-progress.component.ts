@@ -5,6 +5,7 @@ import { catchError, map } from 'rxjs/operators';
 import { RestClientService } from 'src/app/services/rest-client.service';
 import { DataService } from 'src/app/services/data.service';
 import { IRawApplicationHealth, IRawNode, IRawReplicaOnPartition } from 'src/app/Models/RawDataTypes';
+import { NodeStatusConstants, ReplicaRoles } from 'src/app/Common/Constants';
 import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 
 interface RecoveryStep {
@@ -21,16 +22,6 @@ enum RecoveryStepName {
   UserServices = 'User Services'
 }
 
-enum NodeStatus {
-  Up = 'Up',
-  Down = 'Down',
-  Disabled = 'Disabled',
-  Disabling = 'Disabling'
-}
-
-const SYSTEM_APP_NAME = 'System';
-const FAILOVER_MANAGER_SERVICE = 'System/FailoverManagerService';
-const FAILOVER_MANAGER_PARTITION_ID = '00000000-0000-0000-0000-000000000001';
 @Component({
   selector: 'app-recovery-progress',
   templateUrl: './recovery-progress.component.html',
@@ -46,23 +37,22 @@ export class RecoveryProgressComponent extends BaseControllerDirective {
   ];
 
   isLoading = true;
+  override fixedRefreshIntervalMs = 60000; // 60 seconds
 
   constructor(private restClient: RestClientService, private data: DataService, injector: Injector) {
     super(injector);
   }
-
-  override fixedRefreshIntervalMs = 60000; // 60 seconds
 
   refresh(): Observable<any> {
     this.isLoading = true;
     return forkJoin({
       nodes: this.restClient.getNodes(),
       failoverManagerReplicas: this.restClient.getReplicasOnPartition(
-        SYSTEM_APP_NAME,
-        FAILOVER_MANAGER_SERVICE,
-        FAILOVER_MANAGER_PARTITION_ID
+        'System',
+        'System/FailoverManagerService',
+        '00000000-0000-0000-0000-000000000001'
       ),
-      systemAppHealth: this.restClient.getApplicationHealth(SYSTEM_APP_NAME).pipe(
+      systemAppHealth: this.restClient.getApplicationHealth('System').pipe(
         catchError(() => {
           this.updateStepStatus(RecoveryStepName.SystemServices, 'error', 'Get system services health timed out. Please check if Cluster Manager is unhealthy.');
           return of(null);
@@ -81,7 +71,7 @@ export class RecoveryProgressComponent extends BaseControllerDirective {
         }
 
         this.checkNodesStatus(results.nodes);
-        this.checkUserServicesStatus(results.apps);
+        this.checkUserApplicationHealth(results.apps);
         this.isLoading = false;
       }),
       catchError(() => {
@@ -92,21 +82,17 @@ export class RecoveryProgressComponent extends BaseControllerDirective {
   }
 
   private updateStepStatus(stepName: RecoveryStepName, status: RecoveryStep['status'], tooltip: string): void {
-    const step = this.findStep(stepName);
+    const step = this.recoverySteps.find(s => s.name === stepName);
     if (step) {
       step.status = status;
       step.tooltip = tooltip;
     }
   }
 
-  private findStep(stepName: RecoveryStepName): RecoveryStep | undefined {
-    return this.recoverySteps.find(step => step.name === stepName);
-  }
-
   private checkSeedNodeQuorum(rawNodes: IRawNode[]): void {
     const seedNodes = rawNodes.filter(node => node.IsSeedNode);
     const totalSeedNodes = seedNodes.length;
-    const upSeedNodes = seedNodes.filter(node => node.NodeStatus === NodeStatus.Up).length;
+    const upSeedNodes = seedNodes.filter(node => node.NodeStatus === NodeStatusConstants.Up).length;
     const quorum = this.calculateQuorum(totalSeedNodes);
     const hasQuorum = upSeedNodes >= quorum;
 
@@ -124,8 +110,8 @@ export class RecoveryProgressComponent extends BaseControllerDirective {
 
   private calculateWriteQuorum(replicas: IRawReplicaOnPartition[]): number {
     // If the previous configuration (PC) role is 'None' for all replicas, then the partition is not in reconfiguration.
-    const isNotInReconfiguration = replicas.every(replica => 
-      replica.PreviousReplicaRole === 'None'
+    const isNotInReconfiguration = replicas.every(replica =>
+      replica.PreviousReplicaRole === ReplicaRoles.None
     );
 
     // If the partition is not in reconfiguration, write quorum is calculated using the current configuration (CC) role.
@@ -138,7 +124,7 @@ export class RecoveryProgressComponent extends BaseControllerDirective {
   }
 
   private isActiveReplica(role: string | undefined): boolean {
-    return role === 'ActiveSecondary' || role === 'Primary';
+    return role === ReplicaRoles.ActiveSecondary || role === ReplicaRoles.Primary;
   }
 
   private checkFailoverManagerStatus(replicas: IRawReplicaOnPartition[]): boolean {
@@ -172,10 +158,10 @@ export class RecoveryProgressComponent extends BaseControllerDirective {
 
   private checkNodesStatus(rawNodes: IRawNode[]): void {
     const totalNodes = rawNodes.length;
-    const disabledNodes = rawNodes.filter(node => 
-      node.NodeStatus === NodeStatus.Disabled || node.NodeStatus === NodeStatus.Disabling
+    const disabledNodes = rawNodes.filter(node =>
+      node.NodeStatus === NodeStatusConstants.Disabled || node.NodeStatus === NodeStatusConstants.Disabling
     );
-    const downNodes = rawNodes.filter(node => node.NodeStatus === NodeStatus.Down);
+    const downNodes = rawNodes.filter(node => node.NodeStatus === NodeStatusConstants.Down);
 
     let status: RecoveryStep['status'];
     let tooltip: string;
@@ -194,7 +180,7 @@ export class RecoveryProgressComponent extends BaseControllerDirective {
     this.updateStepStatus(RecoveryStepName.Nodes, status, tooltip);
   }
 
-  private checkUserServicesStatus(appsCollection: any): void {
+  private checkUserApplicationHealth(appsCollection: any): void {
     if (!appsCollection || !appsCollection.collection) {
       this.updateStepStatus(RecoveryStepName.UserServices, 'warning', 'Unable to determine user services status');
       return;
@@ -208,7 +194,6 @@ export class RecoveryProgressComponent extends BaseControllerDirective {
       return;
     }
 
-    const healthyApps = apps.filter((app: any) => app.healthState.text === 'Ok').length;
     const warningApps = apps.filter((app: any) => app.healthState.text === 'Warning').length;
     const errorApps = apps.filter((app: any) => app.healthState.text === 'Error').length;
 

@@ -9,27 +9,23 @@ import { ListColumnSetting } from 'src/app/Models/ListSettings';
 export class ReplicaDetailsComponent implements OnInit, DetailBaseComponent {
   item: any;
   listSetting: ListColumnSetting;
-  detailedInfo: any;
+  deployedReplicaDetails: any;
 
   ngOnInit(): void {
-    if (this.item?.deployedReplicaCounts && typeof this.item.deployedReplicaCounts === 'object') {
-      this.detailedInfo = this.item.deployedReplicaCounts;
-    } else if (this.item?.deployedReplicaDetails && !this.item.deployedReplicaDetails.error) {
-      // Handle deployed replica details (for replica list component)
-      this.detailedInfo = this.buildDetailedInfo(this.item.deployedReplicaDetails);
+    const details = this.item?.deployedReplicaDetails;
+    
+    if (details && !details.error) {
+      const deployedServiceReplica = details.DeployedServiceReplica || {};
+      const reconfigInfo = deployedServiceReplica.ReconfigurationInformation || {};
+      
+      this.deployedReplicaDetails = {
+        'Host Process ID': deployedServiceReplica.HostProcessId || '',
+        'Previous Configuration Role': reconfigInfo.PreviousConfigurationRole || '',
+        'Reconfiguration Phase': reconfigInfo.ReconfigurationPhase || '',
+        'Reconfiguration Type': reconfigInfo.ReconfigurationType || '',
+        'Reconfiguration Start Time UTC': reconfigInfo.ReconfigurationStartTimeUtc || ''
+      };
     }
-  }
-
-  private buildDetailedInfo(details: any): any {
-    const deployedServiceReplica = details.DeployedServiceReplica || {};
-    const reconfigInfo = deployedServiceReplica.ReconfigurationInformation || {};
-    return {
-      'Host Process ID': deployedServiceReplica.HostProcessId || '',
-      'Previous Configuration Role': reconfigInfo.PreviousConfigurationRole || '',
-      'Reconfiguration Phase': reconfigInfo.ReconfigurationPhase || '',
-      'Reconfiguration Type': reconfigInfo.ReconfigurationType || '',
-      'Reconfiguration Start Time UTC': reconfigInfo.ReconfigurationStartTimeUtc || ''
-    };
   }
 }
 

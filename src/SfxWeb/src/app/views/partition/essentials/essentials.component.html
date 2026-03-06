@@ -71,8 +71,8 @@
           <div class="stat-box" 
                [ngClass]="partition.raw.PartitionStatus">
             <div class="stat-label">
-              <span *ngIf="partition.raw.PartitionStatus === 'InQuorumLoss'" class="not-met-label">Expected</span>
-              <span *ngIf="partition.raw.PartitionStatus !== 'InQuorumLoss'" class="met-label">Current</span>
+              <span *ngIf="partition.raw.PartitionStatus === 'InQuorumLoss'" >Expected</span>
+              <span *ngIf="partition.raw.PartitionStatus !== 'InQuorumLoss'">Current</span>
               Write Quorum
             </div>
             <div class="stat-value" 

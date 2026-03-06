@@ -11,14 +11,6 @@ export class ExpandableLinkComponent implements DetailBaseComponent {
   item: any;
   listSetting: any;
 
-  getDisplayText(): string {
-    return this.listSetting?.getValue(this.item) || this.item?.id || '';
-  }
-
-  getColor(): string {
-    return this.item?.color ?? 'var(--accent-lightblue)';
-  }
-
   onClick(): void {
     if (this.listSetting?.clickHandler) {
       this.listSetting.clickHandler(this.item);

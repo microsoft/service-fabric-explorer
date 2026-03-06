@@ -32,7 +32,6 @@
   gap: 0.4rem;
 
   &.replica-set-box {
-    width: 180px;
     padding: 0.35rem 0.5rem;
     align-items: stretch;
     text-align: left;
@@ -51,14 +50,14 @@
 
   .stat-label {
     font-size: 0.8rem;
-    color: var(--text-secondary);
+    color: var(--font-accent-color);
     font-weight: 400;
   }
 
   .stat-value {
     font-size: 1.15rem;
     font-weight: 600;
-    color: var(--text-primary);
+    color: var(--font-primary-color);
 
     &.InQuorumLoss {
       color: var(--badge-error);
@@ -75,7 +74,7 @@
   align-items: center;
   gap: 0.3rem;
   font-size: 0.75rem;
-  color: var(--text-secondary);
+  color: var(--font-accent-color);
 }
 
 .line-item {
@@ -88,7 +87,7 @@
     width: 22px;
     text-align: end;
     font-weight: 600;
-    color: var(--text-primary);
+    color: var(--font-primary-color);
   }
 }
 

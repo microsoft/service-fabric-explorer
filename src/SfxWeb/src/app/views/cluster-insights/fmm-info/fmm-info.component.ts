@@ -12,15 +12,15 @@ import { RestClientService } from 'src/app/services/rest-client.service';
   styleUrls: ['./fmm-info.component.scss']
 })
 export class FmmInfoComponent extends BaseControllerDirective {
-  fmmInfo: IRawFailoverManagerManagerInformation = {} as IRawFailoverManagerManagerInformation;
+  fmmInfo: IRawFailoverManagerManagerInformation;
   isLoading = true;
   isFmmEstimate = false;
-  
+
+  override fixedRefreshIntervalMs = 60000; // 60 seconds
+
   constructor(private restClientService: RestClientService, injector: Injector) {
     super(injector);
   }
-
-  override fixedRefreshIntervalMs = 60000; // 60 seconds
 
   refresh(): Observable<any> {
     this.isLoading = true;
@@ -36,27 +36,22 @@ export class FmmInfoComponent extends BaseControllerDirective {
   private estimateFmmNode(): Observable<any> {
     return this.restClientService.getNodes().pipe(
       map(nodes => {
-        if (nodes && nodes.length > 0) {
-          const upNodes = nodes.filter(node => node.NodeStatus === NodeStatusConstants.Up);
-
-          if (upNodes.length > 0) {
-            let lowest = upNodes[0];
-
-            upNodes.forEach(node => {
-              if (parseInt(lowest.Id.Id, 16) > parseInt(node.Id.Id, 16)) {
-                lowest = node;
-              }
-            });
-
-            if (lowest) {
-              this.fmmInfo = {
-                NodeName: lowest.Name,
-                NodeId: lowest.Id,
-                NodeInstanceId: lowest.InstanceId
-              };
-              this.isFmmEstimate = true;
+        const upNodes = nodes.filter(node => node.NodeStatus === NodeStatusConstants.Up);
+        if (upNodes.length > 0) {
+          let lowest = upNodes[0];
+          
+          // FMM is on the node with the lowest NodeId
+          upNodes.forEach(node => {
+            if (parseInt(node.Id.Id, 16) < parseInt(lowest.Id.Id, 16)) {
+              lowest = node;
             }
-          }
+          });
+          this.fmmInfo = {
+            NodeName: lowest.Name,
+            NodeId: lowest.Id,
+            NodeInstanceId: lowest.InstanceId
+          };
+          this.isFmmEstimate = true;
         }
         this.isLoading = false;
       }),
