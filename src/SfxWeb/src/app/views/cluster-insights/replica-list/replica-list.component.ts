@@ -5,7 +5,7 @@ import { switchMap, catchError, map } from 'rxjs/operators';
 import { RestClientService } from 'src/app/services/rest-client.service';
 import { ListSettings, ListColumnSettingWithFilter, ListColumnSettingForColoredNodeName, ListColumnSettingForBadge, ListColumnSetting } from 'src/app/Models/ListSettings';
 import { ListColumnSettingWithExpandableLink } from '../expandable-link/expandable-link.component';
-import { ListColumnSettingForExpandedDetails } from '../replica-details/replica-details.component';
+import { ListColumnSettingForExpandedDetails } from '../expanded-details/expanded-details.component';
 import { NodeStatusConstants, ReplicaRoles, SortPriorities, PartitionStatusConstants } from 'src/app/Common/Constants';
 import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 
@@ -319,12 +319,20 @@ export class ReplicaListComponent extends BaseControllerDirective {
       replicaItem.id
     ).subscribe({
       next: (details: any) => {
-        replicaItem.deployedReplicaDetails = details;
+        const deployedServiceReplica = details?.DeployedServiceReplica || {};
+        const reconfigInfo = deployedServiceReplica.ReconfigurationInformation || {};
+        replicaItem.deployedReplicaDetails = {
+          'Host Process ID': deployedServiceReplica.HostProcessId || '',
+          'Previous Configuration Role': reconfigInfo.PreviousConfigurationRole || '',
+          'Reconfiguration Phase': reconfigInfo.ReconfigurationPhase || '',
+          'Reconfiguration Type': reconfigInfo.ReconfigurationType || '',
+          'Reconfiguration Start Time UTC': reconfigInfo.ReconfigurationStartTimeUtc || ''
+        };
         const lastSeqNum = details?.ReplicatorStatus?.ReplicationQueueStatus?.LastSequenceNumber;
         replicaItem.lastSequenceNumber = lastSeqNum != null ? lastSeqNum.toString() : 'N/A';
       },
       error: () => {
-        replicaItem.deployedReplicaDetails = { error: true };
+        replicaItem.deployedReplicaDetails = null;
         replicaItem.lastSequenceNumber = 'Error';
       }
     });

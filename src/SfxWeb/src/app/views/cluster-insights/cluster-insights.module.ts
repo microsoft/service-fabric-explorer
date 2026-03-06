@@ -11,7 +11,7 @@ import { FmmInfoComponent } from './fmm-info/fmm-info.component';
 import { NodesComponent } from './nodes/nodes.component';
 import { RecoveryProgressComponent } from './recovery-progress/recovery-progress.component';
 import { ExpandableLinkComponent } from './expandable-link/expandable-link.component';
-import { ReplicaDetailsComponent } from './replica-details/replica-details.component';
+import { ExpandedDetailsComponent } from './expanded-details/expanded-details.component';
 
 @NgModule({
   declarations: [
@@ -21,7 +21,7 @@ import { ReplicaDetailsComponent } from './replica-details/replica-details.compo
     NodesComponent,
     RecoveryProgressComponent,
     ExpandableLinkComponent,
-    ReplicaDetailsComponent
+    ExpandedDetailsComponent
   ],
   imports: [
     CommonModule,

@@ -8,7 +8,7 @@ import { ListSettings, ListColumnSetting, ListColumnSettingWithFilter, ListColum
 import { NodeStatusConstants, ReplicaRoles } from 'src/app/Common/Constants';
 import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 import { ListColumnSettingWithExpandableLink } from '../expandable-link/expandable-link.component';
-import { ListColumnSettingForExpandedDetails } from '../replica-details/replica-details.component';
+import { ListColumnSettingForExpandedDetails } from '../expanded-details/expanded-details.component';
 import { IDashboardViewModel, DashboardViewModel } from 'src/app/ViewModels/DashboardViewModels';
 import { IEssentialListItem } from 'src/app/modules/charts/essential-health-tile/essential-health-tile.component';
 
