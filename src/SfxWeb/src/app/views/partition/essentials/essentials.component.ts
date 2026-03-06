@@ -1,5 +1,5 @@
 import { Component, Injector } from '@angular/core';
-import { ListSettings, ListColumnSettingForLink, ListColumnSetting, ListColumnSettingWithFilter, ListColumnSettingForBadge, ListColumnSettingForColoredNodeName } from 'src/app/Models/ListSettings';
+import { ListSettings, ListColumnSettingForLink, ListColumnSetting, ListColumnSettingWithFilter, ListColumnSettingForBadge } from 'src/app/Models/ListSettings';
 import { DataService } from 'src/app/services/data.service';
 import { SettingsService } from 'src/app/services/settings.service';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
@@ -40,7 +40,7 @@ export class EssentialsComponent extends PartitionBaseControllerDirective {
     let defaultSortProperties = ['replicaRoleSortPriority', 'raw.NodeName'];
     const columnSettings = [
         new ListColumnSettingForLink('id', 'Id', item => item.viewPath),
-        new ListColumnSettingForColoredNodeName('raw.NodeName', 'Node Name'),
+        new ListColumnSettingWithFilter('raw.NodeName', 'Node Name'),
         new ListColumnSettingWithFilter('role', 'Replica Role', {sortPropertyPaths: defaultSortProperties}),
         new ListColumnSettingForBadge('healthState', 'Health State'),
         new ListColumnSettingWithFilter('raw.ReplicaStatus', 'Status')

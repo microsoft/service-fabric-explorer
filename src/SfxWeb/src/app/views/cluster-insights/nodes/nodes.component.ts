@@ -107,7 +107,7 @@ export class NodesComponent extends BaseControllerDirective {
       raw: rawNode,
       nodeStatus,
       nodeStatusBadge: this.getNodeStatusBadge(nodeStatus),
-      isClickable: rawNode.NodeStatus === NodeStatusConstants.Up,
+      isClickable: primaryCount > 0 || activeSecondaryCount > 0 || applicationsOnNode.length > 0,
       isSecondRowCollapsed: true,
       systemPrimaryReplicasCount: primaryCount,
       expandedDetails: {
