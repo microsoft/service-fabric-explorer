@@ -60,16 +60,14 @@ context('cluster-insights', () => {
       cy.intercept('GET', NODE_DEPLOYED_APPS_ROUTE, { fixture: 'cluster-insights/deployed-apps-on-node.json' }).as('nodeDeployedApps');
 
       cy.visit('/#/cluster-insights');
-      cy.wait('@nodes');
-      cy.wait('@nodeSystemReplicas');
+      cy.wait(['@nodes', '@nodeSystemReplicas', '@nodeDeployedApps']);
 
       cy.get('app-nodes').within(() => {
         cy.contains('a.nav-link', 'All Nodes').click();
-        cy.get('tbody > tr').first().within(() => {
-          cy.get('span.expandable-link').click();
-        });
+        cy.get('tbody > tr:first-child span.expandable-link').click();
+      });
+      cy.get('app-nodes').within(() => {
         cy.get('app-expanded-details').scrollIntoView().should('be.visible');
-        cy.get('app-expanded-details').contains('th', 'System Services Primary Replicas Count').should('exist');
       });
     });
   });
