@@ -68,7 +68,8 @@ context('cluster-insights', () => {
         cy.get('tbody > tr').first().within(() => {
           cy.get('span.expandable-link').click();
         });
-        cy.get('expanded-details').should('be.visible');
+        cy.get('app-expanded-details').should('be.visible');
+        cy.get('app-expanded-details').contains('th', 'System Services Primary Replicas Count').should('exist');
       });
     });
   });
@@ -126,8 +127,8 @@ context('cluster-insights', () => {
           cy.get('span.expandable-link').click();
         });
         
-        cy.get('expanded-details').should('be.visible');
-        cy.get('expanded-details').contains('th', 'Reconfiguration Type').should('exist');
+        cy.get('app-expanded-details').should('be.visible');
+        cy.get('app-expanded-details').contains('th', 'Reconfiguration Type').should('exist');
       });
     });
   });
