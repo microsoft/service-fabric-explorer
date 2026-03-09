@@ -57,7 +57,7 @@ export class ReplicaListComponent extends BaseControllerDirective {
   };
 
   activeTab = ServiceName.FailoverManager;
-  override fixedRefreshIntervalMs = 60000; // 60 seconds
+  override fixedRefreshIntervalMs = 65000; // 65 seconds
   
   failoverManagerState: ServiceState = this.createDefaultServiceState();
   clusterManagerState: ServiceState = this.createDefaultServiceState();
@@ -179,19 +179,21 @@ export class ReplicaListComponent extends BaseControllerDirective {
 
     const { isInReconfiguration, writeQuorum, quorumReplicas } = this.calculateWriteQuorum(replicas);
 
-    const nodeStatusMap = new Map(nodes.map(node => [node.Name, node.NodeStatus]));
+    const nodeMap = new Map(nodes.map(node => [node.Name, node]));
 
     state.replicaData = replicas.map(replica => {
       const countsTowardWriteQuorum = quorumReplicas.has(replica.ReplicaId);
       const isDownAndCountsTowardQuorum = countsTowardWriteQuorum && replica.ReplicaStatus !== 'Ready';
-      const nodeStatus = nodeStatusMap.get(replica.NodeName) ?? NodeStatusConstants.Unknown;
+      const node = nodeMap.get(replica.NodeName);
+      const nodeStatus = node?.NodeStatus || NodeStatusConstants.Unknown;
 
       return {
         id: replica.ReplicaId,
         nodeName: replica.NodeName,
         raw: {
           ...replica,
-          NodeStatus: nodeStatus
+          NodeStatus: nodeStatus,
+          IsSeedNode: node.IsSeedNode
         },
         replicaRoleSortPriority: SortPriorities.ReplicaRolesToSortPriorities[replica.ReplicaRole] || 0,
         replicaStatusBadge: {
@@ -215,7 +217,7 @@ export class ReplicaListComponent extends BaseControllerDirective {
     state.writeQuorum = writeQuorum;
     state.isInReconfiguration = isInReconfiguration;
     state.downReplicasInQuorum = state.replicaData.filter(r => r.isDownAndCountsTowardQuorum).length;
-    state.quorumNeeded = writeQuorum - (state.currentReplicaSetSize - state.downReplicasInQuorum);
+    state.quorumNeeded = Math.max(0, writeQuorum - (state.currentReplicaSetSize - state.downReplicasInQuorum));
     state.isLoading = false;
 
     this.setupReplicaList(service);

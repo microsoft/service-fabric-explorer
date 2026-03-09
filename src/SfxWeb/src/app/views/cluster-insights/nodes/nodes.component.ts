@@ -42,7 +42,7 @@ export class NodesComponent extends BaseControllerDirective {
   essentialItems: IEssentialListItem[] = [];
   isLoading = true;
 
-  override fixedRefreshIntervalMs = 60000; // 60 seconds
+  override fixedRefreshIntervalMs = 65000; // 65 seconds
 
   constructor(private restClient: RestClientService, injector: Injector) {
     super(injector);

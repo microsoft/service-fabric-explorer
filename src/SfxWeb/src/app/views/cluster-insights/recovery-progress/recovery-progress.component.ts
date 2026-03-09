@@ -37,7 +37,7 @@ export class RecoveryProgressComponent extends BaseControllerDirective {
   ];
 
   isLoading = true;
-  override fixedRefreshIntervalMs = 60000; // 60 seconds
+  override fixedRefreshIntervalMs = 65000; // 65 seconds
 
   constructor(private restClient: RestClientService, private data: DataService, injector: Injector) {
     super(injector);

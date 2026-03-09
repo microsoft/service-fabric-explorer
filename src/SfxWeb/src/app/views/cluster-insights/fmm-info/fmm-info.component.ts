@@ -16,7 +16,7 @@ export class FmmInfoComponent extends BaseControllerDirective {
   isLoading = true;
   isFmmEstimate = false;
 
-  override fixedRefreshIntervalMs = 60000; // 60 seconds
+  override fixedRefreshIntervalMs = 65000; // 65 seconds
 
   constructor(private restClientService: RestClientService, injector: Injector) {
     super(injector);

@@ -4,7 +4,7 @@ import { DataService } from 'src/app/services/data.service';
 import { SettingsService } from 'src/app/services/settings.service';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Observable, forkJoin } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { tap } from 'rxjs/operators';
 import { PartitionBaseControllerDirective } from '../PartitionBase';
 import { IEssentialListItem } from 'src/app/modules/charts/essential-health-tile/essential-health-tile.component';
 import { ReplicaRoles } from 'src/app/Common/Constants';
@@ -75,7 +75,7 @@ export class EssentialsComponent extends PartitionBaseControllerDirective {
       this.partition.health.refresh(messageHandler),
       this.partition.replicas.refresh(messageHandler)
     ]).pipe(
-      map(() => {
+      tap(() => {
         if (this.partition.isStatefulService) {
           this.processStatefulPartitionReplicas();
         }
@@ -146,7 +146,7 @@ export class EssentialsComponent extends PartitionBaseControllerDirective {
       quorumReplicas.has(r.raw.ReplicaId) && r.raw.ReplicaStatus !== 'Ready'
     ).length;
 
-    this.quorumNeeded = this.writeQuorum - (quorumReplicas.size - this.downReplicasInQuorum);
+    this.quorumNeeded = Math.max(0, this.writeQuorum - (quorumReplicas.size - this.downReplicasInQuorum));
 
     this.listSettings.rowClass = (replica) =>
       isInQuorumLoss && quorumReplicas.has(replica.raw.ReplicaId) && replica.raw.ReplicaStatus !== 'Ready' ? 'highlighted-row' : '';
