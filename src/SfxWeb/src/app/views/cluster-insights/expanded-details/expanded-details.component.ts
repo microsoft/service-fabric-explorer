@@ -3,7 +3,7 @@ import { DetailBaseComponent } from 'src/app/ViewModels/detail-table-base.compon
 import { ListColumnSetting } from 'src/app/Models/ListSettings';
 
 @Component({
-  selector: 'app-expanded-details',
+  selector: 'expanded-details',
   templateUrl: './expanded-details.component.html',
   styleUrls: ['./expanded-details.component.scss']
 })

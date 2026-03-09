@@ -9,6 +9,8 @@ const FM_PARTITION_ROUTE = apiUrl('/Applications/System/$/GetServices/System%2FF
 const CM_REPLICAS_ROUTE = apiUrl('/Applications/System/$/GetServices/System%2FClusterManagerService/$/GetPartitions/00000000-0000-0000-0000-000000002000/$/GetReplicas?*');
 const CM_PARTITION_ROUTE = apiUrl('/Applications/System/$/GetServices/System%2FClusterManagerService/$/GetPartitions/00000000-0000-0000-0000-000000002000?*');
 const NODES_ROUTE = apiUrl('/Nodes/?*');
+const NODE_SYSTEM_REPLICAS_ROUTE = apiUrl('/Nodes/*/$/GetApplications/System/$/GetReplicas?*');
+const NODE_DEPLOYED_APPS_ROUTE = apiUrl('/Nodes/*/$/GetApplications?*');
 const REPLICA_DETAIL_ROUTE = apiUrl('/Nodes/*/$/GetPartitions/*/$/GetReplicas/*/$/GetDetail?*');
 const FMM_INFO_ROUTE = apiUrl('/$/GetFailoverManagerManagerInformation?*');
 
@@ -50,6 +52,23 @@ context('cluster-insights', () => {
       cy.get('app-nodes').within(() => {
         cy.contains('a.nav-link', 'Seed Nodes').click();
         cy.get('tbody > tr').should('have.length', 5);
+      });
+    });
+
+    it('show system services replica count and deployed application count on node click', () => {
+      cy.intercept('GET', NODE_SYSTEM_REPLICAS_ROUTE, { fixture: 'cluster-insights/system-replicas-on-node.json' }).as('nodeSystemReplicas');
+      cy.intercept('GET', NODE_DEPLOYED_APPS_ROUTE, { fixture: 'cluster-insights/deployed-apps-on-node.json' }).as('nodeDeployedApps');
+
+      cy.visit('/#/cluster-insights');
+      cy.wait('@nodes');
+      cy.wait('@nodeSystemReplicas');
+
+      cy.get('app-nodes').within(() => {
+        cy.contains('a.nav-link', 'All Nodes').click();
+        cy.get('tbody > tr').first().within(() => {
+          cy.get('span.expandable-link').click();
+        });
+        cy.get('expanded-details').should('be.visible');
       });
     });
   });
@@ -104,11 +123,11 @@ context('cluster-insights', () => {
         
         cy.wait('@replicaDetail');
         cy.get('tbody > tr').first().within(() => {
-          cy.get('span.replica-id-link').click();
+          cy.get('span.expandable-link').click();
         });
         
-        cy.get('[data-cy=replica-detail-panel]').should('be.visible');
-        cy.get('[data-cy=replica-detail-panel]').contains('th', 'Reconfiguration Type').should('exist');
+        cy.get('expanded-details').should('be.visible');
+        cy.get('expanded-details').contains('th', 'Reconfiguration Type').should('exist');
       });
     });
   });

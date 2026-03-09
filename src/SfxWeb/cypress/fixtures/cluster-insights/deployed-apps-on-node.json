@@ -1,0 +1,12 @@
+[
+  {
+    "Id": "Voting",
+    "Name": "fabric:/Voting",
+    "TypeName": "VotingType",
+    "Status": "Active",
+    "WorkDirectory": "D:\\SvcFab\\_App\\VotingType_App0\\work",
+    "LogDirectory": "D:\\SvcFab\\_App\\VotingType_App0\\log",
+    "TempDirectory": "D:\\SvcFab\\_App\\VotingType_App0\\temp",
+    "HealthState": "Unknown"
+  }
+]
