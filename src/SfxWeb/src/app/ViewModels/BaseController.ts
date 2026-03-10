@@ -34,7 +34,7 @@ export abstract class BaseControllerDirective implements  OnInit, OnDestroy {
 
             this.setup();
 
-            if (this.fixedRefreshIntervalMs != null) {
+            if (this.fixedRefreshIntervalMs) {
               this.subscriptions.add(interval(this.fixedRefreshIntervalMs).subscribe(() => this.fullRefresh().subscribe()));
             } 
             else {

@@ -8,7 +8,7 @@
   </app-essential-health-tile>
 
     <app-tile-wrapper *ngIf="partition?.raw">
-      <app-state-info [stateful]="partition.isStatefulService" [data]="partition.raw"></app-state-info>
+      <app-state-info [stateful]="partition.isStatefulService" [data]="partition.raw" [currentReplicaSetSize]="currentReplicaSetSize"></app-state-info>
     </app-tile-wrapper>
   </div>
 
@@ -44,30 +44,6 @@
       </div>
       <div collapse-body>
         <div *ngIf="partition.isStatefulService" class="replica-stats-container">
-          <div class="stat-box replica-set-box">
-            <div class="flex-center line-item-separator">
-              <div class="line-item-small">{{ partition.raw.MinReplicaSetSize }}</div>
-              <div>Min Replica Set Size</div>
-            </div>
-            <div class="flex-center line-item-separator">
-              <div class="line-item-small">{{ partition.raw.TargetReplicaSetSize }}</div>
-              <div>Target Replica Set Size</div>
-            </div>
-            <div class="flex-center">
-              <div class="line-item-small">{{ partition.replicas.collection.length }}</div>
-              <div>Current Replica Set Size</div>
-            </div>
-          </div>
-
-          <div class="stat-box"
-              [ngClass]="partition.raw.PartitionStatus">
-            <div class="stat-label">Partition Status</div>
-            <div class="stat-value" 
-                [ngClass]="partition.raw.PartitionStatus">
-              {{ partition.raw.PartitionStatus }}
-            </div>
-          </div>
-
           <div class="stat-box" 
                [ngClass]="partition.raw.PartitionStatus">
             <div class="stat-label">

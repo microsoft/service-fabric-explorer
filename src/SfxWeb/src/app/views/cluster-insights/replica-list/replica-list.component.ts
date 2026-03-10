@@ -7,6 +7,8 @@ import { ListSettings, ListColumnSettingWithFilter, ListColumnSettingForColoredN
 import { ListColumnSettingWithExpandableLink } from '../expandable-link/expandable-link.component';
 import { ListColumnSettingForExpandedDetails } from '../expanded-details/expanded-details.component';
 import { NodeStatusConstants, ReplicaRoles, SortPriorities, PartitionStatusConstants } from 'src/app/Common/Constants';
+import { ReplicaOnPartition } from 'src/app/Models/DataModels/Replica';
+import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 
 interface ServiceConfig {
@@ -213,7 +215,7 @@ export class ReplicaListComponent extends BaseControllerDirective {
     state.targetReplicaSetSize = partition.TargetReplicaSetSize ?? 0;
     state.currentReplicaSetSize = quorumReplicas.size;
     state.partitionStatus = partitionStatus;
-    state.lastQuorumLossDuration = this.formatDuration(partition.LastQuorumLossDurationInSeconds ?? 0);
+    state.lastQuorumLossDuration = TimeUtils.formatDurationAsAspNetTimespan((partition.LastQuorumLossDurationInSeconds ?? 0) * 1000);
     state.writeQuorum = writeQuorum;
     state.isInReconfiguration = isInReconfiguration;
     state.downReplicasInQuorum = state.replicaData.filter(r => r.isDownAndCountsTowardQuorum).length;
@@ -238,8 +240,8 @@ export class ReplicaListComponent extends BaseControllerDirective {
 
     replicas.forEach(replica => {
       const countsTowardWriteQuorum = isInReconfiguration
-        ? replica.PreviousReplicaRole === ReplicaRoles.ActiveSecondary || replica.PreviousReplicaRole === ReplicaRoles.Primary
-        : replica.ReplicaRole === ReplicaRoles.ActiveSecondary || replica.ReplicaRole === ReplicaRoles.Primary;
+        ? ReplicaOnPartition.isActiveRole(replica.PreviousReplicaRole)
+        : ReplicaOnPartition.isActiveRole(replica.ReplicaRole);
 
       if (countsTowardWriteQuorum) {
         writeQuorumReplicaIds.add(replica.ReplicaId);
@@ -250,26 +252,6 @@ export class ReplicaListComponent extends BaseControllerDirective {
     const writeQuorum = Math.floor(count / 2) + 1;
 
     return { isInReconfiguration, writeQuorum, quorumReplicas: writeQuorumReplicaIds };
-  }
-
-  private formatDuration(seconds: number): string {
-    if (seconds === 0) {
-      return '0 seconds';
-    }
-
-    const days = Math.floor(seconds / 86400);
-    const hours = Math.floor((seconds % 86400) / 3600);
-    const minutes = Math.floor((seconds % 3600) / 60);
-    const secs = seconds % 60;
-
-    const parts: string[] = [];
-
-    if (days > 0) parts.push(`${days} d`);
-    if (hours > 0) parts.push(`${hours} hr`);
-    if (minutes > 0) parts.push(`${minutes} m`);
-    if (secs > 0) parts.push(`${secs} s`);
-
-    return parts.join(' ');
   }
 
   private getReplicaInfoMessage(nodeStatus: string): string {

@@ -8,6 +8,9 @@ import { tap } from 'rxjs/operators';
 import { PartitionBaseControllerDirective } from '../PartitionBase';
 import { IEssentialListItem } from 'src/app/modules/charts/essential-health-tile/essential-health-tile.component';
 import { ReplicaRoles } from 'src/app/Common/Constants';
+import { IRawReplicaOnPartition } from 'src/app/Models/RawDataTypes';
+import { ReplicaOnPartition } from 'src/app/Models/DataModels/Replica';
+import { TimeUtils } from 'src/app/Utils/TimeUtils';
 
 @Component({
   selector: 'app-essentials',
@@ -25,6 +28,7 @@ export class EssentialsComponent extends PartitionBaseControllerDirective {
   isInReconfiguration = false;
   quorumLossDuration = '';
   downReplicasInQuorum = 0;
+  currentReplicaSetSize = 0;
 
   constructor(protected data: DataService, injector: Injector, private settings: SettingsService) {
     super(data, injector);
@@ -139,8 +143,9 @@ export class EssentialsComponent extends PartitionBaseControllerDirective {
 
     const quorumReplicas = this.calculateWriteQuorum(this.partition.replicas.collection.map(r => r.raw));
     const isInQuorumLoss = this.partition.raw.PartitionStatus === 'InQuorumLoss';
+    this.currentReplicaSetSize = quorumReplicas.size;
 
-    this.quorumLossDuration = this.formatDuration(this.partition.raw.LastQuorumLossDurationInSeconds || 0);
+    this.quorumLossDuration = TimeUtils.formatDurationAsAspNetTimespan((this.partition.raw.LastQuorumLossDurationInSeconds || 0) * 1000);
 
     this.downReplicasInQuorum = this.partition.replicas.collection.filter(r =>
       quorumReplicas.has(r.raw.ReplicaId) && r.raw.ReplicaStatus !== 'Ready'
@@ -152,7 +157,7 @@ export class EssentialsComponent extends PartitionBaseControllerDirective {
       isInQuorumLoss && quorumReplicas.has(replica.raw.ReplicaId) && replica.raw.ReplicaStatus !== 'Ready' ? 'highlighted-row' : '';
   }
 
-  private calculateWriteQuorum(replicas: any[]): Set<string> {
+  private calculateWriteQuorum(replicas: IRawReplicaOnPartition[]): Set<string> {
     this.isInReconfiguration = !replicas.every(replica =>
       replica.PreviousReplicaRole === ReplicaRoles.None
     );
@@ -162,8 +167,8 @@ export class EssentialsComponent extends PartitionBaseControllerDirective {
 
     replicas.forEach(replica => {
       const countsTowardWriteQuorum = this.isInReconfiguration
-        ? replica.PreviousReplicaRole === ReplicaRoles.ActiveSecondary || replica.PreviousReplicaRole === ReplicaRoles.Primary
-        : replica.ReplicaRole === ReplicaRoles.ActiveSecondary || replica.ReplicaRole === ReplicaRoles.Primary;
+        ? ReplicaOnPartition.isActiveRole(replica.PreviousReplicaRole)
+        : ReplicaOnPartition.isActiveRole(replica.ReplicaRole);
 
       if (countsTowardWriteQuorum) {
         writeQuorumReplicaIds.add(replica.ReplicaId);
@@ -174,26 +179,6 @@ export class EssentialsComponent extends PartitionBaseControllerDirective {
     this.writeQuorum = Math.floor(count / 2) + 1;
 
     return writeQuorumReplicaIds;
-  }
-
-  private formatDuration(seconds: number): string {
-    if (seconds === 0) {
-      return '0 seconds';
-    }
-
-    const days = Math.floor(seconds / 86400);
-    const hours = Math.floor((seconds % 86400) / 3600);
-    const minutes = Math.floor((seconds % 3600) / 60);
-    const secs = seconds % 60;
-
-    const parts: string[] = [];
-
-    if (days > 0) parts.push(`${days} d`);
-    if (hours > 0) parts.push(`${hours} hr`);
-    if (minutes > 0) parts.push(`${minutes} m`);
-    if (secs > 0) parts.push(`${secs} s`);
-
-    return parts.join(' ');
   }
 
 }

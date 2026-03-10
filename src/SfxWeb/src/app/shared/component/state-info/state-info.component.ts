@@ -13,6 +13,7 @@ export class StateInfoComponent {
 
   @Input() stateful = false;
   @Input() data: IRawServiceDescription | IRawPartition;
+  @Input() currentReplicaSetSize: number = 0;
 
   constructor() { }
 }
