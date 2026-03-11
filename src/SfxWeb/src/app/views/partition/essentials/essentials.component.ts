@@ -9,7 +9,6 @@ import { PartitionBaseControllerDirective } from '../PartitionBase';
 import { IEssentialListItem } from 'src/app/modules/charts/essential-health-tile/essential-health-tile.component';
 import { ReplicaRoles } from 'src/app/Common/Constants';
 import { ReplicaOnPartition } from 'src/app/Models/DataModels/Replica';
-import { TimeUtils } from 'src/app/Utils/TimeUtils';
 
 @Component({
   selector: 'app-essentials',
@@ -25,7 +24,7 @@ export class EssentialsComponent extends PartitionBaseControllerDirective {
   writeQuorum = 0;
   quorumNeeded = 0;
   isInReconfiguration = false;
-  quorumLossDuration = '';
+  quorumLossDuration: number = 0;
   downReplicasInQuorum = 0;
   currentReplicaSetSize = 0;
 
@@ -144,7 +143,7 @@ export class EssentialsComponent extends PartitionBaseControllerDirective {
     const isInQuorumLoss = this.partition.raw.PartitionStatus === 'InQuorumLoss';
     this.currentReplicaSetSize = quorumReplicas.size;
 
-    this.quorumLossDuration = TimeUtils.formatDurationAsAspNetTimespan((this.partition.raw.LastQuorumLossDurationInSeconds || 0) * 1000);
+    this.quorumLossDuration = this.partition.raw.LastQuorumLossDurationInSeconds * 1000;
 
     this.downReplicasInQuorum = this.partition.replicas.collection.filter(r =>
       quorumReplicas.has(r.id) && r.raw.ReplicaStatus !== 'Ready'

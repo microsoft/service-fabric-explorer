@@ -8,8 +8,7 @@ import { Node } from 'src/app/Models/DataModels/Node';
 import { ListSettings, ListColumnSettingWithFilter, ListColumnSettingForColoredNodeName, ListColumnSettingForBadge, ListColumnSetting } from 'src/app/Models/ListSettings';
 import { ListColumnSettingWithExpandableLink } from '../expandable-link/expandable-link.component';
 import { ListColumnSettingForExpandedDetails } from '../expanded-details/expanded-details.component';
-import { NodeStatusConstants, ReplicaRoles, SortPriorities, PartitionStatusConstants } from 'src/app/Common/Constants';
-import { TimeUtils } from 'src/app/Utils/TimeUtils';
+import { NodeStatusConstants, ReplicaRoles, SortPriorities, PartitionStatusConstants, Constants } from 'src/app/Common/Constants';
 import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 
 interface ServiceConfig {
@@ -24,7 +23,7 @@ interface ServiceState {
   targetReplicaSetSize: number;
   currentReplicaSetSize: number;
   partitionStatus: string;
-  lastQuorumLossDuration: string;
+  lastQuorumLossDuration: number;
   writeQuorum: number;
   isInReconfiguration: boolean;
   downReplicasInQuorum: number; // Number of replicas counted toward write quorum that are not in Ready state. This identifies which replicas to focus on for partition recovery.
@@ -48,15 +47,15 @@ export class ReplicaListComponent extends BaseControllerDirective {
   readonly PartitionStatus = PartitionStatusConstants;
 
   private readonly failoverManagerConfig: ServiceConfig = {
-    applicationId: 'System',
-    serviceId: 'System/FailoverManagerService',
-    partitionId: '00000000-0000-0000-0000-000000000001'
+    applicationId: Constants.SystemAppId,
+    serviceId: `${Constants.SystemAppId}/${Constants.FailoverManagerServiceName}`,
+    partitionId: Constants.FailoverManagerPartitionId
   };
 
   private readonly clusterManagerConfig: ServiceConfig = {
-    applicationId: 'System',
-    serviceId: 'System/ClusterManagerService',
-    partitionId: '00000000-0000-0000-0000-000000002000'
+    applicationId: Constants.SystemAppId,
+    serviceId: `${Constants.SystemAppId}/${Constants.ClusterManagerServiceName}`,
+    partitionId: Constants.ClusterManagerPartitionId
   };
 
   activeTab = ServiceName.FailoverManager;
@@ -98,7 +97,7 @@ export class ReplicaListComponent extends BaseControllerDirective {
       targetReplicaSetSize: 0,
       currentReplicaSetSize: 0,
       partitionStatus: '',
-      lastQuorumLossDuration: '',
+      lastQuorumLossDuration: 0,
       writeQuorum: 0,
       isInReconfiguration: false,
       downReplicasInQuorum: 0,
@@ -217,7 +216,7 @@ export class ReplicaListComponent extends BaseControllerDirective {
     state.targetReplicaSetSize = partition.TargetReplicaSetSize ?? 0;
     state.currentReplicaSetSize = quorumReplicas.size;
     state.partitionStatus = partitionStatus;
-    state.lastQuorumLossDuration = TimeUtils.formatDurationAsAspNetTimespan((partition.LastQuorumLossDurationInSeconds ?? 0) * 1000);
+    state.lastQuorumLossDuration = partition.LastQuorumLossDurationInSeconds * 1000;
     state.writeQuorum = writeQuorum;
     state.isInReconfiguration = isInReconfiguration;
     state.downReplicasInQuorum = state.replicaData.filter(r => r.isDownAndCountsTowardQuorum).length;

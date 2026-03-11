@@ -6,7 +6,7 @@ import { RestClientService } from 'src/app/services/rest-client.service';
 import { DataService } from 'src/app/services/data.service';
 import { IRawApplicationHealth, IRawReplicaOnPartition } from 'src/app/Models/RawDataTypes';
 import { NodeCollection } from 'src/app/Models/DataModels/collections/NodeCollection';
-import { NodeStatusConstants, ReplicaRoles } from 'src/app/Common/Constants';
+import { NodeStatusConstants, ReplicaRoles, Constants } from 'src/app/Common/Constants';
 import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 
 interface RecoveryStep {
@@ -49,9 +49,9 @@ export class RecoveryProgressComponent extends BaseControllerDirective {
     return forkJoin({
       nodes: this.dataService.getNodes(true),
       failoverManagerReplicas: this.restClient.getReplicasOnPartition(
-        'System',
-        'System/FailoverManagerService',
-        '00000000-0000-0000-0000-000000000001'
+        Constants.SystemAppId,
+        `${Constants.SystemAppId}/${Constants.FailoverManagerServiceName}`,
+        Constants.FailoverManagerPartitionId
       ),
       systemAppHealth: this.restClient.getApplicationHealth('System').pipe(
         catchError(() => {

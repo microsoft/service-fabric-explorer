@@ -32,6 +32,12 @@ export class Constants {
     public static SystemAppTypeName = 'System';
     public static InfrastructureServiceType = 'InfrastructureServiceType';
 
+    // System service names and partition IDs
+    public static FailoverManagerServiceName = 'FailoverManagerService';
+    public static FailoverManagerPartitionId = '00000000-0000-0000-0000-000000000001';
+    public static ClusterManagerServiceName = 'ClusterManagerService';
+    public static ClusterManagerPartitionId = '00000000-0000-0000-0000-000000002000';
+
     // Version header
     public static SfxVersionMetadataName = 'SFX-Version';
     public static SfxBuildMetadataName = 'SFX-Build';
