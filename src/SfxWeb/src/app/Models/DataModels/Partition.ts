@@ -7,6 +7,7 @@ import { HealthStateFilterFlags } from '../HealthChunkRawDataTypes';
 import { ServicePartitionKindRegexes } from 'src/app/Common/Constants';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
+import { isInReconfiguration, getQuorumReplicas } from 'src/app/Utils/PartitionQuorumUtils';
 import { HealthBase } from './HealthEvent';
 import { PartitionBackupInfo } from './PartitionBackupInfo';
 import { Observable } from 'rxjs';
@@ -60,6 +61,34 @@ export class Partition extends DataModelBase<IRawPartition> {
 
     public get IsStatefulServiceAndSystemService(): boolean {
         return this.isStatefulService && this.parent.parent.raw.TypeName !== 'System';
+    }
+
+    public get isInReconfiguration(): boolean {
+        return isInReconfiguration(this.replicas.collection.map(r => r.raw));
+    }
+
+    public get quorumReplicas(): Set<string> {
+        return getQuorumReplicas(this.replicas.collection.map(r => r.raw));
+    }
+
+    public get writeQuorum(): number {
+        return Math.floor(this.quorumReplicas.size / 2) + 1;
+    }
+
+    public get quorumLossDurationMs(): number {
+        return this.raw.LastQuorumLossDurationInSeconds * 1000;
+    }
+
+    public get currentReplicaSetSize(): number {
+        return this.quorumReplicas.size;
+    }
+
+    public get downReplicasInQuorum(): number {
+        return this.replicas.collection.filter(r => this.quorumReplicas.has(r.raw.ReplicaId) && r.raw.ReplicaStatus !== 'Ready').length;
+    }
+
+    public get quorumNeeded(): number {
+        return Math.max(0, this.writeQuorum - (this.currentReplicaSetSize - this.downReplicasInQuorum));
     }
 
     protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<IRawPartition> {

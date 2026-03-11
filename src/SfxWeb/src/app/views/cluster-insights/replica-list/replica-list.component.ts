@@ -8,7 +8,9 @@ import { Node } from 'src/app/Models/DataModels/Node';
 import { ListSettings, ListColumnSettingWithFilter, ListColumnSettingForColoredNodeName, ListColumnSettingForBadge, ListColumnSetting } from 'src/app/Models/ListSettings';
 import { ListColumnSettingWithExpandableLink } from '../expandable-link/expandable-link.component';
 import { ListColumnSettingForExpandedDetails } from '../expanded-details/expanded-details.component';
-import { NodeStatusConstants, ReplicaRoles, SortPriorities, PartitionStatusConstants, Constants } from 'src/app/Common/Constants';
+import { NodeStatusConstants, SortPriorities, PartitionStatusConstants, Constants } from 'src/app/Common/Constants';
+import { isInReconfiguration, getQuorumReplicas, calculateWriteQuorum } from 'src/app/Utils/PartitionQuorumUtils';
+import { IRawReplicaOnPartition } from 'src/app/Models/RawDataTypes';
 import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 
 interface ServiceConfig {
@@ -119,8 +121,8 @@ export class ReplicaListComponent extends BaseControllerDirective {
     ];
 
     // During reconfiguration, the replica role that counts toward write quorum is calculated based on PreviousReplicaRole.
-    const isInReconfiguration = this.getServiceState(service).isInReconfiguration;
-    if (isInReconfiguration) {
+    const inReconfiguration = this.getServiceState(service).isInReconfiguration;
+    if (inReconfiguration) {
       columnSettings.splice(1, 0, new ListColumnSettingWithFilter('raw.PreviousReplicaRole', 'Previous Replica Role'));
     }
 
@@ -173,14 +175,16 @@ export class ReplicaListComponent extends BaseControllerDirective {
   private processServiceReplicas(
     config: ServiceConfig,
     service: string,
-    replicas: any[],
+    replicas: IRawReplicaOnPartition[],
     nodes: Node[],
     partition: any
   ): void {
     const state = this.getServiceState(service);
     const partitionStatus = partition.PartitionStatus ?? '';
 
-    const { isInReconfiguration, writeQuorum, quorumReplicas } = this.calculateWriteQuorum(replicas);
+    const inReconfiguration = isInReconfiguration(replicas);
+    const quorumReplicas = getQuorumReplicas(replicas);
+    const writeQuorum = calculateWriteQuorum(replicas);
 
     const nodeMap = new Map(nodes.map(node => [node.name, node]));
 
@@ -218,7 +222,7 @@ export class ReplicaListComponent extends BaseControllerDirective {
     state.partitionStatus = partitionStatus;
     state.lastQuorumLossDuration = partition.LastQuorumLossDurationInSeconds * 1000;
     state.writeQuorum = writeQuorum;
-    state.isInReconfiguration = isInReconfiguration;
+    state.isInReconfiguration = inReconfiguration;
     state.downReplicasInQuorum = state.replicaData.filter(r => r.isDownAndCountsTowardQuorum).length;
     state.quorumNeeded = Math.max(0, writeQuorum - (state.currentReplicaSetSize - state.downReplicasInQuorum));
     state.isLoading = false;
@@ -229,30 +233,6 @@ export class ReplicaListComponent extends BaseControllerDirective {
       partitionStatus === PartitionStatusConstants.InQuorumLoss && replica.isDownAndCountsTowardQuorum ? 'highlighted-row' : '';
 
     state.replicaData.forEach(replicaItem => this.loadDeployedReplicaDetails(replicaItem, config.partitionId));
-  }
-
-  private calculateWriteQuorum(replicas: any[]): { isInReconfiguration: boolean; writeQuorum: number; quorumReplicas: Set<string> } {
-    const isInReconfiguration = !replicas.every(replica =>
-      replica.PreviousReplicaRole === ReplicaRoles.None
-    );
-
-    const writeQuorumReplicaIds = new Set<string>();
-    let count = 0;
-
-    replicas.forEach(replica => {
-      const countsTowardWriteQuorum = isInReconfiguration
-        ? (replica.PreviousReplicaRole === ReplicaRoles.ActiveSecondary || replica.PreviousReplicaRole === ReplicaRoles.Primary)
-        : (replica.ReplicaRole === ReplicaRoles.ActiveSecondary || replica.ReplicaRole === ReplicaRoles.Primary);
-
-      if (countsTowardWriteQuorum) {
-        writeQuorumReplicaIds.add(replica.ReplicaId);
-        count++;
-      }
-    });
-
-    const writeQuorum = Math.floor(count / 2) + 1;
-
-    return { isInReconfiguration, writeQuorum, quorumReplicas: writeQuorumReplicaIds };
   }
 
   private getReplicaInfoMessage(nodeStatus: string): string {

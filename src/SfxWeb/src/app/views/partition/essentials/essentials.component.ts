@@ -7,8 +7,7 @@ import { Observable, forkJoin } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { PartitionBaseControllerDirective } from '../PartitionBase';
 import { IEssentialListItem } from 'src/app/modules/charts/essential-health-tile/essential-health-tile.component';
-import { ReplicaRoles } from 'src/app/Common/Constants';
-import { ReplicaOnPartition } from 'src/app/Models/DataModels/Replica';
+
 
 @Component({
   selector: 'app-essentials',
@@ -21,12 +20,6 @@ export class EssentialsComponent extends PartitionBaseControllerDirective {
   listSettings: ListSettings;
 
   essentialItems: IEssentialListItem[] = [];
-  writeQuorum = 0;
-  quorumNeeded = 0;
-  isInReconfiguration = false;
-  quorumLossDuration: number = 0;
-  downReplicasInQuorum = 0;
-  currentReplicaSetSize = 0;
 
   constructor(protected data: DataService, injector: Injector, private settings: SettingsService) {
     super(data, injector);
@@ -78,8 +71,11 @@ export class EssentialsComponent extends PartitionBaseControllerDirective {
       this.partition.replicas.refresh(messageHandler)
     ]).pipe(
       tap(() => {
-        if (this.partition.isStatefulService) {
-          this.processStatefulPartitionReplicas();
+        // Highlight the replicas that need to be brought back up to get the partition out of quorum loss
+        if (this.partition.isStatefulService && this.partition.raw.PartitionStatus === 'InQuorumLoss') {
+          this.listSettings.rowClass = (replica) =>
+            this.partition.quorumReplicas.has(replica.id) && replica.raw.ReplicaStatus !== 'Ready'
+              ? 'highlighted-row' : '';
         }
       })
     );
@@ -132,48 +128,6 @@ export class EssentialsComponent extends PartitionBaseControllerDirective {
 
     }
 
-  }
-
-  private processStatefulPartitionReplicas(): void {
-    if (!this?.partition?.partitionInformation.isInitialized) {
-      return;
-    }
-
-    const quorumReplicas = this.calculateWriteQuorum(this.partition.replicas.collection);
-    const isInQuorumLoss = this.partition.raw.PartitionStatus === 'InQuorumLoss';
-    this.currentReplicaSetSize = quorumReplicas.size;
-
-    this.quorumLossDuration = this.partition.raw.LastQuorumLossDurationInSeconds * 1000;
-
-    this.downReplicasInQuorum = this.partition.replicas.collection.filter(r =>
-      quorumReplicas.has(r.id) && r.raw.ReplicaStatus !== 'Ready'
-    ).length;
-
-    this.quorumNeeded = Math.max(0, this.writeQuorum - (quorumReplicas.size - this.downReplicasInQuorum));
-
-    this.listSettings.rowClass = (replica) =>
-      isInQuorumLoss && quorumReplicas.has(replica.id) && replica.raw.ReplicaStatus !== 'Ready' ? 'highlighted-row' : '';
-  }
-
-  private calculateWriteQuorum(replicas: ReplicaOnPartition[]): Set<string> {
-    this.isInReconfiguration = !replicas.every(replica =>
-      replica.raw.PreviousReplicaRole === ReplicaRoles.None
-    );
-
-    const writeQuorumReplicaIds = new Set<string>();
-    let count = 0;
-
-    replicas.forEach(replica => {
-      const role = this.isInReconfiguration ? replica.raw.PreviousReplicaRole : replica.raw.ReplicaRole;
-      if (role === ReplicaRoles.ActiveSecondary || role === ReplicaRoles.Primary) {
-        writeQuorumReplicaIds.add(replica.id);
-        count++;
-      }
-    });
-
-    this.writeQuorum = Math.floor(count / 2) + 1;
-
-    return writeQuorumReplicaIds;
   }
 
 }

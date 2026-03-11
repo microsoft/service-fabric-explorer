@@ -6,7 +6,8 @@ import { RestClientService } from 'src/app/services/rest-client.service';
 import { DataService } from 'src/app/services/data.service';
 import { IRawApplicationHealth, IRawReplicaOnPartition } from 'src/app/Models/RawDataTypes';
 import { NodeCollection } from 'src/app/Models/DataModels/collections/NodeCollection';
-import { NodeStatusConstants, ReplicaRoles, Constants } from 'src/app/Common/Constants';
+import { NodeStatusConstants, Constants } from 'src/app/Common/Constants';
+import { calculateWriteQuorum } from 'src/app/Utils/PartitionQuorumUtils';
 import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 
 interface RecoveryStep {
@@ -93,39 +94,20 @@ export class RecoveryProgressComponent extends BaseControllerDirective {
   private checkSeedNodeQuorum(nodeCollection: NodeCollection): void {
     const totalSeedNodes = nodeCollection.seedNodeCount;
     const upSeedNodes = nodeCollection.collection.filter(node => node.raw.IsSeedNode && node.raw.NodeStatus === NodeStatusConstants.Up).length;
-    const quorum = this.calculateQuorum(totalSeedNodes);
-    const hasQuorum = upSeedNodes >= quorum;
+    const seedNodeQuorum = Math.floor(totalSeedNodes / 2) + 1;
+    const hasQuorum = upSeedNodes >= seedNodeQuorum;
 
     const status = hasQuorum ? 'success' : 'error';
     const tooltip = hasQuorum 
-      ? `Quorum achieved: ${upSeedNodes}/${totalSeedNodes} seed nodes are Up (${quorum} required)`
-      : `Quorum lost: Only ${upSeedNodes}/${totalSeedNodes} seed nodes are Up (${quorum} required)`;
+      ? `Quorum achieved: ${upSeedNodes}/${totalSeedNodes} seed nodes are Up (${seedNodeQuorum} required)`
+      : `Quorum lost: Only ${upSeedNodes}/${totalSeedNodes} seed nodes are Up (${seedNodeQuorum} required)`;
 
     this.updateStepStatus(RecoveryStepName.SeedNodesQuorum, status, tooltip);
   }
 
-  private calculateQuorum(total: number): number {
-    return Math.floor(total / 2) + 1;
-  }
-
-  private calculateWriteQuorum(replicas: IRawReplicaOnPartition[]): number {
-    // If the previous configuration (PC) role is 'None' for all replicas, then the partition is not in reconfiguration.
-    const isNotInReconfiguration = replicas.every(replica =>
-      replica.PreviousReplicaRole === ReplicaRoles.None
-    );
-
-    // If the partition is not in reconfiguration, write quorum is calculated using the current configuration (CC) role.
-    // Otherwise, it is calculated using the PC role.
-    const activeReplicas = isNotInReconfiguration
-      ? replicas.filter(replica => replica.ReplicaRole === ReplicaRoles.ActiveSecondary || replica.ReplicaRole === ReplicaRoles.Primary)
-      : replicas.filter(replica => replica.PreviousReplicaRole === ReplicaRoles.ActiveSecondary || replica.PreviousReplicaRole === ReplicaRoles.Primary);
-
-    return this.calculateQuorum(activeReplicas.length);
-  }
-
   private checkFailoverManagerStatus(replicas: IRawReplicaOnPartition[]): boolean {
     const readyReplicas = replicas.filter(replica => replica.ReplicaStatus === 'Ready').length;
-    const writeQuorum = this.calculateWriteQuorum(replicas);
+    const writeQuorum = calculateWriteQuorum(replicas);
     const hasQuorum = readyReplicas >= writeQuorum;
 
     const status = hasQuorum ? 'success' : 'error';

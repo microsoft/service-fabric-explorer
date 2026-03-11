@@ -70,8 +70,8 @@ context('partition', () => {
             cy.visit(urlFormatter(appName, serviceName, partitionId));
             cy.wait(waitRequest);
 
-            cy.get('[data-cy=replicas]').within(() => {
-                cy.contains('InQuorumLoss');
+            cy.get('[data-cy=quorum-loss-tile]').within(() => {
+                cy.contains('Duration');
             });
         })
 

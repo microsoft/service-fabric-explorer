@@ -64,7 +64,7 @@ context('cluster-insights', () => {
 
       cy.get('app-nodes').within(() => {
         cy.contains('a.nav-link', 'All Nodes').click();
-        cy.get('tbody > tr:first-child span.expandable-link').click();
+        cy.get('tbody > tr:first-child span.expandable-link').first().click();
       });
       cy.get('app-nodes').within(() => {
         cy.get('app-expanded-details').scrollIntoView().should('be.visible');
