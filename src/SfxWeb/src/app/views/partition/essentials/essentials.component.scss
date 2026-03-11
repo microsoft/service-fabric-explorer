@@ -7,94 +7,36 @@
         font-size: var(--font-size-large);
         color: var(--font-accent-color);
     }
-
 }
 
-.replica-stats-container {
-  display: flex;
-  gap: 1rem;
-  margin-top: 1rem;
-  margin-bottom: 1.5rem;
-  flex-wrap: wrap;
-}
-
-.stat-box {
-  width: 180px;
-  padding: 0.75rem;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid var(--accent-underline);
-  border-radius: var(--primary-border-radius);
-  box-shadow: var(--primary-box-shadow);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  gap: 0.4rem;
-
-  &.replica-set-box {
-    padding: 0.35rem 0.5rem;
-    align-items: stretch;
-    text-align: left;
-    gap: 0;
-  }
-
-  &.Ready {
-    border-color: var(--badge-ok);
-    background: rgba(0, 255, 0, 0.08);
-  }
-
-  &.InQuorumLoss {
-    border-color: var(--badge-error);
-    background: rgba(255, 0, 0, 0.08);
-  }
-
-  .stat-label {
-    font-size: 0.8rem;
-    color: var(--font-accent-color);
-    font-weight: 400;
-  }
-
-  .stat-value {
-    font-size: 1.15rem;
-    font-weight: 600;
-    color: var(--font-primary-color);
-
-    &.InQuorumLoss {
-      color: var(--badge-error);
-    }
-
-    &.Ready {
-      color: var(--badge-ok);
-    }
-  }
-}
-
-.flex-center {
-  display: flex;
-  align-items: center;
-  gap: 0.3rem;
-  font-size: 0.75rem;
-  color: var(--font-accent-color);
-}
-
-.line-item {
+.title-wrapper {
+  font-size: 18pt;
   line-height: 0.9;
-  margin-right: 3px;
+  font-weight: 600;
+  border-bottom: 1px solid #4c4c4c;
+  padding-bottom: 8px;
+  text-align: center;
+}
 
-  &-small {
-    @extend .line-item;
-    font-size: 18px;
-    width: 22px;
-    text-align: end;
-    font-weight: 600;
-    color: var(--font-primary-color);
+.quorum-info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+
+  .quorum-info-value {
+    text-align: right;
   }
 }
 
 .line-item-separator {
-  border-bottom: 1px solid var(--accent-underline);
-  padding-bottom: 3px;
-  margin-bottom: 3px;
+    border-bottom: 1px solid #4c4c4c;
+    padding-bottom: 8px;
+    margin-bottom: 3px;
+}
+
+.quorum-info-text {
+    color: var(--badge-error);
 }
 
 .quorum-loss-section {
