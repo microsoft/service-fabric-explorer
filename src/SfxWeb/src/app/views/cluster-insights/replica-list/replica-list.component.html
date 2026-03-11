@@ -52,15 +52,13 @@
             </div>
           </div>
 
-          <div class="quorum-loss-message" *ngIf="failoverManagerState.partitionStatus === PartitionStatus.InQuorumLoss">
-            <i class="bowtie-icon bowtie-status-warning"></i>
-            <span>Failover Manager is in quorum loss. All approvals for upgrades, repair jobs, and infrastructure jobs are paused.</span>
-          </div>
+          <app-warning *ngIf="failoverManagerState.partitionStatus === PartitionStatus.InQuorumLoss"
+            description="Failover Manager is in quorum loss. All approvals for upgrades, repair jobs, and infrastructure jobs are paused.">
+          </app-warning>
 
-          <div *ngIf="failoverManagerState.partitionStatus === PartitionStatus.InQuorumLoss" class="quorum-loss-message">
-            <i class="bowtie-icon bowtie-status-warning"></i>
-            <span>You need to have any <strong>{{ failoverManagerState.quorumNeeded }}</strong> of the below <strong>{{ failoverManagerState.downReplicasInQuorum }}</strong> highlighted replicas ready to be out of quorum loss.</span>
-          </div>
+          <app-warning *ngIf="failoverManagerState.partitionStatus === PartitionStatus.InQuorumLoss">
+            <span description-add-on>You need to have any <strong>{{ failoverManagerState.quorumNeeded }}</strong> of the below <strong>{{ failoverManagerState.downReplicasInQuorum }}</strong> highlighted replicas ready to be out of quorum loss.</span>
+          </app-warning>
 
           <app-detail-list [list]="failoverManagerState.replicaData" [listSettings]="failoverManagerState.listSettings"></app-detail-list>
         </ng-template>
@@ -115,14 +113,13 @@
             </div>
           </div>
 
-          <div *ngIf="failoverManagerState.partitionStatus === PartitionStatus.InQuorumLoss && clusterManagerState.replicaData.length === 0" class="quorum-loss-message">
-            <span><strong>Warning:</strong> Cluster Manager data will not load when Failover Manager is in quorum loss.</span>
-          </div>
+          <app-warning *ngIf="failoverManagerState.partitionStatus === PartitionStatus.InQuorumLoss && clusterManagerState.replicaData.length === 0">
+            <span description-add-on><strong>Warning:</strong> Cluster Manager data will not load when Failover Manager is in quorum loss.</span>
+          </app-warning>
 
-          <div *ngIf="clusterManagerState.partitionStatus === PartitionStatus.InQuorumLoss" class="quorum-loss-message">
-            <i class="bowtie-icon bowtie-status-warning"></i>
-            <span>You need to have any <strong>{{ clusterManagerState.quorumNeeded }}</strong> of the below <strong>{{ clusterManagerState.downReplicasInQuorum }}</strong> highlighted replicas ready to be out of quorum loss.</span>
-          </div>
+          <app-warning *ngIf="clusterManagerState.partitionStatus === PartitionStatus.InQuorumLoss">
+            <span description-add-on>You need to have any <strong>{{ clusterManagerState.quorumNeeded }}</strong> of the below <strong>{{ clusterManagerState.downReplicasInQuorum }}</strong> highlighted replicas ready to be out of quorum loss.</span>
+          </app-warning>
 
           <app-detail-list [list]="clusterManagerState.replicaData" [listSettings]="clusterManagerState.listSettings"></app-detail-list>
         </ng-template>

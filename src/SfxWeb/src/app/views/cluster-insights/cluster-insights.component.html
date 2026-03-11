@@ -1,9 +1,6 @@
 <app-navbar type="Cluster Recovery Insights" [showCopy]="false"></app-navbar>
 
-<div class="alert alert-secondary" >
-  <strong>Note:</strong> This page may display only a partial view of the cluster. Loading may take longer if the Cluster Manager Service is in quorum loss.
-To ensure APIs can load during Failover Manager or Cluster Manager quorum loss, this page will reload every 65 seconds, regardless of the global refresh rate.
-</div>
+<app-warning description="This page may display only a partial view of the cluster. Loading may take longer if the Cluster Manager Service is in quorum loss. To ensure APIs can load during Failover Manager or Cluster Manager quorum loss, this page will reload every 65 seconds, regardless of the global refresh rate."></app-warning>
 
 <app-recovery-progress></app-recovery-progress>
 

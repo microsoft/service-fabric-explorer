@@ -39,20 +39,4 @@
     color: var(--badge-error);
 }
 
-.quorum-loss-section {
-    margin-bottom: 1.5rem;
-}
 
-.quorum-loss-message {
-  background-color: rgba(241, 157, 3, 0.15);
-  border-left: 4px solid var(--badge-warning);
-  padding: 1rem 1.5rem;
-  border-radius: var(--primary-border-radius);
-  font-size: var(--font-size-default);
-  display: flex;
-
-  strong {
-    color: var(--badge-warning);
-    font-weight: var(--font-weight-semibold);
-  }
-}

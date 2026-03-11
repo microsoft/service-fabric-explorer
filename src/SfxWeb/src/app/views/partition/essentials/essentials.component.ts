@@ -8,7 +8,6 @@ import { tap } from 'rxjs/operators';
 import { PartitionBaseControllerDirective } from '../PartitionBase';
 import { IEssentialListItem } from 'src/app/modules/charts/essential-health-tile/essential-health-tile.component';
 import { ReplicaRoles } from 'src/app/Common/Constants';
-import { IRawReplicaOnPartition } from 'src/app/Models/RawDataTypes';
 import { ReplicaOnPartition } from 'src/app/Models/DataModels/Replica';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 
@@ -61,8 +60,8 @@ export class EssentialsComponent extends PartitionBaseControllerDirective {
     }
     
     if (this.partition.isStatefulService) {
-      // Add Previous Replica Role column only when stateful partition is in quorum loss
-      if (this.partition.raw.PartitionStatus === 'InQuorumLoss') {
+      // Add Previous Replica Role column only when stateful partition is in quorum loss or reconfiguring
+      if (this.partition.raw.PartitionStatus === 'InQuorumLoss' || this.partition.raw.PartitionStatus === 'Reconfiguring') {
         columnSettings.splice(3, 0, new ListColumnSetting('raw.PreviousReplicaRole', 'Previous Replica Role'));
       }
     }
@@ -141,37 +140,34 @@ export class EssentialsComponent extends PartitionBaseControllerDirective {
       return;
     }
 
-    const quorumReplicas = this.calculateWriteQuorum(this.partition.replicas.collection.map(r => r.raw));
+    const quorumReplicas = this.calculateWriteQuorum(this.partition.replicas.collection);
     const isInQuorumLoss = this.partition.raw.PartitionStatus === 'InQuorumLoss';
     this.currentReplicaSetSize = quorumReplicas.size;
 
     this.quorumLossDuration = TimeUtils.formatDurationAsAspNetTimespan((this.partition.raw.LastQuorumLossDurationInSeconds || 0) * 1000);
 
     this.downReplicasInQuorum = this.partition.replicas.collection.filter(r =>
-      quorumReplicas.has(r.raw.ReplicaId) && r.raw.ReplicaStatus !== 'Ready'
+      quorumReplicas.has(r.id) && r.raw.ReplicaStatus !== 'Ready'
     ).length;
 
     this.quorumNeeded = Math.max(0, this.writeQuorum - (quorumReplicas.size - this.downReplicasInQuorum));
 
     this.listSettings.rowClass = (replica) =>
-      isInQuorumLoss && quorumReplicas.has(replica.raw.ReplicaId) && replica.raw.ReplicaStatus !== 'Ready' ? 'highlighted-row' : '';
+      isInQuorumLoss && quorumReplicas.has(replica.id) && replica.raw.ReplicaStatus !== 'Ready' ? 'highlighted-row' : '';
   }
 
-  private calculateWriteQuorum(replicas: IRawReplicaOnPartition[]): Set<string> {
+  private calculateWriteQuorum(replicas: ReplicaOnPartition[]): Set<string> {
     this.isInReconfiguration = !replicas.every(replica =>
-      replica.PreviousReplicaRole === ReplicaRoles.None
+      replica.raw.PreviousReplicaRole === ReplicaRoles.None
     );
 
     const writeQuorumReplicaIds = new Set<string>();
     let count = 0;
 
     replicas.forEach(replica => {
-      const countsTowardWriteQuorum = this.isInReconfiguration
-        ? ReplicaOnPartition.isActiveRole(replica.PreviousReplicaRole)
-        : ReplicaOnPartition.isActiveRole(replica.ReplicaRole);
-
-      if (countsTowardWriteQuorum) {
-        writeQuorumReplicaIds.add(replica.ReplicaId);
+      const role = this.isInReconfiguration ? replica.raw.PreviousReplicaRole : replica.raw.ReplicaRole;
+      if (role === ReplicaRoles.ActiveSecondary || role === ReplicaRoles.Primary) {
+        writeQuorumReplicaIds.add(replica.id);
         count++;
       }
     });

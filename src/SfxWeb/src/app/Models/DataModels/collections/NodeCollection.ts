@@ -73,6 +73,7 @@ export class NodeCollection extends DataModelCollectionBase<Node> {
     public disabledAndDisablingCount: number;
     public disabledAndDisablingNodes: Node[];
     public nodeTypes: string[];
+    public upNodes: Node[] = [];
 
     public constructor(data: DataService) {
         super(data);
@@ -83,12 +84,11 @@ export class NodeCollection extends DataModelCollectionBase<Node> {
     }
 
     public getLikelyFmmNode(): Node | null {
-        const upNodes = this.collection.filter(node => node.raw.NodeStatus === NodeStatusConstants.Up);
-        if (upNodes.length === 0) {
+        if (this.upNodes.length === 0) {
             return null;
         }
-        let lowest = upNodes[0];
-        upNodes.forEach(node => {
+        let lowest = this.upNodes[0];
+        this.upNodes.forEach(node => {
             if (parseInt(node.id, 16) < parseInt(lowest.id, 16)) {
                 lowest = node;
             }
@@ -163,7 +163,11 @@ export class NodeCollection extends DataModelCollectionBase<Node> {
 
         const disabled = [];
         const disabling = [];
+        const up = [];
         this.collection.forEach(node => {
+            if (node.raw.NodeStatus === NodeStatusConstants.Up) {
+                up.push(node);
+            }
             if (node.raw.NodeStatus === NodeStatusConstants.Disabled) {
                 disabledNodes++;
                 disabled.push(node);
@@ -176,6 +180,7 @@ export class NodeCollection extends DataModelCollectionBase<Node> {
             nodeTypes.add(node.raw.Type);
         });
 
+        this.upNodes = up;
         this.disabledAndDisablingNodes = disabling.concat(disabled);
 
         this.seedNodeCount = seedNodes.length;

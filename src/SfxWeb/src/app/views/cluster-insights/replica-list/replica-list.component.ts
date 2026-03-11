@@ -9,7 +9,6 @@ import { ListSettings, ListColumnSettingWithFilter, ListColumnSettingForColoredN
 import { ListColumnSettingWithExpandableLink } from '../expandable-link/expandable-link.component';
 import { ListColumnSettingForExpandedDetails } from '../expanded-details/expanded-details.component';
 import { NodeStatusConstants, ReplicaRoles, SortPriorities, PartitionStatusConstants } from 'src/app/Common/Constants';
-import { ReplicaOnPartition } from 'src/app/Models/DataModels/Replica';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 
@@ -243,8 +242,8 @@ export class ReplicaListComponent extends BaseControllerDirective {
 
     replicas.forEach(replica => {
       const countsTowardWriteQuorum = isInReconfiguration
-        ? ReplicaOnPartition.isActiveRole(replica.PreviousReplicaRole)
-        : ReplicaOnPartition.isActiveRole(replica.ReplicaRole);
+        ? (replica.PreviousReplicaRole === ReplicaRoles.ActiveSecondary || replica.PreviousReplicaRole === ReplicaRoles.Primary)
+        : (replica.ReplicaRole === ReplicaRoles.ActiveSecondary || replica.ReplicaRole === ReplicaRoles.Primary);
 
       if (countsTowardWriteQuorum) {
         writeQuorumReplicaIds.add(replica.ReplicaId);

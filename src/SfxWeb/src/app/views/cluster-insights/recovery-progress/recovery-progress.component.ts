@@ -8,7 +8,6 @@ import { IRawApplicationHealth, IRawReplicaOnPartition } from 'src/app/Models/Ra
 import { NodeCollection } from 'src/app/Models/DataModels/collections/NodeCollection';
 import { NodeStatusConstants, ReplicaRoles } from 'src/app/Common/Constants';
 import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
-import { ReplicaOnPartition } from 'src/app/Models/DataModels/Replica';
 
 interface RecoveryStep {
   name: string;
@@ -118,8 +117,8 @@ export class RecoveryProgressComponent extends BaseControllerDirective {
     // If the partition is not in reconfiguration, write quorum is calculated using the current configuration (CC) role.
     // Otherwise, it is calculated using the PC role.
     const activeReplicas = isNotInReconfiguration
-      ? replicas.filter(replica => ReplicaOnPartition.isActiveRole(replica.ReplicaRole))
-      : replicas.filter(replica => ReplicaOnPartition.isActiveRole(replica.PreviousReplicaRole));
+      ? replicas.filter(replica => replica.ReplicaRole === ReplicaRoles.ActiveSecondary || replica.ReplicaRole === ReplicaRoles.Primary)
+      : replicas.filter(replica => replica.PreviousReplicaRole === ReplicaRoles.ActiveSecondary || replica.PreviousReplicaRole === ReplicaRoles.Primary);
 
     return this.calculateQuorum(activeReplicas.length);
   }

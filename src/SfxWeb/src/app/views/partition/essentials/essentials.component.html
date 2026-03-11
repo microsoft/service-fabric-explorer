@@ -59,11 +59,9 @@
         <h2>{{partition.isStatelessService ? "Instances" : "Replicas"}}</h2>
       </div>
       <div collapse-body>
-        <div *ngIf="partition.isStatefulService && partition.raw?.PartitionStatus === 'InQuorumLoss'" class="quorum-loss-section">
-          <div class="quorum-loss-message">
-            <span>You need to have any <strong>{{ quorumNeeded }}</strong> of the below <strong>{{ downReplicasInQuorum }}</strong> highlighted replicas ready to be out of quorum loss.</span>
-          </div>
-        </div>
+        <app-warning *ngIf="partition.isStatefulService && partition.raw?.PartitionStatus === 'InQuorumLoss'">
+          <span description-add-on>You need to have any <strong>{{ quorumNeeded }}</strong> of the below <strong>{{ downReplicasInQuorum }}</strong> highlighted replicas ready to be out of quorum loss.</span>
+        </app-warning>
 
         <app-detail-list [list]="partition.replicas.collection" [listSettings]="listSettings"
           *ngIf="partition.replicas.isInitialized"></app-detail-list>

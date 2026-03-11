@@ -171,10 +171,6 @@ export class ReplicaOnPartition extends DataModelBase<IRawReplicaOnPartition> {
         return SortPriorities.ReplicaRolesToSortPriorities[this.raw.ReplicaRole] || 0;
     }
 
-    public static isActiveRole(role: string): boolean {
-        return role === ReplicaRoles.ActiveSecondary || role === ReplicaRoles.Primary;
-    }
-
     public get stoppedReplicaExpirationTimeUtc(): string {
         return TimeUtils.timestampToUTCString(this.raw.ToBeRemovedReplicaExpirationTimeUtc);
     }
