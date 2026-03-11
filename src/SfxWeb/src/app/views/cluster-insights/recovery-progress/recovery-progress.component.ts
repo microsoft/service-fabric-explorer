@@ -4,7 +4,8 @@ import { catchError, map } from 'rxjs/operators';
 
 import { RestClientService } from 'src/app/services/rest-client.service';
 import { DataService } from 'src/app/services/data.service';
-import { IRawApplicationHealth, IRawNode, IRawReplicaOnPartition } from 'src/app/Models/RawDataTypes';
+import { IRawApplicationHealth, IRawReplicaOnPartition } from 'src/app/Models/RawDataTypes';
+import { NodeCollection } from 'src/app/Models/DataModels/collections/NodeCollection';
 import { NodeStatusConstants, ReplicaRoles } from 'src/app/Common/Constants';
 import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 import { ReplicaOnPartition } from 'src/app/Models/DataModels/Replica';
@@ -40,14 +41,14 @@ export class RecoveryProgressComponent extends BaseControllerDirective {
   isLoading = true;
   override fixedRefreshIntervalMs = 65000; // 65 seconds
 
-  constructor(private restClient: RestClientService, private data: DataService, injector: Injector) {
+  constructor(private restClient: RestClientService, private dataService: DataService, injector: Injector) {
     super(injector);
   }
 
   refresh(): Observable<any> {
     this.isLoading = true;
     return forkJoin({
-      nodes: this.restClient.getNodes(),
+      nodes: this.dataService.getNodes(true),
       failoverManagerReplicas: this.restClient.getReplicasOnPartition(
         'System',
         'System/FailoverManagerService',
@@ -59,7 +60,7 @@ export class RecoveryProgressComponent extends BaseControllerDirective {
           return of(null);
         })
       ),
-      apps: this.data.getApps().pipe(
+      apps: this.dataService.getApps(true).pipe(
         catchError(() => of(null))
       )
     }).pipe(
@@ -90,10 +91,9 @@ export class RecoveryProgressComponent extends BaseControllerDirective {
     }
   }
 
-  private checkSeedNodeQuorum(rawNodes: IRawNode[]): void {
-    const seedNodes = rawNodes.filter(node => node.IsSeedNode);
-    const totalSeedNodes = seedNodes.length;
-    const upSeedNodes = seedNodes.filter(node => node.NodeStatus === NodeStatusConstants.Up).length;
+  private checkSeedNodeQuorum(nodeCollection: NodeCollection): void {
+    const totalSeedNodes = nodeCollection.seedNodeCount;
+    const upSeedNodes = nodeCollection.collection.filter(node => node.raw.IsSeedNode && node.raw.NodeStatus === NodeStatusConstants.Up).length;
     const quorum = this.calculateQuorum(totalSeedNodes);
     const hasQuorum = upSeedNodes >= quorum;
 
@@ -151,12 +151,9 @@ export class RecoveryProgressComponent extends BaseControllerDirective {
     this.updateStepStatus(RecoveryStepName.SystemServices, status, tooltip);
   }
 
-  private checkNodesStatus(rawNodes: IRawNode[]): void {
-    const totalNodes = rawNodes.length;
-    const disabledNodes = rawNodes.filter(node =>
-      node.NodeStatus === NodeStatusConstants.Disabled || node.NodeStatus === NodeStatusConstants.Disabling
-    );
-    const downNodes = rawNodes.filter(node => node.NodeStatus === NodeStatusConstants.Down);
+  private checkNodesStatus(nodeCollection: NodeCollection): void {
+    const totalNodes = nodeCollection.collection.length;
+    const downNodes = nodeCollection.collection.filter(node => node.raw.NodeStatus === NodeStatusConstants.Down);
 
     let status: RecoveryStep['status'];
     let tooltip: string;
@@ -164,9 +161,9 @@ export class RecoveryProgressComponent extends BaseControllerDirective {
     if (downNodes.length > 0) {
       status = 'error';
       tooltip = `${downNodes.length} node(s) are Down`;
-    } else if (disabledNodes.length > 0) {
+    } else if (nodeCollection.disabledAndDisablingCount > 0) {
       status = 'warning';
-      tooltip = `${disabledNodes.length} node(s) are Disabled or Disabling`;
+      tooltip = `${nodeCollection.disabledAndDisablingCount} node(s) are Disabled or Disabling`;
     } else {
       status = 'success';
       tooltip = `All ${totalNodes} nodes are Up`;

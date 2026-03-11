@@ -3,7 +3,9 @@ import { forkJoin, of, Observable } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 
 import { RestClientService } from 'src/app/services/rest-client.service';
+import { DataService } from 'src/app/services/data.service';
 import { IRawNode, IRawNodeStatusCount } from 'src/app/Models/RawDataTypes';
+import { Node } from 'src/app/Models/DataModels/Node';
 import { ListSettings, ListColumnSetting, ListColumnSettingWithFilter, ListColumnSettingForBadge } from 'src/app/Models/ListSettings';
 import { NodeStatusConstants, ReplicaRoles } from 'src/app/Common/Constants';
 import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
@@ -44,7 +46,7 @@ export class NodesComponent extends BaseControllerDirective {
 
   override fixedRefreshIntervalMs = 65000; // 65 seconds
 
-  constructor(private restClient: RestClientService, injector: Injector) {
+  constructor(private restClient: RestClientService, private dataService: DataService, injector: Injector) {
     super(injector);
   }
 
@@ -54,30 +56,31 @@ export class NodesComponent extends BaseControllerDirective {
 
   refresh(): Observable<any> {
     this.isLoading = true;
-    return this.restClient.getNodes().pipe(
-      switchMap(rawNodes => {
-        const nodeDataRequests = rawNodes.map(rawNode =>
+    return this.dataService.getNodes(true).pipe(
+      switchMap(nodeCollection => {
+        const nodes = nodeCollection.collection;
+        const nodeDataRequests = nodes.map(node =>
           forkJoin({
-            systemServiceReplicasOnNode: this.restClient.getDeployedReplicasByApplication(rawNode.Name, 'System').pipe(catchError(() => of([]))),
-            applicationsOnNode: this.restClient.getDeployedApplications(rawNode.Name).pipe(catchError(() => of([])))
+            systemServiceReplicasOnNode: this.restClient.getDeployedReplicasByApplication(node.name, 'System').pipe(catchError(() => of([]))),
+            applicationsOnNode: this.restClient.getDeployedApplications(node.name).pipe(catchError(() => of([])))
           })
         );
 
-        if (rawNodes.length === 0) {
+        if (nodes.length === 0) {
           this.isLoading = false;
           return of(null);
         }
 
         return forkJoin(nodeDataRequests).pipe(
           map(nodeResults => {
-            this.nodes = rawNodes.map((rawNode, i) => this.buildNodeDisplay(rawNode, nodeResults[i]));
+            this.nodes = nodes.map((node, i) => this.buildNodeDisplay(node, nodeResults[i]));
 
             this.seedNodes = this.nodes.filter(node => node.raw.IsSeedNode);
             this.nonSeedNodes = this.nodes.filter(node => !node.raw.IsSeedNode);
 
-            this.faultDomainCount = new Set(rawNodes.map(node => node.FaultDomain)).size;
-            this.upgradeDomainCount = new Set(rawNodes.map(node => node.UpgradeDomain)).size;
-            this.uniqueCodeVersions = [...new Set(rawNodes.map(node => node.CodeVersion))];
+            this.faultDomainCount = nodeCollection.faultDomains.length;
+            this.upgradeDomainCount = nodeCollection.upgradeDomains.length;
+            this.uniqueCodeVersions = [...new Set(nodes.map(node => node.raw.CodeVersion))];
 
             this.updateItemInEssentials();
             this.updateTiles();
@@ -96,15 +99,15 @@ export class NodesComponent extends BaseControllerDirective {
     );
   }
 
-  private buildNodeDisplay(rawNode: IRawNode, replicaData: { systemServiceReplicasOnNode: any[]; applicationsOnNode: any[] }): NodeDisplay {
-    const nodeStatus = rawNode.NodeStatus || NodeStatusConstants.Unknown;
+  private buildNodeDisplay(node: Node, replicaData: { systemServiceReplicasOnNode: any[]; applicationsOnNode: any[] }): NodeDisplay {
+    const nodeStatus = node.raw.NodeStatus || NodeStatusConstants.Unknown;
     const { systemServiceReplicasOnNode, applicationsOnNode } = replicaData;
     const primaryCount = systemServiceReplicasOnNode.filter(r => r.ReplicaRole === ReplicaRoles.Primary).length;
     const activeSecondaryCount = systemServiceReplicasOnNode.filter(r => r.ReplicaRole === ReplicaRoles.ActiveSecondary).length;
 
     return {
-      name: rawNode.Name,
-      raw: rawNode,
+      name: node.name,
+      raw: node.raw,
       nodeStatus,
       nodeStatusBadge: this.getNodeStatusBadge(nodeStatus),
       isClickable: primaryCount > 0 || activeSecondaryCount > 0 || applicationsOnNode.length > 0,
@@ -116,7 +119,7 @@ export class NodesComponent extends BaseControllerDirective {
         'User Applications Count': applicationsOnNode.length.toString()
       },
       color: this.getNodeColor(nodeStatus),
-      icon: rawNode.IsSeedNode ? { src: 'assets/seed.svg', alt: 'Seed Node', title: 'Seed Node' } : undefined
+      icon: node.raw.IsSeedNode ? { src: 'assets/seed.svg', alt: 'Seed Node', title: 'Seed Node' } : undefined
     };
   }
 

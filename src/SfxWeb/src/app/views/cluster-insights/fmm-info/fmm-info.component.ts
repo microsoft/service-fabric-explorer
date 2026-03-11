@@ -2,9 +2,9 @@ import { Component, Injector } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
-import { NodeStatusConstants } from 'src/app/Common/Constants';
 import { IRawFailoverManagerManagerInformation } from 'src/app/Models/RawDataTypes';
 import { RestClientService } from 'src/app/services/rest-client.service';
+import { DataService } from 'src/app/services/data.service';
 
 @Component({
   selector: 'app-fmm-info',
@@ -18,7 +18,7 @@ export class FmmInfoComponent extends BaseControllerDirective {
 
   override fixedRefreshIntervalMs = 65000; // 65 seconds
 
-  constructor(private restClientService: RestClientService, injector: Injector) {
+  constructor(private restClientService: RestClientService, private dataService: DataService, injector: Injector) {
     super(injector);
   }
 
@@ -34,22 +34,14 @@ export class FmmInfoComponent extends BaseControllerDirective {
   }
 
   private estimateFmmNode(): Observable<any> {
-    return this.restClientService.getNodes().pipe(
-      map(nodes => {
-        const upNodes = nodes.filter(node => node.NodeStatus === NodeStatusConstants.Up);
-        if (upNodes.length > 0) {
-          let lowest = upNodes[0];
-          
-          // FMM is on the node with the lowest NodeId
-          upNodes.forEach(node => {
-            if (parseInt(node.Id.Id, 16) < parseInt(lowest.Id.Id, 16)) {
-              lowest = node;
-            }
-          });
+    return this.dataService.getNodes(true).pipe(
+      map(nodeCollection => {
+        const fmmNode = nodeCollection.getLikelyFmmNode();
+        if (fmmNode) {
           this.fmmInfo = {
-            NodeName: lowest.Name,
-            NodeId: lowest.Id,
-            NodeInstanceId: lowest.InstanceId
+            NodeName: fmmNode.name,
+            NodeId: fmmNode.raw.Id,
+            NodeInstanceId: fmmNode.raw.InstanceId
           };
           this.isFmmEstimate = true;
         }

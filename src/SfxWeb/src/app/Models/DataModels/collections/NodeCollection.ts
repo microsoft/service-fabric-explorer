@@ -82,6 +82,20 @@ export class NodeCollection extends DataModelCollectionBase<Node> {
         return RoutesService.getNodesViewPath();
     }
 
+    public getLikelyFmmNode(): Node | null {
+        const upNodes = this.collection.filter(node => node.raw.NodeStatus === NodeStatusConstants.Up);
+        if (upNodes.length === 0) {
+            return null;
+        }
+        let lowest = upNodes[0];
+        upNodes.forEach(node => {
+            if (parseInt(node.id, 16) < parseInt(lowest.id, 16)) {
+                lowest = node;
+            }
+        });
+        return lowest;
+    }
+
     public mergeClusterHealthStateChunk(clusterHealthChunk: IClusterHealthChunk): Observable<any> {
         return this.updateCollectionFromHealthChunkList(clusterHealthChunk.NodeHealthStateChunks, item => IdGenerator.node(item.NodeName)).pipe(map(() => {
             this.updateNodesHealthState();

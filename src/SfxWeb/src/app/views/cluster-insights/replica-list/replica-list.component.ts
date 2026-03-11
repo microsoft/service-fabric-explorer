@@ -3,6 +3,8 @@ import { forkJoin, of, Observable } from 'rxjs';
 import { switchMap, catchError, map } from 'rxjs/operators';
 
 import { RestClientService } from 'src/app/services/rest-client.service';
+import { DataService } from 'src/app/services/data.service';
+import { Node } from 'src/app/Models/DataModels/Node';
 import { ListSettings, ListColumnSettingWithFilter, ListColumnSettingForColoredNodeName, ListColumnSettingForBadge, ListColumnSetting } from 'src/app/Models/ListSettings';
 import { ListColumnSettingWithExpandableLink } from '../expandable-link/expandable-link.component';
 import { ListColumnSettingForExpandedDetails } from '../expanded-details/expanded-details.component';
@@ -70,7 +72,7 @@ export class ReplicaListComponent extends BaseControllerDirective {
     return service === ServiceName.FailoverManager ? this.failoverManagerState : this.clusterManagerState;
   }
 
-  constructor(private restClientService: RestClientService, injector: Injector) {
+  constructor(private restClientService: RestClientService, private dataService: DataService, injector: Injector) {
     super(injector);
   }
 
@@ -80,7 +82,8 @@ export class ReplicaListComponent extends BaseControllerDirective {
   }
 
   refresh(): Observable<any> {
-    return this.restClientService.getNodes().pipe(
+    return this.dataService.getNodes(true).pipe(
+      map(nodeCollection => nodeCollection.collection),
       catchError(() => of([])),
       switchMap(nodes => forkJoin({
         failoverManager: this.fetchServiceData(this.failoverManagerConfig, ServiceName.FailoverManager, nodes),
@@ -145,7 +148,7 @@ export class ReplicaListComponent extends BaseControllerDirective {
     this.getServiceState(service).listSettings = listSettings;
   }
 
-  private fetchServiceData(config: ServiceConfig, service: string, nodes: any[]): Observable<any> {
+  private fetchServiceData(config: ServiceConfig, service: string, nodes: Node[]): Observable<any> {
     this.getServiceState(service).isLoading = true;
 
     return forkJoin({
@@ -173,7 +176,7 @@ export class ReplicaListComponent extends BaseControllerDirective {
     config: ServiceConfig,
     service: string,
     replicas: any[],
-    nodes: any[],
+    nodes: Node[],
     partition: any
   ): void {
     const state = this.getServiceState(service);
@@ -181,13 +184,13 @@ export class ReplicaListComponent extends BaseControllerDirective {
 
     const { isInReconfiguration, writeQuorum, quorumReplicas } = this.calculateWriteQuorum(replicas);
 
-    const nodeMap = new Map(nodes.map(node => [node.Name, node]));
+    const nodeMap = new Map(nodes.map(node => [node.name, node]));
 
     state.replicaData = replicas.map(replica => {
       const countsTowardWriteQuorum = quorumReplicas.has(replica.ReplicaId);
       const isDownAndCountsTowardQuorum = countsTowardWriteQuorum && replica.ReplicaStatus !== 'Ready';
       const node = nodeMap.get(replica.NodeName);
-      const nodeStatus = node?.NodeStatus || NodeStatusConstants.Unknown;
+      const nodeStatus = node?.raw.NodeStatus || NodeStatusConstants.Unknown;
 
       return {
         id: replica.ReplicaId,
@@ -195,7 +198,7 @@ export class ReplicaListComponent extends BaseControllerDirective {
         raw: {
           ...replica,
           NodeStatus: nodeStatus,
-          IsSeedNode: node.IsSeedNode
+          IsSeedNode: node?.raw.IsSeedNode
         },
         replicaRoleSortPriority: SortPriorities.ReplicaRolesToSortPriorities[replica.ReplicaRole] || 0,
         replicaStatusBadge: {

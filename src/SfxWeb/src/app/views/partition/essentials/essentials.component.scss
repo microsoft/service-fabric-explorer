@@ -22,7 +22,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 0;
+  padding: 4px 0;
 
   .quorum-info-value {
     text-align: right;
@@ -31,8 +31,8 @@
 
 .line-item-separator {
     border-bottom: 1px solid #4c4c4c;
-    padding-bottom: 8px;
-    margin-bottom: 3px;
+    padding-bottom: 4px;
+    margin-bottom: 4px;
 }
 
 .quorum-info-text {
@@ -49,7 +49,6 @@
   padding: 1rem 1.5rem;
   border-radius: var(--primary-border-radius);
   font-size: var(--font-size-default);
-  color: var(--font-primary-color);
   display: flex;
 
   strong {

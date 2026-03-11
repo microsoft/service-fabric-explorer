@@ -8,7 +8,7 @@
   </app-essential-health-tile>
 
     <app-tile-wrapper *ngIf="partition?.raw">
-      <app-state-info [stateful]="partition.isStatefulService" [data]="partition.raw" [currentReplicaSetSize]="currentReplicaSetSize"></app-state-info>
+      <app-state-info [stateful]="partition.isStatefulService" [data]="partition.raw"></app-state-info>
     </app-tile-wrapper>
 
     <app-tile-wrapper *ngIf="partition.isStatefulService && partition.raw.PartitionStatus === 'InQuorumLoss'">
