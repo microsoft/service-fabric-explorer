@@ -320,8 +320,9 @@ export class ClusterUpgradeProgress extends DataModelBase<IRawClusterUpgradeProg
         }));
     }
 
-    updateInternal(): Observable<any> | void {
+    protected updateInternal(): Observable<any> | void {
         this.unhealthyEvaluations = HealthUtils.getParsedHealthEvaluations(this.raw.UnhealthyEvaluations, null, null, this.data);
+
         const upgradeUnits = this.isUDUpgrade ? this.raw.UpgradeDomains : this.raw.UpgradeUnits;
         const domains = upgradeUnits.map(ud => new UpgradeDomain(this.data, ud, !this.isUDUpgrade));
 

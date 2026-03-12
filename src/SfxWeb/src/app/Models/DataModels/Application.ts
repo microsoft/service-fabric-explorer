@@ -369,9 +369,10 @@ export class ApplicationUpgradeProgress extends DataModelBase<IRawApplicationUpg
              this.raw?.HealthCheckPhase !== "Invalid";
     }
 
-    updateInternal(): Observable<any> | void {
+    protected updateInternal(): Observable<any> | void {
                                                                                                 // set depth to 0 and parent ref to null
         this.unhealthyEvaluations = HealthUtils.getParsedHealthEvaluations(this.raw.UnhealthyEvaluations, 0, null, this.data);
+
         const upgradeUnits = this.isUDUpgrade ? this.raw.UpgradeDomains : this.raw.UpgradeUnits;
 
         const domains = upgradeUnits.map(ud => new UpgradeDomain(this.data, ud, !this.isUDUpgrade));

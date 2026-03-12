@@ -16,7 +16,7 @@ import { ApplicationEventList } from 'src/app/Models/DataModels/collections/Coll
 import { IEventStoreData } from 'src/app/modules/event-store/event-store/event-store.component';
 import { getSimultaneousEventsForEvent, IConcurrentEvents } from 'src/app/Models/eventstore/rcaEngine';
 import { RelatedEventsConfigs } from 'src/app/Models/eventstore/RelatedEventsConfigs';
-import cloneDeep from 'lodash/cloneDeep';
+
 @Component({
   selector: 'app-essentials',
   templateUrl: './essentials.component.html',
