@@ -43,7 +43,12 @@ export class DetailsComponent extends BaseControllerDirective {
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
     return forkJoin([
-      this.clusterUpgradeProgress.refresh(messageHandler),
+
+      this.clusterUpgradeProgress.refresh(messageHandler).pipe(map(upgradeProgress => {
+              this.clusterUpgradeProgress = new ClusterUpgradeProgress(upgradeProgress.data, upgradeProgress.parent);
+              this.clusterUpgradeProgress.update(upgradeProgress.raw);
+            }
+      )),
       this.clusterLoadInformation.refresh(messageHandler),
       this.nodes.refresh(messageHandler).pipe(map( () => {
         this.nodesStatuses = this.nodes.getNodeStateCounts();
