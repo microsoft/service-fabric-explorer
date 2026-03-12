@@ -1,0 +1,60 @@
+{
+  "Name": "fabric:/VisualObjectsApplicationType",
+  "TypeName": "VisualObjectsApplicationType",
+  "TargetApplicationTypeVersion": "21.0.0",
+  "UpgradeDomains": [
+    { "Name": "0", "State": "Completed" },
+    { "Name": "1", "State": "Completed" },
+    { "Name": "2", "State": "Completed" },
+    { "Name": "3", "State": "Completed" },
+    { "Name": "4", "State": "Completed" }
+  ],
+  "UpgradeState": "RollingBackCompleted",
+  "NextUpgradeDomain": "",
+  "RollingUpgradeMode": "Monitored",
+  "UpgradeDescription": {
+    "Name": "fabric:/VisualObjectsApplicationType",
+    "TargetApplicationTypeVersion": "21.0.0",
+    "Parameters": [
+      { "Key": "VisualObjects.ActorService_PartitionCount", "Value": "10" },
+      { "Key": "VisualObjects.WebService_InstanceCount", "Value": "-1" }
+    ],
+    "UpgradeKind": "Rolling",
+    "RollingUpgradeMode": "Monitored",
+    "UpgradeReplicaSetCheckTimeoutInSeconds": 4294967295,
+    "InstanceCloseDelayDurationInSeconds": 4294967295,
+    "ForceRestart": false,
+    "MonitoringPolicy": {
+      "FailureAction": "Rollback",
+      "HealthCheckWaitDurationInMilliseconds": "PT0H0M0S",
+      "HealthCheckStableDurationInMilliseconds": "PT0H2M0S",
+      "HealthCheckRetryTimeoutInMilliseconds": "PT0H10M0S",
+      "UpgradeTimeoutInMilliseconds": "P10675199DT2H48M5.4775807S",
+      "UpgradeDomainTimeoutInMilliseconds": "P10675199DT2H48M5.4775807S"
+    },
+    "SortOrder": "Default"
+  },
+  "UpgradeDurationInMilliseconds": "PT0H15M30.123S",
+  "UpgradeDomainDurationInMilliseconds": "PT0H0M0.0804175S",
+  "UnhealthyEvaluations": [],
+  "CurrentUpgradeDomainProgress": {
+    "DomainName": "",
+    "NodeUpgradeProgressList": []
+  },
+  "StartTimestampUtc": "2022-03-10T16:13:59.906Z",
+  "FailureTimestampUtc": "2022-03-10T16:30:00.000Z",
+  "FailureReason": "UpgradeDomainTimeout",
+  "FailureClassification": "PreUpgradeSafetyCheckTimeout",
+  "UpgradeDomainProgressAtFailure": {
+    "DomainName": "2",
+    "NodeUpgradeProgressList": [
+      {
+        "NodeName": "_app-node_1",
+        "UpgradePhase": "Upgrading",
+        "PendingSafetyChecks": []
+      }
+    ]
+  },
+  "UpgradeStatusDetails": "Upgrade failed due to health policy violation in upgrade domain 2.",
+  "IsNodeByNode": false
+}

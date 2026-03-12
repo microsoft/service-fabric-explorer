@@ -16,6 +16,7 @@ import { ApplicationEventList } from 'src/app/Models/DataModels/collections/Coll
 import { IEventStoreData } from 'src/app/modules/event-store/event-store/event-store.component';
 import { getSimultaneousEventsForEvent, IConcurrentEvents } from 'src/app/Models/eventstore/rcaEngine';
 import { RelatedEventsConfigs } from 'src/app/Models/eventstore/RelatedEventsConfigs';
+
 @Component({
   selector: 'app-essentials',
   templateUrl: './essentials.component.html',
@@ -116,7 +117,8 @@ export class EssentialsComponent extends ApplicationBaseControllerDirective {
 
     return forkJoin([
       this.app.upgradeProgress.refresh(messageHandler).pipe(map(upgradeProgress => {
-        this.upgradeProgress = upgradeProgress;
+        this.upgradeProgress = new ApplicationUpgradeProgress(upgradeProgress.data, upgradeProgress.parent);
+        this.upgradeProgress.update(upgradeProgress.raw);
       })),
       this.app.serviceTypes.refresh(messageHandler),
       this.app.services.refresh(messageHandler),

@@ -6,7 +6,6 @@
         <app-essential-item *ngFor="let item of failedUpgradeItems; let l = last" [item]="item" [underline]="false">
         </app-essential-item>
       </div>
-
       <div *ngIf="upgradeProgress.raw.UpgradeDomainProgressAtFailure?.NodeUpgradeProgressList.length > 0"
         data-cy="failedud" class="node-list">
         <h3>Nodes Upgrading Status at Failure</h3>
@@ -14,10 +13,16 @@
           [upgradeDomain]="upgradeProgress.raw.UpgradeDomainProgressAtFailure">
         </app-upgrade-domain-progress>
       </div>
-
+      <div class="overview-container" data-cy="upgradefailuredetails"
+        *ngIf="upgradeProgress.raw.UpgradeStatusDetails?.length > 0">
+        <h3>Upgrade Failure Details</h3>
+        <div style="text-align: center;">
+          {{upgradeProgress.raw.UpgradeStatusDetails}}
+          <app-clip-board [text]="upgradeProgress.raw.UpgradeStatusDetails"></app-clip-board>
+        </div>
+      </div>
     </div>
   </div>
-
   <div class="layout-container">
     <app-warning *ngIf="manual" data-cy="manualmode"
       description="Unmonitored manual mode needs manual intervention after every upgrade on an update domain,
@@ -35,14 +40,11 @@
         <h3>Overview</h3>
         <app-essential-item *ngFor="let item of essentialItems; let l = last" [item]="item" [underline]="false">
         </app-essential-item>
-
         <app-essential-item [item]="startTimeEssentialItem" [underline]="false">
           <app-display-time [time]="upgradeProgress.startTimestampUtc"></app-display-time>
         </app-essential-item>
-
         <app-essential-item [item]="upgradeDuration" *ngIf="!upgradeProgress.isUpgrading && upgradeDuration">
         </app-essential-item>
-
         <div class="duration" data-cy="upgrade-bar" *ngIf="upgradeProgress.isUpgrading && upgradeProgress.isUDUpgrade">
           <app-display-duration topText="Upgrade Duration" [topInMilliseconds]="upgradeProgress.upgradeTime"
             [bottomHelpText]="helpText" [bottomHelpTextLink]="link" bottomText="Time Left Until Timeout"
@@ -50,12 +52,10 @@
           </app-display-duration>
         </div>
       </div>
-
       <div data-cy="cud" *ngIf="upgradeProgress.isUpgrading && upgradeProgress.isUDUpgrade">
         <h3>Current Domain</h3>
         <app-essential-item *ngFor="let item of essentialItems2; let l = last" [item]="item" [underline]="false">
         </app-essential-item>
-
         <div class="duration" data-cy="upgrade-bar-domain">
           <app-display-duration topText="Upgrade Domain Duration"
             [topInMilliseconds]="upgradeProgress.currentDomainTime" [bottomHelpText]="helpText"
@@ -63,24 +63,21 @@
             [bottomInMilliseconds]="upgradeProgress.getUpgradeDomainTimeout()">
           </app-display-duration>
         </div>
-
       </div>
     </div>
-
     <div *ngIf="healthPolicy.length > 0">
       <h3>Monitoring And Health Policies</h3>
       <app-essential-item *ngFor="let item of healthPolicy; let l = last" [item]="item" [underline]="false">
       </app-essential-item>
-
     </div>
-
     <div class="node-list" style="flex: 1;" data-cy="healthmonitoring"
-        *ngIf="upgradeProgress.isUpgrading && upgradeProgress.isAtHealthCheckPhase && upgradeProgress.nodesInProgress?.NodeUpgradeProgressList.length === 0">
+      *ngIf="upgradeProgress.isUpgrading && upgradeProgress.isAtHealthCheckPhase && upgradeProgress.nodesInProgress?.NodeUpgradeProgressList.length === 0">
       <h3>Health Check Progress</h3>
-      <app-health-policy-check [monitoringPolicy]="upgradeProgress.raw?.UpgradeDescription?.MonitoringPolicy" [healthCheckRetryFlips]="upgradeProgress.raw.HealthCheckRetryFlips"
-                               [healthCheckPhase]="upgradeProgress.raw.HealthCheckPhase" [healthCheckPhaseDuration]="upgradeProgress.raw.HealthCheckElapsedTime" ></app-health-policy-check>
+      <app-health-policy-check [monitoringPolicy]="upgradeProgress.raw?.UpgradeDescription?.MonitoringPolicy"
+        [healthCheckRetryFlips]="upgradeProgress.raw.HealthCheckRetryFlips"
+        [healthCheckPhase]="upgradeProgress.raw.HealthCheckPhase"
+        [healthCheckPhaseDuration]="upgradeProgress.raw.HealthCheckElapsedTime"></app-health-policy-check>
     </div>
-
     <div *ngIf="upgradeProgress.isUpgrading && upgradeProgress.nodesInProgress?.NodeUpgradeProgressList.length > 0"
       data-cy="currentud" class="node-list">
       <h3 style="text-align: center;">Nodes status</h3>
@@ -88,8 +85,8 @@
       </app-upgrade-domain-progress>
     </div>
   </div>
-
-  <div class="detail-pane" *ngIf="upgradeProgress.unhealthyEvaluations.length > 0" data-cy="upgradeHealthEvents" style="margin-top: 10px;">
+  <div class="detail-pane" *ngIf="upgradeProgress.unhealthyEvaluations.length > 0" data-cy="upgradeHealthEvents"
+    style="margin-top: 10px;">
     <h3>Unhealthy Evaluations (Upgrade)</h3>
     <app-detail-list [list]="upgradeProgress.unhealthyEvaluations"
       [listSettings]="upgradeProgressUnhealthyEvaluationsListSettings"></app-detail-list>
