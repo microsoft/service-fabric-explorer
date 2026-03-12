@@ -89,6 +89,8 @@
   "StartTimestampUtc": "2022-03-10T16:13:59.906Z",
   "FailureTimestampUtc": "2022-03-10T16:13:59.906Z",
   "FailureReason": "UpgradeDomainTimeout",
+  "FailureClassification": "PreUpgradeSafetyCheckTimeout",
+  "UpgradeStatusDetails": "Upgrade could not start because the pre-upgrade safety checks were not met. The cluster was not in a safe state to proceed. This usually indicates cluster-state constraints (availability, quorum, or placement) rather than a problem with the upgrade payload. Review the pending safety checks shown in upgrade progress.",
   "UpgradeDomainProgressAtFailure": {
       "DomainName": "2",
       "NodeUpgradeProgressList": [

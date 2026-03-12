@@ -251,6 +251,7 @@ context('Cluster page', () => {
 
         cy.get('[data-cy=failureoverview]').within(() => {
           cy.contains('UpgradeDomainTimeout');
+          cy.contains('PreUpgradeSafetyCheckTimeout');
           cy.contains('2022-03-10T16:13:59.906Z');
         })
 
@@ -258,9 +259,11 @@ context('Cluster page', () => {
           cy.contains('b-hrs-1_2');
           cy.get('[data-cy=failedphase]')
         })
+        cy.get('[data-cy=upgradefailuredetails]').within(() => {
+          cy.contains('Upgrade could not start because the pre-upgrade safety checks were not met. The cluster was not in a safe state to proceed. This usually indicates cluster-state constraints (availability, quorum, or placement) rather than a problem with the upgrade payload. Review the pending safety checks shown in upgrade progress.')
+        })
       })
       cy.get('[data-cy=healthmonitoring]').should('not.exist');
-
     })
 
     it('upgrade completed', () => {

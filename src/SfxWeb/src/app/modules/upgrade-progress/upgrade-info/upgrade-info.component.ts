@@ -46,36 +46,17 @@ export class UpgradeInfoComponent implements OnChanges, OnInit {
   ngOnChanges(): void {
     this.manual = this.upgradeProgress.raw.RollingUpgradeMode === "UnmonitoredManual";
     this.failed = this.upgradeProgress.raw.FailureReason !== 'None';
+    if (this.failed) {
+      const raw = this.upgradeProgress.raw;
+      const domainName = raw.UpgradeDomainProgressAtFailure.DomainName;
 
-    if(this.failed) {
       this.failedUpgradeItems = [
-        {
-          descriptionName: 'Failure Reason',
-          copyTextValue: this.upgradeProgress.raw.FailureReason,
-          displayText: this.upgradeProgress.raw.FailureReason,
-        },
-        {
-          descriptionName: 'Failure Classification',
-          copyTextValue: this.upgradeProgress.raw.FailureClassification,
-          displayText: this.upgradeProgress.raw.FailureClassification,
-        },
-        {
-          descriptionName: 'Failure Timestamp',
-          copyTextValue: this.upgradeProgress.raw.FailureTimestampUtc,
-          displayText: this.upgradeProgress.raw.FailureTimestampUtc,
-        },
-      ]
-
-      const domainName = this.upgradeProgress.raw.UpgradeDomainProgressAtFailure.DomainName;
-      if(domainName) {
-        this.failedUpgradeItems.push({
-          descriptionName: 'Failure Domain',
-          copyTextValue: domainName,
-          displayText: domainName,
-        })
-      }
+        { descriptionName: 'Failure Reason', copyTextValue: raw.FailureReason, displayText: raw.FailureReason },
+         raw.FailureClassification ? { descriptionName: 'Failure Classification', copyTextValue: raw.FailureClassification, displayText: raw.FailureClassification } : null,
+        { descriptionName: 'Failure Timestamp', copyTextValue: raw.FailureTimestampUtc, displayText: raw.FailureTimestampUtc },
+        domainName ? { descriptionName: 'Failure Domain', copyTextValue: domainName, displayText: domainName } : null,
+      ].filter(Boolean);
     }
-
     const monitoringPolicy = this.upgradeProgress.raw?.UpgradeDescription?.MonitoringPolicy;
 
     if(monitoringPolicy) {

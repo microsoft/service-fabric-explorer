@@ -108,6 +108,30 @@ context('app', () => {
 
         })
 
+        it('failed upgrade', () => {
+          addRoute("upgradeProgress", "app-page/failed-upgrade.json", apiUrl(`/Applications/${appName}/$/GetUpgradeProgress?*`))
+
+          cy.visit(`/#/apptype/${appName}/app/${appName}`)
+
+          cy.get('[data-cy=failedupgrade]').within(() => {
+
+            cy.get('[data-cy=failureoverview]').within(() => {
+              cy.contains('UpgradeDomainTimeout');
+              cy.contains('PreUpgradeSafetyCheckTimeout');
+              cy.contains('2022-03-10T16:30:00.000Z');
+            })
+
+            cy.get('[data-cy=failedud]').within(() => {
+              cy.contains('_app-node_1');
+              cy.get('[data-cy=failedphase]')
+            })
+
+            cy.get('[data-cy=upgradefailuredetails]').within(() => {
+              cy.contains('Upgrade failed due to health policy violation in upgrade domain 2.')
+            })
+          })
+        })
+
         it('arm managed app', () => {
           addRoute('visualObjectsApplicationType', 'app-page/app-arm-managed.json', apiUrl('/Applications/VisualObjectsApplicationType/?*'))
           cy.visit(`/#/apptype/${appName}/app/${appName}`)
