@@ -44,7 +44,6 @@ export class UpgradeInfoComponent implements OnChanges, OnInit {
   }
 
   ngOnChanges(): void {
-    console.log('Upgrade Info Component - ngOnChanges', this.upgradeProgress);
     this.manual = this.upgradeProgress.raw.RollingUpgradeMode === "UnmonitoredManual";
     this.failed = this.upgradeProgress.raw.FailureReason !== 'None';
 
