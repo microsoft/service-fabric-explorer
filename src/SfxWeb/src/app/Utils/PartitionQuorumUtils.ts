@@ -4,7 +4,7 @@
 // -----------------------------------------------------------------------------
 
 import { IRawReplicaOnPartition } from '../Models/RawDataTypes';
-import { ReplicaRoles } from '../Common/Constants';
+import { ReplicaRoles, NodeStatusConstants } from '../Common/Constants';
 
 /**
  * Returns true if any replica has a PreviousReplicaRole, indicating the
@@ -46,4 +46,19 @@ export function getQuorumReplicas(replicas: IRawReplicaOnPartition[]): Set<strin
  */
 export function calculateWriteQuorum(replicas: IRawReplicaOnPartition[]): number {
     return Math.floor(getQuorumReplicas(replicas).size / 2) + 1;
+}
+
+/**
+ * Returns a human-readable mitigation hint for a replica that is not Ready
+ * during quorum loss, based on the status of the node it is hosted on.
+ */
+export function getReplicaMitigationHint(nodeStatus: string): string {
+    if (nodeStatus === NodeStatusConstants.Down) {
+        return 'Node is down, try to bring it back up';
+    } else if (nodeStatus === NodeStatusConstants.Disabling || nodeStatus === NodeStatusConstants.Disabled) {
+        return 'Node is in deactivated state, enable it if possible';
+    } else if (nodeStatus === NodeStatusConstants.Up) {
+        return 'Node is up but replica is not Ready, try restarting the replica';
+    }
+    return '';
 }

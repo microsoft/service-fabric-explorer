@@ -122,12 +122,23 @@ export class RecoveryProgressComponent extends BaseControllerDirective {
 
   private checkSystemServicesStatus(applicationHealth: IRawApplicationHealth, fmHasQuorum: boolean): void {
     const healthState = applicationHealth.AggregatedHealthState;
-    const isOk = healthState === 'Ok' && fmHasQuorum;
 
-    const status = isOk ? 'success' : 'error';
-    const tooltip = !fmHasQuorum
-      ? 'Failover Manager is in quorum loss'
-      : `System application health is in ${healthState} state`;
+    let status: RecoveryStep['status'];
+    let tooltip: string;
+
+    if (!fmHasQuorum) {
+      status = 'error';
+      tooltip = 'Failover Manager is in quorum loss';
+    } else if (healthState === 'Ok') {
+      status = 'success';
+      tooltip = 'System application health is Ok';
+    } else if (healthState === 'Warning') {
+      status = 'warning';
+      tooltip = 'System application health is in Warning state';
+    } else {
+      status = 'error';
+      tooltip = `System application health is in ${healthState} state`;
+    }
 
     this.updateStepStatus(RecoveryStepName.SystemServices, status, tooltip);
   }

@@ -9,7 +9,7 @@ import { ListSettings, ListColumnSettingWithFilter, ListColumnSettingForColoredN
 import { ListColumnSettingWithExpandableLink } from '../expandable-link/expandable-link.component';
 import { ListColumnSettingForExpandedDetails } from '../expanded-details/expanded-details.component';
 import { NodeStatusConstants, SortPriorities, PartitionStatusConstants, Constants } from 'src/app/Common/Constants';
-import { isInReconfiguration, getQuorumReplicas, calculateWriteQuorum } from 'src/app/Utils/PartitionQuorumUtils';
+import { isInReconfiguration, getQuorumReplicas, calculateWriteQuorum, getReplicaMitigationHint } from 'src/app/Utils/PartitionQuorumUtils';
 import { IRawReplicaOnPartition } from 'src/app/Models/RawDataTypes';
 import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 
@@ -212,7 +212,7 @@ export class ReplicaListComponent extends BaseControllerDirective {
         lastSequenceNumber: replica.ReplicaStatus === 'Down' ? 'N/A' : 'Loading...',
         isClickable: replica.ReplicaStatus !== 'Down',
         isDownAndCountsTowardQuorum,
-        infoMessage: partitionStatus === PartitionStatusConstants.InQuorumLoss && isDownAndCountsTowardQuorum ? this.getReplicaInfoMessage(nodeStatus) : ''
+        infoMessage: partitionStatus === PartitionStatusConstants.InQuorumLoss && isDownAndCountsTowardQuorum ? getReplicaMitigationHint(nodeStatus) : ''
       };
     });
 
@@ -233,18 +233,6 @@ export class ReplicaListComponent extends BaseControllerDirective {
       partitionStatus === PartitionStatusConstants.InQuorumLoss && replica.isDownAndCountsTowardQuorum ? 'highlighted-row' : '';
 
     state.replicaData.forEach(replicaItem => this.loadDeployedReplicaDetails(replicaItem, config.partitionId));
-  }
-
-  private getReplicaInfoMessage(nodeStatus: string): string {
-    if (nodeStatus === NodeStatusConstants.Down) {
-      return 'Node is down, try to bring it back up';
-    } else if (nodeStatus === NodeStatusConstants.Disabling || nodeStatus === NodeStatusConstants.Disabled) {
-      return 'Node is in deactivated state, enable it if possible';
-    } else if (nodeStatus === NodeStatusConstants.Up) {
-      return 'Node is up but replica is not Ready, try restarting the replica';
-    }
-
-    return '';
   }
 
   private handleReplicaClick(replicaItem: any): void {
