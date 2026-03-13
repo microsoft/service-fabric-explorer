@@ -1,3 +1,8 @@
+// -----------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// Licensed under the MIT License. See License file under the project root for license information.
+// -----------------------------------------------------------------------------
+
 import { DataModelBase, IDecorators } from './Base';
 import {
     IRawService, IRawUpdateServiceDescription, IRawServiceHealth, IRawServiceDescription, IRawServiceType, IRawServiceManifest,
@@ -24,10 +29,6 @@ import { ViewBackupComponent } from 'src/app/modules/backup-restore/view-backup/
 import { RoutesService } from 'src/app/services/routes.service';
 import { ActionDialogComponent } from 'src/app/modules/action-dialog/action-dialog/action-dialog.component';
 import { ActionDialogUtils } from 'src/app/modules/action-dialog/utils';
-// -----------------------------------------------------------------------------
-// Copyright (c) Microsoft Corporation.  All rights reserved.
-// Licensed under the MIT License. See License file under the project root for license information.
-// -----------------------------------------------------------------------------
 
 // Type guards for service kinds - works with any object that has a ServiceKind property
 // Using proper TypeScript type predicates for type narrowing

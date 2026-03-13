@@ -1,11 +1,11 @@
-import { LoadMetricInformation } from '../Models/DataModels/Shared';
-import { Node, NodeLoadInformation } from '../Models/DataModels/Node';
-import { ClusterLoadInformation } from '../Models/DataModels/Cluster';
-
 // -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
 // -----------------------------------------------------------------------------
+
+import { LoadMetricInformation } from '../Models/DataModels/Shared';
+import { Node, NodeLoadInformation } from '../Models/DataModels/Node';
+import { ClusterLoadInformation } from '../Models/DataModels/Cluster';
 
 export interface IMetricsViewModel {
     selectedMetrics: LoadMetricInformation[];

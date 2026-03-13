@@ -1,3 +1,8 @@
+// -----------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// Licensed under the MIT License. See License file under the project root for license information.
+// -----------------------------------------------------------------------------
+
 import { InfrastructureDoc } from 'src/app/Models/DataModels/InfrastructureDoc';
 import { Component, Input } from '@angular/core';
 import { InfrastructureDocumentCollection } from 'src/app/Models/DataModels/collections/InfrastructureDocCollection';

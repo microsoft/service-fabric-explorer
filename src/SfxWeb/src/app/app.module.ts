@@ -1,3 +1,8 @@
+// -----------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// Licensed under the MIT License. See License file under the project root for license information.
+// -----------------------------------------------------------------------------
+
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule, APP_INITIALIZER, ErrorHandler } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';

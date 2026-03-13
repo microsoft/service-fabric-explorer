@@ -1,3 +1,8 @@
+// -----------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// Licensed under the MIT License. See License file under the project root for license information.
+// -----------------------------------------------------------------------------
+
 // ***********************************************
 // This example commands.js shows you how to
 // create various custom commands and overwrite

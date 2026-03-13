@@ -1,3 +1,8 @@
+// -----------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// Licensed under the MIT License. See License file under the project root for license information.
+// -----------------------------------------------------------------------------
+
 import { Component, OnInit, Input, ChangeDetectionStrategy } from '@angular/core';
 import { ActionCollection } from 'src/app/Models/ActionCollection';
 import { Router } from '@angular/router';

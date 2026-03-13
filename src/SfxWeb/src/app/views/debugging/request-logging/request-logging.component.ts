@@ -1,3 +1,8 @@
+// -----------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// Licensed under the MIT License. See License file under the project root for license information.
+// -----------------------------------------------------------------------------
+
 import { Component, OnInit } from '@angular/core';
 import { ListColumnSetting, ListColumnSettingWithCustomComponent, ListSettings } from 'src/app/Models/ListSettings';
 import { RestClientService } from 'src/app/services/rest-client.service';

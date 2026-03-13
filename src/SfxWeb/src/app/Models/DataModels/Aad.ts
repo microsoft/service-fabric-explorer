@@ -1,10 +1,10 @@
-import { IRawAadMetadata, IRawAadMetadataMetadata } from '../RawDataTypes';
-import { DataModelBase } from './Base';
-
 // -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
 // -----------------------------------------------------------------------------
+
+import { IRawAadMetadata, IRawAadMetadataMetadata } from '../RawDataTypes';
+import { DataModelBase } from './Base';
 
 export class AuthenticationBootstrapConstants {
     public static GetAadMetadataUriPart = '/$/GetAadMetadata?api-version=1.0';

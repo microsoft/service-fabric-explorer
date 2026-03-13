@@ -1,3 +1,8 @@
+// -----------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// Licensed under the MIT License. See License file under the project root for license information.
+// -----------------------------------------------------------------------------
+
 import { DataModelBase } from './Base';
 import { IRawDeployedServicePackage, IRawDeployedServicePackageHealth } from '../RawDataTypes';
 import { DeployedCodePackageCollection, DeployedReplicaCollection } from './collections/Collections';
@@ -11,11 +16,6 @@ import { DeployedApplication } from './DeployedApplication';
 import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { RoutesService } from 'src/app/services/routes.service';
-
-// -----------------------------------------------------------------------------
-// Copyright (c) Microsoft Corporation.  All rights reserved.
-// Licensed under the MIT License. See License file under the project root for license information.
-// -----------------------------------------------------------------------------
 
 export class DeployedServicePackage extends DataModelBase<IRawDeployedServicePackage> {
     public deployedCodePackages: DeployedCodePackageCollection;

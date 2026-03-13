@@ -1,3 +1,8 @@
+// -----------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// Licensed under the MIT License. See License file under the project root for license information.
+// -----------------------------------------------------------------------------
+
 import { Component, Injector, OnInit } from '@angular/core';
 import { DataService } from 'src/app/services/data.service';
 import { IEventStoreData, VisReference } from 'src/app/modules/event-store/event-store/event-store.component';

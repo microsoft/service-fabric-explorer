@@ -1,3 +1,8 @@
+// -----------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// Licensed under the MIT License. See License file under the project root for license information.
+// -----------------------------------------------------------------------------
+
 import { IRawNode, IRawNodeLoadInformation, IRawNodeLoadMetricInformation, IRawNodeHealth, NodeStatus, IRawNodeDeactivationTask } from '../RawDataTypes';
 import { IDecorators, DataModelBase } from './Base';
 import { DataService } from 'src/app/services/data.service';
@@ -12,11 +17,6 @@ import { DeployedApplicationCollection } from './collections/DeployedApplication
 import { ActionWithConfirmationDialog, Action } from '../Action';
 import { NodeStatusConstants } from 'src/app/Common/Constants';
 import { RoutesService } from 'src/app/services/routes.service';
-
-// -----------------------------------------------------------------------------
-// Copyright (c) Microsoft Corporation.  All rights reserved.
-// Licensed under the MIT License. See License file under the project root for license information.
-// -----------------------------------------------------------------------------
 
 export class Node extends DataModelBase<IRawNode> {
     public decorators: IDecorators = {

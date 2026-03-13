@@ -1,3 +1,8 @@
+// -----------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// Licensed under the MIT License. See License file under the project root for license information.
+// -----------------------------------------------------------------------------
+
 import { DataModelBase, IDecorators } from './Base';
 import { IRawClusterHealth, IRawClusterManifest, IRawClusterUpgradeProgress, IRawClusterLoadInformation, IRawBackupPolicy } from '../RawDataTypes';
 import { DataService } from 'src/app/services/data.service';
@@ -15,12 +20,6 @@ import { HealthUtils } from 'src/app/Utils/healthUtils';
 import { IsolatedAction } from '../Action';
 import { ViewBackupComponent } from 'src/app/modules/backup-restore/view-backup/view-backup.component';
 import { Utils } from 'src/app/Utils/Utils';
-
-// -----------------------------------------------------------------------------
-// Copyright (c) Microsoft Corporation.  All rights reserved.
-// Licensed under the MIT License. See License file under the project root for license information.
-// -----------------------------------------------------------------------------
-
 
 export class ClusterHealth extends HealthBase<IRawClusterHealth> {
 

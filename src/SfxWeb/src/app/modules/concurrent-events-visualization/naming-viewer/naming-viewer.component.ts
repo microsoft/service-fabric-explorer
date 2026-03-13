@@ -1,3 +1,8 @@
+// -----------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// Licensed under the MIT License. See License file under the project root for license information.
+// -----------------------------------------------------------------------------
+
 import { Component, OnInit } from '@angular/core';
 import { IDataSet, IParallelChartData } from 'src/app/modules/concurrent-events-visualization/timeseries/timeseries.component';
 import { Utils } from 'src/app/Utils/Utils';

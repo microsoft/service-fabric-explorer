@@ -1,3 +1,8 @@
+// -----------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// Licensed under the MIT License. See License file under the project root for license information.
+// -----------------------------------------------------------------------------
+
 import { Component, OnInit, Input } from '@angular/core';
 import { ImageStore } from 'src/app/Models/DataModels/ImageStore';
 import { SettingsService } from 'src/app/services/settings.service';

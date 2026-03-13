@@ -1,3 +1,8 @@
+// -----------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// Licensed under the MIT License. See License file under the project root for license information.
+// -----------------------------------------------------------------------------
+
 import { DataModelBase } from './Base';
 import { IRawApplicationType } from '../RawDataTypes';
 import { ServiceTypeCollection, ApplicationCollection } from './collections/Collections';
@@ -16,11 +21,6 @@ import { RoutesService } from 'src/app/services/routes.service';
 import { MessageWithWarningComponent } from 'src/app/modules/action-dialog/message-wth-warning/message-with-warning.component';
 import { MessageWithConfirmationComponent } from 'src/app/modules/action-dialog/message-with-confirmation/message-with-confirmation.component';
 import { ActionDialogComponent } from 'src/app/modules/action-dialog/action-dialog/action-dialog.component';
-
-// -----------------------------------------------------------------------------
-// Copyright (c) Microsoft Corporation.  All rights reserved.
-// Licensed under the MIT License. See License file under the project root for license information.
-// -----------------------------------------------------------------------------
 
 export class ApplicationType extends DataModelBase<IRawApplicationType> {
     /*IsInUse is only set on the AppType on the appType Essential page*/

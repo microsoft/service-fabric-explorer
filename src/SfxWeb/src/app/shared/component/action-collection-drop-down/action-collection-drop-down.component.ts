@@ -1,3 +1,8 @@
+// -----------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// Licensed under the MIT License. See License file under the project root for license information.
+// -----------------------------------------------------------------------------
+
 import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
 import { ActionCollection } from 'src/app/Models/ActionCollection';
 import { DataService } from 'src/app/services/data.service';
