@@ -18,7 +18,6 @@ export function isInReconfiguration(replicas: IRawReplicaOnPartition[]): boolean
 
 /**
  * Returns true if the given role counts toward write quorum
- * (i.e. Primary or ActiveSecondary).
  */
 export function isActiveRole(role: string): boolean {
     return role === ReplicaRoles.Primary || role === ReplicaRoles.ActiveSecondary;
@@ -42,23 +41,22 @@ export function getQuorumReplicas(replicas: IRawReplicaOnPartition[]): Set<strin
 }
 
 /**
- * Returns the write quorum size for a set of replicas.
+ * Returns the write quorum for a partition.
  */
 export function calculateWriteQuorum(replicas: IRawReplicaOnPartition[]): number {
     return Math.floor(getQuorumReplicas(replicas).size / 2) + 1;
 }
 
 /**
- * Returns a human-readable mitigation hint for a replica that is not Ready
- * during quorum loss, based on the status of the node it is hosted on.
+ * Returns a basic mitigation hint for a down replica based on node status.
  */
-export function getReplicaMitigationHint(nodeStatus: string): string {
+export function getDownReplicaMitigationHint(nodeStatus: string): string {
     if (nodeStatus === NodeStatusConstants.Down) {
-        return 'Node is down, try to bring it back up';
+        return 'Node is down. Please recover the node.';
     } else if (nodeStatus === NodeStatusConstants.Disabling || nodeStatus === NodeStatusConstants.Disabled) {
-        return 'Node is in deactivated state, enable it if possible';
+        return 'Node is in deactivated state. Please enable the node.';
     } else if (nodeStatus === NodeStatusConstants.Up) {
-        return 'Node is up but replica is not Ready, try restarting the replica';
+        return 'Node is up but replica is not ready. Please bring the replica back up.';
     }
     return '';
 }

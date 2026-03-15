@@ -9,7 +9,7 @@ import { ListSettings, ListColumnSettingWithFilter, ListColumnSettingForColoredN
 import { ListColumnSettingWithExpandableLink } from '../expandable-link/expandable-link.component';
 import { ListColumnSettingForExpandedDetails } from '../expanded-details/expanded-details.component';
 import { NodeStatusConstants, SortPriorities, PartitionStatusConstants, Constants } from 'src/app/Common/Constants';
-import { isInReconfiguration, getQuorumReplicas, calculateWriteQuorum, getReplicaMitigationHint } from 'src/app/Utils/PartitionQuorumUtils';
+import { isInReconfiguration, getQuorumReplicas, calculateWriteQuorum, getDownReplicaMitigationHint } from 'src/app/Utils/PartitionQuorumUtils';
 import { IRawReplicaOnPartition } from 'src/app/Models/RawDataTypes';
 import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 
@@ -34,9 +34,9 @@ interface ServiceState {
   isLoading: boolean;
 }
 
-class ServiceName {
-  static FailoverManager = 'failover-manager';
-  static ClusterManager = 'cluster-manager';
+enum ServiceName {
+  FailoverManager = 'failover-manager',
+  ClusterManager = 'cluster-manager'
 }
 
 @Component({
@@ -50,13 +50,13 @@ export class ReplicaListComponent extends BaseControllerDirective {
 
   private readonly failoverManagerConfig: ServiceConfig = {
     applicationId: Constants.SystemAppId,
-    serviceId: `${Constants.SystemAppId}/${Constants.FailoverManagerServiceName}`,
+    serviceId: `${Constants.SystemAppTypeName}/${Constants.FailoverManagerServiceName}`,
     partitionId: Constants.FailoverManagerPartitionId
   };
 
   private readonly clusterManagerConfig: ServiceConfig = {
     applicationId: Constants.SystemAppId,
-    serviceId: `${Constants.SystemAppId}/${Constants.ClusterManagerServiceName}`,
+    serviceId: `${Constants.SystemAppTypeName}/${Constants.ClusterManagerServiceName}`,
     partitionId: Constants.ClusterManagerPartitionId
   };
 
@@ -142,7 +142,6 @@ export class ReplicaListComponent extends BaseControllerDirective {
       false
     );
 
-    // Sorting using lower priority number first. Primary=2 sorts before ActiveSecondary=3, which is the desired order.
     listSettings.sortReverse = true;
 
     this.getServiceState(service).listSettings = listSettings;
@@ -197,11 +196,9 @@ export class ReplicaListComponent extends BaseControllerDirective {
       return {
         id: replica.ReplicaId,
         nodeName: replica.NodeName,
-        raw: {
-          ...replica,
-          NodeStatus: nodeStatus,
-          IsSeedNode: node?.raw.IsSeedNode
-        },
+        raw: replica,
+        nodeStatus,
+        isSeedNode: node?.raw.IsSeedNode ?? false,
         replicaRoleSortPriority: SortPriorities.ReplicaRolesToSortPriorities[replica.ReplicaRole] || 0,
         replicaStatusBadge: {
           text: replica.ReplicaStatus,
@@ -212,7 +209,7 @@ export class ReplicaListComponent extends BaseControllerDirective {
         lastSequenceNumber: replica.ReplicaStatus === 'Down' ? 'N/A' : 'Loading...',
         isClickable: replica.ReplicaStatus !== 'Down',
         isDownAndCountsTowardQuorum,
-        infoMessage: partitionStatus === PartitionStatusConstants.InQuorumLoss && isDownAndCountsTowardQuorum ? getReplicaMitigationHint(nodeStatus) : ''
+        infoMessage: partitionStatus === PartitionStatusConstants.InQuorumLoss && isDownAndCountsTowardQuorum ? getDownReplicaMitigationHint(nodeStatus) : ''
       };
     });
 

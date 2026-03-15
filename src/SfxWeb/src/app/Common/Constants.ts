@@ -31,8 +31,6 @@ export class Constants {
     public static SystemAppName = 'fabric:/System';
     public static SystemAppTypeName = 'System';
     public static InfrastructureServiceType = 'InfrastructureServiceType';
-
-    // System service names and partition IDs
     public static FailoverManagerServiceName = 'FailoverManagerService';
     public static FailoverManagerPartitionId = '00000000-0000-0000-0000-000000000001';
     public static ClusterManagerServiceName = 'ClusterManagerService';

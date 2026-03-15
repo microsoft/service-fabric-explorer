@@ -9,8 +9,8 @@ const FM_PARTITION_ROUTE = apiUrl('/Applications/System/$/GetServices/System%2FF
 const CM_REPLICAS_ROUTE = apiUrl('/Applications/System/$/GetServices/System%2FClusterManagerService/$/GetPartitions/00000000-0000-0000-0000-000000002000/$/GetReplicas?*');
 const CM_PARTITION_ROUTE = apiUrl('/Applications/System/$/GetServices/System%2FClusterManagerService/$/GetPartitions/00000000-0000-0000-0000-000000002000?*');
 const NODES_ROUTE = apiUrl('/Nodes/?*');
-const NODE_SYSTEM_REPLICAS_ROUTE = apiUrl('/Nodes/*/$/GetApplications/System/$/GetReplicas?*');
-const NODE_DEPLOYED_APPS_ROUTE = apiUrl('/Nodes/*/$/GetApplications?*');
+const GET_SYSTEM_REPLICAS_ON_NODE_ROUTE = apiUrl('/Nodes/*/$/GetApplications/System/$/GetReplicas?*');
+const GET_DEPLOYED_APPS_ON_NODE_ROUTE = apiUrl('/Nodes/*/$/GetApplications?*');
 const REPLICA_DETAIL_ROUTE = apiUrl('/Nodes/*/$/GetPartitions/*/$/GetReplicas/*/$/GetDetail?*');
 const FMM_INFO_ROUTE = apiUrl('/$/GetFailoverManagerManagerInformation?*');
 
@@ -56,17 +56,20 @@ context('cluster-insights', () => {
     });
 
     it('show system services replica count and deployed application count on node click', () => {
-      cy.intercept('GET', NODE_SYSTEM_REPLICAS_ROUTE, { fixture: 'cluster-insights/system-replicas-on-node.json' }).as('nodeSystemReplicas');
-      cy.intercept('GET', NODE_DEPLOYED_APPS_ROUTE, { fixture: 'cluster-insights/deployed-apps-on-node.json' }).as('nodeDeployedApps');
+      cy.intercept('GET', GET_SYSTEM_REPLICAS_ON_NODE_ROUTE, { fixture: 'cluster-insights/system-replicas-on-node.json' }).as('systemReplicaOnNodes');
+      cy.intercept('GET', GET_DEPLOYED_APPS_ON_NODE_ROUTE, { fixture: 'cluster-insights/deployed-apps-on-node.json' }).as('deployedAppsOnNode');
 
       cy.visit('/#/cluster-insights');
-      cy.wait(['@nodes', '@nodeSystemReplicas', '@nodeDeployedApps']);
+      cy.wait('@nodes');
 
       cy.get('app-nodes').within(() => {
         cy.contains('a.nav-link', 'All Nodes').click();
-        cy.get('tbody > tr:first-child span.expandable-link').first().click();
       });
+
+      cy.wait(['@systemReplicaOnNodes', '@deployedAppsOnNode']);
+
       cy.get('app-nodes').within(() => {
+        cy.get('tbody > tr:first-child span.expandable-link').first().click();
         cy.get('app-expanded-details').scrollIntoView().should('be.visible');
       });
     });

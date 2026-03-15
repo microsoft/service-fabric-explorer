@@ -51,10 +51,10 @@ export class RecoveryProgressComponent extends BaseControllerDirective {
       nodes: this.dataService.getNodes(true),
       failoverManagerReplicas: this.restClient.getReplicasOnPartition(
         Constants.SystemAppId,
-        `${Constants.SystemAppId}/${Constants.FailoverManagerServiceName}`,
+        `${Constants.SystemAppTypeName}/${Constants.FailoverManagerServiceName}`,
         Constants.FailoverManagerPartitionId
       ),
-      systemAppHealth: this.restClient.getApplicationHealth('System').pipe(
+      systemAppHealth: this.restClient.getApplicationHealth(Constants.SystemAppId).pipe(
         catchError(() => {
           this.updateStepStatus(RecoveryStepName.SystemServices, 'error', 'Get system services health timed out. Please check if Cluster Manager is unhealthy.');
           return of(null);

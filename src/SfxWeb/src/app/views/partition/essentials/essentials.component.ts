@@ -7,7 +7,7 @@ import { Observable, forkJoin } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { PartitionBaseControllerDirective } from '../PartitionBase';
 import { NodeStatusConstants } from 'src/app/Common/Constants';
-import { getReplicaMitigationHint } from 'src/app/Utils/PartitionQuorumUtils';
+import { getDownReplicaMitigationHint } from 'src/app/Utils/PartitionQuorumUtils';
 import { Node } from 'src/app/Models/DataModels/Node';
 import { IEssentialListItem } from 'src/app/modules/charts/essential-health-tile/essential-health-tile.component';
 
@@ -19,6 +19,7 @@ import { IEssentialListItem } from 'src/app/modules/charts/essential-health-tile
 })
 export class EssentialsComponent extends PartitionBaseControllerDirective {
 
+  public hideReplicator = true;
   listSettings: ListSettings;
 
   essentialItems: IEssentialListItem[] = [];
@@ -80,12 +81,12 @@ export class EssentialsComponent extends PartitionBaseControllerDirective {
         this.partition.replicas.collection.forEach(replica => {
           const node = nodeMap.get(replica.raw.NodeName);
           const nodeStatus = node?.raw.NodeStatus || NodeStatusConstants.Unknown;
-          (replica.raw as any).NodeStatus = nodeStatus;
-          (replica.raw as any).IsSeedNode = node?.raw.IsSeedNode ?? false;
+          replica.nodeStatus = nodeStatus;
+          replica.isSeedNode = node?.raw.IsSeedNode ?? false;
           const isDownAndCountsTowardQuorum = inQuorumLoss
             && this.partition.quorumReplicas.has(replica.id)
             && replica.raw.ReplicaStatus !== 'Ready';
-          (replica as any).infoMessage = isDownAndCountsTowardQuorum ? getReplicaMitigationHint(nodeStatus) : '';
+          replica.infoMessage = isDownAndCountsTowardQuorum ? getDownReplicaMitigationHint(nodeStatus) : '';
         });
 
         // Highlight the replicas that need to be brought back up to get the partition out of quorum loss
@@ -146,5 +147,4 @@ export class EssentialsComponent extends PartitionBaseControllerDirective {
     }
 
   }
-
 }

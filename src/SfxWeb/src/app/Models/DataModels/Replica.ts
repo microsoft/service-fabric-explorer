@@ -38,6 +38,10 @@ export class ReplicaOnPartition extends DataModelBase<IRawReplicaOnPartition> {
     public detail: DeployedReplicaDetail;
     public address: any;
 
+    public nodeStatus: string = '';
+    public isSeedNode: boolean = false;
+    public infoMessage: string = '';
+
     public constructor(data: DataService, raw: IRawReplicaOnPartition, public parent: Partition) {
         super(data, raw, parent);
 

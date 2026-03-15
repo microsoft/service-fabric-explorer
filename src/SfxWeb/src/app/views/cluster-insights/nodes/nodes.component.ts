@@ -59,19 +59,18 @@ export class NodesComponent extends BaseControllerDirective {
     return this.dataService.getNodes(true).pipe(
       switchMap(nodeCollection => {
         const nodes = nodeCollection.collection;
-        const nodeDataRequests = nodes.map(node =>
-          forkJoin({
-            systemServiceReplicasOnNode: this.restClient.getDeployedReplicasByApplication(node.name, 'System').pipe(catchError(() => of([]))),
-            applicationsOnNode: this.restClient.getDeployedApplications(node.name).pipe(catchError(() => of([])))
-          })
-        );
 
         if (nodes.length === 0) {
           this.isLoading = false;
           return of(null);
         }
 
-        return forkJoin(nodeDataRequests).pipe(
+        return forkJoin(nodes.map(node =>
+          forkJoin({
+            systemServiceReplicasOnNode: this.restClient.getDeployedReplicasByApplication(node.name, 'System').pipe(catchError(() => of([]))),
+            applicationsOnNode: this.restClient.getDeployedApplications(node.name).pipe(catchError(() => of([])))
+          })
+        )).pipe(
           map(nodeResults => {
             this.nodes = nodes.map((node, i) => this.buildNodeDisplay(node, nodeResults[i]));
 
@@ -104,12 +103,13 @@ export class NodesComponent extends BaseControllerDirective {
     const { systemServiceReplicasOnNode, applicationsOnNode } = replicaData;
     const primaryCount = systemServiceReplicasOnNode.filter(r => r.ReplicaRole === ReplicaRoles.Primary).length;
     const activeSecondaryCount = systemServiceReplicasOnNode.filter(r => r.ReplicaRole === ReplicaRoles.ActiveSecondary).length;
+    const nodeStatusBadge = this.getNodeStatusBadge(nodeStatus);
 
     return {
       name: node.name,
       raw: node.raw,
       nodeStatus,
-      nodeStatusBadge: this.getNodeStatusBadge(nodeStatus),
+      nodeStatusBadge,
       isClickable: primaryCount > 0 || activeSecondaryCount > 0 || applicationsOnNode.length > 0,
       isSecondRowCollapsed: true,
       systemPrimaryReplicasCount: primaryCount,
@@ -118,7 +118,7 @@ export class NodesComponent extends BaseControllerDirective {
         'System Services ActiveSecondary Replicas Count': activeSecondaryCount.toString(),
         'User Applications Count': applicationsOnNode.length.toString()
       },
-      color: this.getNodeColor(nodeStatus),
+      color: `var(--${nodeStatusBadge.badgeClass})`,
       icon: node.raw.IsSeedNode ? { src: 'assets/seed.svg', alt: 'Seed Node', title: 'Seed Node' } : undefined
     };
   }
@@ -205,16 +205,6 @@ export class NodesComponent extends BaseControllerDirective {
         copyTextValue: this.seedNodes.length.toString()
       }
     ];
-  }
-
-  private getNodeColor(status: string): string {
-    switch (status) {
-      case NodeStatusConstants.Up: return 'var(--badge-ok)';
-      case NodeStatusConstants.Down: return 'var(--badge-error)';
-      case NodeStatusConstants.Disabling:
-      case NodeStatusConstants.Disabled: return 'var(--badge-warning)';
-      default: return 'var(--badge-unknown)';
-    }
   }
 
   private handleNodeClick(node: NodeDisplay): void {
