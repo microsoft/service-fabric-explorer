@@ -6,7 +6,7 @@ import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers'
 import { Observable, forkJoin } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { PartitionBaseControllerDirective } from '../PartitionBase';
-import { NodeStatusConstants } from 'src/app/Common/Constants';
+import { NodeStatusConstants, PartitionStatusConstants } from 'src/app/Common/Constants';
 import { getDownReplicaMitigationHint } from 'src/app/Utils/PartitionQuorumUtils';
 import { Node } from 'src/app/Models/DataModels/Node';
 import { IEssentialListItem } from 'src/app/modules/charts/essential-health-tile/essential-health-tile.component';
@@ -56,8 +56,8 @@ export class EssentialsComponent extends PartitionBaseControllerDirective {
     
     if (this.partition.isStatefulService) {
       // Add Previous Replica Role column only when stateful partition is in quorum loss or reconfiguring
-      if (this.partition.raw.PartitionStatus === 'InQuorumLoss' || this.partition.raw.PartitionStatus === 'Reconfiguring') {
-        columnSettings.splice(3, 0, new ListColumnSetting('raw.PreviousReplicaRole', 'Previous Replica Role'));
+      if (this.partition.raw.PartitionStatus === PartitionStatusConstants.InQuorumLoss || this.partition.raw.PartitionStatus === PartitionStatusConstants.Reconfiguring) {
+        columnSettings.splice(2, 0, new ListColumnSetting('raw.PreviousReplicaRole', 'Previous Replica Role'));
       }
     }
 
@@ -76,7 +76,7 @@ export class EssentialsComponent extends PartitionBaseControllerDirective {
     }).pipe(
       tap(({ nodes }) => {
         const nodeMap = new Map<string, Node>(nodes.collection.map(n => [n.name, n]));
-        const inQuorumLoss = this.partition.isStatefulService && this.partition.raw.PartitionStatus === 'InQuorumLoss';
+        const inQuorumLoss = this.partition.isStatefulService && this.partition.raw.PartitionStatus === PartitionStatusConstants.InQuorumLoss;
 
         this.partition.replicas.collection.forEach(replica => {
           const node = nodeMap.get(replica.raw.NodeName);

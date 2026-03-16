@@ -6,7 +6,7 @@ import { RestClientService } from 'src/app/services/rest-client.service';
 import { DataService } from 'src/app/services/data.service';
 import { IRawApplicationHealth, IRawReplicaOnPartition } from 'src/app/Models/RawDataTypes';
 import { NodeCollection } from 'src/app/Models/DataModels/collections/NodeCollection';
-import { NodeStatusConstants, Constants } from 'src/app/Common/Constants';
+import { NodeStatusConstants, Constants, HealthStateConstants } from 'src/app/Common/Constants';
 import { calculateWriteQuorum } from 'src/app/Utils/PartitionQuorumUtils';
 import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 
@@ -132,7 +132,7 @@ export class RecoveryProgressComponent extends BaseControllerDirective {
     } else if (healthState === 'Ok') {
       status = 'success';
       tooltip = 'System application health is Ok';
-    } else if (healthState === 'Warning') {
+    } else if (healthState === HealthStateConstants.Warning) {
       status = 'warning';
       tooltip = 'System application health is in Warning state';
     } else {
@@ -165,31 +165,30 @@ export class RecoveryProgressComponent extends BaseControllerDirective {
   }
 
   private checkUserApplicationHealth(appsCollection: any): void {
-    if (!appsCollection || !appsCollection.collection) {
-      this.updateStepStatus(RecoveryStepName.UserServices, 'warning', 'Unable to determine user services status');
+    if (!appsCollection || !appsCollection.collection || appsCollection.collection.length === 0) {
+      this.updateStepStatus(RecoveryStepName.UserServices, 'pending', 'No user applications are deployed, or the application list is unavailable.');
       return;
     }
 
     const apps = appsCollection.collection;
     const totalApps = apps.length;
 
-    if (totalApps === 0) {
-      this.updateStepStatus(RecoveryStepName.UserServices, 'success', 'No user applications deployed');
-      return;
-    }
-
-    const warningApps = apps.filter((app: any) => app.healthState.text === 'Warning').length;
-    const errorApps = apps.filter((app: any) => app.healthState.text === 'Error').length;
+    const warningApps = apps.filter((app: any) => app.healthState.text === HealthStateConstants.Warning).length;
+    const errorApps = apps.filter((app: any) => app.healthState.text === HealthStateConstants.Error).length;
+    const healthyApps = totalApps - warningApps - errorApps;
 
     let status: RecoveryStep['status'];
     let tooltip: string;
 
-    if (errorApps > 0) {
+    if (errorApps > 0 && warningApps > 0) {
       status = 'error';
-      tooltip = `${errorApps} application(s) have errors`;
+      tooltip = `${errorApps} application(s) have errors, ${warningApps} have warnings, ${healthyApps} are healthy`;
+    } else if (errorApps > 0) {
+      status = 'error';
+      tooltip = `${errorApps} application(s) have errors, ${healthyApps} are healthy`;
     } else if (warningApps > 0) {
       status = 'warning';
-      tooltip = `${warningApps} application(s) have warnings`;
+      tooltip = `${warningApps} application(s) have warnings, ${healthyApps} are healthy`;
     } else {
       status = 'success';
       tooltip = `All ${totalApps} application(s) are healthy`;

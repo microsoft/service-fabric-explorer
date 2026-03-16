@@ -7,7 +7,7 @@ import { DataService } from 'src/app/services/data.service';
 import { IRawNode, IRawNodeStatusCount } from 'src/app/Models/RawDataTypes';
 import { Node } from 'src/app/Models/DataModels/Node';
 import { ListSettings, ListColumnSetting, ListColumnSettingWithFilter, ListColumnSettingForBadge } from 'src/app/Models/ListSettings';
-import { NodeStatusConstants, ReplicaRoles } from 'src/app/Common/Constants';
+import { NodeStatusConstants, ReplicaRoles, BadgeConstants } from 'src/app/Common/Constants';
 import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 import { ListColumnSettingWithExpandableLink } from '../expandable-link/expandable-link.component';
 import { ListColumnSettingForExpandedDetails } from '../expanded-details/expanded-details.component';
@@ -159,14 +159,14 @@ export class NodesComponent extends BaseControllerDirective {
   private getNodeStatusBadge(nodeStatus: string): { text: string; badgeClass: string } {
     switch (nodeStatus) {
       case NodeStatusConstants.Up:
-        return { text: nodeStatus, badgeClass: 'badge-ok' };
+        return { text: nodeStatus, badgeClass: BadgeConstants.BadgeOK };
       case NodeStatusConstants.Down:
-        return { text: nodeStatus, badgeClass: 'badge-error' };
+        return { text: nodeStatus, badgeClass: BadgeConstants.BadgeError };
       case NodeStatusConstants.Disabling:
       case NodeStatusConstants.Disabled:
-        return { text: nodeStatus, badgeClass: 'badge-warning' };
+        return { text: nodeStatus, badgeClass: BadgeConstants.BadgeWarning };
       default:
-        return { text: nodeStatus, badgeClass: 'badge-unknown' };
+        return { text: nodeStatus, badgeClass: BadgeConstants.BadgeUnknown };
     }
   }
 
