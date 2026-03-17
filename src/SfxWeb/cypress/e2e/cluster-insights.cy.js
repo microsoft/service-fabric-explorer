@@ -69,7 +69,7 @@ context('cluster-insights', () => {
       cy.wait(['@systemReplicaOnNodes', '@deployedAppsOnNode']);
 
       cy.get('app-nodes').within(() => {
-        cy.get('tbody > tr:first-child span.expandable-link').first().click();
+        cy.get('tbody > tr:first-child span.expandable-link').should('exist').first().click();
         cy.get('app-expanded-details').scrollIntoView().should('be.visible');
       });
     });
