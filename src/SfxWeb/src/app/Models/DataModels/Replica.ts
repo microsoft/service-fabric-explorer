@@ -5,7 +5,7 @@ import { DeployedReplicaDetail } from './DeployedReplica';
 import { DataService } from 'src/app/services/data.service';
 import { Partition } from './Partition';
 import { HealthStateFilterFlags } from '../HealthChunkRawDataTypes';
-import { SortPriorities, UnicodeConstants, ReplicaRoles } from 'src/app/Common/Constants';
+import { SortPriorities, UnicodeConstants } from 'src/app/Common/Constants';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { HealthBase } from './HealthEvent';
@@ -37,10 +37,6 @@ export class ReplicaOnPartition extends DataModelBase<IRawReplicaOnPartition> {
     public health: ReplicaHealth;
     public detail: DeployedReplicaDetail;
     public address: any;
-
-    public nodeStatus: string = '';
-    public isSeedNode: boolean = false;
-    public infoMessage: string = '';
 
     public constructor(data: DataService, raw: IRawReplicaOnPartition, public parent: Partition) {
         super(data, raw, parent);

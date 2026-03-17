@@ -6,6 +6,7 @@ import { RestClientService } from 'src/app/services/rest-client.service';
 import { DataService } from 'src/app/services/data.service';
 import { IRawApplicationHealth, IRawReplicaOnPartition } from 'src/app/Models/RawDataTypes';
 import { NodeCollection } from 'src/app/Models/DataModels/collections/NodeCollection';
+import { ApplicationCollection } from 'src/app/Models/DataModels/collections/Collections';
 import { NodeStatusConstants, Constants, HealthStateConstants } from 'src/app/Common/Constants';
 import { calculateWriteQuorum } from 'src/app/Utils/PartitionQuorumUtils';
 import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
@@ -129,15 +130,15 @@ export class RecoveryProgressComponent extends BaseControllerDirective {
     if (!fmHasQuorum) {
       status = 'error';
       tooltip = 'Failover Manager is in quorum loss';
-    } else if (healthState === 'Ok') {
+    } else if (healthState.toLowerCase() === HealthStateConstants.OK.toLowerCase()) {
       status = 'success';
-      tooltip = 'System application health is Ok';
+      tooltip = 'System services health is Ok';
     } else if (healthState === HealthStateConstants.Warning) {
       status = 'warning';
-      tooltip = 'System application health is in Warning state';
+      tooltip = 'System services health is in Warning state';
     } else {
       status = 'error';
-      tooltip = `System application health is in ${healthState} state`;
+      tooltip = `System services health is in ${healthState} state`;
     }
 
     this.updateStepStatus(RecoveryStepName.SystemServices, status, tooltip);
@@ -164,7 +165,7 @@ export class RecoveryProgressComponent extends BaseControllerDirective {
     this.updateStepStatus(RecoveryStepName.Nodes, status, tooltip);
   }
 
-  private checkUserApplicationHealth(appsCollection: any): void {
+  private checkUserApplicationHealth(appsCollection: ApplicationCollection | null): void {
     if (!appsCollection || !appsCollection.collection || appsCollection.collection.length === 0) {
       this.updateStepStatus(RecoveryStepName.UserServices, 'pending', 'No user applications are deployed, or the application list is unavailable.');
       return;
@@ -173,26 +174,26 @@ export class RecoveryProgressComponent extends BaseControllerDirective {
     const apps = appsCollection.collection;
     const totalApps = apps.length;
 
-    const warningApps = apps.filter((app: any) => app.healthState.text === HealthStateConstants.Warning).length;
-    const errorApps = apps.filter((app: any) => app.healthState.text === HealthStateConstants.Error).length;
-    const healthyApps = totalApps - warningApps - errorApps;
+    const warningApps = apps.filter((app) => app.healthState.text === HealthStateConstants.Warning).length;
+    const errorApps = apps.filter((app) => app.healthState.text === HealthStateConstants.Error).length;
 
     let status: RecoveryStep['status'];
-    let tooltip: string;
+    const tooltipParts: string[] = [];
 
-    if (errorApps > 0 && warningApps > 0) {
+    if (errorApps > 0) {
       status = 'error';
-      tooltip = `${errorApps} application(s) have errors, ${warningApps} have warnings, ${healthyApps} are healthy`;
-    } else if (errorApps > 0) {
-      status = 'error';
-      tooltip = `${errorApps} application(s) have errors, ${healthyApps} are healthy`;
-    } else if (warningApps > 0) {
-      status = 'warning';
-      tooltip = `${warningApps} application(s) have warnings, ${healthyApps} are healthy`;
-    } else {
-      status = 'success';
-      tooltip = `All ${totalApps} application(s) are healthy`;
+      tooltipParts.push(`${errorApps} application${errorApps === 1 ? ' has' : 's have'} errors.`);
     }
+    if (warningApps > 0) {
+      status = 'warning';
+      tooltipParts.push(`${warningApps} application${warningApps === 1 ? ' has' : 's have'} warnings.`);
+    }
+    if(errorApps === 0 && warningApps === 0) {
+      status = 'success';
+      tooltipParts.push(`All ${totalApps} application${totalApps === 1 ? ' is' : 's are'} healthy.`);
+    }
+
+    const tooltip = tooltipParts.join(' ');
 
     this.updateStepStatus(RecoveryStepName.UserServices, status, tooltip);
   }

@@ -21,6 +21,7 @@ export class EssentialsComponent extends PartitionBaseControllerDirective {
 
   public hideReplicator = true;
   listSettings: ListSettings;
+  replicaViewModels: any[] = [];
 
   essentialItems: IEssentialListItem[] = [];
 
@@ -78,21 +79,24 @@ export class EssentialsComponent extends PartitionBaseControllerDirective {
         const nodeMap = new Map<string, Node>(nodes.collection.map(n => [n.name, n]));
         const inQuorumLoss = this.partition.isStatefulService && this.partition.raw.PartitionStatus === PartitionStatusConstants.InQuorumLoss;
 
-        this.partition.replicas.collection.forEach(replica => {
+        this.replicaViewModels = this.partition.replicas.collection.map(replica => {
           const node = nodeMap.get(replica.raw.NodeName);
           const nodeStatus = node?.raw.NodeStatus || NodeStatusConstants.Unknown;
-          replica.nodeStatus = nodeStatus;
-          replica.isSeedNode = node?.raw.IsSeedNode ?? false;
           const isDownAndCountsTowardQuorum = inQuorumLoss
             && this.partition.quorumReplicas.has(replica.id)
             && replica.raw.ReplicaStatus !== 'Ready';
-          replica.infoMessage = isDownAndCountsTowardQuorum ? getDownReplicaMitigationHint(nodeStatus) : '';
+
+          const replicaView = Object.create(replica);
+          replicaView.nodeStatus = nodeStatus;
+          replicaView.isSeedNode = node?.raw.IsSeedNode ?? false;
+          replicaView.infoMessage = isDownAndCountsTowardQuorum ? getDownReplicaMitigationHint(nodeStatus) : '';
+          return replicaView;
         });
 
         // Highlight the replicas that need to be brought back up to get the partition out of quorum loss
         if (inQuorumLoss) {
-          this.listSettings.rowClass = (replica) =>
-            this.partition.quorumReplicas.has(replica.id) && replica.raw.ReplicaStatus !== 'Ready'
+          this.listSettings.rowClass = (replicaView) =>
+            this.partition.quorumReplicas.has(replicaView.id) && replicaView.raw.ReplicaStatus !== 'Ready'
               ? 'highlighted-row' : '';
         }
       })
