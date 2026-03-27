@@ -23,6 +23,7 @@ import { ClusterEvent, NodeEvent, ApplicationEvent, ServiceEvent, PartitionEvent
 import { AadMetadata } from '../Models/DataModels/Aad';
 import { environment } from 'src/environments/environment';
 import { IRequest, NetworkDebugger } from '../Models/DataModels/networkDebugger';
+import { normalizeKeys } from '../Utils/ResponseNormalization';
 @Injectable({
   providedIn: 'root'
 })
@@ -913,7 +914,7 @@ export class RestClientService {
         data: null,
         statusCode: 200
     };
-    return resultPromise.pipe(catchError((err: HttpErrorResponse) => {
+    return resultPromise.pipe(map(response => normalizeKeys<T>(response)), catchError((err: HttpErrorResponse) => {
         const header = `${err.status.toString()} : ${apiDesc}`;
 
         const message = messageHandler.getErrorMessage(apiDesc, err);
