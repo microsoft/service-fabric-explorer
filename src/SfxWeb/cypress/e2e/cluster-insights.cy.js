@@ -9,6 +9,8 @@ const FM_PARTITION_ROUTE = apiUrl('/Applications/System/$/GetServices/System%2FF
 const CM_REPLICAS_ROUTE = apiUrl('/Applications/System/$/GetServices/System%2FClusterManagerService/$/GetPartitions/00000000-0000-0000-0000-000000002000/$/GetReplicas?*');
 const CM_PARTITION_ROUTE = apiUrl('/Applications/System/$/GetServices/System%2FClusterManagerService/$/GetPartitions/00000000-0000-0000-0000-000000002000?*');
 const NODES_ROUTE = apiUrl('/Nodes/?*');
+const GET_SYSTEM_REPLICAS_ON_NODE_ROUTE = apiUrl('/Nodes/*/$/GetApplications/System/$/GetReplicas?*');
+const GET_DEPLOYED_APPS_ON_NODE_ROUTE = apiUrl('/Nodes/*/$/GetApplications?*');
 const REPLICA_DETAIL_ROUTE = apiUrl('/Nodes/*/$/GetPartitions/*/$/GetReplicas/*/$/GetDetail?*');
 const FMM_INFO_ROUTE = apiUrl('/$/GetFailoverManagerManagerInformation?*');
 
@@ -50,6 +52,25 @@ context('cluster-insights', () => {
       cy.get('app-nodes').within(() => {
         cy.contains('a.nav-link', 'Seed Nodes').click();
         cy.get('tbody > tr').should('have.length', 5);
+      });
+    });
+
+    it('show system services replica count and deployed application count on node click', () => {
+      cy.intercept('GET', GET_SYSTEM_REPLICAS_ON_NODE_ROUTE, { fixture: 'cluster-insights/system-replicas-on-node.json' }).as('systemReplicaOnNodes');
+      cy.intercept('GET', GET_DEPLOYED_APPS_ON_NODE_ROUTE, { fixture: 'cluster-insights/deployed-apps-on-node.json' }).as('deployedAppsOnNode');
+
+      cy.visit('/#/cluster-insights');
+      cy.wait('@nodes');
+
+      cy.get('app-nodes').within(() => {
+        cy.contains('a.nav-link', 'All Nodes').click();
+      });
+
+      cy.wait(['@systemReplicaOnNodes', '@deployedAppsOnNode']);
+
+      cy.get('app-nodes').within(() => {
+        cy.get('tbody > tr:first-child span.expandable-link').should('exist').first().click();
+        cy.get('app-expanded-details').scrollIntoView().should('be.visible');
       });
     });
   });
@@ -104,11 +125,11 @@ context('cluster-insights', () => {
         
         cy.wait('@replicaDetail');
         cy.get('tbody > tr').first().within(() => {
-          cy.get('span.replica-id-link').click();
+          cy.get('span.expandable-link').click();
         });
         
-        cy.get('[data-cy=replica-detail-panel]').should('be.visible');
-        cy.get('[data-cy=replica-detail-panel]').contains('th', 'Reconfiguration Type').should('exist');
+        cy.get('app-expanded-details').scrollIntoView().should('be.visible');
+        cy.get('app-expanded-details').contains('th', 'Reconfiguration Type').should('exist');
       });
     });
   });

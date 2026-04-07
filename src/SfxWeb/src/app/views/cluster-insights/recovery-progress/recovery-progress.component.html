@@ -4,7 +4,6 @@
       Cluster Recovery Progress
       <span class="mif-loop2 rotate" *ngIf="isLoading"></span>
     </h4>
-    <div class="progress-bar-wrapper">
       <div class="progress-steps">
         <div class="progress-step" 
              [class.success]="step.status === 'success'" 
@@ -17,6 +16,5 @@
           <div class="step-label">{{ step.name }}</div>
         </div>
       </div>
-    </div>
   </div>
 </div>

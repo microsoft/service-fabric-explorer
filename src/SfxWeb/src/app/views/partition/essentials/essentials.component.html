@@ -10,6 +10,22 @@
     <app-tile-wrapper *ngIf="partition?.raw">
       <app-state-info [stateful]="partition.isStatefulService" [data]="partition.raw"></app-state-info>
     </app-tile-wrapper>
+
+    <app-tile-wrapper data-cy="quorum-loss-tile" *ngIf="partition.isStatefulService && partition.raw.PartitionStatus === 'InQuorumLoss'">
+        <h2 class="title-wrapper quorum-info-text">Quorum Loss</h2>
+        <div class="quorum-info-row line-item-separator">
+          <div>Duration</div>
+          <div class="quorum-info-value quorum-info-text">{{ partition.quorumLossDurationMs | formatDate }}</div>
+        </div>
+        <div class="quorum-info-row line-item-separator">
+          <div>Available Replicas</div>
+          <div class="quorum-info-value quorum-info-text">{{ partition.currentReplicaSetSize - partition.downReplicasInQuorum }} out of {{ partition.currentReplicaSetSize }}</div>
+        </div>
+        <div class="quorum-info-row">
+          <div >Required Replicas</div>
+          <div class="quorum-info-value quorum-info-text">{{ partition.writeQuorum }}</div>
+        </div>
+    </app-tile-wrapper>
   </div>
 
 
@@ -43,7 +59,11 @@
         <h2>{{partition.isStatelessService ? "Instances" : "Replicas"}}</h2>
       </div>
       <div collapse-body>
-        <app-detail-list [list]="partition.replicas.collection" [listSettings]="listSettings"
+        <app-warning *ngIf="partition.isStatefulService && partition.raw?.PartitionStatus === 'InQuorumLoss'">
+          <span description-add-on>You need to have any <strong>{{ partition.quorumNeeded }}</strong> of the below <strong>{{ partition.downReplicasInQuorum }}</strong> highlighted replicas ready to be out of quorum loss.</span>
+        </app-warning>
+
+        <app-detail-list [list]="replicaViewModels" [listSettings]="listSettings"
           *ngIf="partition.replicas.isInitialized"></app-detail-list>
       </div>
     </app-collapse-container>

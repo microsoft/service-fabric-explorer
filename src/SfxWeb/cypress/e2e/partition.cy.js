@@ -63,6 +63,18 @@ context('partition', () => {
             })
         })
 
+        it('quorum loss', () => {
+            addRoute('partitionInfo', 'partition-page/stateful-partition-in-quorum-loss-info.json', apiUrl(`${routeFormatter(appName, serviceName)}/${partitionId}?*`));
+            addRoute('replicasList', 'partition-page/stateful-replicas-in-quorum-loss.json', apiUrl(`${routeFormatter(appName, serviceName)}/${partitionId}/$/GetReplicas?*`));
+
+            cy.visit(urlFormatter(appName, serviceName, partitionId));
+            cy.wait(waitRequest);
+
+            cy.get('[data-cy=quorum-loss-tile]').within(() => {
+                cy.contains('Duration');
+            });
+        })
+
         it('view details', () => {
             cy.wait([waitRequest, FIXTURE_REF_MANIFEST]);
 

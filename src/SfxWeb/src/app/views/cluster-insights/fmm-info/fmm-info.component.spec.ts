@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { FailoverManagerManagerInformationComponent } from './fmm-info.component';
+import { FmmInfoComponent } from './fmm-info.component';
 
-describe('FailoverManagerManagerInformationComponent', () => {
-  let component: FailoverManagerManagerInformationComponent;
-  let fixture: ComponentFixture<FailoverManagerManagerInformationComponent>;
+describe('FmmInfoComponent', () => {
+  let component: FmmInfoComponent;
+  let fixture: ComponentFixture<FmmInfoComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ FailoverManagerManagerInformationComponent ]
+      declarations: [ FmmInfoComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(FailoverManagerManagerInformationComponent);
+    fixture = TestBed.createComponent(FmmInfoComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

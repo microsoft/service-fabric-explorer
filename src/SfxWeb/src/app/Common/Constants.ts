@@ -31,6 +31,10 @@ export class Constants {
     public static SystemAppName = 'fabric:/System';
     public static SystemAppTypeName = 'System';
     public static InfrastructureServiceType = 'InfrastructureServiceType';
+    public static FailoverManagerServiceName = 'FailoverManagerService';
+    public static FailoverManagerPartitionId = '00000000-0000-0000-0000-000000000001';
+    public static ClusterManagerServiceName = 'ClusterManagerService';
+    public static ClusterManagerPartitionId = '00000000-0000-0000-0000-000000002000';
 
     // Version header
     public static SfxVersionMetadataName = 'SFX-Version';
@@ -137,6 +141,26 @@ export class NodeStatusConstants {
     public static Disabling = 'Disabling';
     public static Disabled = 'Disabled';
     public static Unknown = 'Unknown';
+}
+
+export class PartitionStatusConstants {
+    public static Invalid = 'Invalid';
+    public static Ready = 'Ready';
+    public static NotReady = 'NotReady';
+    public static InQuorumLoss = 'InQuorumLoss';
+    public static Reconfiguring = 'Reconfiguring';
+    public static Deleting = 'Deleting';
+}
+
+export class ReplicaRoles {
+    public static Unknown = 'Unknown';
+    public static None = 'None';
+    public static Primary = 'Primary';
+    public static ActiveSecondary = 'ActiveSecondary';
+    public static IdleSecondary = 'IdleSecondary';
+    public static PrimaryAuxiliary = 'PrimaryAuxiliary';
+    public static ActiveAuxiliary = 'ActiveAuxiliary';
+    public static IdleAuxiliary = 'IdleAuxiliary';
 }
 
 export class HealthStateConstants {

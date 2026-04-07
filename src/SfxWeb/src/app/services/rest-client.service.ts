@@ -248,6 +248,14 @@ export class RestClientService {
       return this.get(formedUrl, 'Get replicas on service', messageHandler);
   }
 
+  public getDeployedReplicasByApplication(nodeName: string, applicationId: string, messageHandler?: IResponseMessageHandler): Observable<IRawDeployedReplica[]> {
+      const url = 'Nodes/' + encodeURIComponent(nodeName)
+          + '/$/GetApplications/' + encodeURIComponent(applicationId)
+          + '/$/GetReplicas';
+
+      return this.get(this.getApiUrl(url), 'Get replicas for application', messageHandler);
+  }
+
   public getDeployedCodePackages(nodeName: string, applicationId: string, servicePackageName: string, messageHandler?: IResponseMessageHandler): Observable<IRawDeployedCodePackage[]> {
       const url = 'Nodes/' + encodeURIComponent(nodeName)
           + '/$/GetApplications/' + encodeURIComponent(applicationId)

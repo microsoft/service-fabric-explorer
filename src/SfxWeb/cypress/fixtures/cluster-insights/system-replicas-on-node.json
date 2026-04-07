@@ -1,0 +1,90 @@
+[
+  {
+    "ServiceKind": "Stateful",
+    "ServiceName": "fabric:/System/FailoverManagerService",
+    "ServiceTypeName": "FMServiceType",
+    "ServiceManifestVersion": "",
+    "ServiceManifestName": "",
+    "CodePackageName": "",
+    "PartitionId": "00000000-0000-0000-0000-000000000001",
+    "ReplicaId": "134169561815321788",
+    "ReplicaRole": "ActiveSecondary",
+    "ReplicaStatus": "Ready",
+    "Address": "6e2511564401fd0a01946e1a6cdeb61:134169560849994596",
+    "ServicePackageActivationId": "",
+    "HostProcessId": "2072",
+    "ReconfigurationInformation": {
+      "PreviousConfigurationRole": "None",
+      "PreviousSelfReconfiguringConfigurationRole": "SelfReconfiguringNone",
+      "ReconfigurationPhase": "None",
+      "ReconfigurationType": "None",
+      "ReconfigurationStartTimeUtc": "0001-01-01T00:00:00.000Z"
+    }
+  },
+  {
+    "ServiceKind": "Stateful",
+    "ServiceName": "fabric:/System/NamingService",
+    "ServiceTypeName": "NamingStoreService",
+    "ServiceManifestVersion": "",
+    "ServiceManifestName": "",
+    "CodePackageName": "",
+    "PartitionId": "00000000-0000-0000-0000-000000001000",
+    "ReplicaId": "134169562190987814",
+    "ReplicaRole": "ActiveSecondary",
+    "ReplicaStatus": "Ready",
+    "Address": "6e2511564401fd0a01946e1a6cdeb61:134169560849994596+00000000-0000-0000-0000-000000001000+134169562190987814+134173071384506303++",
+    "ServicePackageActivationId": "",
+    "HostProcessId": "2072",
+    "ReconfigurationInformation": {
+      "PreviousConfigurationRole": "None",
+      "PreviousSelfReconfiguringConfigurationRole": "SelfReconfiguringNone",
+      "ReconfigurationPhase": "None",
+      "ReconfigurationType": "None",
+      "ReconfigurationStartTimeUtc": "0001-01-01T00:00:00.000Z"
+    }
+  },
+  {
+    "ServiceKind": "Stateful",
+    "ServiceName": "fabric:/System/NamingService",
+    "ServiceTypeName": "NamingStoreService",
+    "ServiceManifestVersion": "",
+    "ServiceManifestName": "",
+    "CodePackageName": "",
+    "PartitionId": "00000000-0000-0000-0000-000000001001",
+    "ReplicaId": "134169562235207163",
+    "ReplicaRole": "ActiveSecondary",
+    "ReplicaStatus": "Ready",
+    "Address": "6e2511564401fd0a01946e1a6cdeb61:134169560849994596+00000000-0000-0000-0000-000000001001+134169562235207163+134169562241344125++",
+    "ServicePackageActivationId": "",
+    "HostProcessId": "2072",
+    "ReconfigurationInformation": {
+      "PreviousConfigurationRole": "None",
+      "PreviousSelfReconfiguringConfigurationRole": "SelfReconfiguringNone",
+      "ReconfigurationPhase": "None",
+      "ReconfigurationType": "None",
+      "ReconfigurationStartTimeUtc": "0001-01-01T00:00:00.000Z"
+    }
+  },
+  {
+    "ServiceKind": "Stateful",
+    "ServiceName": "fabric:/System/NamingService",
+    "ServiceTypeName": "NamingStoreService",
+    "ServiceManifestVersion": "",
+    "ServiceManifestName": "",
+    "CodePackageName": "",
+    "PartitionId": "00000000-0000-0000-0000-000000001002",
+    "ReplicaId": "134169562235207163",
+    "ReplicaRole": "ActiveSecondary",
+    "ReplicaStatus": "Ready",
+    "Address": "6e2511564401fd0a01946e1a6cdeb61:134169560849994596+00000000-0000-0000-0000-000000001002+134169562235207163+134169562238844144++",
+    "ServicePackageActivationId": "",
+    "HostProcessId": "2072",
+    "ReconfigurationInformation": {
+      "PreviousConfigurationRole": "None",
+      "PreviousSelfReconfiguringConfigurationRole": "SelfReconfiguringNone",
+      "ReconfigurationPhase": "None",
+      "ReconfigurationType": "None",
+      "ReconfigurationStartTimeUtc": "0001-01-01T00:00:00.000Z"
+    }
+  }
+]

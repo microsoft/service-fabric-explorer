@@ -1,0 +1,13 @@
+<ng-container *ngIf="item && listSetting">
+  <span 
+    [class.expandable-link]="item.isClickable" 
+    [class.non-expandable-link]="!item.isClickable"
+    [style.color]="item.color"
+    (click)="onClick()">
+    {{ listSetting.getValue(item) }}
+    <ng-container *ngIf="item.icon as icon">
+      <img [src]="icon.src" [alt]="icon.alt" class="icon" [title]="icon.title">
+    </ng-container>
+    <i *ngIf="item.infoMessage" class="mif-info info-icon" [title]="item.infoMessage"></i>
+  </span>
+</ng-container>

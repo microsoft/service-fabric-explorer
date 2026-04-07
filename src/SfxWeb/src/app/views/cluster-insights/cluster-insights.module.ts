@@ -7,21 +7,21 @@ import { ChartsModule } from 'src/app/modules/charts/charts.module';
 import { ClusterInsightsRoutingModule } from './cluster-insights-routing.module';
 import { ClusterInsightsComponent } from './cluster-insights.component';
 import { ReplicaListComponent } from './replica-list/replica-list.component';
-import { FailoverManagerManagerInformationComponent } from './fmm-info/fmm-info.component';
+import { FmmInfoComponent } from './fmm-info/fmm-info.component';
 import { NodesComponent } from './nodes/nodes.component';
 import { RecoveryProgressComponent } from './recovery-progress/recovery-progress.component';
-import { ExpandableLinkComponent } from './replica-id-link/replica-id-link.component';
-import { ReplicaDetailsComponent } from './replica-details/replica-details.component';
+import { ExpandableLinkComponent } from './expandable-link/expandable-link.component';
+import { ExpandedDetailsComponent } from './expanded-details/expanded-details.component';
 
 @NgModule({
   declarations: [
     ClusterInsightsComponent,
     ReplicaListComponent,
-    FailoverManagerManagerInformationComponent,
+    FmmInfoComponent,
     NodesComponent,
     RecoveryProgressComponent,
     ExpandableLinkComponent,
-    ReplicaDetailsComponent
+    ExpandedDetailsComponent
   ],
   imports: [
     CommonModule,

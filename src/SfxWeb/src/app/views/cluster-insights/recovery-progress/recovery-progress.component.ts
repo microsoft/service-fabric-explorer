@@ -1,8 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Injector } from '@angular/core';
+import { forkJoin, of, Observable } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
+
 import { RestClientService } from 'src/app/services/rest-client.service';
-import { IRawApplicationHealth, IRawNode, IRawReplicaOnPartition } from 'src/app/Models/RawDataTypes';
-import { forkJoin, of } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { DataService } from 'src/app/services/data.service';
+import { IRawApplicationHealth, IRawReplicaOnPartition } from 'src/app/Models/RawDataTypes';
+import { NodeCollection } from 'src/app/Models/DataModels/collections/NodeCollection';
+import { ApplicationCollection } from 'src/app/Models/DataModels/collections/Collections';
+import { NodeStatusConstants, Constants, HealthStateConstants } from 'src/app/Common/Constants';
+import { calculateWriteQuorum } from 'src/app/Utils/PartitionQuorumUtils';
+import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 
 interface RecoveryStep {
   name: string;
@@ -18,23 +25,12 @@ enum RecoveryStepName {
   UserServices = 'User Services'
 }
 
-enum NodeStatus {
-  Up = 'Up',
-  Down = 'Down',
-  Disabled = 'Disabled',
-  Disabling = 'Disabling'
-}
-
-const SYSTEM_APP_NAME = 'System';
-const FAILOVER_MANAGER_SERVICE = 'System/FailoverManagerService';
-const FAILOVER_MANAGER_PARTITION_ID = '00000000-0000-0000-0000-000000000001';
-
 @Component({
   selector: 'app-recovery-progress',
   templateUrl: './recovery-progress.component.html',
   styleUrls: ['./recovery-progress.component.scss']
 })
-export class RecoveryProgressComponent implements OnInit {
+export class RecoveryProgressComponent extends BaseControllerDirective {
   recoverySteps: RecoveryStep[] = [
     { name: RecoveryStepName.SeedNodesQuorum, status: 'pending' },
     { name: RecoveryStepName.FailoverManager, status: 'pending' },
@@ -43,101 +39,76 @@ export class RecoveryProgressComponent implements OnInit {
     { name: RecoveryStepName.UserServices, status: 'pending' }
   ];
 
-  public isLoading = true;
+  isLoading = true;
+  override fixedRefreshIntervalMs = 65000; // 65 seconds
 
-  constructor(private restClient: RestClientService) {}
-
-  ngOnInit(): void {
-    this.checkRecoveryStatus();
+  constructor(private restClient: RestClientService, private dataService: DataService, injector: Injector) {
+    super(injector);
   }
 
-  checkRecoveryStatus(): void {
+  refresh(): Observable<any> {
     this.isLoading = true;
-
-    forkJoin({
-      nodes: this.restClient.getNodes(),
+    return forkJoin({
+      nodes: this.dataService.getNodes(true),
       failoverManagerReplicas: this.restClient.getReplicasOnPartition(
-        SYSTEM_APP_NAME,
-        FAILOVER_MANAGER_SERVICE,
-        FAILOVER_MANAGER_PARTITION_ID
+        Constants.SystemAppId,
+        `${Constants.SystemAppTypeName}/${Constants.FailoverManagerServiceName}`,
+        Constants.FailoverManagerPartitionId
       ),
-      systemAppHealth: this.restClient.getApplicationHealth(SYSTEM_APP_NAME).pipe(
+      systemAppHealth: this.restClient.getApplicationHealth(Constants.SystemAppId).pipe(
         catchError(() => {
           this.updateStepStatus(RecoveryStepName.SystemServices, 'error', 'Get system services health timed out. Please check if Cluster Manager is unhealthy.');
           return of(null);
         })
+      ),
+      apps: this.dataService.getApps(true).pipe(
+        catchError(() => of(null))
       )
-    }).subscribe({
-      next: (results) => {
+    }).pipe(
+      map(results => {
         this.checkSeedNodeQuorum(results.nodes);
         const fmHasQuorum = this.checkFailoverManagerStatus(results.failoverManagerReplicas);
-        
+
         if (results.systemAppHealth) {
           this.checkSystemServicesStatus(results.systemAppHealth, fmHasQuorum);
         }
-        
+
         this.checkNodesStatus(results.nodes);
+        this.checkUserApplicationHealth(results.apps);
         this.isLoading = false;
-      },
-      error: () => {
+      }),
+      catchError(() => {
         this.isLoading = false;
-      }
-    });
+        return of(null);
+      })
+    );
   }
 
   private updateStepStatus(stepName: RecoveryStepName, status: RecoveryStep['status'], tooltip: string): void {
-    const step = this.findStep(stepName);
+    const step = this.recoverySteps.find(s => s.name === stepName);
     if (step) {
       step.status = status;
       step.tooltip = tooltip;
     }
   }
 
-  private findStep(stepName: RecoveryStepName): RecoveryStep | undefined {
-    return this.recoverySteps.find(step => step.name === stepName);
-  }
-
-  private checkSeedNodeQuorum(rawNodes: IRawNode[]): void {
-    const seedNodes = rawNodes.filter(node => node.IsSeedNode);
-    const totalSeedNodes = seedNodes.length;
-    const upSeedNodes = seedNodes.filter(node => node.NodeStatus === NodeStatus.Up).length;
-    const quorum = this.calculateQuorum(totalSeedNodes);
-    const hasQuorum = upSeedNodes >= quorum;
+  private checkSeedNodeQuorum(nodeCollection: NodeCollection): void {
+    const totalSeedNodes = nodeCollection.seedNodeCount;
+    const upSeedNodes = nodeCollection.collection.filter(node => node.raw.IsSeedNode && node.raw.NodeStatus === NodeStatusConstants.Up).length;
+    const seedNodeQuorum = Math.floor(totalSeedNodes / 2) + 1;
+    const hasQuorum = upSeedNodes >= seedNodeQuorum;
 
     const status = hasQuorum ? 'success' : 'error';
     const tooltip = hasQuorum 
-      ? `Quorum achieved: ${upSeedNodes}/${totalSeedNodes} seed nodes are Up (${quorum} required)`
-      : `Quorum lost: Only ${upSeedNodes}/${totalSeedNodes} seed nodes are Up (${quorum} required)`;
+      ? `Quorum achieved: ${upSeedNodes}/${totalSeedNodes} seed nodes are Up (${seedNodeQuorum} required)`
+      : `Quorum lost: Only ${upSeedNodes}/${totalSeedNodes} seed nodes are Up (${seedNodeQuorum} required)`;
 
     this.updateStepStatus(RecoveryStepName.SeedNodesQuorum, status, tooltip);
   }
 
-  private calculateQuorum(total: number): number {
-    return Math.floor(total / 2) + 1;
-  }
-
-  private calculateWriteQuorum(replicas: IRawReplicaOnPartition[]): number {
-    // If the previous configuration (PC) role is 'None' for all replicas, then the partition is not in reconfiguration.
-    const isNotInReconfiguration = replicas.every(replica => 
-      replica.PreviousReplicaRole === 'None'
-    );
-
-    // If the partition is not in reconfiguration, write quorum is calculated using the current configuration (CC) role.
-    // Otherwise, it is calculated using the PC role.
-    const activeReplicas = isNotInReconfiguration
-      ? replicas.filter(replica => this.isActiveReplica(replica.ReplicaRole))
-      : replicas.filter(replica => this.isActiveReplica(replica.PreviousReplicaRole));
-
-    return this.calculateQuorum(activeReplicas.length);
-  }
-
-  private isActiveReplica(role: string | undefined): boolean {
-    return role === 'ActiveSecondary' || role === 'Primary';
-  }
-
   private checkFailoverManagerStatus(replicas: IRawReplicaOnPartition[]): boolean {
     const readyReplicas = replicas.filter(replica => replica.ReplicaStatus === 'Ready').length;
-    const writeQuorum = this.calculateWriteQuorum(replicas);
+    const writeQuorum = calculateWriteQuorum(replicas);
     const hasQuorum = readyReplicas >= writeQuorum;
 
     const status = hasQuorum ? 'success' : 'error';
@@ -152,24 +123,30 @@ export class RecoveryProgressComponent implements OnInit {
 
   private checkSystemServicesStatus(applicationHealth: IRawApplicationHealth, fmHasQuorum: boolean): void {
     const healthState = applicationHealth.AggregatedHealthState;
-    const isOk = healthState === 'Ok' && fmHasQuorum;
 
-    const status = isOk ? 'success' : 'error';
-    const tooltip = !fmHasQuorum
-      ? 'Failover Manager is in quorum loss'
-      : isOk 
-        ? 'System application health is Ok'
-        : `System application health is ${healthState}`;
+    let status: RecoveryStep['status'];
+    let tooltip: string;
+
+    if (!fmHasQuorum) {
+      status = 'error';
+      tooltip = 'Failover Manager is in quorum loss';
+    } else if (healthState.toLowerCase() === HealthStateConstants.OK.toLowerCase()) {
+      status = 'success';
+      tooltip = 'System services health is Ok';
+    } else if (healthState === HealthStateConstants.Warning) {
+      status = 'warning';
+      tooltip = 'System services health is in Warning state';
+    } else {
+      status = 'error';
+      tooltip = `System services health is in ${healthState} state`;
+    }
 
     this.updateStepStatus(RecoveryStepName.SystemServices, status, tooltip);
   }
 
-  private checkNodesStatus(rawNodes: IRawNode[]): void {
-    const totalNodes = rawNodes.length;
-    const disabledNodes = rawNodes.filter(node => 
-      node.NodeStatus === NodeStatus.Disabled || node.NodeStatus === NodeStatus.Disabling
-    );
-    const downNodes = rawNodes.filter(node => node.NodeStatus === NodeStatus.Down);
+  private checkNodesStatus(nodeCollection: NodeCollection): void {
+    const totalNodes = nodeCollection.collection.length;
+    const downNodes = nodeCollection.collection.filter(node => node.raw.NodeStatus === NodeStatusConstants.Down);
 
     let status: RecoveryStep['status'];
     let tooltip: string;
@@ -177,14 +154,47 @@ export class RecoveryProgressComponent implements OnInit {
     if (downNodes.length > 0) {
       status = 'error';
       tooltip = `${downNodes.length} node(s) are Down`;
-    } else if (disabledNodes.length > 0) {
+    } else if (nodeCollection.disabledAndDisablingCount > 0) {
       status = 'warning';
-      tooltip = `${disabledNodes.length} node(s) are Disabled or Disabling`;
+      tooltip = `${nodeCollection.disabledAndDisablingCount} node(s) are Disabled or Disabling`;
     } else {
       status = 'success';
       tooltip = `All ${totalNodes} nodes are Up`;
     }
 
     this.updateStepStatus(RecoveryStepName.Nodes, status, tooltip);
+  }
+
+  private checkUserApplicationHealth(appsCollection: ApplicationCollection | null): void {
+    if (!appsCollection || !appsCollection.collection || appsCollection.collection.length === 0) {
+      this.updateStepStatus(RecoveryStepName.UserServices, 'pending', 'No user applications are deployed, or the application list is unavailable.');
+      return;
+    }
+
+    const apps = appsCollection.collection;
+    const totalApps = apps.length;
+
+    const warningApps = apps.filter((app) => app.healthState.text === HealthStateConstants.Warning).length;
+    const errorApps = apps.filter((app) => app.healthState.text === HealthStateConstants.Error).length;
+
+    let status: RecoveryStep['status'];
+    const tooltipParts: string[] = [];
+
+    if (errorApps > 0) {
+      status = 'error';
+      tooltipParts.push(`${errorApps} application${errorApps === 1 ? ' has' : 's have'} errors.`);
+    }
+    if (warningApps > 0) {
+      status = 'warning';
+      tooltipParts.push(`${warningApps} application${warningApps === 1 ? ' has' : 's have'} warnings.`);
+    }
+    if(errorApps === 0 && warningApps === 0) {
+      status = 'success';
+      tooltipParts.push(`All ${totalApps} application${totalApps === 1 ? ' is' : 's are'} healthy.`);
+    }
+
+    const tooltip = tooltipParts.join(' ');
+
+    this.updateStepStatus(RecoveryStepName.UserServices, status, tooltip);
   }
 }

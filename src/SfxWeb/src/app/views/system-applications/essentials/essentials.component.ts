@@ -6,7 +6,6 @@ import { SettingsService } from 'src/app/services/settings.service';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Observable, forkJoin } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { NodeStatusConstants } from 'src/app/Common/Constants';
 import { IEssentialListItem } from 'src/app/modules/charts/essential-health-tile/essential-health-tile.component';
 @Component({
   selector: 'app-essentials',
@@ -37,20 +36,14 @@ export class EssentialsComponent extends ServiceApplicationsBaseControllerDirect
     return forkJoin([this.systemApp.services.refresh(messageHandler),
     this.data.getNodes(true)
     ]).pipe(map((results) => {
-      let lowest = results[1].collection[0];
+      const fmmNode = results[1].getLikelyFmmNode();
 
-      results[1].collection.forEach(node => {
-        if (parseInt(lowest.id, 16) > parseInt(node.id, 16) && node.raw.HealthState === NodeStatusConstants.Up) {
-          lowest = node;
-        }
-      })
-
-      if(lowest) {
+      if (fmmNode) {
         this.essentialItems = [
           {
             descriptionName: 'Likely FMM Node',
-            displayText: lowest.name,
-            copyTextValue: lowest.name,
+            displayText: fmmNode.name,
+            copyTextValue: fmmNode.name,
           }
         ];
       }

@@ -1,67 +1,56 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Injector } from '@angular/core';
+import { Observable, of } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
+import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 import { IRawFailoverManagerManagerInformation } from 'src/app/Models/RawDataTypes';
 import { RestClientService } from 'src/app/services/rest-client.service';
+import { DataService } from 'src/app/services/data.service';
 
 @Component({
   selector: 'app-fmm-info',
   templateUrl: './fmm-info.component.html',
   styleUrls: ['./fmm-info.component.scss']
 })
-export class FailoverManagerManagerInformationComponent implements OnInit {
-  fmmInfo: IRawFailoverManagerManagerInformation = {} as IRawFailoverManagerManagerInformation;
+export class FmmInfoComponent extends BaseControllerDirective {
+  fmmInfo: IRawFailoverManagerManagerInformation;
   isLoading = true;
   isFmmEstimate = false;
-  
-  constructor(private restClientService: RestClientService) {}
 
-  ngOnInit(): void {
-    this.getFailoverManagerManagerInformation();
+  override fixedRefreshIntervalMs = 65000; // 65 seconds
+
+  constructor(private restClientService: RestClientService, private dataService: DataService, injector: Injector) {
+    super(injector);
   }
 
-  getFailoverManagerManagerInformation(): void {
+  refresh(): Observable<any> {
     this.isLoading = true;
-    this.restClientService.getFailoverManagerManagerInformation().subscribe({
-      next: (data) => {
+    return this.restClientService.getFailoverManagerManagerInformation().pipe(
+      map(data => {
         this.fmmInfo = data;
         this.isLoading = false;
-      },
-      error: () => {
-        this.estimateFmmNode();
-      }
-    });
+      }),
+      catchError(() => this.estimateFmmNode())
+    );
   }
 
-  private estimateFmmNode(): void {
-    this.restClientService.getNodes().subscribe({
-      next: (nodes) => {
-        if (nodes && nodes.length > 0) {
-          // FMM is on the up node with the lowest node ID
-          const upNodes = nodes.filter(node => node.NodeStatus === "Up");
-          
-          if (upNodes.length > 0) {
-            let lowest = upNodes[0];
-            
-            upNodes.forEach(node => {
-              if (parseInt(lowest.Id.Id, 16) > parseInt(node.Id.Id, 16)) {
-                lowest = node;
-              }
-            });
-
-            if (lowest) {
-              this.fmmInfo = {
-                NodeName: lowest.Name,
-                NodeId: lowest.Id,
-                NodeInstanceId: lowest.InstanceId
-              };
-              this.isFmmEstimate = true;
-            }
-          }
+  private estimateFmmNode(): Observable<any> {
+    return this.dataService.getNodes(true).pipe(
+      map(nodeCollection => {
+        const fmmNode = nodeCollection.getLikelyFmmNode();
+        if (fmmNode) {
+          this.fmmInfo = {
+            NodeName: fmmNode.name,
+            NodeId: fmmNode.raw.Id,
+            NodeInstanceId: fmmNode.raw.InstanceId
+          };
+          this.isFmmEstimate = true;
         }
         this.isLoading = false;
-      },
-      error: () => {
+      }),
+      catchError(() => {
         this.isLoading = false;
-      }
-    });
+        return of(null);
+      })
+    );
   }
 }

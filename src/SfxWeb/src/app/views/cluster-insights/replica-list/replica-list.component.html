@@ -1,7 +1,7 @@
 <div class="essen-pane detail-pane nav-wrapper">
   <h4>System Services</h4>
   <div class="nav-wrapper">
-    <ul ngbNav #nav="ngbNav" class="nav-wrapper" [(activeId)]="activeTab" (activeIdChange)="onTabChange($event)">
+    <ul ngbNav #nav="ngbNav" class="nav-wrapper" [(activeId)]="activeTab">
       <li [ngbNavItem]="ServiceName.FailoverManager">
         <a ngbNavLink class="nav-link">
           Failover Manager
@@ -36,8 +36,8 @@
             <div class="stat-box" 
                  [ngClass]="failoverManagerState.partitionStatus">
               <div class="stat-label">
-                <span *ngIf="failoverManagerState.partitionStatus === PartitionStatus.InQuorumLoss" class="not-met-label">Expected</span>
-                <span *ngIf="failoverManagerState.partitionStatus !== PartitionStatus.InQuorumLoss" class="met-label">Current</span>
+                <span *ngIf="failoverManagerState.partitionStatus === PartitionStatus.InQuorumLoss">Expected</span>
+                <span *ngIf="failoverManagerState.partitionStatus !== PartitionStatus.InQuorumLoss">Current</span>
                 Write Quorum
               </div>
               <div class="stat-value" 
@@ -48,13 +48,17 @@
 
             <div class="stat-box" *ngIf="failoverManagerState.partitionStatus === PartitionStatus.InQuorumLoss" [ngClass]="failoverManagerState.partitionStatus">
               <div class="stat-label">Quorum Loss Duration</div>
-              <div class="stat-value" [ngClass]="failoverManagerState.partitionStatus">{{ failoverManagerState.lastQuorumLossDuration }}</div>
+              <div class="stat-value" [ngClass]="failoverManagerState.partitionStatus">{{ failoverManagerState.lastQuorumLossDuration | formatDate }}</div>
             </div>
           </div>
 
-          <div *ngIf="failoverManagerState.partitionStatus === PartitionStatus.InQuorumLoss" class="quorum-loss-message">
-            <span>You need to have any <strong>{{ failoverManagerState.quorumNeeded }}</strong> of the below <strong>{{ failoverManagerState.highlightedReplicaCount }}</strong> highlighted replicas ready to be out of quorum loss.</span>
-          </div>
+          <app-warning *ngIf="failoverManagerState.partitionStatus === PartitionStatus.InQuorumLoss"
+            description="Failover Manager is in quorum loss. All approvals for upgrades, repair jobs, and infrastructure jobs are paused.">
+          </app-warning>
+
+          <app-warning *ngIf="failoverManagerState.partitionStatus === PartitionStatus.InQuorumLoss">
+            <span description-add-on>You need to have any <strong>{{ failoverManagerState.quorumNeeded }}</strong> of the below <strong>{{ failoverManagerState.downReplicasInQuorum }}</strong> highlighted replicas ready to be out of quorum loss.</span>
+          </app-warning>
 
           <app-detail-list [list]="failoverManagerState.replicaData" [listSettings]="failoverManagerState.listSettings"></app-detail-list>
         </ng-template>
@@ -93,8 +97,8 @@
             <div class="stat-box" 
                  [ngClass]="clusterManagerState.partitionStatus">
               <div class="stat-label">
-                <span *ngIf="clusterManagerState.partitionStatus === PartitionStatus.InQuorumLoss" class="not-met-label">Expected</span>
-                <span *ngIf="clusterManagerState.partitionStatus !== PartitionStatus.InQuorumLoss" class="met-label">Current</span>
+                <span *ngIf="clusterManagerState.partitionStatus === PartitionStatus.InQuorumLoss">Expected</span>
+                <span *ngIf="clusterManagerState.partitionStatus !== PartitionStatus.InQuorumLoss">Current</span>
                 Write Quorum
               </div>
               <div class="stat-value" 
@@ -105,18 +109,17 @@
 
             <div class="stat-box" *ngIf="clusterManagerState.partitionStatus === PartitionStatus.InQuorumLoss" [ngClass]="clusterManagerState.partitionStatus">
               <div class="stat-label">Quorum Loss Duration</div>
-              <div class="stat-value" [ngClass]="clusterManagerState.partitionStatus">{{ clusterManagerState.lastQuorumLossDuration }}</div>
+              <div class="stat-value" [ngClass]="clusterManagerState.partitionStatus">{{ clusterManagerState.lastQuorumLossDuration | formatDate }}</div>
             </div>
           </div>
 
-          <div *ngIf="failoverManagerState.partitionStatus === PartitionStatus.InQuorumLoss && clusterManagerState.replicaData.length === 0" class="quorum-loss-message">
-            <span><strong>Warning:</strong> Cluster Manager data will not load when Failover Manager is in quorum loss.</span>
-          </div>
+          <app-warning *ngIf="failoverManagerState.partitionStatus === PartitionStatus.InQuorumLoss && clusterManagerState.replicaData.length === 0">
+            <span description-add-on><strong>Warning:</strong> Cluster Manager data will not load when Failover Manager is in quorum loss.</span>
+          </app-warning>
 
-          <div *ngIf="clusterManagerState.partitionStatus === PartitionStatus.InQuorumLoss" class="quorum-loss-message">
-            <i class="bowtie-icon bowtie-status-warning"></i>
-            <span>You need to have any <strong>{{ clusterManagerState.quorumNeeded }}</strong> of the below <strong>{{ clusterManagerState.highlightedReplicaCount }}</strong> highlighted replicas ready to be out of quorum loss.</span>
-          </div>
+          <app-warning *ngIf="clusterManagerState.partitionStatus === PartitionStatus.InQuorumLoss">
+            <span description-add-on>You need to have any <strong>{{ clusterManagerState.quorumNeeded }}</strong> of the below <strong>{{ clusterManagerState.downReplicasInQuorum }}</strong> highlighted replicas ready to be out of quorum loss.</span>
+          </app-warning>
 
           <app-detail-list [list]="clusterManagerState.replicaData" [listSettings]="clusterManagerState.listSettings"></app-detail-list>
         </ng-template>

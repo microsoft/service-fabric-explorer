@@ -1,5 +1,4 @@
 <app-dashboard-text-scale-tile data-cy="fmm-info">
-  <div style="display: flex; flex-direction: column">
     <h2 class="title-wrapper top-separator">
       {{ isFmmEstimate ? 'FMM Information (Estimated)' : 'FMM Information' }}
       <span class="mif-info" title="This is the node location of the Failover Manager Manager."></span>
@@ -31,5 +30,4 @@
         <app-clip-board [text]="fmmInfo?.NodeInstanceId" *ngIf="fmmInfo?.NodeInstanceId" [name]="'Node Instance ID'"></app-clip-board>
       </div>
     </div>
-  </div>
 </app-dashboard-text-scale-tile>

@@ -21,10 +21,10 @@ export class ColoredNodeNameComponent implements OnInit, DetailBaseComponent {
   }
 
   getNodeStatus(): string {
-    return this.item?.raw?.NodeStatus || '';
+    return this.item?.nodeStatus || '';
   }
 
   isSeedNode(): boolean {
-    return this.item?.raw?.IsSeedNode === true;
+    return this.item?.isSeedNode === true;
   }
 }

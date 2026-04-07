@@ -7,5 +7,36 @@
         font-size: var(--font-size-large);
         color: var(--font-accent-color);
     }
-
 }
+
+.title-wrapper {
+  font-size: 18pt;
+  line-height: 0.9;
+  font-weight: 600;
+  border-bottom: 1px solid #4c4c4c;
+  padding-bottom: 8px;
+  text-align: center;
+}
+
+.quorum-info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 0;
+
+  .quorum-info-value {
+    text-align: right;
+  }
+}
+
+.line-item-separator {
+    border-bottom: 1px solid #4c4c4c;
+    padding-bottom: 4px;
+    margin-bottom: 4px;
+}
+
+.quorum-info-text {
+    color: var(--badge-error);
+}
+
+
