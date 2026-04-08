@@ -87,7 +87,7 @@ export class BaseComponent implements OnInit, IBaseView {
     this.dataService.nodes.refresh().subscribe( () => {
       this.dataService.clusterManifest.ensureInitialized().subscribe( () => {
           // if < 5 seed nodes display warning for SFRP
-          if (this.dataService.clusterManifest.isSfrpCluster){
+          if (this.dataService.clusterManifest.isSfrpCluster && !this.dataService.clusterManifest.isSfmcCluster){
               this.dataService.nodes.checkSeedNodeCount(5);
           }
       });
