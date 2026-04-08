@@ -1,6 +1,7 @@
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { DataModelBase } from '../DataModels/Base';
 import { DataService } from 'src/app/services/data.service';
+import { HtmlUtils } from 'src/app/Utils/HtmlUtils';
 
 // -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -80,6 +81,18 @@ export class FabricEventInstanceModel<T extends FabricEventBase> extends DataMod
     public get id() { return this.raw.eventInstanceId; }
     public get name() { return `${this.raw.kind} (${this.raw.eventInstanceId})`; }
     public eventInstanceId: string;
+
+    // Computed property to determine event status for filtering
+    public get eventStatus(): string {
+        if (HtmlUtils.eventTypesUtil.isError(this.raw)) {
+            return 'Error';
+        } else if (HtmlUtils.eventTypesUtil.isWarning(this.raw)) {
+            return 'Warning';
+        } else if (HtmlUtils.eventTypesUtil.isResolved(this.raw)) {
+            return 'Resolved';
+        }
+        return 'Info';
+    }
 }
 
 export class FabricEvent extends FabricEventBase {
