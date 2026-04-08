@@ -78,7 +78,8 @@ export class RepairTaskCollection extends DataModelCollectionBase<RepairTask> {
             stuckJobTypeMap[job.concerningJobInfo.type] = jobList;
           })
 
-          const messageTypes = [RepairTaskMessages.seedNodeChecksId,
+          const messageTypes = [RepairTaskMessages.longExecutingId,
+          RepairTaskMessages.seedNodeChecksId,
           RepairTaskMessages.safetyChecksId,
           RepairTaskMessages.clusterHealthCheckId];
           //loop over each type of stuck job to set or clear if there is a message

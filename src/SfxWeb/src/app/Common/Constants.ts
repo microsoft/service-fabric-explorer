@@ -227,6 +227,8 @@ export class TelemetryEventNames {
 
 
 export class RepairTaskMessages {
+  public static longExecutingMessage = "This repair job is taking longer than expected. There may be underlying issues preventing it from progressing.";
+  public static longExecutingId = "longExecuting";
   public static seedNodeChecks = "Disabling a seed node can get stuck indefinitely. This is blocked by design to prevent any risk to the cluster availability. There are multiple options available to come out of this state. read more here https://aka.ms/sfseednodequoromtsg";
   public static seedNodeChecksId = "seedNode";
   public static safetyChecks = `This usually happens due to the following reasons:
@@ -240,6 +242,7 @@ export class RepairTaskMessages {
 
   public static messageMap(id: string) {
     const map = {};
+    map[RepairTaskMessages.longExecutingId] = RepairTaskMessages.longExecutingMessage;
     map[RepairTaskMessages.seedNodeChecksId] = RepairTaskMessages.seedNodeChecks;
     map[RepairTaskMessages.safetyChecksId] = RepairTaskMessages.safetyChecks;
     map[RepairTaskMessages.clusterHealthCheckId] = RepairTaskMessages.clusterHealthCheck;

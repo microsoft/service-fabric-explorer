@@ -144,6 +144,25 @@ describe('RepairTask', () => {
     });
 
     describe("stuck jobs", () => {
+      fit("long executing", () => {
+        testData.State = 'Executing';
+        testData.History = {
+            CreatedUtcTimestamp: '2020-07-17T03:17:33.342Z',
+            ClaimedUtcTimestamp: '2020-07-17T03:17:33.342Z',
+            PreparingUtcTimestamp: '2020-07-17T03:17:33.342Z',
+            ApprovedUtcTimestamp: '2020-07-17T03:17:33.530Z',
+            ExecutingUtcTimestamp: '2020-07-17T03:17:48.437Z',
+            RestoringUtcTimestamp: '0001-01-01T00:00:00.000Z',
+            CompletedUtcTimestamp: '0001-01-01T00:00:00.000Z',
+            PreparingHealthCheckStartUtcTimestamp: '2020-07-17T03:17:33.420Z',
+            PreparingHealthCheckEndUtcTimestamp: '2020-07-17T03:17:33.467Z',
+            RestoringHealthCheckStartUtcTimestamp: '0001-01-01T00:00:00.000Z',
+            RestoringHealthCheckEndUtcTimestamp: '0001-01-01T00:00:00.000Z'
+        };
+        const task = new RepairTask(dataService, testData);
+        expect(task.concerningJobInfo.type).toBe("longExecuting");
+      })
+
       fit("seed node", () => {
         dataService.getNode = (name, refresh, messegage) => {
           return of({ raw: {
