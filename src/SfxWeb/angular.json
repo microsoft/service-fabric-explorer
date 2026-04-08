@@ -59,7 +59,9 @@
                   "with": "src/environments/environment.accesstesting.ts"
                 }
               ],
-              "index": "src/index.html"
+              "index": "src/index.html",
+              "outputHashing": "all",
+              "namedChunks": false
             },
             "production": {
               "fileReplacements": [
