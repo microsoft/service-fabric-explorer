@@ -1,4 +1,12 @@
-code {
+pre.hljs {
+    padding: 16px;
+    border-radius: 4px;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+pre.hljs code {
     padding: 0;
     font-size: inherit;
     color: inherit;
