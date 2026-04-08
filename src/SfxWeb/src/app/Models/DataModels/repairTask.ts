@@ -239,12 +239,7 @@ export class RepairTask extends DataModelBase<IRawRepairTask> implements IRCAIte
         observer.next(data);
         observer.complete();
       }
-      if (this.raw.State === "Executing" && this.getPhase("Executing").durationMilliseconds > (2 * 60 * 60 * 1000)) {
-        emit({
-          type: RepairTaskMessages.longExecutingId,
-          description: `This Repair task has been executing for ${this.displayDuration}, which doesn't seem normal. ${RepairTaskMessages.longExecutingMessage}`
-        })
-      } else if (this.raw.State === "Preparing" && this.getPhase("Preparing Health Check Start").durationMilliseconds > (1000 * 60 * 15) ||
+      if (this.raw.State === "Preparing" && this.getPhase("Preparing Health Check Start").durationMilliseconds > (1000 * 60 * 15) ||
         this.raw.State === "Restoring" && this.getPhase("Restoring Health Check Start").durationMilliseconds > (1000 * 60 * 15)) {
         forkJoin(this.impactedNodes.map(id => {
           return this.dataService.getNode(id, true).pipe(catchError(err => { console.log(err); return of(null) }));
