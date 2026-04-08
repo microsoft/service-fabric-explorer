@@ -23,7 +23,7 @@ export function initApp(aadService: AdalService, standaloneIntegrationService: S
       await aadService.load().toPromise();
 
       if (aadService.aadEnabled) {
-        aadService.handleWindowCallback();
+        await aadService.handleWindowCallback();
         if (!aadService.isAuthenticated) {
           aadService.login();
         }
