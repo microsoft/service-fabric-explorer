@@ -94,12 +94,12 @@
         "serve": {
           "builder": "ngx-build-plus:dev-server",
           "options": {
-            "browserTarget": "SfxWeb:build",
-            "proxyConfig": "proxy.conf.js"
+            "buildTarget": "SfxWeb:build",
+            "proxyConfig": "proxy.conf.json"
           },
           "configurations": {
             "production": {
-              "browserTarget": "SfxWeb:build:production"
+              "buildTarget": "SfxWeb:build:production"
             }
           },
           "allowedCommonJsDependencies": [
@@ -136,18 +136,6 @@
               "src/**/*.ts",
               "src/**/*.html"
             ]
-          }
-        },
-        "e2e": {
-          "builder": "@angular-devkit/build-angular:protractor",
-          "options": {
-            "protractorConfig": "e2e/protractor.conf.js",
-            "devServerTarget": "SfxWeb:serve"
-          },
-          "configurations": {
-            "production": {
-              "devServerTarget": "SfxWeb:serve:production"
-            }
           }
         }
       }
