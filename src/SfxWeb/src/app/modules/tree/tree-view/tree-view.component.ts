@@ -29,7 +29,7 @@ export class TreeViewComponent implements DoCheck, AfterViewInit {
               private liveAnnouncer: LiveAnnouncer,
               public restClientService: RestClientService,
               private telemService: TelemetryService) {}
-
+              
   ngAfterViewInit() {
     this.treeService.containerRef = this.treeContainer;
     this.focusSubject.pipe(debounceTime(300), distinctUntilChanged()).subscribe((focusState) => {
