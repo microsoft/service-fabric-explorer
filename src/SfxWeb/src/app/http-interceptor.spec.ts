@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
-import { HttpTestingController, HttpClientTestingModule } from '@angular/common/http/testing';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { httpInterceptorProviders } from './http-interceptor';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { DataService } from './services/data.service';
 import { environment } from 'src/environments/environment';
 import { AdalService } from './services/adal.service';
@@ -32,11 +32,11 @@ describe('Http interceptors', () => {
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            imports: [HttpClientTestingModule],
-            providers: [httpInterceptorProviders, StandaloneIntegrationService,
-                { provide: DataService, useValue: dataService },
-                { provide: AdalService, useValue: adalService }]
-        });
+    imports: [],
+    providers: [httpInterceptorProviders, StandaloneIntegrationService,
+        { provide: DataService, useValue: dataService },
+        { provide: AdalService, useValue: adalService }, provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting()]
+});
 
         httpMock = TestBed.inject(HttpTestingController);
         httpClient = TestBed.inject(HttpClient);

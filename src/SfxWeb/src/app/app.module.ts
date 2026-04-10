@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule, APP_INITIALIZER, ErrorHandler } from '@angular/core';
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { DataService } from './services/data.service';
@@ -21,41 +21,34 @@ import { AppInsightsErrorHandler } from './error-handling';
 import { StandaloneIntegrationService } from './services/standalone-integration.service';
 import { ActionDialogModule } from './modules/action-dialog/action-dialog.module';
 
-@NgModule({
-  declarations: [
-    AppComponent,
-    TelemetrySnackBarComponent
-  ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    HttpClientModule,
-    TreeModule,
-    SharedModule,
-    NoopAnimationsModule,
-    MatDialogModule,
-    NgbDropdownModule,
-    ReactiveFormsModule,
-    NgbTooltipModule,
-    MatSnackBarModule,
-    DebuggingModule,
-    ActionDialogModule
-  ],
-
-  providers: [
-    {provide: LocationStrategy, useClass: HashLocationStrategy},
-    AdalService,
-    DataService,
-    StandaloneIntegrationService,
-    {
-      provide: APP_INITIALIZER,
-      useFactory: initApp,
-      multi: true,
-      deps: [AdalService, StandaloneIntegrationService]
-    },
-    httpInterceptorProviders,
-    { provide: ErrorHandler, useClass: AppInsightsErrorHandler }
-  ],
-  bootstrap: [AppComponent],
-})
+@NgModule({ declarations: [
+        AppComponent,
+        TelemetrySnackBarComponent
+    ],
+    bootstrap: [AppComponent], imports: [BrowserModule,
+        AppRoutingModule,
+        TreeModule,
+        SharedModule,
+        NoopAnimationsModule,
+        MatDialogModule,
+        NgbDropdownModule,
+        ReactiveFormsModule,
+        NgbTooltipModule,
+        MatSnackBarModule,
+        DebuggingModule,
+        ActionDialogModule], providers: [
+        { provide: LocationStrategy, useClass: HashLocationStrategy },
+        AdalService,
+        DataService,
+        StandaloneIntegrationService,
+        {
+            provide: APP_INITIALIZER,
+            useFactory: initApp,
+            multi: true,
+            deps: [AdalService, StandaloneIntegrationService]
+        },
+        httpInterceptorProviders,
+        { provide: ErrorHandler, useClass: AppInsightsErrorHandler },
+        provideHttpClient(withInterceptorsFromDi())
+    ] })
 export class AppModule { }
