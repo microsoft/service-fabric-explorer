@@ -9,9 +9,10 @@ import { Observable, Subscription, of } from 'rxjs';
 import { catchError, defaultIfEmpty } from 'rxjs/operators';
 
 @Component({
-  selector: 'app-scale-service',
-  templateUrl: './scale-service.component.html',
-  styleUrls: ['./scale-service.component.scss']
+    selector: 'app-scale-service',
+    templateUrl: './scale-service.component.html',
+    styleUrls: ['./scale-service.component.scss'],
+    standalone: false
 })
 export class ScaleServiceComponent implements OnInit, OnDestroy, DialogBodyComponent {
 

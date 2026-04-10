@@ -10,9 +10,10 @@ export interface IQuickDates {
 }
 
 @Component({
-  selector: 'app-full-time-picker',
-  templateUrl: './full-time-picker.component.html',
-  styleUrls: ['./full-time-picker.component.scss']
+    selector: 'app-full-time-picker',
+    templateUrl: './full-time-picker.component.html',
+    styleUrls: ['./full-time-picker.component.scss'],
+    standalone: false
 })
 export class FullTimePickerComponent implements OnInit, OnDestroy {
 

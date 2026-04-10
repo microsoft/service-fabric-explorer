@@ -6,9 +6,10 @@ import { DataService } from 'src/app/services/data.service';
 import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 
 @Component({
-  selector: 'app-map',
-  templateUrl: './map.component.html',
-  styleUrls: ['./map.component.scss']
+    selector: 'app-map',
+    templateUrl: './map.component.html',
+    styleUrls: ['./map.component.scss'],
+    standalone: false
 })
 export class MapComponent extends BaseControllerDirective implements OnChanges {
   static readonly baseScale = 'scale(1)';

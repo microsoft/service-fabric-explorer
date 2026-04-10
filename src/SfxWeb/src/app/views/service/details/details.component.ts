@@ -6,9 +6,10 @@ import { ServiceBaseControllerDirective } from '../ServiceBase';
 import { Constants } from 'src/app/Common/Constants';
 
 @Component({
-  selector: 'app-details',
-  templateUrl: './details.component.html',
-  styleUrls: ['./details.component.scss']
+    selector: 'app-details',
+    templateUrl: './details.component.html',
+    styleUrls: ['./details.component.scss'],
+    standalone: false
 })
 export class DetailsComponent extends ServiceBaseControllerDirective {
 

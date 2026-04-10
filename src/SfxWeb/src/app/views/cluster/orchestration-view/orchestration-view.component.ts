@@ -14,9 +14,10 @@ import { TimeUtils } from "src/app/Utils/TimeUtils";
 import { DataSet } from "vis-data";
 
 @Component({
-  selector: "app-orchestration-view",
-  templateUrl: "./orchestration-view.component.html",
-  styleUrls: ["./orchestration-view.component.scss"],
+    selector: "app-orchestration-view",
+    templateUrl: "./orchestration-view.component.html",
+    styleUrls: ["./orchestration-view.component.scss"],
+    standalone: false
 })
 export class OrchestrationViewComponent implements OnInit, AfterViewInit {
   readonly Balancing = "Balancing";

@@ -11,10 +11,11 @@ interface ITileCount {
   name: string;
 }
 @Component({
-  selector: 'app-upgrade-progress',
-  templateUrl: './upgrade-progress.component.html',
-  styleUrls: ['./upgrade-progress.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'app-upgrade-progress',
+    templateUrl: './upgrade-progress.component.html',
+    styleUrls: ['./upgrade-progress.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class UpgradeProgressComponent implements AfterViewInit, OnChanges {
 

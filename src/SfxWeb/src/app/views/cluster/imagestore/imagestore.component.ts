@@ -7,9 +7,10 @@ import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers'
 import { Observable } from 'rxjs';
 
 @Component({
-  selector: 'app-imagestore',
-  templateUrl: './imagestore.component.html',
-  styleUrls: ['./imagestore.component.scss']
+    selector: 'app-imagestore',
+    templateUrl: './imagestore.component.html',
+    styleUrls: ['./imagestore.component.scss'],
+    standalone: false
 })
 export class ImagestoreComponent extends BaseControllerDirective {
 

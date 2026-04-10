@@ -7,9 +7,10 @@ import { ITimedReplication } from '../replica-status-container/replica-status-co
 import { IChartData } from '../replication-trend-line/replication-trend-line.component';
 
 @Component({
-  selector: 'app-replica-tile',
-  templateUrl: './replica-tile.component.html',
-  styleUrls: ['./replica-tile.component.scss']
+    selector: 'app-replica-tile',
+    templateUrl: './replica-tile.component.html',
+    styleUrls: ['./replica-tile.component.scss'],
+    standalone: false
 })
 export class ReplicaTileComponent implements OnChanges {
   @Input() replica: ReplicaOnPartition;

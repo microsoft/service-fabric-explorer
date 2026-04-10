@@ -4,9 +4,10 @@ import { Node } from 'src/app/Models/DataModels/Node';
 import { DataService } from 'src/app/services/data.service';
 
 @Component({
-  selector: 'app-node-filter',
-  templateUrl: './node-filter.component.html',
-  styleUrls: ['./node-filter.component.scss']
+    selector: 'app-node-filter',
+    templateUrl: './node-filter.component.html',
+    styleUrls: ['./node-filter.component.scss'],
+    standalone: false
 })
 export class NodeFilterComponent implements OnInit, OnChanges {
 

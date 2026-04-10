@@ -4,9 +4,10 @@ import { DataService } from 'src/app/services/data.service';
 import { ServiceBaseControllerDirective } from '../ServiceBase';
 
 @Component({
-  selector: 'app-service-commands',
-  templateUrl: './commands.component.html',
-  styleUrls: ['./commands.component.scss']
+    selector: 'app-service-commands',
+    templateUrl: './commands.component.html',
+    styleUrls: ['./commands.component.scss'],
+    standalone: false
 })
 export class CommandsComponent extends ServiceBaseControllerDirective {
 

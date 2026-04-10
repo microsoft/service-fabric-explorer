@@ -7,9 +7,10 @@ import { map } from 'rxjs/operators';
 import { ServiceManifest } from 'src/app/Models/DataModels/Service';
 
 @Component({
-  selector: 'app-manifest',
-  templateUrl: './manifest.component.html',
-  styleUrls: ['./manifest.component.scss']
+    selector: 'app-manifest',
+    templateUrl: './manifest.component.html',
+    styleUrls: ['./manifest.component.scss'],
+    standalone: false
 })
 export class ManifestComponent extends DeployedServicePackageBaseControllerDirective {
   serviceManifest: ServiceManifest;

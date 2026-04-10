@@ -7,9 +7,10 @@ import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { Utils } from 'src/app/Utils/Utils';
 
 @Component({
-  selector: 'app-repair-job-chart',
-  templateUrl: './repair-job-chart.component.html',
-  styleUrls: ['./repair-job-chart.component.scss']
+    selector: 'app-repair-job-chart',
+    templateUrl: './repair-job-chart.component.html',
+    styleUrls: ['./repair-job-chart.component.scss'],
+    standalone: false
 })
 export class RepairJobChartComponent implements OnInit, OnChanges {
 

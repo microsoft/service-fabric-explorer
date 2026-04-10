@@ -8,9 +8,10 @@ import { IProgressStatus } from 'src/app/shared/component/phase-diagram/phase-di
 import { IEssentialListItem } from '../../charts/essential-health-tile/essential-health-tile.component';
 
 @Component({
-  selector: 'app-infrastructure-job-tile',
-  templateUrl: './infrastructure-job-tile.component.html',
-  styleUrls: ['./infrastructure-job-tile.component.scss']
+    selector: 'app-infrastructure-job-tile',
+    templateUrl: './infrastructure-job-tile.component.html',
+    styleUrls: ['./infrastructure-job-tile.component.scss'],
+    standalone: false
 })
 export class InfrastructureJobTileComponent implements OnChanges, OnInit {
 

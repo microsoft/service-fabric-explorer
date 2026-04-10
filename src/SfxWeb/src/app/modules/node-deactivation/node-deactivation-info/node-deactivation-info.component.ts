@@ -7,9 +7,10 @@ import { IProgressStatus } from 'src/app/shared/component/phase-diagram/phase-di
 import { DeactivationUtils } from 'src/app/Utils/deactivationUtils';
 
 @Component({
-  selector: 'app-node-deactivation-info',
-  templateUrl: './node-deactivation-info.component.html',
-  styleUrls: ['./node-deactivation-info.component.scss']
+    selector: 'app-node-deactivation-info',
+    templateUrl: './node-deactivation-info.component.html',
+    styleUrls: ['./node-deactivation-info.component.scss'],
+    standalone: false
 })
 export class NodeDeactivationInfoComponent implements OnInit, OnChanges {
 

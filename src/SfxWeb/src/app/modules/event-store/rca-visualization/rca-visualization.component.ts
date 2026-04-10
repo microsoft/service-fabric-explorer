@@ -8,9 +8,10 @@ import { IEventStoreData } from '../event-store/event-store.component';
 import { EventColumnUpdate, VisualizationComponent, VisUpdateData } from '../visualizationComponents';
 
 @Component({
-  selector: 'app-rca-visualization',
-  templateUrl: './rca-visualization.component.html',
-  styleUrls: ['./rca-visualization.component.scss']
+    selector: 'app-rca-visualization',
+    templateUrl: './rca-visualization.component.html',
+    styleUrls: ['./rca-visualization.component.scss'],
+    standalone: false
 })
 export class RcaVisualizationComponent implements VisualizationComponent {
 

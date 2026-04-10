@@ -7,9 +7,10 @@ import { DataService } from 'src/app/services/data.service';
 import { CreateServiceComponent } from '../create-service/create-service.component';
 
 @Component({
-  selector: 'app-action-row',
-  templateUrl: './action-row.component.html',
-  styleUrls: ['./action-row.component.scss']
+    selector: 'app-action-row',
+    templateUrl: './action-row.component.html',
+    styleUrls: ['./action-row.component.scss'],
+    standalone: false
 })
 export class ActionRowComponent implements DetailBaseComponent {
 

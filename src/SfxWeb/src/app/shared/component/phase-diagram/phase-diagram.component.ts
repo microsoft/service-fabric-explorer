@@ -1,9 +1,10 @@
 import { Component, Input, OnChanges, OnInit, TemplateRef } from '@angular/core';
 
 @Component({
-  selector: 'app-phase-diagram',
-  templateUrl: './phase-diagram.component.html',
-  styleUrls: ['./phase-diagram.component.scss']
+    selector: 'app-phase-diagram',
+    templateUrl: './phase-diagram.component.html',
+    styleUrls: ['./phase-diagram.component.scss'],
+    standalone: false
 })
 export class PhaseDiagramComponent implements OnChanges {
 

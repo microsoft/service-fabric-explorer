@@ -6,9 +6,10 @@ import { DataService } from 'src/app/services/data.service';
 import { StatusWarningLevel } from 'src/app/Common/Constants';
 
 @Component({
-  selector: 'app-status-warnings',
-  templateUrl: './status-warnings.component.html',
-  styleUrls: ['./status-warnings.component.scss']
+    selector: 'app-status-warnings',
+    templateUrl: './status-warnings.component.html',
+    styleUrls: ['./status-warnings.component.scss'],
+    standalone: false
 })
 export class StatusWarningsComponent{
 

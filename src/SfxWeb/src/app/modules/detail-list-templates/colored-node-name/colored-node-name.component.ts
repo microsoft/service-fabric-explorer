@@ -4,9 +4,10 @@ import { DetailBaseComponent } from 'src/app/ViewModels/detail-table-base.compon
 import { environment } from 'src/environments/environment';
 
 @Component({
-  selector: 'app-colored-node-name',
-  templateUrl: './colored-node-name.component.html',
-  styleUrls: ['./colored-node-name.component.scss']
+    selector: 'app-colored-node-name',
+    templateUrl: './colored-node-name.component.html',
+    styleUrls: ['./colored-node-name.component.scss'],
+    standalone: false
 })
 export class ColoredNodeNameComponent implements OnInit, DetailBaseComponent {
   item: any;

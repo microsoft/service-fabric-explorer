@@ -10,9 +10,10 @@ import { Observable, of } from 'rxjs';
 import { IBaseView } from '../../BaseView';
 
 @Component({
-  selector: 'app-base',
-  templateUrl: './base.component.html',
-  styleUrls: ['./base.component.scss']
+    selector: 'app-base',
+    templateUrl: './base.component.html',
+    styleUrls: ['./base.component.scss'],
+    standalone: false
 })
 export class BaseComponent extends DeployedCodePackageBaseControllerDirective implements IBaseView {
 

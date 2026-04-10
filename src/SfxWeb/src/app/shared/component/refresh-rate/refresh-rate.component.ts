@@ -2,9 +2,10 @@ import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 
 @Component({
-  selector: 'app-refresh-rate',
-  templateUrl: './refresh-rate.component.html',
-  styleUrls: ['./refresh-rate.component.scss']
+    selector: 'app-refresh-rate',
+    templateUrl: './refresh-rate.component.html',
+    styleUrls: ['./refresh-rate.component.scss'],
+    standalone: false
 })
 export class RefreshRateComponent {
   @Input() refresh = false;

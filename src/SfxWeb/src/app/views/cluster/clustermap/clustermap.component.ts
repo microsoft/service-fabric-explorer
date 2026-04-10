@@ -5,9 +5,10 @@ import { DataService } from 'src/app/services/data.service';
 import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 
 @Component({
-  selector: 'app-clustermap',
-  templateUrl: './clustermap.component.html',
-  styleUrls: ['./clustermap.component.scss']
+    selector: 'app-clustermap',
+    templateUrl: './clustermap.component.html',
+    styleUrls: ['./clustermap.component.scss'],
+    standalone: false
 })
 export class ClustermapComponent extends BaseControllerDirective {
   nodes: NodeCollection;

@@ -1,12 +1,12 @@
-import { TestBed, fakeAsync, tick, waitForAsync } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
 import { Location } from '@angular/common';
 
 import { RoutesService } from './routes.service';
-import { RouterTestingModule } from '@angular/router/testing';
-import { Routes, Router } from '@angular/router';
+import { provideRouter, Routes, Router } from '@angular/router';
 import { Component } from '@angular/core';
 @Component({
-  template: `<router-outlet></router-outlet>`
+    template: `<router-outlet></router-outlet>`,
+    standalone: false
 })
 export class AppComponent {
 }
@@ -23,8 +23,8 @@ describe('RoutesService', () => {
   beforeEach(() => {
 
     TestBed.configureTestingModule({
-      imports: [RouterTestingModule.withRoutes(routes)],
-      declarations: [AppComponent]
+      declarations: [AppComponent],
+      providers: [provideRouter(routes)]
     });
 
     router = TestBed.inject(Router);
@@ -47,11 +47,11 @@ describe('RoutesService', () => {
     expect(location.path()).toBe('/node/node1/details');
 
     await router.navigate(['/node/node2']);
-    await new Promise(resolve => setTimeout(resolve, 10));
+    await new Promise(resolve => setTimeout(resolve, 100));
     expect(location.path()).toBe('/node/node2/details');
 
     await router.navigate(['/node/node2']);
-    await new Promise(resolve => setTimeout(resolve, 10));
+    await new Promise(resolve => setTimeout(resolve, 100));
     expect(location.path()).toBe('/node/node2');
   });
 
@@ -62,11 +62,11 @@ describe('RoutesService', () => {
     expect(location.path()).toBe('/node/node1/details');
 
     await router.navigate(['/']);
-    await new Promise(resolve => setTimeout(resolve, 10));
-    expect(location.path()).toBe('/');
+    await new Promise(resolve => setTimeout(resolve, 100));
+    expect(location.path()).toBe('');
 
     await router.navigate(['/node/node2']);
-    await new Promise(resolve => setTimeout(resolve, 10));
+    await new Promise(resolve => setTimeout(resolve, 100));
     expect(location.path()).toBe('/node/node2');
   });
 
@@ -78,11 +78,11 @@ describe('RoutesService', () => {
     expect(location.path()).toBe('/node/node1/details');
 
     await router.navigate(['/node/node1']);
-    await new Promise(resolve => setTimeout(resolve, 10));
+    await new Promise(resolve => setTimeout(resolve, 100));
     expect(location.path()).toBe('/node/node1');
 
     await router.navigate(['/node/node1/details']);
-    await new Promise(resolve => setTimeout(resolve, 10));
+    await new Promise(resolve => setTimeout(resolve, 100));
     expect(location.path()).toBe('/node/node1/details');
   });
 
@@ -93,11 +93,11 @@ describe('RoutesService', () => {
     expect(location.path()).toBe('/node/node1');
 
     await router.navigate(['/node/node2']);
-    await new Promise(resolve => setTimeout(resolve, 10));
+    await new Promise(resolve => setTimeout(resolve, 100));
     expect(location.path()).toBe('/node/node2');
 
     await router.navigate(['/node/node1']);
-    await new Promise(resolve => setTimeout(resolve, 10));
+    await new Promise(resolve => setTimeout(resolve, 100));
     expect(location.path()).toBe('/node/node1');
   });
 });

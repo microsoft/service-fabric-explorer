@@ -1,10 +1,11 @@
 import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
-  selector: 'app-timeseries-item',
-  templateUrl: './timeseries-item.component.html',
-  styleUrls: ['./timeseries-item.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'app-timeseries-item',
+    templateUrl: './timeseries-item.component.html',
+    styleUrls: ['./timeseries-item.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class TimeseriesItemComponent {
   @Input() item: any;

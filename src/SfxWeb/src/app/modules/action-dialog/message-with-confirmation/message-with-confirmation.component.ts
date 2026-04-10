@@ -3,9 +3,10 @@ import { DialogBodyComponent } from '../DialogBodyComponent';
 import { Subscription } from 'rxjs';
 
 @Component({
-  selector: 'app-message-with-confirmation',
-  templateUrl: './message-with-confirmation.component.html',
-  styleUrls: ['./message-with-confirmation.component.scss']
+    selector: 'app-message-with-confirmation',
+    templateUrl: './message-with-confirmation.component.html',
+    styleUrls: ['./message-with-confirmation.component.scss'],
+    standalone: false
 })
 export class MessageWithConfirmationComponent implements OnInit, OnDestroy, DialogBodyComponent {
 

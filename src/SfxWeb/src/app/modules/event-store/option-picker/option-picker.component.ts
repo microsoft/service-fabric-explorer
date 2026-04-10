@@ -17,9 +17,10 @@ export interface IOptionConfig{
 }
 
 @Component({
-  selector: 'app-option-picker',
-  templateUrl: './option-picker.component.html',
-  styleUrls: ['./option-picker.component.scss']
+    selector: 'app-option-picker',
+    templateUrl: './option-picker.component.html',
+    styleUrls: ['./option-picker.component.scss'],
+    standalone: false
 })
 export class OptionPickerComponent implements OnChanges {
   @Input() optionsConfig: IOptionConfig;

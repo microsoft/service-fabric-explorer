@@ -20,9 +20,10 @@ export interface IOverviewPanel {
 }
 
 @Component({
-  selector: 'app-naming-viewer',
-  templateUrl: './naming-viewer.component.html',
-  styleUrls: ['./naming-viewer.component.scss']
+    selector: 'app-naming-viewer',
+    templateUrl: './naming-viewer.component.html',
+    styleUrls: ['./naming-viewer.component.scss'],
+    standalone: false
 })
 export class NamingViewerComponent implements VisualizationComponent {
   public startDate: Date;

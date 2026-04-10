@@ -20,9 +20,10 @@ export class ResolvedObject {
 }
 
 @Component({
-  selector: 'app-detail-view-part',
-  templateUrl: './detail-view-part.component.html',
-  styleUrls: ['./detail-view-part.component.scss']
+    selector: 'app-detail-view-part',
+    templateUrl: './detail-view-part.component.html',
+    styleUrls: ['./detail-view-part.component.scss'],
+    standalone: false
 })
 export class DetailViewPartComponent implements OnChanges {
 

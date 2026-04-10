@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule, APP_INITIALIZER, ErrorHandler } from '@angular/core';
+import { NgModule, ErrorHandler, inject, provideAppInitializer } from '@angular/core';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -41,12 +41,10 @@ import { ActionDialogModule } from './modules/action-dialog/action-dialog.module
         AdalService,
         DataService,
         StandaloneIntegrationService,
-        {
-            provide: APP_INITIALIZER,
-            useFactory: initApp,
-            multi: true,
-            deps: [AdalService, StandaloneIntegrationService]
-        },
+        provideAppInitializer(() => {
+        const initializerFn = (initApp)(inject(AdalService), inject(StandaloneIntegrationService));
+        return initializerFn();
+      }),
         httpInterceptorProviders,
         { provide: ErrorHandler, useClass: AppInsightsErrorHandler },
         provideHttpClient(withInterceptorsFromDi())

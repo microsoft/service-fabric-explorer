@@ -4,9 +4,10 @@ import { IsolatedAction } from 'src/app/Models/Action';
 import { DataService } from 'src/app/services/data.service';
 
 @Component({
-  selector: 'app-partition-disable-back-up',
-  templateUrl: './partition-disable-back-up.component.html',
-  styleUrls: ['./partition-disable-back-up.component.scss']
+    selector: 'app-partition-disable-back-up',
+    templateUrl: './partition-disable-back-up.component.html',
+    styleUrls: ['./partition-disable-back-up.component.scss'],
+    standalone: false
 })
 export class PartitionDisableBackUpComponent {
 

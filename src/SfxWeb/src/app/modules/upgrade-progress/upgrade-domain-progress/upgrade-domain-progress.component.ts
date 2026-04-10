@@ -3,10 +3,11 @@ import { IRawUpgradeDomainProgress, IRawNodeUpgradeProgress, ICurrentUpgradeUnit
 import { IPartitionData } from '../safety-checks/safety-checks.component';
 
 @Component({
-  selector: 'app-upgrade-domain-progress',
-  templateUrl: './upgrade-domain-progress.component.html',
-  styleUrls: ['./upgrade-domain-progress.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'app-upgrade-domain-progress',
+    templateUrl: './upgrade-domain-progress.component.html',
+    styleUrls: ['./upgrade-domain-progress.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class UpgradeDomainProgressComponent{
 

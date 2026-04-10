@@ -1,9 +1,10 @@
 import { Component, Input, OnChanges, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'app-relation-viewer',
-  templateUrl: './relation-viewer.component.html',
-  styleUrls: ['./relation-viewer.component.scss']
+    selector: 'app-relation-viewer',
+    templateUrl: './relation-viewer.component.html',
+    styleUrls: ['./relation-viewer.component.scss'],
+    standalone: false
 })
 export class RelationViewerComponent implements OnChanges {
 

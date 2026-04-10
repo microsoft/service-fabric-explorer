@@ -3,9 +3,10 @@ import { DetailBaseComponent } from 'src/app/ViewModels/detail-table-base.compon
 import { ListColumnSettingForLink } from 'src/app/Models/ListSettings';
 
 @Component({
-  selector: 'app-hyper-link',
-  templateUrl: './hyper-link.component.html',
-  styleUrls: ['./hyper-link.component.scss']
+    selector: 'app-hyper-link',
+    templateUrl: './hyper-link.component.html',
+    styleUrls: ['./hyper-link.component.scss'],
+    standalone: false
 })
 export class HyperLinkComponent implements OnInit, DetailBaseComponent {
 

@@ -10,9 +10,10 @@ import { ViewUpgradesListItemComponent } from '../view-upgrades-list-item/view-u
 import { ApplicationsBaseControllerDirective } from '../applicationsBase';
 
 @Component({
-  selector: 'app-upgrading',
-  templateUrl: './upgrading.component.html',
-  styleUrls: ['./upgrading.component.scss']
+    selector: 'app-upgrading',
+    templateUrl: './upgrading.component.html',
+    styleUrls: ['./upgrading.component.scss'],
+    standalone: false
 })
 export class UpgradingComponent extends ApplicationsBaseControllerDirective {
 

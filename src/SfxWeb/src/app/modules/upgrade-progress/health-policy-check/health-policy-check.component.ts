@@ -5,9 +5,10 @@ import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { IEssentialListItem } from '../../charts/essential-health-tile/essential-health-tile.component';
 
 @Component({
-  selector: 'app-health-policy-check',
-  templateUrl: './health-policy-check.component.html',
-  styleUrls: ['./health-policy-check.component.scss']
+    selector: 'app-health-policy-check',
+    templateUrl: './health-policy-check.component.html',
+    styleUrls: ['./health-policy-check.component.scss'],
+    standalone: false
 })
 export class HealthPolicyCheckComponent implements OnChanges {
 

@@ -6,9 +6,10 @@ import { DataService } from 'src/app/services/data.service';
 import { ReplicaBaseControllerDirective } from '../ReplicaBase';
 
 @Component({
-  selector: 'app-replica-commands',
-  templateUrl: './commands.component.html',
-  styleUrls: ['./commands.component.scss']
+    selector: 'app-replica-commands',
+    templateUrl: './commands.component.html',
+    styleUrls: ['./commands.component.scss'],
+    standalone: false
 })
 export class CommandsComponent extends ReplicaBaseControllerDirective{
 

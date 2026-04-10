@@ -8,9 +8,10 @@ import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 @Component({
-  selector: 'app-tree-view',
-  templateUrl: './tree-view.component.html',
-  styleUrls: ['./tree-view.component.scss']
+    selector: 'app-tree-view',
+    templateUrl: './tree-view.component.html',
+    styleUrls: ['./tree-view.component.scss'],
+    standalone: false
 })
 export class TreeViewComponent implements DoCheck, AfterViewInit {
 
@@ -28,7 +29,7 @@ export class TreeViewComponent implements DoCheck, AfterViewInit {
               private liveAnnouncer: LiveAnnouncer,
               public restClientService: RestClientService,
               private telemService: TelemetryService) {}
-              
+
   ngAfterViewInit() {
     this.treeService.containerRef = this.treeContainer;
     this.focusSubject.pipe(debounceTime(300), distinctUntilChanged()).subscribe((focusState) => {

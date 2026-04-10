@@ -10,9 +10,10 @@ import { IEssentialListItem } from '../../charts/essential-health-tile/essential
 import { IRawNodeRepairTargetDescription } from 'src/app/Models/RawDataTypes';
 
 @Component({
-  selector: 'app-repair-task-view',
-  templateUrl: './repair-task-view.component.html',
-  styleUrls: ['./repair-task-view.component.scss']
+    selector: 'app-repair-task-view',
+    templateUrl: './repair-task-view.component.html',
+    styleUrls: ['./repair-task-view.component.scss'],
+    standalone: false
 })
 export class RepairTaskViewComponent implements OnInit, DetailBaseComponent, OnDestroy {
   phaseTooLongDuration = 1000 * 60 * 20;

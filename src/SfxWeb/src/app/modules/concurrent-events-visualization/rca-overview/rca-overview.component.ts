@@ -13,9 +13,10 @@ interface ExtendedListItem extends IEssentialListItem {
 }
 
 @Component({
-  selector: 'app-rca-overview',
-  templateUrl: './rca-overview.component.html',
-  styleUrls: ['./rca-overview.component.scss']
+    selector: 'app-rca-overview',
+    templateUrl: './rca-overview.component.html',
+    styleUrls: ['./rca-overview.component.scss'],
+    standalone: false
 })
 export class RcaOverviewComponent implements AfterViewInit, OnChanges {
   @Input() type: string;

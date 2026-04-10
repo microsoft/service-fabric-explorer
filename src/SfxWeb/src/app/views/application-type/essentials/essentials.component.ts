@@ -9,9 +9,10 @@ import { ApplicationTypeBaseControllerDirective } from '../ApplicationTypeBase';
 import { map } from 'rxjs/operators';
 
 @Component({
-  selector: 'app-essentials',
-  templateUrl: './essentials.component.html',
-  styleUrls: ['./essentials.component.scss']
+    selector: 'app-essentials',
+    templateUrl: './essentials.component.html',
+    styleUrls: ['./essentials.component.scss'],
+    standalone: false
 })
 export class EssentialsComponent extends ApplicationTypeBaseControllerDirective {
   appTypeGroup: ApplicationTypeGroup;

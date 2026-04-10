@@ -5,9 +5,10 @@ import { IOptionConfig } from 'src/app/modules/event-store/option-picker/option-
 import { ApplicationsBaseControllerDirective } from '../applicationsBase';
 
 @Component({
-  selector: 'app-apps-events',
-  templateUrl: './events.component.html',
-  styleUrls: ['./events.component.scss']
+    selector: 'app-apps-events',
+    templateUrl: './events.component.html',
+    styleUrls: ['./events.component.scss'],
+    standalone: false
 })
 export class EventsComponent extends ApplicationsBaseControllerDirective {
 

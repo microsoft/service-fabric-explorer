@@ -23,9 +23,10 @@ interface ITileListItem {
 }
 
 @Component({
-  selector: 'app-repair-tasks',
-  templateUrl: './repair-tasks.component.html',
-  styleUrls: ['./repair-tasks.component.scss']
+    selector: 'app-repair-tasks',
+    templateUrl: './repair-tasks.component.html',
+    styleUrls: ['./repair-tasks.component.scss'],
+    standalone: false
 })
 export class RepairTasksComponent extends BaseControllerDirective {
   public repairTaskCollection: RepairTaskCollection;

@@ -5,9 +5,10 @@ import { DataService } from 'src/app/services/data.service';
 import { DeployedCodePackageBaseControllerDirective } from '../DeployedCodePackageBase';
 
 @Component({
-  selector: 'app-essentials',
-  templateUrl: './essentials.component.html',
-  styleUrls: ['./essentials.component.scss']
+    selector: 'app-essentials',
+    templateUrl: './essentials.component.html',
+    styleUrls: ['./essentials.component.scss'],
+    standalone: false
 })
 export class EssentialsComponent extends DeployedCodePackageBaseControllerDirective {
 

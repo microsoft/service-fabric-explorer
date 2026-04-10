@@ -4,9 +4,10 @@ import { DetailBaseComponent } from 'src/app/ViewModels/detail-table-base.compon
 import { ImageStoreItem, ImageStore } from 'src/app/Models/DataModels/ImageStore';
 
 @Component({
-  selector: 'app-display-name-column',
-  templateUrl: './display-name-column.component.html',
-  styleUrls: ['./display-name-column.component.scss']
+    selector: 'app-display-name-column',
+    templateUrl: './display-name-column.component.html',
+    styleUrls: ['./display-name-column.component.scss'],
+    standalone: false
 })
 export class DisplayNameColumnComponent implements DetailBaseComponent {
 

@@ -9,9 +9,10 @@ import { ITab } from 'src/app/shared/component/navbar/navbar.component';
 import { IBaseView } from '../../BaseView';
 
 @Component({
-  selector: 'app-base',
-  templateUrl: './base.component.html',
-  styleUrls: ['./base.component.scss']
+    selector: 'app-base',
+    templateUrl: './base.component.html',
+    styleUrls: ['./base.component.scss'],
+    standalone: false
 })
 export class BaseComponent extends DeployedReplicaBaseControllerDirective implements IBaseView {
 

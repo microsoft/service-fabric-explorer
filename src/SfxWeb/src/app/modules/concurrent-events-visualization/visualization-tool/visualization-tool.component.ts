@@ -6,9 +6,10 @@ import { IConcurrentEvents, IRCAItem } from 'src/app/Models/eventstore/rcaEngine
 
 
 @Component({
-  selector: 'app-visualization-tool',
-  templateUrl: './visualization-tool.component.html',
-  styleUrls: ['./visualization-tool.component.scss']
+    selector: 'app-visualization-tool',
+    templateUrl: './visualization-tool.component.html',
+    styleUrls: ['./visualization-tool.component.scss'],
+    standalone: false
 })
 
 export class VisualizationToolComponent implements OnChanges, AfterViewInit, DetailBaseComponent {

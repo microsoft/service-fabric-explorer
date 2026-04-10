@@ -14,9 +14,10 @@ import { SettingsService } from 'src/app/services/settings.service';
 import { IBaseView } from '../../BaseView';
 
 @Component({
-  selector: 'app-base',
-  templateUrl: './base.component.html',
-  styleUrls: ['./base.component.scss']
+    selector: 'app-base',
+    templateUrl: './base.component.html',
+    styleUrls: ['./base.component.scss'],
+    standalone: false
 })
 export class BaseComponent extends BaseControllerDirective implements IBaseView {
   public nodeName: string;

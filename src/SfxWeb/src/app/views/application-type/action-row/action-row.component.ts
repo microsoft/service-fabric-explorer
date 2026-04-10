@@ -4,9 +4,10 @@ import { ListColumnSetting } from 'src/app/Models/ListSettings';
 import { ApplicationType } from 'src/app/Models/DataModels/ApplicationType';
 
 @Component({
-  selector: 'app-action-row',
-  templateUrl: './action-row.component.html',
-  styleUrls: ['./action-row.component.scss']
+    selector: 'app-action-row',
+    templateUrl: './action-row.component.html',
+    styleUrls: ['./action-row.component.scss'],
+    standalone: false
 })
 export class ActionRowComponent implements DetailBaseComponent {
 

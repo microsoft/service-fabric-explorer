@@ -2,10 +2,11 @@ import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@
 import { interval } from 'rxjs';
 
 @Component({
-  selector: 'app-local-time',
-  templateUrl: './local-time.component.html',
-  styleUrls: ['./local-time.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'app-local-time',
+    templateUrl: './local-time.component.html',
+    styleUrls: ['./local-time.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class LocalTimeComponent implements OnInit {
   utcTime = '';

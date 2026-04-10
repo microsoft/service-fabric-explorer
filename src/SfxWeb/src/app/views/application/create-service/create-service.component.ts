@@ -5,9 +5,10 @@ import { ServiceType, CreateServiceDescription } from 'src/app/Models/DataModels
 import { Application } from 'src/app/Models/DataModels/Application';
 
 @Component({
-  selector: 'app-create-service',
-  templateUrl: './create-service.component.html',
-  styleUrls: ['./create-service.component.scss']
+    selector: 'app-create-service',
+    templateUrl: './create-service.component.html',
+    styleUrls: ['./create-service.component.scss'],
+    standalone: false
 })
 export class CreateServiceComponent implements OnInit {
 

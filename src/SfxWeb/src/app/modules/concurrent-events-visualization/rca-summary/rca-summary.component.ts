@@ -4,9 +4,10 @@ import { RelatedEventsConfigs } from 'src/app/Models/eventstore/RelatedEventsCon
 import { Utils } from 'src/app/Utils/Utils';
 
 @Component({
-  selector: 'app-rca-summary',
-  templateUrl: './rca-summary.component.html',
-  styleUrls: ['./rca-summary.component.scss']
+    selector: 'app-rca-summary',
+    templateUrl: './rca-summary.component.html',
+    styleUrls: ['./rca-summary.component.scss'],
+    standalone: false
 })
 export class RcaSummaryComponent implements OnChanges {
 

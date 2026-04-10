@@ -8,9 +8,10 @@ import { mergeMap } from 'rxjs/operators';
 import { NamingViewerComponent } from 'src/app/modules/concurrent-events-visualization/naming-viewer/naming-viewer.component';
 
 @Component({
-  selector: 'app-naming-viewer-page',
-  templateUrl: './naming-viewer-page.component.html',
-  styleUrls: ['./naming-viewer-page.component.scss']
+    selector: 'app-naming-viewer-page',
+    templateUrl: './naming-viewer-page.component.html',
+    styleUrls: ['./naming-viewer-page.component.scss'],
+    standalone: false
 })
 export class NamingViewerPageComponent implements OnInit {
 

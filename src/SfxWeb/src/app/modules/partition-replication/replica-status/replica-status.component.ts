@@ -3,9 +3,10 @@ import { IRawRemoteReplicatorStatus } from 'src/app/Models/RawDataTypes';
 import { IEssentialListItem } from '../../charts/essential-health-tile/essential-health-tile.component';
 
 @Component({
-  selector: 'app-replica-status',
-  templateUrl: './replica-status.component.html',
-  styleUrls: ['./replica-status.component.scss']
+    selector: 'app-replica-status',
+    templateUrl: './replica-status.component.html',
+    styleUrls: ['./replica-status.component.scss'],
+    standalone: false
 })
 export class ReplicaStatusComponent implements OnChanges {
 

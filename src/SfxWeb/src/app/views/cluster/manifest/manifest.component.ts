@@ -6,9 +6,10 @@ import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers'
 import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 
 @Component({
-  selector: 'app-manifest',
-  templateUrl: './manifest.component.html',
-  styleUrls: ['./manifest.component.scss']
+    selector: 'app-manifest',
+    templateUrl: './manifest.component.html',
+    styleUrls: ['./manifest.component.scss'],
+    standalone: false
 })
 export class ManifestComponent extends BaseControllerDirective {
 

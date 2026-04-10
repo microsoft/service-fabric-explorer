@@ -13,9 +13,10 @@ import { PartitionDisableBackUpComponent } from 'src/app/modules/backup-restore/
 import { PartitionEnableBackUpComponent } from 'src/app/modules/backup-restore/partition-enable-back-up/partition-enable-back-up.component';
 
 @Component({
-  selector: 'app-backup',
-  templateUrl: './backup.component.html',
-  styleUrls: ['./backup.component.scss']
+    selector: 'app-backup',
+    templateUrl: './backup.component.html',
+    styleUrls: ['./backup.component.scss'],
+    standalone: false
 })
 export class BackupComponent extends ApplicationBaseControllerDirective  {
 

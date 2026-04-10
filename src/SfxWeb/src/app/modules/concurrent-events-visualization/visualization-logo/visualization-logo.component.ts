@@ -5,9 +5,10 @@ import { DetailBaseComponent } from 'src/app/ViewModels/detail-table-base.compon
 import { environment } from 'src/environments/environment';
 
 @Component({
-  selector: 'app-visualization-logo',
-  templateUrl: './visualization-logo.component.html',
-  styleUrls: ['./visualization-logo.component.scss']
+    selector: 'app-visualization-logo',
+    templateUrl: './visualization-logo.component.html',
+    styleUrls: ['./visualization-logo.component.scss'],
+    standalone: false
 })
 export class VisualizationLogoComponent implements OnInit, DetailBaseComponent {
 

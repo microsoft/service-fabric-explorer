@@ -5,9 +5,10 @@ import { DialogBodyComponent } from '../DialogBodyComponent';
 import { ActionDialogUtils } from '../utils';
 
 @Component({
-  selector: 'app-message-with-warning',
-  templateUrl: './message-with-warning.component.html',
-  styleUrls: ['./message-with-warning.component.scss']
+    selector: 'app-message-with-warning',
+    templateUrl: './message-with-warning.component.html',
+    styleUrls: ['./message-with-warning.component.scss'],
+    standalone: false
 })
 export class MessageWithWarningComponent implements AfterViewInit, OnDestroy, DialogBodyComponent {
 

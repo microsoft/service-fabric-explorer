@@ -2,9 +2,10 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { IExportInfo, exportInfo } from './utils';
 @Component({
-  selector: 'app-export-modal',
-  templateUrl: './export-modal.component.html',
-  styleUrls: ['./export-modal.component.scss']
+    selector: 'app-export-modal',
+    templateUrl: './export-modal.component.html',
+    styleUrls: ['./export-modal.component.scss'],
+    standalone: false
 })
 export class ExportModalComponent implements OnInit {
 

@@ -11,9 +11,10 @@ import { DashboardDataPointViewModel, IDashboardDataPointViewModel } from 'src/a
 import { IEssentialListItem } from '../../charts/essential-health-tile/essential-health-tile.component';
 
 @Component({
-  selector: 'app-section-overview',
-  templateUrl: './section-overview.component.html',
-  styleUrls: ['./section-overview.component.scss']
+    selector: 'app-section-overview',
+    templateUrl: './section-overview.component.html',
+    styleUrls: ['./section-overview.component.scss'],
+    standalone: false
 })
 export class SectionOverviewComponent implements OnChanges {
   @Input() nodes: Node[];

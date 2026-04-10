@@ -4,9 +4,10 @@ import { ITextAndBadge } from 'src/app/Utils/ValueResolver';
 import { DetailBaseComponent } from 'src/app/ViewModels/detail-table-base.component';
 
 @Component({
-  selector: 'app-healthbadge',
-  templateUrl: './healthbadge.component.html',
-  styleUrls: ['./healthbadge.component.scss']
+    selector: 'app-healthbadge',
+    templateUrl: './healthbadge.component.html',
+    styleUrls: ['./healthbadge.component.scss'],
+    standalone: false
 })
 export class HealthbadgeComponent implements OnInit, DetailBaseComponent {
 

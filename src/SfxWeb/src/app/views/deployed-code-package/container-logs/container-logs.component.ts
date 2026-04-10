@@ -6,9 +6,10 @@ import { DeployedCodePackageBaseControllerDirective } from '../DeployedCodePacka
 import { map } from 'rxjs/operators';
 
 @Component({
-  selector: 'app-container-logs',
-  templateUrl: './container-logs.component.html',
-  styleUrls: ['./container-logs.component.scss']
+    selector: 'app-container-logs',
+    templateUrl: './container-logs.component.html',
+    styleUrls: ['./container-logs.component.scss'],
+    standalone: false
 })
 export class ContainerLogsComponent extends DeployedCodePackageBaseControllerDirective {
   containerLogs: string;

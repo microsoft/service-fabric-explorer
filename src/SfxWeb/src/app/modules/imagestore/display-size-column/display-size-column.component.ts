@@ -5,9 +5,10 @@ import { ImageStore, ImageStoreItem } from 'src/app/Models/DataModels/ImageStore
 import { Utils } from 'src/app/Utils/Utils';
 
 @Component({
-  selector: 'app-display-size-column',
-  templateUrl: './display-size-column.component.html',
-  styleUrls: ['./display-size-column.component.scss']
+    selector: 'app-display-size-column',
+    templateUrl: './display-size-column.component.html',
+    styleUrls: ['./display-size-column.component.scss'],
+    standalone: false
 })
 export class DisplaySizeColumnComponent implements OnChanges, OnInit, DetailBaseComponent {
 

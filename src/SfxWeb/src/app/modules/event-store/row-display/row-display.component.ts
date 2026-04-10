@@ -5,9 +5,10 @@ import { DetailBaseComponent } from 'src/app/ViewModels/detail-table-base.compon
 import { Utils } from 'src/app/Utils/Utils';
 
 @Component({
-  selector: 'app-row-display',
-  templateUrl: './row-display.component.html',
-  styleUrls: ['./row-display.component.scss']
+    selector: 'app-row-display',
+    templateUrl: './row-display.component.html',
+    styleUrls: ['./row-display.component.scss'],
+    standalone: false
 })
 export class RowDisplayComponent implements OnInit, DetailBaseComponent {
 

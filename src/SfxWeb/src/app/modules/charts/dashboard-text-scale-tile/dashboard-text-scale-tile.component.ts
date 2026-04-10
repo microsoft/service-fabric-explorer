@@ -1,9 +1,10 @@
 import { Component, Input } from '@angular/core';
 
 @Component({
-  selector: 'app-dashboard-text-scale-tile',
-  templateUrl: './dashboard-text-scale-tile.component.html',
-  styleUrls: ['./dashboard-text-scale-tile.component.scss']
+    selector: 'app-dashboard-text-scale-tile',
+    templateUrl: './dashboard-text-scale-tile.component.html',
+    styleUrls: ['./dashboard-text-scale-tile.component.scss'],
+    standalone: false
 })
 export class DashboardTextScaleTileComponent {
 

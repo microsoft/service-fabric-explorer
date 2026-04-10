@@ -3,9 +3,10 @@ import { IDashboardDataPointViewModel, IDashboardViewModel } from 'src/app/ViewM
 import { Chart, Options, chart, PointOptionsObject, SeriesPieOptions } from 'highcharts';
 
 @Component({
-  selector: 'app-health-chart',
-  templateUrl: './health-chart.component.html',
-  styleUrls: ['./health-chart.component.scss']
+    selector: 'app-health-chart',
+    templateUrl: './health-chart.component.html',
+    styleUrls: ['./health-chart.component.scss'],
+    standalone: false
 })
 export class HealthChartComponent implements OnInit, AfterViewInit, OnChanges {
   @Input() data: IDashboardDataPointViewModel[];

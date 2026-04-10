@@ -26,9 +26,10 @@ enum RecoveryStepName {
 }
 
 @Component({
-  selector: 'app-recovery-progress',
-  templateUrl: './recovery-progress.component.html',
-  styleUrls: ['./recovery-progress.component.scss']
+    selector: 'app-recovery-progress',
+    templateUrl: './recovery-progress.component.html',
+    styleUrls: ['./recovery-progress.component.scss'],
+    standalone: false
 })
 export class RecoveryProgressComponent extends BaseControllerDirective {
   recoverySteps: RecoveryStep[] = [
