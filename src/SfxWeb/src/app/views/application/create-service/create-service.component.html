@@ -99,7 +99,7 @@
 
                         <ng-container
                             *ngFor="let partitionScheme of description.servicePartitionKinds;  let i = index;">
-                            <div class="radio-btns">
+                            <div class="radio-btns" *ngIf="partitionScheme !== 'Invalid'">
                                 <input ngbButton type="radio" [value]="i.toString()" [id]="i + 's'" name="s"
                                         [(ngModel)]="description.raw.PartitionDescription.PartitionScheme" [ngModelOptions]="{standalone: true}">
                                 <label [for]="i + 's'">{{partitionScheme}}</label>
