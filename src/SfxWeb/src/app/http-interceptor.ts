@@ -63,7 +63,8 @@ export class GlobalHeaderInterceptor implements HttpInterceptor {
     let newHeaders = req.headers;
     // ADD ADDITIONAL HEADERS HERE
     newHeaders = newHeaders.append('x-servicefabricclienttype', 'SFX')
-                           .append('sfx-build', environment.version);
+                           .append('sfx-build', environment.version)
+                           .append('Accept-Language', 'en-US');
 
     return next.handle(req.clone({headers: newHeaders}));
  }
