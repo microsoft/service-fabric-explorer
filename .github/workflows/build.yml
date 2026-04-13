@@ -13,6 +13,7 @@ defaults:
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     strategy:
       matrix:
         node-version: [24.x]
@@ -55,6 +56,8 @@ jobs:
 
       - name: E2E test
         run: npm run ci:cy-run
+        env:
+          CYPRESS_COVERAGE: false
 
       - name: upload failed
         uses: actions/upload-artifact@v4
