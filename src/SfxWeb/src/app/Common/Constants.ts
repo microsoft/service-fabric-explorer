@@ -110,7 +110,6 @@ export class FabricEnumValues {
     ];
 
     public static ServicePartitionKinds = [
-        'Invalid',
         'Singleton',
         'Int64Range',
         'Named'
