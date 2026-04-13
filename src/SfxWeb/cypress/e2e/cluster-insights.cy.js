@@ -62,14 +62,15 @@ context('cluster-insights', () => {
       cy.visit('/#/cluster-insights');
       cy.wait('@nodes');
 
+      // Wait for all 5 nodes' per-node requests to complete (forkJoin requires all)
+      cy.wait([
+        '@systemReplicaOnNodes', '@systemReplicaOnNodes', '@systemReplicaOnNodes', '@systemReplicaOnNodes', '@systemReplicaOnNodes',
+        '@deployedAppsOnNode', '@deployedAppsOnNode', '@deployedAppsOnNode', '@deployedAppsOnNode', '@deployedAppsOnNode'
+      ]);
+
       cy.get('app-nodes').within(() => {
         cy.contains('a.nav-link', 'All Nodes').click();
-      });
-
-      cy.wait(['@systemReplicaOnNodes', '@deployedAppsOnNode']);
-
-      cy.get('app-nodes').within(() => {
-        cy.get('tbody > tr:first-child span.expandable-link').should('exist').first().click();
+        cy.get('tbody > tr:first-child span.expandable-link').should('be.visible').first().click();
         cy.get('app-expanded-details').scrollIntoView().should('be.visible');
       });
     });
