@@ -1,6 +1,6 @@
 import { Component, Injector } from '@angular/core';
 import { forkJoin, of, Observable } from 'rxjs';
-import { catchError, map, switchMap } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 
 import { RestClientService } from 'src/app/services/rest-client.service';
 import { DataService } from 'src/app/services/data.service';
@@ -21,10 +21,10 @@ interface NodeDisplay {
   nodeStatus: string;
   isClickable: boolean;
   isSecondRowCollapsed: boolean;
-  systemPrimaryReplicasCount: number;
   expandedDetails?: Record<string, string>;
   icon?: { src: string; alt: string; title: string };
   color: string;
+  detailsLoaded?: boolean;
 }
 
 @Component({
@@ -57,39 +57,21 @@ export class NodesComponent extends BaseControllerDirective {
   refresh(): Observable<any> {
     this.isLoading = true;
     return this.dataService.getNodes(true).pipe(
-      switchMap(nodeCollection => {
+      map(nodeCollection => {
         const nodes = nodeCollection.collection;
 
-        if (nodes.length === 0) {
-          this.isLoading = false;
-          return of(null);
-        }
+        this.nodes = nodes.map(node => this.buildNodeDisplay(node));
 
-        return forkJoin(nodes.map(node =>
-          forkJoin({
-            systemServiceReplicasOnNode: this.restClient.getDeployedReplicasByApplication(node.name, 'System').pipe(catchError(() => of([]))),
-            applicationsOnNode: this.restClient.getDeployedApplications(node.name).pipe(catchError(() => of([])))
-          })
-        )).pipe(
-          map(nodeResults => {
-            this.nodes = nodes.map((node, i) => this.buildNodeDisplay(node, nodeResults[i]));
+        this.seedNodes = this.nodes.filter(node => node.raw.IsSeedNode);
+        this.nonSeedNodes = this.nodes.filter(node => !node.raw.IsSeedNode);
 
-            this.seedNodes = this.nodes.filter(node => node.raw.IsSeedNode);
-            this.nonSeedNodes = this.nodes.filter(node => !node.raw.IsSeedNode);
+        this.faultDomainCount = nodeCollection.faultDomains.length;
+        this.upgradeDomainCount = nodeCollection.upgradeDomains.length;
+        this.uniqueCodeVersions = [...new Set(nodes.map(node => node.raw.CodeVersion))];
 
-            this.faultDomainCount = nodeCollection.faultDomains.length;
-            this.upgradeDomainCount = nodeCollection.upgradeDomains.length;
-            this.uniqueCodeVersions = [...new Set(nodes.map(node => node.raw.CodeVersion))];
-
-            this.updateItemInEssentials();
-            this.updateTiles();
-            this.isLoading = false;
-          }),
-          catchError(() => {
-            this.isLoading = false;
-            return of(null);
-          })
-        );
+        this.updateItemInEssentials();
+        this.updateTiles();
+        this.isLoading = false;
       }),
       catchError(() => {
         this.isLoading = false;
@@ -98,11 +80,8 @@ export class NodesComponent extends BaseControllerDirective {
     );
   }
 
-  private buildNodeDisplay(node: Node, replicaData: { systemServiceReplicasOnNode: any[]; applicationsOnNode: any[] }): NodeDisplay {
+  private buildNodeDisplay(node: Node): NodeDisplay {
     const nodeStatus = node.raw.NodeStatus || NodeStatusConstants.Unknown;
-    const { systemServiceReplicasOnNode, applicationsOnNode } = replicaData;
-    const primaryCount = systemServiceReplicasOnNode.filter(r => r.ReplicaRole === ReplicaRoles.Primary).length;
-    const activeSecondaryCount = systemServiceReplicasOnNode.filter(r => r.ReplicaRole === ReplicaRoles.ActiveSecondary).length;
     const nodeStatusBadge = this.getNodeStatusBadge(nodeStatus);
 
     return {
@@ -110,16 +89,11 @@ export class NodesComponent extends BaseControllerDirective {
       raw: node.raw,
       nodeStatus,
       nodeStatusBadge,
-      isClickable: primaryCount > 0 || activeSecondaryCount > 0 || applicationsOnNode.length > 0,
+      isClickable: true,
       isSecondRowCollapsed: true,
-      systemPrimaryReplicasCount: primaryCount,
-      expandedDetails: {
-        'System Services Primary Replicas Count': primaryCount.toString(),
-        'System Services ActiveSecondary Replicas Count': activeSecondaryCount.toString(),
-        'User Applications Count': applicationsOnNode.length.toString()
-      },
       color: `var(--${nodeStatusBadge.badgeClass})`,
-      icon: node.raw.IsSeedNode ? { src: 'assets/seed.svg', alt: 'Seed Node', title: 'Seed Node' } : undefined
+      icon: node.raw.IsSeedNode ? { src: 'assets/seed.svg', alt: 'Seed Node', title: 'Seed Node' } : undefined,
+      detailsLoaded: false
     };
   }
 
@@ -134,7 +108,6 @@ export class NodesComponent extends BaseControllerDirective {
       new ListColumnSettingWithFilter('raw.FaultDomain', 'Fault Domain'),
       new ListColumnSettingWithFilter('raw.IsSeedNode', 'Is Seed Node'),
       new ListColumnSettingForBadge('nodeStatusBadge', 'Status'),
-      new ListColumnSetting('systemPrimaryReplicasCount', 'System Primary Replicas'),
       new ListColumnSettingWithFilter('raw.Id.Id', 'Node Id'),
       new ListColumnSettingWithFilter('raw.CodeVersion', 'Code Version')
     ];
@@ -208,9 +181,27 @@ export class NodesComponent extends BaseControllerDirective {
   }
 
   private handleNodeClick(node: NodeDisplay): void {
-    if (node.isClickable) {
-      node.isSecondRowCollapsed = !node.isSecondRowCollapsed;
+    node.isSecondRowCollapsed = !node.isSecondRowCollapsed;
+    if (!node.isSecondRowCollapsed && !node.detailsLoaded) {
+      this.loadNodeDetails(node);
     }
+  }
+
+  private loadNodeDetails(node: NodeDisplay): void {
+    forkJoin({
+      systemServiceReplicasOnNode: this.restClient.getDeployedReplicasByApplication(node.name, 'System').pipe(catchError(() => of([]))),
+      applicationsOnNode: this.restClient.getDeployedApplications(node.name).pipe(catchError(() => of([])))
+    }).subscribe(({ systemServiceReplicasOnNode, applicationsOnNode }) => {
+      const primaryCount = systemServiceReplicasOnNode.filter((r: any) => r.ReplicaRole === ReplicaRoles.Primary).length;
+      const activeSecondaryCount = systemServiceReplicasOnNode.filter((r: any) => r.ReplicaRole === ReplicaRoles.ActiveSecondary).length;
+
+      node.expandedDetails = {
+        'System Services Primary Replicas Count': primaryCount.toString(),
+        'System Services Active Secondary Replicas Count': activeSecondaryCount.toString(),
+        'User Applications Count': applicationsOnNode.length.toString()
+      };
+      node.detailsLoaded = true;
+    });
   }
 
 }
