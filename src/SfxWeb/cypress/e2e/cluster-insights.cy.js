@@ -71,7 +71,7 @@ context('cluster-insights', () => {
         // Click the row expander to expand the first node
         // Use separate cy.get() calls so the click re-queries the DOM fresh (avoids detached element from Angular re-renders)
         cy.get('tbody > tr:first-child button.row-expander').should('be.visible');
-        cy.get('tbody > tr:first-child button.row-expander').click();
+        cy.get('tbody > tr:first-child button.row-expander').first().click();
       });
 
       // Wait for the lazy-loaded detail requests triggered by expand
