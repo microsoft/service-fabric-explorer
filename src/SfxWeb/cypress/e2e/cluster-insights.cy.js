@@ -61,7 +61,7 @@ context('cluster-insights', () => {
 
       cy.visit('/#/cluster-insights');
       // Wait for all initial data to load so Angular finishes rendering before we interact
-      cy.wait(['@nodes', '@fmPartition', '@fmReplicas']);
+      cy.wait(['@nodes', '@fmPartition', '@fmReplicas', '@replicaDetail']);
 
       cy.get('app-nodes').within(() => {
         cy.contains('a.nav-link', 'All Nodes').click();
@@ -70,7 +70,9 @@ context('cluster-insights', () => {
         cy.get('app-expanded-details').should('not.exist');
 
         // Click the row expander to expand the first node
-        cy.get('tbody > tr').first().find('button.row-expander').click();
+        cy.get('tbody > tr').first().within(() => {
+          cy.get('button.row-expander').click();
+        });
       });
 
       // Wait for the lazy-loaded detail requests triggered by expand
