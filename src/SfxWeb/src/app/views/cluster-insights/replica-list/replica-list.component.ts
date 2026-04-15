@@ -6,7 +6,6 @@ import { RestClientService } from 'src/app/services/rest-client.service';
 import { DataService } from 'src/app/services/data.service';
 import { Node } from 'src/app/Models/DataModels/Node';
 import { ListSettings, ListColumnSettingWithFilter, ListColumnSettingForColoredNodeName, ListColumnSettingForBadge, ListColumnSetting } from 'src/app/Models/ListSettings';
-import { ListColumnSettingWithExpandableLink } from '../expandable-link/expandable-link.component';
 import { ListColumnSettingForExpandedDetails } from '../expanded-details/expanded-details.component';
 import { NodeStatusConstants, SortPriorities, PartitionStatusConstants, Constants } from 'src/app/Common/Constants';
 import { isInReconfiguration, getQuorumReplicas, calculateWriteQuorum, getDownReplicaMitigationHint } from 'src/app/Utils/PartitionQuorumUtils';
@@ -21,6 +20,7 @@ interface ServiceConfig {
 
 interface ServiceState {
   replicaData: any[];
+  replicaDisplayMap: Map<string, any>;
   minReplicaSetSize: number;
   targetReplicaSetSize: number;
   currentReplicaSetSize: number;
@@ -66,8 +66,6 @@ export class ReplicaListComponent extends BaseControllerDirective {
   failoverManagerState: ServiceState = this.createDefaultServiceState();
   clusterManagerState: ServiceState = this.createDefaultServiceState();
 
-  private expandedReplicasState = new Map<string, boolean>();
-
   private getServiceState(service: string): ServiceState {
     return service === ServiceName.FailoverManager ? this.failoverManagerState : this.clusterManagerState;
   }
@@ -95,6 +93,7 @@ export class ReplicaListComponent extends BaseControllerDirective {
   private createDefaultServiceState(): ServiceState {
     return {
       replicaData: [],
+      replicaDisplayMap: new Map<string, any>(),
       minReplicaSetSize: 0,
       targetReplicaSetSize: 0,
       currentReplicaSetSize: 0,
@@ -109,11 +108,9 @@ export class ReplicaListComponent extends BaseControllerDirective {
   }
 
   private setupReplicaList(service: string): void {
-    const clickHandler = this.handleReplicaClick.bind(this);
-
     const defaultSortProperties = ['replicaRoleSortPriority', 'nodeName'];
     const columnSettings = [
-      new ListColumnSettingWithExpandableLink('id', 'Replica Id', clickHandler),
+      new ListColumnSetting('id', 'Replica Id'),
       new ListColumnSettingWithFilter('raw.ReplicaRole', 'Replica Role', {sortPropertyPaths: defaultSortProperties}),
       new ListColumnSettingForBadge('replicaStatusBadge', 'Status'),
       new ListColumnSettingForColoredNodeName('nodeName', 'Node Name'),
@@ -139,7 +136,7 @@ export class ReplicaListComponent extends BaseControllerDirective {
       true,
       (item) => item.isClickable && item.expandedDetails !== null,
       true,
-      false
+      true  // showRowExpander
     );
 
     listSettings.sortReverse = true;
@@ -187,31 +184,53 @@ export class ReplicaListComponent extends BaseControllerDirective {
 
     const nodeMap = new Map(nodes.map(node => [node.name, node]));
 
+    const newDisplayMap = new Map<string, any>();
     state.replicaData = replicas.map(replica => {
       const countsTowardWriteQuorum = quorumReplicas.has(replica.ReplicaId);
       const isDownAndCountsTowardQuorum = countsTowardWriteQuorum && replica.ReplicaStatus !== 'Ready';
       const node = nodeMap.get(replica.NodeName);
       const nodeStatus = node?.raw.NodeStatus || NodeStatusConstants.Unknown;
 
-      return {
+      const existing = state.replicaDisplayMap.get(replica.ReplicaId);
+      if (existing) {
+        existing.nodeName = replica.NodeName;
+        existing.raw = replica;
+        existing.nodeStatus = nodeStatus;
+        existing.isSeedNode = node?.raw.IsSeedNode ?? false;
+        existing.replicaRoleSortPriority = (SortPriorities.ReplicaRolesToSortPriorities as any)[replica.ReplicaRole] || 0;
+        existing.replicaStatusBadge = {
+          text: replica.ReplicaStatus,
+          badgeClass: replica.ReplicaStatus === 'Ready' ? 'badge-ok' : 'badge-error'
+        };
+        existing.isClickable = replica.ReplicaStatus !== 'Down';
+        existing.isDownAndCountsTowardQuorum = isDownAndCountsTowardQuorum;
+        existing.infoMessage = partitionStatus === PartitionStatusConstants.InQuorumLoss && isDownAndCountsTowardQuorum ? getDownReplicaMitigationHint(nodeStatus) : '';
+        newDisplayMap.set(replica.ReplicaId, existing);
+        return existing;
+      }
+
+      const item = {
         id: replica.ReplicaId,
         nodeName: replica.NodeName,
         raw: replica,
         nodeStatus,
         isSeedNode: node?.raw.IsSeedNode ?? false,
-        replicaRoleSortPriority: SortPriorities.ReplicaRolesToSortPriorities[replica.ReplicaRole] || 0,
+        replicaRoleSortPriority: (SortPriorities.ReplicaRolesToSortPriorities as any)[replica.ReplicaRole] || 0,
         replicaStatusBadge: {
           text: replica.ReplicaStatus,
           badgeClass: replica.ReplicaStatus === 'Ready' ? 'badge-ok' : 'badge-error'
         },
-        isSecondRowCollapsed: !(this.expandedReplicasState.get(replica.ReplicaId) ?? false),
+        isSecondRowCollapsed: true,
         expandedDetails: null,
         lastSequenceNumber: replica.ReplicaStatus === 'Down' ? 'N/A' : 'Loading...',
         isClickable: replica.ReplicaStatus !== 'Down',
         isDownAndCountsTowardQuorum,
         infoMessage: partitionStatus === PartitionStatusConstants.InQuorumLoss && isDownAndCountsTowardQuorum ? getDownReplicaMitigationHint(nodeStatus) : ''
       };
+      newDisplayMap.set(replica.ReplicaId, item);
+      return item;
     });
+    state.replicaDisplayMap = newDisplayMap;
 
     state.minReplicaSetSize = partition.MinReplicaSetSize ?? 0;
     state.targetReplicaSetSize = partition.TargetReplicaSetSize ?? 0;
@@ -226,19 +245,10 @@ export class ReplicaListComponent extends BaseControllerDirective {
 
     this.setupReplicaList(service);
 
-    state.listSettings.rowClass = (replica) =>
+    state.listSettings!.rowClass = (replica) =>
       partitionStatus === PartitionStatusConstants.InQuorumLoss && replica.isDownAndCountsTowardQuorum ? 'highlighted-row' : '';
 
     state.replicaData.forEach(replicaItem => this.loadDeployedReplicaDetails(replicaItem, config.partitionId));
-  }
-
-  private handleReplicaClick(replicaItem: any): void {
-    if (!replicaItem.isClickable) {
-      return;
-    }
-    
-    replicaItem.isSecondRowCollapsed = !replicaItem.isSecondRowCollapsed;
-    this.expandedReplicasState.set(replicaItem.id, !replicaItem.isSecondRowCollapsed);
   }
 
   private loadDeployedReplicaDetails(replicaItem: any, partitionId: string): void {

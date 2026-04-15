@@ -68,8 +68,8 @@ context('cluster-insights', () => {
         // Details should not be fetched before expanding
         cy.get('app-expanded-details').should('not.exist');
 
-        // Click to expand the first node
-        cy.get('tbody > tr:first-child span.expandable-link').should('exist').first().click();
+        // Click the row expander to expand the first node
+        cy.get('tbody > tr:first-child button.row-expander').should('exist').first().click();
       });
 
       // Wait for the lazy-loaded detail requests triggered by expand
@@ -138,7 +138,7 @@ context('cluster-insights', () => {
         
         cy.wait('@replicaDetail');
         cy.get('tbody > tr').first().within(() => {
-          cy.get('span.expandable-link').click();
+          cy.get('button.row-expander').click();
         });
         
         cy.get('app-expanded-details').scrollIntoView().should('be.visible');

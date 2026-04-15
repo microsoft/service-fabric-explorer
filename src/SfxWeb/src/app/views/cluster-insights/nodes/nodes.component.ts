@@ -9,7 +9,6 @@ import { Node } from 'src/app/Models/DataModels/Node';
 import { ListSettings, ListColumnSetting, ListColumnSettingWithFilter, ListColumnSettingForBadge } from 'src/app/Models/ListSettings';
 import { NodeStatusConstants, ReplicaRoles, BadgeConstants } from 'src/app/Common/Constants';
 import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
-import { ListColumnSettingWithExpandableLink } from '../expandable-link/expandable-link.component';
 import { ListColumnSettingForExpandedDetails } from '../expanded-details/expanded-details.component';
 import { IDashboardViewModel, DashboardViewModel } from 'src/app/ViewModels/DashboardViewModels';
 import { IEssentialListItem } from 'src/app/modules/charts/essential-health-tile/essential-health-tile.component';
@@ -19,7 +18,6 @@ interface NodeDisplay {
   raw: IRawNode;
   nodeStatusBadge: { text: string; badgeClass: string };
   nodeStatus: string;
-  isClickable: boolean;
   isSecondRowCollapsed: boolean;
   expandedDetails?: Record<string, string>;
   icon?: { src: string; alt: string; title: string };
@@ -37,6 +35,7 @@ export class NodesComponent extends BaseControllerDirective {
   seedNodes: NodeDisplay[] = [];
   nonSeedNodes: NodeDisplay[] = [];
   listSettings!: ListSettings;
+  private nodeDisplayMap = new Map<string, NodeDisplay>();
   faultDomainCount = 0;
   upgradeDomainCount = 0;
   uniqueCodeVersions: string[] = [];
@@ -60,7 +59,19 @@ export class NodesComponent extends BaseControllerDirective {
       map(nodeCollection => {
         const nodes = nodeCollection.collection;
 
-        this.nodes = nodes.map(node => this.buildNodeDisplay(node));
+        const newMap = new Map<string, NodeDisplay>();
+        this.nodes = nodes.map(node => {
+          const existing = this.nodeDisplayMap.get(node.name);
+          if (existing) {
+            this.updateNodeDisplay(existing, node);
+            newMap.set(node.name, existing);
+            return existing;
+          }
+          const display = this.buildNodeDisplay(node);
+          newMap.set(node.name, display);
+          return display;
+        });
+        this.nodeDisplayMap = newMap;
 
         this.seedNodes = this.nodes.filter(node => node.raw.IsSeedNode);
         this.nonSeedNodes = this.nodes.filter(node => !node.raw.IsSeedNode);
@@ -84,24 +95,47 @@ export class NodesComponent extends BaseControllerDirective {
     const nodeStatus = node.raw.NodeStatus || NodeStatusConstants.Unknown;
     const nodeStatusBadge = this.getNodeStatusBadge(nodeStatus);
 
-    return {
+    const display: NodeDisplay = {
       name: node.name,
       raw: node.raw,
       nodeStatus,
       nodeStatusBadge,
-      isClickable: true,
       isSecondRowCollapsed: true,
       color: `var(--${nodeStatusBadge.badgeClass})`,
       icon: node.raw.IsSeedNode ? { src: 'assets/seed.svg', alt: 'Seed Node', title: 'Seed Node' } : undefined,
       detailsLoaded: false
     };
+
+    // Use a property setter so data loads automatically when the row expander toggles expansion
+    let collapsed = true;
+    Object.defineProperty(display, 'isSecondRowCollapsed', {
+      get: () => collapsed,
+      set: (value: boolean) => {
+        collapsed = value;
+        if (!value && !display.detailsLoaded) {
+          this.loadNodeDetails(display);
+        }
+      },
+      enumerable: true,
+      configurable: true
+    });
+
+    return display;
+  }
+
+  private updateNodeDisplay(display: NodeDisplay, node: Node): void {
+    const nodeStatus = node.raw.NodeStatus || NodeStatusConstants.Unknown;
+    const nodeStatusBadge = this.getNodeStatusBadge(nodeStatus);
+    display.raw = node.raw;
+    display.nodeStatus = nodeStatus;
+    display.nodeStatusBadge = nodeStatusBadge;
+    display.color = `var(--${nodeStatusBadge.badgeClass})`;
+    display.icon = node.raw.IsSeedNode ? { src: 'assets/seed.svg', alt: 'Seed Node', title: 'Seed Node' } : undefined;
   }
 
   private setupListSettings(): void {
-    const clickHandler = this.handleNodeClick.bind(this);
-
     const columnSettings = [
-      new ListColumnSettingWithExpandableLink('name', 'Name', clickHandler),
+      new ListColumnSetting('name', 'Name'),
       new ListColumnSetting('raw.IpAddressOrFQDN', 'Address'),
       new ListColumnSettingWithFilter('raw.Type', 'Node Type'),
       new ListColumnSettingWithFilter('raw.UpgradeDomain', 'Upgrade Domain'),
@@ -118,14 +152,14 @@ export class NodesComponent extends BaseControllerDirective {
 
     this.listSettings = new ListSettings(
       15,
-      null,
+      [],
       'nodes',
       columnSettings,
       secondRowColumnSettings,
       true,
-      (item) => item.isClickable,
+      () => true,
       true,  // searchable
-      false  // showRowExpander
+      true   // showRowExpander
     );
   }
 
@@ -178,13 +212,6 @@ export class NodesComponent extends BaseControllerDirective {
         copyTextValue: this.seedNodes.length.toString()
       }
     ];
-  }
-
-  private handleNodeClick(node: NodeDisplay): void {
-    node.isSecondRowCollapsed = !node.isSecondRowCollapsed;
-    if (!node.isSecondRowCollapsed && !node.detailsLoaded) {
-      this.loadNodeDetails(node);
-    }
   }
 
   private loadNodeDetails(node: NodeDisplay): void {
