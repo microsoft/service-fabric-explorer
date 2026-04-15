@@ -1,6 +1,6 @@
 import { Component, Injector } from '@angular/core';
 import { forkJoin, of, Observable } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { catchError, tap } from 'rxjs/operators';
 
 import { RestClientService } from 'src/app/services/rest-client.service';
 import { DataService } from 'src/app/services/data.service';
@@ -56,7 +56,7 @@ export class NodesComponent extends BaseControllerDirective {
   refresh(): Observable<any> {
     this.isLoading = true;
     return this.dataService.getNodes(true).pipe(
-      map(nodeCollection => {
+      tap(nodeCollection => {
         const nodes = nodeCollection.collection;
 
         const newMap = new Map<string, NodeDisplay>();

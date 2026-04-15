@@ -134,7 +134,7 @@ export class ReplicaListComponent extends BaseControllerDirective {
       columnSettings,
       secondRowColumnSettings,
       true,
-      (item) => item.isClickable && item.expandedDetails !== null,
+      (item) => item.isClickable,
       true,
       true  // showRowExpander
     );
@@ -203,6 +203,12 @@ export class ReplicaListComponent extends BaseControllerDirective {
           badgeClass: replica.ReplicaStatus === 'Ready' ? 'badge-ok' : 'badge-error'
         };
         existing.isClickable = replica.ReplicaStatus !== 'Down';
+        if (replica.ReplicaStatus === 'Down') {
+          existing.lastSequenceNumber = 'N/A';
+          existing.expandedDetails = null;
+        } else if (!existing.expandedDetails) {
+          existing.lastSequenceNumber = 'Loading...';
+        }
         existing.isDownAndCountsTowardQuorum = isDownAndCountsTowardQuorum;
         existing.infoMessage = partitionStatus === PartitionStatusConstants.InQuorumLoss && isDownAndCountsTowardQuorum ? getDownReplicaMitigationHint(nodeStatus) : '';
         newDisplayMap.set(replica.ReplicaId, existing);
