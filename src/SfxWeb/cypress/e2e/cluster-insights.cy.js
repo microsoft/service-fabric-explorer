@@ -69,7 +69,7 @@ context('cluster-insights', () => {
         cy.get('app-expanded-details').should('not.exist');
 
         // Click the row expander to expand the first node
-        cy.get('tbody > tr:first-child button.row-expander').should('exist').first().click();
+        cy.get('tbody > tr:first-child button.row-expander').first().should('be.visible').click();
       });
 
       // Wait for the lazy-loaded detail requests triggered by expand
