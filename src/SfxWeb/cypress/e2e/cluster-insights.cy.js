@@ -55,23 +55,38 @@ context('cluster-insights', () => {
       });
     });
 
-    it('show system services replica count and deployed application count on node click', () => {
+    it('load details on expand and show correct replica and app counts', () => {
       cy.intercept('GET', GET_SYSTEM_REPLICAS_ON_NODE_ROUTE, { fixture: 'cluster-insights/system-replicas-on-node.json' }).as('systemReplicaOnNodes');
       cy.intercept('GET', GET_DEPLOYED_APPS_ON_NODE_ROUTE, { fixture: 'cluster-insights/deployed-apps-on-node.json' }).as('deployedAppsOnNode');
 
       cy.visit('/#/cluster-insights');
-      cy.wait('@nodes');
-
-      // Wait for all 5 nodes' per-node requests to complete (forkJoin requires all)
-      cy.wait([
-        '@systemReplicaOnNodes', '@systemReplicaOnNodes', '@systemReplicaOnNodes', '@systemReplicaOnNodes', '@systemReplicaOnNodes',
-        '@deployedAppsOnNode', '@deployedAppsOnNode', '@deployedAppsOnNode', '@deployedAppsOnNode', '@deployedAppsOnNode'
-      ]);
+      // Wait for all initial data to load so Angular finishes rendering before we interact
+      cy.wait(['@nodes', '@fmPartition', '@fmReplicas', '@replicaDetail']);
 
       cy.get('app-nodes').within(() => {
         cy.contains('a.nav-link', 'All Nodes').click();
-        cy.get('tbody > tr:first-child span.expandable-link').should('be.visible').first().click();
+
+        // Details should not be fetched before expanding (lazy-load)
+        cy.get('app-expanded-details').should('not.exist');
+
+        // Click the row expander to expand the first node
+        cy.get('tbody > tr').first().within(() => {
+          cy.get('button.row-expander').click();
+        });
+      });
+
+      // Wait for the lazy-loaded detail requests triggered by expand
+      cy.wait(['@systemReplicaOnNodes', '@deployedAppsOnNode']);
+
+      cy.get('app-nodes').within(() => {
         cy.get('app-expanded-details').scrollIntoView().should('be.visible');
+
+        // Fixture has 0 Primary, 4 ActiveSecondary, 1 deployed app
+        cy.get('app-expanded-details').within(() => {
+          cy.contains('System Services Primary Replicas Count').parent().should('contain', '0');
+          cy.contains('System Services Active Secondary Replicas Count').parent().should('contain', '4');
+          cy.contains('User Applications Count').parent().should('contain', '1');
+        });
       });
     });
   });
@@ -126,7 +141,7 @@ context('cluster-insights', () => {
         
         cy.wait('@replicaDetail');
         cy.get('tbody > tr').first().within(() => {
-          cy.get('span.expandable-link').click();
+          cy.get('button.row-expander').click();
         });
         
         cy.get('app-expanded-details').scrollIntoView().should('be.visible');

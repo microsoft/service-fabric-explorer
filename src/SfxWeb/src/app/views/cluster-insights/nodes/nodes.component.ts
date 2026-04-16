@@ -1,6 +1,6 @@
 import { Component, Injector } from '@angular/core';
 import { forkJoin, of, Observable } from 'rxjs';
-import { catchError, map, switchMap } from 'rxjs/operators';
+import { catchError, tap } from 'rxjs/operators';
 
 import { RestClientService } from 'src/app/services/rest-client.service';
 import { DataService } from 'src/app/services/data.service';
@@ -9,7 +9,6 @@ import { Node } from 'src/app/Models/DataModels/Node';
 import { ListSettings, ListColumnSetting, ListColumnSettingWithFilter, ListColumnSettingForBadge } from 'src/app/Models/ListSettings';
 import { NodeStatusConstants, ReplicaRoles, BadgeConstants } from 'src/app/Common/Constants';
 import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
-import { ListColumnSettingWithExpandableLink } from '../expandable-link/expandable-link.component';
 import { ListColumnSettingForExpandedDetails } from '../expanded-details/expanded-details.component';
 import { IDashboardViewModel, DashboardViewModel } from 'src/app/ViewModels/DashboardViewModels';
 import { IEssentialListItem } from 'src/app/modules/charts/essential-health-tile/essential-health-tile.component';
@@ -19,12 +18,11 @@ interface NodeDisplay {
   raw: IRawNode;
   nodeStatusBadge: { text: string; badgeClass: string };
   nodeStatus: string;
-  isClickable: boolean;
   isSecondRowCollapsed: boolean;
-  systemPrimaryReplicasCount: number;
   expandedDetails?: Record<string, string>;
   icon?: { src: string; alt: string; title: string };
   color: string;
+  detailsLoaded?: boolean;
 }
 
 @Component({
@@ -38,6 +36,7 @@ export class NodesComponent extends BaseControllerDirective {
   seedNodes: NodeDisplay[] = [];
   nonSeedNodes: NodeDisplay[] = [];
   listSettings!: ListSettings;
+  private nodeDisplayMap = new Map<string, NodeDisplay>();
   faultDomainCount = 0;
   upgradeDomainCount = 0;
   uniqueCodeVersions: string[] = [];
@@ -58,39 +57,33 @@ export class NodesComponent extends BaseControllerDirective {
   refresh(): Observable<any> {
     this.isLoading = true;
     return this.dataService.getNodes(true).pipe(
-      switchMap(nodeCollection => {
+      tap(nodeCollection => {
         const nodes = nodeCollection.collection;
 
-        if (nodes.length === 0) {
-          this.isLoading = false;
-          return of(null);
-        }
+        const newMap = new Map<string, NodeDisplay>();
+        this.nodes = nodes.map(node => {
+          const existing = this.nodeDisplayMap.get(node.name);
+          if (existing) {
+            this.updateNodeDisplay(existing, node);
+            newMap.set(node.name, existing);
+            return existing;
+          }
+          const display = this.buildNodeDisplay(node);
+          newMap.set(node.name, display);
+          return display;
+        });
+        this.nodeDisplayMap = newMap;
 
-        return forkJoin(nodes.map(node =>
-          forkJoin({
-            systemServiceReplicasOnNode: this.restClient.getDeployedReplicasByApplication(node.name, 'System').pipe(catchError(() => of([]))),
-            applicationsOnNode: this.restClient.getDeployedApplications(node.name).pipe(catchError(() => of([])))
-          })
-        )).pipe(
-          map(nodeResults => {
-            this.nodes = nodes.map((node, i) => this.buildNodeDisplay(node, nodeResults[i]));
+        this.seedNodes = this.nodes.filter(node => node.raw.IsSeedNode);
+        this.nonSeedNodes = this.nodes.filter(node => !node.raw.IsSeedNode);
 
-            this.seedNodes = this.nodes.filter(node => node.raw.IsSeedNode);
-            this.nonSeedNodes = this.nodes.filter(node => !node.raw.IsSeedNode);
+        this.faultDomainCount = nodeCollection.faultDomains.length;
+        this.upgradeDomainCount = nodeCollection.upgradeDomains.length;
+        this.uniqueCodeVersions = [...new Set(nodes.map(node => node.raw.CodeVersion))];
 
-            this.faultDomainCount = nodeCollection.faultDomains.length;
-            this.upgradeDomainCount = nodeCollection.upgradeDomains.length;
-            this.uniqueCodeVersions = [...new Set(nodes.map(node => node.raw.CodeVersion))];
-
-            this.updateItemInEssentials();
-            this.updateTiles();
-            this.isLoading = false;
-          }),
-          catchError(() => {
-            this.isLoading = false;
-            return of(null);
-          })
-        );
+        this.updateItemInEssentials();
+        this.updateTiles();
+        this.isLoading = false;
       }),
       catchError(() => {
         this.isLoading = false;
@@ -99,43 +92,57 @@ export class NodesComponent extends BaseControllerDirective {
     );
   }
 
-  private buildNodeDisplay(node: Node, replicaData: { systemServiceReplicasOnNode: any[]; applicationsOnNode: any[] }): NodeDisplay {
+  private buildNodeDisplay(node: Node): NodeDisplay {
     const nodeStatus = node.raw.NodeStatus || NodeStatusConstants.Unknown;
-    const { systemServiceReplicasOnNode, applicationsOnNode } = replicaData;
-    const primaryCount = systemServiceReplicasOnNode.filter(r => r.ReplicaRole === ReplicaRoles.Primary).length;
-    const activeSecondaryCount = systemServiceReplicasOnNode.filter(r => r.ReplicaRole === ReplicaRoles.ActiveSecondary).length;
     const nodeStatusBadge = this.getNodeStatusBadge(nodeStatus);
 
-    return {
+    const display: NodeDisplay = {
       name: node.name,
       raw: node.raw,
       nodeStatus,
       nodeStatusBadge,
-      isClickable: primaryCount > 0 || activeSecondaryCount > 0 || applicationsOnNode.length > 0,
       isSecondRowCollapsed: true,
-      systemPrimaryReplicasCount: primaryCount,
-      expandedDetails: {
-        'System Services Primary Replicas Count': primaryCount.toString(),
-        'System Services ActiveSecondary Replicas Count': activeSecondaryCount.toString(),
-        'User Applications Count': applicationsOnNode.length.toString()
-      },
       color: `var(--${nodeStatusBadge.badgeClass})`,
-      icon: node.raw.IsSeedNode ? { src: 'assets/seed.svg', alt: 'Seed Node', title: 'Seed Node' } : undefined
+      icon: node.raw.IsSeedNode ? { src: 'assets/seed.svg', alt: 'Seed Node', title: 'Seed Node' } : undefined,
+      detailsLoaded: false
     };
+
+    // Use a property setter so data loads automatically when the row expander toggles expansion
+    let collapsed = true;
+    Object.defineProperty(display, 'isSecondRowCollapsed', {
+      get: () => collapsed,
+      set: (value: boolean) => {
+        collapsed = value;
+        if (!value && !display.detailsLoaded) {
+          this.loadNodeDetails(display);
+        }
+      },
+      enumerable: true,
+      configurable: true
+    });
+
+    return display;
+  }
+
+  private updateNodeDisplay(display: NodeDisplay, node: Node): void {
+    const nodeStatus = node.raw.NodeStatus || NodeStatusConstants.Unknown;
+    const nodeStatusBadge = this.getNodeStatusBadge(nodeStatus);
+    display.raw = node.raw;
+    display.nodeStatus = nodeStatus;
+    display.nodeStatusBadge = nodeStatusBadge;
+    display.color = `var(--${nodeStatusBadge.badgeClass})`;
+    display.icon = node.raw.IsSeedNode ? { src: 'assets/seed.svg', alt: 'Seed Node', title: 'Seed Node' } : undefined;
   }
 
   private setupListSettings(): void {
-    const clickHandler = this.handleNodeClick.bind(this);
-
     const columnSettings = [
-      new ListColumnSettingWithExpandableLink('name', 'Name', clickHandler),
+      new ListColumnSetting('name', 'Name'),
       new ListColumnSetting('raw.IpAddressOrFQDN', 'Address'),
       new ListColumnSettingWithFilter('raw.Type', 'Node Type'),
       new ListColumnSettingWithFilter('raw.UpgradeDomain', 'Upgrade Domain'),
       new ListColumnSettingWithFilter('raw.FaultDomain', 'Fault Domain'),
       new ListColumnSettingWithFilter('raw.IsSeedNode', 'Is Seed Node'),
       new ListColumnSettingForBadge('nodeStatusBadge', 'Status'),
-      new ListColumnSetting('systemPrimaryReplicasCount', 'System Primary Replicas'),
       new ListColumnSettingWithFilter('raw.Id.Id', 'Node Id'),
       new ListColumnSettingWithFilter('raw.CodeVersion', 'Code Version')
     ];
@@ -146,14 +153,14 @@ export class NodesComponent extends BaseControllerDirective {
 
     this.listSettings = new ListSettings(
       15,
-      null,
+      [],
       'nodes',
       columnSettings,
       secondRowColumnSettings,
       true,
-      (item) => item.isClickable,
+      () => true,
       true,  // searchable
-      false  // showRowExpander
+      true   // showRowExpander
     );
   }
 
@@ -208,10 +215,21 @@ export class NodesComponent extends BaseControllerDirective {
     ];
   }
 
-  private handleNodeClick(node: NodeDisplay): void {
-    if (node.isClickable) {
-      node.isSecondRowCollapsed = !node.isSecondRowCollapsed;
-    }
+  private loadNodeDetails(node: NodeDisplay): void {
+    forkJoin({
+      systemServiceReplicasOnNode: this.restClient.getDeployedReplicasByApplication(node.name, 'System').pipe(catchError(() => of([]))),
+      applicationsOnNode: this.restClient.getDeployedApplications(node.name).pipe(catchError(() => of([])))
+    }).subscribe(({ systemServiceReplicasOnNode, applicationsOnNode }) => {
+      const primaryCount = systemServiceReplicasOnNode.filter((r: any) => r.ReplicaRole === ReplicaRoles.Primary).length;
+      const activeSecondaryCount = systemServiceReplicasOnNode.filter((r: any) => r.ReplicaRole === ReplicaRoles.ActiveSecondary).length;
+
+      node.expandedDetails = {
+        'System Services Primary Replicas Count': primaryCount.toString(),
+        'System Services Active Secondary Replicas Count': activeSecondaryCount.toString(),
+        'User Applications Count': applicationsOnNode.length.toString()
+      };
+      node.detailsLoaded = true;
+    });
   }
 
 }
