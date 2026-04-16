@@ -4,9 +4,10 @@ import { PartitionCacheService } from '../partition-cache.service';
 import { IPartitionData } from '../safety-checks/safety-checks.component';
 
 @Component({
-  selector: 'app-load-cell',
-  templateUrl: './load-cell.component.html',
-  styleUrls: ['./load-cell.component.scss']
+    selector: 'app-load-cell',
+    templateUrl: './load-cell.component.html',
+    styleUrls: ['./load-cell.component.scss'],
+    standalone: false
 })
 export class LoadCellComponent {
 

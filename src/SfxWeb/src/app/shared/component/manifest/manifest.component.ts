@@ -1,9 +1,10 @@
 import { Component, OnInit, Input } from '@angular/core';
 
 @Component({
-  selector: 'app-manifest-viewer',
-  templateUrl: './manifest.component.html',
-  styleUrls: ['./manifest.component.scss']
+    selector: 'app-manifest-viewer',
+    templateUrl: './manifest.component.html',
+    styleUrls: ['./manifest.component.scss'],
+    standalone: false
 })
 export class ManifestComponent implements OnInit {
 

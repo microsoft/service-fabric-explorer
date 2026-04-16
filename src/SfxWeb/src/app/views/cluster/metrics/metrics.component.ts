@@ -16,9 +16,10 @@ interface IChartSeries {
 }
 
 @Component({
-  selector: 'app-metrics',
-  templateUrl: './metrics.component.html',
-  styleUrls: ['./metrics.component.scss']
+    selector: 'app-metrics',
+    templateUrl: './metrics.component.html',
+    styleUrls: ['./metrics.component.scss'],
+    standalone: false
 })
 export class MetricsComponent extends BaseControllerDirective {
 

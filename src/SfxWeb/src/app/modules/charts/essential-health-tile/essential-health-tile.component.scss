@@ -1,4 +1,4 @@
-@import "../chart.scss";
+@use "../chart" as *;
 
 .badge-container {
     margin: 0px 10px 0px 0px;

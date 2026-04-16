@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'app-telemetry-snack-bar',
-  templateUrl: './telemetry-snack-bar.component.html',
-  styleUrls: ['./telemetry-snack-bar.component.scss']
+    selector: 'app-telemetry-snack-bar',
+    templateUrl: './telemetry-snack-bar.component.html',
+    styleUrls: ['./telemetry-snack-bar.component.scss'],
+    standalone: false
 })
 export class TelemetrySnackBarComponent {
 

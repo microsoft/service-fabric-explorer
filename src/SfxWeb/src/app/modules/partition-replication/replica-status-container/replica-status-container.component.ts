@@ -16,9 +16,10 @@ const reduceReplicators = (data, replica) => {
 };
 
 @Component({
-  selector: 'app-replica-status-container',
-  templateUrl: './replica-status-container.component.html',
-  styleUrls: ['./replica-status-container.component.scss']
+    selector: 'app-replica-status-container',
+    templateUrl: './replica-status-container.component.html',
+    styleUrls: ['./replica-status-container.component.scss'],
+    standalone: false
 })
 export class ReplicaStatusContainerComponent implements OnChanges, OnDestroy {
 

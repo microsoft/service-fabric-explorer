@@ -4,9 +4,10 @@ import { IsolatedAction } from 'src/app/Models/Action';
 import { DataService } from 'src/app/services/data.service';
 
 @Component({
-  selector: 'app-partition-enable-back-up',
-  templateUrl: './partition-enable-back-up.component.html',
-  styleUrls: ['./partition-enable-back-up.component.scss']
+    selector: 'app-partition-enable-back-up',
+    templateUrl: './partition-enable-back-up.component.html',
+    styleUrls: ['./partition-enable-back-up.component.scss'],
+    standalone: false
 })
 export class PartitionEnableBackUpComponent implements OnInit {
 

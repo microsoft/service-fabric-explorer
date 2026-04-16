@@ -12,9 +12,10 @@ import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { INodeTypeInfo } from 'src/app/Models/DataModels/Cluster';
 
 @Component({
-  selector: 'app-essentials',
-  templateUrl: './essentials.component.html',
-  styleUrls: ['./essentials.component.scss']
+    selector: 'app-essentials',
+    templateUrl: './essentials.component.html',
+    styleUrls: ['./essentials.component.scss'],
+    standalone: false
 })
 export class EssentialsComponent extends NodeBaseControllerDirective {
 

@@ -38,9 +38,10 @@ export const resize = () => {
 }
 
 @Component({
-  selector: 'app-timeseries',
-  templateUrl: './timeseries.component.html',
-  styleUrls: ['./timeseries.component.scss']
+    selector: 'app-timeseries',
+    templateUrl: './timeseries.component.html',
+    styleUrls: ['./timeseries.component.scss'],
+    standalone: false
 })
 export class TimeseriesComponent implements AfterViewInit, OnChanges, OnDestroy, OnInit {
 

@@ -65,8 +65,8 @@ context('app type', () => {
       cy.wait('@getunprovision');
       cy.wait('@getunprovision');
 
-      cy.get('@getunprovision.0').then(request1 => {
-        cy.get('@getunprovision.1').then(request2 => {
+      cy.get('@getunprovision.1').then(request1 => {
+        cy.get('@getunprovision.2').then(request2 => {
           const versionsSeen = [request1.request.body.ApplicationTypeVersion, request2.request.body.ApplicationTypeVersion];
           expect(versionsSeen).to.include.members(["16.0.0", "17.0.0"]);
           expect(versionsSeen).to.not.include("18.0.0");

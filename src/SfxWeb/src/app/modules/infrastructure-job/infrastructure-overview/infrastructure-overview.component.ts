@@ -6,9 +6,10 @@ import { RepairTaskCollection } from 'src/app/Models/DataModels/collections/Repa
 import { InfrastructureCollectionItem } from 'src/app/Models/DataModels/collections/infrastructureCollection';
 
 @Component({
-  selector: 'app-infrastructure-overview',
-  templateUrl: './infrastructure-overview.component.html',
-  styleUrls: ['./infrastructure-overview.component.scss']
+    selector: 'app-infrastructure-overview',
+    templateUrl: './infrastructure-overview.component.html',
+    styleUrls: ['./infrastructure-overview.component.scss'],
+    standalone: false
 })
 export class InfrastructureOverviewComponent implements OnInit {
   @Input() collection: InfrastructureCollectionItem;

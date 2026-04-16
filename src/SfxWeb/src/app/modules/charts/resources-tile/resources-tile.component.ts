@@ -15,7 +15,10 @@ interface IResourceItemInternal extends IResourceItem {
   ref?: TemplateRef<any>;
 }
 
-@Directive({ selector: '[appResourcesTemplate]'})
+@Directive({
+    selector: '[appResourcesTemplate]',
+    standalone: false
+})
 export class ResourcesTemplateDirective {
   @Input() id: string;
 
@@ -28,9 +31,10 @@ export class ResourcesTemplateDirective {
 }
 
 @Component({
-  selector: 'app-service-resources-tile',
-  templateUrl: './resources-tile.component.html',
-  styleUrls: ['./resources-tile.component.scss']
+    selector: 'app-service-resources-tile',
+    templateUrl: './resources-tile.component.html',
+    styleUrls: ['./resources-tile.component.scss'],
+    standalone: false
 })
 export class ResourcesTileComponent implements AfterViewInit, OnChanges {
   

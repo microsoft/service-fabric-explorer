@@ -2,7 +2,8 @@ import { Pipe, PipeTransform, TrackByFunction } from '@angular/core';
 import { ListColumnSetting } from 'src/app/Models/ListSettings';
 
 @Pipe({
-  name: 'customTrackBy'
+    name: 'customTrackBy',
+    standalone: false
 })
 export class CustomTrackByPipe implements PipeTransform {
   transform(item: any): TrackByFunction<any> {

@@ -1,7 +1,7 @@
 /// <reference types="cypress" />
 
 export const apiUrl = (url) => {
-    return `/${Cypress.env("API_PREFIX")}${url}`;
+    return `/${Cypress.expose("API_PREFIX")}${url}`;
 }
 
 export const fixtureRefFormatter = (fixture_ref_name) => {

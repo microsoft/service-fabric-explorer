@@ -40,9 +40,10 @@ enum ServiceName {
 }
 
 @Component({
-  selector: 'app-replica-list',
-  templateUrl: './replica-list.component.html',
-  styleUrls: ['./replica-list.component.scss']
+    selector: 'app-replica-list',
+    templateUrl: './replica-list.component.html',
+    styleUrls: ['./replica-list.component.scss'],
+    standalone: false
 })
 export class ReplicaListComponent extends BaseControllerDirective {
   readonly ServiceName = ServiceName;

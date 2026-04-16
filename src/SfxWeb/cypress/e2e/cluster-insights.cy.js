@@ -66,7 +66,7 @@ context('cluster-insights', () => {
       cy.get('app-nodes').within(() => {
         cy.contains('a.nav-link', 'All Nodes').click();
 
-        // Details should not be fetched before expanding
+        // Details should not be fetched before expanding (lazy-load)
         cy.get('app-expanded-details').should('not.exist');
 
         // Click the row expander to expand the first node

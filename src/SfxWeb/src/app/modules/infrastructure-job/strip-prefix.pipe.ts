@@ -1,7 +1,8 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
-  name: 'stripPrefix'
+    name: 'stripPrefix',
+    standalone: false
 })
 export class StripPrefixPipe implements PipeTransform {
 

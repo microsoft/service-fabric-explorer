@@ -5,10 +5,11 @@ import { UntypedFormGroup, UntypedFormBuilder, Validators, UntypedFormArray, Abs
 import { IsolatedAction } from 'src/app/Models/Action';
 
 @Component({
-  selector: 'app-action-create-backup-policy',
-  templateUrl: './action-create-backup-policy.component.html',
-  styleUrls: ['./action-create-backup-policy.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'app-action-create-backup-policy',
+    templateUrl: './action-create-backup-policy.component.html',
+    styleUrls: ['./action-create-backup-policy.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class ActionCreateBackupPolicyComponent implements OnInit {
 

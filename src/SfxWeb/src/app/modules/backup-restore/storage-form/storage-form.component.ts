@@ -2,9 +2,10 @@ import { Component, OnInit, Input } from '@angular/core';
 import { UntypedFormGroup, UntypedFormBuilder, Validators, FormControl, AbstractControl } from '@angular/forms';
 
 @Component({
-  selector: 'app-storage-form',
-  templateUrl: './storage-form.component.html',
-  styleUrls: ['./storage-form.component.scss']
+    selector: 'app-storage-form',
+    templateUrl: './storage-form.component.html',
+    styleUrls: ['./storage-form.component.scss'],
+    standalone: false
 })
 export class StorageFormComponent implements OnInit {
 

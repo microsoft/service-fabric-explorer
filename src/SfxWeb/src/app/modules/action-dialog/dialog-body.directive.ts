@@ -1,7 +1,8 @@
 import { Directive, ViewContainerRef } from '@angular/core';
 
 @Directive({
-  selector: '[appDialogBody]'
+    selector: '[appDialogBody]',
+    standalone: false
 })
 export class DialogBodyDirective {
 

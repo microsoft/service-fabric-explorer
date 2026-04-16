@@ -1,5 +1,5 @@
 {
-    "/api/*": {
+    "/api": {
       "target": "http://localhost:2500",
       "secure": false,
       "changeOrigin": true,

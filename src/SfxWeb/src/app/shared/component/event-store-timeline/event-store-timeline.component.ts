@@ -8,10 +8,11 @@ import { Timeline, DataItem, DataGroup } from 'vis-timeline/peer';
 import { DataSet } from 'vis-data';
 
 @Component({
-  selector: 'app-event-store-timeline',
-  templateUrl: './event-store-timeline.component.html',
-  styleUrls: ['./event-store-timeline.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'app-event-store-timeline',
+    templateUrl: './event-store-timeline.component.html',
+    styleUrls: ['./event-store-timeline.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class EventStoreTimelineComponent implements AfterViewInit, OnChanges, OnDestroy {
 
@@ -87,7 +88,7 @@ export class EventStoreTimelineComponent implements AfterViewInit, OnChanges, On
 
   public flipTimeZone(utc: boolean) {
     this.timeline.setOptions({
-      moment: utc ? moment.utc : moment
+      moment: (utc ? moment.utc : moment) as any
     });
   }
 

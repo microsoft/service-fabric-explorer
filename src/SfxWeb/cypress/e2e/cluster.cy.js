@@ -939,6 +939,21 @@ context('Cluster page', () => {
   })
 
   describe("orchestration view", () => {
+    const visitOrchestrationView = () => {
+      cy.visit('/#/')
+      cy.get('[data-cy=navtabs]').within(() => {
+        cy.contains('orchestration view').click();
+      })
+    };
+
+    const loadPartitionTimeline = () => {
+      visitOrchestrationView();
+      cy.get("[data-cy=partition-input]").type("745ab433-dc74-4edb-ac37-ad9cc9a0446d");
+      cy.get("[data-cy=confirm-button]").click();
+      cy.wait('@partitionevents');
+      cy.get("[data-cy=orchestration-timeline] .vis-point").should("have.length", 4);
+    };
+
     beforeEach(() => {
       cy.fixture('cluster-page/orchestration-view/partition-operation-events.json').then((partitionEvents) => {
         partitionEvents.forEach(event => {
@@ -953,13 +968,11 @@ context('Cluster page', () => {
     })
 
     it("opens orchestration view page", () => {
-      cy.visit('/#/')
-      cy.get('[data-cy=navtabs]').within(() => {
-        cy.contains('orchestration view').click();
-      })
+      visitOrchestrationView();
     });
 
     it("renders time picker, partition input and stage toggles", () => {
+      visitOrchestrationView();
       cy.get("[data-cy=time-picker]").should("exist");
       cy.get("[data-cy=partition-input]").should("exist").and('have.value', '');
       cy.get("[data-cy=confirm-button]").should("exist");
@@ -970,21 +983,20 @@ context('Cluster page', () => {
     });
 
     it("doesn't disaply the timeline when clicking on Confirm with empty partition id", () => {
+      visitOrchestrationView();
       cy.get("[data-cy=confirm-button]").click();
       cy.wait(1000);
       cy.get("[data-cy=orchestration-timeline]").should("not.exist");
     });
 
     it("disaplies the timeline and events when clicking on Confirm with existing partition id", () => {
-      cy.get("[data-cy=partition-input]").type("745ab433-dc74-4edb-ac37-ad9cc9a0446d");
-      cy.get("[data-cy=confirm-button]").click();
-      cy.wait('@partitionevents');
+      loadPartitionTimeline();
       cy.get("[data-cy=orchestration-timeline]").should("exist");
-      cy.get("[data-cy=orchestration-timeline] .vis-point").should("have.length", 4);
       cy.get("[data-cy=event-details]").should("not.exist");
     });
 
     it("toggles balancing operations", () => {
+      loadPartitionTimeline();
       cy.get("[data-cy=balancing-toggle]").click();
       cy.wait('@partitionevents');
       cy.get("[data-cy=orchestration-timeline] .vis-point").should("have.length", 3);
@@ -994,6 +1006,7 @@ context('Cluster page', () => {
     });
 
     it("toggles placement operations", () => {
+      loadPartitionTimeline();
       cy.get("[data-cy=placement-toggle]").click();
       cy.wait('@partitionevents');
       cy.get("[data-cy=orchestration-timeline] .vis-point").should("have.length", 3);
@@ -1003,6 +1016,7 @@ context('Cluster page', () => {
     });
 
     it("toggles constraint check operations", () => {
+      loadPartitionTimeline();
       cy.get("[data-cy=constrain-check-toggle]").click();
       cy.wait('@partitionevents');
       cy.get("[data-cy=orchestration-timeline] .vis-point").should("have.length", 3);
@@ -1012,6 +1026,7 @@ context('Cluster page', () => {
     });
 
     it("toggles other operations", () => {
+      loadPartitionTimeline();
       cy.get("[data-cy=other-toggle]").click();
       cy.wait('@partitionevents');
       cy.get("[data-cy=orchestration-timeline] .vis-point").should("have.length", 3);
@@ -1021,6 +1036,7 @@ context('Cluster page', () => {
     });
 
     it("displays event details when an event is selected", () => {
+      loadPartitionTimeline();
       cy.get("[data-cy=orchestration-timeline] .vis-point").first().click();
       cy.get("[data-cy=event-details]").should("exist");
       cy.contains("Operation Details");
@@ -1099,7 +1115,7 @@ context('Cluster page', () => {
         cy.contains('System.Azure.Job.TenantUpdate')
       })
 
-      cy.get('[data-cy=pendingjobs]').within(() => {
+      cy.get('[data-cy=pendingjobs]').last().within(() => {
         cy.get('tbody > tr').first().within(() => {
           cy.get('button').first().click();
         });
@@ -1119,7 +1135,7 @@ context('Cluster page', () => {
 
       cy.contains("node_1:Restart");
 
-      cy.get('[data-cy=pendingjobs]').within(() => {
+      cy.get('[data-cy=pendingjobs]').last().within(() => {
         cy.get('tbody > tr').eq(1).within(() => {
           cy.get('button').first().click();
         });
@@ -1154,17 +1170,17 @@ context('Cluster page', () => {
       setup('cluster-page/repair-jobs/mixed-node-external.json')
 
       // Verify that only Node repair tasks appear in the Most Common Actions
-      cy.get('[data-cy=top]').within(() => {
+      cy.get('[data-cy=top]').first().within(() => {
         // Should show 3 Node-based actions: 2 PlatformUpdate and 1 TenantUpdate
         cy.contains('System.Azure.Job.PlatformUpdate')
         cy.contains('System.Azure.Job.TenantUpdate')
         // Should NOT show External actions
-        cy.contains('External.RestartNode').should('not.exist')
-        cy.contains('External.ApplicationUpgrade').should('not.exist')
+        cy.root().should('not.contain', 'External.RestartNode')
+        cy.root().should('not.contain', 'External.ApplicationUpgrade')
       })
 
       // Verify only Node repair tasks appear in pending jobs table
-      cy.get('[data-cy=pendingjobs]').within(() => {
+      cy.get('[data-cy=pendingjobs]').last().within(() => {
         cy.get('tbody > tr').first().within(() => {
           cy.get('button').first().click();
         });
@@ -1183,9 +1199,9 @@ context('Cluster page', () => {
         cy.contains('Azure/PlatformUpdate/00065b20-aa83-4199-877b-a4b51efa8de6/3/616')
         cy.contains('Azure/TenantUpdate/46df1c03-5212-4b8f-98b0-47dfb70744b6/2/612')
         // Should NOT show External repair tasks (neither Action strings nor TaskIds)
-        cy.contains('External.RestartNode').should('not.exist')
-        cy.contains('IM/Node/').should('not.exist')
-        cy.contains('IM/ApplicationUpgrade/').should('not.exist')
+        cy.root().should('not.contain', 'External.RestartNode')
+        cy.root().should('not.contain', 'IM/Node/')
+        cy.root().should('not.contain', 'IM/ApplicationUpgrade/')
       })
 
       // Verify timeline only shows Node repair tasks

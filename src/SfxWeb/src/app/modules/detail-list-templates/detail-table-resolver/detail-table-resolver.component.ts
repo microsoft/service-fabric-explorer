@@ -5,9 +5,10 @@ import { Type } from '@angular/core';
 import { ListColumnSetting } from 'src/app/Models/ListSettings';
 
 @Component({
-  selector: 'app-detail-table-resolver',
-  templateUrl: './detail-table-resolver.component.html',
-  styleUrls: ['./detail-table-resolver.component.scss']
+    selector: 'app-detail-table-resolver',
+    templateUrl: './detail-table-resolver.component.html',
+    styleUrls: ['./detail-table-resolver.component.scss'],
+    standalone: false
 })
 export class DetailTableResolverComponent implements OnInit {
   @Input() cache: Record<string, any>;

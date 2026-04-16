@@ -15,9 +15,10 @@ export interface IViewBackUpData {
 }
 
 @Component({
-  selector: 'app-view-backup',
-  templateUrl: './view-backup.component.html',
-  styleUrls: ['./view-backup.component.scss']
+    selector: 'app-view-backup',
+    templateUrl: './view-backup.component.html',
+    styleUrls: ['./view-backup.component.scss'],
+    standalone: false
 })
 export class ViewBackupComponent implements OnInit {
 

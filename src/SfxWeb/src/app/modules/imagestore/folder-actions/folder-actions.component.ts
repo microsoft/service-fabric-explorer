@@ -6,9 +6,10 @@ import { ActionWithConfirmationDialog } from 'src/app/Models/Action';
 import { DataService } from 'src/app/services/data.service';
 
 @Component({
-  selector: 'app-folder-actions',
-  templateUrl: './folder-actions.component.html',
-  styleUrls: ['./folder-actions.component.scss']
+    selector: 'app-folder-actions',
+    templateUrl: './folder-actions.component.html',
+    styleUrls: ['./folder-actions.component.scss'],
+    standalone: false
 })
 export class FolderActionsComponent  implements DetailBaseComponent {
 

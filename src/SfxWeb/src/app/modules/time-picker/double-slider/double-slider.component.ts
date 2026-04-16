@@ -7,10 +7,11 @@ export interface IOnDateChange {
   startDate: Date;
 }
 @Component({
-  selector: 'app-double-slider',
-  templateUrl: './double-slider.component.html',
-  styleUrls: ['./double-slider.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'app-double-slider',
+    templateUrl: './double-slider.component.html',
+    styleUrls: ['./double-slider.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class DoubleSliderComponent implements OnChanges, AfterViewInit {
 

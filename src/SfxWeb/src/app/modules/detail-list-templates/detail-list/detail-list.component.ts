@@ -25,9 +25,10 @@ export interface ISortOrdering {
   displayPath: string;
 }
 @Component({
-  selector: 'app-detail-list',
-  templateUrl: './detail-list.component.html',
-  styleUrls: ['./detail-list.component.scss']
+    selector: 'app-detail-list',
+    templateUrl: './detail-list.component.html',
+    styleUrls: ['./detail-list.component.scss'],
+    standalone: false
 })
 export class DetailListComponent implements OnInit, OnDestroy {
 

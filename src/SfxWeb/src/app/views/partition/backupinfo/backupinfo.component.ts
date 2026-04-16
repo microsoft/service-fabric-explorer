@@ -4,9 +4,10 @@ import { IsolatedAction } from 'src/app/Models/Action';
 import { DataService } from 'src/app/services/data.service';
 
 @Component({
-  selector: 'app-backupinfo',
-  templateUrl: './backupinfo.component.html',
-  styleUrls: ['./backupinfo.component.scss']
+    selector: 'app-backupinfo',
+    templateUrl: './backupinfo.component.html',
+    styleUrls: ['./backupinfo.component.scss'],
+    standalone: false
 })
 export class BackupinfoComponent {
   backupinfo: any;

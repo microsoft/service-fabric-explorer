@@ -5,9 +5,10 @@ import { Observable, Subscription } from 'rxjs';
 import { RefreshService } from 'src/app/services/refresh.service';
 
 @Component({
-  selector: 'app-cluster-upgrade-banner',
-  templateUrl: './cluster-upgrade-banner.component.html',
-  styleUrls: ['./cluster-upgrade-banner.component.scss']
+    selector: 'app-cluster-upgrade-banner',
+    templateUrl: './cluster-upgrade-banner.component.html',
+    styleUrls: ['./cluster-upgrade-banner.component.scss'],
+    standalone: false
 })
 export class ClusterUpgradeBannerComponent implements OnInit {
 

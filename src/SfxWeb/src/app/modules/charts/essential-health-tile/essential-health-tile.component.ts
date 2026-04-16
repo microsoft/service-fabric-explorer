@@ -14,7 +14,10 @@ interface IEssentialListItemInternal extends IEssentialListItem {
   ref?: TemplateRef<any>;
 }
 
-@Directive({ selector: '[appEssentialTemplate]'})
+@Directive({
+    selector: '[appEssentialTemplate]',
+    standalone: false
+})
 export class EssentialTemplateDirective {
   @Input() id: string;
 
@@ -27,10 +30,11 @@ export class EssentialTemplateDirective {
 }
 
 @Component({
-  selector: 'app-essential-health-tile',
-  templateUrl: './essential-health-tile.component.html',
-  styleUrls: ['./essential-health-tile.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'app-essential-health-tile',
+    templateUrl: './essential-health-tile.component.html',
+    styleUrls: ['./essential-health-tile.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class EssentialHealthTileComponent implements AfterViewInit, OnChanges {
 

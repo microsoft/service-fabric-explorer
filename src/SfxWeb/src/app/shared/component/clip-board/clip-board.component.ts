@@ -4,10 +4,11 @@ import { Component, Input, ChangeDetectionStrategy, ViewChild, ElementRef, OnCha
 import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
-  selector: 'app-clip-board',
-  templateUrl: './clip-board.component.html',
-  styleUrls: ['./clip-board.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'app-clip-board',
+    templateUrl: './clip-board.component.html',
+    styleUrls: ['./clip-board.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class ClipBoardComponent implements OnChanges {
 

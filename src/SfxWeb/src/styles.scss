@@ -12,7 +12,6 @@
 @use '@angular/cdk';
 @use '@angular/material' as mat;
 // For more information: https://material.angular.io/guide/theming
-@import '@angular/material/theming';
 // Plus imports for other components in your app.
 
 // Include the common styles for Angular Material. We include this here so that you only
@@ -27,19 +26,26 @@
 //  you can delete this line and instead use:
 //    `@include mat.legacy-typography-hierarchy(mat.define-typography-config());`
 @include mat.all-component-typographies();
-@include mat.core();
+@include mat.elevation-classes();
+@include mat.app-background();
 
 // Define the palettes for your theme using the Material Design palettes available in palette.scss
 // (imported above). For each palette, you can optionally specify a default, lighter, and darker
 // hue. Available color palettes: https://material.io/design/color/
-$SfxWeb-primary: mat.define-palette(mat.$indigo-palette);
-$SfxWeb-accent: mat.define-palette(mat.$pink-palette, A200, A100, A400);
+$SfxWeb-primary: mat.m2-define-palette(mat.$m2-indigo-palette);
+$SfxWeb-accent: mat.m2-define-palette(mat.$m2-pink-palette, A200, A100, A400);
 
 // The warn palette is optional (defaults to red).
-$SfxWeb-warn: mat.define-palette(mat.$red-palette);
+$SfxWeb-warn: mat.m2-define-palette(mat.$m2-red-palette);
 
 // Create the theme object (a Sass map containing all of the palettes).
-$SfxWeb-theme: mat.define-light-theme($SfxWeb-primary, $SfxWeb-accent, $SfxWeb-warn);
+$SfxWeb-theme: mat.m2-define-light-theme((
+  color: (
+    primary: $SfxWeb-primary,
+    accent: $SfxWeb-accent,
+    warn: $SfxWeb-warn,
+  ),
+));
 
 // Include theme styles for core and each component used in your app.
 // Alternatively, you can import and @include the theme mixins for each component
@@ -572,10 +578,10 @@ table.detail-list {
   .radio-btns {
     .checkbox-push{
         input:checked  + label{
+            color: Highlight !important;
             @-moz-document url-prefix() {
                 color: HighlightText !important;
             }
-            color: Highlight !important;
             & {
                 background-color: Highlight !important;
             }

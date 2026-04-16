@@ -3,9 +3,10 @@ import { Node } from 'src/app/Models/DataModels/Node';
 import { environment } from 'src/environments/environment';
 
 @Component({
-  selector: 'app-node-list',
-  templateUrl: './node-list.component.html',
-  styleUrls: ['./node-list.component.scss']
+    selector: 'app-node-list',
+    templateUrl: './node-list.component.html',
+    styleUrls: ['./node-list.component.scss'],
+    standalone: false
 })
 export class NodeListComponent {
   @Input() listTemplate: TemplateRef<any>;

@@ -8,9 +8,10 @@ import { Observable, Subscription, of } from 'rxjs';
 import { catchError, defaultIfEmpty } from 'rxjs/operators';
 
 @Component({
-  selector: 'app-create-application',
-  templateUrl: './create-application.component.html',
-  styleUrls: ['./create-application.component.scss']
+    selector: 'app-create-application',
+    templateUrl: './create-application.component.html',
+    styleUrls: ['./create-application.component.scss'],
+    standalone: false
 })
 export class CreateApplicationComponent implements OnInit, OnDestroy {
 

@@ -4,10 +4,11 @@ import { IRawPartition, IRawServiceDescription } from 'src/app/Models/RawDataTyp
 
 
 @Component({
-  selector: 'app-state-info',
-  templateUrl: './state-info.component.html',
-  styleUrls: ['./state-info.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'app-state-info',
+    templateUrl: './state-info.component.html',
+    styleUrls: ['./state-info.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class StateInfoComponent {
 

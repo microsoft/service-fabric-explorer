@@ -6,9 +6,10 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { IsolatedAction } from 'src/app/Models/Action';
 
 @Component({
-  selector: 'app-partition-restore-back-up',
-  templateUrl: './partition-restore-back-up.component.html',
-  styleUrls: ['./partition-restore-back-up.component.scss']
+    selector: 'app-partition-restore-back-up',
+    templateUrl: './partition-restore-back-up.component.html',
+    styleUrls: ['./partition-restore-back-up.component.scss'],
+    standalone: false
 })
 export class PartitionRestoreBackUpComponent implements OnInit {
 

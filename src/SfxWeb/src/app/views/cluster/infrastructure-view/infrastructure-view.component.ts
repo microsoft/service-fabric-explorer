@@ -10,9 +10,10 @@ import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 import { InfrastructureDocumentCollection } from 'src/app/Models/DataModels/collections/InfrastructureDocCollection';
 
 @Component({
-  selector: 'app-infrastructure-view',
-  templateUrl: './infrastructure-view.component.html',
-  styleUrls: ['./infrastructure-view.component.scss']
+    selector: 'app-infrastructure-view',
+    templateUrl: './infrastructure-view.component.html',
+    styleUrls: ['./infrastructure-view.component.scss'],
+    standalone: false
 })
 export class InfrastructureViewComponent extends BaseControllerDirective {
   public collection: InfrastructureCollection;

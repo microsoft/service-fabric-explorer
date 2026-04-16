@@ -5,9 +5,10 @@ import { IOptionConfig } from 'src/app/modules/event-store/option-picker/option-
 import { SettingsService } from 'src/app/services/settings.service';
 
 @Component({
-  selector: 'app-cluster-events',
-  templateUrl: './events.component.html',
-  styleUrls: ['./events.component.scss']
+    selector: 'app-cluster-events',
+    templateUrl: './events.component.html',
+    styleUrls: ['./events.component.scss'],
+    standalone: false
 })
 export class EventsComponent implements OnInit {
 

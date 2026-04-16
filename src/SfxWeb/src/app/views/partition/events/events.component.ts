@@ -6,9 +6,10 @@ import { IEventStoreData } from 'src/app/modules/event-store/event-store/event-s
 import { IOptionConfig } from 'src/app/modules/event-store/option-picker/option-picker.component';
 
 @Component({
-  selector: 'app-partition-events',
-  templateUrl: './events.component.html',
-  styleUrls: ['./events.component.scss']
+    selector: 'app-partition-events',
+    templateUrl: './events.component.html',
+    styleUrls: ['./events.component.scss'],
+    standalone: false
 })
 export class EventsComponent extends PartitionBaseControllerDirective {
 

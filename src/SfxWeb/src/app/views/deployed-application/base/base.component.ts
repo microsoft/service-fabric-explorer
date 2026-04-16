@@ -7,9 +7,10 @@ import { IdGenerator } from 'src/app/Utils/IdGenerator';
 import { IBaseView } from '../../BaseView';
 
 @Component({
-  selector: 'app-base',
-  templateUrl: './base.component.html',
-  styleUrls: ['./base.component.scss']
+    selector: 'app-base',
+    templateUrl: './base.component.html',
+    styleUrls: ['./base.component.scss'],
+    standalone: false
 })
 export class BaseComponent extends DeployedAppBaseControllerDirective implements IBaseView {
 

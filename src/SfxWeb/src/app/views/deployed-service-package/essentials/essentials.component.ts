@@ -5,9 +5,10 @@ import { IEssentialListItem } from 'src/app/modules/charts/essential-health-tile
 import { of } from 'rxjs';
 
 @Component({
-  selector: 'app-essentials',
-  templateUrl: './essentials.component.html',
-  styleUrls: ['./essentials.component.scss']
+    selector: 'app-essentials',
+    templateUrl: './essentials.component.html',
+    styleUrls: ['./essentials.component.scss'],
+    standalone: false
 })
 export class EssentialsComponent extends DeployedServicePackageBaseControllerDirective {
   essentialItems: IEssentialListItem[] = [];

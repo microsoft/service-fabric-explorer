@@ -26,9 +26,10 @@ interface NodeDisplay {
 }
 
 @Component({
-  selector: 'app-nodes',
-  templateUrl: './nodes.component.html',
-  styleUrls: ['./nodes.component.scss']
+    selector: 'app-nodes',
+    templateUrl: './nodes.component.html',
+    styleUrls: ['./nodes.component.scss'],
+    standalone: false
 })
 export class NodesComponent extends BaseControllerDirective {
   nodes: NodeDisplay[] = [];

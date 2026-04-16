@@ -8,9 +8,10 @@ import { IProgressStatus } from 'src/app/shared/component/phase-diagram/phase-di
 // PostUpgradeSafetyCheck - The upgrade has completed and post upgrade safety checks are being performed. The value is 3
 
 @Component({
-  selector: 'app-node-progress',
-  templateUrl: './node-progress.component.html',
-  styleUrls: ['./node-progress.component.scss']
+    selector: 'app-node-progress',
+    templateUrl: './node-progress.component.html',
+    styleUrls: ['./node-progress.component.scss'],
+    standalone: false
 })
 export class NodeProgressComponent implements OnChanges {
   @Input() failed = false;

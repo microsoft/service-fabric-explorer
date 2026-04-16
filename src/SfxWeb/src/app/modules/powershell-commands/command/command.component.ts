@@ -4,10 +4,11 @@ import { BadgeConstants } from 'src/app/Common/Constants';
 import { UntypedFormGroup } from '@angular/forms';
 
 @Component({
-  selector: 'app-command',
-  templateUrl: './command.component.html',
-  styleUrls: ['./command.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'app-command',
+    templateUrl: './command.component.html',
+    styleUrls: ['./command.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class CommandComponent implements OnInit{
 

@@ -6,9 +6,10 @@ import { DataService } from 'src/app/services/data.service';
 import { ApplicationBaseControllerDirective } from '../applicationBase';
 
 @Component({
-  selector: 'app-app-commands',
-  templateUrl: './commands.component.html',
-  styleUrls: ['./commands.component.scss']
+    selector: 'app-app-commands',
+    templateUrl: './commands.component.html',
+    styleUrls: ['./commands.component.scss'],
+    standalone: false
 })
 export class CommandsComponent extends ApplicationBaseControllerDirective{
 

@@ -2,9 +2,10 @@ import { Component, OnInit, Input, OnChanges, SimpleChanges, SimpleChange, Outpu
 import { NgbCalendar, NgbDate, NgbDateParserFormatter, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
-  selector: 'app-dual-date-picker',
-  templateUrl: './dual-date-picker.component.html',
-  styleUrls: ['./dual-date-picker.component.scss']
+    selector: 'app-dual-date-picker',
+    templateUrl: './dual-date-picker.component.html',
+    styleUrls: ['./dual-date-picker.component.scss'],
+    standalone: false
 })
 export class DualDatePickerComponent implements OnInit, OnChanges {
 

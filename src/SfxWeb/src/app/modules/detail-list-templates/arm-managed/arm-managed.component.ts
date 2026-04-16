@@ -3,9 +3,10 @@ import { ListColumnSettingForArmManaged } from 'src/app/Models/ListSettings';
 import { DetailBaseComponent } from 'src/app/ViewModels/detail-table-base.component';
 
 @Component({
-  selector: 'app-arm-managed',
-  templateUrl: './arm-managed.component.html',
-  styleUrls: ['./arm-managed.component.scss']
+    selector: 'app-arm-managed',
+    templateUrl: './arm-managed.component.html',
+    styleUrls: ['./arm-managed.component.scss'],
+    standalone: false
 })
 export class ArmManagedComponent implements OnInit, DetailBaseComponent {
 

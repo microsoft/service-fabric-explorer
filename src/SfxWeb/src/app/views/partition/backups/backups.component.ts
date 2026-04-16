@@ -16,9 +16,10 @@ import { PartitionRestoreBackUpComponent } from '../partition-restore-back-up/pa
 import { IOnDateChange } from 'src/app/modules/time-picker/double-slider/double-slider.component';
 
 @Component({
-  selector: 'app-backups',
-  templateUrl: './backups.component.html',
-  styleUrls: ['./backups.component.scss']
+    selector: 'app-backups',
+    templateUrl: './backups.component.html',
+    styleUrls: ['./backups.component.scss'],
+    standalone: false
 })
 export class BackupsComponent extends PartitionBaseControllerDirective {
 

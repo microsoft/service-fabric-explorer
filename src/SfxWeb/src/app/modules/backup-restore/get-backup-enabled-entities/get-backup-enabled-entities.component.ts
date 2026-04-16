@@ -13,9 +13,10 @@ import { ListColumnSetting, ListSettings } from 'src/app/Models/ListSettings';
 import { SettingsService } from 'src/app/services/settings.service';
 
 @Component({
-  selector: 'app-get-backup-enabled-entities',
-  templateUrl: './get-backup-enabled-entities.component.html',
-  styleUrls: ['./get-backup-enabled-entities.component.scss']
+    selector: 'app-get-backup-enabled-entities',
+    templateUrl: './get-backup-enabled-entities.component.html',
+    styleUrls: ['./get-backup-enabled-entities.component.scss'],
+    standalone: false
 })
 
 export class GetBackupEnabledEntitiesComponent implements OnInit {

@@ -4,9 +4,10 @@ import { ListColumnSetting } from 'src/app/Models/ListSettings';
 import { DetailBaseComponent } from 'src/app/ViewModels/detail-table-base.component';
 
 @Component({
-  selector: 'app-question-tool-tip',
-  templateUrl: './question-tool-tip.component.html',
-  styleUrls: ['./question-tool-tip.component.scss']
+    selector: 'app-question-tool-tip',
+    templateUrl: './question-tool-tip.component.html',
+    styleUrls: ['./question-tool-tip.component.scss'],
+    standalone: false
 })
 export class QuestionToolTipComponent implements  OnInit, DetailBaseComponent {
 

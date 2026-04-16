@@ -1,9 +1,10 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 
 @Component({
-  selector: 'app-toggle',
-  templateUrl: './toggle.component.html',
-  styleUrls: ['./toggle.component.scss']
+    selector: 'app-toggle',
+    templateUrl: './toggle.component.html',
+    styleUrls: ['./toggle.component.scss'],
+    standalone: false
 })
 export class ToggleComponent {
   @Input() aria = '';

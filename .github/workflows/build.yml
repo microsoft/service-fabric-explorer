@@ -13,18 +13,19 @@ defaults:
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     strategy:
       matrix:
-        node-version: [16.x]
+        node-version: [24.x]
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
-      - name: Use Node 16.x
+        uses: actions/checkout@v4
+      - name: Use Node 24.x
 
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
         with:
-          node-version: '16.x'
+          node-version: '24.x'
       - name: Cache node modules
         uses: actions/cache@v4
         env:
@@ -55,6 +56,8 @@ jobs:
 
       - name: E2E test
         run: npm run ci:cy-run
+        env:
+          CYPRESS_COVERAGE: false
 
       - name: upload failed
         uses: actions/upload-artifact@v4
