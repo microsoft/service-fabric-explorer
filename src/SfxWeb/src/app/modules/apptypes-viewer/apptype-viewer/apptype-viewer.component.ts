@@ -5,9 +5,10 @@ import { DataService } from 'src/app/services/data.service';
 import { SettingsService } from 'src/app/services/settings.service';
 
 @Component({
-  selector: 'app-apptype-viewer',
-  templateUrl: './apptype-viewer.component.html',
-  styleUrls: ['./apptype-viewer.component.scss']
+    selector: 'app-apptype-viewer',
+    templateUrl: './apptype-viewer.component.html',
+    styleUrls: ['./apptype-viewer.component.scss'],
+    standalone: false
 })
 export class ApptypeViewerComponent implements OnChanges {
 

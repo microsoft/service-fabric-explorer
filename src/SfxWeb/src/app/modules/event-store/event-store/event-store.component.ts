@@ -40,9 +40,10 @@ export interface VisReference {
 }
 
 @Component({
-  selector: 'app-event-store',
-  templateUrl: './event-store.component.html',
-  styleUrls: ['./event-store.component.scss']
+    selector: 'app-event-store',
+    templateUrl: './event-store.component.html',
+    styleUrls: ['./event-store.component.scss'],
+    standalone: false
 })
 export class EventStoreComponent implements OnChanges, AfterViewInit {
 

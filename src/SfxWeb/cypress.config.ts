@@ -2,6 +2,10 @@ import { defineConfig } from 'cypress'
 
 export default defineConfig({
   env: {
+    coverage: false,
+    API_PREFIX: '',
+  },
+  expose: {
     API_PREFIX: '',
   },
   requestTimeout: 10000,

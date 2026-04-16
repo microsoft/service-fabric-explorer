@@ -7,9 +7,10 @@ import { ListColumnSettingWithDisplayName } from '../display-name-column/display
 import { ListColumnSettingWithImageStoreActions } from '../folder-actions/folder-actions.component';
 
 @Component({
-  selector: 'app-imagestore-viewer',
-  templateUrl: './imagestore-viewer.component.html',
-  styleUrls: ['./imagestore-viewer.component.scss']
+    selector: 'app-imagestore-viewer',
+    templateUrl: './imagestore-viewer.component.html',
+    styleUrls: ['./imagestore-viewer.component.scss'],
+    standalone: false
 })
 export class ImagestoreViewerComponent implements OnInit {
 

@@ -11,9 +11,10 @@ import { TelemetryService } from 'src/app/services/telemetry.service';
 import { environment } from 'src/environments/environment';
 
 @Component({
-  selector: 'app-advanced-option',
-  templateUrl: './advanced-option.component.html',
-  styleUrls: ['./advanced-option.component.scss']
+    selector: 'app-advanced-option',
+    templateUrl: './advanced-option.component.html',
+    styleUrls: ['./advanced-option.component.scss'],
+    standalone: false
 })
 export class AdvancedOptionComponent implements OnInit {
   public showBeta = environment.showBeta;

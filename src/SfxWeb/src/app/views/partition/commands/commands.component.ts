@@ -6,9 +6,10 @@ import { DataService } from 'src/app/services/data.service';
 import { PartitionBaseControllerDirective } from '../PartitionBase';
 
 @Component({
-  selector: 'app-partition-commands',
-  templateUrl: './commands.component.html',
-  styleUrls: ['./commands.component.scss']
+    selector: 'app-partition-commands',
+    templateUrl: './commands.component.html',
+    styleUrls: ['./commands.component.scss'],
+    standalone: false
 })
 export class CommandsComponent extends PartitionBaseControllerDirective{
 

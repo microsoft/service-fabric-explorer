@@ -2,7 +2,8 @@ import { Directive, ElementRef } from '@angular/core';
 import { FocusService } from 'src/app/services/focus.service';
 
 @Directive({
-  selector: '[appFocusable]'
+    selector: '[appFocusable]',
+    standalone: false
 })
 export class FocusableDirective {
 

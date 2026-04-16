@@ -96,9 +96,8 @@ context('replica', () => {
 
             cy.get('[data-cy=submit]').click();
 
-            cy.get('[data-cy=command]').should('have.length', 2).within(() => {
-                cy.contains('Restart Replica')
-            });
+            cy.get('[data-cy=command]').should('have.length', 2);
+            cy.contains('[data-cy=command]', 'Restart Replica');
         })
 
         it('view idle secondary commands', () => {
@@ -124,13 +123,11 @@ context('replica', () => {
 
             cy.get('[data-cy=submit]').click();
 
-            cy.get('[data-cy=command]').should('have.length', 5).within(() => {
-                cy.contains('Restart Replica')
-                cy.contains('Move Secondary Replica To Specifc Node')
-                cy.contains('Move Secondary Replica To Random Node')
-                cy.contains('Force Remove Replica/Instance')
-
-            });
+            cy.get('[data-cy=command]').should('have.length', 5);
+            cy.contains('[data-cy=command]', 'Restart Replica');
+            cy.contains('[data-cy=command]', 'Move Secondary Replica To Specifc Node');
+            cy.contains('[data-cy=command]', 'Move Secondary Replica To Random Node');
+            cy.contains('[data-cy=command]', 'Force Remove Replica/Instance');
 
         })
 
@@ -200,9 +197,8 @@ context('replica', () => {
 
             cy.get('[data-cy=submit]').click();
 
-            cy.get('[data-cy=command]').should('have.length', 2).within(() => {
-                cy.contains('Move Instance')
-            });;
+            cy.get('[data-cy=command]').should('have.length', 2);
+            cy.contains('[data-cy=command]', 'Move Instance');;;
         })
     })
 

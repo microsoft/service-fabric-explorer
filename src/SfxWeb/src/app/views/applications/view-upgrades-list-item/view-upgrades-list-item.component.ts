@@ -4,9 +4,10 @@ import { ListColumnSetting } from 'src/app/Models/ListSettings';
 import { DetailBaseComponent } from 'src/app/ViewModels/detail-table-base.component';
 
 @Component({
-  selector: 'app-view-upgrades-list-item',
-  templateUrl: './view-upgrades-list-item.component.html',
-  styleUrls: ['./view-upgrades-list-item.component.scss']
+    selector: 'app-view-upgrades-list-item',
+    templateUrl: './view-upgrades-list-item.component.html',
+    styleUrls: ['./view-upgrades-list-item.component.scss'],
+    standalone: false
 })
 export class ViewUpgradesListItemComponent implements DetailBaseComponent {
   listSetting: ListColumnSetting;

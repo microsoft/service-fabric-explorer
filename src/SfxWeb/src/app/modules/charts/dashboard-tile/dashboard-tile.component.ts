@@ -3,9 +3,10 @@ import { IDashboardViewModel } from 'src/app/ViewModels/DashboardViewModels';
 import { Chart, Options, chart, PointOptionsObject, SeriesPieOptions } from 'highcharts';
 
 @Component({
-  selector: 'app-dashboard-tile',
-  templateUrl: './dashboard-tile.component.html',
-  styleUrls: ['./dashboard-tile.component.scss']
+    selector: 'app-dashboard-tile',
+    templateUrl: './dashboard-tile.component.html',
+    styleUrls: ['./dashboard-tile.component.scss'],
+    standalone: false
 })
 export class DashboardTileComponent implements OnInit, AfterViewInit, OnChanges {
 

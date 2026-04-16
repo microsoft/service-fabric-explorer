@@ -1,9 +1,10 @@
 import { Component, Input } from '@angular/core';
 
 @Component({
-  selector: 'app-arm-warning',
-  templateUrl: './arm-warning.component.html',
-  styleUrls: ['./arm-warning.component.scss']
+    selector: 'app-arm-warning',
+    templateUrl: './arm-warning.component.html',
+    styleUrls: ['./arm-warning.component.scss'],
+    standalone: false
 })
 export class ArmWarningComponent{
 

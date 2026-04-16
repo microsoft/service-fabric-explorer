@@ -6,9 +6,10 @@ import { SettingsService } from 'src/app/services/settings.service';
 import { NodeBaseControllerDirective } from '../NodeBase';
 
 @Component({
-  selector: 'app-details',
-  templateUrl: './details.component.html',
-  styleUrls: ['./details.component.scss']
+    selector: 'app-details',
+    templateUrl: './details.component.html',
+    styleUrls: ['./details.component.scss'],
+    standalone: false
 })
 export class DetailsComponent extends NodeBaseControllerDirective {
   constructor(protected data: DataService, injector: Injector, private settings: SettingsService) {

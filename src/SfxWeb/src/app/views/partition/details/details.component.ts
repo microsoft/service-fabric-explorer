@@ -6,9 +6,10 @@ import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers'
 import { PartitionBaseControllerDirective } from '../PartitionBase';
 
 @Component({
-  selector: 'app-details',
-  templateUrl: './details.component.html',
-  styleUrls: ['./details.component.scss']
+    selector: 'app-details',
+    templateUrl: './details.component.html',
+    styleUrls: ['./details.component.scss'],
+    standalone: false
 })
 export class DetailsComponent extends PartitionBaseControllerDirective {
 

@@ -6,9 +6,10 @@ import { Node } from 'src/app/Models/DataModels/Node';
 import { IEssentialListItem } from '../../charts/essential-health-tile/essential-health-tile.component';
 
 @Component({
-  selector: 'app-status-tile',
-  templateUrl: './status-tile.component.html',
-  styleUrls: ['./status-tile.component.scss']
+    selector: 'app-status-tile',
+    templateUrl: './status-tile.component.html',
+    styleUrls: ['./status-tile.component.scss'],
+    standalone: false
 })
 export class StatusTileComponent implements OnChanges {
 

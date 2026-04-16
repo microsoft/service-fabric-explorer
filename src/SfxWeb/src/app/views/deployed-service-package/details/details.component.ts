@@ -3,9 +3,10 @@ import { DeployedServicePackageBaseControllerDirective } from '../DeployedServic
 import { DataService } from 'src/app/services/data.service';
 
 @Component({
-  selector: 'app-details',
-  templateUrl: './details.component.html',
-  styleUrls: ['./details.component.scss']
+    selector: 'app-details',
+    templateUrl: './details.component.html',
+    styleUrls: ['./details.component.scss'],
+    standalone: false
 })
 export class DetailsComponent extends DeployedServicePackageBaseControllerDirective {
   constructor(protected data: DataService, injector: Injector) {

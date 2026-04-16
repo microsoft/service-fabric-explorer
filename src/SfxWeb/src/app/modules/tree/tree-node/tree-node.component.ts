@@ -4,9 +4,10 @@ import { TreeService } from 'src/app/services/tree.service';
 import { environment } from 'src/environments/environment';
 
 @Component({
-  selector: 'app-tree-node',
-  templateUrl: './tree-node.component.html',
-  styleUrls: ['./tree-node.component.scss']
+    selector: 'app-tree-node',
+    templateUrl: './tree-node.component.html',
+    styleUrls: ['./tree-node.component.scss'],
+    standalone: false
 })
 export class TreeNodeComponent {
   @Input() node: TreeNodeGroupViewModel;

@@ -8,9 +8,10 @@ import { IProgressStatus } from 'src/app/shared/component/phase-diagram/phase-di
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 
 @Component({
-  selector: 'app-upgrade-info',
-  templateUrl: './upgrade-info.component.html',
-  styleUrls: ['./upgrade-info.component.scss']
+    selector: 'app-upgrade-info',
+    templateUrl: './upgrade-info.component.html',
+    styleUrls: ['./upgrade-info.component.scss'],
+    standalone: false
 })
 export class UpgradeInfoComponent implements OnChanges, OnInit {
 

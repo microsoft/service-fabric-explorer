@@ -4,10 +4,11 @@ import { ListColumnSetting } from 'src/app/Models/ListSettings';
 import { FabricEventBase } from 'src/app/Models/eventstore/Events';
 
 @Component({
-  selector: 'app-full-description',
-  templateUrl: './full-description.component.html',
-  styleUrls: ['./full-description.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'app-full-description',
+    templateUrl: './full-description.component.html',
+    styleUrls: ['./full-description.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class FullDescriptionComponent implements DetailBaseComponent, OnInit {
 

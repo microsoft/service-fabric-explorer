@@ -10,9 +10,10 @@ export interface IQuickDates {
 }
 
 @Component({
-  selector: 'app-time-picker',
-  templateUrl: './time-picker.component.html',
-  styleUrls: ['./time-picker.component.scss']
+    selector: 'app-time-picker',
+    templateUrl: './time-picker.component.html',
+    styleUrls: ['./time-picker.component.scss'],
+    standalone: false
 })
 export class TimePickerComponent implements OnInit, OnDestroy {
 

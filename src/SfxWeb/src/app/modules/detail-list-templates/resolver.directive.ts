@@ -1,7 +1,8 @@
 import { Directive, ViewContainerRef } from '@angular/core';
 
 @Directive({
-  selector: '[appResolver]'
+    selector: '[appResolver]',
+    standalone: false
 })
 export class ResolverDirective {
 

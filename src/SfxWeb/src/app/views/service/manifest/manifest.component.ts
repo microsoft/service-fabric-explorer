@@ -6,9 +6,10 @@ import { Observable } from 'rxjs';
 import { map, mergeMap } from 'rxjs/operators';
 
 @Component({
-  selector: 'app-service-manifest',
-  templateUrl: './manifest.component.html',
-  styleUrls: ['./manifest.component.scss']
+    selector: 'app-service-manifest',
+    templateUrl: './manifest.component.html',
+    styleUrls: ['./manifest.component.scss'],
+    standalone: false
 })
 export class ManifestComponent extends ServiceBaseControllerDirective {
   serviceManifest: string;

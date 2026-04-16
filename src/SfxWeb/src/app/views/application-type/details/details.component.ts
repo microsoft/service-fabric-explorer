@@ -7,9 +7,10 @@ import { forkJoin, Observable } from 'rxjs';
 import { ApplicationTypeBaseControllerDirective } from '../ApplicationTypeBase';
 
 @Component({
-  selector: 'app-details',
-  templateUrl: './details.component.html',
-  styleUrls: ['./details.component.scss']
+    selector: 'app-details',
+    templateUrl: './details.component.html',
+    styleUrls: ['./details.component.scss'],
+    standalone: false
 })
 export class DetailsComponent extends ApplicationTypeBaseControllerDirective {
   appTypeName: string;

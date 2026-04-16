@@ -3,11 +3,11 @@ import { ControlContainer, UntypedFormControl, UntypedFormGroup, NgForm } from '
 import { PowershellCommandParameter, CommandParamTypes } from 'src/app/Models/PowershellCommand';
 
 @Component({
-  selector: 'app-command-input',
-  templateUrl: './command-input.component.html',
-  styleUrls: ['./command-input.component.scss'],
-  viewProviders: [ { provide: ControlContainer, useExisting: NgForm }]
-
+    selector: 'app-command-input',
+    templateUrl: './command-input.component.html',
+    styleUrls: ['./command-input.component.scss'],
+    viewProviders: [{ provide: ControlContainer, useExisting: NgForm }],
+    standalone: false
 })
 export class CommandInputComponent implements OnInit{
 

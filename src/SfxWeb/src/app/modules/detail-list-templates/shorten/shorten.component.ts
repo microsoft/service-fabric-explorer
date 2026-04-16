@@ -4,9 +4,10 @@ import { ListColumnSettingWithShorten } from 'src/app/Models/ListSettings';
 import { DetailBaseComponent } from 'src/app/ViewModels/detail-table-base.component';
 
 @Component({
-  selector: 'app-shorten',
-  templateUrl: './shorten.component.html',
-  styleUrls: ['./shorten.component.scss']
+    selector: 'app-shorten',
+    templateUrl: './shorten.component.html',
+    styleUrls: ['./shorten.component.scss'],
+    standalone: false
 })
 export class ShortenComponent implements DetailBaseComponent, OnInit {
 

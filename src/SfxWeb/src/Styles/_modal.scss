@@ -1,4 +1,5 @@
-@import "vars.scss";
+@use "sass:color";
+@use "vars" as *;
 
 $modal-dt-width: 180px;
 $modal-short-dt-width: 100px;
@@ -78,7 +79,7 @@ $dialog-input-bg-color: #242424;
                     font-weight: var(--font-weight-normal);
 
                     &[uib-btn-radio] {
-                        color: darken(white, 25%);
+                        color: color.adjust(white, $lightness: -25%);
 
                         &.active, &:hover {
                             color: white;

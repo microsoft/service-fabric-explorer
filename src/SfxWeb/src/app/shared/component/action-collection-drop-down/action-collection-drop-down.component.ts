@@ -5,9 +5,10 @@ import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { Utils } from 'src/app/Utils/Utils';
 
 @Component({
-  selector: 'app-action-collection-drop-down',
-  templateUrl: './action-collection-drop-down.component.html',
-  styleUrls: ['./action-collection-drop-down.component.scss']
+    selector: 'app-action-collection-drop-down',
+    templateUrl: './action-collection-drop-down.component.html',
+    styleUrls: ['./action-collection-drop-down.component.scss'],
+    standalone: false
 })
 export class ActionCollectionDropDownComponent {
   @Input() treeView = false;

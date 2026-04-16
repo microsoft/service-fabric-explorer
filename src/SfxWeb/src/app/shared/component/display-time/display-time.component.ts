@@ -3,10 +3,11 @@ import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { interval, Subscription } from 'rxjs';
 
 @Component({
-  selector: 'app-display-time',
-  templateUrl: './display-time.component.html',
-  styleUrls: ['./display-time.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'app-display-time',
+    templateUrl: './display-time.component.html',
+    styleUrls: ['./display-time.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class DisplayTimeComponent implements OnInit, OnChanges, OnDestroy {
 

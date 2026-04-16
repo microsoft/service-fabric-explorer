@@ -2,9 +2,10 @@ import { Component, Input, OnChanges, OnInit } from '@angular/core';
 import { HealthStateConstants, NodeStatusConstants } from 'src/app/Common/Constants';
 
 @Component({
-  selector: 'app-status-resolver',
-  templateUrl: './status-resolver.component.html',
-  styleUrls: ['./status-resolver.component.scss']
+    selector: 'app-status-resolver',
+    templateUrl: './status-resolver.component.html',
+    styleUrls: ['./status-resolver.component.scss'],
+    standalone: false
 })
 export class StatusResolverComponent implements  OnInit, OnChanges {
 

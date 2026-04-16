@@ -8,9 +8,10 @@ import { IBaseView } from '../../BaseView';
 import { ApplicationsBaseControllerDirective } from '../applicationsBase';
 
 @Component({
-  selector: 'app-base',
-  templateUrl: './base.component.html',
-  styleUrls: ['./base.component.scss']
+    selector: 'app-base',
+    templateUrl: './base.component.html',
+    styleUrls: ['./base.component.scss'],
+    standalone: false
 })
 export class BaseComponent extends ApplicationsBaseControllerDirective implements IBaseView {
   SFXClusterName = '';

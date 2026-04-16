@@ -3,7 +3,8 @@ import { FocusService } from 'src/app/services/focus.service';
 import { TreeService } from 'src/app/services/tree.service';
 
 @Directive({
-  selector: '[appSelectedNode]'
+    selector: '[appSelectedNode]',
+    standalone: false
 })
 export class SeletedNodeDirective implements OnChanges {
 

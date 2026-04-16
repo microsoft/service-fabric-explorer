@@ -3,9 +3,10 @@ import { DetailBaseComponent } from 'src/app/ViewModels/detail-table-base.compon
 import { ListColumnSetting } from 'src/app/Models/ListSettings';
 
 @Component({
-  selector: 'app-expandable-link',
-  templateUrl: './expandable-link.component.html',
-  styleUrls: ['./expandable-link.component.scss']
+    selector: 'app-expandable-link',
+    templateUrl: './expandable-link.component.html',
+    styleUrls: ['./expandable-link.component.scss'],
+    standalone: false
 })
 export class ExpandableLinkComponent implements DetailBaseComponent {
   item: any;

@@ -171,12 +171,10 @@ context('partition', () => {
 
           cy.get('[data-cy=submit]').click();
 
-          cy.get('[data-cy=command]').should('have.length', 4).within(() => {
-            cy.contains('Restart Primary Replica')
-            cy.contains('Move Primary Replica To Specifc Node')
-            cy.contains('Move Primary Replica To Random Node')
-
-          });
+          cy.get('[data-cy=command]').should('have.length', 4);
+          cy.contains('[data-cy=command]', 'Restart Primary Replica');
+          cy.contains('[data-cy=command]', 'Move Primary Replica To Specifc Node');
+          cy.contains('[data-cy=command]', 'Move Primary Replica To Random Node');
 
       })
     })

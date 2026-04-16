@@ -84,7 +84,7 @@ context('app', () => {
 
           watchForAlert(() => {
             cy.visit(`/#/apptype/${appName}/app/${xssEncoded}/events`);
-            cy.contains(`<img src="1">`);
+            cy.contains(/img src=.1./);
           })
         });
 

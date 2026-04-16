@@ -5,9 +5,10 @@ import { SettingsService } from 'src/app/services/settings.service';
 import { NestedTableComponent } from '../nested-table/nested-table.component';
 
 @Component({
-  selector: 'app-request-logging',
-  templateUrl: './request-logging.component.html',
-  styleUrls: ['./request-logging.component.scss']
+    selector: 'app-request-logging',
+    templateUrl: './request-logging.component.html',
+    styleUrls: ['./request-logging.component.scss'],
+    standalone: false
 })
 export class RequestLoggingComponent implements OnInit {
 

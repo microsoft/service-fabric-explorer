@@ -7,9 +7,10 @@ import { LoadCellComponent } from '../load-cell/load-cell.component';
 import { Subscription } from 'rxjs';
 
 @Component({
-  selector: 'app-safety-checks',
-  templateUrl: './safety-checks.component.html',
-  styleUrls: ['./safety-checks.component.scss']
+    selector: 'app-safety-checks',
+    templateUrl: './safety-checks.component.html',
+    styleUrls: ['./safety-checks.component.scss'],
+    standalone: false
 })
 export class SafetyChecksComponent implements OnChanges, OnInit, OnDestroy {
 

@@ -5,9 +5,10 @@ import { IsolatedAction } from 'src/app/Models/Action';
 import { Subscription, timer } from 'rxjs';
 
 @Component({
-  selector: 'app-message-with-wait-confirmation',
-  templateUrl: './message-with-wait-confirmation.component.html',
-  styleUrls: ['./message-with-wait-confirmation.component.scss']
+    selector: 'app-message-with-wait-confirmation',
+    templateUrl: './message-with-wait-confirmation.component.html',
+    styleUrls: ['./message-with-wait-confirmation.component.scss'],
+    standalone: false
 })
 export class MessageWithWaitConfirmationComponent implements OnInit, DialogBodyComponent {
   private readonly countdownTime = 15000;

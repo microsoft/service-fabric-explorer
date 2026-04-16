@@ -11,9 +11,10 @@ export interface IChartData {
 }
 
 @Component({
-  selector: 'app-replication-trend-line',
-  templateUrl: './replication-trend-line.component.html',
-  styleUrls: ['./replication-trend-line.component.scss']
+    selector: 'app-replication-trend-line',
+    templateUrl: './replication-trend-line.component.html',
+    styleUrls: ['./replication-trend-line.component.scss'],
+    standalone: false
 })
 export class ReplicationTrendLineComponent implements AfterViewInit, OnChanges, OnInit, OnDestroy {
 

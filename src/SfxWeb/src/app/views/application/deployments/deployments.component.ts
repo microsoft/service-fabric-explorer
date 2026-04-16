@@ -9,9 +9,10 @@ import { map } from 'rxjs/operators';
 import { ApplicationBaseControllerDirective } from '../applicationBase';
 
 @Component({
-  selector: 'app-deployments',
-  templateUrl: './deployments.component.html',
-  styleUrls: ['./deployments.component.scss']
+    selector: 'app-deployments',
+    templateUrl: './deployments.component.html',
+    styleUrls: ['./deployments.component.scss'],
+    standalone: false
 })
 export class DeploymentsComponent extends ApplicationBaseControllerDirective {
 

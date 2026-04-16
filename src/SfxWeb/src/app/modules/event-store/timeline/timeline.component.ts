@@ -11,10 +11,11 @@ import { IEventStoreData } from '../event-store/event-store.component';
 import { VisualizationComponent, VisUpdateData } from '../visualizationComponents';
 
 @Component({
-  selector: 'app-timeline',
-  templateUrl: './timeline.component.html',
-  styleUrls: ['./timeline.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-timeline',
+    templateUrl: './timeline.component.html',
+    styleUrls: ['./timeline.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class TimelineComponent implements VisualizationComponent {
 

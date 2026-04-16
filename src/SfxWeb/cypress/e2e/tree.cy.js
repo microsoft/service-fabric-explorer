@@ -15,12 +15,15 @@ const evalTreePanelFocus = (focused) => {
 
 context('tree', () => {
     describe("accessibility", () => {
+        // NOTE: This test fails when using the @angular-devkit/build-angular:application (esbuild) builder.
+        // The focus DOM event does not propagate through Angular event bindings with that builder.
+        // Keep using the browser (webpack) builder until this is resolved.
         it("keyboard navigation", () => {
             addDefaultFixtures();
             cy.visit("");
 
             //focused highlights tree
-            cy.get(".selected").focus();;
+            cy.get(".selected").focus();
             evalTreePanelFocus(true);
 
             //down arrow

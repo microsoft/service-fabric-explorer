@@ -7,9 +7,10 @@ import { RestClientService } from 'src/app/services/rest-client.service';
 import { DataService } from 'src/app/services/data.service';
 
 @Component({
-  selector: 'app-fmm-info',
-  templateUrl: './fmm-info.component.html',
-  styleUrls: ['./fmm-info.component.scss']
+    selector: 'app-fmm-info',
+    templateUrl: './fmm-info.component.html',
+    styleUrls: ['./fmm-info.component.scss'],
+    standalone: false
 })
 export class FmmInfoComponent extends BaseControllerDirective {
   fmmInfo: IRawFailoverManagerManagerInformation;

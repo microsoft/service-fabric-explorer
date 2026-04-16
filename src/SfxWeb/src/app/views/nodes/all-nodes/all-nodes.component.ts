@@ -10,9 +10,10 @@ import { map } from 'rxjs/operators';
 import { DashboardViewModel, IDashboardViewModel } from 'src/app/ViewModels/DashboardViewModels';
 
 @Component({
-  selector: 'app-all-nodes',
-  templateUrl: './all-nodes.component.html',
-  styleUrls: ['./all-nodes.component.scss']
+    selector: 'app-all-nodes',
+    templateUrl: './all-nodes.component.html',
+    styleUrls: ['./all-nodes.component.scss'],
+    standalone: false
 })
 export class AllNodesComponent extends BaseControllerDirective {
 

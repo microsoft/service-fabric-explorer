@@ -7,9 +7,10 @@ import { map, mergeMap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 
 @Component({
-  selector: 'app-service-resources',
-  templateUrl: './resources.component.html',
-  styleUrls: ['./resources.component.scss']
+    selector: 'app-service-resources',
+    templateUrl: './resources.component.html',
+    styleUrls: ['./resources.component.scss'],
+    standalone: false
 })
 export class ResourcesComponent extends ServiceBaseControllerDirective {
 

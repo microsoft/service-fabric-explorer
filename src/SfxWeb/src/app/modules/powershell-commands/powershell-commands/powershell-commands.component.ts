@@ -7,10 +7,11 @@ import { ActionDialogComponent } from 'src/app/modules/action-dialog/action-dial
 import { IModalBody, IModalData, IModalTitle } from 'src/app/ViewModels/Modal';
 
 @Component({
-  selector: 'app-powershell-commands',
-  templateUrl: './powershell-commands.component.html',
-  styleUrls: ['./powershell-commands.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'app-powershell-commands',
+    templateUrl: './powershell-commands.component.html',
+    styleUrls: ['./powershell-commands.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class PowershellCommandsComponent implements IModalData, OnChanges{
 

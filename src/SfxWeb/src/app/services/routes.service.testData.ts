@@ -1,18 +1,21 @@
 import { Component, NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 @Component({
-    template: `Search`
+    template: `Search`,
+    standalone: false
 })
 export class SearchComponent {}
 
 @Component({
-    template: `Home`
+    template: `Home`,
+    standalone: false
 })
 export class HomeComponent {}
 
 @Component({
-    template: `<router-outlet></router-outlet>`
-  })
+    template: `<router-outlet></router-outlet>`,
+    standalone: false
+})
 export class NestedComponent {}
 
 const routes: Routes = [{
@@ -30,18 +33,21 @@ export class ApplicationModule { }
 
 
 @Component({
-    template: `Search`
+    template: `Search`,
+    standalone: false
 })
 export class Search2Component {}
 
 @Component({
-    template: `Home`
+    template: `Home`,
+    standalone: false
 })
 export class Home2Component {}
 
 @Component({
-    template: `<router-outlet></router-outlet>`
-  })
+    template: `<router-outlet></router-outlet>`,
+    standalone: false
+})
 export class Nested2Component {}
 
 const routes2: Routes = [{

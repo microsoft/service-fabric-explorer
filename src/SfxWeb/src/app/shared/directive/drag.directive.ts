@@ -1,7 +1,8 @@
 import { Directive, Output, EventEmitter, HostListener } from '@angular/core';
 
 @Directive({
-  selector: '[appDrag]'
+    selector: '[appDrag]',
+    standalone: false
 })
 export class DragDirective {
 

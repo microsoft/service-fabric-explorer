@@ -13,9 +13,10 @@ import { PartitionDisableBackUpComponent } from 'src/app/modules/backup-restore/
 import { TelemetryService } from 'src/app/services/telemetry.service';
 
 @Component({
-  selector: 'app-backup',
-  templateUrl: './backup.component.html',
-  styleUrls: ['./backup.component.scss']
+    selector: 'app-backup',
+    templateUrl: './backup.component.html',
+    styleUrls: ['./backup.component.scss'],
+    standalone: false
 })
 export class BackupComponent extends ServiceBaseControllerDirective {
   serviceBackupConfigurationInfoListSettings: ListSettings;

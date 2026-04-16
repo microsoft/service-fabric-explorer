@@ -11,9 +11,10 @@ import { IsolatedAction } from 'src/app/Models/Action';
 import { ActionCreateBackupPolicyComponent } from '../action-create-backup-policy/action-create-backup-policy.component';
 
 @Component({
-  selector: 'app-backups',
-  templateUrl: './backups.component.html',
-  styleUrls: ['./backups.component.scss']
+    selector: 'app-backups',
+    templateUrl: './backups.component.html',
+    styleUrls: ['./backups.component.scss'],
+    standalone: false
 })
 export class BackupsComponent extends BaseControllerDirective {
 

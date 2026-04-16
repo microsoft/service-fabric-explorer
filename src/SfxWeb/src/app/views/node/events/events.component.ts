@@ -5,9 +5,10 @@ import { IEventStoreData } from 'src/app/modules/event-store/event-store/event-s
 import { IOptionConfig } from 'src/app/modules/event-store/option-picker/option-picker.component';
 
 @Component({
-  selector: 'app-node-events',
-  templateUrl: './events.component.html',
-  styleUrls: ['./events.component.scss']
+    selector: 'app-node-events',
+    templateUrl: './events.component.html',
+    styleUrls: ['./events.component.scss'],
+    standalone: false
 })
 export class EventsComponent extends NodeBaseControllerDirective {
 

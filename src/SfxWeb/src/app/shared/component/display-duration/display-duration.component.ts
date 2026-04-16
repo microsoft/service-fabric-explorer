@@ -6,9 +6,10 @@ export interface ISection {
 }
 
 @Component({
-  selector: 'app-display-duration',
-  templateUrl: './display-duration.component.html',
-  styleUrls: ['./display-duration.component.scss']
+    selector: 'app-display-duration',
+    templateUrl: './display-duration.component.html',
+    styleUrls: ['./display-duration.component.scss'],
+    standalone: false
 })
 export class DisplayDurationComponent implements OnChanges {
 

@@ -5,9 +5,10 @@ import { IRawUnhealthyEvaluation } from 'src/app/Models/RawDataTypes';
 import { SettingsService } from 'src/app/services/settings.service';
 
 @Component({
-  selector: 'app-health-viewer',
-  templateUrl: './health-viewer.component.html',
-  styleUrls: ['./health-viewer.component.scss']
+    selector: 'app-health-viewer',
+    templateUrl: './health-viewer.component.html',
+    styleUrls: ['./health-viewer.component.scss'],
+    standalone: false
 })
 export class HealthViewerComponent implements OnInit {
 

@@ -7,9 +7,10 @@ import { DialogBodyComponent } from '../DialogBodyComponent';
 import { ActionDialogUtils } from '../utils';
 
 @Component({
-  selector: 'app-action-dialog',
-  templateUrl: './action-dialog.component.html',
-  styleUrls: ['./action-dialog.component.scss']
+    selector: 'app-action-dialog',
+    templateUrl: './action-dialog.component.html',
+    styleUrls: ['./action-dialog.component.scss'],
+    standalone: false
 })
 export class ActionDialogComponent implements AfterViewInit {
 

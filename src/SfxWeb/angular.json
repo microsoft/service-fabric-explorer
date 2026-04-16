@@ -19,8 +19,9 @@
           "options": {
             "outputPath": "dist",
             "index": "src/index.html",
-            "main": "src/main.ts",
-            "polyfills": "src/polyfills.ts",
+            "polyfills": [
+              "src/polyfills.ts"
+            ],
             "tsConfig": "tsconfig.app.json",
             "assets": [
               "src/favicon.png",
@@ -44,12 +45,11 @@
             "stylePreprocessorOptions": {
               "includePaths": []
             },
-            "vendorChunk": true,
             "extractLicenses": false,
-            "buildOptimizer": false,
             "sourceMap": true,
             "optimization": false,
-            "namedChunks": true
+            "namedChunks": true,
+            "main": "src/main.ts"
           },
           "configurations": {
             "accesstesting": {
@@ -75,8 +75,6 @@
               "sourceMap": false,
               "namedChunks": false,
               "extractLicenses": true,
-              "vendorChunk": false,
-              "buildOptimizer": true,
               "budgets": [
                 {
                   "type": "initial",
@@ -96,12 +94,12 @@
         "serve": {
           "builder": "ngx-build-plus:dev-server",
           "options": {
-            "browserTarget": "SfxWeb:build",
-            "proxyConfig": "proxy.conf.js"
+            "buildTarget": "SfxWeb:build",
+            "proxyConfig": "proxy.conf.json"
           },
           "configurations": {
             "production": {
-              "browserTarget": "SfxWeb:build:production"
+              "buildTarget": "SfxWeb:build:production"
             }
           },
           "allowedCommonJsDependencies": [
@@ -111,7 +109,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "SfxWeb:build"
+            "buildTarget": "SfxWeb:build"
           }
         },
         "test": {
@@ -138,18 +136,6 @@
               "src/**/*.ts",
               "src/**/*.html"
             ]
-          }
-        },
-        "e2e": {
-          "builder": "@angular-devkit/build-angular:protractor",
-          "options": {
-            "protractorConfig": "e2e/protractor.conf.js",
-            "devServerTarget": "SfxWeb:serve"
-          },
-          "configurations": {
-            "production": {
-              "devServerTarget": "SfxWeb:serve:production"
-            }
           }
         }
       }
