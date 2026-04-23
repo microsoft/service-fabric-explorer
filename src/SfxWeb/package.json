@@ -94,7 +94,7 @@
     "ngx-build-plus": "^19.0.0",
     "nyc": "^15.1.0",
     "source-map-support": "^0.5.20",
-    "start-server-and-test": "^1.12.0",
+    "start-server-and-test": "^2.0.13",
     "stop-only": "^3.1.2",
     "typescript": "~5.8.3",
     "webpack-bundle-analyzer": "^4.5.0"
@@ -102,7 +102,8 @@
   "overrides": {
     "pacote": {
       "tar": "^7.4.3"
-    }
+    },
+    "serialize-javascript": "^7.0.5"
   },
   "nyc": {
     "extends": "@istanbuljs/nyc-config-typescript",
