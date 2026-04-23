@@ -99,6 +99,11 @@
     "typescript": "~5.8.3",
     "webpack-bundle-analyzer": "^4.5.0"
   },
+  "overrides": {
+    "pacote": {
+      "tar": "^7.4.3"
+    }
+  },
   "nyc": {
     "extends": "@istanbuljs/nyc-config-typescript",
     "all": true,
