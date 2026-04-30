@@ -40,11 +40,29 @@ if(config.TargetCluster.PFXLocation){
 
 const fileExists = async path => !!(await fs.stat(path).catch(e => false));
 
+// Find a recording file, handling case differences and %2F decoding by Azure's reverse proxy
+const findRecordingFile = async (targetPath) => {
+    const dir = path.dirname(targetPath);
+    const baseName = path.basename(targetPath).toLowerCase();
+    // Normalize: decode %XX then replace / with - so both sides use the same separator
+    const normalize = (s) => decodeURIComponent(s).toLowerCase().split('/').join('-');
+    const normalized = normalize(baseName);
+    try {
+        const files = await fs.readdir(dir);
+        const match = files.find(f => normalize(f) === normalized);
+        return match ? path.join(dir, match) : null;
+    } catch(e) {
+        return null;
+    }
+}
+
 const reformatUrl = (req) => {
     const copy = JSON.parse(JSON.stringify(req.query)); //make a deep copy to remove _cacheToken since it isnt necessary
     delete copy._cacheToken;
     const params =  Object.keys(copy).sort().map(key => `${key}=${copy[key]}` ).join("&")
-    return config.recordFileBase +  `${req.method.toLowerCase()}${req.path}${params}.json`.split('/').join('-').replace(/:/g, "-");
+    // Use the raw URL path (before Express decodes %2F etc.) so filenames match recordings on case-sensitive filesystems
+    const rawPath = req.originalUrl.split('?')[0];
+    return config.recordFileBase +  `${req.method.toLowerCase()}${rawPath}${params}.json`.split('/').join('-').replace(/:/g, "-");
 }
 
 const writeRequest = async (req, resp) => {
@@ -61,15 +79,16 @@ const writeRequest = async (req, resp) => {
 
 const loadRequest = async (req) => {
     const url = reformatUrl(req);
+    const resolved = await findRecordingFile(url);
     try {
-        return JSON.parse(await fs.readFile(url));
+        return JSON.parse(await fs.readFile(resolved || url));
     } catch(e) {
        throw new Error(`failed to load ${url}`)
     }
 }
 
 const checkFile = async (req) => {
-    return await fileExists(reformatUrl(req))
+    return (await findRecordingFile(reformatUrl(req))) !== null;
 }
 
 const proxyRequest = async (req) => {
