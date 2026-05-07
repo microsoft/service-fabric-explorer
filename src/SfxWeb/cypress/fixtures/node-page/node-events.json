@@ -1,0 +1,32 @@
+[
+    {
+        "NodeInstance": 132428553760489593,
+        "LastNodeUpAt": "2020-08-25T18:56:31.439Z",
+        "NodeName": "_nt_0",
+        "Kind": "NodeDown",
+        "EventInstanceId": "29dd383d-fdd4-4499-8e69-b7b40de04bd2",
+        "TimeStamp": "2020-09-01T16:46:39.2458955Z",
+        "Category": "StateTransition",
+        "HasCorrelatedEvents": false
+    },
+    {
+        "NodeInstance": 132428553760489594,
+        "LastNodeUpAt": "2020-08-25T18:44:39.354Z",
+        "NodeName": "_nt_1",
+        "Kind": "NodeDown",
+        "EventInstanceId": "29dd383d-fdd4-4499-8e69-b7b40de04bd3",
+        "TimeStamp": "2020-09-01T17:46:39.2458955Z",
+        "Category": "StateTransition",
+        "HasCorrelatedEvents": false
+    },
+    {
+        "NodeInstance": 132428553760489595,
+        "LastNodeDownAt": "2020-08-25T18:44:39.354Z",
+        "NodeName": "_nt_2",
+        "Kind": "NodeUp",
+        "EventInstanceId": "29dd383d-fdd4-4499-8e69-b7b40de04bd4",
+        "TimeStamp": "2020-09-01T18:46:39.2458955Z",
+        "Category": "StateTransition",
+        "HasCorrelatedEvents": false
+    }
+]
