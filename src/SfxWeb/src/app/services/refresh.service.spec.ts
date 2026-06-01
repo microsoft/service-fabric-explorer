@@ -1,4 +1,4 @@
-import { TestBed } from '@angular/core/testing';
+import { TestBed, fakeAsync, tick, discardPeriodicTasks } from '@angular/core/testing';
 
 import { RefreshService } from './refresh.service';
 import { StorageService } from './storage.service';
@@ -21,7 +21,7 @@ describe('RefreshService', () => {
   });
 
 
-  fit('auto refresh', async (done) => {
+  fit('auto refresh', fakeAsync(() => {
     window.localStorage.setItem(Constants.AutoRefreshIntervalStorageKey, 'OFF');
 
     const service: RefreshService = TestBed.inject(RefreshService);
@@ -29,14 +29,21 @@ describe('RefreshService', () => {
 
     service.updateRefreshInterval('2');
 
-    await timer(3000).toPromise();
+    // Advance 3 s: immediate refresh at t=0 (emits 0) and interval at t=2s (emits 1).
+    tick(3000);
 
-    service.refreshSubject.subscribe(tick => {
-      expect(tick).toBe(2);
-      done();
+    let receivedTick: number;
+    service.refreshSubject.subscribe(t => {
+      receivedTick = t;
     });
 
-  });
+    // Advance 2 s more: interval fires at t=4s and emits refreshTick value 2.
+    tick(2000);
+
+    expect(receivedTick).toBe(2);
+
+    discardPeriodicTasks();
+  }));
 
   fit('refresh all', (done) => {
     window.localStorage.setItem(Constants.AutoRefreshIntervalStorageKey, 'OFF');
