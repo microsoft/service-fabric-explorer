@@ -6,7 +6,7 @@
 
       <button class="simple-button" style="float: right;" (click)="export()"> <span class="mif-download2"></span> Export</button>
     </div>
-        <label aria-live="off" aria-atomic="true" class="sr-only">There are {{sortedFilteredList.length}} items in the search result    </label>
+        <label aria-live="polite" aria-atomic="true" class="sr-only">There are {{sortedFilteredList.length}} items in the search result    </label>
         <div class="table-responsive">
             <table class="detail-list" [attr.aria-label]="listSettings.tableName">
                 <thead aria-live="polite">
