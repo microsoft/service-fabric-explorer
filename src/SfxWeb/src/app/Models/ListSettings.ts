@@ -159,6 +159,7 @@ export interface IListColumnAdditionalSettings {
     canNotExport?: boolean;
     alternateExportFormat?: (item) => string;
     id?: string;
+    cellId?: (item: any) => string;
 }
 
 export interface ITemplate {

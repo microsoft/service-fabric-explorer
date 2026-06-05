@@ -54,7 +54,7 @@
                 <ng-container *ngFor="let item of sortedFilteredList.slice( (page - 1) * listSettings.limit , page * listSettings.limit)">
                     <tr class="hover-row" [ngClass]="listSettings.rowClass(item)">
                             <!-- track by columnSetting.propertyPath -->
-                        <td *ngFor="let columnSetting of listSettings.columnSettings; let i = index;">
+                        <td *ngFor="let columnSetting of listSettings.columnSettings; let i = index;" [attr.id]="columnSetting.config.cellId ? columnSetting.config.cellId(item) : null">
                             <div class="item-wrapper">
                                 <button
                                     class="row-expander {{item.isSecondRowCollapsed ? 'mif-chevron-thin-down' : 'mif-chevron-thin-up' }} flat-button"
