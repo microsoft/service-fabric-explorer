@@ -1,0 +1,5 @@
+{
+    "appService.showBuildDuringDeployPrompt": false,
+    "appService.defaultWebAppToDeploy": "/subscriptions/35349201-a0b3-405e-8a23-9f1450984307/resourceGroups/sfxaccesstesting/providers/Microsoft.Web/sites/sfxaccesstesting",
+    "appService.deploySubpath": "src\\Sfx-Proxy"
+}
