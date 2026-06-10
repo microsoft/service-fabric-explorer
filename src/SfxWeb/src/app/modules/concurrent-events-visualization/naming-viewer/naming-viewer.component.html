@@ -11,7 +11,7 @@
       <div>
         <div class="operation-container">
           <div ngbDropdown #myDrop="ngbDropdown" [autoClose]="'outside'">
-            <button class="flat-button" ngbDropdownToggle aria-label="settings drop down">
+            <button class="flat-button" ngbDropdownToggle [attr.aria-label]="'toggle operations ' + getToggled(panel.nestedOptions) + ' / ' + panel.nestedOptions.length + ' for ' + panel.name">
               toggle operations ({{getToggled(panel.nestedOptions)}} / {{panel.nestedOptions.length}})
             </button>
             <ul ngbDropdownMenu aria-labelledby="dropdownBasic1" class="dropdown-container">
