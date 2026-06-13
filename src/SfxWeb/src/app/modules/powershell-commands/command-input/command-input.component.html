@@ -21,28 +21,40 @@
 
 <!-- dropdown applies to enums but also others with predefined options -->
 <ng-template #dropDown>
-    <div ngbDropdown 
+    <div ngbDropdown #drop="ngbDropdown"
+    (openChange)="$event || toggleBtn.focus()"
     [class]="(value.invalid ? 'invalid ' : 'valid ') + (commandParam.required ? 'required' : '')" >
-        
+
         <input [id]="commandParam.name" [name]="commandParam.name"
         type="hidden" [formControl]="value" [required]="commandParam.required" />
-        
-        <button class="simple-button" ngbDropdownToggle>{{commandParam.value ? commandParam.value : '-Select-'}}</button>
-        
-        <div ngbDropdownMenu>
-            <div>
-                <button value="" type="button" ngbDropdownItem (click)="setFormValue($event.target.value)">-Select-</button>
-            </div>
-            <div *ngFor="let option of commandParam.options; let i = index" >
-                <button [value]="option" type="button"
-                [attr.aria-label]="option + (option === commandParam.value ? ' selected ' : ' ') + (i+1) + ' of ' + commandParam.options.length"
-                ngbDropdownItem (click)="setFormValue($event.target.value)">
-                    {{option}}
-                </button>
-            </div>
+
+        <button #toggleBtn class="simple-button" ngbDropdownToggle
+            role="combobox"
+            [attr.aria-controls]="commandParam.name + 'Options'"
+            aria-haspopup="listbox">
+            {{commandParam.value ? commandParam.value : '-Select-'}}
+        </button>
+
+        <div ngbDropdownMenu [id]="commandParam.name+'Options'" role="listbox">
+            <button value="" type="button" role="option"
+                [attr.aria-selected]="!commandParam.value"
+                ngbDropdownItem
+                (click)="setFormValue('')"
+                (keydown.tab)="setFormValue('')">
+                -Select-
+            </button>
+            <button *ngFor="let option of commandParam.options"
+                [value]="option" type="button" role="option"
+                [attr.aria-selected]="option === commandParam.value"
+                ngbDropdownItem
+                (click)="setFormValue(option)"
+                (keydown.tab)="setFormValue(option)">
+                {{option}}
+            </button>
             <div *ngIf="commandParam.allowCustomValAndOptions">
                 <input [id]="commandParam.name + '-custom'" [name]="commandParam.name + '-custom'"
-                type="text" [formControl]="value" placeholder="custom input" class="input-flat"/>
+                type="text" [formControl]="value" placeholder="custom input" class="input-flat"
+                (keydown.tab)="drop.close()"/>
             </div>
         </div>
     </div>
