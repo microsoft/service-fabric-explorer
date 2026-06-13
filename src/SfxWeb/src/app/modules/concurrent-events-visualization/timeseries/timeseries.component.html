@@ -9,8 +9,9 @@
               <span class="mif-info link"></span>
               Click to focus a point or click and drag to zoom
             </div>
-            <div *ngFor="let dataSet of data.series; let i = index" class="chart" data-cy="metric">
-              {{dataSet.name}}
+            <div *ngFor="let dataSet of data.series; let i = index" class="chart" data-cy="metric"
+              role="figure" [attr.aria-label]="dataSet.name + ' chart'" tabindex="0">
+              <span aria-hidden="true">{{dataSet.name}}</span>
 
               <div #container (mousemove)="interactionEvent($event, i)" class="chart-container"></div>
             </div>
