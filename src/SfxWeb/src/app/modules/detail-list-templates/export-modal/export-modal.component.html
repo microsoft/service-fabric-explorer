@@ -26,10 +26,12 @@
             Copy to Clipboard
             <app-clip-board [text]="copyText" name="raw csv content"></app-clip-board>
         </div>
-
-        <div class="text-wrapper" contenteditable="true" *ngIf="text.length > 0">
-            <div *ngFor="let row of text" class="text-row" data-cy="row">{{row}}</div>
-        </div>
+        <label *ngIf="text.length > 0" style="margin-bottom: 5px;">
+            Exported CSV Content:
+            <div class="text-wrapper" contenteditable="true" *ngIf="text.length > 0" role="textbox" aria-label="Exported csv content" >
+                <div *ngFor="let row of text" class="text-row" data-cy="row">{{row}}</div>
+            </div>
+        </label>    
 
     </div>
     <div class="modal-footer">
