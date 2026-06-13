@@ -7,14 +7,17 @@
      
         <ul data-cy="columns">
             <li>
-                <input type="checkbox" [name]="'Check All'" [ngModel]="allChecked" (click)="updateCheckAll($event)" [indeterminate]="!allChecked && !noneChecked" style="margin-right: 5px;" />
-                <label [for]="'Check All'">Check All</label>
+                <label>
+                    <input type="checkbox" [name]="'Check All'" [ngModel]="allChecked" (click)="updateCheckAll($event)" [indeterminate]="!allChecked && !noneChecked" style="margin-right: 5px;" />
+                    Check All
+                </label>
             </li>
             <ng-container *ngFor="let column of data.config.columnSettings">
                 <li *ngIf="!column.config.canNotExport">
-                    <input type="checkbox" [name]="column.displayName" [(ngModel)]="selected[column.displayName]"
-                        [id]="column.displayName" style="margin-right: 5px;"> <label
-                        [for]="column.displayName">{{column.displayName}}</label>
+                    <label>
+                        <input type="checkbox" [name]="column.displayName" [(ngModel)]="selected[column.displayName]"
+                            style="margin-right: 5px;">{{column.displayName}}
+                    </label>
                 </li>
             </ng-container>
         </ul>
