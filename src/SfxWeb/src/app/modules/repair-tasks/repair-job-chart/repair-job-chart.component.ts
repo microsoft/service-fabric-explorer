@@ -44,6 +44,26 @@ export class RepairJobChartComponent implements OnInit, OnChanges {
       text:  document.ontouchstart === undefined ?
           'Click and drag in the plot area to zoom in' : 'Pinch the chart to zoom in'
     },
+    accessibility: {
+      point: {
+        // Provide the same content as the tooltip for screen readers.
+        descriptionFormatter: (() => { const bind = this; return function (point: any) {
+          try {
+            const task = bind.jobs && bind.jobs.concat(bind.jobs)[point.index];
+            const phase = task && task.getHistoryPhase ? task.getHistoryPhase(point.series.name) : null;
+            const phaseDuration = phase ? phase.duration : '';
+            const totalDuration = task && task.displayDuration ? task.displayDuration : '';
+            const id = task && task.id !== undefined ? task.id : '';
+            const category = point.category || '';
+            return `${category}. Job ${id}. ${point.series.name} : ${phaseDuration}. Total Duration: ${totalDuration}`;
+          } catch (e) {
+            return '';
+          }
+        }; })(),
+        // Fallback format (uses built-in placeholders where available).
+        valueDescriptionFormat: '{category}. {series.name}, {value}.'
+      }
+    },
     yAxis: {
         title: {
             text: 'Duration',
