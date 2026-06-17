@@ -23,7 +23,7 @@
             <h2>Store Content</h2>
             <div class="image-store-breadcrumb">
                 <span *ngIf="imagestoreRoot.isLoadingFolderContent" style="padding-right: 5px;">
-                    <span  class="mif-refresh mif-large rotate" aria-label="refresh" title="Loading folder content"></span>
+                    <span  class="mif-refresh mif-large rotate" title="Loading folder content"></span>
                 </span>
                 <span><button class="clear-button" (click)="openFolder(imagestoreRoot.pathBreadcrumbItems[0].path)" [disabled]="imagestoreRoot.currentFolder.path === imagestoreRoot.pathBreadcrumbItems[0].path"
                         aria-label="click to go to root of image store">
