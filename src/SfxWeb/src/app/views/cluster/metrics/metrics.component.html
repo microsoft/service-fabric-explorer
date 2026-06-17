@@ -2,7 +2,10 @@
   <div style="display: flex; max-width: 100%; flex-wrap: wrap;">
     <div>
       <div>
-        <button (click)="toggleSide()" class="simple-button">Hide </button>
+        <label class="toggle-wrapper" aria-label="Hide metric chart options">
+          Hide
+          <app-toggle [state]="!showOptions" (stateChange)="toggleSide()" aria="Hide metric chart options"></app-toggle>
+        </label>
       </div>
       <div class="options-panel" [ngStyle]="{'max-width': (showOptions ? '100%' : '0'), 'visibility': (showOptions ? 'inherit' : 'collapse') }" [attr.aria-hidden]="!showOptions">
         <div class="essen-pane filter-container">
