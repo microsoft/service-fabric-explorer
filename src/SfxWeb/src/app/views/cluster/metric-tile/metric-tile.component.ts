@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { LoadMetricInformation } from 'src/app/Models/DataModels/Shared';
 
 @Component({
@@ -9,6 +9,7 @@ import { LoadMetricInformation } from 'src/app/Models/DataModels/Shared';
 })
 export class MetricTileComponent {
   @Input() metric: LoadMetricInformation;
+  @Output() toggleSelected = new EventEmitter<void>();
 
   constructor() { }
 }

@@ -51,6 +51,10 @@ export class MetricsComponent extends BaseControllerDirective {
     this.updateViewMetric();
   }
 
+  trackByMetric(index: number, metric: LoadMetricInformation): string {
+    return metric.name;
+  }
+
   updateViewMetric() {
     this.tableData = {
       dataPoints: [],
