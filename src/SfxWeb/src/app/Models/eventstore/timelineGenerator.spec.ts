@@ -319,7 +319,9 @@ describe('TimelineGenerators', () => {
         const data = [addedToClusterEvent, nodeUpevent, nodeDownEvent, nodeUpevent2];
 
         const events = generator.consume(data, startDate, endDateRange);
-        expect(events.items.length).toBe(2);
+        //the trailing NodeUp carries LastNodeDownAt = 1601 FILETIME sentinel (never been down),
+        //so no synthetic down bar is generated for it - only the "added to cluster" marker remains
+        expect(events.items.length).toBe(1);
         expect(events.groups.length).toBe(2);
       });
 
