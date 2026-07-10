@@ -354,6 +354,8 @@ export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
   static readonly NodesFailedToOpenLabel = 'Nodes Failed to Open';
   static readonly NodesAddedToClusterLabel = 'Nodes Added to cluster';
   static readonly NodesRemovedFromClusterLabel = 'Nodes removed from cluster';
+  //FILETIME epoch sentinel emitted for LastNodeDownAt when a node has never been down
+  static readonly FileTimeEpochSentinel = '1601-01-01T00:00:00Z';
   static readonly transitions = [NodeUp, NodeDown, NodeDeactivateCompleted, NodeRemovedFromCluster, NodeAddedToCluster, NodeOpenFailed];
 
   generateNodeOpenFailedEvent(event: NodeEvent, eventIndex: number) {
@@ -547,7 +549,11 @@ export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
           }
 
           if(lastUpEvent) {
-            items.add(this.generateDownNodeEvent(lastUpEvent, events.indexOf(lastUpEvent), lastUpEvent.eventProperties.LastNodeDownAt, lastUpEvent.timeStamp));
+            const lastDown = lastUpEvent.eventProperties.LastNodeDownAt;
+            //skip the synthetic down bar when LastNodeDownAt is the FILETIME epoch sentinel ("never been down")
+            if(lastDown && lastDown !== NodeTimelineGenerator.FileTimeEpochSentinel) {
+              items.add(this.generateDownNodeEvent(lastUpEvent, events.indexOf(lastUpEvent), lastDown, lastUpEvent.timeStamp));
+            }
           }
         })
 
