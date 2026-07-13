@@ -29,7 +29,7 @@
         <div class="input-group">
         <ng-content select="[startTime]"></ng-content>
         <div style="margin-left: 5px;">
-        <span style="color:  var(--font-primary-color); font-size: 105%;">Start:  </span>
+        <span id="dual-date-start-label" style="color:  var(--font-primary-color); font-size: 105%;">Start:  </span>
         <input #dpFromTime
                 type="time"
                 name="dpFromTime"
@@ -53,7 +53,7 @@
         <div class="input-group">
         <ng-content select="[toTime]"></ng-content>
         <div style="margin-left: 5px;">
-        <span style="color:  var(--font-primary-color); font-size: 105%;">End:  </span>
+        <span id="dual-date-end-label" style="color:  var(--font-primary-color); font-size: 105%;">End:  </span>
         <input #dpToTime
                 type="time"
                 name="dpToTime"

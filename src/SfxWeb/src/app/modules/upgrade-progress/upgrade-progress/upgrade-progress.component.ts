@@ -75,6 +75,16 @@ export class UpgradeProgressComponent implements AfterViewInit, OnChanges {
             return bind.sanitizer.sanitize(SecurityContext.HTML,`${this.key} <br> ${ud.stateName}`); };
           })()
         },
+        accessibility: {
+          point: {
+            // Provide the same content as the tooltip for screen readers.
+            descriptionFormatter: (() => { const bind = this; return function(point: any) {
+              const ud = bind.upgradeDomains[point.index];
+              const stateName = ud ? ud.stateName : '';
+              return bind.sanitizer.sanitize(SecurityContext.HTML, `${point.name}. ${stateName}.`);
+            }; })()
+          }
+        },
         series: [{
           data: dataSet
         }],

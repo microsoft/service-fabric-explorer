@@ -35,13 +35,13 @@
         <ng-template ngbNavContent>
             <div style="display: flex;flex-direction: row; gap: 15px">
                 <div *ngIf="item.raw.History" style="min-width: 400px;" data-cy="history">
-                    <div class="section-title" style="border-bottom: 1px solid gray; padding-bottom: 5px">
+                    <h5 class="section-title" style="border-bottom: 1px solid gray; padding-bottom: 5px">
                       History
-                    </div>
+                    </h5>
                     <div style="font-size: larger;">
                         Phase <div style="float: right">Duration</div>
                     </div>
-                    <app-collapse-container *ngFor="let phase of item.historyPhases" [collapsed]="phase.startCollapsed" (collapsedChange)="item.changePhaseCollapse(phase.name,$event)" [sectionName]="phase.name + ':' + phase.status">
+                    <app-collapse-container *ngFor="let phase of item.historyPhases" [collapsed]="phase.startCollapsed" (collapsedChange)="item.changePhaseCollapse(phase.name,$event)" [sectionName]="phase.name + ':' + phase.status + (phase.durationMilliseconds > 0 ? ' Duration: ' + phase.duration : '')">
                         <div collapse-header [ngClass]='phase.statusCss'>
                             {{phase.name}} : {{phase.status}} <span *ngIf="phase.durationMilliseconds > 0" style="float: right;">{{phase.duration}}</span>
                         </div>

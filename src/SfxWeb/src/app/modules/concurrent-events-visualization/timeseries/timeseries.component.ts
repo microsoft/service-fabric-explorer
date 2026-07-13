@@ -276,6 +276,13 @@ export class TimeseriesComponent implements AfterViewInit, OnChanges, OnDestroy,
       }
       return {
             ...this.options, series: dataSet, yAxis,
+            title: { text: chartData.name, style: { color: 'white', opacity: 0 } },
+            accessibility: {
+              enabled: true,
+              description: chartData.name,
+              landmarkVerbosity: 'one' as const,
+              point: { valueDescriptionFormat: '{point.name}, {point.y}' }
+            },
         }
     })
   }

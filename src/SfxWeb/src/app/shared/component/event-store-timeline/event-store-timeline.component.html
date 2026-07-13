@@ -8,7 +8,7 @@
     <div class="button-container">
       <ng-content select="[buttons]"></ng-content>
 
-      <label class="toggle-wrapper" [attr.aria-label]="(isUTC ? 'Untoggle' : 'Toggle') + ' to use ' + (isUTC ? 'Local Time' : 'UTC time') ">
+      <label class="toggle-wrapper" aria-label="Toggle to use UTC time">
         UTC time
         <app-toggle [(state)]="isUTC" (stateChange)="flipTimeZone($event)" ></app-toggle>
       </label>

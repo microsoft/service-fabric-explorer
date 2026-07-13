@@ -60,3 +60,10 @@ $border-radius: 50px;
     transform: translateX(16px);
   }
 
+@media screen and (forced-colors: active) {
+
+  .slider {
+    background-color: ButtonFace;
+    forced-color-adjust: none;
+  }
+}

@@ -7,5 +7,5 @@
     {{tooltipText.tooltip}}
   </ng-template>
   <app-clip-board [text]="item.raw.TaskId" name="repair job task id" style="display: inline-block;"></app-clip-board>
-  {{item.raw.TaskId}} <span class="mif-info" *ngIf="tooltipText?.tooltip.length > 0" style="color: #70daf8;"  tooltipClass="styled-tooltip" [ngbTooltip]="tipContent" container="body"></span>
+  {{item.raw.TaskId}} <span class="mif-info" *ngIf="tooltipText?.tooltip.length > 0" style="color: #70daf8;"  tooltipClass="styled-tooltip" [ngbTooltip]="tipContent" container="body" tabindex="0"></span>
 </div>

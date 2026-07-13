@@ -45,10 +45,12 @@ export class DoubleSliderComponent implements OnChanges, AfterViewInit {
             max: new Date().getTime(),
         },
         handleAttributes: [
-          { 'aria-label': 'lower',
+          { 'aria-label': 'start date',
+            'aria-labelledby': 'dual-date-start-label',
             'aria-valuemax': 'lower'
          },
-          { 'aria-label': 'upper',
+          { 'aria-label': 'end date',
+           'aria-labelledby': 'dual-date-end-label',
            'aria-valuemin': 'upper'
         },
       ],

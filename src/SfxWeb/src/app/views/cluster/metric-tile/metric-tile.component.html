@@ -1,4 +1,4 @@
-<button class="metric-container" [ngClass]="{'selected': metric.selected}">
+<button class="metric-container" role="checkbox" [ngClass]="{'selected': metric.selected}" [attr.aria-checked]="metric.selected" (click)="toggleSelected.emit()">
   <div class="metric-legend" [ngStyle]="{'background-color': metric.color}"></div>
   <div class="metric-title">{{metric.displayName}}</div>
   <div class="metric-ratio">{{metric.hasCapacity? metric.loadCapacityRatioString : "N/A"}}</div>

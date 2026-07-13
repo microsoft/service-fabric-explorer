@@ -14,7 +14,15 @@
 			],
 			"gallery": "https://api.mcp.github.com",
 			"version": "0.21.0"
-		}
+		},
+		"playwright": {
+		"type": "stdio",
+		"command": "npx",
+		"args": [
+			"-y",
+			"@playwright/mcp@latest"
+		]
+		},
 	},
 	"inputs": []
 }

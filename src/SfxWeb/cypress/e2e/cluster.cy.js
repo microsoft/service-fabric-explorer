@@ -1349,14 +1349,15 @@ context('Cluster page', () => {
         cy.get('[data-cy=optionalInput]').should('have.length', 6)
 
         cy.contains('HealthState').click().contains('OK').then(btn => {
-          cy.wrap(btn).should('have.attr', 'aria-label').and('equal', 'OK 1 of 3')
+          cy.wrap(btn).should('have.attr', 'role', 'option').and('have.attr', 'aria-selected', 'false')
           cy.wrap(btn).click()
         })
         cy.get('[data-cy=warning]').should('not.include.text', 'HealthState')
         cy.get('[data-cy=copy-text]').should('include.text', '-HealthState  OK')
         cy.contains('HealthState').click().within(() => {
-          cy.get('button[value="OK"]').should('have.attr', 'aria-label').and('equal', 'OK selected 1 of 3')
+          cy.get('button[value="OK"]').should('have.attr', 'aria-selected', 'true')
         })
+        cy.get('[data-cy=copy-text]').click()
         cy.contains('SourceId').type('id')
         cy.get('[data-cy=warning]').should('not.include.text', 'SourceId')
         cy.get('[data-cy=copy-text]').should('include.text', '-SourceId  "id"')

@@ -55,7 +55,7 @@ export class EssentialsComponent extends ApplicationBaseControllerDirective {
     ]);
 
     this.serviceTypesListSettings = this.settings.getNewOrExistingListSettings('serviceTypes', ['raw.ServiceTypeDescription.ServiceTypeName'], [
-      new ListColumnSetting('raw.ServiceTypeDescription.ServiceTypeName', 'Service Type Name'),
+      new ListColumnSetting('raw.ServiceTypeDescription.ServiceTypeName', 'Service Type Name', { cellId: (item) => item.name }),
       new ListColumnSettingWithFilter('serviceKind', 'Service Kind'),
       new ListColumnSetting('raw.ServiceManifestVersion', 'Service Manifest Version')
     ]);

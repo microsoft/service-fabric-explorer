@@ -7,14 +7,17 @@
      
         <ul data-cy="columns">
             <li>
-                <input type="checkbox" [name]="'Check All'" [ngModel]="allChecked" (click)="updateCheckAll($event)" [indeterminate]="!allChecked && !noneChecked" style="margin-right: 5px;" />
-                <label [for]="'Check All'">Check All</label>
+                <label>
+                    <input type="checkbox" [name]="'Check All'" [ngModel]="allChecked" (click)="updateCheckAll($event)" [indeterminate]="!allChecked && !noneChecked" style="margin-right: 5px;" />
+                    Check All
+                </label>
             </li>
             <ng-container *ngFor="let column of data.config.columnSettings">
                 <li *ngIf="!column.config.canNotExport">
-                    <input type="checkbox" [name]="column.displayName" [(ngModel)]="selected[column.displayName]"
-                        [id]="column.displayName" style="margin-right: 5px;"> <label
-                        [for]="column.displayName">{{column.displayName}}</label>
+                    <label>
+                        <input type="checkbox" [name]="column.displayName" [(ngModel)]="selected[column.displayName]"
+                            style="margin-right: 5px;">{{column.displayName}}
+                    </label>
                 </li>
             </ng-container>
         </ul>
@@ -23,10 +26,12 @@
             Copy to Clipboard
             <app-clip-board [text]="copyText" name="raw csv content"></app-clip-board>
         </div>
-
-        <div class="text-wrapper" contenteditable="true" *ngIf="text.length > 0">
-            <div *ngFor="let row of text" class="text-row" data-cy="row">{{row}}</div>
-        </div>
+        <label *ngIf="text.length > 0" style="margin-bottom: 5px;">
+            Exported CSV Content:
+            <div class="text-wrapper" contenteditable="true" *ngIf="text.length > 0" role="textbox" aria-label="Exported csv content" >
+                <div *ngFor="let row of text" class="text-row" data-cy="row">{{row}}</div>
+            </div>
+        </label>    
 
     </div>
     <div class="modal-footer">

@@ -2,7 +2,10 @@
   <div style="display: flex; max-width: 100%; flex-wrap: wrap;">
     <div>
       <div>
-        <button (click)="toggleSide()" class="simple-button">Hide </button>
+        <label class="toggle-wrapper" aria-label="Hide metric chart options">
+          Hide
+          <app-toggle [state]="!showOptions" (stateChange)="toggleSide()" aria="Hide metric chart options"></app-toggle>
+        </label>
       </div>
       <div class="options-panel" [ngStyle]="{'max-width': (showOptions ? '100%' : '0'), 'visibility': (showOptions ? 'inherit' : 'collapse') }" [attr.aria-hidden]="!showOptions">
         <div class="essen-pane filter-container">
@@ -19,8 +22,8 @@
               data
             </label>
             <div class="metrics-column">
-              <app-metric-tile [metric]="metric" *ngFor="let metric of metricsViewModel.metricsWithCapacities"
-                (click)="updateSelectedMetric(metric, metricsViewModel.metricsWithCapacities)">
+              <app-metric-tile [metric]="metric" *ngFor="let metric of metricsViewModel.metricsWithCapacities; trackBy: trackByMetric"
+                (toggleSelected)="updateSelectedMetric(metric, metricsViewModel.metricsWithCapacities)">
               </app-metric-tile>
             </div>
           </div>
@@ -33,8 +36,8 @@
           <div collapse-body style="width: 300px">
             <app-warning iconSize="mif-2x" description="Count, Primary Count, and Replica Count will not include services that use custom metrics"></app-warning>
             <div class="metrics-column">
-              <app-metric-tile [metric]="metric" *ngFor="let metric of metricsViewModel.metricsWithoutCapacities"
-                (click)="updateSelectedMetric(metric, metricsViewModel.metricsWithoutCapacities)">
+              <app-metric-tile [metric]="metric" *ngFor="let metric of metricsViewModel.metricsWithoutCapacities; trackBy: trackByMetric"
+                (toggleSelected)="updateSelectedMetric(metric, metricsViewModel.metricsWithoutCapacities)">
               </app-metric-tile>
             </div>
           </div>
@@ -46,8 +49,8 @@
           </div>
           <div collapse-body>
             <div class="metrics-column">
-              <app-metric-tile [metric]="metric" *ngFor="let metric of metricsViewModel.systemMetrics"
-                (click)="updateSelectedMetric(metric, metricsViewModel.systemMetrics)">
+              <app-metric-tile [metric]="metric" *ngFor="let metric of metricsViewModel.systemMetrics; trackBy: trackByMetric"
+                (toggleSelected)="updateSelectedMetric(metric, metricsViewModel.systemMetrics)">
               </app-metric-tile>
             </div>
           </div>
