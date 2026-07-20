@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { DetailBaseComponent } from 'src/app/ViewModels/detail-table-base.component';
 import { ListColumnSetting } from 'src/app/Models/ListSettings';
 import { ServiceType } from 'src/app/Models/DataModels/Service';
@@ -13,11 +13,11 @@ import { CreateServiceComponent } from '../create-service/create-service.compone
     standalone: false
 })
 export class ActionRowComponent implements DetailBaseComponent {
+  private data = inject(DataService);
+
 
   item: ServiceType;
   listSetting: ListColumnSettingForApplicationServiceRow;
-
-  constructor(private data: DataService) { }
 
   createService() {
     new IsolatedAction(

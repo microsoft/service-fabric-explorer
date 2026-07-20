@@ -1,4 +1,4 @@
-import { Component, Injector } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { ApplicationsBaseControllerDirective } from '../applicationsBase';
 import { DataService } from 'src/app/services/data.service';
 
@@ -9,8 +9,5 @@ import { DataService } from 'src/app/services/data.service';
     standalone: false
 })
 export class ApptypesComponent  extends ApplicationsBaseControllerDirective {
-
-  constructor(private dataService: DataService, injector: Injector) {
-    super(dataService, injector);
-  }
+  private dataService: DataService = inject(DataService);
 }

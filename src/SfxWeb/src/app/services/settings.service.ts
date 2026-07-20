@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {
     ListColumnSetting, ListSettings, ListColumnSettingForBadge, ListColumnSettingForLink,
     ListColumnSettingWithCopyText, ListColumnSettingWithUtcTime, ListColumnSettingWithCustomComponent,
@@ -19,6 +19,8 @@ import { ReplaySubject } from 'rxjs';
   providedIn: 'root'
 })
 export class SettingsService {
+  private storage = inject(StorageService);
+
   private listSettings: Record<string, ListSettings>;
   private iPaginationLimit: number;
   private iMetricsViewModel: MetricsViewModel;
@@ -44,7 +46,9 @@ export class SettingsService {
       this.updatePaginationLimit(limit);
   }
 
-  public constructor(private storage: StorageService) {
+  public constructor() {
+      const storage = this.storage;
+
       this.listSettings = {};
       this.iPaginationLimit = storage.getValueNumber(Constants.PaginationLimitStorageKey, Constants.DefaultPaginationLimit);
     }

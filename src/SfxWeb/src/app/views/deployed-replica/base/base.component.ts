@@ -1,4 +1,4 @@
-import { Component, ElementRef, Injector } from '@angular/core';
+import { Component, ElementRef, inject } from '@angular/core';
 import { DeployedReplicaBaseControllerDirective } from '../DeployedReplicaBase';
 import { DataService } from 'src/app/services/data.service';
 import { TreeService } from 'src/app/services/tree.service';
@@ -15,6 +15,10 @@ import { IBaseView } from '../../BaseView';
     standalone: false
 })
 export class BaseComponent extends DeployedReplicaBaseControllerDirective implements IBaseView {
+  protected data: DataService = inject(DataService);
+  private tree = inject(TreeService);
+  el = inject(ElementRef);
+
 
   type = '';
 
@@ -31,10 +35,6 @@ export class BaseComponent extends DeployedReplicaBaseControllerDirective implem
       route: './commands'
     }
   ];
-
-  constructor(protected data: DataService, injector: Injector, private tree: TreeService, public el: ElementRef) {
-    super(data, injector);
-  }
 
   setup() {
     console.log(this);

@@ -1,4 +1,4 @@
-import { Injectable, Component } from '@angular/core';
+import { Injectable, Component, inject } from '@angular/core';
 import { Location } from '@angular/common';
 import { Router, ActivationEnd, NavigationEnd, ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
 
@@ -22,8 +22,12 @@ This is considered reset when viewing a different entity so viewing node/details
   providedIn: 'root'
 })
 export class RoutesService {
+  location = inject(Location);
+  routing = inject(Router);
+  private activedRoute = inject(ActivatedRoute);
 
-  constructor(public location: Location, public routing: Router, private activedRoute: ActivatedRoute) {
+
+  constructor() {
 
     // there can be multiple activationEnd events so we want to grab the last one.
     let lastActivationEnd: ActivationEnd = null;

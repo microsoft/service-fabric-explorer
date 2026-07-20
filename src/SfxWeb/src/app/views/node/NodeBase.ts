@@ -1,5 +1,5 @@
 import { DataService } from 'src/app/services/data.service';
-import { Injector, Directive } from '@angular/core';
+import { Directive, inject } from '@angular/core';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Observable } from 'rxjs';
 import { map, mergeMap } from 'rxjs/operators';
@@ -10,12 +10,10 @@ import { Node } from 'src/app/Models/DataModels/Node';
 
 @Directive()
 export class NodeBaseControllerDirective extends BaseControllerDirective {
+    protected data = inject(DataService);
+
     nodeName: string;
     node: Node;
-
-    constructor(protected data: DataService, injector: Injector) {
-      super(injector);
-    }
 
     common(messageHandler?: IResponseMessageHandler): Observable<any> {
         return this.data.getNode(this.nodeName, true, messageHandler).pipe(mergeMap( node => {

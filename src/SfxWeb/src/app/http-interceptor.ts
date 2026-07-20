@@ -1,5 +1,5 @@
 import { HttpRequest, HttpInterceptor, HttpHandler, HttpEvent, HTTP_INTERCEPTORS, HttpResponse, HttpErrorResponse } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { AdalService } from './services/adal.service';
 import { finalize, map, mergeMap } from 'rxjs/operators';
@@ -13,7 +13,8 @@ The will intercept and allow the modification of every http request going in and
 */
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
-  constructor(private adalService: AdalService) {}
+  private adalService = inject(AdalService);
+
   intercept(req: HttpRequest<any>, next: HttpHandler):
     Observable<HttpEvent<any>> {
     if (this.adalService.aadEnabled){
@@ -37,7 +38,8 @@ export class AuthInterceptor implements HttpInterceptor {
 
 @Injectable()
 export class ReadOnlyHeaderInterceptor implements HttpInterceptor {
-  constructor(private dataService: DataService) {}
+  private dataService = inject(DataService);
+
   intercept(req: HttpRequest<any>, next: HttpHandler):
     Observable<HttpEvent<any>> {
         return next.handle(req).pipe(map(res => {
@@ -71,7 +73,8 @@ export class GlobalHeaderInterceptor implements HttpInterceptor {
 
 @Injectable()
 export class StandAloneInterceptor implements HttpInterceptor {
-  constructor(private standaloneIntegration: StandaloneIntegrationService) {}
+  private standaloneIntegration = inject(StandaloneIntegrationService);
+
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     if(!this.standaloneIntegration.isStandalone()) {
       return next.handle(req);

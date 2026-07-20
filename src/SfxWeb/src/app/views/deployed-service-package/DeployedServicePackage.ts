@@ -1,5 +1,5 @@
 import { DataService } from 'src/app/services/data.service';
-import { Injector, Directive } from '@angular/core';
+import { Directive, inject } from '@angular/core';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Observable } from 'rxjs';
 import { map, mergeMap } from 'rxjs/operators';
@@ -10,16 +10,14 @@ import { DeployedServicePackage } from 'src/app/Models/DataModels/DeployedServic
 
 @Directive()
 export class DeployedServicePackageBaseControllerDirective extends BaseControllerDirective {
+    protected data = inject(DataService);
+
     public serviceId: string;
     public activationId: string;
     public appId: string;
     public nodeName: string;
 
     servicePackage: DeployedServicePackage;
-
-    constructor(protected data: DataService, injector: Injector) {
-      super(injector);
-    }
 
     common(messageHandler?: IResponseMessageHandler): Observable<any> {
         return this.data.getDeployedServicePackage(this.nodeName, this.appId, this.serviceId, this.activationId, true, messageHandler)

@@ -1,4 +1,4 @@
-import { Component, OnInit, Injector, ElementRef } from '@angular/core';
+import { Component, OnInit, ElementRef, inject } from '@angular/core';
 import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 import { DeployedReplicaCollection } from 'src/app/Models/DataModels/collections/Collections';
 import { ListSettings, ListColumnSetting, ListColumnSettingWithFilter, ListColumnSettingForLink } from 'src/app/Models/ListSettings';
@@ -20,6 +20,11 @@ import { IBaseView } from '../../BaseView';
     standalone: false
 })
 export class BaseComponent extends BaseControllerDirective implements IBaseView{
+  protected data = inject(DataService);
+  private tree = inject(TreeService);
+  private settings = inject(SettingsService);
+  el = inject(ElementRef);
+
   nodeName: string;
   appId: string;
   serviceId: string;
@@ -29,10 +34,6 @@ export class BaseComponent extends BaseControllerDirective implements IBaseView{
   listSettings: ListSettings;
 
   type: string;
-
-  constructor(protected data: DataService, injector: Injector, private tree: TreeService, private settings: SettingsService, public el: ElementRef) {
-    super(injector);
-  }
 
   setup() {
     this.tree.selectTreeNode([

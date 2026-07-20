@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpResponse, HttpErrorResponse } from '@angular/common/http';
 import { StorageService } from './storage.service';
 
@@ -19,12 +19,14 @@ export interface IToast {
   providedIn: 'root'
 })
 export class MessageService {
+  private storageService = inject(StorageService);
+
 
   static readonly LOCALSTORAGE_KEY_SUPPRES = 'SFX-supress-message';
 
   toasts: IToast[] = [];
   private suppressMessagesState = false;
-  constructor(private storageService: StorageService) {
+  constructor() {
     this.suppressMessage = this.storageService.getValueBoolean(MessageService.LOCALSTORAGE_KEY_SUPPRES, false);
   }
 

@@ -1,4 +1,4 @@
-import { Component, OnInit, Injector } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { DataService } from 'src/app/services/data.service';
 import { ClusterManifest } from 'src/app/Models/DataModels/Cluster';
 import { Observable } from 'rxjs';
@@ -12,12 +12,10 @@ import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
     standalone: false
 })
 export class ManifestComponent extends BaseControllerDirective {
+  private data = inject(DataService);
+
 
   clusterManifest: ClusterManifest;
-
-  constructor(private data: DataService, injector: Injector) {
-    super(injector);
-   }
 
   setup() {
     this.clusterManifest = this.data.clusterManifest;

@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, ViewChildren, QueryList, AfterViewInit, Type } from '@angular/core';
+import { Component, Input, OnChanges, ViewChildren, QueryList, AfterViewInit, Type, inject } from '@angular/core';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { IOnDateChange } from '../../time-picker/double-slider/double-slider.component';
 import { Subject, Subscription, forkJoin } from 'rxjs';
@@ -46,8 +46,8 @@ export interface VisReference {
     standalone: false
 })
 export class EventStoreComponent implements OnChanges, AfterViewInit {
+  dataService = inject(DataService);
 
-  constructor(public dataService: DataService) { }
 
   @ViewChildren(VisualizationDirective) vizDirs: QueryList<VisualizationDirective>;
   @Input() listEventStoreData: IEventStoreData<any, any>[];

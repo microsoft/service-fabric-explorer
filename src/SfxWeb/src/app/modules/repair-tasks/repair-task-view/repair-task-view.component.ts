@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { DetailBaseComponent } from 'src/app/ViewModels/detail-table-base.component';
 import { ListColumnSetting } from 'src/app/Models/ListSettings';
 import { RepairTask } from 'src/app/Models/DataModels/repairTask';
@@ -16,6 +16,9 @@ import { IRawNodeRepairTargetDescription } from 'src/app/Models/RawDataTypes';
     standalone: false
 })
 export class RepairTaskViewComponent implements OnInit, DetailBaseComponent, OnDestroy {
+  dataService = inject(DataService);
+  private refreshService = inject(RefreshService);
+
   phaseTooLongDuration = 1000 * 60 * 20;
   listSetting: ListColumnSetting;
   item: RepairTask;
@@ -24,8 +27,6 @@ export class RepairTaskViewComponent implements OnInit, DetailBaseComponent, OnD
   subs: Subscription = new Subscription();
 
   healthCheckConfigs: IEssentialListItem[] = [];
-
-  constructor(public dataService: DataService, private refreshService: RefreshService) { }
 
   ngOnInit(): void {
     this.copyText = JSON.stringify(this.item.raw, null, '\t');

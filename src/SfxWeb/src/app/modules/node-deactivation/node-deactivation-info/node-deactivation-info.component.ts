@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnChanges } from '@angular/core';
+import { Component, OnInit, Input, OnChanges, inject } from '@angular/core';
 import { Node } from 'src/app/Models/DataModels/Node';
 import { ListColumnSetting, ListSettings } from 'src/app/Models/ListSettings';
 import { IRawNodeDeactivationInfo } from 'src/app/Models/RawDataTypes';
@@ -13,6 +13,8 @@ import { DeactivationUtils } from 'src/app/Utils/deactivationUtils';
     standalone: false
 })
 export class NodeDeactivationInfoComponent implements OnInit, OnChanges {
+  settingsService = inject(SettingsService);
+
 
   public readonly seedNodeQuorumMessage = "This node deactivation is waiting on a Seed Node Quorom safety check. If this deactivation is going for an irregular amount of time, consider referring to the following TSG to potentially continue progress for this deactivation."
 
@@ -25,8 +27,6 @@ export class NodeDeactivationInfoComponent implements OnInit, OnChanges {
   showSeedNodeTSG = false;
 
   settings: ListSettings;
-
-  constructor(public settingsService: SettingsService) { }
 
   ngOnInit(): void {
 

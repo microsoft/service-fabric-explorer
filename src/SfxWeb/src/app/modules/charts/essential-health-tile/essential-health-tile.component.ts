@@ -1,5 +1,4 @@
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component,
-        ContentChildren, Directive, Input, OnChanges, OnInit, QueryList, TemplateRef } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ContentChildren, Directive, Input, OnChanges, OnInit, QueryList, TemplateRef, inject } from '@angular/core';
 
 export interface IEssentialListItem {
   displayText?: string;
@@ -19,10 +18,9 @@ interface IEssentialListItemInternal extends IEssentialListItem {
     standalone: false
 })
 export class EssentialTemplateDirective {
-  @Input() id: string;
+  templateRef = inject<TemplateRef<any>>(TemplateRef);
 
-  constructor(public templateRef: TemplateRef<any>) {
-  }
+  @Input() id: string;
 
   public getId() {
     return this.id;
@@ -37,6 +35,8 @@ export class EssentialTemplateDirective {
     standalone: false
 })
 export class EssentialHealthTileComponent implements AfterViewInit, OnChanges {
+  private detectorRef = inject(ChangeDetectorRef);
+
 
   @Input() healthState;
   @Input() listItems: IEssentialListItem[] = [];
@@ -45,8 +45,6 @@ export class EssentialHealthTileComponent implements AfterViewInit, OnChanges {
 
   internalList: IEssentialListItemInternal[] = [];
   viewHasLoaded = false;
-
-  constructor(private detectorRef: ChangeDetectorRef) { }
 
   ngAfterViewInit(): void {
     this.viewHasLoaded = true;

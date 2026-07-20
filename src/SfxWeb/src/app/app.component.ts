@@ -1,4 +1,4 @@
-import { Component, OnInit, HostListener, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, HostListener, ViewChild, ElementRef, inject } from '@angular/core';
 import { TreeService } from './services/tree.service';
 import { RefreshService } from './services/refresh.service';
 import { AdalService } from './services/adal.service';
@@ -20,6 +20,17 @@ import { FocusService } from './services/focus.service';
     standalone: false
 })
 export class AppComponent implements OnInit{
+  treeService = inject(TreeService);
+  refreshService = inject(RefreshService);
+  adalService = inject(AdalService);
+  private storageService = inject(StorageService);
+  breakpointObserver = inject(BreakpointObserver);
+  dataService = inject(DataService);
+  liveAnnouncer = inject(LiveAnnouncer);
+  private snackBar = inject(MatSnackBar);
+  private settingsService = inject(SettingsService);
+  private focusService = inject(FocusService);
+
 
   @ViewChild('main') main: ElementRef;
 
@@ -38,18 +49,6 @@ export class AppComponent implements OnInit{
   shortenAzure = false;
   hideSFXText = false;
   shrinkAllHeaderItem = false;
-  constructor(public treeService: TreeService,
-              public refreshService: RefreshService,
-              public adalService: AdalService,
-              private storageService: StorageService,
-              public breakpointObserver: BreakpointObserver,
-              public dataService: DataService,
-              public liveAnnouncer: LiveAnnouncer,
-              private snackBar: MatSnackBar,
-              private settingsService: SettingsService,
-              private focusService: FocusService) {
-
-  }
 
   ngOnInit() {
     console.log(`SFX VERSION : ${environment.version}`);

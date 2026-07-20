@@ -1,4 +1,4 @@
-import { Component, Injector } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Observable, forkJoin, of } from 'rxjs';
 import { DataService } from 'src/app/services/data.service';
 import { SettingsService } from 'src/app/services/settings.service';
@@ -14,14 +14,12 @@ import { IEssentialListItem } from 'src/app/modules/charts/essential-health-tile
     standalone: false
 })
 export class EssentialsComponent extends DeployedAppBaseControllerDirective {
+  protected data: DataService = inject(DataService);
+  private settings = inject(SettingsService);
+
   listSettings: ListSettings;
 
   essentialItems: IEssentialListItem[] = [];
-
-  constructor(protected data: DataService, injector: Injector, private settings: SettingsService) {
-      super(data, injector);
-   }
-
 
    refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
     this.essentialItems = [

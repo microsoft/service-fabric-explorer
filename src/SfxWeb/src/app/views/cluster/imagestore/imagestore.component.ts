@@ -1,4 +1,4 @@
-import { Component, OnInit, Injector } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { DataService } from 'src/app/services/data.service';
 import { ImageStore } from 'src/app/Models/DataModels/ImageStore';
 import { SettingsService } from 'src/app/services/settings.service';
@@ -13,12 +13,11 @@ import { Observable } from 'rxjs';
     standalone: false
 })
 export class ImagestoreComponent extends BaseControllerDirective {
+  data = inject(DataService);
+  settings = inject(SettingsService);
+
 
   imageStore: ImageStore;
-
-  constructor(public data: DataService, injector: Injector, public settings: SettingsService) {
-    super(injector);
-   }
 
   setup() {
     this.imageStore = new ImageStore(this.data);

@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnInit, SecurityContext } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, SecurityContext, inject } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Chart, Options, chart } from 'highcharts';
 import { RepairTask } from 'src/app/Models/DataModels/repairTask';
@@ -13,6 +13,8 @@ import { Utils } from 'src/app/Utils/Utils';
     standalone: false
 })
 export class RepairJobChartComponent implements OnInit, OnChanges {
+  private sanitizer = inject(DomSanitizer);
+
 
   @Input() jobs: RepairTask[];
   @Input() sortOrder: ISortOrdering;
@@ -22,8 +24,6 @@ export class RepairJobChartComponent implements OnInit, OnChanges {
   };
 
   private chart: Chart;
-
-  constructor(private sanitizer: DomSanitizer) { }
 
   ngOnInit(): void {
     const options: Options = {

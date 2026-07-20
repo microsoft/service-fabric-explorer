@@ -1,4 +1,4 @@
-import { Component, OnInit, Injector } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { ListSettings, ListColumnSettingForLink, ListColumnSettingWithFilter, ListColumnSettingForBadge } from 'src/app/Models/ListSettings';
 import { DataService } from 'src/app/services/data.service';
 import { SettingsService } from 'src/app/services/settings.service';
@@ -18,16 +18,15 @@ import { IEssentialListItem } from 'src/app/modules/charts/essential-health-tile
     standalone: false
 })
 export class EssentialsComponent extends ServiceBaseControllerDirective {
+  protected data: DataService = inject(DataService);
+  private settings = inject(SettingsService);
+
 
   listSettings: ListSettings;
   partitionsDashboard: IDashboardViewModel;
   replicasDashboard: IDashboardViewModel;
 
   essentialItems: IEssentialListItem[] = [];
-
-  constructor(protected data: DataService, injector: Injector, private settings: SettingsService) {
-    super(data, injector);
-  }
 
   setup() {
     this.listSettings = this.settings.getNewOrExistingListSettings('partitions', ['id'], [

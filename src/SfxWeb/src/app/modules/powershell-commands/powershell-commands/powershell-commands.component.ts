@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component,  Input, ViewChild, OnChanges } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, ViewChild, OnChanges, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { NgbNav, NgbNavChangeEvent } from '@ng-bootstrap/ng-bootstrap';
 import { CommandSafetyLevel, PowershellCommand } from 'src/app/Models/PowershellCommand';
@@ -14,6 +14,9 @@ import { IModalBody, IModalData, IModalTitle } from 'src/app/ViewModels/Modal';
     standalone: false
 })
 export class PowershellCommandsComponent implements IModalData, OnChanges{
+  protected dialog = inject(MatDialog);
+  protected settings = inject(SettingsService);
+
 
   title: string = 'Acknowledge';
   
@@ -32,8 +35,6 @@ export class PowershellCommandsComponent implements IModalData, OnChanges{
   safeCommands: PowershellCommand[] = [];
   unsafeCommands: PowershellCommand[] = [];
   dangerousCommands: PowershellCommand[] = [];
-  
-  constructor(protected dialog: MatDialog, protected settings: SettingsService) {}
   
   ngOnChanges() {
     this.safeCommands = this.getCommandsBySafety(this.safetyLevelEnum.safe);

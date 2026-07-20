@@ -1,4 +1,4 @@
-import { Component, Inject, Injector, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { IsolatedAction } from 'src/app/Models/Action';
 import { DataService } from 'src/app/services/data.service';
@@ -10,9 +10,14 @@ import { DataService } from 'src/app/services/data.service';
     standalone: false
 })
 export class BackupinfoComponent {
+  dialogRef = inject<MatDialogRef<BackupinfoComponent>>(MatDialogRef);
+  data = inject<IsolatedAction>(MAT_DIALOG_DATA);
+  private dataService = inject(DataService);
+
   backupinfo: any;
-  constructor(public dialogRef: MatDialogRef<BackupinfoComponent>,
-              @Inject(MAT_DIALOG_DATA) public data: IsolatedAction, injector: Injector, private dataService: DataService) {
+  constructor() {
+    const data = this.data;
+
     this.backupinfo = data.data;
    }
 

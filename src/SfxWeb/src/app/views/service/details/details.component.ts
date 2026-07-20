@@ -1,4 +1,4 @@
-import { Component, OnInit, Injector } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Observable, forkJoin } from 'rxjs';
 import { DataService } from 'src/app/services/data.service';
@@ -12,10 +12,7 @@ import { Constants } from 'src/app/Common/Constants';
     standalone: false
 })
 export class DetailsComponent extends ServiceBaseControllerDirective {
-
-  constructor(protected data: DataService, injector: Injector) {
-    super(data, injector);
-  }
+  protected data: DataService = inject(DataService);
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
     if (this.data.clusterManifest.isBackupRestoreEnabled && this.service.isStatefulService

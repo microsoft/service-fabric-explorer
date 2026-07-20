@@ -1,4 +1,4 @@
-import { Component, OnInit, Injector, ElementRef } from '@angular/core';
+import { Component, OnInit, ElementRef, inject } from '@angular/core';
 import { DeployedCodePackageBaseControllerDirective } from '../DeployedCodePackageBase';
 import { ITab } from 'src/app/shared/component/navbar/navbar.component';
 import { DataService } from 'src/app/services/data.service';
@@ -16,6 +16,10 @@ import { IBaseView } from '../../BaseView';
     standalone: false
 })
 export class BaseComponent extends DeployedCodePackageBaseControllerDirective implements IBaseView {
+  protected data: DataService = inject(DataService);
+  private tree = inject(TreeService);
+  el = inject(ElementRef);
+
 
   containerLogTabName = 'container logs';
 
@@ -28,10 +32,6 @@ export class BaseComponent extends DeployedCodePackageBaseControllerDirective im
       route: './details'
     }
   ];
-
-  constructor(protected data: DataService, injector: Injector, private tree: TreeService, public el: ElementRef) {
-    super(data, injector);
-  }
 
   setup() {
     this.tree.selectTreeNode([

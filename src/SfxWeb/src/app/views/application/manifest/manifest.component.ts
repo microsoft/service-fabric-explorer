@@ -1,4 +1,4 @@
-import { Component, OnInit, Injector } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { ApplicationBaseControllerDirective } from '../applicationBase';
 import { DataService } from 'src/app/services/data.service';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
@@ -11,10 +11,7 @@ import { Observable } from 'rxjs';
     standalone: false
 })
 export class ManifestComponent extends ApplicationBaseControllerDirective {
-
-  constructor(protected data: DataService, injector: Injector) {
-    super(data, injector);
-  }
+  protected data: DataService = inject(DataService);
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
     return this.app.manifest.refresh(messageHandler);

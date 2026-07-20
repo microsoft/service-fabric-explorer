@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { IRequestsData } from 'src/app/Models/DataModels/networkDebugger';
 import { ListColumnSetting, ListSettings } from 'src/app/Models/ListSettings';
 import { SettingsService } from 'src/app/services/settings.service';
@@ -11,12 +11,12 @@ import { DetailBaseComponent } from 'src/app/ViewModels/detail-table-base.compon
     standalone: false
 })
 export class NestedTableComponent implements DetailBaseComponent, OnInit {
+  private settings = inject(SettingsService);
+
 
   item: IRequestsData;
   listSetting: ListColumnSetting;
   listSettings: ListSettings;
-
-  constructor(private settings: SettingsService) { }
 
   ngOnInit(): void {
     this.listSettings = this.settings.getNewOrExistingNetworkRequestListSettings();

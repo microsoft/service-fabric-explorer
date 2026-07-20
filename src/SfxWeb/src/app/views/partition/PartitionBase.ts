@@ -1,5 +1,5 @@
 import { DataService } from 'src/app/services/data.service';
-import { Injector, Directive } from '@angular/core';
+import { Directive, inject } from '@angular/core';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -10,16 +10,14 @@ import { Partition } from 'src/app/Models/DataModels/Partition';
 
 @Directive()
 export class PartitionBaseControllerDirective extends BaseControllerDirective {
+    protected data = inject(DataService);
+
     public appId: string;
     public serviceId: string;
     public partitionId: string;
     public appTypeName: string;
 
     partition: Partition;
-
-    constructor(protected data: DataService, injector: Injector) {
-      super(injector);
-    }
 
     common(messageHandler?: IResponseMessageHandler): Observable<any> {
         return this.data.getPartition(this.appId, this.serviceId, this.partitionId, true, messageHandler)

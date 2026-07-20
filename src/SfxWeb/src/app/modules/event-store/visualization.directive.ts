@@ -1,13 +1,13 @@
-import { Directive, ViewContainerRef } from '@angular/core';
+import { Directive, ViewContainerRef, inject } from '@angular/core';
 
 @Directive({
     selector: '[appVisualization]',
     standalone: false
 })
 export class VisualizationDirective {
+  viewContainerRef = inject(ViewContainerRef);
+
 
   public name: string;
-
-  constructor(public viewContainerRef: ViewContainerRef) { }
 
 }

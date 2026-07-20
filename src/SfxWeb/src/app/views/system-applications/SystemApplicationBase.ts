@@ -1,5 +1,5 @@
 import { DataService } from 'src/app/services/data.service';
-import { Injector, Directive } from '@angular/core';
+import { Directive, inject } from '@angular/core';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Observable } from 'rxjs';
 import { map, mergeMap } from 'rxjs/operators';
@@ -9,13 +9,11 @@ import { ListSettings } from 'src/app/Models/ListSettings';
 
 @Directive()
 export class ServiceApplicationsBaseControllerDirective extends BaseControllerDirective {
+    protected data = inject(DataService);
+
     systemApp: SystemApplication;
     listSettings: ListSettings;
     unhealthyEvaluationsListSettings: ListSettings;
-
-    constructor(protected data: DataService, injector: Injector) {
-      super(injector);
-    }
 
     common(messageHandler?: IResponseMessageHandler): Observable<any> {
         return this.data.getSystemApp(true, messageHandler).pipe(map(systemApp => {

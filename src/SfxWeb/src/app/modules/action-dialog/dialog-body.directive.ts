@@ -1,11 +1,10 @@
-import { Directive, ViewContainerRef } from '@angular/core';
+import { Directive, ViewContainerRef, inject } from '@angular/core';
 
 @Directive({
     selector: '[appDialogBody]',
     standalone: false
 })
-export class DialogBodyDirective {
+export class DialogBodyDirective {  viewContainerRef = inject(ViewContainerRef);
 
-  constructor(public viewContainerRef: ViewContainerRef) { }
 
 }

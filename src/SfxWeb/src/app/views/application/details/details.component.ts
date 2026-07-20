@@ -1,4 +1,4 @@
-import { Component, OnInit, Injector } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { DataService } from 'src/app/services/data.service';
 import { ApplicationBaseControllerDirective } from '../applicationBase';
 
@@ -9,9 +9,5 @@ import { ApplicationBaseControllerDirective } from '../applicationBase';
     standalone: false
 })
 export class DetailsComponent extends ApplicationBaseControllerDirective {
-
-  constructor(protected data: DataService, injector: Injector) {
-    super(data, injector);
-  }
-
+  protected data: DataService = inject(DataService);
 }

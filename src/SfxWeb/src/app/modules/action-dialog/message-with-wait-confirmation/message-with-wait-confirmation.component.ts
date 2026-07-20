@@ -1,4 +1,4 @@
-import { Component, Inject, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
 import { DialogBodyComponent } from '../DialogBodyComponent';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { IsolatedAction } from 'src/app/Models/Action';
@@ -11,6 +11,9 @@ import { Subscription, timer } from 'rxjs';
     standalone: false
 })
 export class MessageWithWaitConfirmationComponent implements OnInit, DialogBodyComponent {
+  dialogRef = inject<MatDialogRef<MessageWithWaitConfirmationComponent>>(MatDialogRef);
+  data = inject<IsolatedAction>(MAT_DIALOG_DATA);
+
   private readonly countdownTime = 15000;
   private readonly countdownStepInMS = 1000;
 
@@ -24,10 +27,6 @@ export class MessageWithWaitConfirmationComponent implements OnInit, DialogBodyC
   countDown = false;
   countDownLeft = this.countdownTime;
   timerSubscription: Subscription;
-
-  constructor(public dialogRef: MatDialogRef<MessageWithWaitConfirmationComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: IsolatedAction
-  ) { }
 
   ngOnInit(): void {
     this.dialogRef.beforeClosed().subscribe(() => {

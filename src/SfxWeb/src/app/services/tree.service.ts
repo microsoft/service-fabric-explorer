@@ -1,4 +1,4 @@
-import { ElementRef, Injectable } from '@angular/core';
+import { ElementRef, Injectable, inject } from '@angular/core';
 import { IdGenerator } from '../Utils/IdGenerator';
 import { ITreeNode } from '../ViewModels/TreeTypes';
 import { IClusterHealthChunkQueryDescription, IClusterHealthChunk, HealthStateFilterFlags } from '../Models/HealthChunkRawDataTypes';
@@ -18,6 +18,12 @@ import { FocusService } from './focus.service';
   providedIn: 'root'
 })
 export class TreeService {
+        private data = inject(DataService);
+        private routes = inject(RoutesService);
+        private settings = inject(SettingsService);
+        private refreshService = inject(RefreshService);
+        private focusService = inject(FocusService);
+
 
         public containerRef: ElementRef;
         public tree: TreeViewModel;
@@ -29,14 +35,6 @@ export class TreeService {
 
         public get cachedTreeNodeSelection(): string {
             return this.cachedTreeSelection ? this.cachedTreeSelection.path.slice(-1).pop() : null;
-        }
-
-        constructor(
-            private data: DataService,
-            private routes: RoutesService,
-            private settings: SettingsService,
-            private refreshService: RefreshService,
-            private focusService: FocusService) {
         }
 
         // AuthenticationController will call this function to initialize the tree view once authentication is cleared

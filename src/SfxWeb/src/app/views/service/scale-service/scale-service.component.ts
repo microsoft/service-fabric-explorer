@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject, Input, EventEmitter, OnDestroy, Output } from '@angular/core';
+import { Component, OnInit, Input, EventEmitter, OnDestroy, Output, inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { IsolatedAction } from 'src/app/Models/Action';
 import { Service } from 'src/app/Models/DataModels/Service';
@@ -15,6 +15,10 @@ import { catchError, defaultIfEmpty } from 'rxjs/operators';
     standalone: false
 })
 export class ScaleServiceComponent implements OnInit, OnDestroy, DialogBodyComponent {
+  dialogRef = inject<MatDialogRef<ScaleServiceComponent>>(MatDialogRef);
+  data = inject<IsolatedAction>(MAT_DIALOG_DATA);
+  private formBuilder = inject(UntypedFormBuilder);
+
 
   @Input() inputs: { service: Service };
   count: number;
@@ -26,10 +30,6 @@ export class ScaleServiceComponent implements OnInit, OnDestroy, DialogBodyCompo
 
   validityCheckerSubscription: Subscription;
   disableSubmitSubscription: Subscription = new Subscription();
-  
-  constructor(public dialogRef: MatDialogRef<ScaleServiceComponent>,
-              @Inject(MAT_DIALOG_DATA) public data: IsolatedAction,
-              private formBuilder: UntypedFormBuilder) { }
 
   ngOnInit() {
     this.updateServiceDescription = {

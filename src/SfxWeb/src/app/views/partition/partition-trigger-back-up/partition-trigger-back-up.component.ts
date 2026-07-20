@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { DataService } from 'src/app/services/data.service';
 import { Partition } from 'src/app/Models/DataModels/Partition';
@@ -12,13 +12,13 @@ import { IsolatedAction } from 'src/app/Models/Action';
     standalone: false
 })
 export class PartitionTriggerBackUpComponent implements OnInit {
+  private formBuilder = inject(UntypedFormBuilder);
+  private data = inject(DataService);
+  partition = inject<IsolatedAction>(MAT_DIALOG_DATA);
+  dialogRef = inject<MatDialogRef<PartitionTriggerBackUpComponent>>(MatDialogRef);
+
 
   form: UntypedFormGroup;
-
-  constructor(private formBuilder: UntypedFormBuilder,
-              private data: DataService,
-              @Inject(MAT_DIALOG_DATA) public partition: IsolatedAction,
-              public dialogRef: MatDialogRef<PartitionTriggerBackUpComponent>) { }
   ngOnInit() {
     // storage gets set by nested component
     this.form = this.formBuilder.group({

@@ -1,4 +1,4 @@
-import { Component, ElementRef, Injector } from '@angular/core';
+import { Component, ElementRef, inject } from '@angular/core';
 import { ITab } from 'src/app/shared/component/navbar/navbar.component';
 import { TreeService } from 'src/app/services/tree.service';
 import { IdGenerator } from 'src/app/Utils/IdGenerator';
@@ -14,6 +14,10 @@ import { IBaseView } from '../../BaseView';
     standalone: false
 })
 export class BaseComponent extends NodeBaseControllerDirective implements IBaseView {
+  protected data = inject(DataService);
+  private tree = inject(TreeService);
+  el = inject(ElementRef);
+
 
   tabs: ITab[] = [{
     name: 'essentials',
@@ -29,8 +33,8 @@ export class BaseComponent extends NodeBaseControllerDirective implements IBaseV
   }
   ];
 
-  constructor(protected data: DataService, injector: Injector, private tree: TreeService, public el: ElementRef) {
-    super(data, injector);
+  constructor() {
+    super();
 
     this.data.clusterManifest.ensureInitialized().subscribe(() => {
       if (this.data.clusterManifest.isEventStoreEnabled &&

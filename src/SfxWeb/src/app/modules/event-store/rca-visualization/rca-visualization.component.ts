@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { getSimultaneousEventsForEvent, IConcurrentEvents } from 'src/app/Models/eventstore/rcaEngine';
 import { RelatedEventsConfigs } from 'src/app/Models/eventstore/RelatedEventsConfigs';
 import { ListColumnSettingWithEmbeddedVis } from 'src/app/Models/ListSettings';
@@ -14,14 +14,14 @@ import { EventColumnUpdate, VisualizationComponent, VisUpdateData } from '../vis
     standalone: false
 })
 export class RcaVisualizationComponent implements VisualizationComponent {
+  changeDetector = inject(ChangeDetectorRef);
+
 
   @Input() listEventStoreData: IEventStoreData<any, any>[];
   @Output() updateColumn = new EventEmitter<EventColumnUpdate>();
 
   public simulEvents: Record<string, IConcurrentEvents> = {};
   public simulEventsList: IConcurrentEvents[] = [];
-
-  constructor(public changeDetector: ChangeDetectorRef) { }
 
   private getConcurrentEventsData() {
     let sourceEvents = [];

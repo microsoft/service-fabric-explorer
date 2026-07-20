@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MessageService } from 'src/app/services/message.service';
 
 @Component({
@@ -7,8 +7,7 @@ import { MessageService } from 'src/app/services/message.service';
     styleUrls: ['./toast-container.component.scss'],
     standalone: false
 })
-export class ToastContainerComponent {
+export class ToastContainerComponent {  toastService = inject(MessageService);
 
-  constructor(public toastService: MessageService) {}
 
 }

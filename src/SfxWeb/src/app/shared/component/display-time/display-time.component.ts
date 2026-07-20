@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnChanges, ChangeDetectorRef, ChangeDetectionStrategy, OnDestroy } from '@angular/core';
+import { Component, OnInit, Input, OnChanges, ChangeDetectorRef, ChangeDetectionStrategy, OnDestroy, inject } from '@angular/core';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { interval, Subscription } from 'rxjs';
 
@@ -10,6 +10,8 @@ import { interval, Subscription } from 'rxjs';
     standalone: false
 })
 export class DisplayTimeComponent implements OnInit, OnChanges, OnDestroy {
+  private cdr = inject(ChangeDetectorRef);
+
 
   @Input() time: string;
 
@@ -17,8 +19,6 @@ export class DisplayTimeComponent implements OnInit, OnChanges, OnDestroy {
   timeSince = '';
 
   private sub: Subscription = new Subscription();
-
-  constructor(private cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
     this.sub.add(interval(1000).subscribe(() => this.setTime()));

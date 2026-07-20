@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { ListColumnSetting } from 'src/app/Models/ListSettings';
 import { PartitionCacheService } from '../partition-cache.service';
 import { IPartitionData } from '../safety-checks/safety-checks.component';
@@ -10,11 +10,11 @@ import { IPartitionData } from '../safety-checks/safety-checks.component';
     standalone: false
 })
 export class LoadCellComponent {
+  cacheService = inject(PartitionCacheService);
+
 
   item: IPartitionData;
   listSetting: ListColumnSetting;
-
-  constructor(public cacheService: PartitionCacheService) { }
 
   load() {
     this.cacheService.getPartitionInfo(this.item.SafetyCheck.PartitionId, this.item);

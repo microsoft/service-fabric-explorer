@@ -1,4 +1,4 @@
-import { Component, Injector, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { DataService } from 'src/app/services/data.service';
 import { IEventStoreData, VisReference } from 'src/app/modules/event-store/event-store/event-store.component';
 import { IOptionConfig } from 'src/app/modules/event-store/option-picker/option-picker.component';
@@ -14,6 +14,8 @@ import { NamingViewerComponent } from 'src/app/modules/concurrent-events-visuali
     standalone: false
 })
 export class NamingViewerPageComponent implements OnInit {
+  protected data = inject(DataService);
+
 
   listEventStoreData: IEventStoreData<any, any> [] = [];
 
@@ -29,9 +31,6 @@ export class NamingViewerPageComponent implements OnInit {
     { name: "Timeline", component: TimelineComponent },
     { name: "Metrics", component: NamingViewerComponent}
   ]
-
-  constructor(protected data: DataService) {
-  }
   ngOnInit(): void {
     this.data.getService("System", "System/NamingService").pipe(mergeMap(app => {
       this.namingService = app;

@@ -1,4 +1,4 @@
-import { Component, OnInit, Injector } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { DataService } from 'src/app/services/data.service';
 import { SettingsService } from 'src/app/services/settings.service';
 import { ListSettings, ListColumnSettingForLink, ListColumnSetting, ListColumnSettingWithFilter, ListColumnSettingForBadge } from 'src/app/Models/ListSettings';
@@ -16,14 +16,13 @@ import { DashboardViewModel, IDashboardViewModel } from 'src/app/ViewModels/Dash
     standalone: false
 })
 export class AllNodesComponent extends BaseControllerDirective {
+  private data = inject(DataService);
+  private settings = inject(SettingsService);
+
 
   nodes: NodeCollection;
   listSettings: ListSettings;
   tiles: IDashboardViewModel[] = [];
-
-  constructor(private data: DataService, private settings: SettingsService, injector: Injector) {
-    super(injector);
-   }
 
   setup() {
     this.nodes = this.data.nodes;

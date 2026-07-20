@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectorRef, Component, OnInit } from "@angular/core";
+import { AfterViewInit, ChangeDetectorRef, Component, OnInit, inject } from "@angular/core";
 import { Router } from "@angular/router";
 import { PartitionEventList } from "src/app/Models/DataModels/collections/Collections";
 import { PartitionEvent } from "src/app/Models/eventstore/Events";
@@ -20,6 +20,10 @@ import { DataSet } from "vis-data";
     standalone: false
 })
 export class OrchestrationViewComponent implements OnInit, AfterViewInit {
+  private dataService = inject(DataService);
+  private router = inject(Router);
+  private cdr = inject(ChangeDetectorRef);
+
   readonly Balancing = "Balancing";
   readonly Placement = "Placement";
   readonly ConstraintCheck = "ConstraintCheck";
@@ -43,8 +47,6 @@ export class OrchestrationViewComponent implements OnInit, AfterViewInit {
   otherToggle = true;
 
   timeLineEventsData: ITimelineData;
-
-  constructor(private dataService: DataService, private router: Router, private cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
     if (!this.dataService.clusterManifest.isEventStoreEnabled) {

@@ -1,4 +1,4 @@
-import { Component, Injector } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { of } from 'rxjs';
 import { IEssentialListItem } from 'src/app/modules/charts/essential-health-tile/essential-health-tile.component';
 import { DataService } from 'src/app/services/data.service';
@@ -11,13 +11,11 @@ import { DeployedCodePackageBaseControllerDirective } from '../DeployedCodePacka
     standalone: false
 })
 export class EssentialsComponent extends DeployedCodePackageBaseControllerDirective {
+  protected data: DataService = inject(DataService);
+
 
   essentialItems: IEssentialListItem[] = [];
   essentialItems2: IEssentialListItem[] = [];
-
-  constructor(protected data: DataService, injector: Injector) {
-    super(data, injector);
-  }
 
   refresh() {
 

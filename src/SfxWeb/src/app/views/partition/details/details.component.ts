@@ -1,4 +1,4 @@
-import { Component, OnInit, Injector } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { forkJoin, Observable, of } from 'rxjs';
 import { DataService } from 'src/app/services/data.service';
 import { SettingsService } from 'src/app/services/settings.service';
@@ -12,10 +12,8 @@ import { PartitionBaseControllerDirective } from '../PartitionBase';
     standalone: false
 })
 export class DetailsComponent extends PartitionBaseControllerDirective {
-
-  constructor(protected data: DataService, injector: Injector, private settings: SettingsService) {
-    super(data, injector);
-  }
+  protected data: DataService = inject(DataService);
+  private settings = inject(SettingsService);
 
   setup() {
 

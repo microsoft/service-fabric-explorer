@@ -1,5 +1,5 @@
 import { DataService } from 'src/app/services/data.service';
-import { Injector, Directive } from '@angular/core';
+import { Directive, inject } from '@angular/core';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -10,6 +10,8 @@ import { DeployedCodePackage } from 'src/app/Models/DataModels/DeployedCodePacka
 
 @Directive()
 export class DeployedCodePackageBaseControllerDirective extends BaseControllerDirective {
+    protected data = inject(DataService);
+
     serviceId: string;
     activationId: string;
     appId: string;
@@ -17,10 +19,6 @@ export class DeployedCodePackageBaseControllerDirective extends BaseControllerDi
     codePackageName: string;
 
     deployedCodePackage: DeployedCodePackage;
-
-    constructor(protected data: DataService, injector: Injector) {
-      super(injector);
-    }
 
     common(messageHandler?: IResponseMessageHandler): Observable<any> {
         return this.data.getDeployedCodePackage(this.nodeName, this.appId, this.serviceId, this.activationId, this.codePackageName, true, messageHandler)

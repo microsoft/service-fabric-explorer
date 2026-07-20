@@ -1,4 +1,4 @@
-import { Component, ViewChild, ElementRef, Input, AfterViewInit, OnChanges, ChangeDetectionStrategy, Output, EventEmitter, OnDestroy, SecurityContext,  } from '@angular/core';
+import { Component, ViewChild, ElementRef, Input, AfterViewInit, OnChanges, ChangeDetectionStrategy, Output, EventEmitter, OnDestroy, SecurityContext, inject } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { pregeneratedColors } from 'src/app/Common/Constants';
@@ -15,6 +15,9 @@ import { DataSet } from 'vis-data';
     standalone: false
 })
 export class EventStoreTimelineComponent implements AfterViewInit, OnChanges, OnDestroy {
+  private sanitzer = inject(DomSanitizer);
+  private liveAnnouncer = inject(LiveAnnouncer);
+
 
   @Input() events: ITimelineData;
   @Input() additionalWhiteListClasses = [];
@@ -35,9 +38,6 @@ export class EventStoreTimelineComponent implements AfterViewInit, OnChanges, On
   private mostRecentEvent: DataItem;
 
   @ViewChild('visualization') container: ElementRef;
-
-
-  constructor(private sanitzer: DomSanitizer, private liveAnnouncer: LiveAnnouncer) { }
 
   ngOnChanges() {
     if (this.timeline) {

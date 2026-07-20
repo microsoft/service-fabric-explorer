@@ -1,4 +1,4 @@
-import { Component, Injector } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { PowershellCommand, PowershellCommandParameter, CommandParamTypes, CommandSafetyLevel, CommandFactory } from 'src/app/Models/PowershellCommand';
 import { DataService } from 'src/app/services/data.service';
 import { ApplicationTypeBaseControllerDirective } from '../ApplicationTypeBase';
@@ -10,12 +10,10 @@ import { ApplicationTypeBaseControllerDirective } from '../ApplicationTypeBase';
     standalone: false
 })
 export class CommandsComponent extends ApplicationTypeBaseControllerDirective {
+  protected data: DataService = inject(DataService);
+
 
   commands: PowershellCommand[] = [];
-
-  constructor(protected data: DataService, injector: Injector) {
-    super(data, injector);
-   }
 
   afterDataSet(): void {
     this.setUpCommands();
