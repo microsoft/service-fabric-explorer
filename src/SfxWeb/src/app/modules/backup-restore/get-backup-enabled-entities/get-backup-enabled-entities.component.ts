@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject, Input } from '@angular/core';
+import { Component, OnInit, Input, inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { IsolatedAction } from 'src/app/Models/Action';
 import { DataService } from 'src/app/services/data.service';
@@ -20,12 +20,13 @@ import { SettingsService } from 'src/app/services/settings.service';
 })
 
 export class GetBackupEnabledEntitiesComponent implements OnInit {
+  dialogRef = inject<MatDialogRef<GetBackupEnabledEntitiesComponent>>(MatDialogRef);
+  data = inject<IsolatedAction>(MAT_DIALOG_DATA);
+  dataService = inject(DataService);
+
   rawdata: IRawBackupEntity[];
   response = '';
   backupEnabledEntitiesInfoListSettings: ListSettings;
-  constructor(public dialogRef: MatDialogRef<GetBackupEnabledEntitiesComponent>,
-              @Inject(MAT_DIALOG_DATA) public data: IsolatedAction, public dataService: DataService) {
-     }
 
   ngOnInit(){
     this.rawdata = this.data.data.backupEntity;

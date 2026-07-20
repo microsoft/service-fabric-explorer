@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, ViewChildren, QueryList, ViewChild, ElementRef} from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, ViewChildren, QueryList, ViewChild, ElementRef, inject } from '@angular/core';
 import { ListSettings, ListColumnSetting, FilterValue } from 'src/app/Models/ListSettings';
 import { DataModelCollectionBase } from 'src/app/Models/DataModels/collections/CollectionBase';
 import fill from 'lodash/fill';
@@ -31,6 +31,9 @@ export interface ISortOrdering {
     standalone: false
 })
 export class DetailListComponent implements OnInit, OnDestroy {
+  private liveAnnouncer = inject(LiveAnnouncer);
+  private dialog = inject(MatDialog);
+
 
   @Input() listSettings: ListSettings;
   @Input() searchText = 'Search list';
@@ -51,9 +54,6 @@ export class DetailListComponent implements OnInit, OnDestroy {
   debounceHandler: Subject<any[]> = new Subject<any[]>();
   debouncerHandlerSubscription: Subscription;
   @ViewChildren(NgbDropdown) dropdowns: QueryList<NgbDropdown>;
-
-  constructor(private liveAnnouncer: LiveAnnouncer,
-              private dialog: MatDialog) { }
 
   @Input()
   set list(data: any[] | DataModelCollectionBase<any>) {

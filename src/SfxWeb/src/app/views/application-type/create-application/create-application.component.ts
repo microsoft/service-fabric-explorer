@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject, Input, EventEmitter, OnDestroy, Output } from '@angular/core';
+import { Component, OnInit, Input, EventEmitter, OnDestroy, Output, inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { IsolatedAction } from 'src/app/Models/Action';
 import { ApplicationType } from 'src/app/Models/DataModels/ApplicationType';
@@ -14,17 +14,16 @@ import { catchError, defaultIfEmpty } from 'rxjs/operators';
     standalone: false
 })
 export class CreateApplicationComponent implements OnInit, OnDestroy {
+  dialogRef = inject<MatDialogRef<CreateApplicationComponent>>(MatDialogRef);
+  data = inject<IsolatedAction>(MAT_DIALOG_DATA);
+  private formBuilder = inject(UntypedFormBuilder);
+
 
   @Input() inputs: { appType: ApplicationType };
   form: UntypedFormGroup;
   @Output() disableSubmit = new EventEmitter<boolean>();
   validityCheckerSubscription: Subscription;
   disableSubmitSubscription: Subscription = new Subscription();
-
-
-  constructor(public dialogRef: MatDialogRef<CreateApplicationComponent>,
-              @Inject(MAT_DIALOG_DATA) public data: IsolatedAction,
-              private formBuilder: UntypedFormBuilder) { }
 
   ngOnInit(): void {
     this.form = this.formBuilder.group({

@@ -1,4 +1,4 @@
-import { Component, Injector } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Observable } from 'rxjs';
 import { DataService } from 'src/app/services/data.service';
@@ -15,13 +15,12 @@ import { ApplicationBaseControllerDirective } from '../applicationBase';
     standalone: false
 })
 export class DeploymentsComponent extends ApplicationBaseControllerDirective {
+  protected data: DataService = inject(DataService);
+  private settings = inject(SettingsService);
+
 
   deployedApplicationsHealthStatesListSettings: ListSettings;
   deployedApplicationsHealthStates: DeployedApplicationHealthState[] = [];
-
-  constructor(protected data: DataService, injector: Injector, private settings: SettingsService) {
-    super(data, injector);
-  }
 
   setup() {
     this.deployedApplicationsHealthStatesListSettings = this.settings.getNewOrExistingListSettings('deployedApps', ['raw.NodeName'], [

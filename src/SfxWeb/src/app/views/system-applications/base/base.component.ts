@@ -1,4 +1,4 @@
-import { Component, OnInit, Injector, ElementRef } from '@angular/core';
+import { Component, OnInit, ElementRef, inject } from '@angular/core';
 import { ITab } from 'src/app/shared/component/navbar/navbar.component';
 import { ServiceApplicationsBaseControllerDirective } from '../SystemApplicationBase';
 import { IdGenerator } from 'src/app/Utils/IdGenerator';
@@ -13,14 +13,15 @@ import { IBaseView } from '../../BaseView';
     standalone: false
 })
 export class BaseComponent extends ServiceApplicationsBaseControllerDirective implements IBaseView{
+  protected data: DataService = inject(DataService);
+  private tree = inject(TreeService);
+  el = inject(ElementRef);
+
   tabs: ITab[] = [{
     name: 'essentials',
     route: './'
     }
   ];
-  constructor(protected data: DataService, injector: Injector, private tree: TreeService, public el: ElementRef) {
-    super(data, injector);
-  }
 
   setup() {
     this.tree.selectTreeNode([

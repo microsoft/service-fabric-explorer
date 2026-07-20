@@ -1,4 +1,4 @@
-import { OnDestroy, OnInit, Injector, Directive } from '@angular/core';
+import { OnDestroy, OnInit, Directive, inject } from '@angular/core';
 import { Observable, Subscription, interval, of } from 'rxjs';
 import { IResponseMessageHandler } from '../Common/ResponseMessageHandlers';
 import { ActivatedRoute, Router, ActivatedRouteSnapshot } from '@angular/router';
@@ -11,23 +11,17 @@ export abstract class BaseControllerDirective implements  OnInit, OnDestroy {
 
   subscriptions: Subscription = new Subscription();
 
-  activatedRoute: ActivatedRoute;
-  router: Router;
-  refreshService: RefreshService;
-  messageService: MessageService;
+  activatedRoute = inject(ActivatedRoute);
+  router = inject(Router);
+  refreshService = inject(RefreshService);
+  messageService = inject(MessageService);
 
   // Allow subclass to override the refresh interval instead of using the global refresh interval
   // Primarily used for cluster recovery insights page to give APIs sufficient time to return data during system services quorum loss
   fixedRefreshIntervalMs?: number;
 
-  constructor(public injector: Injector) {}
-
 
   ngOnInit(){
-        this.activatedRoute = this.injector.get<ActivatedRoute>(ActivatedRoute);
-        this.refreshService = this.injector.get<RefreshService>(RefreshService);
-        this.messageService = this.injector.get<MessageService>(MessageService);
-        this.router = this.injector.get<Router>(Router);
         this.subscriptions.add(this.activatedRoute.params.subscribe( () => {
             // get params
             this.getParams(this.activatedRoute.snapshot);

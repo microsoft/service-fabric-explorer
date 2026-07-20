@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { DataService } from 'src/app/services/data.service';
 import { ServiceType, CreateServiceDescription } from 'src/app/Models/DataModels/Service';
@@ -11,12 +11,13 @@ import { Application } from 'src/app/Models/DataModels/Application';
     standalone: false
 })
 export class CreateServiceComponent implements OnInit {
+  dialogRef = inject<MatDialogRef<CreateServiceComponent>>(MatDialogRef);
+  data = inject(MAT_DIALOG_DATA);
+  private dataService = inject(DataService);
+
 
   description: CreateServiceDescription;
   serviceType: ServiceType;
-  constructor(public dialogRef: MatDialogRef<CreateServiceComponent>,
-              @Inject(MAT_DIALOG_DATA) public data: any,
-              private dataService: DataService) { }
 
   ngOnInit() {
     this.serviceType = this.data.data;

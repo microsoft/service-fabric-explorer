@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { SystemApplication, Application } from '../Models/DataModels/Application';
 import { ApplicationTypeGroupCollection, ApplicationCollection, BackupPolicyCollection, ServiceTypeCollection,
          DeployedReplicaCollection, DeployedCodePackageCollection, DeployedServicePackageCollection, ReplicaOnPartitionCollection,
@@ -47,6 +47,15 @@ import { InfrastructureDocumentCollection } from '../Models/DataModels/collectio
   providedIn: 'root'
 })
 export class DataService {
+  routes = inject(RoutesService);
+  message = inject(MessageService);
+  telemetry = inject(TelemetryService);
+  warnings = inject(StatusWarningService);
+  storage = inject(StorageService);
+  restClient = inject(RestClientService);
+  dialog = inject(MatDialog);
+  standalone = inject(StandaloneIntegrationService);
+
 
   public systemApp: SystemApplication;
   public clusterManifest: ClusterManifest;
@@ -65,16 +74,9 @@ export class DataService {
   public readOnlyHeader: boolean =  null;
   public clusterNameMetadata: string = null;
 
-  constructor(
-    public routes: RoutesService,
-    public message: MessageService,
-    public telemetry: TelemetryService,
-    public warnings: StatusWarningService,
-    public storage: StorageService,
-    public restClient: RestClientService,
-    public dialog: MatDialog,
-    public standalone: StandaloneIntegrationService,
-  ) {
+  constructor() {
+    const standalone = this.standalone;
+
     this.clusterUpgradeProgress = new ClusterUpgradeProgress(this);
     this.clusterManifest = new ClusterManifest(this);
     this.clusterLoadInformation = new ClusterLoadInformation(this);

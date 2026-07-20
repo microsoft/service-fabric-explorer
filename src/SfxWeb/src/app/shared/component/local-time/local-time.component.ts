@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
 import { interval } from 'rxjs';
 
 @Component({
@@ -9,9 +9,9 @@ import { interval } from 'rxjs';
     standalone: false
 })
 export class LocalTimeComponent implements OnInit {
-  utcTime = '';
+  private cdr = inject(ChangeDetectorRef);
 
-  constructor(private cdr: ChangeDetectorRef) { }
+  utcTime = '';
 
   ngOnInit(): void {
     interval(1000).subscribe(() => this.setTime());

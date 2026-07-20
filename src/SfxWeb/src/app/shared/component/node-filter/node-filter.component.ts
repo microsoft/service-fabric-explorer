@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, inject } from '@angular/core';
 import { HealthStateConstants } from 'src/app/Common/Constants';
 import { Node } from 'src/app/Models/DataModels/Node';
 import { DataService } from 'src/app/services/data.service';
@@ -10,6 +10,8 @@ import { DataService } from 'src/app/services/data.service';
     standalone: false
 })
 export class NodeFilterComponent implements OnInit, OnChanges {
+  data = inject(DataService);
+
 
   @Input() showGroupByNodeType = true;
 
@@ -22,8 +24,6 @@ export class NodeFilterComponent implements OnInit, OnChanges {
   filter = '';
   healthFilter: Record<string, boolean> = {};
   nodeTypeFilter: Record<string, boolean> = {};
-
-  constructor(public data: DataService) { }
 
   ngOnInit(): void {
     this.healthFilter[HealthStateConstants.OK] = true;

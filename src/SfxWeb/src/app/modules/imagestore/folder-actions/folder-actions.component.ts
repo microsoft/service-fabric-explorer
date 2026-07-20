@@ -1,4 +1,4 @@
-import { Component, OnInit, OnChanges } from '@angular/core';
+import { Component, OnInit, OnChanges, inject } from '@angular/core';
 import { DetailBaseComponent } from 'src/app/ViewModels/detail-table-base.component';
 import { ImageStoreItem, ImageStore } from 'src/app/Models/DataModels/ImageStore';
 import { ListColumnSetting } from 'src/app/Models/ListSettings';
@@ -12,12 +12,12 @@ import { DataService } from 'src/app/services/data.service';
     standalone: false
 })
 export class FolderActionsComponent  implements DetailBaseComponent {
+  private data = inject(DataService);
+
 
 
   item: ImageStoreItem;
   listSetting: ListColumnSettingWithImageStoreActions;
-
-  constructor(private data: DataService) { }
 
   deleteItem() {
     new ActionWithConfirmationDialog(

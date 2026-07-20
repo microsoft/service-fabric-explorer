@@ -1,4 +1,4 @@
-import { Component, Injector } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { DeployedServicePackageBaseControllerDirective } from '../DeployedServicePackage';
 import { DataService } from 'src/app/services/data.service';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
@@ -13,11 +13,9 @@ import { ServiceManifest } from 'src/app/Models/DataModels/Service';
     standalone: false
 })
 export class ManifestComponent extends DeployedServicePackageBaseControllerDirective {
-  serviceManifest: ServiceManifest;
+  protected data: DataService = inject(DataService);
 
-  constructor(protected data: DataService, injector: Injector) {
-    super(data, injector);
-  }
+  serviceManifest: ServiceManifest;
 
   setup() {}
 

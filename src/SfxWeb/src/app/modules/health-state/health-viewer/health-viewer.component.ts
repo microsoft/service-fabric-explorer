@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
 import { HealthEvaluation } from 'src/app/Models/DataModels/Shared';
 import { ListSettings } from 'src/app/Models/ListSettings';
 import { IRawUnhealthyEvaluation } from 'src/app/Models/RawDataTypes';
@@ -11,14 +11,14 @@ import { SettingsService } from 'src/app/services/settings.service';
     standalone: false
 })
 export class HealthViewerComponent implements OnInit {
+  private settings = inject(SettingsService);
+
 
   @Input() unhealthyEvaluations: IRawUnhealthyEvaluation[];
   @Input() healthyEvaluations: HealthEvaluation[];
 
   unhealthyEvaluationsListSettings: ListSettings;
   healthEventsListSettings: ListSettings;
-
-  constructor(private settings: SettingsService) { }
 
   ngOnInit(): void {
     this.unhealthyEvaluationsListSettings = this.settings.getNewOrExistingUnhealthyEvaluationsListSettings();

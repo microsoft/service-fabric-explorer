@@ -1,4 +1,4 @@
-import { Directive, ElementRef, Input, OnChanges } from '@angular/core';
+import { Directive, ElementRef, Input, OnChanges, inject } from '@angular/core';
 import { FocusService } from 'src/app/services/focus.service';
 import { TreeService } from 'src/app/services/tree.service';
 
@@ -7,10 +7,13 @@ import { TreeService } from 'src/app/services/tree.service';
     standalone: false
 })
 export class SeletedNodeDirective implements OnChanges {
+  private elementRef = inject(ElementRef);
+  private treeService = inject(TreeService);
+  private focusService = inject(FocusService);
+
 
   @Input() selected: boolean;
   @Input() focused: boolean;
-  constructor(private elementRef: ElementRef, private treeService: TreeService, private focusService: FocusService) { }
 
   ngOnChanges() {
     if (this.selected) {

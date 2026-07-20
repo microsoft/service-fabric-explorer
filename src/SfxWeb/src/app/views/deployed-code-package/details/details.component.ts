@@ -1,4 +1,4 @@
-import { Component, Injector } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { DataService } from 'src/app/services/data.service';
 import { DeployedCodePackageBaseControllerDirective } from '../DeployedCodePackageBase';
 
@@ -9,8 +9,5 @@ import { DeployedCodePackageBaseControllerDirective } from '../DeployedCodePacka
     standalone: false
 })
 export class DetailsComponent extends DeployedCodePackageBaseControllerDirective {
-
-  constructor(protected data: DataService, injector: Injector) {
-    super(data, injector);
-  }
+  protected data: DataService = inject(DataService);
 }

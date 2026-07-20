@@ -1,5 +1,5 @@
 import { DataService } from 'src/app/services/data.service';
-import { Injector, Directive } from '@angular/core';
+import { Directive, inject } from '@angular/core';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -11,6 +11,8 @@ import { Constants } from 'src/app/Common/Constants';
 
 @Directive()
 export class ReplicaBaseControllerDirective extends BaseControllerDirective {
+    protected data = inject(DataService);
+
     public appId: string;
     public serviceId: string;
     public partitionId: string;
@@ -19,10 +21,6 @@ export class ReplicaBaseControllerDirective extends BaseControllerDirective {
     public isSystem: boolean;
 
     replica: ReplicaOnPartition;
-
-    constructor(protected data: DataService, injector: Injector) {
-      super(injector);
-    }
 
     common(messageHandler?: IResponseMessageHandler): Observable<any> {
         this.isSystem = this.appTypeName === Constants.SystemAppTypeName;

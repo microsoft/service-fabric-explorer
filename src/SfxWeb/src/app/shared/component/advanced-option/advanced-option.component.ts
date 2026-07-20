@@ -1,4 +1,4 @@
-import { Component, ElementRef, HostListener, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, QueryList, ViewChild, ViewChildren, inject } from '@angular/core';
 import { StorageService } from 'src/app/services/storage.service';
 import { Constants, TelemetryEventNames } from 'src/app/Common/Constants';
 import { MessageService } from 'src/app/services/message.service';
@@ -17,19 +17,19 @@ import { environment } from 'src/environments/environment';
     standalone: false
 })
 export class AdvancedOptionComponent implements OnInit {
+  storage = inject(StorageService);
+  messageService = inject(MessageService);
+  settingsService = inject(SettingsService);
+  private liveAnnouncer = inject(LiveAnnouncer);
+  platform = inject(Platform);
+  telemetryService = inject(TelemetryService);
+  private elRef = inject(ElementRef);
+
   public showBeta = environment.showBeta;
 
   status = false;
   @ViewChild(NgbDropdown, {static: true}) dropdown: NgbDropdown;
   @ViewChildren(NgbTooltip) tooltips: QueryList<NgbTooltip>;
-
-  constructor(public storage: StorageService,
-              public messageService: MessageService,
-              public settingsService: SettingsService,
-              private liveAnnouncer: LiveAnnouncer,
-              public platform: Platform,
-              public telemetryService: TelemetryService,
-              private elRef: ElementRef) { }
 
   ngOnInit() {
     this.status = this.storage.getValueBoolean(Constants.AdvancedModeKey, false);

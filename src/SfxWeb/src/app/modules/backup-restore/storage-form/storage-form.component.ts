@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, inject } from '@angular/core';
 import { UntypedFormGroup, UntypedFormBuilder, Validators, FormControl, AbstractControl } from '@angular/forms';
 
 @Component({
@@ -8,13 +8,14 @@ import { UntypedFormGroup, UntypedFormBuilder, Validators, FormControl, Abstract
     standalone: false
 })
 export class StorageFormComponent implements OnInit {
+  private formBuilder = inject(UntypedFormBuilder);
+
 
   @Input() form: UntypedFormGroup;
   @Input() data: any;
   @Input() required = true;
 
   localForm: UntypedFormGroup;
-  constructor(private formBuilder: UntypedFormBuilder) { }
 
   ngOnInit() {
     this.localForm = this.formBuilder.group({

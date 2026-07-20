@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { MessageService, MessageSeverity } from './message.service';
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { HealthStateFilterFlags, IClusterHealthChunkQueryDescription } from '../Models/HealthChunkRawDataTypes';
@@ -27,10 +27,9 @@ import { IRequest, NetworkDebugger } from '../Models/DataModels/networkDebugger'
   providedIn: 'root'
 })
 export class RestClientService {
+  private httpClient = inject(HttpClient);
+  private message = inject(MessageService);
 
-  constructor(private httpClient: HttpClient, private message: MessageService) {
-
-  }
 
   private static defaultApiVersion = '3.0';
   private static apiVersion40 = '4.0';

@@ -1,9 +1,10 @@
-import { Injectable, ErrorHandler } from '@angular/core';
+import { Injectable, ErrorHandler, inject } from '@angular/core';
 import { TelemetryService } from './services/telemetry.service';
 
 @Injectable()
 export class AppInsightsErrorHandler implements ErrorHandler {
-constructor(private telemetry: TelemetryService) {}
+private telemetry = inject(TelemetryService);
+
 
     handleError(error) {
         console.error(error);

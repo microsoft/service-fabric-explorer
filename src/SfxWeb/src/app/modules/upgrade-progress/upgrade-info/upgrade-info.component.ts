@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, inject } from '@angular/core';
 import { ApplicationUpgradeProgress } from 'src/app/Models/DataModels/Application';
 import { ClusterUpgradeProgress } from 'src/app/Models/DataModels/Cluster';
 import { ListSettings } from 'src/app/Models/ListSettings';
@@ -14,6 +14,8 @@ import { TimeUtils } from 'src/app/Utils/TimeUtils';
     standalone: false
 })
 export class UpgradeInfoComponent implements OnChanges, OnInit {
+  private settings = inject(SettingsService);
+
 
   @Input() upgradeProgress: ClusterUpgradeProgress | ApplicationUpgradeProgress;
 
@@ -37,8 +39,6 @@ export class UpgradeInfoComponent implements OnChanges, OnInit {
 
   failed: boolean = false;
   manual: boolean = false;
-
-  constructor(private settings: SettingsService) { }
 
   ngOnInit() {
     this.upgradeProgressUnhealthyEvaluationsListSettings = this.settings.getNewOrExistingUnhealthyEvaluationsListSettings('clusterUpgradeProgressUnhealthyEvaluations');

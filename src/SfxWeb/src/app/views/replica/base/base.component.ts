@@ -1,4 +1,4 @@
-import { Component, ElementRef, Injector } from '@angular/core';
+import { Component, ElementRef, inject } from '@angular/core';
 import { ITab } from 'src/app/shared/component/navbar/navbar.component';
 import { ReplicaBaseControllerDirective } from '../ReplicaBase';
 import { DataService } from 'src/app/services/data.service';
@@ -14,6 +14,10 @@ import { IBaseView } from '../../BaseView';
     standalone: false
 })
 export class BaseComponent extends ReplicaBaseControllerDirective implements IBaseView {
+  protected dataService: DataService = inject(DataService);
+  private tree = inject(TreeService);
+  el = inject(ElementRef);
+
 
   tabs: ITab[] = [{
     name: 'essentials',
@@ -28,10 +32,6 @@ export class BaseComponent extends ReplicaBaseControllerDirective implements IBa
       route: './commands'
     }
   ];
-
-  constructor(protected dataService: DataService, injector: Injector, private tree: TreeService, public el: ElementRef) {
-    super(dataService, injector);
-  }
 
   setup() {
     this.dataService.clusterManifest.ensureInitialized().subscribe(() => {

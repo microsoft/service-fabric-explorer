@@ -1,5 +1,4 @@
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component,
-        ContentChildren, Directive, Input, OnChanges, OnInit, QueryList, TemplateRef } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ContentChildren, Directive, Input, OnChanges, OnInit, QueryList, TemplateRef, inject } from '@angular/core';
         
 export interface IResourceItem {
   title: string;
@@ -20,10 +19,9 @@ interface IResourceItemInternal extends IResourceItem {
     standalone: false
 })
 export class ResourcesTemplateDirective {
-  @Input() id: string;
+  templateRef = inject<TemplateRef<any>>(TemplateRef);
 
-  constructor(public templateRef: TemplateRef<any>) {
-  }
+  @Input() id: string;
 
   public getId() {
     return this.id;
@@ -37,6 +35,8 @@ export class ResourcesTemplateDirective {
     standalone: false
 })
 export class ResourcesTileComponent implements AfterViewInit, OnChanges {
+  private detectorRef = inject(ChangeDetectorRef);
+
   
   @Input() listItems: IResourceItem[] = [];
   @Input() templateRefs: Record<string, TemplateRef<any>>;
@@ -44,8 +44,6 @@ export class ResourcesTileComponent implements AfterViewInit, OnChanges {
 
   internalList: IResourceItemInternal[] = [];
   viewHasLoaded = false;
-
-  constructor(private detectorRef: ChangeDetectorRef) { }
 
   ngAfterViewInit(): void {
     this.viewHasLoaded = true;

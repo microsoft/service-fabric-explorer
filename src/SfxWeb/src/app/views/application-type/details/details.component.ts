@@ -1,4 +1,4 @@
-import { Component, Injector } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { DataService } from 'src/app/services/data.service';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { ApplicationTypeGroup } from 'src/app/Models/DataModels/ApplicationType';
@@ -13,12 +13,10 @@ import { ApplicationTypeBaseControllerDirective } from '../ApplicationTypeBase';
     standalone: false
 })
 export class DetailsComponent extends ApplicationTypeBaseControllerDirective {
+  protected data: DataService = inject(DataService);
+
   appTypeName: string;
   appTypeGroup: ApplicationTypeGroup;
-
-  constructor(protected data: DataService, injector: Injector) {
-    super(data, injector);
-  }
 
   setup() { }
 

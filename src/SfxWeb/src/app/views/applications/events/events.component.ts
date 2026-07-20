@@ -1,4 +1,4 @@
-import { Component, Injector } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { DataService } from 'src/app/services/data.service';
 import { IEventStoreData } from 'src/app/modules/event-store/event-store/event-store.component';
 import { IOptionConfig } from 'src/app/modules/event-store/option-picker/option-picker.component';
@@ -14,10 +14,6 @@ export class EventsComponent extends ApplicationsBaseControllerDirective {
 
   listEventStoreData: IEventStoreData<any, any> [];
   optionsConfig: IOptionConfig;
-
-  constructor(data: DataService, injector: Injector) {
-    super(data, injector);
-   }
 
    setup() {
     this.listEventStoreData = [

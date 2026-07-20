@@ -1,5 +1,5 @@
 import { LiveAnnouncer } from '@angular/cdk/a11y';
-import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, Input, inject } from '@angular/core';
 
 @Component({
     selector: 'app-refresh-rate',
@@ -8,6 +8,8 @@ import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
     standalone: false
 })
 export class RefreshRateComponent {
+  private liveAnnouncer = inject(LiveAnnouncer);
+
   @Input() refresh = false;
   @Input()
   set value( val: number) {
@@ -30,8 +32,6 @@ export class RefreshRateComponent {
     4: '10',
     5: '5',
   };
-
-  constructor(private liveAnnouncer: LiveAnnouncer) { }
 
   changed() {
     this.change(this.refreshRate);

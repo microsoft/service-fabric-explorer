@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, inject } from '@angular/core';
 import { InfrastructureJob } from 'src/app/Models/DataModels/infrastructureJob';
 import { RepairTask } from 'src/app/Models/DataModels/repairTask';
 import { ListColumnSetting, ListColumnSettingWithShorten, ListSettings } from 'src/app/Models/ListSettings';
@@ -14,6 +14,9 @@ import { IEssentialListItem } from '../../charts/essential-health-tile/essential
     standalone: false
 })
 export class InfrastructureJobTileComponent implements OnChanges, OnInit {
+  settings = inject(SettingsService);
+  dataService = inject(DataService);
+
 
   @Input() job: InfrastructureJob;
 
@@ -26,9 +29,6 @@ export class InfrastructureJobTileComponent implements OnChanges, OnInit {
   repairTask: RepairTask[];
   completed: RepairTask[];
   allCollapsed: boolean = true;
-
-  constructor(public settings: SettingsService,
-              public dataService: DataService) { }
 
   ngOnInit()  {
     this.impactingNodes = this.settings.getNewOrExistingListSettings('impactingNodes', [], [

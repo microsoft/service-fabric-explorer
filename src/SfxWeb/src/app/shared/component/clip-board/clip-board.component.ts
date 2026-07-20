@@ -1,6 +1,6 @@
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { Clipboard } from '@angular/cdk/clipboard';
-import { Component, Input, ChangeDetectionStrategy, ViewChild, ElementRef, OnChanges } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy, ViewChild, ElementRef, OnChanges, inject } from '@angular/core';
 import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
@@ -11,6 +11,9 @@ import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
     standalone: false
 })
 export class ClipBoardComponent implements OnChanges {
+  private liveAnnouncer = inject(LiveAnnouncer);
+  private clipboard = inject(Clipboard);
+
 
   @Input() text = '';
   @Input() tooltipText = '';
@@ -19,9 +22,6 @@ export class ClipBoardComponent implements OnChanges {
   @ViewChild('ref') ref: ElementRef;
   @ViewChild(NgbTooltip) tooltip: NgbTooltip; // First
   public ariaLabel = '';
-
-  constructor(private liveAnnouncer: LiveAnnouncer,
-              private clipboard: Clipboard) { }
               
   copy() {
     

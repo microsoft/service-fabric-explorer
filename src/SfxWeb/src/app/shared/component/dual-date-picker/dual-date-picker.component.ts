@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnChanges, SimpleChanges, SimpleChange, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, OnChanges, SimpleChanges, SimpleChange, Output, EventEmitter, inject } from '@angular/core';
 import { NgbCalendar, NgbDate, NgbDateParserFormatter, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
@@ -8,6 +8,9 @@ import { NgbCalendar, NgbDate, NgbDateParserFormatter, NgbDateStruct } from '@ng
     standalone: false
 })
 export class DualDatePickerComponent implements OnInit, OnChanges {
+  calendar = inject(NgbCalendar);
+  formatter = inject(NgbDateParserFormatter);
+
 
   @Input() minDate: Date;
   @Input() maxDate: Date;
@@ -26,10 +29,6 @@ export class DualDatePickerComponent implements OnInit, OnChanges {
   toDate: NgbDate;
   currentStartTime: string;
   currentEndTime: string;
-
-  constructor(public calendar: NgbCalendar, public formatter: NgbDateParserFormatter) {
-
-  }
 
   ngOnChanges(simple: SimpleChanges) {
     this.toDate = this.dateToNgbDate(this.currentEndDate);

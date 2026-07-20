@@ -1,4 +1,4 @@
-import { Component, Injector } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Observable } from 'rxjs';
 import { DataService } from 'src/app/services/data.service';
@@ -12,12 +12,9 @@ import { map } from 'rxjs/operators';
     standalone: false
 })
 export class ContainerLogsComponent extends DeployedCodePackageBaseControllerDirective {
+  protected data: DataService = inject(DataService);
+
   containerLogs: string;
-
-  constructor(protected data: DataService, injector: Injector) {
-    super(data, injector);
-  }
-
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
     return this.deployedCodePackage.containerLogs.refresh(messageHandler).pipe(map(containerLogs => {

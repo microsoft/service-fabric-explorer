@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { DataService } from 'src/app/services/data.service';
 import { IEventStoreData } from 'src/app/modules/event-store/event-store/event-store.component';
 import { SettingsService } from 'src/app/services/settings.service';
@@ -11,11 +11,12 @@ import { IOptionConfig } from 'src/app/modules/event-store/option-picker/option-
     standalone: false
 })
 export class EventsComponent implements OnInit {
+  data = inject(DataService);
+  settings = inject(SettingsService);
+
 
   listEventStoreData: IEventStoreData<any, any> [];
   optionsConfig: IOptionConfig;
-
-  constructor(public data: DataService, public settings: SettingsService) { }
 
   ngOnInit() {
     this.listEventStoreData = [

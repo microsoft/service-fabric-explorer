@@ -1,4 +1,4 @@
-import { Component, ViewChild, ElementRef, Output, EventEmitter, DoCheck, Input, AfterViewInit } from '@angular/core';
+import { Component, ViewChild, ElementRef, Output, EventEmitter, DoCheck, Input, AfterViewInit, inject } from '@angular/core';
 import { TreeService } from 'src/app/services/tree.service';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { RestClientService } from 'src/app/services/rest-client.service';
@@ -14,6 +14,11 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
     standalone: false
 })
 export class TreeViewComponent implements DoCheck, AfterViewInit {
+  treeService = inject(TreeService);
+  private liveAnnouncer = inject(LiveAnnouncer);
+  restClientService = inject(RestClientService);
+  private telemService = inject(TelemetryService);
+
 
   @Input() smallWindowSize = false;
   @Output() treeResize = new EventEmitter<number>();
@@ -24,11 +29,6 @@ export class TreeViewComponent implements DoCheck, AfterViewInit {
   @ViewChild('tree') tree: ElementRef;
   
   focusSubject = new Subject<boolean>();
-  
-  constructor(public treeService: TreeService,
-              private liveAnnouncer: LiveAnnouncer,
-              public restClientService: RestClientService,
-              private telemService: TelemetryService) {}
               
   ngAfterViewInit() {
     this.treeService.containerRef = this.treeContainer;

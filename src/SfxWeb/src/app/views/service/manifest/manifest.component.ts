@@ -1,4 +1,4 @@
-import { Component, OnInit, Injector } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { ServiceBaseControllerDirective } from '../ServiceBase';
 import { DataService } from 'src/app/services/data.service';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
@@ -12,11 +12,9 @@ import { map, mergeMap } from 'rxjs/operators';
     standalone: false
 })
 export class ManifestComponent extends ServiceBaseControllerDirective {
-  serviceManifest: string;
+  protected data: DataService = inject(DataService);
 
-  constructor(protected data: DataService, injector: Injector) {
-    super(data, injector);
-  }
+  serviceManifest: string;
 
   setup() {}
 

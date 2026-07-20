@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { IRawBackupConfigurationInfo, IRawBackupEntity, IRawBackupPolicy } from 'src/app/Models/RawDataTypes';
 import { Observable } from 'rxjs';
@@ -21,12 +21,13 @@ export interface IViewBackUpData {
     standalone: false
 })
 export class ViewBackupComponent implements OnInit {
+  dialogRef = inject<MatDialogRef<ViewBackupComponent>>(MatDialogRef);
+  data = inject<IsolatedAction>(MAT_DIALOG_DATA);
+  dataService = inject(DataService);
+
 
   backUpData: IViewBackUpData;
   action: IsolatedAction;
-  constructor(public dialogRef: MatDialogRef<ViewBackupComponent>,
-              @Inject(MAT_DIALOG_DATA) public data: IsolatedAction, public dataService: DataService) {
-  }
 
   ngOnInit() {
     this.backUpData = this.data.data;

@@ -1,4 +1,4 @@
-import { Component, OnInit, Injector } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 import { DataService } from 'src/app/services/data.service';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
@@ -29,6 +29,11 @@ interface ITileListItem {
     standalone: false
 })
 export class RepairTasksComponent extends BaseControllerDirective {
+  private data = inject(DataService);
+  private settings = inject(SettingsService);
+  private telemService = inject(TelemetryService);
+  private timelineGeneratorFactoryService = inject(TimelineGeneratorFactoryService);
+
   public repairTaskCollection: RepairTaskCollection;
 
   longestRunning: ITileListItem[] = [];
@@ -48,10 +53,6 @@ export class RepairTasksComponent extends BaseControllerDirective {
 
   // will be initially set by detail list component.
   ordering: ISortOrdering;
-
-  constructor(private data: DataService, injector: Injector, private settings: SettingsService, private telemService: TelemetryService, private timelineGeneratorFactoryService: TimelineGeneratorFactoryService) {
-    super(injector);
-  }
 
   setup() {
     this.repairTaskCollection = this.data.repairCollection;

@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges } from '@angular/core';
+import { Component, Input, OnChanges, inject } from '@angular/core';
 import { ApplicationType } from 'src/app/Models/DataModels/ApplicationType';
 import { ListSettings } from 'src/app/Models/ListSettings';
 import { DataService } from 'src/app/services/data.service';
@@ -11,14 +11,15 @@ import { SettingsService } from 'src/app/services/settings.service';
     standalone: false
 })
 export class ApptypeViewerComponent implements OnChanges {
+  dataService = inject(DataService);
+  private settings = inject(SettingsService);
+
 
   @Input() activeAppTypes: ApplicationType[];
   @Input() inactiveAppTypes: ApplicationType[];
   allAppTypes: ApplicationType[];
   allAppTypesListSettings: ListSettings;
   appTypesListSettings: ListSettings;
-
-  constructor(public dataService: DataService, private settings: SettingsService) {}
 
   ngOnChanges(): void { 
     this.allAppTypesListSettings = this.settings.getNewOrExistingAppTypeListSettings(true);

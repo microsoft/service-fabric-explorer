@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, inject } from '@angular/core';
 import { of } from 'rxjs';
 import { map, mergeMap } from 'rxjs/operators';
 import { NodeStatusConstants } from 'src/app/Common/Constants';
@@ -17,6 +17,8 @@ import { IEssentialListItem } from '../../charts/essential-health-tile/essential
     standalone: false
 })
 export class SectionOverviewComponent implements OnChanges {
+  dataService = inject(DataService);
+
   @Input() nodes: Node[];
   @Input() repairJobs: RepairTaskCollection;
   @Input() title = '';
@@ -28,8 +30,6 @@ export class SectionOverviewComponent implements OnChanges {
   dataPoints: IDashboardDataPointViewModel[] = [];
   public constants = NodeStatusConstants;
   repairInfo;
-
-  constructor(public dataService: DataService) { }
 
   ngOnChanges(): void {
     const nodeInfo = new NodeStatusDetails('');

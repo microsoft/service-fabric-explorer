@@ -1,4 +1,4 @@
-import { Component, Injector } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
@@ -13,12 +13,10 @@ import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
     standalone: false
 })
 export class CommandsComponent extends BaseControllerDirective {
+  protected data = inject(DataService);
+
   commands: PowershellCommand[] = [];
   hasRepairTask: boolean = true;
-
-  constructor(protected data: DataService, injector: Injector) {
-    super(injector);
-  }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
     return this.data.getClusterManifest().pipe(map((manifest) => {

@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
 import { DataService } from 'src/app/services/data.service';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { UntypedFormGroup, UntypedFormBuilder, Validators, UntypedFormArray, AbstractControl } from '@angular/forms';
@@ -12,6 +12,12 @@ import { IsolatedAction } from 'src/app/Models/Action';
     standalone: false
 })
 export class ActionCreateBackupPolicyComponent implements OnInit {
+  dialogRef = inject<MatDialogRef<ActionCreateBackupPolicyComponent>>(MatDialogRef);
+  data = inject<IsolatedAction>(MAT_DIALOG_DATA);
+  private dataService = inject(DataService);
+  private formBuilder = inject(UntypedFormBuilder);
+  private cdr = inject(ChangeDetectorRef);
+
 
   form: UntypedFormGroup;
 
@@ -19,13 +25,6 @@ export class ActionCreateBackupPolicyComponent implements OnInit {
   public weekDay: string[]  = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
   isUpdateOperation = false;
-
-  constructor(public dialogRef: MatDialogRef<ActionCreateBackupPolicyComponent>,
-              @Inject(MAT_DIALOG_DATA) public data: IsolatedAction,
-              private dataService: DataService,
-              private formBuilder: UntypedFormBuilder,
-              private cdr: ChangeDetectorRef) {
-  }
 
   public saveBackupPolicy() {
     const data = this.form.getRawValue();

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { StatusWarningService, IStatusWarning } from 'src/app/services/status-warning.service';
 import { of } from 'rxjs';
 import { ActionWithConfirmationDialog } from 'src/app/Models/Action';
@@ -12,10 +12,11 @@ import { StatusWarningLevel } from 'src/app/Common/Constants';
     standalone: false
 })
 export class StatusWarningsComponent{
+  alerts = inject(StatusWarningService);
+  data = inject(DataService);
+
 
   displayAll = false;
-
-  constructor(public alerts: StatusWarningService, public data: DataService) { }
 
   public toggleViewed(): void {
       this.displayAll = !this.displayAll;

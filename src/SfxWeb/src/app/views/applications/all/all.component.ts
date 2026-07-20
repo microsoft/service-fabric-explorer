@@ -1,4 +1,4 @@
-import { Component, Injector } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { DataService } from 'src/app/services/data.service';
 import { SettingsService } from 'src/app/services/settings.service';
 import { ListSettings, ListColumnSettingForLink, ListColumnSettingWithFilter, ListColumnSettingForBadge, ListColumnSetting, ListColumnSettingForArmManaged } from 'src/app/Models/ListSettings';
@@ -11,12 +11,11 @@ import { ApplicationsBaseControllerDirective } from '../applicationsBase';
     standalone: false
 })
 export class AllComponent extends ApplicationsBaseControllerDirective {
+  data: DataService = inject(DataService);
+  private settings = inject(SettingsService);
+
 
   listSettings: ListSettings;
-
-  constructor(public data: DataService, private settings: SettingsService, injector: Injector) {
-    super(data, injector);
-   }
 
   setup() {
     this.listSettings = this.settings.getNewOrExistingListSettings('apps', ['name'], [

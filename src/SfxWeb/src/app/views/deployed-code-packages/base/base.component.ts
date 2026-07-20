@@ -1,4 +1,4 @@
-import { Component, OnInit, Injector, ElementRef } from '@angular/core';
+import { Component, OnInit, ElementRef, inject } from '@angular/core';
 import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 import { ActivatedRouteSnapshot } from '@angular/router';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
@@ -20,6 +20,11 @@ import { IBaseView } from '../../BaseView';
     standalone: false
 })
 export class BaseComponent extends BaseControllerDirective implements IBaseView {
+  protected data = inject(DataService);
+  private tree = inject(TreeService);
+  private settings = inject(SettingsService);
+  el = inject(ElementRef);
+
   public nodeName: string;
   public appId: string;
   public serviceId: string;
@@ -27,10 +32,6 @@ export class BaseComponent extends BaseControllerDirective implements IBaseView 
 
   codePackages: DeployedCodePackageCollection;
   listSettings: ListSettings;
-
-  constructor(protected data: DataService, injector: Injector, private tree: TreeService, private settings: SettingsService, public el: ElementRef) {
-    super(injector);
-  }
 
   setup() {
     this.tree.selectTreeNode([

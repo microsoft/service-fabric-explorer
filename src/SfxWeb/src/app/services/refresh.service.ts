@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { StorageService } from './storage.service';
 import { Constants } from '../Common/Constants';
 import { Observable, interval, Subscription, timer, Subject } from 'rxjs';
@@ -7,15 +7,15 @@ import { Observable, interval, Subscription, timer, Subject } from 'rxjs';
   providedIn: 'root'
 })
 export class RefreshService {
+  private storage = inject(StorageService);
+
   public isRefreshing = false;
   public refreshRate = '';
   private autoRefreshInterval: Observable<any> = null;
   public refreshSubject: Subject<number> = new Subject();
   private currentSync: Subscription;
   private previousRefreshSetting = 0;
-  public refreshTick = 0; // used to test how many refreshes have been performed
-
-  constructor(private storage: StorageService) { }
+  public refreshTick = 0;
 
   public init(): void {
     const defaultRefreshInterval = this.storage.getValueNumber(

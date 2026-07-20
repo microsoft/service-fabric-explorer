@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { IDataSet, IParallelChartData } from 'src/app/modules/concurrent-events-visualization/timeseries/timeseries.component';
 import { Utils } from 'src/app/Utils/Utils';
 import { ReplicaEvent } from 'src/app/Models/eventstore/Events';
@@ -26,6 +26,8 @@ export interface IOverviewPanel {
     standalone: false
 })
 export class NamingViewerComponent implements VisualizationComponent {
+  private settings = inject(SettingsService);
+
   public startDate: Date;
   public endDate: Date;
   public startDateMin: Date;
@@ -60,8 +62,6 @@ export class NamingViewerComponent implements VisualizationComponent {
 
   overviewPanels: IOverviewPanel[] = []
   localData: VisUpdateData;
-
-  constructor(private settings: SettingsService) {}
 
   generateOverviewPanel(data: VisUpdateData) {
     const previousOverviewPanels = this.overviewPanels;

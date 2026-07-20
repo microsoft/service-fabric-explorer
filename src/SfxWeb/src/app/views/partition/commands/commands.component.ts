@@ -1,4 +1,4 @@
-import { Component, Injector } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { forkJoin, Observable } from 'rxjs';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { CommandFactory, CommandParamTypes, CommandSafetyLevel, PowershellCommand, PowershellCommandParameter } from 'src/app/Models/PowershellCommand';
@@ -12,12 +12,10 @@ import { PartitionBaseControllerDirective } from '../PartitionBase';
     standalone: false
 })
 export class CommandsComponent extends PartitionBaseControllerDirective{
+  protected data: DataService = inject(DataService);
+
 
   commands: PowershellCommand[] = [];
-
-  constructor(protected data: DataService, injector: Injector) {
-    super(data, injector);
-  }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
     return this.data.getNodes();

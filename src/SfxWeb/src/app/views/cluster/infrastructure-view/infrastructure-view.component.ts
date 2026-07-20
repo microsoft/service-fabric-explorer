@@ -1,4 +1,4 @@
-import { Component, Injector } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { forkJoin, Observable } from 'rxjs';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { InfrastructureCollection } from 'src/app/Models/DataModels/collections/infrastructureCollection';
@@ -16,16 +16,15 @@ import { InfrastructureDocumentCollection } from 'src/app/Models/DataModels/coll
     standalone: false
 })
 export class InfrastructureViewComponent extends BaseControllerDirective {
+  private data = inject(DataService);
+  private settings = inject(SettingsService);
+
   public collection: InfrastructureCollection;
   public repairTaskCollection: RepairTaskCollection;
   public infrastructureDocumentCollection: InfrastructureDocumentCollection;
 
   allPendingMRJobs: InfrastructureJob[] = [];
   executingMRJobs: InfrastructureJob[] = [];
-
-  constructor(private data: DataService, injector: Injector, private settings: SettingsService) {
-    super(injector);
-  }
 
   setup() {
     this.collection = this.data.infrastructureCollection;

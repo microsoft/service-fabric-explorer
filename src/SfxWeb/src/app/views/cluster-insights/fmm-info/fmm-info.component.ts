@@ -1,4 +1,4 @@
-import { Component, Injector } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
@@ -13,15 +13,14 @@ import { DataService } from 'src/app/services/data.service';
     standalone: false
 })
 export class FmmInfoComponent extends BaseControllerDirective {
+  private restClientService = inject(RestClientService);
+  private dataService = inject(DataService);
+
   fmmInfo: IRawFailoverManagerManagerInformation;
   isLoading = true;
   isFmmEstimate = false;
 
   override fixedRefreshIntervalMs = 65000; // 65 seconds
-
-  constructor(private restClientService: RestClientService, private dataService: DataService, injector: Injector) {
-    super(injector);
-  }
 
   refresh(): Observable<any> {
     this.isLoading = true;

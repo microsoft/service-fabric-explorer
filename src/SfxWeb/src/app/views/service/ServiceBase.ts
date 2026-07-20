@@ -1,5 +1,5 @@
 import { DataService } from 'src/app/services/data.service';
-import { Injector, Directive } from '@angular/core';
+import { Directive, inject } from '@angular/core';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Observable, forkJoin } from 'rxjs';
 import { map, mergeMap } from 'rxjs/operators';
@@ -10,14 +10,12 @@ import { Service } from 'src/app/Models/DataModels/Service';
 
 @Directive()
 export class ServiceBaseControllerDirective extends BaseControllerDirective {
+    protected data = inject(DataService);
+
     appId: string;
     serviceId: string;
     appTypeName: string;
     service: Service;
-
-    constructor(protected data: DataService, injector: Injector) {
-      super(injector);
-    }
 
     common(messageHandler?: IResponseMessageHandler): Observable<any> {
         return this.data.getService(this.appId, this.serviceId, true, messageHandler).pipe(mergeMap(service => {
