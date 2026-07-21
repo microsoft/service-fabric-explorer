@@ -1,12 +1,16 @@
-<div class="detail-pane essen-pane" *ngIf="appTypeGroup" data-cy="apptypeviewer">
+@if (appTypeGroup) {
+  <div class="detail-pane essen-pane" data-cy="apptypeviewer">
     <app-apptype-viewer [activeAppTypes]="appTypeGroup.activeAppTypes" [inactiveAppTypes]="appTypeGroup.inactiveAppTypes"></app-apptype-viewer>
-</div>
+  </div>
+}
 
-<div class="detail-pane essen-pane" *ngIf="appTypeGroup">
+@if (appTypeGroup) {
+  <div class="detail-pane essen-pane">
     <app-collapse-container sectionName="Applications">
-        <h2 collapse-header>
-            Applications
-        </h2>
-        <app-detail-list [list]="appTypeGroup.apps" [listSettings]="appsListSettings" collapse-body data-cy="applicationsList"></app-detail-list>
+      <h2 collapse-header>
+        Applications
+      </h2>
+      <app-detail-list [list]="appTypeGroup.apps" [listSettings]="appsListSettings" collapse-body data-cy="applicationsList"></app-detail-list>
     </app-collapse-container>
-</div>
+  </div>
+}

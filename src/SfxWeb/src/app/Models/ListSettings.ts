@@ -172,6 +172,9 @@ export class ListColumnSetting {
 
     public fixedWidthPx?: number;
 
+    // Populated by subclasses that render a custom detail template component (see ITemplate).
+    public template?: Type<DetailBaseComponent>;
+
     public get hasFilters(): boolean {
         return this.config.enableFilter && this.filterValues.length > 0;
     }

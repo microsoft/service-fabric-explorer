@@ -1,26 +1,26 @@
-<div *ngIf="replica">
-
+@if (replica) {
+  <div>
     <div class="detail-pane essen-pane">
-        <app-collapse-container sectionName="General">
-            <div collapse-header>
-                <h2>General</h2>
-            </div>
-            <div collapse-body>
-                <app-detail-view-part [data]="replica"></app-detail-view-part>    
-            </div>
-        </app-collapse-container>
+      <app-collapse-container sectionName="General">
+        <div collapse-header>
+          <h2>General</h2>
+        </div>
+        <div collapse-body>
+          <app-detail-view-part [data]="replica"></app-detail-view-part>
+        </div>
+      </app-collapse-container>
     </div>
-
     <div class="detail-pane essen-pane">
-        <app-collapse-container sectionName="Details">
-            <div collapse-header>
-                <h2>
-                    Details
-                </h2>
-            </div>
-            <div collapse-body>
-                <app-detail-view-part [data]="replica.detail.raw" [parent]="replica.detail"></app-detail-view-part>    
-            </div>
-        </app-collapse-container>
+      <app-collapse-container sectionName="Details">
+        <div collapse-header>
+          <h2>
+            Details
+          </h2>
+        </div>
+        <div collapse-body>
+          <app-detail-view-part [data]="replica.detail.raw" [parent]="replica.detail"></app-detail-view-part>
+        </div>
+      </app-collapse-container>
     </div>
-</div>
+  </div>
+}

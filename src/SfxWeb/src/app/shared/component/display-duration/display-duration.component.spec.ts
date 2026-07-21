@@ -27,30 +27,26 @@ describe('DisplayDurationComponent', () => {
   });
 
   fit('correct colors', () => {
-    component.topText = 'topTextTest';
-    component.topInMilliseconds = 1000;
+    fixture.componentRef.setInput('topText', 'topTextTest');
+    fixture.componentRef.setInput('bottomText', 'bottomText');
+    fixture.componentRef.setInput('topInMilliseconds', 1000);
+    fixture.componentRef.setInput('bottomInMilliseconds', 5000);
 
-    component.bottomText = 'bottomText';
-    component.bottomInMilliseconds = 5000;
-
-    component.ngOnChanges();
     fixture.detectChanges();
     let barElement = fixture.debugElement.queryAll(By.css('[data-cy="bar-progress"]'));
 
     expect(barElement[0].styles['background-color']).toBe('var(--accent-darkblue)');
     expect(barElement[0].styles.flex).toBe('0.2 1 0%');
 
-    component.topInMilliseconds = 3000;
-    component.bottomInMilliseconds = 5000;
-    component.ngOnChanges();
+    fixture.componentRef.setInput('topInMilliseconds', 3000);
+    fixture.componentRef.setInput('bottomInMilliseconds', 5000);
     fixture.detectChanges();
     barElement = fixture.debugElement.queryAll(By.css('[data-cy="bar-progress"]'));
     expect(barElement[0].styles['background-color']).toBe('yellow');
     expect(barElement[0].styles.flex).toBe('0.6 1 0%');
 
-    component.topInMilliseconds = 4500;
-    component.bottomInMilliseconds = 5000;
-    component.ngOnChanges();
+    fixture.componentRef.setInput('topInMilliseconds', 4500);
+    fixture.componentRef.setInput('bottomInMilliseconds', 5000);
     fixture.detectChanges();
     barElement = fixture.debugElement.queryAll(By.css('[data-cy="bar-progress"]'));
     expect(barElement[0].styles['background-color']).toBe('red');

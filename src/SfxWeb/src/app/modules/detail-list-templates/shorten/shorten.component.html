@@ -1,14 +1,22 @@
 <div style="white-space: nowrap;">
-    <span *ngIf="!cache[item.id]">
+  @if (!cache[item.id]) {
+    <span>
       {{displayValue}}
     </span>
-    <span *ngIf="overflow">
-        <span *ngIf="!cache[item.id]" class="link" (click)="flipState()">
-            ({{value.length - listSetting.maxWidth }}) more
+  }
+  @if (overflow) {
+    <span>
+      @if (!cache[item.id]) {
+        <span class="link" (click)="flipState()">
+          ({{value.length - listSetting.maxWidth }}) more
         </span>
-        <span *ngIf="cache[item.id]">
-            {{value}}
-            <div class="link" (click)="flipState()"> show less</div>
+      }
+      @if (cache[item.id]) {
+        <span>
+          {{value}}
+          <div class="link" (click)="flipState()"> show less</div>
         </span>
+      }
     </span>
+  }
 </div>

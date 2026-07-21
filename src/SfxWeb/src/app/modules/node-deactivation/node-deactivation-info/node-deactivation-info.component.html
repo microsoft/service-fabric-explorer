@@ -1,24 +1,30 @@
 <div style="margin: 10px; display: flex; flex-wrap: wrap">
-  <div *ngIf="showSeedNodeTSG" data-cy="seedNodeQuorom" style="margin-bottom: 10px;">
-    <app-warning [description]="seedNodeQuorumMessage" link="https://aka.ms/sfseednodequoromtsg"
+  @if (showSeedNodeTSG) {
+    <div data-cy="seedNodeQuorom" style="margin-bottom: 10px;">
+      <app-warning [description]="seedNodeQuorumMessage" link="https://aka.ms/sfseednodequoromtsg"
       linkText="Node deactivation - Seed node quorom TSG"></app-warning>
-  </div>
+    </div>
+  }
 
   <div style="width: 200px;">
     <h3 class="underline title">
       Deactivation Status
-  </h3>
+    </h3>
     <app-phase-diagram [items]="progress" [currentIndex]="index" [vertical]="true"></app-phase-diagram>
   </div>
 
-  <div *ngIf="deactivationInfo.NodeDeactivationTask.length > 0" class="deactivation-info">
-    <h3 class="underline title" >Deactivation Tasks</h3>
-    <app-detail-list [list]="deactivationInfo.NodeDeactivationTask" [listSettings]="settings" [showTopOptions]="false"></app-detail-list>
+  @if (deactivationInfo.NodeDeactivationTask.length > 0) {
+    <div class="deactivation-info">
+      <h3 class="underline title" >Deactivation Tasks</h3>
+      <app-detail-list [list]="deactivationInfo.NodeDeactivationTask" [listSettings]="settings" [showTopOptions]="false"></app-detail-list>
+    </div>
+  }
+</div>
+
+
+@if (deactivationInfo.PendingSafetyChecks.length > 0) {
+  <div>
+    <h3 style="font-size: 16px;">Safety Checks</h3>
+    <app-safety-checks [safetyChecks]="deactivationInfo.PendingSafetyChecks"></app-safety-checks>
   </div>
-</div>
-
-
-<div *ngIf="deactivationInfo.PendingSafetyChecks.length > 0">
-  <h3 style="font-size: 16px;">Safety Checks</h3>
-  <app-safety-checks [safetyChecks]="deactivationInfo.PendingSafetyChecks"></app-safety-checks>
-</div>
+}

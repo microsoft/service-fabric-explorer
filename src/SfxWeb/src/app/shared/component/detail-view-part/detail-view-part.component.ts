@@ -33,7 +33,6 @@ export class DetailViewPartComponent implements OnChanges {
   resolvedData: any;
 
   @Input() data: any;
-  @Input() title: string;
   // with parent added it will assume data is from data.raw and this allows to run change detection.
   @Input() parent: any;
   constructor() { }

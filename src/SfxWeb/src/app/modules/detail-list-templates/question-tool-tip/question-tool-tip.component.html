@@ -1,11 +1,15 @@
 <div>
-  <i *ngIf="item.concerningJobInfo" style="font-size: 1.2em;"  class="mif-notification warning-icon" tooltipClass="styled-tooltip"
+  @if (item.concerningJobInfo) {
+    <i style="font-size: 1.2em;"  class="mif-notification warning-icon" tooltipClass="styled-tooltip"
     ngbTooltip="This repair job is potentially stuck. Please expand to get more information" container="body"></i>
+  }
 
   <ng-template #tipContent>
     <div style="border-bottom: 1px solid white; padding: 3px;">{{tooltipText.type}}</div>
     {{tooltipText.tooltip}}
   </ng-template>
   <app-clip-board [text]="item.raw.TaskId" name="repair job task id" style="display: inline-block;"></app-clip-board>
-  {{item.raw.TaskId}} <span class="mif-info" *ngIf="tooltipText?.tooltip.length > 0" style="color: #70daf8;"  tooltipClass="styled-tooltip" [ngbTooltip]="tipContent" container="body" tabindex="0"></span>
+  {{item.raw.TaskId}} @if (tooltipText?.tooltip.length > 0) {
+  <span class="mif-info" style="color: #70daf8;"  tooltipClass="styled-tooltip" [ngbTooltip]="tipContent" container="body" tabindex="0"></span>
+}
 </div>

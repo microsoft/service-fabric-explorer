@@ -1,15 +1,19 @@
 <div class="dashboard-wrapper">
-    <div class="dashboard dashboard-medium">
-        <div class="dashboard-tile flex-center" style="height: 100%;">
-            <div class="flex-center"  style="height: 100%;">
-                <div class="badge-container" *ngIf="healthState">
-                    <app-health-badge [badgeClass]="healthState.badgeClass" size="75px"></app-health-badge>
-                </div>
-                <div class="right-side-wrapper">
-                    <app-essential-item *ngFor="let item of internalList; let l = last" [ngClass]="l ? '': 'underline'" [item]="item">
-                        <ng-container *ngTemplateOutlet="item.ref"></ng-container>
-                    </app-essential-item>
-                </div>
-            </div>
+  <div class="dashboard dashboard-medium">
+    <div class="dashboard-tile flex-center" style="height: 100%;">
+      <div class="flex-center"  style="height: 100%;">
+        @if (healthState) {
+          <div class="badge-container">
+            <app-health-badge [badgeClass]="healthState.badgeClass" size="75px"></app-health-badge>
+          </div>
+        }
+        <div class="right-side-wrapper">
+          @for (item of internalList; track item; let l = $last) {
+            <app-essential-item [ngClass]="l ? '': 'underline'" [item]="item">
+              <ng-container *ngTemplateOutlet="item.ref"></ng-container>
+            </app-essential-item>
+          }
         </div>
+      </div>
     </div>
+  </div>

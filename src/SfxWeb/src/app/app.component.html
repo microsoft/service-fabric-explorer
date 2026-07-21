@@ -10,12 +10,14 @@
           {{(!shortenAzure ? 'Microsoft Azure' : 'Azure')}}
         </span>
       </div>
-      </a>
+    </a>
     <a [class]="'navbar-brand' + (shrinkAllHeaderItem ? ' navbar-brand-small' : '')" [routerLink]="['/']" >
       <img style="width: 32px" [src]="assetBase + 'assets/favicon.svg'" title="Service Fabric Explorer" class="navbar-brand-icon"/>
-      <span style="vertical-align: middle; margin-left: 14px;" *ngIf="!hideSFXText">
-        Service Fabric Explorer
-      </span>
+      @if (!hideSFXText) {
+        <span style="vertical-align: middle; margin-left: 14px;">
+          Service Fabric Explorer
+        </span>
+      }
     </a>
 
     <app-cluster-upgrade-banner style="margin: auto;" [clusterUpgradeProgress]="dataService.clusterUpgradeProgress"></app-cluster-upgrade-banner>
@@ -24,23 +26,27 @@
     <div style="margin-left: auto;"></div>
     <div>
       <app-refresh-rate [value]="refreshService.refreshRate" (rateChange)="refreshService.updateRefreshInterval($event)" [condensedVersion]="shrinkAllHeaderItem"
-                        [refresh]="refreshService.isRefreshing" (forceRefreshed)="attemptForceRefresh()"></app-refresh-rate>
+      [refresh]="refreshService.isRefreshing" (forceRefreshed)="attemptForceRefresh()"></app-refresh-rate>
     </div>
     <app-advanced-option></app-advanced-option>
 
-    <div ngbDropdown *ngIf="adalService.aadEnabled" display="'static'" placement="'bottom-left'">
+    @if (adalService.aadEnabled) {
+      <div ngbDropdown display="'static'" placement="'bottom-left'">
         <button class="flat-button" ngbDropdownToggle title="Contains the toggle for setting advanced mode">
-            <span class="mif-user"></span>
+          <span class="mif-user"></span>
         </button>
-        <div ngbDropdownMenu style="padding: 10px;" *ngIf="dataService.actionsEnabled()">
-          <div ngbDropdownItem style="padding-bottom: 10px;" class="repress-highlight">
-            {{adalService?.userInfo?.profile?.name}}
+        @if (dataService.actionsEnabled()) {
+          <div ngbDropdownMenu style="padding: 10px;">
+            <div ngbDropdownItem style="padding-bottom: 10px;" class="repress-highlight">
+              {{adalService?.userInfo?.profile?.name}}
+            </div>
+            <button class="simple-button" (click)="adalService.logout()" ngbDropdownItem>
+              Log Out
+            </button>
           </div>
-          <button class="simple-button" (click)="adalService.logout()" ngbDropdownItem>
-            Log Out
-          </button>
-        </div>
-    </div>
+        }
+      </div>
+    }
 
     <div ngbDropdown display="'static'" placement="'bottom-right'" class="report">
       <button ngbDropdownToggle class="mif-bug mif-lg flat-button round link" style="color: #70daf8" aria-label="Issue reporting options" ngbTooltip="Issue reporting options" tooltipClass="styled-tooltip"></button>
@@ -61,29 +67,39 @@
 
   <div>
     <div class="left-panel left-bar"  [ngStyle]="{'width': smallScreenSize ? smallScreenLeftPanelWidth : treeWidth, 'display' : smallScreenSize ?  smallScreenTreeDisplay : treeDisplay, 'overflow' : smallScreenSize ? 'initial' : 'hidden' }">
-      <button *ngIf="smallScreenSize && smallScreenLeftPanelWidth !== '0%'" class="simple-button sidenav-button close"
+      @if (smallScreenSize && smallScreenLeftPanelWidth !== '0%') {
+        <button class="simple-button sidenav-button close"
           (click)="resize(0)" tabindex="0" title="Close navigation tree panel">
-        close
-      </button>  
+          close
+        </button>
+      }
       <nav class="tree-container" [attr.aria-hidden]="smallScreenSize ? smallScreenLeftPanelWidth === '0%' : false" role="navigation">
-          <app-tree-view (treeResize)="resize($event)" [smallWindowSize]="smallScreenSize"  ></app-tree-view>
-        </nav>
-        <div class="slider-bar" appDrag (dragFinish)="resize($event)" *ngIf="!smallScreenSize">
-      </div>
-      <div class="slider-bar" style="cursor: initial;" *ngIf="smallScreenSize"></div>
+        <app-tree-view (treeResize)="resize($event)" [smallWindowSize]="smallScreenSize"  ></app-tree-view>
+      </nav>
+      @if (!smallScreenSize) {
+        <div class="slider-bar" appDrag (dragFinish)="resize($event)">
+        </div>
+      }
+      @if (smallScreenSize) {
+        <div class="slider-bar" style="cursor: initial;"></div>
+      }
     </div>
     <div [ngStyle]="{'left': smallScreenSize ? '0px' : rightOffset }" class="right-panel main-content" >
       <main>
         <div class="expander-container" >
-            <button class="expander-icon mif-vertical-align-bottom" [ngClass]="{'flip': treeWidth === '8px'}" placement="right" *ngIf="!smallScreenSize"
-                  [title]="(treeWidth === '8px' ? 'Expand' : 'Close') + ' tree view'" (click)="collapseSide()"></button>
-            <button *ngIf="smallScreenSize && smallScreenLeftPanelWidth === '0%'" class="simple-button sidenav-button open"
+          @if (!smallScreenSize) {
+            <button class="expander-icon mif-vertical-align-bottom" [ngClass]="{'flip': treeWidth === '8px'}" placement="right"
+            [title]="(treeWidth === '8px' ? 'Expand' : 'Close') + ' tree view'" (click)="collapseSide()"></button>
+          }
+          @if (smallScreenSize && smallScreenLeftPanelWidth === '0%') {
+            <button class="simple-button sidenav-button open"
               (click)="resize(60)" tabindex="0" title="Open navigation tree panel">
               menu
             </button>
-          </div>
+          }
+        </div>
         <div class="view-container" (click)="smallScreenSize ? resize(0): null" (focusin)="smallScreenSize ? resize(0): null">
-          
+
           <router-outlet id="view-container"></router-outlet>
         </div>
       </main>

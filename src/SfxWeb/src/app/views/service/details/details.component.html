@@ -1,12 +1,14 @@
 <div class="detail-pane essen-pane">
-    <app-detail-view-part [data]="service"></app-detail-view-part>
+  <app-detail-view-part [data]="service"></app-detail-view-part>
 </div>
 
-<div *ngIf="service">
+@if (service) {
+  <div>
     <div class="detail-pane essen-pane" data-cy="serviceDescription">
-        <h2>
-            Service Description
-        </h2>
-        <app-detail-view-part [data]="service.description.raw" [parent]="service.description"></app-detail-view-part>
+      <h2>
+        Service Description
+      </h2>
+      <app-detail-view-part [data]="service.description.raw" [parent]="service.description"></app-detail-view-part>
     </div>
-</div>
+  </div>
+}

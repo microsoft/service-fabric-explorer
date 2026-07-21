@@ -1,3 +1,5 @@
-<div class="detail-pane essen-pane" *ngIf="item?.expandedDetails">
+@if (item?.expandedDetails) {
+  <div class="detail-pane essen-pane">
     <app-detail-view-part [data]="item.expandedDetails"></app-detail-view-part>
-</div>
+  </div>
+}

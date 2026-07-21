@@ -1,8 +1,10 @@
 <app-navbar [tabs]="tabs" type="Service" [name]="service?.name" [actions]="service?.actions">
-    <app-arm-warning warning *ngIf="service?.isArmManaged" [resourceId]="service?.resourceId" ></app-arm-warning>
+  @if (service?.isArmManaged) {
+    <app-arm-warning warning [resourceId]="service?.resourceId" ></app-arm-warning>
+  }
 </app-navbar>
 <div class="main-view">
-    <div class="flex-child">
-        <router-outlet></router-outlet>
-    </div>
+  <div class="flex-child">
+    <router-outlet></router-outlet>
+  </div>
 </div>

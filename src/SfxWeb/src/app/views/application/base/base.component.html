@@ -1,9 +1,13 @@
 <app-navbar [tabs]="tabs" type="Application" [name]="app?.name" [actions]="app?.actions">
-    <app-arm-warning warning *ngIf="app?.isArmManaged" [resourceId]="app?.resourceId"></app-arm-warning>
-    <app-warning warning *ngIf="app?.isUpgrading && app?.disabledServicesCount > 0" [description]="getDisabledServicesWarning()" iconSize="mif-2x" data-cy="disabledServicesWarning"></app-warning>
+  @if (app?.isArmManaged) {
+    <app-arm-warning warning [resourceId]="app?.resourceId"></app-arm-warning>
+  }
+  @if (app?.isUpgrading && app?.disabledServicesCount > 0) {
+    <app-warning warning [description]="getDisabledServicesWarning()" iconSize="mif-2x" data-cy="disabledServicesWarning"></app-warning>
+  }
 </app-navbar>
 <div class="main-view">
-    <div class="flex-child">
-        <router-outlet></router-outlet>
-    </div>
+  <div class="flex-child">
+    <router-outlet></router-outlet>
+  </div>
 </div>

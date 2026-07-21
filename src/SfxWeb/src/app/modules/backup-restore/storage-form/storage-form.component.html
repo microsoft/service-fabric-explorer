@@ -1,106 +1,112 @@
 <!-- formGroupName="Storage" -->
 <div [formGroup]="form">
-    <div formGroupName="Storage">
+  <div formGroupName="Storage">
+    <dl class="dl-horizontal">
+      <dt>StorageKind</dt>
+      <dd>
+        <label>
+          <input type="radio" formControlName="StorageKind" value="AzureBlobStore">
+          AzureBlobStore
+        </label>
+        <label>
+          <input type="radio" formControlName="StorageKind" value="ManagedIdentityAzureBlobStore">
+          ManagedIdentityAzureBlobStore
+        </label>
+        <label>
+          <input type="radio" formControlName="StorageKind" value="FileShare">
+          FileShare
+        </label><br />
+      </dd>
+    </dl>
+    @if (localForm.value.StorageKind === 'AzureBlobStore') {
+      <dl class="dl-horizontal">
+        <dt>FriendlyName</dt>
+        <dd>
+          <input type="text" class="input-flat" formControlName="FriendlyName" name="FriendlyName">
+        </dd>
+        <dt>ConnectionString</dt>
+        <dd>
+          <input type="text" class="input-flat" formControlName="ConnectionString"
+            name="ConnectionString">
+          </dd>
+          <dt>ContainerName</dt>
+          <dd>
+            <input type="text" class="input-flat" formControlName="ContainerName" name="ContainerName">
+          </dd>
+        </dl>
+      }
+      @if (localForm.value.StorageKind === 'ManagedIdentityAzureBlobStore') {
         <dl class="dl-horizontal">
-            <dt>StorageKind</dt>
-            <dd>
-                <label>
-                    <input type="radio" formControlName="StorageKind" value="AzureBlobStore">
-                    AzureBlobStore
-                </label>
-                <label>
-                    <input type="radio" formControlName="StorageKind" value="ManagedIdentityAzureBlobStore">
-                    ManagedIdentityAzureBlobStore
-                </label>
-                <label>
-                    <input type="radio" formControlName="StorageKind" value="FileShare">
-                    FileShare
-                </label><br />
-            </dd>
-        </dl>
-        <dl class="dl-horizontal" *ngIf="localForm.value.StorageKind === 'AzureBlobStore'">
-            <dt>FriendlyName</dt>
-            <dd>
-                <input type="text" class="input-flat" formControlName="FriendlyName" name="FriendlyName">
-            </dd>
-            <dt>ConnectionString</dt>
-            <dd>
-                <input type="text" class="input-flat" formControlName="ConnectionString"
-                    name="ConnectionString">
+          <dt>FriendlyName</dt>
+          <dd>
+            <input type="text" class="input-flat" formControlName="FriendlyName" name="FriendlyName">
+          </dd>
+          <dt>BlobServiceUri</dt>
+          <dd>
+            <input type="text" class="input-flat" formControlName="BlobServiceUri"
+              name="BlobServiceUri">
             </dd>
             <dt>ContainerName</dt>
             <dd>
-                <input type="text" class="input-flat" formControlName="ContainerName" name="ContainerName">
-            </dd>
-        </dl>
-        <dl class="dl-horizontal" *ngIf="localForm.value.StorageKind === 'ManagedIdentityAzureBlobStore'">
-            <dt>FriendlyName</dt>
-            <dd>
-                <input type="text" class="input-flat" formControlName="FriendlyName" name="FriendlyName">
-            </dd>
-            <dt>BlobServiceUri</dt>
-            <dd>
-                <input type="text" class="input-flat" formControlName="BlobServiceUri"
-                    name="BlobServiceUri">
-            </dd>
-            <dt>ContainerName</dt>
-            <dd>
-                <input type="text" class="input-flat" formControlName="ContainerName" name="ContainerName">
+              <input type="text" class="input-flat" formControlName="ContainerName" name="ContainerName">
             </dd>
             <dt>ManagedIdentityType</dt>
             <dd>
-                <label>
-                    <input type="radio" formControlName="ManagedIdentityType" value="Cluster">
-                    Cluster
-                </label>
-                <label>
-                    <input type="radio" formControlName="ManagedIdentityType" value="VMSS">
-                    VMSS
-                </label><br />
+              <label>
+                <input type="radio" formControlName="ManagedIdentityType" value="Cluster">
+                Cluster
+              </label>
+              <label>
+                <input type="radio" formControlName="ManagedIdentityType" value="VMSS">
+                VMSS
+              </label><br />
             </dd>
             <dt>ManagedIdentityClientId
-                <span tabindex="0" class="mif-info" title="Client-id of the user-assigned managed identity (in the case of the system-assigned managed identity, please keep ManagedIdentityClientId Empty)"></span>
+              <span tabindex="0" class="mif-info" title="Client-id of the user-assigned managed identity (in the case of the system-assigned managed identity, please keep ManagedIdentityClientId Empty)"></span>
             </dt>
             <dd>
-                <input type="text" class="input-flat" formControlName="ManagedIdentityClientId" name="ManagedIdentityClientId">
+              <input type="text" class="input-flat" formControlName="ManagedIdentityClientId" name="ManagedIdentityClientId">
             </dd>
-        </dl>
-        <dl class="dl-horizontal" *ngIf="localForm.value.StorageKind === 'FileShare'">
+          </dl>
+        }
+        @if (localForm.value.StorageKind === 'FileShare') {
+          <dl class="dl-horizontal">
             <dt>FriendlyName</dt>
             <dd>
-                <input type="text" class="input-flat" formControlName="FriendlyName" name="FriendlyName">
+              <input type="text" class="input-flat" formControlName="FriendlyName" name="FriendlyName">
             </dd>
             <dt>Path</dt>
             <dd>
-                <input type="text" class="input-flat" formControlName="Path" name="Path">
+              <input type="text" class="input-flat" formControlName="Path" name="Path">
             </dd>
             <dt>Empty Primary Creds</dt>
             <dd class="checkbox-container-default">
-                <input type="checkbox" formControlName="IsEmptyPrimaryCredential"/>
+              <input type="checkbox" formControlName="IsEmptyPrimaryCredential"/>
             </dd>
             <dt>PrimaryUserName</dt>
             <dd>
-                <input type="text" class="input-flat" formControlName="PrimaryUserName" name="PrimaryUserName" >
+              <input type="text" class="input-flat" formControlName="PrimaryUserName" name="PrimaryUserName" >
             </dd>
             <dt>PrimaryPassword</dt>
             <dd>
-                <input type="password" class="input-flat" formControlName="PrimaryPassword"
-                    name="PrimaryPassword" >
-            </dd>
-            <dt>Empty Secondary Creds</dt>
-            <dd class="checkbox-container-default">
+              <input type="password" class="input-flat" formControlName="PrimaryPassword"
+                name="PrimaryPassword" >
+              </dd>
+              <dt>Empty Secondary Creds</dt>
+              <dd class="checkbox-container-default">
                 <input type="checkbox" formControlName="IsEmptySecondaryCredential"/>
-            </dd>
-            <dt>SecondaryUserName</dt>
-            <dd>
+              </dd>
+              <dt>SecondaryUserName</dt>
+              <dd>
                 <input type="text" class="input-flat" formControlName="SecondaryUserName"
-                    name="SecondaryUserName" >
-            </dd>
-            <dt>SecondaryPassword</dt>
-            <dd>
-                <input type="password" class="input-flat" formControlName="SecondaryPassword"
+                  name="SecondaryUserName" >
+                </dd>
+                <dt>SecondaryPassword</dt>
+                <dd>
+                  <input type="password" class="input-flat" formControlName="SecondaryPassword"
                     name="SecondaryPassword" >
-            </dd>
-        </dl>
-    </div>
-</div>
+                  </dd>
+                </dl>
+              }
+            </div>
+          </div>

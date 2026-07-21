@@ -1,18 +1,24 @@
 <div style="flex: 1;">
-    <div>
-        <span *ngIf="topText">{{topText}} :</span> {{topInMilliseconds | formatDate}}
+  <div>
+    @if (topText) {
+      <span>{{topText}} :</span>
+      } {{topInMilliseconds | formatDate}}
     </div>
     <div style="display: flex; margin-bottom: 5px; margin-top: 5px">
-        <div style="height: 5px;" *ngFor="let section of sections"
-        [ngStyle]="{'flex': section.width, 'background-color': section.color}"
-             data-cy="bar-progress"></div>
+      @for (section of sections; track section) {
+        <div style="height: 5px;"
+          [ngStyle]="{'flex': section.width, 'background-color': section.color}"
+        data-cy="bar-progress"></div>
+      }
     </div>
     <div>
-      <span *ngIf="bottomText">
-        {{bottomText}} : {{timeLeft | formatDate}}
-      </span>
-        <a class="link" style="float: right;" target="_blank" [href]="bottomHelpTextLink">
-          {{bottomHelpText}}
-        </a>
+      @if (bottomText) {
+        <span>
+          {{bottomText}} : {{timeLeft | formatDate}}
+        </span>
+      }
+      <a class="link" style="float: right;" target="_blank" [href]="bottomHelpTextLink">
+        {{bottomHelpText}}
+      </a>
     </div>
-</div>
+  </div>
