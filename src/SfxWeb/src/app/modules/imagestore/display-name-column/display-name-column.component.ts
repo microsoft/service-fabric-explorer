@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ListColumnSetting } from 'src/app/Models/ListSettings';
 import { DetailBaseComponent } from 'src/app/ViewModels/detail-table-base.component';
 import { ImageStoreItem, ImageStore } from 'src/app/Models/DataModels/ImageStore';
@@ -7,6 +7,7 @@ import { ImageStoreItem, ImageStore } from 'src/app/Models/DataModels/ImageStore
     selector: 'app-display-name-column',
     templateUrl: './display-name-column.component.html',
     styleUrls: ['./display-name-column.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class DisplayNameColumnComponent implements DetailBaseComponent {

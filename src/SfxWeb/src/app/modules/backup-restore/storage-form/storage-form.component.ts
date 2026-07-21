@@ -1,10 +1,11 @@
-import { Component, OnInit, Input, inject } from '@angular/core';
+import { Component, OnInit, Input, inject, ChangeDetectionStrategy } from '@angular/core';
 import { UntypedFormGroup, UntypedFormBuilder, Validators, FormControl, AbstractControl } from '@angular/forms';
 
 @Component({
     selector: 'app-storage-form',
     templateUrl: './storage-form.component.html',
     styleUrls: ['./storage-form.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class StorageFormComponent implements OnInit {

@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { Observable, forkJoin, of } from 'rxjs';
 import { DataService } from 'src/app/services/data.service';
 import { SettingsService } from 'src/app/services/settings.service';
@@ -11,6 +11,7 @@ import { IEssentialListItem } from 'src/app/modules/charts/essential-health-tile
     selector: 'app-essentials',
     templateUrl: './essentials.component.html',
     styleUrls: ['./essentials.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class EssentialsComponent extends DeployedAppBaseControllerDirective {

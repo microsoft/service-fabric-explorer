@@ -2,7 +2,7 @@
   <div >
     <div class="tile-container">
       @if (partition && partition.isInitialized) {
-        <app-essential-health-tile [healthState]="partition?.healthState"
+        <app-essential-health-tile [healthState]="$safeNavigationMigration(partition?.healthState)"
           class="long" [listItems]="essentialItems">
           <ng-template appEssentialTemplate id="status">
             <app-status-resolver [status]="partition.raw.PartitionStatus"></app-status-resolver>

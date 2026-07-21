@@ -1,6 +1,5 @@
 # Normalize line endings for all text files.
-# Text files are stored with LF in the repository and checked out using each
-# developer's platform-native endings (per core.autocrlf). Making the `text`
-# attribute explicit lets Git normalize confidently and avoids core.safecrlf
-# errors when tooling (e.g. Angular schematics) writes files with LF endings.
-* text=auto
+# Text files are stored and checked out with LF, matching the output of the
+# toolchain (Angular schematics, ts-morph, formatters). Enforcing LF in the
+# working tree avoids core.autocrlf/safecrlf conflicts on Windows.
+* text=auto eol=lf

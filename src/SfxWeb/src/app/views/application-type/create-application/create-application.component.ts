@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, EventEmitter, OnDestroy, Output, inject } from '@angular/core';
+import { Component, OnInit, Input, EventEmitter, OnDestroy, Output, inject, ChangeDetectionStrategy } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { IsolatedAction } from 'src/app/Models/Action';
 import { ApplicationType } from 'src/app/Models/DataModels/ApplicationType';
@@ -11,6 +11,7 @@ import { catchError, defaultIfEmpty } from 'rxjs/operators';
     selector: 'app-create-application',
     templateUrl: './create-application.component.html',
     styleUrls: ['./create-application.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class CreateApplicationComponent implements OnInit, OnDestroy {

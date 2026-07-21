@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Observable, forkJoin } from 'rxjs';
 import { DataService } from 'src/app/services/data.service';
@@ -9,6 +9,7 @@ import { Constants } from 'src/app/Common/Constants';
     selector: 'app-details',
     templateUrl: './details.component.html',
     styleUrls: ['./details.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class DetailsComponent extends ServiceBaseControllerDirective {

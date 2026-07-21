@@ -1,4 +1,4 @@
-import { Component, OnInit, ElementRef, inject } from '@angular/core';
+import { Component, OnInit, ElementRef, inject, ChangeDetectionStrategy } from '@angular/core';
 import { DeployedCodePackageBaseControllerDirective } from '../DeployedCodePackageBase';
 import { ITab } from 'src/app/shared/component/navbar/navbar.component';
 import { DataService } from 'src/app/services/data.service';
@@ -13,6 +13,7 @@ import { IBaseView } from '../../BaseView';
     selector: 'app-base',
     templateUrl: './base.component.html',
     styleUrls: ['./base.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class BaseComponent extends DeployedCodePackageBaseControllerDirective implements IBaseView {

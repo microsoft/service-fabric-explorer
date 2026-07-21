@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { DataService } from 'src/app/services/data.service';
 import { ImageStore } from 'src/app/Models/DataModels/ImageStore';
 import { SettingsService } from 'src/app/services/settings.service';
@@ -10,6 +10,7 @@ import { Observable } from 'rxjs';
     selector: 'app-imagestore',
     templateUrl: './imagestore.component.html',
     styleUrls: ['./imagestore.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class ImagestoreComponent extends BaseControllerDirective {

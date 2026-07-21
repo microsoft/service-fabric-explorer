@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges } from '@angular/core';
+import { Component, Input, OnChanges, ChangeDetectionStrategy } from '@angular/core';
 import { HtmlUtils } from 'src/app/Utils/HtmlUtils';
 import { Constants } from 'src/app/Common/Constants';
 import { Utils } from 'src/app/Utils/Utils';
@@ -23,6 +23,7 @@ export class ResolvedObject {
     selector: 'app-detail-view-part',
     templateUrl: './detail-view-part.component.html',
     styleUrls: ['./detail-view-part.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class DetailViewPartComponent implements OnChanges {

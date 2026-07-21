@@ -1,4 +1,4 @@
-import { Component, ViewChild, ElementRef, Output, EventEmitter, DoCheck, Input, AfterViewInit, inject } from '@angular/core';
+import { Component, ViewChild, ElementRef, Output, EventEmitter, DoCheck, Input, AfterViewInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { TreeService } from 'src/app/services/tree.service';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { RestClientService } from 'src/app/services/rest-client.service';
@@ -11,6 +11,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
     selector: 'app-tree-view',
     templateUrl: './tree-view.component.html',
     styleUrls: ['./tree-view.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class TreeViewComponent implements DoCheck, AfterViewInit {

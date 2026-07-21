@@ -1,4 +1,4 @@
-import { Component, ChangeDetectorRef, inject } from '@angular/core';
+import { Component, ChangeDetectorRef, inject, ChangeDetectionStrategy } from '@angular/core';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { DataService } from 'src/app/services/data.service';
 import { ApplicationUpgradeProgress, ApplicationHealth } from 'src/app/Models/DataModels/Application';
@@ -21,6 +21,7 @@ import { RelatedEventsConfigs } from 'src/app/Models/eventstore/RelatedEventsCon
     selector: 'app-essentials',
     templateUrl: './essentials.component.html',
     styleUrls: ['./essentials.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class EssentialsComponent extends ApplicationBaseControllerDirective {

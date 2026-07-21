@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { forkJoin, of, Observable } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 
@@ -29,6 +29,7 @@ interface NodeDisplay {
     selector: 'app-nodes',
     templateUrl: './nodes.component.html',
     styleUrls: ['./nodes.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class NodesComponent extends BaseControllerDirective {

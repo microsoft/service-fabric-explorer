@@ -1,9 +1,10 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
     selector: 'app-dashboard-text-tile',
     templateUrl: './dashboard-text-tile.component.html',
     styleUrls: ['./dashboard-text-tile.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class DashboardTextTileComponent {

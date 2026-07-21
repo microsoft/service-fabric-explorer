@@ -1,4 +1,4 @@
-import { Component, OnInit, OnChanges } from '@angular/core';
+import { Component, OnInit, OnChanges, ChangeDetectionStrategy } from '@angular/core';
 import { ListColumnSetting } from 'src/app/Models/ListSettings';
 import { DetailBaseComponent } from 'src/app/ViewModels/detail-table-base.component';
 import { ImageStore, ImageStoreItem } from 'src/app/Models/DataModels/ImageStore';
@@ -8,6 +8,7 @@ import { Utils } from 'src/app/Utils/Utils';
     selector: 'app-display-size-column',
     templateUrl: './display-size-column.component.html',
     styleUrls: ['./display-size-column.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class DisplaySizeColumnComponent implements OnChanges, OnInit, DetailBaseComponent {

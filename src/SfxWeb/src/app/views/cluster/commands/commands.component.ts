@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
@@ -10,6 +10,7 @@ import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
     selector: 'app-cluster-commands',
     templateUrl: './commands.component.html',
     styleUrls: ['./commands.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class CommandsComponent extends BaseControllerDirective {

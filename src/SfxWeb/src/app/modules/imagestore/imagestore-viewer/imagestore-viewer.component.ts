@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, inject } from '@angular/core';
+import { Component, OnInit, Input, inject, ChangeDetectionStrategy } from '@angular/core';
 import { ImageStore } from 'src/app/Models/DataModels/ImageStore';
 import { SettingsService } from 'src/app/services/settings.service';
 import { ListColumnSetting, ListSettings, ListColumnSettingWithUtcTime } from 'src/app/Models/ListSettings';
@@ -10,6 +10,7 @@ import { ListColumnSettingWithImageStoreActions } from '../folder-actions/folder
     selector: 'app-imagestore-viewer',
     templateUrl: './imagestore-viewer.component.html',
     styleUrls: ['./imagestore-viewer.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class ImagestoreViewerComponent implements OnInit {

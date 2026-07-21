@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { IsolatedAction } from 'src/app/Models/Action';
 import { DataService } from 'src/app/services/data.service';
@@ -7,6 +7,7 @@ import { DataService } from 'src/app/services/data.service';
     selector: 'app-backupinfo',
     templateUrl: './backupinfo.component.html',
     styleUrls: ['./backupinfo.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class BackupinfoComponent {

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { DetailBaseComponent } from 'src/app/ViewModels/detail-table-base.component';
 import { ListColumnSettingForLink } from 'src/app/Models/ListSettings';
 
@@ -6,6 +6,7 @@ import { ListColumnSettingForLink } from 'src/app/Models/ListSettings';
     selector: 'app-hyper-link',
     templateUrl: './hyper-link.component.html',
     styleUrls: ['./hyper-link.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class HyperLinkComponent implements OnInit, DetailBaseComponent {

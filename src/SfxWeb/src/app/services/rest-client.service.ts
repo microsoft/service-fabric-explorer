@@ -267,7 +267,7 @@ export class RestClientService {
   }
 
 
-// eslint-disable-next-line max-len
+ 
   public getDeployedCodePackage(nodeName: string, applicationId: string, servicePackageName: string, codePackageName: string, messageHandler?: IResponseMessageHandler): Observable<IRawDeployedCodePackage[]> {
       const url = 'Nodes/' + encodeURIComponent(nodeName)
           + '/$/GetApplications/' + encodeURIComponent(applicationId)
@@ -280,7 +280,7 @@ export class RestClientService {
       return this.get(formedUrl, 'Get deployed code package', messageHandler);
   }
 
-// eslint-disable-next-line max-len
+ 
   public getDeployedContainerLogs(nodeName: string, applicationId: string, servicePackageName: string, codePackageName: string, servicePackageActivationId: string, tail: string, messageHandler?: IResponseMessageHandler): Observable<IRawContainerLogs> {
       const url = 'Nodes/' + encodeURIComponent(nodeName)
           + '/$/GetApplications/' + encodeURIComponent(applicationId)
@@ -296,7 +296,7 @@ export class RestClientService {
       return this.get(formedUrl, 'Get deployed container logs', messageHandler);
   }
 
-    // eslint-disable-next-line max-len
+     
   public restartCodePackage(nodeName: string, applicationId: string, serviceManifestName: string, codePackageName: string, codePackageInstanceId: string, servicePackageActivationId?: string, messageHandler?: IResponseMessageHandler): Observable<{}> {
       const url = 'Nodes/' + encodeURIComponent(nodeName)
           + '/$/GetApplications/' + encodeURIComponent(applicationId)
@@ -837,11 +837,11 @@ export class RestClientService {
       return `/${path}${path.indexOf('?') === -1 ? '?' : '&'}api-version=${apiVersion ? apiVersion : RestClientService.defaultApiVersion}${skipCacheToken === true ? '' : `&_cacheToken=${this.cacheAllowanceToken}`}${continuationToken ? `&ContinuationToken=${continuationToken}` : ''}`;
   }
 
-  // eslint-disable-next-line max-len
+   
   private getApiUrl2(path: string, apiVersion = RestClientService.defaultApiVersion, continuationToken?: string, skipCacheToken?: boolean, startDate?: Date, endDate?: Date, maxResults?: number, latest?: boolean): string {
       // token to allow for invalidation of browser api call cache
       const appUrl =  this.getApiUrl(path, apiVersion, continuationToken, false);
-          // eslint-disable-next-line max-len
+           
       return appUrl + `${maxResults === undefined || maxResults === null ? '' : `&MaxResults=${maxResults}`}${(startDate === undefined || startDate === null || endDate === undefined || endDate === null) ? '' : `&StartDateTimeFilter=${startDate.toISOString().substr(0, 19)}Z&EndDateTimeFilter=${endDate.toISOString().substr(0, 19)}Z`}${latest === true ? `&Latest=True` : ''}`;
   }
 
@@ -865,7 +865,7 @@ export class RestClientService {
     return environment.baseUrl || "";
   }
 
-    // eslint-disable-next-line max-len
+     
   private getFullCollection2<T>(url: string, apiDesc: string, apiVersion?: string, messageHandler?: IResponseMessageHandler, continuationToken?: string, startDate?: Date, endDate?: Date, maxResults?: number, latest?: boolean): Observable<T[]> {
       const appUrl = this.getApiUrl2(url, apiVersion, continuationToken, false, startDate, endDate, maxResults, latest);
       return this.get<IRawCollection<T>>(appUrl, apiDesc, messageHandler).pipe(mergeMap(response => {

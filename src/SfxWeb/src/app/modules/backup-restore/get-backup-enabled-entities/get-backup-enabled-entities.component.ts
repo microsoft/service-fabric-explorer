@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, inject } from '@angular/core';
+import { Component, OnInit, Input, inject, ChangeDetectionStrategy } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { IsolatedAction } from 'src/app/Models/Action';
 import { DataService } from 'src/app/services/data.service';
@@ -16,6 +16,7 @@ import { SettingsService } from 'src/app/services/settings.service';
     selector: 'app-get-backup-enabled-entities',
     templateUrl: './get-backup-enabled-entities.component.html',
     styleUrls: ['./get-backup-enabled-entities.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 

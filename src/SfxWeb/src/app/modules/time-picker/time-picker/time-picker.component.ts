@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
@@ -13,6 +13,7 @@ export interface IQuickDates {
     selector: 'app-time-picker',
     templateUrl: './time-picker.component.html',
     styleUrls: ['./time-picker.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class TimePickerComponent implements OnInit, OnDestroy {

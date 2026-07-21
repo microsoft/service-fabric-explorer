@@ -356,26 +356,26 @@ export class CreateServiceDescription {
         const descriptionCloned = cloneDeep(this.raw);
         let flags = 0;
         if (this.raw.ReplicaRestartWaitDurationSeconds !== null) {
-            // eslint-disable-next-line no-bitwise
+             
             flags ^= 0x01;
         } else {
             delete descriptionCloned.ReplicaRestartWaitDurationSeconds;
         }
         if (this.raw.QuorumLossWaitDurationSeconds !== null) {
-            // eslint-disable-next-line no-bitwise
+             
             flags ^= 0x02;
         } else {
             delete descriptionCloned.QuorumLossWaitDurationSeconds;
         }
         if (this.raw.StandByReplicaKeepDurationSeconds !== null) {
-            // eslint-disable-next-line no-bitwise
+             
             flags ^= 0x04;
         } else {
             delete descriptionCloned.StandByReplicaKeepDurationSeconds;
         }
 
         if (this.raw.AuxiliaryReplicaCount !== null && this.raw.AuxiliaryReplicaCount > 0) {
-            // eslint-disable-next-line no-bitwise
+             
             flags ^= 0x80;
         } else {
             delete descriptionCloned.AuxiliaryReplicaCount;

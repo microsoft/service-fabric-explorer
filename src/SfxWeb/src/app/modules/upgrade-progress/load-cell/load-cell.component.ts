@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { ListColumnSetting } from 'src/app/Models/ListSettings';
 import { PartitionCacheService } from '../partition-cache.service';
 import { IPartitionData } from '../safety-checks/safety-checks.component';
@@ -7,6 +7,7 @@ import { IPartitionData } from '../safety-checks/safety-checks.component';
     selector: 'app-load-cell',
     templateUrl: './load-cell.component.html',
     styleUrls: ['./load-cell.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class LoadCellComponent {

@@ -1,4 +1,4 @@
-import { Component, ElementRef, HostListener, Input, OnChanges, TemplateRef, ViewChild, inject } from '@angular/core';
+import { Component, ElementRef, HostListener, Input, OnChanges, TemplateRef, ViewChild, inject, ChangeDetectionStrategy } from '@angular/core';
 import { Observable } from 'rxjs';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Node } from 'src/app/Models/DataModels/Node';
@@ -9,6 +9,7 @@ import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
     selector: 'app-map',
     templateUrl: './map.component.html',
     styleUrls: ['./map.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class MapComponent extends BaseControllerDirective implements OnChanges {

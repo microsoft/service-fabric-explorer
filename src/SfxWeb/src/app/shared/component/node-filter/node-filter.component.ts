@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, inject } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, inject, ChangeDetectionStrategy } from '@angular/core';
 import { HealthStateConstants } from 'src/app/Common/Constants';
 import { Node } from 'src/app/Models/DataModels/Node';
 import { DataService } from 'src/app/services/data.service';
@@ -7,6 +7,7 @@ import { DataService } from 'src/app/services/data.service';
     selector: 'app-node-filter',
     templateUrl: './node-filter.component.html',
     styleUrls: ['./node-filter.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class NodeFilterComponent implements OnInit, OnChanges {

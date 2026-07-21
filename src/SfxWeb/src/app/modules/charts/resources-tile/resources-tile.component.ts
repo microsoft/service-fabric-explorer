@@ -32,6 +32,7 @@ export class ResourcesTemplateDirective {
     selector: 'app-service-resources-tile',
     templateUrl: './resources-tile.component.html',
     styleUrls: ['./resources-tile.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class ResourcesTileComponent implements AfterViewInit, OnChanges {

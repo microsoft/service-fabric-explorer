@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnInit, inject } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { of } from 'rxjs';
 import { map, mergeMap } from 'rxjs/operators';
 import { NodeStatusConstants } from 'src/app/Common/Constants';
@@ -14,6 +14,7 @@ import { IEssentialListItem } from '../../charts/essential-health-tile/essential
     selector: 'app-section-overview',
     templateUrl: './section-overview.component.html',
     styleUrls: ['./section-overview.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class SectionOverviewComponent implements OnChanges {

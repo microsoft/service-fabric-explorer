@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { DataService } from 'src/app/services/data.service';
 import { Partition } from 'src/app/Models/DataModels/Partition';
@@ -9,6 +9,7 @@ import { IsolatedAction } from 'src/app/Models/Action';
     selector: 'app-partition-trigger-back-up',
     templateUrl: './partition-trigger-back-up.component.html',
     styleUrls: ['./partition-trigger-back-up.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class PartitionTriggerBackUpComponent implements OnInit {

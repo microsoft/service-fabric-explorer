@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ListColumnSettingForBadge } from 'src/app/Models/ListSettings';
 import { ITextAndBadge } from 'src/app/Utils/ValueResolver';
 import { DetailBaseComponent } from 'src/app/ViewModels/detail-table-base.component';
@@ -7,6 +7,7 @@ import { DetailBaseComponent } from 'src/app/ViewModels/detail-table-base.compon
     selector: 'app-healthbadge',
     templateUrl: './healthbadge.component.html',
     styleUrls: ['./healthbadge.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class HealthbadgeComponent implements OnInit, DetailBaseComponent {

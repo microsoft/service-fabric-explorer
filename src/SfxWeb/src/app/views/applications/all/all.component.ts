@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { DataService } from 'src/app/services/data.service';
 import { SettingsService } from 'src/app/services/settings.service';
 import { ListSettings, ListColumnSettingForLink, ListColumnSettingWithFilter, ListColumnSettingForBadge, ListColumnSetting, ListColumnSettingForArmManaged } from 'src/app/Models/ListSettings';
@@ -8,6 +8,7 @@ import { ApplicationsBaseControllerDirective } from '../applicationsBase';
     selector: 'app-all',
     templateUrl: './all.component.html',
     styleUrls: ['./all.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class AllComponent extends ApplicationsBaseControllerDirective {

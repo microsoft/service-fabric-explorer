@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ListColumnSettingForArmManaged } from 'src/app/Models/ListSettings';
 import { DetailBaseComponent } from 'src/app/ViewModels/detail-table-base.component';
 
@@ -6,6 +6,7 @@ import { DetailBaseComponent } from 'src/app/ViewModels/detail-table-base.compon
     selector: 'app-arm-managed',
     templateUrl: './arm-managed.component.html',
     styleUrls: ['./arm-managed.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class ArmManagedComponent implements OnInit, DetailBaseComponent {

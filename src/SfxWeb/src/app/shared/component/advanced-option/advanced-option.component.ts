@@ -1,4 +1,4 @@
-import { Component, ElementRef, HostListener, OnInit, QueryList, ViewChild, ViewChildren, inject } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, QueryList, ViewChild, ViewChildren, inject, ChangeDetectionStrategy } from '@angular/core';
 import { StorageService } from 'src/app/services/storage.service';
 import { Constants, TelemetryEventNames } from 'src/app/Common/Constants';
 import { MessageService } from 'src/app/services/message.service';
@@ -14,6 +14,7 @@ import { environment } from 'src/environments/environment';
     selector: 'app-advanced-option',
     templateUrl: './advanced-option.component.html',
     styleUrls: ['./advanced-option.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class AdvancedOptionComponent implements OnInit {

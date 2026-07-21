@@ -1,4 +1,4 @@
-import { Component, OnChanges, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnChanges, AfterViewInit, ViewChild, ElementRef, ChangeDetectionStrategy } from '@angular/core';
 import { chart, Chart, Options, SeriesOptionsType, SeriesSankeyNodesOptionsObject } from 'highcharts';
 import { DetailBaseComponent } from 'src/app/ViewModels/detail-table-base.component';
 import { ListColumnSetting, ListColumnSettingWithEmbeddedVis } from 'src/app/Models/ListSettings';
@@ -9,6 +9,7 @@ import { IConcurrentEvents, IRCAItem } from 'src/app/Models/eventstore/rcaEngine
     selector: 'app-visualization-tool',
     templateUrl: './visualization-tool.component.html',
     styleUrls: ['./visualization-tool.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 

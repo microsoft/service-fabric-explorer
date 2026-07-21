@@ -1,4 +1,4 @@
-import { Component, Input, TemplateRef } from '@angular/core';
+import { Component, Input, TemplateRef, ChangeDetectionStrategy } from '@angular/core';
 import { Node } from 'src/app/Models/DataModels/Node';
 import { environment } from 'src/environments/environment';
 
@@ -6,6 +6,7 @@ import { environment } from 'src/environments/environment';
     selector: 'app-node-list',
     templateUrl: './node-list.component.html',
     styleUrls: ['./node-list.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class NodeListComponent {

@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { IRequestsData } from 'src/app/Models/DataModels/networkDebugger';
 import { ListColumnSetting, ListSettings } from 'src/app/Models/ListSettings';
 import { SettingsService } from 'src/app/services/settings.service';
@@ -8,6 +8,7 @@ import { DetailBaseComponent } from 'src/app/ViewModels/detail-table-base.compon
     selector: 'app-nested-table',
     templateUrl: './nested-table.component.html',
     styleUrls: ['./nested-table.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class NestedTableComponent implements DetailBaseComponent, OnInit {

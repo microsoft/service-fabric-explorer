@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnInit, SecurityContext, inject } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, SecurityContext, inject, ChangeDetectionStrategy } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Chart, Options, chart } from 'highcharts';
 import { RepairTask } from 'src/app/Models/DataModels/repairTask';
@@ -10,6 +10,7 @@ import { Utils } from 'src/app/Utils/Utils';
     selector: 'app-repair-job-chart',
     templateUrl: './repair-job-chart.component.html',
     styleUrls: ['./repair-job-chart.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class RepairJobChartComponent implements OnInit, OnChanges {

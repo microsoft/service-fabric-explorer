@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnInit, TemplateRef } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, TemplateRef, ChangeDetectionStrategy } from '@angular/core';
 import { NodeStatusConstants } from 'src/app/Common/Constants';
 import { NodeStatusDetails } from 'src/app/Models/DataModels/collections/NodeCollection';
 import { RepairTaskCollection } from 'src/app/Models/DataModels/collections/RepairTaskCollection';
@@ -9,6 +9,7 @@ import { IEssentialListItem } from '../../charts/essential-health-tile/essential
     selector: 'app-status-tile',
     templateUrl: './status-tile.component.html',
     styleUrls: ['./status-tile.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class StatusTileComponent implements OnChanges {

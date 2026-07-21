@@ -1,19 +1,22 @@
-import { Component, NgModule } from '@angular/core';
+import { Component, NgModule, ChangeDetectionStrategy } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 @Component({
     template: `Search`,
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class SearchComponent {}
 
 @Component({
     template: `Home`,
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class HomeComponent {}
 
 @Component({
     template: `<router-outlet></router-outlet>`,
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class NestedComponent {}
@@ -34,18 +37,21 @@ export class ApplicationModule { }
 
 @Component({
     template: `Search`,
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class Search2Component {}
 
 @Component({
     template: `Home`,
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class Home2Component {}
 
 @Component({
     template: `<router-outlet></router-outlet>`,
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class Nested2Component {}

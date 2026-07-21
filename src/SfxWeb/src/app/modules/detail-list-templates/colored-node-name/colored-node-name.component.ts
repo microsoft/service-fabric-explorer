@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ListColumnSetting } from 'src/app/Models/ListSettings';
 import { DetailBaseComponent } from 'src/app/ViewModels/detail-table-base.component';
 import { environment } from 'src/environments/environment';
@@ -7,6 +7,7 @@ import { environment } from 'src/environments/environment';
     selector: 'app-colored-node-name',
     templateUrl: './colored-node-name.component.html',
     styleUrls: ['./colored-node-name.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class ColoredNodeNameComponent implements OnInit, DetailBaseComponent {

@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 import { HealthStateConstants } from 'src/app/Common/Constants';
 import { ReplicaOnPartition } from 'src/app/Models/DataModels/Replica';
 import { IRawRemoteReplicatorStatus } from 'src/app/Models/RawDataTypes';
@@ -10,6 +10,7 @@ import { IChartData } from '../replication-trend-line/replication-trend-line.com
     selector: 'app-replica-tile',
     templateUrl: './replica-tile.component.html',
     styleUrls: ['./replica-tile.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class ReplicaTileComponent implements OnChanges {

@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, ChangeDetectionStrategy } from '@angular/core';
 
 export interface ISection {
   width: number;
@@ -9,6 +9,7 @@ export interface ISection {
     selector: 'app-display-duration',
     templateUrl: './display-duration.component.html',
     styleUrls: ['./display-duration.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class DisplayDurationComponent implements OnChanges {

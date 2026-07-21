@@ -3,9 +3,10 @@ import { Location } from '@angular/common';
 
 import { RoutesService } from './routes.service';
 import { provideRouter, Routes, Router } from '@angular/router';
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 @Component({
     template: `<router-outlet></router-outlet>`,
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class AppComponent {

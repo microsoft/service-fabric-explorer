@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { DeployedServicePackageBaseControllerDirective } from '../DeployedServicePackage';
 import { DataService } from 'src/app/services/data.service';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
@@ -10,6 +10,7 @@ import { ServiceManifest } from 'src/app/Models/DataModels/Service';
     selector: 'app-manifest',
     templateUrl: './manifest.component.html',
     styleUrls: ['./manifest.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class ManifestComponent extends DeployedServicePackageBaseControllerDirective {

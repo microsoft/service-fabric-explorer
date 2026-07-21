@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectorRef, Component, OnInit, inject } from "@angular/core";
+import { AfterViewInit, ChangeDetectorRef, Component, OnInit, inject, ChangeDetectionStrategy } from "@angular/core";
 import { Router } from "@angular/router";
 import { PartitionEventList } from "src/app/Models/DataModels/collections/Collections";
 import { PartitionEvent } from "src/app/Models/eventstore/Events";
@@ -17,6 +17,7 @@ import { DataSet } from "vis-data";
     selector: "app-orchestration-view",
     templateUrl: "./orchestration-view.component.html",
     styleUrls: ["./orchestration-view.component.scss"],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class OrchestrationViewComponent implements OnInit, AfterViewInit {

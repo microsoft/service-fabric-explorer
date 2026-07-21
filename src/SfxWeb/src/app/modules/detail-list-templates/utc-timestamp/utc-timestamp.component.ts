@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { DetailBaseComponent } from 'src/app/ViewModels/detail-table-base.component';
 import { ListColumnSettingWithUtcTime } from 'src/app/Models/ListSettings';
 
@@ -6,6 +6,7 @@ import { ListColumnSettingWithUtcTime } from 'src/app/Models/ListSettings';
     selector: 'app-utc-timestamp',
     templateUrl: './utc-timestamp.component.html',
     styleUrls: ['./utc-timestamp.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class UtcTimestampComponent implements DetailBaseComponent, OnInit {

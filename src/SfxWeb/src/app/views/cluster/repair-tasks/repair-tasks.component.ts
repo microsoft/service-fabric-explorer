@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 import { DataService } from 'src/app/services/data.service';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
@@ -26,6 +26,7 @@ interface ITileListItem {
     selector: 'app-repair-tasks',
     templateUrl: './repair-tasks.component.html',
     styleUrls: ['./repair-tasks.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class RepairTasksComponent extends BaseControllerDirective {

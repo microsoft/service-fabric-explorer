@@ -14,7 +14,7 @@
         {{ fmmInfo?.NodeName }}
       </div>
       @if (fmmInfo?.NodeName) {
-        <app-clip-board [text]="fmmInfo?.NodeName" [name]="'Node Name'"></app-clip-board>
+        <app-clip-board [text]="$safeNavigationMigration(fmmInfo?.NodeName)" [name]="'Node Name'"></app-clip-board>
       }
     </div>
 
@@ -24,7 +24,7 @@
         {{ fmmInfo?.NodeId?.Id }}
       </div>
       @if (fmmInfo?.NodeId?.Id) {
-        <app-clip-board [text]="fmmInfo?.NodeId?.Id" [name]="'Node ID'"></app-clip-board>
+        <app-clip-board [text]="$safeNavigationMigration(fmmInfo?.NodeId?.Id)" [name]="'Node ID'"></app-clip-board>
       }
     </div>
 
@@ -34,7 +34,7 @@
         {{ fmmInfo?.NodeInstanceId }}
       </div>
       @if (fmmInfo?.NodeInstanceId) {
-        <app-clip-board [text]="fmmInfo?.NodeInstanceId" [name]="'Node Instance ID'"></app-clip-board>
+        <app-clip-board [text]="$safeNavigationMigration(fmmInfo?.NodeInstanceId)" [name]="'Node Instance ID'"></app-clip-board>
       }
     </div>
   </div>

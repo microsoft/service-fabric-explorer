@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, inject } from '@angular/core';
+import { Component, Input, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { DialogBodyComponent } from '../DialogBodyComponent';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { IsolatedAction } from 'src/app/Models/Action';
@@ -8,6 +8,7 @@ import { Subscription, timer } from 'rxjs';
     selector: 'app-message-with-wait-confirmation',
     templateUrl: './message-with-wait-confirmation.component.html',
     styleUrls: ['./message-with-wait-confirmation.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class MessageWithWaitConfirmationComponent implements OnInit, DialogBodyComponent {

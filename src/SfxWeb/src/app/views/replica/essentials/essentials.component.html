@@ -2,7 +2,7 @@
   <div>
     <div class="tile-container">
       @if (replica && replica.isInitialized) {
-        <app-essential-health-tile [healthState]="replica?.healthState"
+        <app-essential-health-tile [healthState]="$safeNavigationMigration(replica?.healthState)"
           class="long" [listItems]="essentialItems">
           <ng-template appEssentialTemplate id="status">
             <app-status-resolver [status]="replica.raw.ReplicaStatus"></app-status-resolver>

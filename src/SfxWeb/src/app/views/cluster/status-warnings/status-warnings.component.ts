@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { StatusWarningService, IStatusWarning } from 'src/app/services/status-warning.service';
 import { of } from 'rxjs';
 import { ActionWithConfirmationDialog } from 'src/app/Models/Action';
@@ -9,6 +9,7 @@ import { StatusWarningLevel } from 'src/app/Common/Constants';
     selector: 'app-status-warnings',
     templateUrl: './status-warnings.component.html',
     styleUrls: ['./status-warnings.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class StatusWarningsComponent{

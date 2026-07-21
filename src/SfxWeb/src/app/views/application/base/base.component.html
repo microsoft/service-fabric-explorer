@@ -1,6 +1,6 @@
-<app-navbar [tabs]="tabs" type="Application" [name]="app?.name" [actions]="app?.actions">
+<app-navbar [tabs]="tabs" type="Application" [name]="$safeNavigationMigration(app?.name)" [actions]="$safeNavigationMigration(app?.actions)">
   @if (app?.isArmManaged) {
-    <app-arm-warning warning [resourceId]="app?.resourceId"></app-arm-warning>
+    <app-arm-warning warning [resourceId]="$safeNavigationMigration(app?.resourceId)"></app-arm-warning>
   }
   @if (app?.isUpgrading && app?.disabledServicesCount > 0) {
     <app-warning warning [description]="getDisabledServicesWarning()" iconSize="mif-2x" data-cy="disabledServicesWarning"></app-warning>

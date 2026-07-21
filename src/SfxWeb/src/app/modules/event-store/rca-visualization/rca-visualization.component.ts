@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, EventEmitter, Input, Output, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Input, Output, inject, ChangeDetectionStrategy } from '@angular/core';
 import { getSimultaneousEventsForEvent, IConcurrentEvents } from 'src/app/Models/eventstore/rcaEngine';
 import { RelatedEventsConfigs } from 'src/app/Models/eventstore/RelatedEventsConfigs';
 import { ListColumnSettingWithEmbeddedVis } from 'src/app/Models/ListSettings';
@@ -11,6 +11,7 @@ import { EventColumnUpdate, VisualizationComponent, VisUpdateData } from '../vis
     selector: 'app-rca-visualization',
     templateUrl: './rca-visualization.component.html',
     styleUrls: ['./rca-visualization.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class RcaVisualizationComponent implements VisualizationComponent {

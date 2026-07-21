@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { DataService } from 'src/app/services/data.service';
 import { ServiceType, CreateServiceDescription } from 'src/app/Models/DataModels/Service';
@@ -8,6 +8,7 @@ import { Application } from 'src/app/Models/DataModels/Application';
     selector: 'app-create-service',
     templateUrl: './create-service.component.html',
     styleUrls: ['./create-service.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class CreateServiceComponent implements OnInit {
