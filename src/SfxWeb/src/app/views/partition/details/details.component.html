@@ -1,11 +1,14 @@
-<div *ngIf="partition">
+@if (partition) {
+  <div>
     <div class="detail-pane essen-pane">
-        <app-detail-view-part [data]="partition"></app-detail-view-part>
+      <app-detail-view-part [data]="partition"></app-detail-view-part>
     </div>
-
-    <div class="detail-pane essen-pane" *ngIf="partition.loadInformation && partition.loadInformation.isValid">
+    @if (partition.loadInformation && partition.loadInformation.isValid) {
+      <div class="detail-pane essen-pane">
         <h2>Load Information</h2>
         <app-detail-view-part [data]="partition.loadInformation.raw" [parent]="partition.loadInformation">
         </app-detail-view-part>
-    </div>
-</div>
+      </div>
+    }
+  </div>
+}

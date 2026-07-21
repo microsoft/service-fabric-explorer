@@ -1,5 +1,7 @@
 <div style="display: inline-block;">
-    <span style="display: flex;">
-        <span [ngStyle]="{'margin-right': (showText ? '5px' : '0px')}" class="mif-lg" [ngClass]="displayClass"></span> <span *ngIf="showText">{{status}}</span>
-    </span>
+  <span style="display: flex;">
+    <span [ngStyle]="{'margin-right': (showText ? '5px' : '0px')}" class="mif-lg" [ngClass]="displayClass"></span> @if (showText) {
+    <span>{{status}}</span>
+  }
+</span>
 </div>

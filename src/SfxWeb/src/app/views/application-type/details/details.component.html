@@ -1,63 +1,71 @@
 <h2 style="font-size: var(--font-size-large);">
-    Package Versions
+  Package Versions
 </h2>
 <div class="detail-pane">
-    <div class="table-responsive" *ngIf="appTypeGroup">
-        <table class="default-table detail-table" style="width: 100%;">
-            <tr>
-                <th>Name</th>
-                <th>Version</th>
-                <th>Packages</th>
-            </tr>
-            <tr *ngFor="let appType of appTypeGroup.appTypes">
-                <td>
-                    {{appType.raw.Name}}
-                </td>
-                <td>
-                    {{appType.raw.Version}}
-                </td>
-                <td>
-                    <div class="table-responsive">
-                        <table class="default-table detail-param-table">
+  @if (appTypeGroup) {
+    <div class="table-responsive">
+      <table class="default-table detail-table" style="width: 100%;">
+        <tr>
+          <th>Name</th>
+          <th>Version</th>
+          <th>Packages</th>
+        </tr>
+        @for (appType of appTypeGroup.appTypes; track appType) {
+          <tr>
+            <td>
+              {{appType.raw.Name}}
+            </td>
+            <td>
+              {{appType.raw.Version}}
+            </td>
+            <td>
+              <div class="table-responsive">
+                <table class="default-table detail-param-table">
+                  <tr>
+                    <th>Package Name</th>
+                    <th>Version</th>
+                    <th>Packages</th>
+                  </tr>
+                  @for (service of appType.serviceTypes.collection; track service) {
+                    <tr>
+                      <td>
+                        {{service.raw.ServiceManifestName}}
+                      </td>
+                      <td>
+                        {{service.raw.ServiceManifestVersion}}
+                      </td>
+                      <td>
+                        <div class="table-responsive">
+                          <table class="default-table detail-param-table">
                             <tr>
-                                <th>Package Name</th>
-                                <th>Version</th>
-                                <th>Packages</th>
+                              <th>Type</th>
+                              <th>Name</th>
+                              <th>Version</th>
                             </tr>
-                            <tr *ngFor="let service of appType.serviceTypes.collection">
+                            @for (package of service.manifest.packages; track package) {
+                              <tr>
                                 <td>
-                                    {{service.raw.ServiceManifestName}}
+                                  {{package.Type}}
                                 </td>
                                 <td>
-                                    {{service.raw.ServiceManifestVersion}}
+                                  {{package.Name}}
                                 </td>
                                 <td>
-                                    <div class="table-responsive">
-                                        <table class="default-table detail-param-table">
-                                            <tr>
-                                                <th>Type</th>
-                                                <th>Name</th>
-                                                <th>Version</th>
-                                            </tr>
-                                            <tr *ngFor="let package of service.manifest.packages">
-                                                <td>
-                                                    {{package.Type}}
-                                                </td>
-                                                <td>
-                                                    {{package.Name}}
-                                                </td>
-                                                <td>
-                                                    {{package.Version}}
-                                                </td>
-                                            </tr>
-                                        </table>
-                                    </div>
+                                  {{package.Version}}
                                 </td>
-                            </tr>
-                        </table>
-                    </div>
-                </td>
-            </tr>
-        </table>
+                              </tr>
+                            }
+                          </table>
+                        </div>
+                      </td>
+                    </tr>
+                  }
+                </table>
+              </div>
+            </td>
+          </tr>
+        }
+      </table>
     </div>
+  }
 </div>

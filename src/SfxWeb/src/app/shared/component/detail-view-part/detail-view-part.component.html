@@ -1,20 +1,24 @@
 <div class="table-responsive">
-    <div *ngIf="resolvedData">
-        <table class="default-table detail-table detail-list" [ngClass]="{ 'table-layout-fixed': !noFixedLayout }">
-            <tbody *ngFor="let item of resolvedData | keyvalue : asIsOrder"
-                [ngSwitch]="getResolvedPropertyType(item.value)" style="border-top: 0px solid;">
-                <!-- Render simple property (one row) -->
-                <tr *ngSwitchCase="'Value'">
-                    <!-- Render property name -->
-                    <th [title]="item.key">
-                        {{item.key}}
-                    </th>
-
-                    <!-- Render simple property value -->
-                    <td [title]="item.value">{{item.value}}</td>
+  @if (resolvedData) {
+    <div>
+      <table class="default-table detail-table detail-list" [ngClass]="{ 'table-layout-fixed': !noFixedLayout }">
+        @for (item of resolvedData | keyvalue : asIsOrder; track item) {
+          <tbody
+            style="border-top: 0px solid;">
+            @switch (getResolvedPropertyType(item.value)) {
+              <!-- Render simple property (one row) -->
+              @case ('Value') {
+                <tr>
+                  <!-- Render property name -->
+                  <th [title]="item.key">
+                    {{item.key}}
+                  </th>
+                  <!-- Render simple property value -->
+                  <td [title]="item.value">{{item.value}}</td>
                 </tr>
-
-                <tr *ngSwitchCase="'Link'" [title]="item.key">
+              }
+              @case ('Link') {
+                <tr [title]="item.key">
                   <th [title]="item.value">
                     {{item.key}}
                   </th>
@@ -22,89 +26,102 @@
                     <a [href]="item.value" target="_blank">{{item.value}}</a>
                   </td>
                 </tr>
-
-                <tr *ngSwitchCase="'Date'">
-                    <th [title]="item.key">
-                        {{item.key}}
-                    </th>
-                    <td>
-                        <app-display-time [time]="item.value"></app-display-time>
-                    </td>
-                </tr>
-
-                <tr *ngSwitchCase="'HealthState'">
+              }
+              @case ('Date') {
+                <tr>
                   <th [title]="item.key">
-                      {{item.key}}
+                    {{item.key}}
                   </th>
                   <td>
-                      <app-health-badge [badgeClass]="item.value['Badge Class']" [text]="item.value.Text"></app-health-badge>
+                    <app-display-time [time]="item.value"></app-display-time>
                   </td>
-              </tr>
-
-                <!-- Render html property (one row) -->
-                <tr *ngSwitchCase="'Html'">
-                    <!-- Render property name -->
-                    <th [title]="item.key">
-                        {{item.key}}
-                    </th>
-
-                    <!-- Render simple property value -->
-                    <td>
-                      {{item.value}}
-                    </td>
                 </tr>
-
-                <!-- Render object property (two rows) -->
-                <tr *ngIf="title">
-                    <!-- Render sub-object title in the first line -->
-                    <th colspan="2" class="sub-title" [title]="title">
-                        {{title}}
-                    </th>
+              }
+              @case ('HealthState') {
+                <tr>
+                  <th [title]="item.key">
+                    {{item.key}}
+                  </th>
+                  <td>
+                    <app-health-badge [badgeClass]="item.value['Badge Class']" [text]="item.value.Text"></app-health-badge>
+                  </td>
                 </tr>
-                <tr *ngSwitchCase="'Object'">
-                    <td colspan="2">
-                        <h3 class="heading" [title]="title" style="text-transform: none;" >{{item.key}} </h3>
-                        <div class="nested-table-container">
-                            <app-detail-view-part [data]="item.value" [noFixedLayout]="noFixedLayout" [useLink]="useLink"></app-detail-view-part>
-                        </div>
-                    </td>
+              }
+              <!-- Render html property (one row) -->
+              @case ('Html') {
+                <tr>
+                  <!-- Render property name -->
+                  <th [title]="item.key">
+                    {{item.key}}
+                  </th>
+                  <!-- Render simple property value -->
+                  <td>
+                    {{item.value}}
+                  </td>
                 </tr>
-
-                <tr *ngSwitchCase="'Array'">
-                    <th colspan="2">
-                        <h3 class="heading" [title]="title" style="text-transform: none;">{{item.key}} </h3>
-                        <div class="table-responsive">
-                            <div class="nested-table-container">
-                                <!-- Set table-layout to be fixed only when they have only 1 or 2 properties -->
-                                <table class="default-table detail-table nested-table-border" [ngClass]="{ 'table-layout-fixed': !noFixedLayout && getResolvedObjectSize(item.value[0]) <= 3 }">
-                                    <thead>
-                                        <tr class="nested-table-border">
-                                            <!-- Render sub-array table header -->
-                                            <th *ngFor="let subItem of item.value[0] | keyvalue : asIsOrder" [title]="subItem.key">
-                                                {{subItem.key}}
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr *ngFor="let item of item.value; let $last = last;"  [ngClass]="{ 'nested-table-border': !($last) }">
-                                                <!-- Render sub-array table body, assuming the properties are always simple properties rather than object -->
-                                            <td *ngFor="let subItem of item | keyvalue : asIsOrder" [ngSwitch]="getResolvedPropertyType(subItem.value)">
-                                                <span *ngSwitchCase="'Value'" [title]="subItem.value">{{subItem.value}}</span>
-                                                <app-detail-view-part *ngSwitchCase="'Array'" [data]="subItem.value" [useLink]="useLink"></app-detail-view-part>
-                                                <app-detail-view-part *ngSwitchCase="'Object'" [data]="subItem.value" [useLink]="useLink"></app-detail-view-part>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-
-                    </th>
+              }
+              <!-- Render object property -->
+              @case ('Object') {
+                <tr>
+                  <td colspan="2">
+                    <h3 class="heading" style="text-transform: none;" >{{item.key}} </h3>
+                    <div class="nested-table-container">
+                      <app-detail-view-part [data]="item.value" [noFixedLayout]="noFixedLayout" [useLink]="useLink"></app-detail-view-part>
+                    </div>
+                  </td>
                 </tr>
-
-            </tbody>
-
-        </table>
+              }
+              @case ('Array') {
+                <tr>
+                  <th colspan="2">
+                    <h3 class="heading" style="text-transform: none;">{{item.key}} </h3>
+                    <div class="table-responsive">
+                      <div class="nested-table-container">
+                        <!-- Set table-layout to be fixed only when they have only 1 or 2 properties -->
+                        <table class="default-table detail-table nested-table-border" [ngClass]="{ 'table-layout-fixed': !noFixedLayout && getResolvedObjectSize(item.value[0]) <= 3 }">
+                          <thead>
+                            <tr class="nested-table-border">
+                              <!-- Render sub-array table header -->
+                              @for (subItem of item.value[0] | keyvalue : asIsOrder; track subItem) {
+                                <th [title]="subItem.key">
+                                  {{subItem.key}}
+                                </th>
+                              }
+                            </tr>
+                          </thead>
+                          <tbody>
+                            @for (item of item.value; track item) {
+                              <tr  [ngClass]="{ 'nested-table-border': !($last) }">
+                                <!-- Render sub-array table body, assuming the properties are always simple properties rather than object -->
+                                @for (subItem of item | keyvalue : asIsOrder; track subItem) {
+                                  <td>
+                                    @switch (getResolvedPropertyType(subItem.value)) {
+                                      @case ('Value') {
+                                        <span [title]="subItem.value">{{subItem.value}}</span>
+                                      }
+                                      @case ('Array') {
+                                        <app-detail-view-part [data]="subItem.value" [useLink]="useLink"></app-detail-view-part>
+                                      }
+                                      @case ('Object') {
+                                        <app-detail-view-part [data]="subItem.value" [useLink]="useLink"></app-detail-view-part>
+                                      }
+                                    }
+                                  </td>
+                                }
+                              </tr>
+                            }
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </th>
+                </tr>
+              }
+            }
+          </tbody>
+        }
+      </table>
     </div>
+  }
 
 </div>

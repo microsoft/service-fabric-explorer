@@ -1,16 +1,22 @@
-<span *ngIf="clusterUpgradeProgress.isInitialized && clusterUpgradeProgress.isUpgrading" data-cy="upgradebanner">
+@if (clusterUpgradeProgress.isInitialized && clusterUpgradeProgress.isUpgrading) {
+  <span data-cy="upgradebanner">
     <div style="display: inline-flex; height: 50px;" >
-        <a routerLink="/details" style="margin: auto;" [class]="displayAllText ? 'essen-pane' : ''" >
-            <span class="dark-background-link mif-info" title="Cluster Upgrade Info"></span>
-            <span *ngIf="displayAllText">
-                <span style="padding-left: 2px;">{{clusterUpgradeProgress.isUDUpgrade ? '': 'Node by Node '}} Cluster Upgrade </span>
-                <span *ngIf="displayMiddleText">
-                    in Progress since {{clusterUpgradeProgress.startTimestampUtc | date:'medium'}}
-                </span>
-                <span>
-                    ({{clusterUpgradeProgress.getCompletedUpgradeDomains()}} / {{clusterUpgradeProgress.upgradeDomains.length}} {{clusterUpgradeProgress.isUDUpgrade ? 'UDs': 'Nodes'}} completed)
-                </span>
+      <a routerLink="/details" style="margin: auto;" [class]="displayAllText ? 'essen-pane' : ''" >
+        <span class="dark-background-link mif-info" title="Cluster Upgrade Info"></span>
+        @if (displayAllText) {
+          <span>
+            <span style="padding-left: 2px;">{{clusterUpgradeProgress.isUDUpgrade ? '': 'Node by Node '}} Cluster Upgrade </span>
+            @if (displayMiddleText) {
+              <span>
+                in Progress since {{clusterUpgradeProgress.startTimestampUtc | date:'medium'}}
+              </span>
+            }
+            <span>
+              ({{clusterUpgradeProgress.getCompletedUpgradeDomains()}} / {{clusterUpgradeProgress.upgradeDomains.length}} {{clusterUpgradeProgress.isUDUpgrade ? 'UDs': 'Nodes'}} completed)
             </span>
-        </a>
+          </span>
+        }
+      </a>
     </div>
-</span>
+  </span>
+}

@@ -1,41 +1,51 @@
 <div class="action-modal" data-cy="modal">
-    <div class="modal-header">
-        <h1 class="modal-title">Export Table</h1>
-    </div>
-    <div class="modal-body" style="display: flex; flex-direction: column;">
-        Export the table to CSV by selecting which columns to include.
-     
-        <ul data-cy="columns">
-            <li>
-                <label>
-                    <input type="checkbox" [name]="'Check All'" [ngModel]="allChecked" (click)="updateCheckAll($event)" [indeterminate]="!allChecked && !noneChecked" style="margin-right: 5px;" />
-                    Check All
-                </label>
-            </li>
-            <ng-container *ngFor="let column of data.config.columnSettings">
-                <li *ngIf="!column.config.canNotExport">
-                    <label>
-                        <input type="checkbox" [name]="column.displayName" [(ngModel)]="selected[column.displayName]"
-                            style="margin-right: 5px;">{{column.displayName}}
-                    </label>
-                </li>
-            </ng-container>
-        </ul>
+  <div class="modal-header">
+    <h1 class="modal-title">Export Table</h1>
+  </div>
+  <div class="modal-body" style="display: flex; flex-direction: column;">
+    Export the table to CSV by selecting which columns to include.
 
-        <div style="margin: auto; margin-bottom: 10px;" *ngIf="text.length > 0">
-            Copy to Clipboard
-            <app-clip-board [text]="copyText" name="raw csv content"></app-clip-board>
+    <ul data-cy="columns">
+      <li>
+        <label>
+          <input type="checkbox" [name]="'Check All'" [ngModel]="allChecked" (click)="updateCheckAll($event)" [indeterminate]="!allChecked && !noneChecked" style="margin-right: 5px;" />
+          Check All
+        </label>
+      </li>
+      @for (column of data.config.columnSettings; track column) {
+        @if (!column.config.canNotExport) {
+          <li>
+            <label>
+              <input type="checkbox" [name]="column.displayName" [(ngModel)]="selected[column.displayName]"
+                style="margin-right: 5px;">{{column.displayName}}
+              </label>
+            </li>
+          }
+        }
+      </ul>
+
+      @if (text.length > 0) {
+        <div style="margin: auto; margin-bottom: 10px;">
+          Copy to Clipboard
+          <app-clip-board [text]="copyText" name="raw csv content"></app-clip-board>
         </div>
-        <label *ngIf="text.length > 0" style="margin-bottom: 5px;">
-            Exported CSV Content:
-            <div class="text-wrapper" contenteditable="true" *ngIf="text.length > 0" role="textbox" aria-label="Exported csv content" >
-                <div *ngFor="let row of text" class="text-row" data-cy="row">{{row}}</div>
+      }
+      @if (text.length > 0) {
+        <label style="margin-bottom: 5px;">
+          Exported CSV Content:
+          @if (text.length > 0) {
+            <div class="text-wrapper" contenteditable="true" role="textbox" aria-label="Exported csv content" >
+              @for (row of text; track row) {
+                <div class="text-row" data-cy="row">{{row}}</div>
+              }
             </div>
-        </label>    
+          }
+        </label>
+      }
 
     </div>
     <div class="modal-footer">
-        <button type="submit" class="solid-button blue" (click)="export()" data-cy="export">Export</button>
-        <button type="button" class="flat-button" (click)="dialogRef.close()">Cancel</button>
+      <button type="submit" class="solid-button blue" (click)="export()" data-cy="export">Export</button>
+      <button type="button" class="flat-button" (click)="dialogRef.close()">Cancel</button>
     </div>
-</div>
+  </div>

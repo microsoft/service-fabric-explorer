@@ -1,3 +1,5 @@
-<div *ngIf="simulEventsList.length > 0">
-  <app-rca-summary [events]="simulEventsList"></app-rca-summary>
-</div>
+@if (simulEventsList.length > 0) {
+  <div>
+    <app-rca-summary [events]="simulEventsList"></app-rca-summary>
+  </div>
+}

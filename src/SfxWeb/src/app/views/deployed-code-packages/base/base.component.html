@@ -1,7 +1,9 @@
 <app-navbar type="Deployed Code Packages" [showCopy]="false"></app-navbar>
 
-<div class="main-view" *ngIf="codePackages" data-cy="packages">
+@if (codePackages) {
+  <div class="main-view" data-cy="packages">
     <div class="detail-pane essen-pane">
-        <app-detail-list [list]="codePackages" [listSettings]="listSettings"></app-detail-list>
+      <app-detail-list [list]="codePackages" [listSettings]="listSettings"></app-detail-list>
     </div>
-</div>
+  </div>
+}

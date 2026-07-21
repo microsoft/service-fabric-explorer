@@ -1,22 +1,24 @@
-<div *ngIf="timeLineEventsData && startDate && endDate">
-  
-  <app-event-store-timeline [events]="timeLineEventsData" (itemClicked)="setSearch($event)">
-    
-    <div buttons class="flex-center toggle-wrapper"  *ngIf="showCorrelatedBtn">
-      <span class="mif-info mif-lg correlated-icon" placement="right"  tooltipClass="styled-tooltip" tabindex="0"
-        ngbTooltip="Checked: Only certain high value scenarios are plotted, created from multiple events.&#010;Unchecked: Every event listed is plotted."
-        aria-label="Checked: Only certain high value scenarios are plotted, created from multiple events.&#010;Unchecked: Every event listed is plotted."></span>
-      <label style="margin-right: 5px;">
-        Show Only Correlated Events
-        <app-toggle [(state)]="showCorrelatedEvents"></app-toggle>
-      </label>
-
-      <span *ngIf="dataService.isAdvancedModeEnabled() && !showCorrelatedEvents" class="flex-center">
-        <app-input placeholder="query string" [(model)]="transformText">
-        </app-input>
-        <button class="simple-button" (click)="getTimelineData">filter</button>
-      </span>
-  
-    </div>
-  </app-event-store-timeline><br>
-</div>
+@if (timeLineEventsData && startDate && endDate) {
+  <div>
+    <app-event-store-timeline [events]="timeLineEventsData" (itemClicked)="setSearch($event)">
+      @if (showCorrelatedBtn) {
+        <div buttons class="flex-center toggle-wrapper" >
+          <span class="mif-info mif-lg correlated-icon" placement="right"  tooltipClass="styled-tooltip" tabindex="0"
+            ngbTooltip="Checked: Only certain high value scenarios are plotted, created from multiple events.&#010;Unchecked: Every event listed is plotted."
+          aria-label="Checked: Only certain high value scenarios are plotted, created from multiple events.&#010;Unchecked: Every event listed is plotted."></span>
+          <label style="margin-right: 5px;">
+            Show Only Correlated Events
+            <app-toggle [(state)]="showCorrelatedEvents"></app-toggle>
+          </label>
+          @if (dataService.isAdvancedModeEnabled() && !showCorrelatedEvents) {
+            <span class="flex-center">
+              <app-input placeholder="query string" [(model)]="transformText">
+              </app-input>
+              <button class="simple-button" (click)="getTimelineData">filter</button>
+            </span>
+          }
+        </div>
+      }
+    </app-event-store-timeline><br>
+  </div>
+}

@@ -1,16 +1,20 @@
-<div *ngIf="servicePackage">
+@if (servicePackage) {
+  <div>
     <div class="tile-container">
-      <app-essential-health-tile [healthState]="servicePackage.health.healthState" *ngIf="servicePackage?.isInitialized"
-        class="long" [listItems]="essentialItems">
-    
-        <ng-template appEssentialTemplate id="status">
-          <app-status-resolver [status]="servicePackage.raw.Status"></app-status-resolver>
-        </ng-template>
-      </app-essential-health-tile>
+      @if (servicePackage?.isInitialized) {
+        <app-essential-health-tile [healthState]="servicePackage.health.healthState"
+          class="long" [listItems]="essentialItems">
+          <ng-template appEssentialTemplate id="status">
+            <app-status-resolver [status]="servicePackage.raw.Status"></app-status-resolver>
+          </ng-template>
+        </app-essential-health-tile>
+      }
     </div>
-
-    <div class="detail-pane essen-pane" *ngIf="servicePackage.health">
+    @if (servicePackage.health) {
+      <div class="detail-pane essen-pane">
         <h2>Health Evaluations</h2>
         <app-health-viewer  [healthyEvaluations]="servicePackage.health.healthEvents" [unhealthyEvaluations]="servicePackage.health.unhealthyEvaluations" ></app-health-viewer>
-    </div>
-</div>
+      </div>
+    }
+  </div>
+}

@@ -1,12 +1,21 @@
 
 
-<ng-template #internal>
-  <span style="white-space: pre;">{{value}}</span>
-  <i *ngIf="item?.infoMessage" class="mif-info info-icon" [title]="item.infoMessage"></i>
-</ng-template>
 
-<div style="white-space: pre;"  *ngIf="link; else internal"> 
-  <a *ngIf="!listSetting.isExternal" [routerLink]="link"> {{value}} </a>
-  <a *ngIf="listSetting.isExternal" [href]="link" target="_blank"> {{value}} </a>
-  <i *ngIf="item?.infoMessage" class="mif-info info-icon" [title]="item.infoMessage"></i>
-</div>
+@if (link) {
+  <div style="white-space: pre;" >
+    @if (!listSetting.isExternal) {
+      <a [routerLink]="link"> {{value}} </a>
+    }
+    @if (listSetting.isExternal) {
+      <a [href]="link" target="_blank"> {{value}} </a>
+    }
+    @if (item?.infoMessage) {
+      <i class="mif-info info-icon" [title]="item.infoMessage"></i>
+    }
+  </div>
+} @else {
+  <span style="white-space: pre;">{{value}}</span>
+  @if (item?.infoMessage) {
+    <i class="mif-info info-icon" [title]="item.infoMessage"></i>
+  }
+}

@@ -1,5 +1,11 @@
-<div class="detail-pane" *ngIf="address">
+@if (address) {
+  <div class="detail-pane">
     <h2>Address</h2>
-    <app-detail-view-part *ngIf="!isString" noFixedLayout="true" [data]="address" [useLink]="true"></app-detail-view-part>
-    <span *ngIf="isString">{{address}}</span>
-</div>
+    @if (!isString) {
+      <app-detail-view-part noFixedLayout="true" [data]="address" [useLink]="true"></app-detail-view-part>
+    }
+    @if (isString) {
+      <span>{{address}}</span>
+    }
+  </div>
+}

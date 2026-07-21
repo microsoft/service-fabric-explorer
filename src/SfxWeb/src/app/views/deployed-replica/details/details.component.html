@@ -1,12 +1,15 @@
-<div *ngIf="replica">
+@if (replica) {
+  <div>
     <div class="detail-pane essen-pane">
-        <app-detail-view-part [data]="replica"></app-detail-view-part>
+      <app-detail-view-part [data]="replica"></app-detail-view-part>
     </div>
-
-    <div class="detail-pane essen-pane" *ngIf="replica.detail && replica.detail.isInitialized">
+    @if (replica.detail && replica.detail.isInitialized) {
+      <div class="detail-pane essen-pane">
         <h2>
-            Details
+          Details
         </h2>
         <app-detail-view-part [data]="replica.detail"></app-detail-view-part>
-    </div>
-</div>
+      </div>
+    }
+  </div>
+}

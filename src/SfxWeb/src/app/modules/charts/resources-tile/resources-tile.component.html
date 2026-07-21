@@ -1,13 +1,15 @@
 <div class="dashboard-wrapper resources-tile" style="width: fit-content;">
-    <div class="dashboard dashboard-small  dashboard-tile-inner"  >
-        <div class="dashboard-tile flex-center" >
-            <div class="flex-center dashboard-tile-inner" >
-                <div>
-                    <app-resource-item *ngFor="let item of internalList; let l = last" [ngClass]="l ? '': 'underline'" [item]="item" >
-                        <ng-container *ngTemplateOutlet="item.ref"></ng-container>
-                    </app-resource-item>
-                </div>
-            </div>
+  <div class="dashboard dashboard-small  dashboard-tile-inner"  >
+    <div class="dashboard-tile flex-center" >
+      <div class="flex-center dashboard-tile-inner" >
+        <div>
+          @for (item of internalList; track item; let l = $last) {
+            <app-resource-item [ngClass]="l ? '': 'underline'" [item]="item" >
+              <ng-container *ngTemplateOutlet="item.ref"></ng-container>
+            </app-resource-item>
+          }
         </div>
+      </div>
     </div>
+  </div>
 </div>

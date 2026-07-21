@@ -1,12 +1,16 @@
-<div class="detail-pane essen-pane" *ngIf="node">
+@if (node) {
+  <div class="detail-pane essen-pane">
     <app-collapse-container sectionName="Node">
-        <h2 collapse-header>
-            Node
-        </h2>    
-        <app-detail-view-part [data]="node.raw" [parent]="node" collapse-body></app-detail-view-part>
+      <h2 collapse-header>
+        Node
+      </h2>
+      <app-detail-view-part [data]="node.raw" [parent]="node" collapse-body></app-detail-view-part>
     </app-collapse-container>
-</div>
+  </div>
+}
 
-<div class="detail-pane essen-pane" *ngIf="node && node.loadInformation.isInitialized" data-cy="load">
+@if (node && node.loadInformation.isInitialized) {
+  <div class="detail-pane essen-pane" data-cy="load">
     <app-detail-view-part [data]="node.loadInformation.raw" [parent]="node.loadInformation" collapse-body></app-detail-view-part>
-</div>
+  </div>
+}

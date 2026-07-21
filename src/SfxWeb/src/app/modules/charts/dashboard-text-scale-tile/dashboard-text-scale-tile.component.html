@@ -1,12 +1,16 @@
 <div class="dashboard-wrapper">
-    <div class="dashboard dashboard-small" style="padding: 11px 7px;">
-        <div class="dashboard-tile">
-            <div class="dashboard-tile-inner" [style.padding-left]="barClass ? '16px' : '0px'">
-                <div class="dashboard-tile-leftbar" [ngClass]="barClass" *ngIf="barClass"></div>
-                <div class="dashboard-tile-title">{{title}}</div>
-                <ng-content></ng-content>
-                <div class="dashboard-tile-innertext" *ngFor="let line of text">{{line}}</div>
-            </div>
-        </div>
+  <div class="dashboard dashboard-small" style="padding: 11px 7px;">
+    <div class="dashboard-tile">
+      <div class="dashboard-tile-inner" [style.padding-left]="barClass ? '16px' : '0px'">
+        @if (barClass) {
+          <div class="dashboard-tile-leftbar" [ngClass]="barClass"></div>
+        }
+        <div class="dashboard-tile-title">{{title}}</div>
+        <ng-content></ng-content>
+        @for (line of text; track line) {
+          <div class="dashboard-tile-innertext">{{line}}</div>
+        }
+      </div>
     </div>
+  </div>
 </div>

@@ -1,8 +1,10 @@
 <div class="detail-pane essen-pane">
-    <h2>
-        <span id="clusterManifestName">{{manifestName}}</span>
-    </h2>
-    <code [attr.aria-label]="'manifest of ' + manifestName">
-        <code *ngFor="let line of manifestLines">{{line}}</code>
-    </code>
+  <h2>
+    <span id="clusterManifestName">{{manifestName}}</span>
+  </h2>
+  <code [attr.aria-label]="'manifest of ' + manifestName">
+    @for (line of manifestLines; track line) {
+      <code>{{line}}</code>
+    }
+  </code>
 </div>

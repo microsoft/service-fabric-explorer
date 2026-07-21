@@ -1,15 +1,18 @@
 
-<div class="tile-container" *ngIf="deployedCodePackage">
-  
-  <app-essential-health-tile *ngIf="deployedCodePackage?.isInitialized"
-  class="long" [listItems]="essentialItems">
-</app-essential-health-tile>
-
-  <app-essential-health-tile *ngIf="deployedCodePackage?.isInitialized"
-    class="long" [listItems]="essentialItems2">
-
-    <ng-template appEssentialTemplate id="status">
-      <app-status-resolver [status]="deployedCodePackage.raw.Status"></app-status-resolver>
-    </ng-template>
-  </app-essential-health-tile>
-</div>
+@if (deployedCodePackage) {
+  <div class="tile-container">
+    @if (deployedCodePackage?.isInitialized) {
+      <app-essential-health-tile
+        class="long" [listItems]="essentialItems">
+      </app-essential-health-tile>
+    }
+    @if (deployedCodePackage?.isInitialized) {
+      <app-essential-health-tile
+        class="long" [listItems]="essentialItems2">
+        <ng-template appEssentialTemplate id="status">
+          <app-status-resolver [status]="deployedCodePackage.raw.Status"></app-status-resolver>
+        </ng-template>
+      </app-essential-health-tile>
+    }
+  </div>
+}

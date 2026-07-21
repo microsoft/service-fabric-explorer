@@ -1,81 +1,91 @@
-<div *ngIf="node">
-  <div class="tile-container" data-cy="tiles">
-    <app-essential-health-tile [healthState]="node.healthState" class="long" [listItems]="essentialItems" data-cy="essential-info">
-      <ng-template appEssentialTemplate id="status">
-        <app-status-resolver [status]="node.nodeStatus"  data-cy="status"></app-status-resolver>
-      </ng-template>
-    </app-essential-health-tile>
-
-    <app-essential-health-tile [listItems]="ringInfo" data-cy="node-ring-info">
-    </app-essential-health-tile>
-
-    <app-dashboard-text-scale-tile *ngIf="placementProperties" data-cy="placementconstraints">
-      <div class="placement-constraint-wrapper text-center">
-        <h2 class="top-seperator title">Placement Properties</h2>
-        <div class="inner-list" *ngFor="let property of placementProperties.placementProperties | keyvalue">
-          <div>{{property.key}} : {{property.value}}</div>
+@if (node) {
+  <div>
+    <div class="tile-container" data-cy="tiles">
+      <app-essential-health-tile [healthState]="node.healthState" class="long" [listItems]="essentialItems" data-cy="essential-info">
+        <ng-template appEssentialTemplate id="status">
+          <app-status-resolver [status]="node.nodeStatus"  data-cy="status"></app-status-resolver>
+        </ng-template>
+      </app-essential-health-tile>
+      <app-essential-health-tile [listItems]="ringInfo" data-cy="node-ring-info">
+      </app-essential-health-tile>
+      @if (placementProperties) {
+        <app-dashboard-text-scale-tile data-cy="placementconstraints">
+          <div class="placement-constraint-wrapper text-center">
+            <h2 class="top-seperator title">Placement Properties</h2>
+            @for (property of placementProperties.placementProperties | keyvalue; track property) {
+              <div class="inner-list">
+                <div>{{property.key}} : {{property.value}}</div>
+              </div>
+            }
+          </div>
+        </app-dashboard-text-scale-tile>
+      }
+      @if (node?.loadInformation?.isInitialized) {
+        <app-dashboard-text-tile [count]="node.loadInformation.metrics.Count" title="Total Count" middleMargin="0px 0"
+          helpTextLink="https://aka.ms/sf/loadinformation">
+          Count of all service objects (stateless and stateful) on the node
+        </app-dashboard-text-tile>
+        <app-dashboard-text-tile [count]="node.loadInformation.metrics.PrimaryCount" title="Primary Count"
+          middleMargin="0px 0" helpTextLink="https://aka.ms/sf/loadinformation">
+          Count of Primary replicas on the node
+        </app-dashboard-text-tile>
+        <app-dashboard-text-tile [count]="node.loadInformation.metrics.ReplicaCount" title="Replica Count"
+          middleMargin="0px 0" helpTextLink="https://aka.ms/sf/loadinformation">
+          Count of total stateful replicas on the node
+        </app-dashboard-text-tile>
+      }
+    </div>
+    @if (node && node.isDeactivating) {
+      <div class="detail-pane essen-pane" data-cy="deactivated">
+        <app-collapse-container sectionName="Deactivation Info">
+          <div collapse-header>
+            <h2>Deactivation Info</h2>
+          </div>
+          <div collapse-body>
+            <app-node-deactivation-info [deactivationInfo]="node.raw.NodeDeactivationInfo" [hasDescription]="node.hasDeactivatingDescription"></app-node-deactivation-info>
+          </div>
+        </app-collapse-container>
+      </div>
+    }
+    @if (repairJobs.length > 0) {
+      <div class="detail-pane essen-pane" data-cy="repair-jobs">
+        <app-collapse-container sectionName="Repair Jobs">
+          <div collapse-header>
+            <h2>Repair jobs</h2>
+          </div>
+          <div collapse-body>
+            @if (node) {
+              <app-detail-list [list]="repairJobs"
+              [listSettings]="repairJobSettings"></app-detail-list>
+            }
+          </div>
+        </app-collapse-container>
+      </div>
+    }
+    <div class="detail-pane essen-pane">
+      <app-collapse-container sectionName="Health Evaluations">
+        <div collapse-header>
+          <h2>Health Evaluations</h2>
         </div>
+        <div collapse-body>
+          @if (node) {
+            <app-health-viewer [healthyEvaluations]="node.health.healthEvents" [unhealthyEvaluations]="node.health.unhealthyEvaluations" ></app-health-viewer>
+          }
+        </div>
+      </app-collapse-container>
+    </div>
+    @if (deployedApps) {
+      <div class="detail-pane essen-pane">
+        <app-collapse-container sectionName="Deployed Applications">
+          <div collapse-header>
+            <h2>Deployed Applications</h2>
+          </div>
+          <div collapse-body>
+            <app-detail-list [list]="deployedApps.collection" [listSettings]="listSettings" data-cy="appsList">
+            </app-detail-list>
+          </div>
+        </app-collapse-container>
       </div>
-    </app-dashboard-text-scale-tile>
-
-    <ng-container *ngIf="node?.loadInformation?.isInitialized" >
-      <app-dashboard-text-tile [count]="node.loadInformation.metrics.Count" title="Total Count" middleMargin="0px 0"
-      helpTextLink="https://aka.ms/sf/loadinformation">
-        Count of all service objects (stateless and stateful) on the node
-      </app-dashboard-text-tile>
-      <app-dashboard-text-tile [count]="node.loadInformation.metrics.PrimaryCount" title="Primary Count"
-        middleMargin="0px 0" helpTextLink="https://aka.ms/sf/loadinformation">
-        Count of Primary replicas on the node
-      </app-dashboard-text-tile>
-      <app-dashboard-text-tile [count]="node.loadInformation.metrics.ReplicaCount" title="Replica Count"
-        middleMargin="0px 0" helpTextLink="https://aka.ms/sf/loadinformation">
-        Count of total stateful replicas on the node
-      </app-dashboard-text-tile>
-    </ng-container>
+    }
   </div>
-
-  <div class="detail-pane essen-pane" *ngIf="node && node.isDeactivating" data-cy="deactivated">
-    <app-collapse-container sectionName="Deactivation Info">
-      <div collapse-header>
-        <h2>Deactivation Info</h2>
-      </div>
-      <div collapse-body>
-        <app-node-deactivation-info [deactivationInfo]="node.raw.NodeDeactivationInfo" [hasDescription]="node.hasDeactivatingDescription"></app-node-deactivation-info>
-      </div>
-    </app-collapse-container>
-  </div>
-
-  <div class="detail-pane essen-pane" *ngIf="repairJobs.length > 0" data-cy="repair-jobs">
-    <app-collapse-container sectionName="Repair Jobs">
-      <div collapse-header>
-        <h2>Repair jobs</h2>
-      </div>
-      <div collapse-body>
-        <app-detail-list *ngIf="node" [list]="repairJobs"
-          [listSettings]="repairJobSettings"></app-detail-list>
-      </div>
-    </app-collapse-container>
-  </div>
-
-  <div class="detail-pane essen-pane">
-    <app-collapse-container sectionName="Health Evaluations">
-      <div collapse-header>
-        <h2>Health Evaluations</h2>
-      </div>
-      <div collapse-body>
-          <app-health-viewer *ngIf="node" [healthyEvaluations]="node.health.healthEvents" [unhealthyEvaluations]="node.health.unhealthyEvaluations" ></app-health-viewer>
-      </div>
-    </app-collapse-container>
-  </div>
-
-  <div class="detail-pane essen-pane" *ngIf="deployedApps">
-    <app-collapse-container sectionName="Deployed Applications">
-      <div collapse-header>
-        <h2>Deployed Applications</h2>
-      </div>
-      <div collapse-body>
-        <app-detail-list [list]="deployedApps.collection" [listSettings]="listSettings" data-cy="appsList">
-        </app-detail-list>
-      </div>
-    </app-collapse-container>
-  </div>
+}

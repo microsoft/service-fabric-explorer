@@ -1,48 +1,64 @@
 <div class="tile-container">
-  <app-essential-health-tile *ngIf="nodes.isInitialized && clusterUpgradeProgress.isInitialized"
-  class="long" [listItems]="essentialItems">
-  </app-essential-health-tile>
+  @if (nodes.isInitialized && clusterUpgradeProgress.isInitialized) {
+    <app-essential-health-tile
+      class="long" [listItems]="essentialItems">
+    </app-essential-health-tile>
+  }
 
-    <app-dashboard-tile [data]="nodesDashboard" *ngIf="nodesDashboard" data-cy="nodesChart" ></app-dashboard-tile>
-    <app-dashboard-tile [data]="appsDashboard" *ngIf="appsDashboard" data-cy="appsChart" ></app-dashboard-tile>
-    <app-dashboard-tile [data]="servicesDashboard" *ngIf="servicesDashboard" ></app-dashboard-tile>
-    <app-dashboard-tile [data]="partitionsDashboard" *ngIf="partitionsDashboard" >
+  @if (nodesDashboard) {
+    <app-dashboard-tile [data]="nodesDashboard" data-cy="nodesChart" ></app-dashboard-tile>
+  }
+  @if (appsDashboard) {
+    <app-dashboard-tile [data]="appsDashboard" data-cy="appsChart" ></app-dashboard-tile>
+  }
+  @if (servicesDashboard) {
+    <app-dashboard-tile [data]="servicesDashboard" ></app-dashboard-tile>
+  }
+  @if (partitionsDashboard) {
+    <app-dashboard-tile [data]="partitionsDashboard" >
     </app-dashboard-tile>
-    <app-dashboard-tile [data]="replicasDashboard" *ngIf="replicasDashboard" ></app-dashboard-tile>
-    <app-dashboard-text-tile [barClass]="upgradeAppsCount > 0 ? 'badge-upgrade-active' : 'badge-upgrade-inactive'"
-        link="apps/upgrades" [count]="upgradeAppsCount"
-        [title]="upgradeAppsCount === 1 ? 'Application Upgrade In Progress' : 'Application Upgrade In Progress'"
-       ></app-dashboard-text-tile>
+  }
+  @if (replicasDashboard) {
+    <app-dashboard-tile [data]="replicasDashboard" ></app-dashboard-tile>
+  }
+  <app-dashboard-text-tile [barClass]="upgradeAppsCount > 0 ? 'badge-upgrade-active' : 'badge-upgrade-inactive'"
+    link="apps/upgrades" [count]="upgradeAppsCount"
+    [title]="upgradeAppsCount === 1 ? 'Application Upgrade In Progress' : 'Application Upgrade In Progress'"
+  ></app-dashboard-text-tile>
+  @if (repairtaskCollection.isInitialized) {
     <app-dashboard-text-tile
-        [barClass]="repairtaskCollection.repairTasks.length > 0 ? 'badge-upgrade-active' : 'badge-upgrade-inactive'"
-        link="repairtasks" [count]="repairtaskCollection.repairTasks.length" *ngIf="repairtaskCollection.isInitialized"
-        title="Repair Jobs In Progress" ></app-dashboard-text-tile>
+      [barClass]="repairtaskCollection.repairTasks.length > 0 ? 'badge-upgrade-active' : 'badge-upgrade-inactive'"
+      link="repairtasks" [count]="repairtaskCollection.repairTasks.length"
+    title="Repair Jobs In Progress" ></app-dashboard-text-tile>
+  }
+  @if (nodes.isInitialized) {
     <app-dashboard-text-tile
-        [barClass]="nodes.disabledAndDisablingCount > 0 ? 'badge-upgrade-active' : 'badge-upgrade-inactive'" link="nodes"
-        [count]="nodes.disabledAndDisablingCount" *ngIf="nodes.isInitialized" title="Disabled/Disabling Nodes" style="display: block">
+      [barClass]="nodes.disabledAndDisablingCount > 0 ? 'badge-upgrade-active' : 'badge-upgrade-inactive'" link="nodes"
+      [count]="nodes.disabledAndDisablingCount" title="Disabled/Disabling Nodes" style="display: block">
     </app-dashboard-text-tile>
+  }
 </div>
 
-<div *ngIf="repairtaskCollection.isInitialized && repairtaskCollection?.jobsOfInterest?.length > 0 || infraCollection.isInitialized && infraCollection?.throttledJobs?.length > 0" class="essen-pane detail-pane" style="border: 2px solid var(--badge-warning);">
-  <app-collapse-container sectionName="Potentially Stuck Repair Jobs" collapsed="false" data-cy="jobs">
-    <div collapse-header>
-            <h2>Potentially Stuck Repair Jobs and Throttled Infrastructure Jobs</h2>
-    </div>
-    <div collapse-body>
-      <h3 class="nested-header heading">Repair Jobs</h3>
-      <app-detail-list [list]="repairtaskCollection.jobsOfInterest" [listSettings]="repairTaskListSettings" [showTopOptions]="false"></app-detail-list>
+@if (repairtaskCollection.isInitialized && repairtaskCollection?.jobsOfInterest?.length > 0 || infraCollection.isInitialized && infraCollection?.throttledJobs?.length > 0) {
+  <div class="essen-pane detail-pane" style="border: 2px solid var(--badge-warning);">
+    <app-collapse-container sectionName="Potentially Stuck Repair Jobs" collapsed="false" data-cy="jobs">
+      <div collapse-header>
+        <h2>Potentially Stuck Repair Jobs and Throttled Infrastructure Jobs</h2>
+      </div>
+      <div collapse-body>
+        <h3 class="nested-header heading">Repair Jobs</h3>
+        <app-detail-list [list]="repairtaskCollection.jobsOfInterest" [listSettings]="repairTaskListSettings" [showTopOptions]="false"></app-detail-list>
+        <h3 class="nested-header heading">Throttled Infrastructure Jobs</h3>
+        <app-detail-list [list]="infraCollection.throttledJobs" [listSettings]="infraSettings" [showTopOptions]="false"></app-detail-list>
+      </div>
+    </app-collapse-container>
+  </div>
+}
 
-      <h3 class="nested-header heading">Throttled Infrastructure Jobs</h3>
-      <app-detail-list [list]="infraCollection.throttledJobs" [listSettings]="infraSettings" [showTopOptions]="false"></app-detail-list>
-
-    </div>
-
-  </app-collapse-container>
-</div>
-
-<div *ngIf="clusterUpgradeProgress.isInitialized && clusterUpgradeProgress.isUpgrading" class="detail-pane">
-  <div data-cy="upgradeDetails" class="essen-pane" style="flex: 1; min-width: 600px;">
-    <app-collapse-container sectionName="Cluster Upgrade In Progress" collapsed="true">
+@if (clusterUpgradeProgress.isInitialized && clusterUpgradeProgress.isUpgrading) {
+  <div class="detail-pane">
+    <div data-cy="upgradeDetails" class="essen-pane" style="flex: 1; min-width: 600px;">
+      <app-collapse-container sectionName="Cluster Upgrade In Progress" collapsed="true">
         <div collapse-header>
           <h2>Cluster Upgrade In Progress</h2>
         </div>
@@ -53,36 +69,42 @@
           <app-upgrade-progress [upgradeDomains]="clusterUpgradeProgress.upgradeDomains"></app-upgrade-progress>
         </div>
       </app-collapse-container>
-  </div>
-
-  <div class="essen-pane" *ngIf="nodes.isInitialized && nodes.disabledAndDisablingNodes.length > 0"  style="flex: 1; min-width: 600px;">
-    <app-collapse-container [sectionName]="'Deactivation Nodes Info'" collapsed="true">
-      <div collapse-header>
-        <h2>
-          Deactivation Nodes Info ({{nodes.disabledAndDisablingNodes.length}})
-        </h2>
-      </div>
-      <div collapse-body class="disabled-node-list">
-        <div *ngFor="let node of nodes.disabledAndDisablingNodes" class="disabled-node-item">
-          <app-collapse-container collapsed="true" [sectionName]="node.name">
-            <div collapse-header>
-              <div style="font-size: 15px; margin-bottom: 5px;" class="flex-center">{{node.name}} - {{node.raw.NodeStatus}}
-                <span *ngIf="node.raw.IsSeedNode" class="flex-center">
-                  <span class="mif-checkmark seed-node"></span>
-                  Seed Node
-                </span>
+    </div>
+    @if (nodes.isInitialized && nodes.disabledAndDisablingNodes.length > 0) {
+      <div class="essen-pane"  style="flex: 1; min-width: 600px;">
+        <app-collapse-container [sectionName]="'Deactivation Nodes Info'" collapsed="true">
+          <div collapse-header>
+            <h2>
+              Deactivation Nodes Info ({{nodes.disabledAndDisablingNodes.length}})
+            </h2>
+          </div>
+          <div collapse-body class="disabled-node-list">
+            @for (node of nodes.disabledAndDisablingNodes; track node) {
+              <div class="disabled-node-item">
+                <app-collapse-container collapsed="true" [sectionName]="node.name">
+                  <div collapse-header>
+                    <div style="font-size: 15px; margin-bottom: 5px;" class="flex-center">{{node.name}} - {{node.raw.NodeStatus}}
+                      @if (node.raw.IsSeedNode) {
+                        <span class="flex-center">
+                          <span class="mif-checkmark seed-node"></span>
+                          Seed Node
+                        </span>
+                      }
+                    </div>
+                  </div>
+                  <div collapse-body class="table-responsive" style="padding: 10px;">
+                    <a [routerLink]="node.viewPath">View Node</a>
+                    <app-node-deactivation-info [deactivationInfo]="node.raw.NodeDeactivationInfo" [hasDescription]="node.hasDeactivatingDescription"></app-node-deactivation-info>
+                  </div>
+                </app-collapse-container>
               </div>
-            </div>
-            <div collapse-body class="table-responsive" style="padding: 10px;">
-              <a [routerLink]="node.viewPath">View Node</a>
-              <app-node-deactivation-info [deactivationInfo]="node.raw.NodeDeactivationInfo" [hasDescription]="node.hasDeactivatingDescription"></app-node-deactivation-info>
-            </div>
-          </app-collapse-container>
-        </div>
+            }
+          </div>
+        </app-collapse-container>
       </div>
-    </app-collapse-container>
+    }
   </div>
-</div>
+}
 
 <div class="detail-pane essen-pane" data-cy="health" style="position: relative;">
   <h2>Health Evaluations</h2>

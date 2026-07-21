@@ -1,1 +1,3 @@
-<app-imagestore-viewer *ngIf="imageStore" [imagestoreRoot]="imageStore"></app-imagestore-viewer>
+@if (imageStore) {
+  <app-imagestore-viewer [imagestoreRoot]="imageStore"></app-imagestore-viewer>
+}

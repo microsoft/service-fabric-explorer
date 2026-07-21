@@ -1,22 +1,28 @@
-<div *ngIf="groupByNodeType">
-  <div class="underline" *ngFor="let item of nodeTypes | keyvalue; let l = last; trackBy: trackByFn"
-    style="width: 100%;">
-    <app-collapse-container [collapsed]="true" data-cy="nodetype-group" [sectionName]="item.value.nodeType">
-      <div collapse-header>
-        <div style="display: flex; justify-content: space-between;">
-          <div>{{item.value.nodeType}}</div>
-          <div>({{item.value.nodes.length}})</div>
-        </div>
+@if (groupByNodeType) {
+  <div>
+    @for (item of nodeTypes | keyvalue; track trackByFn($index, item); let l = $last) {
+      <div class="underline"
+        style="width: 100%;">
+        <app-collapse-container [collapsed]="true" data-cy="nodetype-group" [sectionName]="item.value.nodeType">
+          <div collapse-header>
+            <div style="display: flex; justify-content: space-between;">
+              <div>{{item.value.nodeType}}</div>
+              <div>({{item.value.nodes.length}})</div>
+            </div>
+          </div>
+          <div collapse-body class="aboveline">
+            <div style="margin-left: 10px;">
+              <app-node-list [nodes]="item.value.nodes" [underlineLast]="false" [listTemplate]="listTemplate"></app-node-list>
+            </div>
+          </div>
+        </app-collapse-container>
       </div>
-      <div collapse-body class="aboveline">
-        <div style="margin-left: 10px;">
-          <app-node-list [nodes]="item.value.nodes" [underlineLast]="false" [listTemplate]="listTemplate"></app-node-list>
-        </div>
-      </div>
-    </app-collapse-container>
+    }
   </div>
-</div>
+}
 
-<div *ngIf="!groupByNodeType">
-  <app-node-list [nodes]="nodes" [listTemplate]="listTemplate"></app-node-list>
-</div>
+@if (!groupByNodeType) {
+  <div>
+    <app-node-list [nodes]="nodes" [listTemplate]="listTemplate"></app-node-list>
+  </div>
+}

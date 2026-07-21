@@ -1,71 +1,78 @@
-<div *ngIf="partition" >
-  <div class="tile-container">
-    <app-essential-health-tile [healthState]="partition?.healthState" *ngIf="partition && partition.isInitialized"
-    class="long" [listItems]="essentialItems">
-    <ng-template appEssentialTemplate id="status">
-      <app-status-resolver [status]="partition.raw.PartitionStatus"></app-status-resolver>
-    </ng-template>
-  </app-essential-health-tile>
-
-    <app-tile-wrapper *ngIf="partition?.raw">
-      <app-state-info [stateful]="partition.isStatefulService" [data]="partition.raw"></app-state-info>
-    </app-tile-wrapper>
-
-    <app-tile-wrapper data-cy="quorum-loss-tile" *ngIf="partition.isStatefulService && partition.raw.PartitionStatus === 'InQuorumLoss'">
-        <h2 class="title-wrapper quorum-info-text">Quorum Loss</h2>
-        <div class="quorum-info-row line-item-separator">
-          <div>Duration</div>
-          <div class="quorum-info-value quorum-info-text">{{ partition.quorumLossDurationMs | formatDate }}</div>
+@if (partition) {
+  <div >
+    <div class="tile-container">
+      @if (partition && partition.isInitialized) {
+        <app-essential-health-tile [healthState]="partition?.healthState"
+          class="long" [listItems]="essentialItems">
+          <ng-template appEssentialTemplate id="status">
+            <app-status-resolver [status]="partition.raw.PartitionStatus"></app-status-resolver>
+          </ng-template>
+        </app-essential-health-tile>
+      }
+      @if (partition?.raw) {
+        <app-tile-wrapper>
+          <app-state-info [stateful]="partition.isStatefulService" [data]="partition.raw"></app-state-info>
+        </app-tile-wrapper>
+      }
+      @if (partition.isStatefulService && partition.raw.PartitionStatus === 'InQuorumLoss') {
+        <app-tile-wrapper data-cy="quorum-loss-tile">
+          <h2 class="title-wrapper quorum-info-text">Quorum Loss</h2>
+          <div class="quorum-info-row line-item-separator">
+            <div>Duration</div>
+            <div class="quorum-info-value quorum-info-text">{{ partition.quorumLossDurationMs | formatDate }}</div>
+          </div>
+          <div class="quorum-info-row line-item-separator">
+            <div>Available Replicas</div>
+            <div class="quorum-info-value quorum-info-text">{{ partition.currentReplicaSetSize - partition.downReplicasInQuorum }} out of {{ partition.currentReplicaSetSize }}</div>
+          </div>
+          <div class="quorum-info-row">
+            <div >Required Replicas</div>
+            <div class="quorum-info-value quorum-info-text">{{ partition.writeQuorum }}</div>
+          </div>
+        </app-tile-wrapper>
+      }
+    </div>
+    <div class="detail-pane essen-pane" data-cy="health">
+      <app-collapse-container sectionName="Health Evaluations">
+        <div collapse-header>
+          <h2>Health Evaluations</h2>
         </div>
-        <div class="quorum-info-row line-item-separator">
-          <div>Available Replicas</div>
-          <div class="quorum-info-value quorum-info-text">{{ partition.currentReplicaSetSize - partition.downReplicasInQuorum }} out of {{ partition.currentReplicaSetSize }}</div>
+        <div collapse-body>
+          <app-health-viewer  [healthyEvaluations]="partition.health.healthEvents" [unhealthyEvaluations]="partition.health.unhealthyEvaluations" ></app-health-viewer>
         </div>
-        <div class="quorum-info-row">
-          <div >Required Replicas</div>
-          <div class="quorum-info-value quorum-info-text">{{ partition.writeQuorum }}</div>
+      </app-collapse-container>
+    </div>
+    @if (partition.isStatefulService) {
+      <div class="replicator-section">
+        <app-collapse-container sectionName="Replicator Status" data-cy="replicator">
+          <div collapse-header>
+            <h2>Replicator Status</h2>
+          </div>
+          <div collapse-body>
+            <div>
+              <app-replica-status-container [replicas]="partition.replicas.collection"></app-replica-status-container>
+            </div>
+          </div>
+        </app-collapse-container>
+      </div>
+    }
+    <div class="detail-pane essen-pane" data-cy="replicas">
+      <app-collapse-container [sectionName]="partition.isStatelessService ? 'Instances' : 'Replicas'">
+        <div collapse-header>
+          <h2>{{partition.isStatelessService ? "Instances" : "Replicas"}}</h2>
         </div>
-    </app-tile-wrapper>
-  </div>
-
-
-  <div class="detail-pane essen-pane" data-cy="health">
-    <app-collapse-container sectionName="Health Evaluations">
-      <div collapse-header>
-        <h2>Health Evaluations</h2>
-      </div>
-      <div collapse-body>
-        <app-health-viewer  [healthyEvaluations]="partition.health.healthEvents" [unhealthyEvaluations]="partition.health.unhealthyEvaluations" ></app-health-viewer>
-      </div>
-    </app-collapse-container>
-  </div>
-
-  <div *ngIf="partition.isStatefulService" class="replicator-section">
-    <app-collapse-container sectionName="Replicator Status" data-cy="replicator">
-      <div collapse-header>
-        <h2>Replicator Status</h2>
-      </div>
-      <div collapse-body>
-        <div>
-          <app-replica-status-container [replicas]="partition.replicas.collection"></app-replica-status-container>
+        <div collapse-body>
+          @if (partition.isStatefulService && partition.raw?.PartitionStatus === 'InQuorumLoss') {
+            <app-warning>
+              <span description-add-on>You need to have any <strong>{{ partition.quorumNeeded }}</strong> of the below <strong>{{ partition.downReplicasInQuorum }}</strong> highlighted replicas ready to be out of quorum loss.</span>
+            </app-warning>
+          }
+          @if (partition.replicas.isInitialized) {
+            <app-detail-list [list]="replicaViewModels" [listSettings]="listSettings"
+            ></app-detail-list>
+          }
         </div>
-      </div>
-    </app-collapse-container>
+      </app-collapse-container>
+    </div>
   </div>
-
-  <div class="detail-pane essen-pane" data-cy="replicas">
-    <app-collapse-container [sectionName]="partition.isStatelessService ? 'Instances' : 'Replicas'">
-      <div collapse-header>
-        <h2>{{partition.isStatelessService ? "Instances" : "Replicas"}}</h2>
-      </div>
-      <div collapse-body>
-        <app-warning *ngIf="partition.isStatefulService && partition.raw?.PartitionStatus === 'InQuorumLoss'">
-          <span description-add-on>You need to have any <strong>{{ partition.quorumNeeded }}</strong> of the below <strong>{{ partition.downReplicasInQuorum }}</strong> highlighted replicas ready to be out of quorum loss.</span>
-        </app-warning>
-
-        <app-detail-list [list]="replicaViewModels" [listSettings]="listSettings"
-          *ngIf="partition.replicas.isInitialized"></app-detail-list>
-      </div>
-    </app-collapse-container>
-  </div>
-</div>
+}

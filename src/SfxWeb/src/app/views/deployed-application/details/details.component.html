@@ -1,14 +1,16 @@
-<div *ngIf="deployedApp">
+@if (deployedApp) {
+  <div>
     <div class="detail-pane essen-pane">
-        <app-collapse-container sectionName="General">
-            <div collapse-header>
-                <h2>
-                    General
-                </h2>
-            </div>
-            <div collapse-body>
-                <app-detail-view-part [data]="deployedApp"></app-detail-view-part>    
-            </div>
-        </app-collapse-container>
+      <app-collapse-container sectionName="General">
+        <div collapse-header>
+          <h2>
+            General
+          </h2>
+        </div>
+        <div collapse-body>
+          <app-detail-view-part [data]="deployedApp"></app-detail-view-part>
+        </div>
+      </app-collapse-container>
     </div>
-</div>
+  </div>
+}

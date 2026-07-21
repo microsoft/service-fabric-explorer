@@ -1,13 +1,17 @@
 <div>
-    <button (click)="openFolder()" class="link image-store-item-name clear-button" style="display: inline-block; cursor: pointer; white-space: nowrap;" *ngIf="item.isFolder === -1">
-        <span class="list-item-name" style="display: table-cell;">
-            <span class="bowtie-icon bowtie-folder"></span>
-            <span [title]="item.path">{{item.displayName}}</span>
-        </span>
-    </button>
-    
-    <div class="image-store-item-name" style="display: inline-block; cursor: initial; white-space: nowrap;" *ngIf="item.isFolder === 1">
-        <span class="bowtie-icon bowtie-file"></span>
+  @if (item.isFolder === -1) {
+    <button (click)="openFolder()" class="link image-store-item-name clear-button" style="display: inline-block; cursor: pointer; white-space: nowrap;">
+      <span class="list-item-name" style="display: table-cell;">
+        <span class="bowtie-icon bowtie-folder"></span>
         <span [title]="item.path">{{item.displayName}}</span>
+      </span>
+    </button>
+  }
+
+  @if (item.isFolder === 1) {
+    <div class="image-store-item-name" style="display: inline-block; cursor: initial; white-space: nowrap;">
+      <span class="bowtie-icon bowtie-file"></span>
+      <span [title]="item.path">{{item.displayName}}</span>
     </div>
+  }
 </div>

@@ -10,8 +10,10 @@
           Copy
         </div>
         <div collapse-body>
-          <app-essential-item *ngFor="let item of copyItems; let l = last; " [item]="item" [underline]="l">
-          </app-essential-item>
+          @for (item of copyItems; track item; let l = $last) {
+            <app-essential-item [item]="item" [underline]="l">
+            </app-essential-item>
+          }
         </div>
       </app-collapse-container>
     </div>
@@ -21,8 +23,10 @@
         Replication
       </div>
       <div collapse-body>
-        <app-essential-item *ngFor="let item of replicationItems; let l = last; " [item]="item" [underline]="l">
-        </app-essential-item>
+        @for (item of replicationItems; track item; let l = $last) {
+          <app-essential-item [item]="item" [underline]="l">
+          </app-essential-item>
+        }
       </div>
     </app-collapse-container>
   </div>
@@ -30,8 +34,10 @@
   <div collapsed="false" data-cy="current-state">
     <h3 class="underline-title">Current State</h3>
     <div collapse-body>
-      <app-essential-item *ngFor="let item of lastItems; let l = last; " [item]="item" [underline]="l">
-      </app-essential-item>
+      @for (item of lastItems; track item; let l = $last) {
+        <app-essential-item [item]="item" [underline]="l">
+        </app-essential-item>
+      }
     </div>
   </div>
 </div>

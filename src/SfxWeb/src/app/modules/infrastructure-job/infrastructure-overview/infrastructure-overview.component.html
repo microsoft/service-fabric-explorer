@@ -5,9 +5,11 @@
     </h2>
 
     <div style="margin-bottom: 20px;" collapse-body class="nested-block">
-      <div *ngFor="let job of collection.executingMRJobs; trackBy: trackByFn" style="margin-bottom: 15px;">
-        <app-infrastructure-job-tile [job]="job"></app-infrastructure-job-tile>
-      </div>
+      @for (job of collection.executingMRJobs; track trackByFn($index, job)) {
+        <div style="margin-bottom: 15px;">
+          <app-infrastructure-job-tile [job]="job"></app-infrastructure-job-tile>
+        </div>
+      }
     </div>
   </app-collapse-container>
 </div>

@@ -1,3 +1,5 @@
-<div *ngIf="serviceManifest">
+@if (serviceManifest) {
+  <div>
     <app-manifest-viewer [manifestName]="service.name" [manifest]="serviceManifest" ></app-manifest-viewer>
-</div>
+  </div>
+}

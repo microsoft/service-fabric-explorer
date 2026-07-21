@@ -1,4 +1,8 @@
 <div class="badge-container" [title]="text">
-    <img *ngIf="badgeClass" [ngStyle]="{'width': size, 'height': size}" [src]="assetBase + 'assets/' + badgeClass + '.svg'" [alt]="text + 'badge'"/>
-    <span *ngIf="showText">{{text}}</span>
+  @if (badgeClass) {
+    <img [ngStyle]="{'width': size, 'height': size}" [src]="assetBase + 'assets/' + badgeClass + '.svg'" [alt]="text + 'badge'"/>
+  }
+  @if (showText) {
+    <span>{{text}}</span>
+  }
 </div>

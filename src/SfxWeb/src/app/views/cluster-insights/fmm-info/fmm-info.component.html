@@ -1,33 +1,41 @@
 <app-dashboard-text-scale-tile data-cy="fmm-info">
-    <h2 class="title-wrapper top-separator">
-      {{ isFmmEstimate ? 'FMM Information (Estimated)' : 'FMM Information' }}
-      <span class="mif-info" title="This is the node location of the Failover Manager Manager."></span>
-      <span class="mif-loop2 rotate" *ngIf="isLoading"></span>
-    </h2>
-    
-    <div>
-      <div class="flex-center line-item-separator">
-        <div class="fmm-label">Node Name</div>
-        <div class="fmm-value" data-cy="fmm-node-name">
-          {{ fmmInfo?.NodeName }}
-        </div>
-        <app-clip-board [text]="fmmInfo?.NodeName" *ngIf="fmmInfo?.NodeName" [name]="'Node Name'"></app-clip-board>
+  <h2 class="title-wrapper top-separator">
+    {{ isFmmEstimate ? 'FMM Information (Estimated)' : 'FMM Information' }}
+    <span class="mif-info" title="This is the node location of the Failover Manager Manager."></span>
+    @if (isLoading) {
+      <span class="mif-loop2 rotate"></span>
+    }
+  </h2>
+
+  <div>
+    <div class="flex-center line-item-separator">
+      <div class="fmm-label">Node Name</div>
+      <div class="fmm-value" data-cy="fmm-node-name">
+        {{ fmmInfo?.NodeName }}
       </div>
-      
-      <div class="flex-center line-item-separator">
-        <div class="fmm-label">Node ID</div>
-        <div class="fmm-value" data-cy="fmm-node-id">
-          {{ fmmInfo?.NodeId?.Id }}
-        </div>
-        <app-clip-board [text]="fmmInfo?.NodeId?.Id" *ngIf="fmmInfo?.NodeId?.Id" [name]="'Node ID'"></app-clip-board>
-      </div>
-      
-      <div class="flex-center line-item-separator">
-        <div class="fmm-label">Node Instance ID</div>
-        <div class="fmm-value" data-cy="fmm-node-instance-id">
-          {{ fmmInfo?.NodeInstanceId }}
-        </div>
-        <app-clip-board [text]="fmmInfo?.NodeInstanceId" *ngIf="fmmInfo?.NodeInstanceId" [name]="'Node Instance ID'"></app-clip-board>
-      </div>
+      @if (fmmInfo?.NodeName) {
+        <app-clip-board [text]="fmmInfo?.NodeName" [name]="'Node Name'"></app-clip-board>
+      }
     </div>
+
+    <div class="flex-center line-item-separator">
+      <div class="fmm-label">Node ID</div>
+      <div class="fmm-value" data-cy="fmm-node-id">
+        {{ fmmInfo?.NodeId?.Id }}
+      </div>
+      @if (fmmInfo?.NodeId?.Id) {
+        <app-clip-board [text]="fmmInfo?.NodeId?.Id" [name]="'Node ID'"></app-clip-board>
+      }
+    </div>
+
+    <div class="flex-center line-item-separator">
+      <div class="fmm-label">Node Instance ID</div>
+      <div class="fmm-value" data-cy="fmm-node-instance-id">
+        {{ fmmInfo?.NodeInstanceId }}
+      </div>
+      @if (fmmInfo?.NodeInstanceId) {
+        <app-clip-board [text]="fmmInfo?.NodeInstanceId" [name]="'Node Instance ID'"></app-clip-board>
+      }
+    </div>
+  </div>
 </app-dashboard-text-scale-tile>

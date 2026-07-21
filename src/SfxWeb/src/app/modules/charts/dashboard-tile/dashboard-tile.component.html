@@ -7,21 +7,24 @@
         <div #chart></div>
       </div>
       <div class="dashboard-datapoints">
-        <div class="dashboard-datapoint" *ngFor="let dataPoint of data.dataPoints; let i = index">
-          <div class="dashboard-datapoint-leftbar" [ngClass]="dataPoint.state.badgeClass"></div>
-          <div class="dashboard-datapoint-title">{{dataPoint.title}}</div>
-          <div class="dashboard-datapoint-number">{{dataPoint.count}}</div>
-        </div>
+        @for (dataPoint of data.dataPoints; track dataPoint; let i = $index) {
+          <div class="dashboard-datapoint">
+            <div class="dashboard-datapoint-leftbar" [ngClass]="dataPoint.state.badgeClass"></div>
+            <div class="dashboard-datapoint-title">{{dataPoint.title}}</div>
+            <div class="dashboard-datapoint-number">{{dataPoint.count}}</div>
+          </div>
+        }
       </div>
     </div>
   </div>
 </ng-template>
 
-<ng-template #default>
+@if (data.viewPath) {
+  <a [routerLink]="data.viewPath" [attr.aria-label]="data.acessibilityText">
+    <ng-container *ngTemplateOutlet="internal"></ng-container>
+  </a>
+} @else {
   <div [attr.aria-label]="data.acessibilityText" tabindex="0" style="height: 100%;">
     <ng-container *ngTemplateOutlet="internal"></ng-container>
   </div>
-</ng-template>
-<a *ngIf="data.viewPath; else default" [routerLink]="data.viewPath" [attr.aria-label]="data.acessibilityText">
-  <ng-container *ngTemplateOutlet="internal"></ng-container>
-</a>
+}

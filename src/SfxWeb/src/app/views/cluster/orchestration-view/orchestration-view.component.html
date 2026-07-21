@@ -1,7 +1,9 @@
 <div class="detail-pane essen-pane">
-  <div style="margin-bottom: 10px;" *ngIf="dateMin">
-    <app-time-picker [dateMin]="dateMin" (dateChange)="setDate($event)" data-cy="time-picker"></app-time-picker>
-  </div>
+  @if (dateMin) {
+    <div style="margin-bottom: 10px;">
+      <app-time-picker [dateMin]="dateMin" (dateChange)="setDate($event)" data-cy="time-picker"></app-time-picker>
+    </div>
+  }
 </div>
 
 <div class="detail-pane essen-pane">
@@ -15,77 +17,99 @@
   </div>
   <label style="display: block; margin-top: 15px; margin-bottom: 15px;">
     <app-toggle [(state)]="balancingToggle" [color]="balancingEventColor"
-      (stateChange)="updateBalancingToggle($event)" data-cy="balancing-toggle"></app-toggle>
+    (stateChange)="updateBalancingToggle($event)" data-cy="balancing-toggle"></app-toggle>
     Show Balancing Operations
   </label>
   <label style="display: block; margin-top: 15px; margin-bottom: 15px;">
     <app-toggle [(state)]="placementToggle" [color]="placementEventColor"
-      (stateChange)="updatePlacementToggle($event)" data-cy="placement-toggle"></app-toggle>
+    (stateChange)="updatePlacementToggle($event)" data-cy="placement-toggle"></app-toggle>
     Show Placement Operations
   </label>
   <label style="display: block; margin-top: 15px; margin-bottom: 15px;">
     <app-toggle [(state)]="constrainCheckToggle" [color]="constraintCheckEventColor"
-      (stateChange)="updateConstrantCheckToggle($event)" data-cy="constrain-check-toggle"></app-toggle>
+    (stateChange)="updateConstrantCheckToggle($event)" data-cy="constrain-check-toggle"></app-toggle>
     Show Constraint Check Operations
   </label>
   <label style="display: block; margin-top: 15px; margin-bottom: 15px;">
     <app-toggle [(state)]="otherToggle" [color]="otherEventColor"
-      (stateChange)="updateOtherToggle($event)" data-cy="other-toggle"></app-toggle>
+    (stateChange)="updateOtherToggle($event)" data-cy="other-toggle"></app-toggle>
     Show Other (ClientAPI) Operations
   </label>
-  <app-event-store-timeline *ngIf="timeLineEventsData" [events]="timeLineEventsData"
+  @if (timeLineEventsData) {
+    <app-event-store-timeline [events]="timeLineEventsData"
     (itemClicked)="selectEvent($event)" class="orchestration-view-timeline" data-cy="orchestration-timeline"></app-event-store-timeline>
+  }
 </div>
 
-<div *ngIf="selectedEvent" class="event-details-container" data-cy="event-details">
-  <div class="detail-pane essen-pane event-details">
-    <h2 class="event-details-title">Operation Details</h2>
-    <div class="details-grid">
-      <div class="detail-row">
-        <span>Partition:</span>
-        <span>{{ selectedEvent.raw['PartitionId'] }}</span>
+@if (selectedEvent) {
+  <div class="event-details-container" data-cy="event-details">
+    <div class="detail-pane essen-pane event-details">
+      <h2 class="event-details-title">Operation Details</h2>
+      <div class="details-grid">
+        <div class="detail-row">
+          <span>Partition:</span>
+          <span>{{ selectedEvent.raw['PartitionId'] }}</span>
+        </div>
+        @if (selectedEvent.timeStamp) {
+          <div class="detail-row">
+            <span>Timestamp:</span>
+            <span>{{ selectedEvent.timeStamp | date:'EEE MMM dd yyyy HH:mm:ss zzzz' }}</span>
+          </div>
+        }
+        @if (selectedEvent.raw['Phase']) {
+          <div class="detail-row">
+            <span>Phase:</span>
+            <span>{{ selectedEvent.raw['Phase'] }}</span>
+          </div>
+        }
+        @if (selectedEvent.raw['Action']) {
+          <div class="detail-row">
+            <span>Action:</span>
+            <span>{{ selectedEvent.raw['Action'] }}</span>
+          </div>
+        }
+        @if (selectedEvent.raw['SourceNodeName']) {
+          <div class="detail-row">
+            <span>Source Node:</span>
+            <span>{{ selectedEvent.raw['SourceNodeName'] }}</span>
+          </div>
+        }
+        @if (selectedEvent.raw['TargetNodeName']) {
+          <div class="detail-row">
+            <span>Target Node:</span>
+            <span>{{ selectedEvent.raw['TargetNodeName'] }}</span>
+          </div>
+        }
+        @if (selectedEvent.raw['MoveCost']) {
+          <div class="detail-row">
+            <span>Move Cost:</span>
+            <span>{{ selectedEvent.raw['MoveCost'] }}</span>
+          </div>
+        }
       </div>
-      <div *ngIf="selectedEvent.timeStamp" class="detail-row">
-        <span>Timestamp:</span>
-        <span>{{ selectedEvent.timeStamp | date:'EEE MMM dd yyyy HH:mm:ss zzzz' }}</span>
-      </div>
-      <div *ngIf="selectedEvent.raw['Phase']" class="detail-row">
-        <span>Phase:</span>
-        <span>{{ selectedEvent.raw['Phase'] }}</span>
-      </div>
-      <div *ngIf="selectedEvent.raw['Action']" class="detail-row">
-        <span>Action:</span>
-        <span>{{ selectedEvent.raw['Action'] }}</span>
-      </div>
-      <div *ngIf="selectedEvent.raw['SourceNodeName']" class="detail-row">
-        <span>Source Node:</span>
-        <span>{{ selectedEvent.raw['SourceNodeName'] }}</span>
-      </div>
-      <div *ngIf="selectedEvent.raw['TargetNodeName']" class="detail-row">
-        <span>Target Node:</span>
-        <span>{{ selectedEvent.raw['TargetNodeName'] }}</span>
-      </div>
-      <div *ngIf="selectedEvent.raw['MoveCost']" class="detail-row">
-        <span>Move Cost:</span>
-        <span>{{ selectedEvent.raw['MoveCost'] }}</span>
+    </div>
+    <div class="detail-pane essen-pane event-details">
+      <h2 class="event-details-title">Decision Details</h2>
+      <div class="details-grid">
+        @if (selectedEvent.raw['DecisionId']) {
+          <div class="detail-row">
+            <span>Decision:</span>
+            <span>{{ selectedEvent.raw['DecisionId'] }}</span>
+          </div>
+        }
+        @if (selectedEvent.raw['Stage']) {
+          <div class="detail-row">
+            <span>Type:</span>
+            <span>{{ selectedEvent.raw['Stage'] }}</span>
+          </div>
+        }
+        @if (selectedEvent.raw['Reason']) {
+          <div class="detail-row">
+            <span>Reason:</span>
+            <pre style="white-space: pre-wrap;">{{ selectedEvent.raw['Reason'] }}</pre>
+          </div>
+        }
       </div>
     </div>
   </div>
-  <div class="detail-pane essen-pane event-details">
-    <h2 class="event-details-title">Decision Details</h2>
-    <div class="details-grid">
-      <div *ngIf="selectedEvent.raw['DecisionId']" class="detail-row">
-        <span>Decision:</span>
-        <span>{{ selectedEvent.raw['DecisionId'] }}</span>
-      </div>
-      <div *ngIf="selectedEvent.raw['Stage']" class="detail-row">
-        <span>Type:</span>
-        <span>{{ selectedEvent.raw['Stage'] }}</span>
-      </div>
-      <div *ngIf="selectedEvent.raw['Reason']" class="detail-row">
-        <span>Reason:</span>
-        <pre style="white-space: pre-wrap;">{{ selectedEvent.raw['Reason'] }}</pre>
-      </div>
-    </div>
-  </div>
-</div>
+}

@@ -1,61 +1,114 @@
 <label>
-    <span>{{commandParam.name}}</span>
-    <div *ngIf="!commandParam.allowCustomValAndOptions; else dropDown" >
-        <div [ngSwitch]="commandParam.type">
-            <input *ngSwitchCase="paramTypes.string" [id]="commandParam.name" [name]="commandParam.name"
-            type="text" [formControl]="value" [required]="commandParam.required" class="input-flat" />
-            
-            <input *ngSwitchCase="paramTypes.number" [id]="commandParam.name" [name]="commandParam.name"
-            type="number" [formControl]="value" [required]="commandParam.required" class="input-flat"/>   
-            
-            <div *ngSwitchCase="paramTypes.enum">
-                <ng-container *ngTemplateOutlet="dropDown"></ng-container>
+  <span>{{commandParam.name}}</span>
+  @if (!commandParam.allowCustomValAndOptions) {
+    <div >
+      <div>
+        @switch (commandParam.type) {
+          @case (paramTypes.string) {
+            <input [id]="commandParam.name" [name]="commandParam.name"
+              type="text" [formControl]="value" [required]="commandParam.required" class="input-flat" />
+          }
+          @case (paramTypes.number) {
+            <input [id]="commandParam.name" [name]="commandParam.name"
+              type="number" [formControl]="value" [required]="commandParam.required" class="input-flat"/>
+          }
+          @case (paramTypes.enum) {
+            <div>
+              <ng-container *ngTemplateOutlet="dropDown"></ng-container>
             </div>
-            <!-- no need to account for required fields, as required switches are in the prefix -->
-            <div *ngSwitchDefault>
-                <app-toggle (stateChange)="setFormValue($event)" [state]="commandParam.value"></app-toggle>
+          }
+          <!-- no need to account for required fields, as required switches are in the prefix -->
+          @default {
+            <div>
+              <app-toggle (stateChange)="setFormValue($event)" [state]="commandParam.value"></app-toggle>
             </div>
-        </div>
+          }
+        }
+      </div>
     </div>
-</label>
-
-<!-- dropdown applies to enums but also others with predefined options -->
-<ng-template #dropDown>
+  } @else {
     <div ngbDropdown #drop="ngbDropdown"
-    (openChange)="$event || toggleBtn.focus()"
-    [class]="(value.invalid ? 'invalid ' : 'valid ') + (commandParam.required ? 'required' : '')" >
+      (openChange)="$event || toggleBtn.focus()"
+      [class]="(value.invalid ? 'invalid ' : 'valid ') + (commandParam.required ? 'required' : '')" >
+      <input [id]="commandParam.name" [name]="commandParam.name"
+        type="hidden" [formControl]="value" [required]="commandParam.required" />
+        <button #toggleBtn class="simple-button" ngbDropdownToggle
+          role="combobox"
+          [attr.aria-controls]="commandParam.name + 'Options'"
+          aria-haspopup="listbox">
+          {{commandParam.value ? commandParam.value : '-Select-'}}
+        </button>
+        <div ngbDropdownMenu [id]="commandParam.name+'Options'" role="listbox">
+          <button value="" type="button" role="option"
+            [attr.aria-selected]="!commandParam.value"
+            ngbDropdownItem
+            (click)="setFormValue('')"
+            (keydown.tab)="setFormValue('')">
+            -Select-
+          </button>
+          @for (option of commandParam.options; track option) {
+            <button
+              [value]="option" type="button" role="option"
+              [attr.aria-selected]="option === commandParam.value"
+              ngbDropdownItem
+              (click)="setFormValue(option)"
+              (keydown.tab)="setFormValue(option)">
+              {{option}}
+            </button>
+          }
+          @if (commandParam.allowCustomValAndOptions) {
+            <div>
+              <input [id]="commandParam.name + '-custom'" [name]="commandParam.name + '-custom'"
+                type="text" [formControl]="value" placeholder="custom input" class="input-flat"
+                (keydown.tab)="drop.close()"/>
+              </div>
+            }
+          </div>
+        </div>
+      }
+    </label>
+
+    <!-- dropdown applies to enums but also others with predefined options -->
+    <ng-template #dropDown>
+      <div ngbDropdown #drop="ngbDropdown"
+        (openChange)="$event || toggleBtn.focus()"
+        [class]="(value.invalid ? 'invalid ' : 'valid ') + (commandParam.required ? 'required' : '')" >
 
         <input [id]="commandParam.name" [name]="commandParam.name"
-        type="hidden" [formControl]="value" [required]="commandParam.required" />
+          type="hidden" [formControl]="value" [required]="commandParam.required" />
 
-        <button #toggleBtn class="simple-button" ngbDropdownToggle
+          <button #toggleBtn class="simple-button" ngbDropdownToggle
             role="combobox"
             [attr.aria-controls]="commandParam.name + 'Options'"
             aria-haspopup="listbox">
             {{commandParam.value ? commandParam.value : '-Select-'}}
-        </button>
+          </button>
 
-        <div ngbDropdownMenu [id]="commandParam.name+'Options'" role="listbox">
+          <div ngbDropdownMenu [id]="commandParam.name+'Options'" role="listbox">
             <button value="" type="button" role="option"
-                [attr.aria-selected]="!commandParam.value"
-                ngbDropdownItem
-                (click)="setFormValue('')"
-                (keydown.tab)="setFormValue('')">
-                -Select-
+              [attr.aria-selected]="!commandParam.value"
+              ngbDropdownItem
+              (click)="setFormValue('')"
+              (keydown.tab)="setFormValue('')">
+              -Select-
             </button>
-            <button *ngFor="let option of commandParam.options"
+            @for (option of commandParam.options; track option) {
+              <button
                 [value]="option" type="button" role="option"
                 [attr.aria-selected]="option === commandParam.value"
                 ngbDropdownItem
                 (click)="setFormValue(option)"
                 (keydown.tab)="setFormValue(option)">
                 {{option}}
-            </button>
-            <div *ngIf="commandParam.allowCustomValAndOptions">
+              </button>
+            }
+            @if (commandParam.allowCustomValAndOptions) {
+              <div>
                 <input [id]="commandParam.name + '-custom'" [name]="commandParam.name + '-custom'"
-                type="text" [formControl]="value" placeholder="custom input" class="input-flat"
-                (keydown.tab)="drop.close()"/>
+                  type="text" [formControl]="value" placeholder="custom input" class="input-flat"
+                  (keydown.tab)="drop.close()"/>
+                </div>
+              }
             </div>
-        </div>
-    </div>
-</ng-template>
+          </div>
+        </ng-template>

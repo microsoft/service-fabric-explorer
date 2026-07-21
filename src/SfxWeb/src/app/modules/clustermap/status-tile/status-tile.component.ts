@@ -21,7 +21,7 @@ export class StatusTileComponent implements OnChanges {
   @Input() title = '';
   items: IEssentialListItem[] = [];
 
-  nodeTypes = {};
+  nodeTypes: { [key: string]: NodeStatusDetails } = {};
   public constants = NodeStatusConstants;
 
   constructor() { }

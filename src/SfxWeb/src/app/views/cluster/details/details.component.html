@@ -1,34 +1,48 @@
-<div data-cy="upgradeDetails" *ngIf="clusterUpgradeProgress.isInitialized" class="detail-pane essen-pane">
+@if (clusterUpgradeProgress.isInitialized) {
+  <div data-cy="upgradeDetails" class="detail-pane essen-pane">
     <app-collapse-container [sectionName]="clusterUpgradeProgress.isUpgrading ? 'Cluster Upgrade In Progress' : 'Latest Cluster Upgrade'">
-        <div collapse-header>
-                <h2 *ngIf="clusterUpgradeProgress.isUpgrading">Cluster Upgrade In Progress</h2>
-                <h2 *ngIf="!clusterUpgradeProgress.isUpgrading">Latest Cluster Upgrade</h2>
-        </div>
-        <div collapse-body>
-            <app-upgrade-info [upgradeProgress]="clusterUpgradeProgress"></app-upgrade-info>
-        </div>
+      <div collapse-header>
+        @if (clusterUpgradeProgress.isUpgrading) {
+          <h2>Cluster Upgrade In Progress</h2>
+        }
+        @if (!clusterUpgradeProgress.isUpgrading) {
+          <h2>Latest Cluster Upgrade</h2>
+        }
+      </div>
+      <div collapse-body>
+        <app-upgrade-info [upgradeProgress]="clusterUpgradeProgress"></app-upgrade-info>
+      </div>
     </app-collapse-container>
-</div>
+  </div>
+}
 
-<div class="detail-pane essen-pane" *ngIf="clusterUpgradeProgress">
+@if (clusterUpgradeProgress) {
+  <div class="detail-pane essen-pane">
     <app-collapse-container sectionName="Upgrade Description" collapsed="true">
-        <h2 collapse-header>Upgrade Description</h2>
-        <div class="detail-pane" *ngIf="clusterUpgradeProgress.upgradeDescription" collapse-body>
-            <app-detail-view-part [data]="clusterUpgradeProgress.upgradeDescription"></app-detail-view-part>
+      <h2 collapse-header>Upgrade Description</h2>
+      @if (clusterUpgradeProgress.upgradeDescription) {
+        <div class="detail-pane" collapse-body>
+          <app-detail-view-part [data]="clusterUpgradeProgress.upgradeDescription"></app-detail-view-part>
         </div>
+      }
     </app-collapse-container>
-</div>
+  </div>
+}
 
-<div *ngIf="nodesStatuses" class="detail-pane essen-pane">
+@if (nodesStatuses) {
+  <div class="detail-pane essen-pane">
     <app-collapse-container sectionName="Node States">
-        <h2 collapse-header>Node States</h2>
-        <app-detail-list [list]="nodesStatuses" [listSettings]="nodeStatusListSettings" collapse-body></app-detail-list>
+      <h2 collapse-header>Node States</h2>
+      <app-detail-list [list]="nodesStatuses" [listSettings]="nodeStatusListSettings" collapse-body></app-detail-list>
     </app-collapse-container>
-</div>
+  </div>
+}
 
-<div class="detail-pane essen-pane" *ngIf="clusterLoadInformation && clusterLoadInformation.isInitialized">
+@if (clusterLoadInformation && clusterLoadInformation.isInitialized) {
+  <div class="detail-pane essen-pane">
     <app-collapse-container sectionName="Load Information">
-        <h2 collapse-header>Load Information</h2>
-        <app-detail-view-part [data]="clusterLoadInformation.raw" [parent]="clusterLoadInformation" collapse-body></app-detail-view-part>
+      <h2 collapse-header>Load Information</h2>
+      <app-detail-view-part [data]="clusterLoadInformation.raw" [parent]="clusterLoadInformation" collapse-body></app-detail-view-part>
     </app-collapse-container>
-</div>
+  </div>
+}

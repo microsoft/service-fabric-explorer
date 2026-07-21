@@ -1,26 +1,32 @@
-<div *ngIf="primaryReplica && primaryReplica.detail.raw" class="overview-container">
-  <div class="essen-pane" style="width: 330px;" data-cy="essentials">
-    <h3 class="underline-title">Primary Replica Queue Status</h3>
-
-    <app-essential-item *ngFor="let item of overviewItems; let l = last; " [item]="item" [underline]="l">
-    </app-essential-item>
-
-    <app-collapse-container collapsed="true" sectionName="Replicator Status">
-      <div collapse-header>
-        Replicator Status
-      </div>
-      <div collapse-body>
-        <app-essential-item *ngFor="let item of replicationStatus; let l = last; " [item]="item" [underline]="l">
+@if (primaryReplica && primaryReplica.detail.raw) {
+  <div class="overview-container">
+    <div class="essen-pane" style="width: 330px;" data-cy="essentials">
+      <h3 class="underline-title">Primary Replica Queue Status</h3>
+      @for (item of overviewItems; track item; let l = $last) {
+        <app-essential-item [item]="item" [underline]="l">
         </app-essential-item>
+      }
+      <app-collapse-container collapsed="true" sectionName="Replicator Status">
+        <div collapse-header>
+          Replicator Status
+        </div>
+        <div collapse-body>
+          @for (item of replicationStatus; track item; let l = $last) {
+            <app-essential-item [item]="item" [underline]="l">
+            </app-essential-item>
+          }
+        </div>
+      </app-collapse-container>
+    </div>
+    <div style="flex: auto; margin-left: 20px;">
+      <div class="replica-container">
+        @for (replica of sortedReplicas; track replica) {
+          <app-replica-tile class="replica-tile tall"
+            [ngClass]="{'expanded-tall': expandedDict[replica.name]}" [(showReplication)]="expandedDict[replica.name]"
+            [replica]="replica" [replicator]="replicaDict[replica.name]" [replicatorHistory]="cachedData[replica.name]">
+          </app-replica-tile>
+        }
       </div>
-    </app-collapse-container>
-  </div>
-  <div style="flex: auto; margin-left: 20px;">
-    <div class="replica-container">
-      <app-replica-tile class="replica-tile tall" *ngFor="let replica of sortedReplicas"
-        [ngClass]="{'expanded-tall': expandedDict[replica.name]}" [(showReplication)]="expandedDict[replica.name]"
-        [replica]="replica" [replicator]="replicaDict[replica.name]" [replicatorHistory]="cachedData[replica.name]">
-      </app-replica-tile>
     </div>
   </div>
-</div>
+}

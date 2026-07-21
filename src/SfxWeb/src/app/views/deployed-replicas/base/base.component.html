@@ -1,9 +1,13 @@
 <app-navbar [type]="type" [showCopy]="false"></app-navbar>
 
-<div *ngIf="replicas">
+@if (replicas) {
+  <div>
     <div class="main-view">
-        <div class="detail-pane essen-pane" *ngIf="listSettings" data-cy="replicas">
-            <app-detail-list [list]="replicas" [listSettings]="listSettings"></app-detail-list>
+      @if (listSettings) {
+        <div class="detail-pane essen-pane" data-cy="replicas">
+          <app-detail-list [list]="replicas" [listSettings]="listSettings"></app-detail-list>
         </div>
+      }
     </div>
-</div>
+  </div>
+}

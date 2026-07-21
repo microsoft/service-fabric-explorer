@@ -1,6 +1,8 @@
 <div class="tile-container">
-    <app-dashboard-tile *ngFor="let tile of tiles" [data]="tile"></app-dashboard-tile>
+  @for (tile of tiles; track tile) {
+    <app-dashboard-tile [data]="tile"></app-dashboard-tile>
+  }
 </div>
 <div class="detail-pane essen-pane">
-    <app-detail-list [listSettings]="listSettings" [list]="nodes.collection" data-cy="nodesList"></app-detail-list>
+  <app-detail-list [listSettings]="listSettings" [list]="nodes.collection" data-cy="nodesList"></app-detail-list>
 </div>

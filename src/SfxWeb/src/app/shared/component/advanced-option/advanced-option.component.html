@@ -1,7 +1,7 @@
 <!-- the last tabbed element needs to close the drop down for accessability compliance -->
 <div ngbDropdown placement="bottom-right" (openChange)="closeChange($event)" #myDrop="ngbDropdown" [autoClose]="false" id="advanced-options-container">
   <button class="flat-button" ngbDropdownToggle aria-label="advanced settings drop down" title="Advanced settings" tooltipClass="styled-tooltip"
-      [ngbTooltip]="'Advanced settings'">
+    [ngbTooltip]="'Advanced settings'">
     <span class="mif-tools"></span>
   </button>
   <div ngbDropdownMenu aria-labelledby="dropdownBasic1" class="dropdown-container">
@@ -9,7 +9,7 @@
       <li ngbDropdownItem>
         <label>
           <span tabindex="0" class="mif-info" tooltipClass="styled-tooltip" tabindex="0"
-            ngbTooltip="Advanced mode is only meant to be turned on to perform potentially dangerous operations. Use with caution."></span>
+          ngbTooltip="Advanced mode is only meant to be turned on to perform potentially dangerous operations. Use with caution."></span>
           Advanced Mode
           <input type="checkbox" [(ngModel)]="status" (ngModelChange)="change()" [attr.aria-checked]="status">
         </label>
@@ -18,56 +18,58 @@
       <li ngbDropdownItem>
         <label>
           <span tabindex="0" class="mif-info" tooltipClass="styled-tooltip" tabindex="0"
-            ngbTooltip="Hide all messages in the bottom right."></span>
+          ngbTooltip="Hide all messages in the bottom right."></span>
           Suppress Messages
           <input type="checkbox" [(ngModel)]="messageService.suppressMessage"
             [attr.aria-checked]="messageService.suppressMessage">
-        </label>
-      </li>
+          </label>
+        </li>
 
-      <li ngbDropdownItem>
-        <label>
-          <span tabindex="0" class="mif-info" tooltipClass="styled-tooltip" tabindex="0"
-          ngbTooltip="Set whether telemetry is enabled."></span>
-          Enable Telemetry
-          <input type="checkbox" [(ngModel)]="telemetryService.telemetryEnabled" (ngModelChange)="telemetryChange()">
-        </label>
-      </li>
+        <li ngbDropdownItem>
+          <label>
+            <span tabindex="0" class="mif-info" tooltipClass="styled-tooltip" tabindex="0"
+            ngbTooltip="Set whether telemetry is enabled."></span>
+            Enable Telemetry
+            <input type="checkbox" [(ngModel)]="telemetryService.telemetryEnabled" (ngModelChange)="telemetryChange()">
+          </label>
+        </li>
 
-      <li ngbDropdownItem>
-        <label>
-          <span tabindex="0" class="mif-info" tooltipClass="styled-tooltip" tabindex="0"
-          ngbTooltip="Display items per page in lists"></span>
-          Page size
-          <input type="number" min="5" [(ngModel)]="settingsService.paginationLimit" class="input-flat"
-            style="width: 50px;">
-        </label>
-      </li>
+        <li ngbDropdownItem>
+          <label>
+            <span tabindex="0" class="mif-info" tooltipClass="styled-tooltip" tabindex="0"
+            ngbTooltip="Display items per page in lists"></span>
+            Page size
+            <input type="number" min="5" [(ngModel)]="settingsService.paginationLimit" class="input-flat"
+              style="width: 50px;">
+            </label>
+          </li>
 
 
-      <li ngbDropdownItem *ngIf="showBeta">
-        <div class="link"  (click)="leaveBeta();">
-          View old SFX
+          @if (showBeta) {
+            <li ngbDropdownItem>
+              <div class="link"  (click)="leaveBeta();">
+                View old SFX
+              </div>
+            </li>
+          }
+
+          <li ngbDropdownItem tabindex="-1">
+            <a routerLink="/networking">
+              View Network Tab
+            </a>
+          </li>
+
+          <li ngbDropdownItem tabindex="-1">
+            <a routerLink="/cluster-insights">
+              View Cluster Recovery Insights
+            </a>
+          </li>
+        </ul>
+
+        <div style="width: 100%; background-color: gray; height: 1px; margin: 5px 0px;"></div>
+        <div>
+          <a href="https://aka.ms/sf/sfxtelemetry" target="_blank">Telemetry collection Info</a>
         </div>
-      </li>
-
-      <li ngbDropdownItem tabindex="-1">
-        <a routerLink="/networking">
-          View Network Tab
-        </a>
-      </li>
-
-      <li ngbDropdownItem tabindex="-1">
-        <a routerLink="/cluster-insights">
-          View Cluster Recovery Insights
-        </a>
-      </li>
-    </ul>
-
-    <div style="width: 100%; background-color: gray; height: 1px; margin: 5px 0px;"></div>
-    <div>
-      <a href="https://aka.ms/sf/sfxtelemetry" target="_blank">Telemetry collection Info</a>
+        <a href="https://go.microsoft.com/fwlink/?LinkId=512132" (keydown.tab)="myDrop.close();">Privacy and Cookies</a>
+      </div>
     </div>
-    <a href="https://go.microsoft.com/fwlink/?LinkId=512132" (keydown.tab)="myDrop.close();">Privacy and Cookies</a>
-  </div>
-</div>

@@ -1,3 +1,5 @@
-<div class="detail-pane essen-pane" *ngIf="upgradeProgresses" data-cy="upgradingapps">
-    <app-detail-list [list]="upgradeProgresses" [listSettings]="upgradeAppsListSettings"></app-detail-list>	
-</div>
+@if (upgradeProgresses) {
+  <div class="detail-pane essen-pane" data-cy="upgradingapps">
+    <app-detail-list [list]="upgradeProgresses" [listSettings]="upgradeAppsListSettings"></app-detail-list>
+  </div>
+}
