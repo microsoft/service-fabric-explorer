@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 import { ListSettings } from 'src/app/Models/ListSettings';
 import { DataService } from 'src/app/services/data.service';
@@ -14,6 +14,7 @@ import { ActionCreateBackupPolicyComponent } from '../action-create-backup-polic
     selector: 'app-backups',
     templateUrl: './backups.component.html',
     styleUrls: ['./backups.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class BackupsComponent extends BaseControllerDirective {

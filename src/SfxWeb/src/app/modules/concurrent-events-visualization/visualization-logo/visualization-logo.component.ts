@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { IRCAItem } from 'src/app/Models/eventstore/rcaEngine';
 import { ListColumnSetting, ListColumnSettingWithEmbeddedVis } from 'src/app/Models/ListSettings';
 import { DetailBaseComponent } from 'src/app/ViewModels/detail-table-base.component';
@@ -8,6 +8,7 @@ import { environment } from 'src/environments/environment';
     selector: 'app-visualization-logo',
     templateUrl: './visualization-logo.component.html',
     styleUrls: ['./visualization-logo.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class VisualizationLogoComponent implements OnInit, DetailBaseComponent {

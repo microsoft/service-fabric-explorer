@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, ViewChildren, QueryList, ViewChild, ElementRef, inject } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, ViewChildren, QueryList, ViewChild, ElementRef, inject, ChangeDetectionStrategy } from '@angular/core';
 import { ListSettings, ListColumnSetting, FilterValue } from 'src/app/Models/ListSettings';
 import { DataModelCollectionBase } from 'src/app/Models/DataModels/collections/CollectionBase';
 import fill from 'lodash/fill';
@@ -28,6 +28,7 @@ export interface ISortOrdering {
     selector: 'app-detail-list',
     templateUrl: './detail-list.component.html',
     styleUrls: ['./detail-list.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class DetailListComponent implements OnInit, OnDestroy {

@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, EventEmitter, OnDestroy, Output, inject } from '@angular/core';
+import { Component, OnInit, Input, EventEmitter, OnDestroy, Output, inject, ChangeDetectionStrategy } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { IsolatedAction } from 'src/app/Models/Action';
 import { Service } from 'src/app/Models/DataModels/Service';
@@ -12,6 +12,7 @@ import { catchError, defaultIfEmpty } from 'rxjs/operators';
     selector: 'app-scale-service',
     templateUrl: './scale-service.component.html',
     styleUrls: ['./scale-service.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class ScaleServiceComponent implements OnInit, OnDestroy, DialogBodyComponent {

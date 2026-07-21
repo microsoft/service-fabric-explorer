@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewChild, ComponentFactoryResolver, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { DetailBaseComponent } from 'src/app/ViewModels/detail-table-base.component';
 import { ResolverDirective } from '../resolver.directive';
 import { Type } from '@angular/core';
@@ -8,6 +8,7 @@ import { ListColumnSetting } from 'src/app/Models/ListSettings';
     selector: 'app-detail-table-resolver',
     templateUrl: './detail-table-resolver.component.html',
     styleUrls: ['./detail-table-resolver.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class DetailTableResolverComponent implements OnInit {

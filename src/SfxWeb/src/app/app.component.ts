@@ -1,4 +1,4 @@
-import { Component, OnInit, HostListener, ViewChild, ElementRef, inject } from '@angular/core';
+import { Component, OnInit, HostListener, ViewChild, ElementRef, inject, ChangeDetectionStrategy } from '@angular/core';
 import { TreeService } from './services/tree.service';
 import { RefreshService } from './services/refresh.service';
 import { AdalService } from './services/adal.service';
@@ -17,6 +17,7 @@ import { FocusService } from './services/focus.service';
     selector: 'app-root',
     templateUrl: './app.component.html',
     styleUrls: ['./app.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class AppComponent implements OnInit{

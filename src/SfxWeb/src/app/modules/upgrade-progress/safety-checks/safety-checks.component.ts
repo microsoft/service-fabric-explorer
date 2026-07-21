@@ -10,6 +10,7 @@ import { Subscription } from 'rxjs';
     selector: 'app-safety-checks',
     templateUrl: './safety-checks.component.html',
     styleUrls: ['./safety-checks.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class SafetyChecksComponent implements OnChanges, OnInit, OnDestroy {

@@ -1,10 +1,11 @@
 import { LiveAnnouncer } from '@angular/cdk/a11y';
-import { Component, OnInit, Output, EventEmitter, Input, inject } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, Input, inject, ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
     selector: 'app-refresh-rate',
     templateUrl: './refresh-rate.component.html',
     styleUrls: ['./refresh-rate.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class RefreshRateComponent {

@@ -1,4 +1,4 @@
-import { Component, ElementRef, inject } from '@angular/core';
+import { Component, ElementRef, inject, ChangeDetectionStrategy } from '@angular/core';
 import { ITab } from 'src/app/shared/component/navbar/navbar.component';
 import { ReplicaBaseControllerDirective } from '../ReplicaBase';
 import { DataService } from 'src/app/services/data.service';
@@ -11,6 +11,7 @@ import { IBaseView } from '../../BaseView';
     selector: 'app-base',
     templateUrl: './base.component.html',
     styleUrls: ['./base.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class BaseComponent extends ReplicaBaseControllerDirective implements IBaseView {

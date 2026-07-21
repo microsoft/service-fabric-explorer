@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { DetailBaseComponent } from 'src/app/ViewModels/detail-table-base.component';
 import { ListColumnSetting } from 'src/app/Models/ListSettings';
 import { ServiceType } from 'src/app/Models/DataModels/Service';
@@ -10,6 +10,7 @@ import { CreateServiceComponent } from '../create-service/create-service.compone
     selector: 'app-action-row',
     templateUrl: './action-row.component.html',
     styleUrls: ['./action-row.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class ActionRowComponent implements DetailBaseComponent {

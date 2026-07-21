@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { IRawNodeUpgradeProgress } from 'src/app/Models/RawDataTypes';
 import { IProgressStatus } from 'src/app/shared/component/phase-diagram/phase-diagram.component';
 
@@ -11,6 +11,7 @@ import { IProgressStatus } from 'src/app/shared/component/phase-diagram/phase-di
     selector: 'app-node-progress',
     templateUrl: './node-progress.component.html',
     styleUrls: ['./node-progress.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class NodeProgressComponent implements OnChanges {

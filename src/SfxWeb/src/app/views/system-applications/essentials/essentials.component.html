@@ -2,7 +2,7 @@
   <div>
     <div class="tile-container">
       @if (systemApp && systemApp.isInitialized) {
-        <app-essential-health-tile [healthState]="systemApp?.healthState"
+        <app-essential-health-tile [healthState]="$safeNavigationMigration(systemApp?.healthState)"
           class="long" [listItems]="essentialItems">
         </app-essential-health-tile>
       }

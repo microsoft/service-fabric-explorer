@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { NodeCollection } from 'src/app/Models/DataModels/collections/NodeCollection';
 import { DataService } from 'src/app/services/data.service';
@@ -8,6 +8,7 @@ import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
     selector: 'app-clustermap',
     templateUrl: './clustermap.component.html',
     styleUrls: ['./clustermap.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class ClustermapComponent extends BaseControllerDirective {

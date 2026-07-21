@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { forkJoin, Observable } from 'rxjs';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { InfrastructureCollection } from 'src/app/Models/DataModels/collections/infrastructureCollection';
@@ -13,6 +13,7 @@ import { InfrastructureDocumentCollection } from 'src/app/Models/DataModels/coll
     selector: 'app-infrastructure-view',
     templateUrl: './infrastructure-view.component.html',
     styleUrls: ['./infrastructure-view.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class InfrastructureViewComponent extends BaseControllerDirective {

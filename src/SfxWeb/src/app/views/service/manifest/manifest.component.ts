@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { ServiceBaseControllerDirective } from '../ServiceBase';
 import { DataService } from 'src/app/services/data.service';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
@@ -9,6 +9,7 @@ import { map, mergeMap } from 'rxjs/operators';
     selector: 'app-service-manifest',
     templateUrl: './manifest.component.html',
     styleUrls: ['./manifest.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class ManifestComponent extends ServiceBaseControllerDirective {

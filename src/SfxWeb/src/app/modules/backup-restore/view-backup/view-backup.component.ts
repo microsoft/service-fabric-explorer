@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { IRawBackupConfigurationInfo, IRawBackupEntity, IRawBackupPolicy } from 'src/app/Models/RawDataTypes';
 import { Observable } from 'rxjs';
@@ -18,6 +18,7 @@ export interface IViewBackUpData {
     selector: 'app-view-backup',
     templateUrl: './view-backup.component.html',
     styleUrls: ['./view-backup.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class ViewBackupComponent implements OnInit {

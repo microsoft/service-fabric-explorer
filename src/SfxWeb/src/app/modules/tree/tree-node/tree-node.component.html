@@ -63,7 +63,7 @@
             </div>
             @if (child.badge && child.badge()?.badgeClass && child.badge()?.badgeClass !== 'badge-ok') {
               <span style="margin-right: 3px;">
-                <app-health-badge [badgeClass]="child.badge()?.badgeClass" [text]="child.badge()?.text" [showText]="false"></app-health-badge>
+                <app-health-badge [badgeClass]="$safeNavigationMigration(child.badge()?.badgeClass)" [text]="$safeNavigationMigration(child.badge()?.text)" [showText]="false"></app-health-badge>
               </span>
             }
             <div  [title]="child.displayName()">

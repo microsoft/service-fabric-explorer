@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnInit, inject } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { ApplicationUpgradeProgress } from 'src/app/Models/DataModels/Application';
 import { ClusterUpgradeProgress } from 'src/app/Models/DataModels/Cluster';
 import { ListSettings } from 'src/app/Models/ListSettings';
@@ -11,6 +11,7 @@ import { TimeUtils } from 'src/app/Utils/TimeUtils';
     selector: 'app-upgrade-info',
     templateUrl: './upgrade-info.component.html',
     styleUrls: ['./upgrade-info.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class UpgradeInfoComponent implements OnChanges, OnInit {

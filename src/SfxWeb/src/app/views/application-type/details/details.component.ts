@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { DataService } from 'src/app/services/data.service';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { ApplicationTypeGroup } from 'src/app/Models/DataModels/ApplicationType';
@@ -10,6 +10,7 @@ import { ApplicationTypeBaseControllerDirective } from '../ApplicationTypeBase';
     selector: 'app-details',
     templateUrl: './details.component.html',
     styleUrls: ['./details.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class DetailsComponent extends ApplicationTypeBaseControllerDirective {

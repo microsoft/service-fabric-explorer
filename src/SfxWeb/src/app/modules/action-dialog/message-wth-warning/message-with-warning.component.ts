@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, EventEmitter, Input, OnDestroy, Output, Type, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, OnDestroy, Output, Type, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { Observable, Subscription, of } from 'rxjs';
 import { DialogBodyDirective } from '../dialog-body.directive';
 import { DialogBodyComponent } from '../DialogBodyComponent';
@@ -8,6 +8,7 @@ import { ActionDialogUtils } from '../utils';
     selector: 'app-message-with-warning',
     templateUrl: './message-with-warning.component.html',
     styleUrls: ['./message-with-warning.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class MessageWithWarningComponent implements AfterViewInit, OnDestroy, DialogBodyComponent {

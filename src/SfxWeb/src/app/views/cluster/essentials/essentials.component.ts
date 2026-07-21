@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { DataService } from 'src/app/services/data.service';
 import { ClusterUpgradeProgress, ClusterHealth, ClusterManifest } from '../../../Models/DataModels/Cluster';
 import { HealthStateFilterFlags } from 'src/app/Models/HealthChunkRawDataTypes';
@@ -21,6 +21,7 @@ import { InfrastructureCollection } from 'src/app/Models/DataModels/collections/
     selector: 'app-essentials',
     templateUrl: './essentials.component.html',
     styleUrls: ['./essentials.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class EssentialsComponent extends BaseControllerDirective {

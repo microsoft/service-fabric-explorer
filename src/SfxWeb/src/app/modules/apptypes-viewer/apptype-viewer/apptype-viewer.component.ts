@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, inject } from '@angular/core';
+import { Component, Input, OnChanges, inject, ChangeDetectionStrategy } from '@angular/core';
 import { ApplicationType } from 'src/app/Models/DataModels/ApplicationType';
 import { ListSettings } from 'src/app/Models/ListSettings';
 import { DataService } from 'src/app/services/data.service';
@@ -8,6 +8,7 @@ import { SettingsService } from 'src/app/services/settings.service';
     selector: 'app-apptype-viewer',
     templateUrl: './apptype-viewer.component.html',
     styleUrls: ['./apptype-viewer.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class ApptypeViewerComponent implements OnChanges {

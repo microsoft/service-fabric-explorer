@@ -1,6 +1,6 @@
 <div class="tile-container">
   @if (service && service.isInitialized) {
-    <app-essential-health-tile [healthState]="service?.healthState" class="long"
+    <app-essential-health-tile [healthState]="$safeNavigationMigration(service?.healthState)" class="long"
       [listItems]="essentialItems">
       <ng-template appEssentialTemplate id="status">
         <app-status-resolver [status]="service.raw.ServiceStatus"></app-status-resolver>

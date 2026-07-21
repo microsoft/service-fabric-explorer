@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnInit, inject } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { InfrastructureJob } from 'src/app/Models/DataModels/infrastructureJob';
 import { ListSettings, ListColumnSetting, ListColumnSettingWithFilter, ListColumnSettingWithShorten } from 'src/app/Models/ListSettings';
 import { SettingsService } from 'src/app/services/settings.service';
@@ -9,6 +9,7 @@ import { InfrastructureCollectionItem } from 'src/app/Models/DataModels/collecti
     selector: 'app-infrastructure-overview',
     templateUrl: './infrastructure-overview.component.html',
     styleUrls: ['./infrastructure-overview.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class InfrastructureOverviewComponent implements OnInit {

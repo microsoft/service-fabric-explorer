@@ -1,9 +1,9 @@
 <div class="tile-container">
   @if (app && app.isInitialized) {
-    <app-essential-health-tile [healthState]="app?.healthState"
+    <app-essential-health-tile [healthState]="$safeNavigationMigration(app?.healthState)"
       class="long" [listItems]="essentialItems">
       <ng-template appEssentialTemplate id="typename">
-        <a [routerLink]="app?.appTypeViewPath" title="app?.raw.TypeName">
+        <a [routerLink]="$safeNavigationMigration(app?.appTypeViewPath)" title="app?.raw.TypeName">
           {{app?.raw.TypeName}}
         </a>
       </ng-template>

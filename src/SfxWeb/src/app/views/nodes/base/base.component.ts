@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, inject } from '@angular/core';
+import { Component, ElementRef, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { IdGenerator } from 'src/app/Utils/IdGenerator';
 import { TreeService } from 'src/app/services/tree.service';
 import { ITab } from 'src/app/shared/component/navbar/navbar.component';
@@ -10,6 +10,7 @@ import { IBaseView } from '../../BaseView';
     selector: 'app-base',
     templateUrl: './base.component.html',
     styleUrls: ['./base.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class BaseComponent implements OnInit, IBaseView{

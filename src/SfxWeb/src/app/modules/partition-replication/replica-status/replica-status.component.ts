@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges } from '@angular/core';
+import { Component, Input, OnChanges, ChangeDetectionStrategy } from '@angular/core';
 import { IRawRemoteReplicatorStatus } from 'src/app/Models/RawDataTypes';
 import { IEssentialListItem } from '../../charts/essential-health-tile/essential-health-tile.component';
 
@@ -6,6 +6,7 @@ import { IEssentialListItem } from '../../charts/essential-health-tile/essential
     selector: 'app-replica-status',
     templateUrl: './replica-status.component.html',
     styleUrls: ['./replica-status.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class ReplicaStatusComponent implements OnChanges {

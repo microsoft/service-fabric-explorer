@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { forkJoin, of, Observable } from 'rxjs';
 import { switchMap, catchError, map } from 'rxjs/operators';
 
@@ -43,6 +43,7 @@ enum ServiceName {
     selector: 'app-replica-list',
     templateUrl: './replica-list.component.html',
     styleUrls: ['./replica-list.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class ReplicaListComponent extends BaseControllerDirective {

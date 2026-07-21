@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef, Input, AfterViewInit, OnChanges } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, Input, AfterViewInit, OnChanges, ChangeDetectionStrategy } from '@angular/core';
 import { IDashboardViewModel } from 'src/app/ViewModels/DashboardViewModels';
 import { Chart, Options, chart, PointOptionsObject, SeriesPieOptions } from 'highcharts';
 
@@ -6,6 +6,7 @@ import { Chart, Options, chart, PointOptionsObject, SeriesPieOptions } from 'hig
     selector: 'app-dashboard-tile',
     templateUrl: './dashboard-tile.component.html',
     styleUrls: ['./dashboard-tile.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class DashboardTileComponent implements OnInit, AfterViewInit, OnChanges {

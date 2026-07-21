@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { ListColumnSetting, ListColumnSettingWithCustomComponent, ListSettings } from 'src/app/Models/ListSettings';
 import { RestClientService } from 'src/app/services/rest-client.service';
 import { SettingsService } from 'src/app/services/settings.service';
@@ -8,6 +8,7 @@ import { NestedTableComponent } from '../nested-table/nested-table.component';
     selector: 'app-request-logging',
     templateUrl: './request-logging.component.html',
     styleUrls: ['./request-logging.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class RequestLoggingComponent implements OnInit {

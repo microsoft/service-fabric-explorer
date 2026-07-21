@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { PowershellCommand, PowershellCommandParameter, CommandParamTypes, CommandSafetyLevel, CommandFactory } from 'src/app/Models/PowershellCommand';
 import { DataService } from 'src/app/services/data.service';
 import { ApplicationTypeBaseControllerDirective } from '../ApplicationTypeBase';
@@ -7,6 +7,7 @@ import { ApplicationTypeBaseControllerDirective } from '../ApplicationTypeBase';
     selector: 'app-apptype-commands',
     templateUrl: './commands.component.html',
     styleUrls: ['./commands.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class CommandsComponent extends ApplicationTypeBaseControllerDirective {

@@ -1,4 +1,4 @@
-import { Component, ViewChild, AfterViewInit, inject } from '@angular/core';
+import { Component, ViewChild, AfterViewInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { IModalData } from 'src/app/ViewModels/Modal';
 import { MessageWithConfirmationComponent } from '../message-with-confirmation/message-with-confirmation.component';
@@ -10,6 +10,7 @@ import { ActionDialogUtils } from '../utils';
     selector: 'app-action-dialog',
     templateUrl: './action-dialog.component.html',
     styleUrls: ['./action-dialog.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class ActionDialogComponent implements AfterViewInit {

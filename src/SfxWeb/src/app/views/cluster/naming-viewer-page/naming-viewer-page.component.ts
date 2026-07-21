@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { DataService } from 'src/app/services/data.service';
 import { IEventStoreData, VisReference } from 'src/app/modules/event-store/event-store/event-store.component';
 import { IOptionConfig } from 'src/app/modules/event-store/option-picker/option-picker.component';
@@ -11,6 +11,7 @@ import { NamingViewerComponent } from 'src/app/modules/concurrent-events-visuali
     selector: 'app-naming-viewer-page',
     templateUrl: './naming-viewer-page.component.html',
     styleUrls: ['./naming-viewer-page.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class NamingViewerPageComponent implements OnInit {

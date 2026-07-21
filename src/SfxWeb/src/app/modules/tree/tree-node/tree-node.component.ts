@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
+import { Component, EventEmitter, Input, Output, inject, ChangeDetectionStrategy } from '@angular/core';
 import { PaginationId, TreeNodeGroupViewModel } from 'src/app/ViewModels/TreeNodeGroupViewModel';
 import { TreeService } from 'src/app/services/tree.service';
 import { environment } from 'src/environments/environment';
@@ -7,6 +7,7 @@ import { environment } from 'src/environments/environment';
     selector: 'app-tree-node',
     templateUrl: './tree-node.component.html',
     styleUrls: ['./tree-node.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class TreeNodeComponent {

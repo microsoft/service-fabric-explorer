@@ -1,4 +1,4 @@
-<app-navbar [tabs]="tabs" type="Application Type" [name]="appTypeName" [actions]="appTypeGroup?.actions">
+<app-navbar [tabs]="tabs" type="Application Type" [name]="appTypeName" [actions]="$safeNavigationMigration(appTypeGroup?.actions)">
   @if (appTypeGroup?.isArmManaged) {
     <app-arm-warning warning armWarningText="Some of the application types are ARM managed. ARM managed resources should only be modified during ARM deployments."></app-arm-warning>
   }

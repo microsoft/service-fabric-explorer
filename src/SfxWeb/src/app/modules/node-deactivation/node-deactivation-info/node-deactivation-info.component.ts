@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnChanges, inject } from '@angular/core';
+import { Component, OnInit, Input, OnChanges, inject, ChangeDetectionStrategy } from '@angular/core';
 import { Node } from 'src/app/Models/DataModels/Node';
 import { ListColumnSetting, ListSettings } from 'src/app/Models/ListSettings';
 import { IRawNodeDeactivationInfo } from 'src/app/Models/RawDataTypes';
@@ -10,6 +10,7 @@ import { DeactivationUtils } from 'src/app/Utils/deactivationUtils';
     selector: 'app-node-deactivation-info',
     templateUrl: './node-deactivation-info.component.html',
     styleUrls: ['./node-deactivation-info.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class NodeDeactivationInfoComponent implements OnInit, OnChanges {

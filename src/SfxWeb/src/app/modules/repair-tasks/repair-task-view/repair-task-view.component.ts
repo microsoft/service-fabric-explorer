@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { DetailBaseComponent } from 'src/app/ViewModels/detail-table-base.component';
 import { ListColumnSetting } from 'src/app/Models/ListSettings';
 import { RepairTask } from 'src/app/Models/DataModels/repairTask';
@@ -13,6 +13,7 @@ import { IRawNodeRepairTargetDescription } from 'src/app/Models/RawDataTypes';
     selector: 'app-repair-task-view',
     templateUrl: './repair-task-view.component.html',
     styleUrls: ['./repair-task-view.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class RepairTaskViewComponent implements OnInit, DetailBaseComponent, OnDestroy {

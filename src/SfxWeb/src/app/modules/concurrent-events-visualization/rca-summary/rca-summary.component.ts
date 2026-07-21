@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { IConcurrentEvents } from 'src/app/Models/eventstore/rcaEngine';
 import { RelatedEventsConfigs } from 'src/app/Models/eventstore/RelatedEventsConfigs';
 import { Utils } from 'src/app/Utils/Utils';
@@ -7,6 +7,7 @@ import { Utils } from 'src/app/Utils/Utils';
     selector: 'app-rca-summary',
     templateUrl: './rca-summary.component.html',
     styleUrls: ['./rca-summary.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class RcaSummaryComponent implements OnChanges {

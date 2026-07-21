@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { ApplicationsBaseControllerDirective } from '../applicationsBase';
 import { DataService } from 'src/app/services/data.service';
 
@@ -6,6 +6,7 @@ import { DataService } from 'src/app/services/data.service';
     selector: 'app-apptypes',
     templateUrl: './apptypes.component.html',
     styleUrls: ['./apptypes.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class ApptypesComponent  extends ApplicationsBaseControllerDirective {

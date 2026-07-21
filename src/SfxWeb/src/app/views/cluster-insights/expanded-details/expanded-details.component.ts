@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { DetailBaseComponent } from 'src/app/ViewModels/detail-table-base.component';
 import { ListColumnSetting } from 'src/app/Models/ListSettings';
 
@@ -6,6 +6,7 @@ import { ListColumnSetting } from 'src/app/Models/ListSettings';
     selector: 'app-expanded-details',
     templateUrl: './expanded-details.component.html',
     styleUrls: ['./expanded-details.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class ExpandedDetailsComponent implements DetailBaseComponent {

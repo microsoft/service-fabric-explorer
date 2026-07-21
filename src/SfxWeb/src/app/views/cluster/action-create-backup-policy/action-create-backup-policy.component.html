@@ -110,7 +110,7 @@
             </dl>
           </div>
 
-          <app-storage-form [form]="form" [data]="data?.data?.Storage" ></app-storage-form>
+          <app-storage-form [form]="form" [data]="$safeNavigationMigration(data?.data?.Storage)" ></app-storage-form>
           <dl class="dl-horizontal">
             <dt>RetentionPolicy</dt>
             <dd class="checkbox-container-default">

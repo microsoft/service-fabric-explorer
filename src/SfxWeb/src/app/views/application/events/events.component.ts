@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { ApplicationBaseControllerDirective } from '../applicationBase';
 import { DataService } from 'src/app/services/data.service';
 import { IEventStoreData } from 'src/app/modules/event-store/event-store/event-store.component';
@@ -8,6 +8,7 @@ import { IOptionConfig } from 'src/app/modules/event-store/option-picker/option-
     selector: 'app-app-events',
     templateUrl: './events.component.html',
     styleUrls: ['./events.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class EventsComponent extends ApplicationBaseControllerDirective {

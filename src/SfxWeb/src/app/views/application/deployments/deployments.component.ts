@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Observable } from 'rxjs';
 import { DataService } from 'src/app/services/data.service';
@@ -12,6 +12,7 @@ import { ApplicationBaseControllerDirective } from '../applicationBase';
     selector: 'app-deployments',
     templateUrl: './deployments.component.html',
     styleUrls: ['./deployments.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class DeploymentsComponent extends ApplicationBaseControllerDirective {

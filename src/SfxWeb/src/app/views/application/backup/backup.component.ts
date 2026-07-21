@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { ApplicationBaseControllerDirective } from '../applicationBase';
 import { DataService } from 'src/app/services/data.service';
 import { SettingsService } from 'src/app/services/settings.service';
@@ -16,6 +16,7 @@ import { PartitionEnableBackUpComponent } from 'src/app/modules/backup-restore/p
     selector: 'app-backup',
     templateUrl: './backup.component.html',
     styleUrls: ['./backup.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class BackupComponent extends ApplicationBaseControllerDirective  {

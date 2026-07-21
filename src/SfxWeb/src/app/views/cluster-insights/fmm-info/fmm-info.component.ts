@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
@@ -10,6 +10,7 @@ import { DataService } from 'src/app/services/data.service';
     selector: 'app-fmm-info',
     templateUrl: './fmm-info.component.html',
     styleUrls: ['./fmm-info.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class FmmInfoComponent extends BaseControllerDirective {

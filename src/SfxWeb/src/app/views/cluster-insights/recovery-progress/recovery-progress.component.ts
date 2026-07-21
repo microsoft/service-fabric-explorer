@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { forkJoin, of, Observable } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
@@ -29,6 +29,7 @@ enum RecoveryStepName {
     selector: 'app-recovery-progress',
     templateUrl: './recovery-progress.component.html',
     styleUrls: ['./recovery-progress.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class RecoveryProgressComponent extends BaseControllerDirective {

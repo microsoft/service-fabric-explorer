@@ -1,4 +1,4 @@
-import { Component, OnInit, ElementRef, inject } from '@angular/core';
+import { Component, OnInit, ElementRef, inject, ChangeDetectionStrategy } from '@angular/core';
 import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 import { DeployedReplicaCollection } from 'src/app/Models/DataModels/collections/Collections';
 import { ListSettings, ListColumnSetting, ListColumnSettingWithFilter, ListColumnSettingForLink } from 'src/app/Models/ListSettings';
@@ -17,6 +17,7 @@ import { IBaseView } from '../../BaseView';
     selector: 'app-base',
     templateUrl: './base.component.html',
     styleUrls: ['./base.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class BaseComponent extends BaseControllerDirective implements IBaseView{

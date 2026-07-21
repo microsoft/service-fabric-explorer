@@ -1,6 +1,6 @@
-<app-navbar [tabs]="tabs" type="Service" [name]="service?.name" [actions]="service?.actions">
+<app-navbar [tabs]="tabs" type="Service" [name]="$safeNavigationMigration(service?.name)" [actions]="$safeNavigationMigration(service?.actions)">
   @if (service?.isArmManaged) {
-    <app-arm-warning warning [resourceId]="service?.resourceId" ></app-arm-warning>
+    <app-arm-warning warning [resourceId]="$safeNavigationMigration(service?.resourceId)" ></app-arm-warning>
   }
 </app-navbar>
 <div class="main-view">

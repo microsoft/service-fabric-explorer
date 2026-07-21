@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { Observable } from 'rxjs';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { CommandFactory, CommandParamTypes, CommandSafetyLevel, PowershellCommand, PowershellCommandParameter } from 'src/app/Models/PowershellCommand';
@@ -9,6 +9,7 @@ import { ApplicationBaseControllerDirective } from '../applicationBase';
     selector: 'app-app-commands',
     templateUrl: './commands.component.html',
     styleUrls: ['./commands.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class CommandsComponent extends ApplicationBaseControllerDirective{
