@@ -30,11 +30,17 @@
                     </div>
                     <div>Instance Count</div>
                 </div>
-                <div class="flex-center">
+                <div class="flex-center" [ngClass]="{'line-item-seperator': data.ServiceKind === 'Stateless'}">
                     <div class="line-item-small">
                         {{data.MinInstanceCount}}
                     </div>
                     <div >Minimum Instance Count</div>
+                </div>
+                <div class="flex-center" *ngIf="data.ServiceKind === 'Stateless'">
+                    <div class="line-item-small">
+                        {{data.MinInstancePercentage}}
+                    </div>
+                    <div >Minimum Instance Percentage</div>
                 </div>
             </div>
         </div>
