@@ -12,6 +12,8 @@ import { DataModelCollectionBase } from './CollectionBase';
 import { RoutesService } from 'src/app/services/routes.service';
 
 
+const upgradeDomainNameComparer = new Intl.Collator(undefined, { numeric: true });
+
 export interface INodesStatusDetails {
   nodeType: string;
   statusTypeCounts: Record<string, number>;
@@ -151,7 +153,8 @@ export class NodeCollection extends DataModelCollectionBase<Node> {
         this.faultDomains = Utils.unique(this.faultDomains).sort();
 
         this.upgradeDomains = this.collection.map(node => node.raw.UpgradeDomain);
-        this.upgradeDomains = Utils.unique(this.upgradeDomains).sort();
+        this.upgradeDomains = Utils.unique(this.upgradeDomains)
+            .sort((left, right) => upgradeDomainNameComparer.compare(left, right));
 
         const seedNodes = this.collection.filter(node => node.raw.IsSeedNode);
         const healthyNodes = seedNodes.filter(node => node.healthState.text === HealthStateConstants.OK);

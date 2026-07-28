@@ -159,12 +159,6 @@ export class MonitoringPolicy extends DataModelBase<IRawMonitoringPolicy> {
     }
 }
 
-const upgradeDomainNameComparer = new Intl.Collator(undefined, { numeric: true });
-
-export function compareUpgradeDomainNames(left: string, right: string): number {
-    return upgradeDomainNameComparer.compare(left, right);
-}
-
 export class UpgradeDomain extends DataModelBase<IRawUpgradeDomain | IUpgradeUnitInfo > {
     public prefix = 'UD : ';
     public constructor(data: DataService, raw: IRawUpgradeDomain | IUpgradeUnitInfo, nodeByNode: boolean = false) {
