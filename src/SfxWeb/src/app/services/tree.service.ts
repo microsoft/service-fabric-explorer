@@ -33,8 +33,8 @@ export class TreeService {
         private selectTreeNodeCalled = false;
         private cachedTreeSelection!: {path: string[], skipSelectAction?: boolean};
 
-        public get cachedTreeNodeSelection(): string | null {
-            return this.cachedTreeSelection ? this.cachedTreeSelection.path.slice(-1).pop() ?? null : null;
+        public get cachedTreeNodeSelection(): string | null | undefined {
+            return this.cachedTreeSelection ? this.cachedTreeSelection.path.slice(-1).pop() : null;
         }
 
         // AuthenticationController will call this function to initialize the tree view once authentication is cleared
@@ -174,7 +174,11 @@ export class TreeService {
 
 
             return forkJoin([getAppsPromise, getNodesPromise, systemNodePromise]).pipe(map(resp => {
-                return resp.filter(node => node !== null) as ITreeNode[];
+                if (resp[2] === null) {
+                    resp.splice(2);
+                    return resp as ITreeNode[];
+                }
+                return resp as ITreeNode[];
             }));
         }
 

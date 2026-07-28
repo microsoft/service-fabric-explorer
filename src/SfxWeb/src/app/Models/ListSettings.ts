@@ -176,7 +176,7 @@ export class ListColumnSetting {
     public template?: Type<DetailBaseComponent>;
 
     public get hasFilters(): boolean {
-        return !!(this.config!.enableFilter && this.filterValues.length > 0);
+        return (this.config!.enableFilter && this.filterValues.length > 0)!;
     }
 
     public get hasEffectiveFilters(): boolean {

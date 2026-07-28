@@ -62,7 +62,7 @@ export class ApplicationCollection extends DataModelCollectionBase<Application> 
     }
 
     protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): Observable<any> {
-        return this.data.restClient.getApplications(!!this.data.readOnlyHeader, messageHandler).pipe(map(items => {
+        return this.data.restClient.getApplications(this.data.readOnlyHeader!, messageHandler).pipe(map(items => {
             return items.map(raw => new Application(this.data, raw));
         }));
     }
@@ -106,7 +106,7 @@ export class ApplicationTypeGroupCollection extends DataModelCollectionBase<Appl
     }
 
     protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): Observable<any> {
-        return this.data.restClient.getApplicationTypes(undefined, messageHandler).pipe(map(response => {
+        return this.data.restClient.getApplicationTypes(null!, messageHandler).pipe(map(response => {
             this.appTypeCount = response.length;
             const appTypes = response.map(item => new ApplicationType(this.data, item));
             const groups = groupBy(appTypes, item => item.raw.Name);
@@ -397,7 +397,7 @@ export abstract class EventListBase<T extends FabricEventBase> extends DataModel
     }
 
     public resetDateWindow(): boolean {
-        return this.setDateWindow(undefined, undefined);
+        return this.setDateWindow(null!, null!);
     }
 
     public reload(messageHandler?: IResponseMessageHandler): Observable<any> {

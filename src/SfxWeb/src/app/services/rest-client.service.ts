@@ -385,12 +385,12 @@ export class RestClientService {
       url =  url + `?ExcludeApplicationParameters=true`;
     }
 
-    return this.getFullCollection<IRawApplication>(url, 'Get applications', undefined, messageHandler);
+    return this.getFullCollection<IRawApplication>(url, 'Get applications', null!, messageHandler);
   }
 
   public getServices(applicationId: string, messageHandler?: IResponseMessageHandler): Observable<IRawService[]> {
       const url = 'Applications/' + encodeURIComponent(applicationId) + '/$/GetServices';
-      return this.getFullCollection<IRawService>(url, 'Get services', undefined, messageHandler);
+    return this.getFullCollection<IRawService>(url, 'Get services', null!, messageHandler);
   }
 
   public getService(applicationId: string, serviceId: string, messageHandler?: IResponseMessageHandler): Observable<IRawService> {
@@ -600,7 +600,7 @@ export class RestClientService {
           + '/$/GetServices/' + encodeURIComponent(serviceId)
           + '/$/GetPartitions';
 
-      return this.getFullCollection<IRawPartition>(url, 'Get partitions', undefined, messageHandler);
+    return this.getFullCollection<IRawPartition>(url, 'Get partitions', null!, messageHandler);
   }
 
   public getPartition(applicationId: string, serviceId: string, partitionId: string, messageHandler?: IResponseMessageHandler): Observable<IRawPartition> {
@@ -655,7 +655,7 @@ export class RestClientService {
           + '/$/GetPartitions/' + encodeURIComponent(partitionId)
           + '/$/GetReplicas';
 
-      return this.getFullCollection<IRawReplicaOnPartition>(url, 'Get replicas on partition', undefined, messageHandler);
+    return this.getFullCollection<IRawReplicaOnPartition>(url, 'Get replicas on partition', null!, messageHandler);
   }
 
   public getReplicaOnPartition(applicationId: string, serviceId: string, partitionId: string, replicaId: string, messageHandler?: IResponseMessageHandler): Observable<IRawReplicaOnPartition> {
@@ -818,8 +818,8 @@ export class RestClientService {
       }
 
 
-      const fullUrl = this.getApiUrl(url + '?' + params.toString(), apiVersion, undefined, true);
-      return this.get<IRawList<{}>>(fullUrl, '', messageHandler).pipe(map(response => {
+    const fullUrl = this.getApiUrl(url + '?' + params.toString(), apiVersion, null!, true);
+    return this.get<IRawList<{}>>(fullUrl, null!, messageHandler).pipe(map(response => {
           return new EventsResponseAdapter(eventType).getEvents(response);
         }));
   }

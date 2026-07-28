@@ -239,7 +239,7 @@ export class TreeNodeGroupViewModel implements ITreeNode {
     public childrenLoaded = false;
 
     private internalIsExpanded = false;
-    private currentGetChildrenPromise: Subject<any> | null = null;
+    private currentGetChildrenPromise?: Subject<any> | null;
     private prevPageNode!: TreeNodeGroupViewModel;
     private nextPageNode!: TreeNodeGroupViewModel;
     private firstPageNode!: TreeNodeGroupViewModel;

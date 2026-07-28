@@ -100,7 +100,7 @@ export class Service extends DataModelBase<IRawService> {
     }
 
     public get resourceId(): string {
-        return this.raw.ServiceMetadata?.ArmMetadata?.ArmResourceId ?? '';
+        return this.raw.ServiceMetadata?.ArmMetadata?.ArmResourceId!;
     }
 
     public get isArmManaged(): boolean {
@@ -173,7 +173,7 @@ export class Service extends DataModelBase<IRawService> {
                     this,
                     ActionDialogComponent,
                     () => this.isStatelessService,
-                    undefined,
+                    null!,
                     {
                         title: "Scale Service",
                     },

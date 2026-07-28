@@ -176,20 +176,19 @@ export class RoutesService {
     RoutesService.singleEncode = force;
   }
 
-   getPathData(snapshot: ActivatedRouteSnapshot): { params: {}, pathPostFix: string, lastPaths: Type<any>[] } {
+   getPathData(snapshot: ActivatedRouteSnapshot | null): { params: {}, pathPostFix: string, lastPaths: Type<any>[] } {
     const data = {
-        params: snapshot.params,
+        params: snapshot!.params,
         pathPostFix: '',
         lastPaths: [] as Type<any>[]
     };
 
-    let current: ActivatedRouteSnapshot | null = snapshot;
-    while (current !== null) {
-        data.pathPostFix = current.routeConfig!.path!;
-        if (current.component) {
-            data.lastPaths.push(current.component);
+    while (snapshot !== null) {
+        data.pathPostFix = snapshot.routeConfig!.path!;
+        if (snapshot.component) {
+            data.lastPaths.push(snapshot.component);
         }
-        current = current.firstChild;
+        snapshot = snapshot.firstChild;
     }
     return data;
    }

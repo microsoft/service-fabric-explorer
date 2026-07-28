@@ -15,8 +15,8 @@ export class RepairTaskCollection extends DataModelCollectionBase<RepairTask> {
     completedRepairTasks: RepairTask[] = [];
     jobsOfInterest: RepairTask[] = [];
 
-    public longRunningApprovalJob: RepairTask | null = null;
-    public longestExecutingJob: RepairTask | null = null;
+    public longRunningApprovalJob?: RepairTask | null;
+    public longestExecutingJob?: RepairTask | null;
 
     public constructor(data: DataService) {
         super(data, parent);

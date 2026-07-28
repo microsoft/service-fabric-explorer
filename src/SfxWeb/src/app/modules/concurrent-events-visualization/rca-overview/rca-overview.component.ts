@@ -168,7 +168,7 @@ export class RcaOverviewComponent implements AfterViewInit, OnChanges {
   }
 
   reasonTreeToList(event: IConcurrentEvents): IConcurrentEvents[] {
-    let next: IConcurrentEvents | null = event;
+    let next: IConcurrentEvents | null | undefined = event;
     const list = [];
     while (next) {
       list.push(next)

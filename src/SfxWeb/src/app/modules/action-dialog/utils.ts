@@ -45,13 +45,13 @@ export class ActionDialogUtils {
       },
       MessageWithWaitConfirmationComponent,
       () => true,
-      undefined,
+      null!,
       {
         title: `Confirm ${title} - Potential Data Loss`,
         class: 'error'
       },
       {
-        template: undefined,
+        template: null!,
         inputs: {
           description
         }

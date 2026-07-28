@@ -57,7 +57,7 @@ export class TimeseriesComponent implements AfterViewInit, OnChanges, OnDestroy,
   subscriptions: Subscription = new Subscription();
   listSettings!: ListSettings;
 
-  currentItems: any[] | null = null;
+  currentItems?: any[] | null;
   currentIndex = 0;
   currentItemsWidth = 400;
   resizer = new Subject<any>();
@@ -343,7 +343,7 @@ export class TimeseriesComponent implements AfterViewInit, OnChanges, OnDestroy,
         if (referencePoint) {
           referencePoint.onMouseOver(); // Show the hover marker
           chart.tooltip.refresh(referencePoint); // Show the tooltip
-          chart.xAxis[0].drawCrosshair(undefined, referencePoint); // Show the crosshair
+          chart.xAxis[0].drawCrosshair(null!, referencePoint); // Show the crosshair
         }
       })
     }

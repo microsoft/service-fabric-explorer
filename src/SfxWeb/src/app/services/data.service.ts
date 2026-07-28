@@ -385,7 +385,7 @@ export class DataService {
         const list = new ApplicationEventList(this, applicationId);
         const d: IEventStoreData<ApplicationEventList, ApplicationEvent> = {
             eventsList : list,
-            type : applicationId ? "Application" : undefined,
+            type : applicationId ? "Application" : null!,
             displayName : applicationId ? applicationId : 'Apps',
         };
 
@@ -397,7 +397,7 @@ export class DataService {
         const list = new ServiceEventList(this, serviceId);
         const d: IEventStoreData<ServiceEventList, ServiceEvent> = {
             eventsList : list,
-            displayName : serviceId ?? ''
+            displayName : serviceId!
         };
 
         this.addFabricEventData<ServiceEventList, ServiceEvent>(d);
@@ -409,7 +409,7 @@ export class DataService {
         const d: IEventStoreData<PartitionEventList, PartitionEvent> = {
             eventsList : list,
             type : "Partition",
-            displayName : partitionId ?? ''
+            displayName : partitionId!
         };
 
         this.addFabricEventData<PartitionEventList, PartitionEvent>(d);

@@ -39,8 +39,7 @@ export class AdalService {
 
           return this.context;
         }
-        return this.context;
-      }));
+      })) as Observable<AuthenticationContext>;
     }
   }
 

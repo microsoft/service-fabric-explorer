@@ -34,8 +34,8 @@ export class EventStoreTimelineComponent implements AfterViewInit, OnChanges, On
   private timeline!: Timeline;
   private start!: Date;
   private end!: Date;
-  private oldestEvent: DataItem | null = null;
-  private mostRecentEvent: DataItem | null = null;
+  private oldestEvent?: DataItem | null;
+  private mostRecentEvent?: DataItem | null;
 
   @ViewChild('visualization') container!: ElementRef;
 

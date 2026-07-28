@@ -45,7 +45,7 @@ export class ApplicationType extends DataModelBase<IRawApplicationType> {
     }
 
     public get resourceId(): string {
-        return this.raw.ApplicationTypeMetadata?.ArmMetadata?.ArmResourceId ?? '';
+        return this.raw.ApplicationTypeMetadata?.ArmMetadata?.ArmResourceId!;
     }
 
     public get isArmManaged(): boolean{
@@ -94,7 +94,7 @@ export class ApplicationType extends DataModelBase<IRawApplicationType> {
             },
             ActionDialogComponent,
             () => true,
-            undefined,
+            null!,
             {
                 title: "Create app instance",
             },
@@ -180,10 +180,10 @@ export class ApplicationTypeGroup extends DataModelBase<IRawApplicationType> {
             () => true,
             {
                 title: 'Confirm Type Unprovision',
-                class: this.isArmManaged ? 'warning' : undefined
+                class: this.isArmManaged ? 'warning' : null!
             },
             {
-                template: this.isArmManaged ? MessageWithWarningComponent : undefined,
+                template: this.isArmManaged ? MessageWithWarningComponent : null!,
                 inputs: {
                     message: `Unprovision all ${this.isArmManaged ? " non-arm managed " : null} versions of application type ${this.name} from cluster ${window.location.host}?`,
                     confirmationKeyword: this.name,
