@@ -190,7 +190,7 @@ export class Utils {
         return text;
     }
 
-    public static addToArrayAndTrim<T>(list: T[], data: T, maxLength: number, onRemoval: (item: T) => void = () => {}, onAddition: (item: T) => void = () => {}) {
+    public static addToArrayAndTrim<T>(list: T[], data: T, maxLength: number, onRemoval: (item: T) => void = (item: T) => null, onAddition: (item: T) => void = (item: T) => null) {
         if (list.length >= maxLength) {
             const r = list.splice(maxLength - 1, 1);
             onRemoval(r[0]);

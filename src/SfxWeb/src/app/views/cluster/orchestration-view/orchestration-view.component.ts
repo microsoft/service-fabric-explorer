@@ -36,7 +36,7 @@ export class OrchestrationViewComponent implements OnInit, AfterViewInit {
 
   partitionEvents!: PartitionEvent[];
   partitionId!: string;
-  selectedEvent: PartitionEvent | null = null;
+  selectedEvent?: PartitionEvent | null;
 
   dateMin!: Date;
   startDate!: Date;
@@ -47,7 +47,7 @@ export class OrchestrationViewComponent implements OnInit, AfterViewInit {
   constrainCheckToggle = true;
   otherToggle = true;
 
-  timeLineEventsData: ITimelineData | null = null;
+  timeLineEventsData?: ITimelineData | null;
 
   ngOnInit(): void {
     if (!this.dataService.clusterManifest.isEventStoreEnabled) {
@@ -114,7 +114,7 @@ export class OrchestrationViewComponent implements OnInit, AfterViewInit {
   }
 
   selectEvent(index: string) {
-    this.selectedEvent = this.partitionEvents[+index];
+    this.selectedEvent = this.partitionEvents[index as any];
   }
 
   private fillInOperationEventsData(partitionEventData: IEventStoreData<PartitionEventList, PartitionEvent>) {

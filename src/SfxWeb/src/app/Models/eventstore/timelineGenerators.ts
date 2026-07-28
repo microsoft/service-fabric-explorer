@@ -267,7 +267,7 @@ export class ClusterTimelineGenerator extends TimeLineGeneratorBase<ClusterEvent
         // state necessary for some events
         let previousClusterHealthReport: ClusterEvent;
         let previousClusterUpgrade: ClusterEvent;
-        let upgradeClusterStarted: ClusterEvent | null = null;
+        let upgradeClusterStarted!: ClusterEvent;
         const clusterRollBacks: Record<string, {complete: ClusterEvent, start?: ClusterEvent}> = {};
 
         events.forEach((event, index) => {
@@ -449,9 +449,9 @@ export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
           //hold onto the last "state" node i.e up or down to put bounds on unexpected down events
           let lastTransitionEvent: NodeEvent | null = null;
 
-          let lastUpEvent: NodeEvent | null = null;
-          let lastDownEvent: {event: NodeEvent, end: string} | null = null;
-          let lastRemoved: NodeEvent | null = null;
+          let lastUpEvent!: NodeEvent | null;
+          let lastDownEvent = null as {event: NodeEvent, end: string} | null;
+          let lastRemoved!: NodeEvent | null;
           //repeat item filter
           const seenIds = new Set();
 
@@ -544,17 +544,15 @@ export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
             }
           })
 
-          const finalDownEvent = lastDownEvent as {event: NodeEvent, end: string} | null;
-          if(finalDownEvent) {
-            items.add(this.generateDownNodeEvent(finalDownEvent.event, events.indexOf(finalDownEvent.event), finalDownEvent.event.timeStamp, finalDownEvent.end));
+          if(lastDownEvent) {
+            items.add(this.generateDownNodeEvent(lastDownEvent.event, events.indexOf(lastDownEvent.event), lastDownEvent.event.timeStamp, lastDownEvent.end));
           }
 
-          const finalUpEvent = lastUpEvent as NodeEvent | null;
-          if(finalUpEvent) {
-            const lastDown = finalUpEvent.eventProperties.LastNodeDownAt;
+          if(lastUpEvent) {
+            const lastDown = lastUpEvent.eventProperties.LastNodeDownAt;
             //skip the synthetic down bar when LastNodeDownAt is the FILETIME epoch sentinel ("never been down")
             if(lastDown && lastDown !== NodeTimelineGenerator.FileTimeEpochSentinel) {
-              items.add(this.generateDownNodeEvent(finalUpEvent, events.indexOf(finalUpEvent), lastDown, finalUpEvent.timeStamp));
+              items.add(this.generateDownNodeEvent(lastUpEvent, events.indexOf(lastUpEvent), lastDown, lastUpEvent.timeStamp));
             }
           }
         })
@@ -600,7 +598,7 @@ export class ApplicationTimelineGenerator extends TimeLineGeneratorBase<Applicat
 
         // state necessary for some events
         let previousApplicationUpgrade: ApplicationEvent;
-        let upgradeApplicationStarted: ApplicationEvent | null = null;
+        let upgradeApplicationStarted!: ApplicationEvent | null;
 
         const applicationRollBacks: Record<string, {complete: ApplicationEvent, start?: ApplicationEvent}> = {};
         const processExitedGroups: Record<string, DataGroup> = {};

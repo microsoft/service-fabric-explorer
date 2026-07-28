@@ -72,7 +72,7 @@ export class SettingsService {
       // Use URL + listName as unique key to track list settings on detail pages
       const key: string = listName; // TODO fix this this.$location.path() + "/" + listName;
       if (!this.listSettings[key]) {
-          this.listSettings[key] = new ListSettings(this.paginationLimit, defaultSortProperties ?? [], listName, columnSettings, secondRowColumnSettings, secondRowCollapsible, showSecondRow, searchable);
+          this.listSettings[key] = new ListSettings(this.paginationLimit, defaultSortProperties!, listName, columnSettings, secondRowColumnSettings, secondRowCollapsible, showSecondRow, searchable);
       }
       return this.listSettings[key];
   }

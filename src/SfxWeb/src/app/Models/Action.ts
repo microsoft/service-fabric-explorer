@@ -31,23 +31,23 @@ export class Action {
     }
 
     public run(...params: any[]) {
-       this.runInternal(() => null, () => null, params).subscribe();
+       this.runInternal(() => null, () => null, params)!.subscribe();
     }
 
     public runWithCallbacks(success: (result: any) => void, error: (reason: string) => void, ...params: any[]): Observable<any> {
-        return this.runInternal(success, error, params);
+        return this.runInternal(success, error, params)!;
     }
 
     public runWithFinalNotification(...params: any[]) {
       return new Observable(subscriber => {
-        this.runInternal(() => null, () => null, params).subscribe(data => {
+                this.runInternal(() => null, () => null, params)!.subscribe(data => {
           subscriber.next(data);
           subscriber.complete();
         });
       });
     }
 
-    protected runInternal(success: (result: any) => void, error: (reason: string) => void, ...params: any[]): Observable<any> {
+        protected runInternal(success: (result: any) => void, error: (reason: string) => void, ...params: any[]): Observable<any> | undefined {
 
         if (this.canRun()) {
             this.running = true;
@@ -56,7 +56,6 @@ export class Action {
                 this.running = false;
             }));
         }
-        return of(null);
     }
 }
 
@@ -91,7 +90,7 @@ export class ActionWithDialog extends Action {
                 const dialogRef = this.dialog.open(this.template, {data: this, panelClass: 'mat-dialog-container-wrapper'});
                 return dialogRef.afterClosed().pipe(mergeMap( (data: boolean) => {
                     if (data){
-                        return super.runInternal(success, error, params);
+                        return super.runInternal(success, error, params)!;
                     }
                     return of(null);
                 }));

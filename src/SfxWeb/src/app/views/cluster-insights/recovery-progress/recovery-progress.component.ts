@@ -178,7 +178,7 @@ export class RecoveryProgressComponent extends BaseControllerDirective {
     const warningApps = apps.filter((app) => app.healthState.text === HealthStateConstants.Warning).length;
     const errorApps = apps.filter((app) => app.healthState.text === HealthStateConstants.Error).length;
 
-    let status: RecoveryStep['status'] = 'success';
+    let status!: RecoveryStep['status'];
     const tooltipParts: string[] = [];
 
     if (errorApps > 0) {

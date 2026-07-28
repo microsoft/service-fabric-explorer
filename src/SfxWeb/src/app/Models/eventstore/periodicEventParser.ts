@@ -124,7 +124,7 @@ const generateItems = ( property: IDiffProperty, states: IRCAItem[], startDate: 
 
   let groups: DataGroup[] = Array.from(uniqueValues).map(value => {
     return {
-      id: String(value), content: String(value)
+      id: (value as any).toString(), content: (value as any).toString()
     }
   })
 

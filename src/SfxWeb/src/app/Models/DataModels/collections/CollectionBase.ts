@@ -48,7 +48,7 @@ export class DataModelCollectionBase<T extends IDataModel<any>> implements IData
 
     private appendOnly: boolean;
     private hash!: Record<string, T>;
-    private refreshingPromise: Subject<any> | null = null;
+    private refreshingPromise?: Subject<any> | null;
 
     public get viewPath(): string {
         return '';

@@ -80,7 +80,7 @@ export class DataModelBase<T> implements IDataModel<T> {
     public parent: any;
 
     protected valueResolver: ValueResolver;
-    private refreshingPromise: Subject<any> | null = null;
+    private refreshingPromise?: Subject<any> | null;
 
     public get isRefreshing(): boolean {
         return !!this.refreshingPromise;

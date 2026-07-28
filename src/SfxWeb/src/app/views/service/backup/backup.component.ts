@@ -83,9 +83,9 @@ export class BackupComponent extends ServiceBaseControllerDirective {
             data: this
         },
         PartitionDisableBackUpComponent,
-        () => !!(this.service.serviceBackupConfigurationInfoCollection.collection.length && this.service.serviceBackupConfigurationInfoCollection.collection[0].raw &&
+          () => (this.service.serviceBackupConfigurationInfoCollection.collection.length && this.service.serviceBackupConfigurationInfoCollection.collection[0].raw &&
               this.service.serviceBackupConfigurationInfoCollection.collection[0].raw.Kind === 'Service' &&
-              this.service.serviceBackupConfigurationInfoCollection.collection[0].raw.PolicyInheritedFrom === 'Service'),
+            this.service.serviceBackupConfigurationInfoCollection.collection[0].raw.PolicyInheritedFrom === 'Service') as unknown as boolean,
     ));
 
       this.actions.add(new ActionWithConfirmationDialog(
@@ -96,10 +96,10 @@ export class BackupComponent extends ServiceBaseControllerDirective {
         () => this.data.restClient.suspendServiceBackup(this.service.id).pipe(map(() => {
             return this.service.serviceBackupConfigurationInfoCollection.refresh();
         })),
-        () => !!(this.service.serviceBackupConfigurationInfoCollection.collection.length && this.service.serviceBackupConfigurationInfoCollection.collection[0].raw &&
+          () => (this.service.serviceBackupConfigurationInfoCollection.collection.length && this.service.serviceBackupConfigurationInfoCollection.collection[0].raw &&
               this.service.serviceBackupConfigurationInfoCollection.collection[0].raw.Kind === 'Service' &&
               this.service.serviceBackupConfigurationInfoCollection.collection[0].raw.PolicyInheritedFrom === 'Service' &&
-              this.service.serviceBackupConfigurationInfoCollection.collection[0].raw.SuspensionInfo.IsSuspended === false),
+            this.service.serviceBackupConfigurationInfoCollection.collection[0].raw.SuspensionInfo.IsSuspended === false) as unknown as boolean,
         {
           title: 'Confirm Service Backup Suspension'
         },
@@ -118,10 +118,10 @@ export class BackupComponent extends ServiceBaseControllerDirective {
         () => this.data.restClient.resumeApplicationBackup(this.service.id).pipe(map(() => {
             return this.service.serviceBackupConfigurationInfoCollection.refresh();
         })),
-        () => !!(this.service.serviceBackupConfigurationInfoCollection.collection.length && this.service.serviceBackupConfigurationInfoCollection.collection[0].raw &&
+          () => (this.service.serviceBackupConfigurationInfoCollection.collection.length && this.service.serviceBackupConfigurationInfoCollection.collection[0].raw &&
               this.service.serviceBackupConfigurationInfoCollection.collection[0].raw.Kind === 'Service' &&
               this.service.serviceBackupConfigurationInfoCollection.collection[0].raw.PolicyInheritedFrom === 'Service' &&
-              this.service.serviceBackupConfigurationInfoCollection.collection[0].raw.SuspensionInfo.IsSuspended === true),
+            this.service.serviceBackupConfigurationInfoCollection.collection[0].raw.SuspensionInfo.IsSuspended === true) as unknown as boolean,
         {
           title: 'Confirm Service Backup Resumption'
         },

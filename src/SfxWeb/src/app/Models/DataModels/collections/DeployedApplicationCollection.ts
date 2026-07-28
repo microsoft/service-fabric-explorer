@@ -15,14 +15,14 @@ export class DeployedApplicationCollection extends DataModelCollectionBase<Deplo
         super(data, parent);
     }
 
-    public mergeClusterHealthStateChunk(clusterHealthChunk: IClusterHealthChunk): Observable<any> {
+    public mergeClusterHealthStateChunk(clusterHealthChunk: IClusterHealthChunk): Observable<any>;
+    public mergeClusterHealthStateChunk(clusterHealthChunk: IClusterHealthChunk): Observable<any> | undefined {
         const nodeHealthChunk = clusterHealthChunk.NodeHealthStateChunks.Items.find(chunk => chunk.NodeName === this.parent.name);
         if (nodeHealthChunk) {
             return this.updateCollectionFromHealthChunkList<IDeployedApplicationHealthStateChunk>(
                 nodeHealthChunk.DeployedApplicationHealthStateChunks,
                 item => IdGenerator.deployedApp(IdUtils.nameToId(item.ApplicationName)));
         }
-        return of(true);
     }
 
     protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): Observable<any> {

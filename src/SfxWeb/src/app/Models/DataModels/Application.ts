@@ -87,7 +87,7 @@ export class Application extends DataModelBase<IRawApplication> {
     }
 
     public get resourceId(): string {
-        return this.raw.ApplicationMetadata?.ArmMetadata?.ArmResourceId ?? '';
+        return this.raw.ApplicationMetadata?.ArmMetadata?.ArmResourceId!;
     }
 
     public get isArmManaged(): boolean{
@@ -121,7 +121,7 @@ export class Application extends DataModelBase<IRawApplication> {
     }
 
     protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<IRawApplication> {
-        return this.data.restClient.getApplication(this.id, !!this.data.readOnlyHeader, messageHandler);
+        return this.data.restClient.getApplication(this.id, this.data.readOnlyHeader!, messageHandler);
     }
 
     private setUpActions(): void {
