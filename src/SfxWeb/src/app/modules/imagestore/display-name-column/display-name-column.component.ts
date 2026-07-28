@@ -12,8 +12,8 @@ import { ImageStoreItem, ImageStore } from 'src/app/Models/DataModels/ImageStore
 })
 export class DisplayNameColumnComponent implements DetailBaseComponent {
 
-  item: ImageStoreItem;
-  listSetting: ListColumnSettingWithDisplayName;
+  item!: ImageStoreItem;
+  listSetting!: ListColumnSettingWithDisplayName;
 
   constructor() { }
 

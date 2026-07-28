@@ -47,8 +47,8 @@ export class DataModelCollectionBase<T extends IDataModel<any>> implements IData
     protected valueResolver: ValueResolver = new ValueResolver();
 
     private appendOnly: boolean;
-    private hash: Record<string, T>;
-    private refreshingPromise: Subject<any>;
+    private hash!: Record<string, T>;
+    private refreshingPromise: Subject<any> | null = null;
 
     public get viewPath(): string {
         return '';
@@ -92,8 +92,8 @@ export class DataModelCollectionBase<T extends IDataModel<any>> implements IData
                     this.collection = [];
                 }
                 this.lastRefreshWasSuccessful = success;
-                this.refreshingPromise.next(success);
-                this.refreshingPromise.complete();
+                this.refreshingPromise!.next(success);
+                this.refreshingPromise!.complete();
                 this.refreshingPromise = null;
             });
             // , error => {
@@ -161,7 +161,7 @@ export class DataModelCollectionBase<T extends IDataModel<any>> implements IData
         if (this.hash) {
             return this.hash[uniqueId];
         }
-        return null;
+        return null!;
     }
 
     public mergeClusterHealthStateChunk(clusterHealthChunk: IClusterHealthChunk): Observable<any> {
@@ -182,7 +182,7 @@ export class DataModelCollectionBase<T extends IDataModel<any>> implements IData
         healthChunkList: IHealthStateChunkList<P>,
         newIdSelector: (item: P) => string): Observable<any> {
 
-        if (!CollectionUtils.compareCollectionsByKeys(this.collection, healthChunkList.Items, item => item[this.indexPropery], newIdSelector)) {
+        if (!CollectionUtils.compareCollectionsByKeys(this.collection, healthChunkList.Items, item => (item as any)[this.indexPropery], newIdSelector)) {
             if (!this.isRefreshing) {
                 // If the health chunk data has different set of keys, refresh the entire collection
                 // to get full information of the new items.
@@ -193,11 +193,11 @@ export class DataModelCollectionBase<T extends IDataModel<any>> implements IData
         }
 
         // Merge health chunk data
-        const updatePromises = [];
+        const updatePromises: any[] = [];
         CollectionUtils.updateCollection<T, P>(
             this.collection,
             healthChunkList.Items,
-            item => item[this.indexPropery],
+            item => (item as any)[this.indexPropery],
             newIdSelector,
             null, // no need to create object because a full refresh will be scheduled when new object is returned by health chunk API,
             // which is needed because the information returned by the health chunk api is not enough for us to create a full data object.
@@ -210,6 +210,6 @@ export class DataModelCollectionBase<T extends IDataModel<any>> implements IData
 
     // Derived class should implement this if it is going to use details-view directive as child and call showDetails(itemId).
     protected getDetailsList(item: any): IDataModelCollection<any> {
-        return null;
+        return null!;
     }
 }

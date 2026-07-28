@@ -14,7 +14,7 @@ export class RefreshRateComponent {
   @Input() refresh = false;
   @Input()
   set value( val: number) {
-    this.change( +(Object.keys(this.mapping).find(key => this.mapping[key] === val) || 4), false );
+    this.change( +(Object.keys(this.mapping).find(key => (this.mapping as any)[key] === val) || 4), false );
   }
 
   @Input() condensedVersion = false;
@@ -23,7 +23,7 @@ export class RefreshRateComponent {
   @Output() forceRefreshed = new EventEmitter<any>();
   refreshRate = 0;
 
-  displayRate: string | number;
+  displayRate!: string | number;
 
   private mapping: Record<number, string> = {
     0: '0',

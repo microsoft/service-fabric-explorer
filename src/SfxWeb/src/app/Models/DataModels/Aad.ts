@@ -14,14 +14,14 @@ export class AuthenticationBootstrapConstants {
 
 export class AadMetadata extends DataModelBase<IRawAadMetadata> {
     public constructor(raw: IRawAadMetadata) {
-        super(null, raw);
+        super(null!, raw);
     }
 
     public get metadata(): IRawAadMetadataMetadata {
         if (this.raw) {
             return this.raw.metadata;
         }
-        return null;
+        return null!;
     }
 
     public get isAadAuthType(): boolean {

@@ -10,7 +10,7 @@ import { IResourceItem } from 'src/app/modules/charts/resources-tile/resources-t
 })
 export class ResourceItemComponent {
 
-  @Input() item: IResourceItem;
+  @Input() item!: IResourceItem;
   @Input() underline = false;
 
   constructor() { }

@@ -9,8 +9,8 @@ import { Component, Input, OnChanges, OnInit, TemplateRef, ChangeDetectionStrate
 })
 export class PhaseDiagramComponent implements OnChanges {
 
-  @Input() middleItem: TemplateRef<any>;
-  @Input() items: IProgressStatus[];
+  @Input() middleItem!: TemplateRef<any>;
+  @Input() items!: IProgressStatus[];
   @Input() currentIndex = 0;
   @Input() vertical = false;
   @Input() failed: boolean = false; //treat in progress phases as failed

@@ -112,7 +112,7 @@ describe('Http interceptors', () => {
     });
 
     fit('standalone interceptor does not fire', () => {
-      standaloneService.setConfiguration(null);
+      standaloneService.setConfiguration(null!);
 
       spyOn(standaloneService, 'getIntegrationCaller');
 
@@ -126,7 +126,7 @@ describe('Http interceptors', () => {
     standaloneService.setConfiguration({passObjectAsString : true, handleAsCallBack : true, windowPath: "path"});
 
     spyOn(standaloneService, 'getIntegrationCaller').and.returnValue(
-      (integrationData) => {
+      (integrationData: any) => {
         integrationData.Callback(JSON.stringify({
           "statusMessage": "OK",
           "statusCode": "200",

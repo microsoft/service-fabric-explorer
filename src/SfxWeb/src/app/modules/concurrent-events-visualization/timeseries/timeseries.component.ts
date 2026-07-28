@@ -48,16 +48,16 @@ export class TimeseriesComponent implements AfterViewInit, OnChanges, OnDestroy,
   private settings = inject(SettingsService);
 
 
-  @Input() data: IParallelChartData;
-  @ViewChildren('container') private container: QueryList<ElementRef>;
+  @Input() data!: IParallelChartData;
+  @ViewChildren('container') private container!: QueryList<ElementRef>;
 
-  @ViewChild('inner') private inner: ElementRef<HTMLDivElement>;
+  @ViewChild('inner') private inner!: ElementRef<HTMLDivElement>;
 
   private charts: Chart[] = [];
   subscriptions: Subscription = new Subscription();
-  listSettings: ListSettings;
+  listSettings!: ListSettings;
 
-  currentItems: any[];
+  currentItems: any[] | null = null;
   currentIndex = 0;
   currentItemsWidth = 400;
   resizer = new Subject<any>();
@@ -68,7 +68,7 @@ export class TimeseriesComponent implements AfterViewInit, OnChanges, OnDestroy,
 
   public options: Options = {
     chart: {
-      backgroundColor: null,
+      backgroundColor: null as any,
       height: 200,
       zooming: {
         type: 'x'
@@ -159,7 +159,7 @@ export class TimeseriesComponent implements AfterViewInit, OnChanges, OnDestroy,
   private generateCharts() {
     const data = this.generateChartData();
 
-    this.container.forEach((element, index) => {
+    this.container.forEach((element, index: any) => {
       const chart = this.charts[index];
       const chartData = data[index];
 
@@ -168,10 +168,10 @@ export class TimeseriesComponent implements AfterViewInit, OnChanges, OnDestroy,
           if (chartData.series.every(set => set.name !== series.name)) {
             series.remove();
           } else {
-            series.update(chartData.series.find(set => set.name === series.name));
+            series.update(chartData.series.find(set => set.name === series.name)!);
           }
         });
-        chartData.series.forEach(item => {
+        chartData.series.forEach((item: any) => {
           if (chart.series.every(set => set.name !== item.name)) {
             chart.addSeries(item);
           }
@@ -193,12 +193,12 @@ export class TimeseriesComponent implements AfterViewInit, OnChanges, OnDestroy,
     const ref = this;
     const colorMap = {};
     this.data.dataSets.forEach(dataset => {
-      colorMap[dataset.name] = Utils.randomColor();
+      (colorMap as any)[dataset.name] = Utils.randomColor();
     })
 
-    return this.data.series.map((chartData, index) => {
+    return this.data.series.map((chartData, index: any) => {
       const dataSet: SeriesOptionsType[] = this.data.dataSets.map(dataset => {
-        const values: PointOptionsObject[] = dataset.values.map(item => {
+        const values: PointOptionsObject[] = dataset.values.map((item: any) => {
           const point = this.pickDataPoints(item, chartData);
 
           return {
@@ -206,7 +206,7 @@ export class TimeseriesComponent implements AfterViewInit, OnChanges, OnDestroy,
             y: point.y,
             itemData: item,
             events: {
-              click: function (e) {
+              click: function (e: any) {
                 const points = this.series.chart.series.map(series => {
                   return (series as any).searchPoint(e, true)
                 }).filter(point => !!point).map(p => {
@@ -238,7 +238,7 @@ export class TimeseriesComponent implements AfterViewInit, OnChanges, OnDestroy,
           dataLabels: {
             style: this.fontColor,
           },
-          color: colorMap[dataset.name]
+          color: (colorMap as any)[dataset.name]
         }
       })
 
@@ -252,11 +252,11 @@ export class TimeseriesComponent implements AfterViewInit, OnChanges, OnDestroy,
       }
 
       if (chartData.yUnits) {
-        yAxis.labels.format = `{value} ${chartData.yUnits}`
+        yAxis.labels!.format = `{value} ${chartData.yUnits}`
       }
 
       if (chartData.yLabel) {
-        yAxis.title.text = chartData.yLabel
+        yAxis.title!.text = chartData.yLabel
       }
 
       const xAxis: XAxisOptions = {
@@ -269,11 +269,11 @@ export class TimeseriesComponent implements AfterViewInit, OnChanges, OnDestroy,
       }
 
       if (chartData.xUnits) {
-        xAxis.labels.format = `{value} ${chartData.xUnits}`
+        xAxis.labels!.format = `{value} ${chartData.xUnits}`
       }
 
       if (chartData.xLabel) {
-        xAxis.title.text = chartData.xLabel
+        xAxis.title!.text = chartData.xLabel
       }
       return {
             ...this.options, series: dataSet, yAxis,
@@ -290,12 +290,12 @@ export class TimeseriesComponent implements AfterViewInit, OnChanges, OnDestroy,
 
   getSync() {
     const compRef = this;
-    return function syncExtremes(e) {
+    return function syncExtremes(this: any, e: any) {
       var thisChart = this.chart;
       if (e.trigger !== 'syncExtremes') { // Prevent feedback loop
         compRef.charts.forEach((chart) => {
           if (chart !== thisChart) {
-            if (chart.xAxis[0].setExtremes) { // It is null while updating
+            if ((chart.xAxis[0] as any).setExtremes) { // It is null while updating
               chart.xAxis[0].setExtremes(
                 e.min,
                 e.max,
@@ -339,11 +339,11 @@ export class TimeseriesComponent implements AfterViewInit, OnChanges, OnDestroy,
       let closestSeries = closestPoint.series;
 
       this.charts.forEach(chart => {
-        const referencePoint = chart.series.find(series => series.name === closestSeries.name).data[closestPoint.index];
+        const referencePoint = chart.series.find(series => series.name === closestSeries.name)!.data[closestPoint.index];
         if (referencePoint) {
           referencePoint.onMouseOver(); // Show the hover marker
           chart.tooltip.refresh(referencePoint); // Show the tooltip
-          chart.xAxis[0].drawCrosshair(null, referencePoint); // Show the crosshair
+          chart.xAxis[0].drawCrosshair(undefined, referencePoint); // Show the crosshair
         }
       })
     }
@@ -361,7 +361,7 @@ export class TimeseriesComponent implements AfterViewInit, OnChanges, OnDestroy,
     this.resizer.next(width);
   }
 
-  itemTrackBy(index, item) {
+  itemTrackBy(index: any, item: any) {
     return item.series.name;
   }
 }

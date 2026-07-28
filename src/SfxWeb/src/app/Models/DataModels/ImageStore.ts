@@ -14,17 +14,17 @@ export class ImageStore extends DataModelBase<IRawImageStoreContent> {
     // These start as true to not display prematurely while loading correct state.
     public isAvailable = true;
     public isNative = true;
-    public connectionString: string;
+    public connectionString!: string;
     public root: ImageStoreFolder = new ImageStoreFolder();
     public initialized = false;
     public cachedCurrentDirectoryFolderSizes: { [path: string]: {size: number, loading: boolean, date?: Date } } = {};
 
     public currentFolder: ImageStoreFolder;
     public pathBreadcrumbItems: IStorePathBreadcrumbItem[] = [];
-    public allChildren: ImageStoreItem[];
+    public allChildren!: ImageStoreItem[];
 
     public isLoadingFolderContent = false;
-    public currentDirectoryBeingLoaded: string = null;
+    public currentDirectoryBeingLoaded: string | null = null;
 
     // helper to determine which way for slashes to be added in.
     public static slashDirection(path: string): boolean {
@@ -114,7 +114,7 @@ export class ImageStore extends DataModelBase<IRawImageStoreContent> {
             return of(null);
         }
 
-        let item: ImageStoreItem = this.currentFolder.childrenFolders.find(folder => folder.path === path);
+        let item: ImageStoreItem | undefined = this.currentFolder.childrenFolders.find(folder => folder.path === path);
         if (!item) {
             item = this.currentFolder.childrenFiles.find(file => file.path === path);
         }
@@ -158,7 +158,7 @@ export class ImageStore extends DataModelBase<IRawImageStoreContent> {
         });
 
         folder.childrenFiles = content.StoreFiles.map(f => new ImageStoreFile(f));
-        folder.allChildren = [].concat(folder.childrenFiles).concat(folder.childrenFolders);
+        folder.allChildren = ([] as ImageStoreItem[]).concat(folder.childrenFiles).concat(folder.childrenFolders);
         folder.fileCount = folder.childrenFiles.length;
 
         this.currentFolder = folder;
@@ -196,13 +196,13 @@ export class ImageStore extends DataModelBase<IRawImageStoreContent> {
 
 export class ImageStoreItem {
     // Used for name based sorting in the table
-    public isFolder: number;
+    public isFolder!: number;
 
     public path: string;
     public displayName: string;
     public isReserved: boolean;
-    public displayedSize: string;
-    public size: number;
+    public displayedSize!: string;
+    public size!: number;
 
     public uniqueId: string;
 
@@ -219,11 +219,11 @@ export class ImageStoreItem {
 export class ImageStoreFolder extends ImageStoreItem {
     public isFolder = -1;
     public size = -1; // setting to -1 for sorting
-    public fileCount: number;
+    public fileCount!: number;
     public isExpanded = false;
-    public childrenFolders: ImageStoreFolder[];
-    public childrenFiles: ImageStoreFile[];
-    public allChildren: ImageStoreItem[];
+    public childrenFolders!: ImageStoreFolder[];
+    public childrenFiles!: ImageStoreFile[];
+    public allChildren!: ImageStoreItem[];
 
     constructor(raw?: IRawStoreFolder) {
         super(raw ? raw.StoreRelativePath : '');
@@ -239,8 +239,8 @@ export class ImageStoreFolder extends ImageStoreItem {
 export class ImageStoreFile extends ImageStoreItem {
     public isFolder = 1;
 
-    public version: string;
-    public modifiedDate: string;
+    public version!: string;
+    public modifiedDate!: string;
     public size = 0;
 
     constructor(raw?: IRawStoreFile) {

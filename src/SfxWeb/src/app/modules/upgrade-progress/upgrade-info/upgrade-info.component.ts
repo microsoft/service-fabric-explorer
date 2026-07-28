@@ -18,9 +18,9 @@ export class UpgradeInfoComponent implements OnChanges, OnInit {
   private settings = inject(SettingsService);
 
 
-  @Input() upgradeProgress: ClusterUpgradeProgress | ApplicationUpgradeProgress;
+  @Input() upgradeProgress!: ClusterUpgradeProgress | ApplicationUpgradeProgress;
 
-  upgradeProgressUnhealthyEvaluationsListSettings: ListSettings;
+  upgradeProgressUnhealthyEvaluationsListSettings!: ListSettings;
 
   essentialItems: IEssentialListItem[] = [];
   essentialItems2: IEssentialListItem[] = [];
@@ -29,14 +29,14 @@ export class UpgradeInfoComponent implements OnChanges, OnInit {
 
   healthPolicy: IEssentialListItem[] = [];
 
-  startTimeEssentialItem: IEssentialListItem;
+  startTimeEssentialItem!: IEssentialListItem;
 
   helpText = '';
   link = 'https://docs.microsoft.com/azure/service-fabric/service-fabric-application-upgrade#rolling-upgrades-overview';
 
   // When an upgrade is not in progress dont show a progress bar.
   // this is to avoid confusion
-  upgradeDuration: IEssentialListItem;
+  upgradeDuration!: IEssentialListItem;
 
   failed: boolean = false;
   manual: boolean = false;
@@ -54,9 +54,9 @@ export class UpgradeInfoComponent implements OnChanges, OnInit {
 
       this.failedUpgradeItems = [
         { descriptionName: 'Failure Reason', copyTextValue: raw.FailureReason, displayText: raw.FailureReason },
-         raw.FailureClassification ? { descriptionName: 'Failure Classification', copyTextValue: raw.FailureClassification, displayText: raw.FailureClassification } : null,
+         raw.FailureClassification ? { descriptionName: 'Failure Classification', copyTextValue: raw.FailureClassification, displayText: raw.FailureClassification } : null!,
         { descriptionName: 'Failure Timestamp', copyTextValue: raw.FailureTimestampUtc, displayText: raw.FailureTimestampUtc },
-        domainName ? { descriptionName: 'Failure Domain', copyTextValue: domainName, displayText: domainName } : null,
+        domainName ? { descriptionName: 'Failure Domain', copyTextValue: domainName, displayText: domainName } : null!,
       ].filter(Boolean);
     }
     const monitoringPolicy = this.upgradeProgress.raw?.UpgradeDescription?.MonitoringPolicy;
@@ -86,7 +86,7 @@ export class UpgradeInfoComponent implements OnChanges, OnInit {
     }
 
 
-    let entitySpecificInformation = [];
+    let entitySpecificInformation: any[] = [];
     if (this.upgradeProgress instanceof ClusterUpgradeProgress) {
       entitySpecificInformation = [
         {

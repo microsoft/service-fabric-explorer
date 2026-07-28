@@ -26,8 +26,8 @@ export class TreeViewComponent implements DoCheck, AfterViewInit {
 
   public canExpand = false;
   public focused = false;
-  @ViewChild('treeContainer') treeContainer: ElementRef;
-  @ViewChild('tree') tree: ElementRef;
+  @ViewChild('treeContainer') treeContainer!: ElementRef;
+  @ViewChild('tree') tree!: ElementRef;
   
   focusSubject = new Subject<boolean>();
               

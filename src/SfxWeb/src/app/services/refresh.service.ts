@@ -11,9 +11,9 @@ export class RefreshService {
 
   public isRefreshing = false;
   public refreshRate = '';
-  private autoRefreshInterval: Observable<any> = null;
+  private autoRefreshInterval: Observable<any> | null = null;
   public refreshSubject: Subject<number> = new Subject();
-  private currentSync: Subscription;
+  private currentSync!: Subscription;
   private previousRefreshSetting = 0;
   public refreshTick = 0;
 

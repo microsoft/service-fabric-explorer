@@ -11,14 +11,14 @@ import { Chart, Options, chart, SeriesOptionsType, TooltipFormatterCallbackFunct
 })
 export class BarChartComponent implements AfterViewInit, OnChanges, OnDestroy {
 
-  @Input() xAxisCategories: string[];
+  @Input() xAxisCategories!: string[];
   @Input() dataSet: any[] = [];
   @Input() title = '';
   @Input() subtitle = '';
-  @Input() tooltip: TooltipFormatterCallbackFunction;
+  @Input() tooltip!: TooltipFormatterCallbackFunction;
 
-  private chart: Chart;
-  @ViewChild('container') private container: ElementRef;
+  private chart!: Chart;
+  @ViewChild('container') private container!: ElementRef;
 
   fontColor = {
                 color: '#fff'

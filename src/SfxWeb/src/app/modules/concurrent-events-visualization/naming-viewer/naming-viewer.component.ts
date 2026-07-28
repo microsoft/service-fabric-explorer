@@ -29,10 +29,10 @@ export interface IOverviewPanel {
 export class NamingViewerComponent implements VisualizationComponent {
   private settings = inject(SettingsService);
 
-  public startDate: Date;
-  public endDate: Date;
-  public startDateMin: Date;
-  public startDateMax: Date;
+  public startDate!: Date;
+  public endDate!: Date;
+  public startDateMin!: Date;
+  public startDateMax!: Date;
 
   dataset: IParallelChartData = {
     dataSets: [],
@@ -58,11 +58,11 @@ export class NamingViewerComponent implements VisualizationComponent {
         yLabel: 'Count'
       }
     ],
-    listSettings: null
+    listSettings: null!
   }
 
   overviewPanels: IOverviewPanel[] = []
-  localData: VisUpdateData;
+  localData!: VisUpdateData;
 
   generateOverviewPanel(data: VisUpdateData) {
     const previousOverviewPanels = this.overviewPanels;

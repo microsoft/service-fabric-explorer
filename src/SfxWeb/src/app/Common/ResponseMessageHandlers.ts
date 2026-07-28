@@ -13,13 +13,13 @@ export interface IResponseMessageHandler {
 
 export class GetResponseMessageHandler implements IResponseMessageHandler {
     public getSuccessMessage(apiDesc: string, response: HttpResponse<any>): string {
-        return null;
+        return null!;
     }
 
     public getErrorMessage(apiDesc: string, response: HttpErrorResponse): string {
         if (response.status === 404) {
             // By default exclude 404 error for all get requests
-            return null;
+            return null!;
         }
         return this.getErrorMessageInternal(apiDesc, response);
     }
@@ -67,11 +67,11 @@ export class DeleteResponseMessageHandler extends GetResponseMessageHandler {
 
 export class SilentResponseMessageHandler implements IResponseMessageHandler {
     public getSuccessMessage(apiDesc: string, response: HttpResponse<any>): string {
-        return null;
+        return null!;
     }
 
     public getErrorMessage(apiDesc: string, response: HttpErrorResponse): string {
-        return null;
+        return null!;
     }
 }
 

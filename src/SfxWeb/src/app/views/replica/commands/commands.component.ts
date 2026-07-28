@@ -17,7 +17,7 @@ export class CommandsComponent extends ReplicaBaseControllerDirective{
 
 
   commands: PowershellCommand[] = [];
-  replicaRole: string;
+  replicaRole!: string;
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
     if (this.replicaRole !== this.replica?.raw.ReplicaRole) {

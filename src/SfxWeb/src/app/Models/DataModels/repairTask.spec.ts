@@ -160,7 +160,7 @@ describe('RepairTask', () => {
             RestoringHealthCheckEndUtcTimestamp: '0001-01-01T00:00:00.000Z'
         };
         const task = new RepairTask(dataService, testData);
-        expect(task.concerningJobInfo.type).toBe("longExecuting");
+        expect(task.concerningJobInfo!.type).toBe("longExecuting");
       })
 
       fit("seed node", () => {
@@ -196,7 +196,7 @@ describe('RepairTask', () => {
           NodeName: 'testnode'
         }]
         const task = new RepairTask(dataService, testData);
-        expect(task.concerningJobInfo.type).toBe("seedNode");
+        expect(task.concerningJobInfo!.type).toBe("seedNode");
       })
 
       fit("health check (not seed node)", () => {
@@ -232,7 +232,7 @@ describe('RepairTask', () => {
           NodeName: 'testnode'
         }]
         const task = new RepairTask(dataService, testData);
-        expect(task.concerningJobInfo.type).toBe("safetychecks");
+        expect(task.concerningJobInfo!.type).toBe("safetychecks");
       })
 
       fit("stuck preparing", () => {
@@ -260,7 +260,7 @@ describe('RepairTask', () => {
         };
 
         const task = new RepairTask(dataService, testData);
-        expect(task.concerningJobInfo.type).toBe("clusterhealthcheck");
+        expect(task.concerningJobInfo!.type).toBe("clusterhealthcheck");
       })
 
     })

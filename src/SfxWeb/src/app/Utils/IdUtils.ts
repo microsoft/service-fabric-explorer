@@ -13,7 +13,7 @@ export class IdUtils {
       if (route != null) {
         const param = route.params[key];
         if (param === undefined) {
-          return IdUtils.getParam(route.parent, key);
+          return IdUtils.getParam(route.parent!, key);
         } else {
           return param;
         }

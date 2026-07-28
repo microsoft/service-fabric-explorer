@@ -14,7 +14,7 @@ export class EventsComponent extends ReplicaBaseControllerDirective {
   protected data: DataService = inject(DataService);
 
 
-  listEventStoreData: IEventStoreData<any, any> [];
+  listEventStoreData!: IEventStoreData<any, any> [];
 
   setup() {
     this.listEventStoreData = [

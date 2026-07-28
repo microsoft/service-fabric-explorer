@@ -12,10 +12,10 @@ import { ListColumnSettingForLink } from 'src/app/Models/ListSettings';
 export class HyperLinkComponent implements OnInit, DetailBaseComponent {
 
   item: any;
-  listSetting: ListColumnSettingForLink;
+  listSetting!: ListColumnSettingForLink;
 
-  link: string;
-  value: string;
+  link!: string;
+  value!: string;
 
   constructor() { }
 

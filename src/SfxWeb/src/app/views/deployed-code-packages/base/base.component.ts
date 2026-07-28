@@ -26,13 +26,13 @@ export class BaseComponent extends BaseControllerDirective implements IBaseView 
   private settings = inject(SettingsService);
   el = inject(ElementRef);
 
-  public nodeName: string;
-  public appId: string;
-  public serviceId: string;
-  public activationId: string;
+  public nodeName!: string;
+  public appId!: string;
+  public serviceId!: string;
+  public activationId!: string;
 
-  codePackages: DeployedCodePackageCollection;
-  listSettings: ListSettings;
+  codePackages!: DeployedCodePackageCollection;
+  listSettings!: ListSettings;
 
   setup() {
     this.tree.selectTreeNode([

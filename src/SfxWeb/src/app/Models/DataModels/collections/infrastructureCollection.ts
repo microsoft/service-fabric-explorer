@@ -39,7 +39,7 @@ export class InfrastructureCollectionItem extends DataModelBase<IInfrastructureC
 export class InfrastructureCollection extends DataModelCollectionBase<InfrastructureCollectionItem> {
   static readonly bannerThrottledJobs = 'throttled-banner';
   static readonly CoordinatedPrefix = "Coordinated_";
-  public throttledJobs: InfrastructureJob[];
+  public throttledJobs!: InfrastructureJob[];
 
   public constructor(data: DataService) {
     super(data, parent);

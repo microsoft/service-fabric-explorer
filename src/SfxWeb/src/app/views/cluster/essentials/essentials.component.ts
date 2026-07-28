@@ -30,22 +30,22 @@ export class EssentialsComponent extends BaseControllerDirective {
   private routes = inject(RoutesService);
 
 
-  clusterUpgradeProgress: ClusterUpgradeProgress;
-  nodes: NodeCollection;
-  clusterHealth: ClusterHealth;
-  systemApp: SystemApplication;
-  clusterManifest: ClusterManifest;
-  repairtaskCollection: RepairTaskCollection;
-  repairTaskListSettings: ListSettings;
-  infraCollection: InfrastructureCollection;
-  infraSettings: ListSettings;
+  clusterUpgradeProgress!: ClusterUpgradeProgress;
+  nodes!: NodeCollection;
+  clusterHealth!: ClusterHealth;
+  systemApp!: SystemApplication;
+  clusterManifest!: ClusterManifest;
+  repairtaskCollection!: RepairTaskCollection;
+  repairTaskListSettings!: ListSettings;
+  infraCollection!: InfrastructureCollection;
+  infraSettings!: ListSettings;
 
-  nodesDashboard: IDashboardViewModel;
-  appsDashboard: IDashboardViewModel;
-  servicesDashboard: IDashboardViewModel;
-  partitionsDashboard: IDashboardViewModel;
-  replicasDashboard: IDashboardViewModel;
-  upgradesDashboard: IDashboardViewModel;
+  nodesDashboard!: IDashboardViewModel;
+  appsDashboard!: IDashboardViewModel;
+  servicesDashboard!: IDashboardViewModel;
+  partitionsDashboard!: IDashboardViewModel;
+  replicasDashboard!: IDashboardViewModel;
+  upgradesDashboard!: IDashboardViewModel;
   upgradeAppsCount = 0;
 
   essentialItems: IEssentialListItem[] = [];

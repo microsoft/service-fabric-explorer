@@ -19,8 +19,8 @@ export class EssentialsComponent extends ApplicationTypeBaseControllerDirective 
   protected data: DataService = inject(DataService);
   private settings = inject(SettingsService);
 
-  appTypeGroup: ApplicationTypeGroup;
-  appsListSettings: ListSettings;
+  appTypeGroup!: ApplicationTypeGroup;
+  appsListSettings!: ListSettings;
 
   setup() {
    

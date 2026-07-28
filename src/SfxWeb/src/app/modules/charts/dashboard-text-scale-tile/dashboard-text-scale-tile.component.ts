@@ -10,8 +10,8 @@ import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 export class DashboardTextScaleTileComponent {
 
   @Input() barClass = '';
-  @Input() title: string;
-  @Input() link: string;
+  @Input() title!: string;
+  @Input() link!: string;
   @Input() text: string[] = [];
 
   constructor() { }

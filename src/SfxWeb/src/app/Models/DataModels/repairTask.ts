@@ -79,15 +79,15 @@ export class RepairTask extends DataModelBase<IRawRepairTask> implements IRCAIte
     public couldParseExecutorData = false;
     public inProgress = true;
 
-    public duration: number;
-    public displayDuration: string;
+    public duration!: number;
+    public displayDuration!: string;
 
-    public historyPhases: IRepairTaskPhase[];
+    public historyPhases!: IRepairTaskPhase[];
 
     public executorData: any;
     public eventInstanceId: string;
     public eventProperties = {};
-    public concerningJobInfo: IConcerningJobInfo = null;
+    public concerningJobInfo: IConcerningJobInfo | null = null;
 
     constructor(public dataService: DataService, public raw: IRawRepairTask, private dateRef?: Date) {
         super(dataService, raw);
@@ -100,8 +100,8 @@ export class RepairTask extends DataModelBase<IRawRepairTask> implements IRCAIte
     WIll use created at timestamp instead of
     */
     public get startTime(): Date {
-        return new Date(this.raw.History.ExecutingUtcTimestamp === RepairTask.NonStartedTimeStamp ? this.raw.History.CreatedUtcTimestamp :
-            this.raw.History.ExecutingUtcTimestamp);
+        return new Date(this.raw.History!.ExecutingUtcTimestamp === RepairTask.NonStartedTimeStamp ? this.raw.History!.CreatedUtcTimestamp! :
+            this.raw.History!.ExecutingUtcTimestamp!);
     }
 
     private getRefDate() {
@@ -110,17 +110,17 @@ export class RepairTask extends DataModelBase<IRawRepairTask> implements IRCAIte
 
     private parseHistory() {
         let history = [
-            { timestamp: this.raw.History.CreatedUtcTimestamp, phase: 'Created' },
-            { timestamp: this.raw.History.ClaimedUtcTimestamp, phase: 'Claimed' },
-            { timestamp: this.raw.History.PreparingUtcTimestamp, phase: 'Preparing' },
-            { timestamp: this.raw.History.PreparingHealthCheckStartUtcTimestamp, phase: 'Preparing Health Check Start' },
-            { timestamp: this.raw.History.PreparingHealthCheckEndUtcTimestamp, phase: 'Preparing Health Check End' },
-            { timestamp: this.raw.History.ApprovedUtcTimestamp, phase: 'Approved' },
-            { timestamp: this.raw.History.ExecutingUtcTimestamp, phase: 'Executing' },
-            { timestamp: this.raw.History.RestoringUtcTimestamp, phase: 'Restoring' },
-            { timestamp: this.raw.History.RestoringHealthCheckStartUtcTimestamp, phase: 'Restoring Health Check Start' },
-            { timestamp: this.raw.History.RestoringHealthCheckEndUtcTimestamp, phase: 'Restoring Health Check End' },
-            { timestamp: this.raw.History.CompletedUtcTimestamp, phase: 'Completed' },
+            { timestamp: this.raw.History!.CreatedUtcTimestamp, phase: 'Created' },
+            { timestamp: this.raw.History!.ClaimedUtcTimestamp, phase: 'Claimed' },
+            { timestamp: this.raw.History!.PreparingUtcTimestamp, phase: 'Preparing' },
+            { timestamp: this.raw.History!.PreparingHealthCheckStartUtcTimestamp, phase: 'Preparing Health Check Start' },
+            { timestamp: this.raw.History!.PreparingHealthCheckEndUtcTimestamp, phase: 'Preparing Health Check End' },
+            { timestamp: this.raw.History!.ApprovedUtcTimestamp, phase: 'Approved' },
+            { timestamp: this.raw.History!.ExecutingUtcTimestamp, phase: 'Executing' },
+            { timestamp: this.raw.History!.RestoringUtcTimestamp, phase: 'Restoring' },
+            { timestamp: this.raw.History!.RestoringHealthCheckStartUtcTimestamp, phase: 'Restoring Health Check Start' },
+            { timestamp: this.raw.History!.RestoringHealthCheckEndUtcTimestamp, phase: 'Restoring Health Check End' },
+            { timestamp: this.raw.History!.CompletedUtcTimestamp, phase: 'Completed' },
         ];
 
         // if the job has been cancelled there shouldnt be Approved or executing phases anymore
@@ -139,11 +139,11 @@ export class RepairTask extends DataModelBase<IRawRepairTask> implements IRCAIte
                 // if the next phase has a timestamp then this phase is finished
                 // otherwise if this phase has a timestamp it would be the active one
                 if (nextPhase.timestamp !== RepairTask.NonStartedTimeStamp) {
-                    phaseDuration = new Date(nextPhase.timestamp).getTime() - new Date(phase.timestamp).getTime();
+                    phaseDuration = new Date(nextPhase.timestamp!).getTime() - new Date(phase.timestamp!).getTime();
                     duration = TimeUtils.formatDurationAsAspNetTimespan(phaseDuration);
                     status = Status.finsihed;
                 } else if (phase.timestamp !== RepairTask.NonStartedTimeStamp) {
-                    phaseDuration = this.getRefDate().getTime() - new Date(phase.timestamp).getTime();
+                    phaseDuration = this.getRefDate().getTime() - new Date(phase.timestamp!).getTime();
                     duration = TimeUtils.formatDurationAsAspNetTimespan(phaseDuration);
                     status = Status.inProgress;
                 }
@@ -159,7 +159,7 @@ export class RepairTask extends DataModelBase<IRawRepairTask> implements IRCAIte
             return {
                 // ...phase,
                 name: phase.phase,
-                timestamp: phase.timestamp === RepairTask.NonStartedTimeStamp ? '' : phase.timestamp,
+                timestamp: phase.timestamp === RepairTask.NonStartedTimeStamp ? '' : phase.timestamp!,
                 duration,
                 textRight: duration,
                 status,
@@ -233,9 +233,9 @@ export class RepairTask extends DataModelBase<IRawRepairTask> implements IRCAIte
         };
     }
 
-  private checkAndSetConcerningJob(): Observable<IConcerningJobInfo> {
+  private checkAndSetConcerningJob(): Observable<IConcerningJobInfo | null> {
     return new Observable(observer => {
-      const emit = (data: IConcerningJobInfo) => {
+      const emit = (data: IConcerningJobInfo | null) => {
         observer.next(data);
         observer.complete();
       }
@@ -249,11 +249,11 @@ export class RepairTask extends DataModelBase<IRawRepairTask> implements IRCAIte
         forkJoin(this.impactedNodes.map(id => {
           return this.dataService.getNode(id, true).pipe(catchError(err => { console.log(err); return of(null) }));
         })).pipe(
-          defaultIfEmpty([]),
-        ).subscribe((data: Node[]) => {
-          data = data.filter(node => node);
-          const nodesWithSeedNodeWarnings = data.filter(node => DeactivationUtils.hasSeedNodeSafetyCheck(node.raw.NodeDeactivationInfo));
-          const nodesWithSafetyChecks = data.filter(node => node.raw.NodeDeactivationInfo.PendingSafetyChecks.length > 0);
+          defaultIfEmpty<(Node | null)[]>([]),
+        ).subscribe((data: (Node | null)[]) => {
+          const nodes = data.filter((node): node is Node => !!node);
+          const nodesWithSeedNodeWarnings = nodes.filter(node => DeactivationUtils.hasSeedNodeSafetyCheck(node.raw.NodeDeactivationInfo));
+          const nodesWithSafetyChecks = nodes.filter(node => node.raw.NodeDeactivationInfo.PendingSafetyChecks.length > 0);
 
           //seed node related
           if (nodesWithSeedNodeWarnings.length > 0) {
@@ -299,7 +299,7 @@ export class RepairTask extends DataModelBase<IRawRepairTask> implements IRCAIte
               return name;
             });
         }
-        this.timeStamp = new Date(this.raw.History.CreatedUtcTimestamp).toISOString();
+        this.timeStamp = new Date(this.raw.History!.CreatedUtcTimestamp!).toISOString();
         this.inProgress = this.raw.State !== 'Completed';
 
         const start = new Date(this.timeStamp).getTime();
@@ -307,12 +307,12 @@ export class RepairTask extends DataModelBase<IRawRepairTask> implements IRCAIte
             const now = this.getRefDate().getTime();
             this.duration = now - start;
         } else {
-            this.duration = new Date(this.raw.History.CompletedUtcTimestamp).getTime() - start;
+            this.duration = new Date(this.raw.History!.CompletedUtcTimestamp!).getTime() - start;
         }
         this.displayDuration = TimeUtils.formatDurationAsAspNetTimespan(this.duration);
 
         try {
-            this.executorData = JSON.parse(this.raw.ExecutorData);
+            this.executorData = JSON.parse(this.raw.ExecutorData!);
 
             this.couldParseExecutorData = true;
         } catch (e) {
@@ -339,7 +339,7 @@ export class RepairTask extends DataModelBase<IRawRepairTask> implements IRCAIte
     }
 
     public getPhase(phase: string): IRepairTaskHistoryPhase {
-        return this.history.find(historyPhase => historyPhase.name === phase);
+        return this.history.find(historyPhase => historyPhase.name === phase)!;
     }
 
     public tooltipInfo() {
@@ -364,7 +364,7 @@ export class RepairTask extends DataModelBase<IRawRepairTask> implements IRCAIte
     }
 
     public getHistoryPhase(phase: string): IRepairTaskPhase {
-        return this.historyPhases.find(historyPhase => historyPhase.name === phase);
+        return this.historyPhases.find(historyPhase => historyPhase.name === phase)!;
     }
 
     public changePhaseCollapse(phase: string, state: boolean) {

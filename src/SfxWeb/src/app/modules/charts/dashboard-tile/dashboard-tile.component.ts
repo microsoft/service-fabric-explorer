@@ -11,11 +11,11 @@ import { Chart, Options, chart, PointOptionsObject, SeriesPieOptions } from 'hig
 })
 export class DashboardTileComponent implements OnInit, AfterViewInit, OnChanges {
 
-  @Input() data: IDashboardViewModel;
+  @Input() data!: IDashboardViewModel;
 
-  @ViewChild('chart') private chartContainer: ElementRef;
+  @ViewChild('chart') private chartContainer!: ElementRef;
 
-  private chart: Chart;
+  private chart!: Chart;
 
   fontColor = {
     color: '#fff'
@@ -24,7 +24,7 @@ export class DashboardTileComponent implements OnInit, AfterViewInit, OnChanges 
   public options: Options = {
     chart: {
       type: 'pie',
-      backgroundColor: null,
+      backgroundColor: null as any,
       borderRadius: 0,
     },
     title: {
@@ -105,20 +105,20 @@ export class DashboardTileComponent implements OnInit, AfterViewInit, OnChanges 
   ngOnInit() {
     const margin = 3;
     const width = (this.data.largeTile ? 230 : 150) + margin * 2;
-    this.options.chart.height = width;
-    this.options.chart.width = width;
+    this.options.chart!.height = width;
+    this.options.chart!.width = width;
 
-    this.options.title.text = this.data.displayTitle;
-    this.options.subtitle.text = this.data.count.toString();
+    this.options.title!.text = this.data.displayTitle;
+    this.options.subtitle!.text = this.data.count.toString();
 
     const data = this.getDataSet();
-    this.options.tooltip.enabled = data.length === 3;
-    (this.options.series[0] as SeriesPieOptions).data = data;
+    this.options.tooltip!.enabled = data.length === 3;
+    (this.options.series![0] as SeriesPieOptions).data = data;
 
     if (!this.data.largeTile) {
-      this.options.title.y = 9;
-      this.options.subtitle.style.fontSize = '14pt';
-      this.options.subtitle.y = 30;
+      this.options.title!.y = 9;
+      this.options.subtitle!.style!.fontSize = '14pt';
+      this.options.subtitle!.y = 30;
     }
   }
 
@@ -143,7 +143,7 @@ export class DashboardTileComponent implements OnInit, AfterViewInit, OnChanges 
       return {
         name: p.title,
         y: p.count,
-        color: colors[p.title]
+        color: (colors as any)[p.title]
       };
     });
 

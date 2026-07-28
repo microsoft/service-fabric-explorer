@@ -1,4 +1,4 @@
-import { Injectable, Component, inject } from '@angular/core';
+import { Injectable, Type, inject } from '@angular/core';
 import { Location } from '@angular/common';
 import { Router, ActivationEnd, NavigationEnd, ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
 
@@ -30,7 +30,7 @@ export class RoutesService {
   constructor() {
 
     // there can be multiple activationEnd events so we want to grab the last one.
-    let lastActivationEnd: ActivationEnd = null;
+    let lastActivationEnd: ActivationEnd | null = null;
 
     this.routing.events.subscribe( event => {
         // given there are multiple activation events we want to get the last one because it will have the activation data for the last child route.
@@ -40,7 +40,7 @@ export class RoutesService {
 
         // this event signifies the end of finding the right route.
         if (event instanceof NavigationEnd){
-            const data = this.getPathData(lastActivationEnd.snapshot);
+            const data = this.getPathData(lastActivationEnd!.snapshot);
 
             // check first if same entity views by comparing first component
             // given all routes are lazy loaded we check if the child routing components are the same.
@@ -68,7 +68,7 @@ export class RoutesService {
   private static singleEncode = true;
 
 // keep track of previous states to know when we changed
-  private previouslastPaths = [];
+  private previouslastPaths: Type<any>[] = [];
   private previousParams = {};
   private previousPathPostFix = '';
 
@@ -176,19 +176,20 @@ export class RoutesService {
     RoutesService.singleEncode = force;
   }
 
-   getPathData(snapshot: ActivatedRouteSnapshot): { params: {}, pathPostFix: string, lastPaths: Component[] } {
+   getPathData(snapshot: ActivatedRouteSnapshot): { params: {}, pathPostFix: string, lastPaths: Type<any>[] } {
     const data = {
         params: snapshot.params,
         pathPostFix: '',
-        lastPaths: []
+        lastPaths: [] as Type<any>[]
     };
 
-    while (snapshot !== null) {
-        data.pathPostFix = snapshot.routeConfig.path;
-        if (snapshot.component) {
-            data.lastPaths.push(snapshot.component);
+    let current: ActivatedRouteSnapshot | null = snapshot;
+    while (current !== null) {
+        data.pathPostFix = current.routeConfig!.path!;
+        if (current.component) {
+            data.lastPaths.push(current.component);
         }
-        snapshot = snapshot.firstChild;
+        current = current.firstChild;
     }
     return data;
    }

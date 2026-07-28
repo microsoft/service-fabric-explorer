@@ -20,17 +20,17 @@ import { IEssentialListItem } from '../../charts/essential-health-tile/essential
 export class SectionOverviewComponent implements OnChanges {
   dataService = inject(DataService);
 
-  @Input() nodes: Node[];
-  @Input() repairJobs: RepairTaskCollection;
+  @Input() nodes!: Node[];
+  @Input() repairJobs!: RepairTaskCollection;
   @Input() title = '';
   @Input() moreInfo = true;
   @Input() vertical = true;
-  info: INodesStatusDetails;
+  info!: INodesStatusDetails;
   item: IEssentialListItem[] = [];
 
   dataPoints: IDashboardDataPointViewModel[] = [];
   public constants = NodeStatusConstants;
-  repairInfo;
+  repairInfo: any;
 
   ngOnChanges(): void {
     const nodeInfo = new NodeStatusDetails('');

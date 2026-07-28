@@ -14,15 +14,15 @@ import { IChartData } from '../replication-trend-line/replication-trend-line.com
     standalone: false
 })
 export class ReplicaTileComponent implements OnChanges {
-  @Input() replica: ReplicaOnPartition;
-  @Input() replicator: IRawRemoteReplicatorStatus;
-  @Input() replicatorHistory: ITimedReplication[];
+  @Input() replica!: ReplicaOnPartition;
+  @Input() replicator!: IRawRemoteReplicatorStatus;
+  @Input() replicatorHistory!: ITimedReplication[];
 
   @Input() showReplication = false;
   @Output() showReplicationChange = new EventEmitter<boolean>();
 
   overviewItems: IEssentialListItem[] = [];
-  status: IEssentialListItem;
+  status!: IEssentialListItem;
 
   leftBannerColor = '';
   fullScreen = false;

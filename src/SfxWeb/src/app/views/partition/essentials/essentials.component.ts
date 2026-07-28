@@ -25,7 +25,7 @@ export class EssentialsComponent extends PartitionBaseControllerDirective {
 
 
   public hideReplicator = true;
-  listSettings: ListSettings;
+  listSettings!: ListSettings;
   replicaViewModels: any[] = [];
 
   essentialItems: IEssentialListItem[] = [];

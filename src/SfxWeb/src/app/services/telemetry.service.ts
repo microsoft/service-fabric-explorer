@@ -34,7 +34,7 @@ export class TelemetryService {
     this.appInsights.context.application.ver = environment.version;
 
     // there can be multiple activationEnd events so we want to grab the last one.
-    let lastActivationEnd = null;
+    let lastActivationEnd: ActivationEnd | null = null;
     this.routing.events.subscribe(event => {
       if (event instanceof ActivationEnd) {
         lastActivationEnd = event;
@@ -43,7 +43,7 @@ export class TelemetryService {
         try {
           let name =  '';
           // build up the URL this way to avoid passing in PII about stuff running in the cluster
-          let snapshot = lastActivationEnd.snapshot;
+          let snapshot: any = lastActivationEnd!.snapshot;
           while (snapshot) {
             const path = snapshot.routeConfig.path;
             if (path.length > 0) {
@@ -76,7 +76,7 @@ export class TelemetryService {
     if (uniqueSessionId && this.uniqueEmitCache.has(uniqueSessionId)) {
       return;
     }else{
-      this.uniqueEmitCache.add(uniqueSessionId);
+      this.uniqueEmitCache.add(uniqueSessionId!);
     }
 
     this.appInsights.trackEvent({name}, data);

@@ -12,8 +12,8 @@ import { PowershellCommandParameter, CommandParamTypes } from 'src/app/Models/Po
 })
 export class CommandInputComponent implements OnInit{
 
-  @Input() commandParam: PowershellCommandParameter;
-  @Input() inputGroup: UntypedFormGroup;
+  @Input() commandParam!: PowershellCommandParameter;
+  @Input() inputGroup!: UntypedFormGroup;
 
   value: UntypedFormControl = new UntypedFormControl('');
 

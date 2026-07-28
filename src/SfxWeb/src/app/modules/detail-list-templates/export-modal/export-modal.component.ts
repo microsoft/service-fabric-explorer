@@ -13,15 +13,15 @@ export class ExportModalComponent implements OnInit {
   dialogRef = inject<MatDialogRef<ExportModalComponent>>(MatDialogRef);
 
 
-  public text = [];
+  public text: (string | string[])[] = [];
   public copyText = '';
   public selected: Record<string, boolean> = {};
 
   ngOnInit(): void {
-    this.selected = this.data.config.columnSettings.reduce((previous, current) => { previous[current.displayName] = true; return previous; }, {});
+    this.selected = this.data.config.columnSettings.reduce((previous, current) => { (previous as any)[current.displayName] = true; return previous; }, {});
   }
 
-  updateCheckAll(event) {
+  updateCheckAll(event: any) {
     if (event.target.checked) {
       this.selectAll();
     } else {

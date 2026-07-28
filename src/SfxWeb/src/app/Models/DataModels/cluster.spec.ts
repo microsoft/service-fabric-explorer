@@ -16,7 +16,7 @@ describe('Cluster', () => {
         apps: {
             ensureInitialized: () => of(null)
         }
-    } as DataService;
+    } as unknown as DataService;
 
     describe('manifest', () => {
 

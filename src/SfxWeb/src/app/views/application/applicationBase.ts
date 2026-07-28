@@ -12,10 +12,10 @@ import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 export class ApplicationBaseControllerDirective extends BaseControllerDirective {
     protected data = inject(DataService);
 
-    appTypeName: string;
-    appId: string;
+    appTypeName!: string;
+    appId!: string;
 
-    app: Application;
+    app!: Application;
 
     common(messageHandler?: IResponseMessageHandler): Observable<any> {
         return this.data.getApp(this.appId, true, messageHandler).pipe(map(data => {

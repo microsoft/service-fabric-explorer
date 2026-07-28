@@ -128,7 +128,7 @@ export interface INodeTypeInfo {
 }
 
 export class ClusterManifest extends DataModelBase<IRawClusterManifest> {
-    public clusterManifestName: string;
+    public clusterManifestName!: string;
 
     public isSfrpCluster = false;
     public isSfmcCluster = false;
@@ -139,7 +139,7 @@ export class ClusterManifest extends DataModelBase<IRawClusterManifest> {
     public isRepairManagerEnabled = false;
     public isEventStoreEnabled = false;
     public eventStoreTimeRange = 30;
-    public nodeTypeProperties: INodeTypeInfo[];
+    public nodeTypeProperties!: INodeTypeInfo[];
 
     public constructor(data: DataService) {
         super(data);
@@ -153,8 +153,8 @@ export class ClusterManifest extends DataModelBase<IRawClusterManifest> {
         const params = element.getElementsByTagName('Parameter');
         for (let i = 0; i < params.length; i ++) {
             const item = params.item(i);
-            if (item.getAttribute('Name') === 'ImageStoreConnectionString'){
-                this.imageStoreConnectionString = item.getAttribute('Value');
+            if (item!.getAttribute('Name') === 'ImageStoreConnectionString'){
+                this.imageStoreConnectionString = item!.getAttribute('Value')!;
                 break;
             }
         }
@@ -165,8 +165,8 @@ export class ClusterManifest extends DataModelBase<IRawClusterManifest> {
         const sfmcResourceIdSegment = 'microsoft.servicefabric/managedclusters/';
         for (let i = 0; i < params.length; i ++) {
             const item = params.item(i);
-            const armResourceId = item.getAttribute('Value');
-            if (item.getAttribute('Name') === 'ArmResourceId' &&
+            const armResourceId = item!.getAttribute('Value');
+            if (item!.getAttribute('Name') === 'ArmResourceId' &&
                 armResourceId &&
                 armResourceId.toLowerCase().includes(sfmcResourceIdSegment)) {
                 this.isSfmcCluster = true;
@@ -182,14 +182,14 @@ export class ClusterManifest extends DataModelBase<IRawClusterManifest> {
 
       for (let nodeIndex = 0; nodeIndex < XMLnodeTypes.length; ++nodeIndex) {
         const XMLnode = XMLnodeTypes[nodeIndex]
-        const nodeType = XMLnode.getAttribute("Name")
+        const nodeType = XMLnode.getAttribute("Name")!
         const placementProperties = XMLnode.getElementsByTagName("PlacementProperties")
         let keyProperties: Record<string, string> = {}
         for (let i = 0; i < placementProperties.length; ++i) {
           const properties = placementProperties[i].getElementsByTagName("Property")
 
           for (let j = 0; j < properties.length; j++) {
-            keyProperties[properties[j].getAttribute("Name")] = properties[j].getAttribute("Value")
+            keyProperties[properties[j].getAttribute("Name")!] = properties[j].getAttribute("Value")!
           }
         }
         nodeTypes.push({
@@ -214,30 +214,30 @@ export class ClusterManifest extends DataModelBase<IRawClusterManifest> {
 
         // let $xml = $($.parseXML(this.raw.Manifest));
         const manifest = xml.getElementsByTagName('ClusterManifest')[0];
-        this.clusterManifestName = manifest.getAttribute('Name');
+        this.clusterManifestName = manifest.getAttribute('Name')!;
 
         const FabricSettings = manifest.getElementsByTagName('FabricSettings')[0];
         const management = FabricSettings.getElementsByTagName('Section');
 
         for (let i = 0; i < management.length; i ++) {
             const item = management.item(i);
-            if (item.getAttribute('Name') === 'Management'){
-                this.getImageStoreConnectionString(item);
-            }else if (item.getAttribute('Name') === 'BackupRestoreService'){
+            if (item!.getAttribute('Name') === 'Management'){
+                this.getImageStoreConnectionString(item!);
+            }else if (item!.getAttribute('Name') === 'BackupRestoreService'){
                 this.isBackupRestoreEnabled = true;
-            }else if (item.getAttribute('Name') === 'UpgradeService'){
+            }else if (item!.getAttribute('Name') === 'UpgradeService'){
                 this.isSfrpCluster = true;
-            }else if (item.getAttribute('Name') === 'Paas') {
-                this.checkSFMCCluster(item);
-            }else if (item.getAttribute('Name') === 'RepairManager'){
+            }else if (item!.getAttribute('Name') === 'Paas') {
+                this.checkSFMCCluster(item!);
+            }else if (item!.getAttribute('Name') === 'RepairManager'){
                 this.isRepairManagerEnabled = true;
-            }else if (item.getAttribute('Name') === 'EventStoreService'){
+            }else if (item!.getAttribute('Name') === 'EventStoreService'){
                 this.isEventStoreEnabled = true;
-            } else if (item.getAttribute('Name') === 'AzureBlobServiceFabricEtw') {
-                const params = item.getElementsByTagName('Parameter');
+            } else if (item!.getAttribute('Name') === 'AzureBlobServiceFabricEtw') {
+                const params = item!.getElementsByTagName('Parameter');
                 for (let j = 0; j < params.length; j++){
-                    if (params.item(j).getAttribute('Name') === 'DataDeletionAgeInDays') {
-                        this.eventStoreTimeRange = +params.item(j).getAttribute('Value')
+                    if (params.item(j)!.getAttribute('Name') === 'DataDeletionAgeInDays') {
+                        this.eventStoreTimeRange = +params.item(j)!.getAttribute('Value')!
                     }
                 }
             }
@@ -266,7 +266,7 @@ export class ClusterUpgradeProgress extends DataModelBase<IRawClusterUpgradeProg
 
     public unhealthyEvaluations: HealthEvaluation[] = [];
     public upgradeDomains: UpgradeDomain[] = [];
-    public upgradeDescription: UpgradeDescription;
+    public upgradeDescription!: UpgradeDescription;
 
     public get isUpgrading(): boolean {
         return UpgradeDomainStateRegexes.InProgress.test(this.raw.UpgradeState) || this.raw.UpgradeState === ClusterUpgradeStates.RollingForwardPending;
@@ -339,7 +339,7 @@ export class ClusterUpgradeProgress extends DataModelBase<IRawClusterUpgradeProg
     }
 
     protected updateInternal(): Observable<any> | void {
-        this.unhealthyEvaluations = HealthUtils.getParsedHealthEvaluations(this.raw.UnhealthyEvaluations, null, null, this.data);
+        this.unhealthyEvaluations = HealthUtils.getParsedHealthEvaluations(this.raw.UnhealthyEvaluations, undefined, null, this.data);
 
         const upgradeUnits = this.isUDUpgrade ? this.raw.UpgradeDomains : this.raw.UpgradeUnits;
         const domains = upgradeUnits.map(ud => new UpgradeDomain(this.data, ud, !this.isUDUpgrade));

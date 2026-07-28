@@ -16,8 +16,8 @@ export class EventsComponent extends PartitionBaseControllerDirective {
   protected data: DataService = inject(DataService);
 
 
-  listEventStoreData: IEventStoreData<any, any> [];
-  optionsConfig: IOptionConfig;
+  listEventStoreData!: IEventStoreData<any, any> [];
+  optionsConfig!: IOptionConfig;
 
   setup() {
     this.listEventStoreData = [

@@ -12,8 +12,8 @@ import { environment } from 'src/environments/environment';
 })
 export class ColoredNodeNameComponent implements OnInit, DetailBaseComponent {
   item: any;
-  listSetting: ListColumnSetting;
-  value: string;
+  listSetting!: ListColumnSetting;
+  value!: string;
   assetBase = environment.assetBase;
 
   constructor() { }

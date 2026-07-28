@@ -19,7 +19,7 @@ export class EventStoreTimelineComponent implements AfterViewInit, OnChanges, On
   private liveAnnouncer = inject(LiveAnnouncer);
 
 
-  @Input() events: ITimelineData;
+  @Input() events!: ITimelineData;
   @Input() additionalWhiteListClasses = [];
   @Input() fitOnDataChange = true;
   @Input() displayMoveToStart = true;
@@ -31,13 +31,13 @@ export class EventStoreTimelineComponent implements AfterViewInit, OnChanges, On
 
   public showControls = false;
 
-  private timeline: Timeline;
-  private start: Date;
-  private end: Date;
-  private oldestEvent: DataItem;
-  private mostRecentEvent: DataItem;
+  private timeline!: Timeline;
+  private start!: Date;
+  private end!: Date;
+  private oldestEvent: DataItem | null = null;
+  private mostRecentEvent: DataItem | null = null;
 
-  @ViewChild('visualization') container: ElementRef;
+  @ViewChild('visualization') container!: ElementRef;
 
   ngOnChanges() {
     if (this.timeline) {
@@ -68,7 +68,7 @@ export class EventStoreTimelineComponent implements AfterViewInit, OnChanges, On
       }
     });
 
-    this.timeline.on('click', data => {
+    this.timeline.on('click', (data: any) => {
       this.itemClicked.emit(data.item)
     })
 
@@ -79,9 +79,9 @@ export class EventStoreTimelineComponent implements AfterViewInit, OnChanges, On
 
   private sanitizeData(items: DataSet<DataGroup | DataItem>) {
     items.forEach(item => {
-      item.content = this.sanitzer.sanitize(SecurityContext.HTML, item.content);
+      item.content = this.sanitzer.sanitize(SecurityContext.HTML, item.content)!;
       if(item.title) {
-        item.title = this.sanitzer.sanitize(SecurityContext.HTML, item.title);
+        item.title = this.sanitzer.sanitize(SecurityContext.HTML, item.title)!;
       }
     })
   }
@@ -157,15 +157,15 @@ export class EventStoreTimelineComponent implements AfterViewInit, OnChanges, On
 
       const options = {
         selectable: false,
-        template: (itemData, element: HTMLElement, data) => {
+        template: (itemData: any, element: HTMLElement, data: any) => {
           if (data.isCluster) {
             const color = itemData.items[0].groupColor;
             if(color) {
               element.classList.add(color);
             }
-            return this.sanitzer.sanitize(SecurityContext.HTML, `<div class="${color}">${data.items.length} ${data.items[0].kind} events </div>`)
+            return this.sanitzer.sanitize(SecurityContext.HTML, `<div class="${color}">${data.items.length} ${data.items[0].kind} events </div>`)!
           } else {
-            return this.sanitzer.sanitize(SecurityContext.HTML, `<div>${data.content}</div>`);
+            return this.sanitzer.sanitize(SecurityContext.HTML, `<div>${data.content}</div>`)!;
           }
         },
         margin: {
@@ -175,7 +175,7 @@ export class EventStoreTimelineComponent implements AfterViewInit, OnChanges, On
         },
         tooltip: {
           followMouse: true,
-          template: (itemData) => {
+          template: (itemData: any) => {
             let content = itemData.title;
 
             if(itemData.isCluster) {
@@ -191,7 +191,7 @@ export class EventStoreTimelineComponent implements AfterViewInit, OnChanges, On
               </div>`
             }
 
-            return this.sanitzer.sanitize(SecurityContext.HTML, content);
+            return this.sanitzer.sanitize(SecurityContext.HTML, content)!;
           }
         },
         stack: true,
@@ -217,11 +217,11 @@ export class EventStoreTimelineComponent implements AfterViewInit, OnChanges, On
         this.timeline.fit();
       }
 
-      if (events.items.length > 0) {
-        let oldest = null;
-        let newest = null;
+      if (events.items!.length > 0) {
+        let oldest: any = null;
+        let newest: any = null;
 
-        events.items.forEach(item => {
+        events.items!.forEach(item => {
           // cant easily grab the first elements of the collection, easier to set here
           if (!oldest && !newest) {
             oldest = item;
@@ -230,7 +230,7 @@ export class EventStoreTimelineComponent implements AfterViewInit, OnChanges, On
           if (oldest.start > item.start) {
             oldest = item;
           }
-          if (newest.end < item.end) {
+          if (newest.end < item.end!) {
             newest = item;
           }
         });

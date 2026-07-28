@@ -19,13 +19,13 @@ export interface IChartData {
 })
 export class ReplicationTrendLineComponent implements AfterViewInit, OnChanges, OnInit, OnDestroy {
 
-  @Input() data: ITimedReplication[];
-  @Input() fullScreen: boolean;
+  @Input() data!: ITimedReplication[];
+  @Input() fullScreen!: boolean;
   @Input() showUTC = false;
 
-  @ViewChild('chart') private chartContainer: ElementRef;
+  @ViewChild('chart') private chartContainer!: ElementRef;
 
-  private chart: Chart;
+  private chart!: Chart;
 
   fontColor = {
     color: '#fff'
@@ -49,7 +49,7 @@ export class ReplicationTrendLineComponent implements AfterViewInit, OnChanges, 
   ngAfterViewInit(): void {
     const options: Options = {
       chart: {
-        backgroundColor: null,
+        backgroundColor: null as any,
         type: 'area',
       },
       title: {

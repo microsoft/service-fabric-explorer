@@ -21,7 +21,7 @@ interface IResourceItemInternal extends IResourceItem {
 export class ResourcesTemplateDirective {
   templateRef = inject<TemplateRef<any>>(TemplateRef);
 
-  @Input() id: string;
+  @Input() id!: string;
 
   public getId() {
     return this.id;
@@ -40,7 +40,7 @@ export class ResourcesTileComponent implements AfterViewInit, OnChanges {
 
   
   @Input() listItems: IResourceItem[] = [];
-  @Input() templateRefs: Record<string, TemplateRef<any>>;
+  @Input() templateRefs!: Record<string, TemplateRef<any>>;
   @ContentChildren(ResourcesTemplateDirective, { descendants: true } ) test!: QueryList<ResourcesTemplateDirective>;
 
   internalList: IResourceItemInternal[] = [];

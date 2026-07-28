@@ -13,7 +13,7 @@ import { environment } from 'src/environments/environment';
 export class TreeNodeComponent {
   treeService = inject(TreeService);
 
-  @Input() node: TreeNodeGroupViewModel;
+  @Input() node!: TreeNodeGroupViewModel;
   @Output() focusEmitter = new EventEmitter<boolean>();
 
   paginationId = PaginationId;

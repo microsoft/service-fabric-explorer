@@ -15,11 +15,11 @@ export class HealthViewerComponent implements OnInit {
   private settings = inject(SettingsService);
 
 
-  @Input() unhealthyEvaluations: IRawUnhealthyEvaluation[];
-  @Input() healthyEvaluations: HealthEvaluation[];
+  @Input() unhealthyEvaluations!: IRawUnhealthyEvaluation[];
+  @Input() healthyEvaluations!: HealthEvaluation[];
 
-  unhealthyEvaluationsListSettings: ListSettings;
-  healthEventsListSettings: ListSettings;
+  unhealthyEvaluationsListSettings!: ListSettings;
+  healthEventsListSettings!: ListSettings;
 
   ngOnInit(): void {
     this.unhealthyEvaluationsListSettings = this.settings.getNewOrExistingUnhealthyEvaluationsListSettings();

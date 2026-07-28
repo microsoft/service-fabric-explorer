@@ -17,8 +17,8 @@ export class CreateServiceComponent implements OnInit {
   private dataService = inject(DataService);
 
 
-  description: CreateServiceDescription;
-  serviceType: ServiceType;
+  description!: CreateServiceDescription;
+  serviceType!: ServiceType;
 
   ngOnInit() {
     this.serviceType = this.data.data;

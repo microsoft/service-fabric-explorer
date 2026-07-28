@@ -26,7 +26,7 @@ export class PartitionEnableBackUpComponent implements OnInit {
     this.data.data.enable(this.backupPolicyName).subscribe( () => {
       this.dialogRef.close(false);
     },
-    err => {
+    (err: any) => {
       console.log(err);
     });
   }

@@ -16,16 +16,16 @@ export class CollectionUtils {
      */
     public static updateCollection<T, P>(collection: T[], newCollection: P[],
                                          keySelector: (item: T) => any, newKeySelector: (item: P) => any,
-                                         create: (item: T, newItem: P) => T,
+                                         create: ((item: T, newItem: P) => T) | null,
                                          update: (item: T, newItem: P) => void,
                                          appendOnly: boolean = false): T[] {
 
         // create dictionary for old id => element
-        const oldCollectionMap = keyBy(collection, keySelector);
+        const oldCollectionMap = keyBy<T>(collection, keySelector);
         // remove deleted items first
         if (!appendOnly) {
             // create dictionary for new id => element
-            const newCollectionMap = keyBy(newCollection, newKeySelector);
+            const newCollectionMap = keyBy<P>(newCollection, newKeySelector);
             collection = collection.filter((item) => newCollectionMap[keySelector(item)]);
         }
 
@@ -40,7 +40,7 @@ export class CollectionUtils {
                 collection.push(create(oldItem, newItem));
             }
         });
-        return [].concat(collection);
+        return ([] as T[]).concat(collection);
     }
 
     /**

@@ -13,11 +13,11 @@ export class UpgradeDomainProgressComponent{
 
   partitions: Record<string, IPartitionData> = {};
   @Input() failed = false;
-  @Input() upgradeDomain: IRawUpgradeDomainProgress | ICurrentUpgradeUnitsProgressInfo;
+  @Input() upgradeDomain!: IRawUpgradeDomainProgress | ICurrentUpgradeUnitsProgressInfo;
 
   constructor() { }
 
-  nodeTrackBy(index, node: IRawNodeUpgradeProgress) {
+  nodeTrackBy(index: any, node: IRawNodeUpgradeProgress) {
     return node.NodeName;
   }
 

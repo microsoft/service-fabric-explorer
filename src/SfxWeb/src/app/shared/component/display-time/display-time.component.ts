@@ -13,7 +13,7 @@ export class DisplayTimeComponent implements OnInit, OnChanges, OnDestroy {
   private cdr = inject(ChangeDetectorRef);
 
 
-  @Input() time: string;
+  @Input() time!: string;
 
   localTime = '';
   timeSince = '';

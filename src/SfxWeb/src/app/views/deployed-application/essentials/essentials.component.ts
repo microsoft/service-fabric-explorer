@@ -18,7 +18,7 @@ export class EssentialsComponent extends DeployedAppBaseControllerDirective {
   protected data: DataService = inject(DataService);
   private settings = inject(SettingsService);
 
-  listSettings: ListSettings;
+  listSettings!: ListSettings;
 
   essentialItems: IEssentialListItem[] = [];
 

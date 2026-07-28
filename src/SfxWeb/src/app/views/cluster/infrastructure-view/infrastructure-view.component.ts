@@ -20,9 +20,9 @@ export class InfrastructureViewComponent extends BaseControllerDirective {
   private data = inject(DataService);
   private settings = inject(SettingsService);
 
-  public collection: InfrastructureCollection;
-  public repairTaskCollection: RepairTaskCollection;
-  public infrastructureDocumentCollection: InfrastructureDocumentCollection;
+  public collection!: InfrastructureCollection;
+  public repairTaskCollection!: RepairTaskCollection;
+  public infrastructureDocumentCollection!: InfrastructureDocumentCollection;
 
   allPendingMRJobs: InfrastructureJob[] = [];
   executingMRJobs: InfrastructureJob[] = [];

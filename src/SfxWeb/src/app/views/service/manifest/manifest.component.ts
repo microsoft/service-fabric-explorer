@@ -15,7 +15,7 @@ import { map, mergeMap } from 'rxjs/operators';
 export class ManifestComponent extends ServiceBaseControllerDirective {
   protected data: DataService = inject(DataService);
 
-  serviceManifest: string;
+  serviceManifest!: string;
 
   setup() {}
 

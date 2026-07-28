@@ -7,6 +7,7 @@ import { map, mergeMap } from 'rxjs/operators';
 import { SettingsService } from 'src/app/services/settings.service';
 import { ClusterLoadInformation } from 'src/app/Models/DataModels/Cluster';
 import { NodeCollection } from 'src/app/Models/DataModels/collections/NodeCollection';
+import { Node } from 'src/app/Models/DataModels/Node';
 import { IMetricsViewModel, MetricsViewModel } from 'src/app/ViewModels/MetricsViewModel';
 import { LoadMetricInformation } from 'src/app/Models/DataModels/Shared';
 
@@ -27,10 +28,10 @@ export class MetricsComponent extends BaseControllerDirective {
   private settings = inject(SettingsService);
 
 
-  clusterLoadInformation: ClusterLoadInformation;
-  nodes: NodeCollection;
-  metricsViewModel: MetricsViewModel;
-  tableData = {
+  clusterLoadInformation!: ClusterLoadInformation;
+  nodes!: NodeCollection;
+  metricsViewModel!: MetricsViewModel;
+  tableData: { dataPoints: IChartSeries[]; categories: string[]; title: string; tooltipFunction: (() => any) | null } = {
     dataPoints: [],
     categories: [],
     title: '',
@@ -39,7 +40,7 @@ export class MetricsComponent extends BaseControllerDirective {
 
   // groupByNodeType = false;
   showOptions = true;
-  filteredNodes = [];
+  filteredNodes: Node[] = [];
 
   setup() {
     this.clusterLoadInformation = this.data.clusterLoadInformation;
@@ -78,18 +79,18 @@ export class MetricsComponent extends BaseControllerDirective {
       this.metricsViewModel.selectedMetrics.forEach((selectedmetric, index) => {
         const normalize = selectedmetric.hasCapacity && this.metricsViewModel.normalizeMetricsData;
         const selectedNodeLoadMetricInfo = metric.nodeLoadMetricInformation.find(lmi => lmi.name === selectedmetric.name);
-        let dataPoint = +selectedNodeLoadMetricInfo.raw.NodeLoad;
+        let dataPoint = +selectedNodeLoadMetricInfo!.raw.NodeLoad;
 
         if (normalize) {
           addNormalizationTooltip = true;
-          dataPoint = selectedNodeLoadMetricInfo.loadCapacityRatio;
+          dataPoint = selectedNodeLoadMetricInfo!.loadCapacityRatio;
 
           const d = selectedNodeLoadMetricInfo;
-          const tooltip = `${d.parent.name}: ${d.raw.NodeLoad}${d.hasCapacity ? ` / ${d.raw.NodeCapacity} (${d.loadCapacityRatioString})` : ""}`;
-          tooltipMap[`${metric.raw.NodeName}-${selectedmetric.displayName}`] = tooltip;
+          const tooltip = `${d!.parent.name}: ${d!.raw.NodeLoad}${d!.hasCapacity ? ` / ${d!.raw.NodeCapacity} (${d!.loadCapacityRatioString})` : ""}`;
+          (tooltipMap as any)[`${metric.raw.NodeName}-${selectedmetric.displayName}`] = tooltip;
 
         } else if (selectedmetric.hasCapacity) {
-          dataPoint = Math.max(+selectedNodeLoadMetricInfo.raw.NodeLoad, +selectedNodeLoadMetricInfo.raw.NodeCapacity);
+          dataPoint = Math.max(+selectedNodeLoadMetricInfo!.raw.NodeLoad, +selectedNodeLoadMetricInfo!.raw.NodeCapacity);
         }
 
           chartMetricSeriesList[index].data.push(dataPoint);
@@ -100,8 +101,8 @@ export class MetricsComponent extends BaseControllerDirective {
     });
 
     if (addNormalizationTooltip) {
-      this.tableData.tooltipFunction = function() {
-        return tooltipMap[`${this.x}-${this.series.name}`]
+      this.tableData.tooltipFunction = function(this: any) {
+        return (tooltipMap as any)[`${this.x}-${this.series.name}`]
       }
     }
 

@@ -80,7 +80,7 @@ export class ResourcesComponent extends ServiceBaseControllerDirective {
       let name  = row.match(/Name="([^"]+)"/);
       let value = row.match(/DefaultValue="([^"]+)"/);
       if (name && value) {
-        parameters[name[1]]=value[1];
+        (parameters as any)[name[1]]=value[1];
       }
       content = content.substring(i2+1);
     }
@@ -200,7 +200,7 @@ export class ResourcesComponent extends ServiceBaseControllerDirective {
       case 0:
         return "Value has not been specified by the cluster owner.";
       default:
-        return null;
+        return null!;
     }
   }
 

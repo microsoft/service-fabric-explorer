@@ -53,7 +53,7 @@ export class TimelineGeneratorFactoryService {
 
 
       default:
-        return null;
+        return null!;
     }
   }
 }

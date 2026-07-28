@@ -40,7 +40,7 @@ export class BackupPolicyCollection extends DataModelCollectionBase<BackupPolicy
 
 export class ApplicationCollection extends DataModelCollectionBase<Application> {
     public upgradingAppCount = 0;
-    public healthState: ITextAndBadge;
+    public healthState!: ITextAndBadge;
 
     public constructor(data: DataService) {
         super(data);
@@ -62,7 +62,7 @@ export class ApplicationCollection extends DataModelCollectionBase<Application> 
     }
 
     protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): Observable<any> {
-        return this.data.restClient.getApplications(this.data.readOnlyHeader, messageHandler).pipe(map(items => {
+        return this.data.restClient.getApplications(!!this.data.readOnlyHeader, messageHandler).pipe(map(items => {
             return items.map(raw => new Application(this.data, raw));
         }));
     }
@@ -74,10 +74,10 @@ export class ApplicationCollection extends DataModelCollectionBase<Application> 
     }
 
     private updateAppsHealthState(): void {
-        this.collection.map(app => HealthStateConstants.Values[app.healthState.text]);
+        this.collection.map(app => (HealthStateConstants.Values as any)[app.healthState.text]);
         // calculates the applications health state which is the max state value of all applications
         this.healthState = this.length > 0
-            ? this.valueResolver.resolveHealthStatus(Math.max(...this.collection.map(app => HealthStateConstants.Values[app.healthState.text]) as number[]).toString())
+            ? this.valueResolver.resolveHealthStatus(Math.max(...this.collection.map(app => (HealthStateConstants.Values as any)[app.healthState.text]) as number[]).toString())
             : ValueResolver.healthStatuses[1];
     }
 
@@ -106,7 +106,7 @@ export class ApplicationTypeGroupCollection extends DataModelCollectionBase<Appl
     }
 
     protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): Observable<any> {
-        return this.data.restClient.getApplicationTypes(null, messageHandler).pipe(map(response => {
+        return this.data.restClient.getApplicationTypes(undefined, messageHandler).pipe(map(response => {
             this.appTypeCount = response.length;
             const appTypes = response.map(item => new ApplicationType(this.data, item));
             const groups = groupBy(appTypes, item => item.raw.Name);
@@ -117,8 +117,8 @@ export class ApplicationTypeGroupCollection extends DataModelCollectionBase<Appl
     public getAppTypeUsage(): Observable<IAppTypeUsage> {
       return this.data.getApps(true).pipe(map(() => {
           // check on refresh which appTypes are being used by at least one application
-          const activeAppTypes = [];
-          const inactiveAppTypes = [];
+          const activeAppTypes: any[] = [];
+          const inactiveAppTypes: any[] = [];
           this.collection.forEach(appTypeGroup => appTypeGroup.appTypes.forEach(appType => {
             if (appType.isInUse) {
               activeAppTypes.push(appType);
@@ -167,8 +167,8 @@ export class PartitionBackupCollection extends DataModelCollectionBase<Partition
     public endDate: Date;
     public constructor(data: DataService, public parent: PartitionBackupInfo) {
         super(data, parent);
-        this.startDate = null;
-        this.endDate = null;
+        this.startDate = null!;
+        this.endDate = null!;
     }
 
     public retrieveNewCollection(messageHandler?: IResponseMessageHandler): Observable<any> {
@@ -352,8 +352,8 @@ export abstract class EventListBase<T extends FabricEventBase> extends DataModel
     public readonly defaultDateWindowInDays: number = 7;
     protected readonly optionalColsStartIndex: number = 2;
 
-    private iStartDate: Date;
-    private iEndDate: Date;
+    private iStartDate!: Date;
+    private iEndDate!: Date;
     protected eventsTypesFilter: string[] = [];
 
     public get startDate() {
@@ -397,7 +397,7 @@ export abstract class EventListBase<T extends FabricEventBase> extends DataModel
     }
 
     public resetDateWindow(): boolean {
-        return this.setDateWindow(null, null);
+        return this.setDateWindow(undefined, undefined);
     }
 
     public reload(messageHandler?: IResponseMessageHandler): Observable<any> {

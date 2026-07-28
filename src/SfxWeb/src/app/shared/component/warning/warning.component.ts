@@ -13,8 +13,8 @@ export class WarningComponent {
   @Input() iconSize: string = "mif-4x";
   //provide additional data in a list format
   @Input() descriptionList: string[] = [];
-  @Input() link: string;
-  @Input() linkText: string;
+  @Input() link!: string;
+  @Input() linkText!: string;
 
   constructor() { }
 

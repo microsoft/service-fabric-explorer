@@ -16,7 +16,7 @@ export class ManifestComponent extends BaseControllerDirective {
   private data = inject(DataService);
 
 
-  clusterManifest: ClusterManifest;
+  clusterManifest!: ClusterManifest;
 
   setup() {
     this.clusterManifest = this.data.clusterManifest;

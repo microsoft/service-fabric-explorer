@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit, inject, ChangeDetectionStrategy } from '@
 import { DetailBaseComponent } from 'src/app/ViewModels/detail-table-base.component';
 import { ListColumnSetting } from 'src/app/Models/ListSettings';
 import { RepairTask } from 'src/app/Models/DataModels/repairTask';
+import { Node } from 'src/app/Models/DataModels/Node';
 import { DataService } from 'src/app/services/data.service';
 import { forkJoin, of, Subscription } from 'rxjs';
 import { RefreshService } from 'src/app/services/refresh.service';
@@ -21,10 +22,10 @@ export class RepairTaskViewComponent implements OnInit, DetailBaseComponent, OnD
   private refreshService = inject(RefreshService);
 
   phaseTooLongDuration = 1000 * 60 * 20;
-  listSetting: ListColumnSetting;
-  item: RepairTask;
+  listSetting!: ListColumnSetting;
+  item!: RepairTask;
   copyText = '';
-  nodes = [];
+  nodes: Node[] = [];
   subs: Subscription = new Subscription();
 
   healthCheckConfigs: IEssentialListItem[] = [];
@@ -72,7 +73,7 @@ export class RepairTaskViewComponent implements OnInit, DetailBaseComponent, OnD
     return forkJoin(nodeIds.map(id => {
       return this.dataService.getNode(id, true).pipe(catchError(err => of(null)));
     })).pipe(map(data => {
-      this.nodes = data.filter(node => node);
+      this.nodes = data.filter(node => node) as Node[];
     }));
   }
 }

@@ -1,4 +1,4 @@
-﻿// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
 // -----------------------------------------------------------------------------
@@ -266,11 +266,11 @@ export class RepairTaskMessages {
 
   public static messageMap(id: string) {
     const map = {};
-    map[RepairTaskMessages.longExecutingId] = RepairTaskMessages.longExecutingMessage;
-    map[RepairTaskMessages.seedNodeChecksId] = RepairTaskMessages.seedNodeChecks;
-    map[RepairTaskMessages.safetyChecksId] = RepairTaskMessages.safetyChecks;
-    map[RepairTaskMessages.clusterHealthCheckId] = RepairTaskMessages.clusterHealthCheck;
-    return map[id];
+    (map as any)[RepairTaskMessages.longExecutingId] = RepairTaskMessages.longExecutingMessage;
+    (map as any)[RepairTaskMessages.seedNodeChecksId] = RepairTaskMessages.seedNodeChecks;
+    (map as any)[RepairTaskMessages.safetyChecksId] = RepairTaskMessages.safetyChecks;
+    (map as any)[RepairTaskMessages.clusterHealthCheckId] = RepairTaskMessages.clusterHealthCheck;
+    return (map as any)[id];
   }
 }
 

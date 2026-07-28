@@ -8,6 +8,6 @@ export class VisualizationDirective {
   viewContainerRef = inject(ViewContainerRef);
 
 
-  public name: string;
+  public name!: string;
 
 }

@@ -168,7 +168,7 @@ export class DetailViewPartComponent implements OnChanges {
           }
       });
 
-      return size(resolvedObject) > 0 ? resolvedObject : null;
+      return size(resolvedObject) > 0 ? resolvedObject : null!;
   }
 
   asIsOrder(a: any, b: any): number {

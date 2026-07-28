@@ -17,14 +17,14 @@ export class RepairJobChartComponent implements OnInit, OnChanges {
   private sanitizer = inject(DomSanitizer);
 
 
-  @Input() jobs: RepairTask[];
-  @Input() sortOrder: ISortOrdering;
+  @Input() jobs!: RepairTask[];
+  @Input() sortOrder!: ISortOrdering;
 
   fontColor = {
     color: '#fff'
   };
 
-  private chart: Chart;
+  private chart!: Chart;
 
   ngOnInit(): void {
     const options: Options = {
@@ -75,7 +75,7 @@ export class RepairJobChartComponent implements OnInit, OnChanges {
         style: this.fontColor,
         formatter: (() => {
           const bind = this; return function () {
-            return bind.sanitizer.sanitize(SecurityContext.HTML, TimeUtils.getDuration(this.value));
+            return bind.sanitizer.sanitize(SecurityContext.HTML, TimeUtils.getDuration(this.value))!;
           }
         })()
       },

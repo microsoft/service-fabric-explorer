@@ -23,7 +23,7 @@ export class ActionDialogUtils {
         if (child.disableSubmit && disableSubmit) {
             try {
                 const sub = child.disableSubmit.subscribe((value: boolean) => disableSubmit(value));
-                child.disableSubmitSubscription.add(sub);
+                child.disableSubmitSubscription!.add(sub);
             }
             catch (e){
                 throw new Error(`The template must have disableSubmit and disableSubmitSubscription, and unsubscribe from disableSubmitSubscription in ngOnDestroy, else there will be potential memory leaks.\nOriginal error: ${e}`);
@@ -45,13 +45,13 @@ export class ActionDialogUtils {
       },
       MessageWithWaitConfirmationComponent,
       () => true,
-      null,
+      undefined,
       {
         title: `Confirm ${title} - Potential Data Loss`,
         class: 'error'
       },
       {
-        template: null,
+        template: undefined,
         inputs: {
           description
         }

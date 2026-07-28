@@ -13,10 +13,10 @@ import { Utils } from 'src/app/Utils/Utils';
 
 export class HealthEvaluation extends DataModelBase<IRawHealthEvaluation> {
     public viewPathUrl = '';
-    public children: any[];
-    public displayName: string;
-    public constructor(raw: IRawHealthEvaluation, public level: number = 0, parent: HealthEvaluation = null, viewPathUrl: string = '') {
-        super(null, raw, parent);
+    public children!: any[];
+    public displayName!: string;
+    public constructor(raw: IRawHealthEvaluation, public level: number = 0, parent: HealthEvaluation | null = null, viewPathUrl: string = '') {
+        super(null!, raw, parent);
         this.viewPathUrl = viewPathUrl;
     }
 
@@ -34,7 +34,7 @@ export class HealthEvaluation extends DataModelBase<IRawHealthEvaluation> {
 
     public get uniqueId(): string {
         // Explicitly set this to null to allow detail-list directive to use angular build-in parameter $id to track the list.
-        return null;
+        return null!;
     }
 
     public get sourceTimeStamp(): string {
@@ -71,18 +71,18 @@ export class LoadMetricInformation extends DataModelBase<IRawLoadMetricInformati
         ]
     };
 
-    public selected: boolean;
+    public selected!: boolean;
 
     public get minNodeLoadId(): string {
-        return this.raw.MinNodeLoadId.Id;
+        return this.raw.MinNodeLoadId!.Id;
     }
 
     public get maxNodeLoadId(): string {
-        return this.raw.MaxNodeLoadId.Id;
+        return this.raw.MaxNodeLoadId!.Id;
     }
 
     public get hasCapacity(): boolean {
-        return this.raw.ClusterCapacity && +this.raw.ClusterCapacity > 0;
+        return !!this.raw.ClusterCapacity && +this.raw.ClusterCapacity > 0;
     }
 
     public get isResourceGovernanceMetric(): boolean {

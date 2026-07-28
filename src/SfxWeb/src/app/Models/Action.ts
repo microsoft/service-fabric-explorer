@@ -56,6 +56,7 @@ export class Action {
                 this.running = false;
             }));
         }
+        return of(null);
     }
 }
 
@@ -130,7 +131,7 @@ export class IsolatedAction extends Action implements IModalData{
         public modalBody?: IModalBody,
         ) {
 
-        super(name, title, runningTitle, null, canRun);
+        super(name, title, runningTitle, null!, canRun);
     }
 
 

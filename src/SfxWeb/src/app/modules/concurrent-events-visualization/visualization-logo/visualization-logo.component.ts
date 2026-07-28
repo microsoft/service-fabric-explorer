@@ -13,9 +13,9 @@ import { environment } from 'src/environments/environment';
 })
 export class VisualizationLogoComponent implements OnInit, DetailBaseComponent {
 
-  visPresent: boolean;
-  item: IRCAItem;
-  listSetting: ListColumnSettingWithEmbeddedVis;
+  visPresent!: boolean;
+  item!: IRCAItem;
+  listSetting!: ListColumnSettingWithEmbeddedVis;
 
   public assetBase = environment.assetBase;
 

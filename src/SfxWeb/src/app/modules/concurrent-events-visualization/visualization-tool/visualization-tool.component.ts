@@ -23,18 +23,18 @@ export class VisualizationToolComponent implements OnChanges, AfterViewInit, Det
   private eventTitleColor: string = "var(--font-primary-color)";
   private textColor: string = "var(--font-accent-color)";
 
-  private chart: Chart;
+  private chart!: Chart;
 
-  visEvents : IConcurrentEvents;
-  item : IRCAItem;
-  listSetting : ListColumnSettingWithEmbeddedVis;
+  visEvents !: IConcurrentEvents;
+  item !: IRCAItem;
+  listSetting !: ListColumnSettingWithEmbeddedVis;
 
-  @ViewChild('container') private container: ElementRef;
+  @ViewChild('container') private container!: ElementRef;
 
   public options: Options = {
       chart: {
         inverted: true,
-        backgroundColor: null,
+        backgroundColor: null as any,
         margin: [0, 0, 0, 0],
         spacingTop: 0,
         spacingBottom: 0,
@@ -71,7 +71,7 @@ export class VisualizationToolComponent implements OnChanges, AfterViewInit, Det
 
     this.options.series = [this.traverse()];
     const data = this.traverse();
-    this.options.chart.height = data.levels.length * 110 || 1;
+    this.options.chart!.height = data.levels!.length * 110 || 1;
     this.chart = chart(this.container.nativeElement, this.options);
   }
 
@@ -103,11 +103,11 @@ export class VisualizationToolComponent implements OnChanges, AfterViewInit, Det
           maxHeight = Math.max(currSize, maxHeight);
           for (let i = 0; i < currSize; i++) {
               let currEvent = queue.shift();
-              let action = currEvent.reasonForEvent ? "<b>Reason: </b>" + currEvent.reasonForEvent + "</br>" : "";
-              let timestamp = "<b>Timestamp: </b>" + currEvent.timeStamp;
+              let action = currEvent!.reasonForEvent ? "<b>Reason: </b>" + currEvent!.reasonForEvent + "</br>" : "";
+              let timestamp = "<b>Timestamp: </b>" + currEvent!.timeStamp;
               let newNodeComponent : SeriesSankeyNodesOptionsObject = {
-                  id: idPrefix + currEvent.eventInstanceId + "</p>",
-                  title: eventTitlePrefix + currEvent.kind + "</p>",
+                  id: idPrefix + currEvent!.eventInstanceId + "</p>",
+                  title: eventTitlePrefix + currEvent!.kind + "</p>",
                   description: descriptionPrefix + action + timestamp +"</p>",
                   layout: "hanging",
                   height: 80,
@@ -122,19 +122,19 @@ export class VisualizationToolComponent implements OnChanges, AfterViewInit, Det
               if (currSize == 1) {
                   delete newNodeComponent["layout"];
               }
-              config.nodes.push(newNodeComponent);
+              config.nodes!.push(newNodeComponent);
 
-              if (currEvent.reason) {
-                if (currEvent.reason.name == "self") {
-                  config.data.push({
-                    from: `${idPrefix}${currEvent.eventInstanceId}</p>`
+              if (currEvent!.reason) {
+                if (currEvent!.reason.name == "self") {
+                  config.data!.push({
+                    from: `${idPrefix}${currEvent!.eventInstanceId}</p>`
                   });
                 } else {
-                  config.data.push({
-                    to: `${idPrefix}${currEvent.eventInstanceId}</p>`,
-                    from: `${idPrefix}${currEvent.reason.eventInstanceId}</p>`
+                  config.data!.push({
+                    to: `${idPrefix}${currEvent!.eventInstanceId}</p>`,
+                    from: `${idPrefix}${currEvent!.reason.eventInstanceId}</p>`
                   });
-                  queue.push(currEvent.reason);
+                  queue.push(currEvent!.reason);
                 }
               }
           }
@@ -144,9 +144,9 @@ export class VisualizationToolComponent implements OnChanges, AfterViewInit, Det
       for (let i = 0; i < levels; i++) {
           let newLevelComponent = {
               level: i,
-              color: null,
+              color: null as any,
           }
-          config.levels.push(newLevelComponent);
+          config.levels!.push(newLevelComponent);
       }
     }
     return config;
@@ -156,7 +156,7 @@ export class VisualizationToolComponent implements OnChanges, AfterViewInit, Det
     if (this.chart) {
       const data = this.traverse();
       this.chart.series[0].update(data);
-      this.chart.setSize(undefined, data.levels.length * 100);
+      this.chart.setSize(undefined, data.levels!.length * 100);
     }
   }
 }

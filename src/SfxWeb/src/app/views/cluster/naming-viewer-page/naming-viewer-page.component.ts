@@ -26,7 +26,7 @@ export class NamingViewerPageComponent implements OnInit {
     enableRepairTasks: true
   };
 
-  public namingService: Service;
+  public namingService!: Service;
 
   public vizRefs: VisReference[] = [
     { name: "Timeline", component: TimelineComponent },

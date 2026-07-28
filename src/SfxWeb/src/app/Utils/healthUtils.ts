@@ -24,7 +24,7 @@ export interface IViewPathData {
 }
 
 export class HealthUtils {
-    public static getParsedHealthEvaluations(rawUnhealthyEvals: IRawUnhealthyEvaluation[], level: number = 0, parent: HealthEvaluation = null, data: DataService): HealthEvaluation[] {
+    public static getParsedHealthEvaluations(rawUnhealthyEvals: IRawUnhealthyEvaluation[], level: number = 0, parent: HealthEvaluation | null = null, data: DataService): HealthEvaluation[] {
         let healthEvals: HealthEvaluation[] = new Array(0);
         const children: HealthEvaluation[] = new Array(0);
         if (rawUnhealthyEvals) {

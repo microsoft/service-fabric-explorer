@@ -10,7 +10,7 @@ import { InfrastructureDocumentCollection } from 'src/app/Models/DataModels/coll
     standalone: false
 })
 export class InfrastructureDocsComponent  {
-  @Input() infrastructureDocumentCollection: InfrastructureDocumentCollection;
+  @Input() infrastructureDocumentCollection!: InfrastructureDocumentCollection;
   selectedInfrastructureService: any = "None" ;
 
   JsonParsedDocument(doc: InfrastructureDoc): any {

@@ -17,7 +17,7 @@ export class FmmInfoComponent extends BaseControllerDirective {
   private restClientService = inject(RestClientService);
   private dataService = inject(DataService);
 
-  fmmInfo: IRawFailoverManagerManagerInformation;
+  fmmInfo!: IRawFailoverManagerManagerInformation;
   isLoading = true;
   isFmmEstimate = false;
 

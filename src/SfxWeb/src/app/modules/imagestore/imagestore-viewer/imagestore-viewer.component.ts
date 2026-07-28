@@ -17,9 +17,9 @@ export class ImagestoreViewerComponent implements OnInit {
   private settings = inject(SettingsService);
 
 
-  @Input() imagestoreRoot: ImageStore;
+  @Input() imagestoreRoot!: ImageStore;
 
-  fileListSettings: ListSettings;
+  fileListSettings!: ListSettings;
 
   ngOnInit() {
     this.setup();

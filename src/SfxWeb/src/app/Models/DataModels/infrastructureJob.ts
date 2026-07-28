@@ -5,10 +5,10 @@ import { of } from 'rxjs';
 
 export class InfrastructureJob extends DataModelBase<IRawInfrastructureJob> {
 
-    Id: string;
-    RepairTask: InfraRepairTask;
-    VmImpact: string[];
-    NodeImpact: string[];
+    Id!: string;
+    RepairTask!: InfraRepairTask;
+    VmImpact!: string[];
+    NodeImpact!: string[];
 
    public get id(): string {
        return this.raw.Id;

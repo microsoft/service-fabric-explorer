@@ -12,8 +12,8 @@ import { ApplicationTypeGroup } from 'src/app/Models/DataModels/ApplicationType'
 export class ApplicationTypeBaseControllerDirective extends BaseControllerDirective {
     protected data = inject(DataService);
 
-    appTypeName: string;
-    appTypeGroup: ApplicationTypeGroup;
+    appTypeName!: string;
+    appTypeGroup!: ApplicationTypeGroup;
 
     common(messageHandler?: IResponseMessageHandler): Observable<any> {
         return this.data.getAppTypeGroup(this.appTypeName, true, messageHandler).pipe(map( appTypeGroup => {

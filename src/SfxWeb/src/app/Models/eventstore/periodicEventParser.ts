@@ -7,11 +7,11 @@ import { DataSet } from 'vis-data';
 import { DataGroup } from 'vis-timeline';
 
 export function mergeTimelineData(combinedData: ITimelineData, data: ITimelineData) {
-  data.items.forEach(item => combinedData.items.add(item));
+  data.items!.forEach(item => combinedData.items!.add(item));
 
-  data.groups.forEach(group => {
-    if(!combinedData.groups.get(group.id)) {
-      combinedData.groups.add(group)
+  data.groups!.forEach(group => {
+    if(!combinedData.groups!.get(group.id)) {
+      combinedData.groups!.add(group)
     }
   });
 
@@ -59,7 +59,7 @@ export const generateTimelineData = (items: IRCAItem[], config: IDiffAnalysis, s
       nestedGroups: []
     }
     result.groups.forEach(group => {
-      majorGroup.nestedGroups.push(group.id);
+      majorGroup.nestedGroups!.push(group.id);
     })
     result.groups.add(majorGroup);
   }
@@ -124,7 +124,7 @@ const generateItems = ( property: IDiffProperty, states: IRCAItem[], startDate: 
 
   let groups: DataGroup[] = Array.from(uniqueValues).map(value => {
     return {
-      id: value.toString(), content: value.toString()
+      id: String(value), content: String(value)
     }
   })
 

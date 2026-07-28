@@ -1,4 +1,4 @@
-import { NodeTimelineGenerator, EventStoreUtils, ApplicationTimelineGenerator } from './timelineGenerators';
+import { NodeTimelineGenerator, EventStoreUtils, ApplicationTimelineGenerator, ITimelineData } from './timelineGenerators';
 import { ApplicationEvent, NodeEvent } from './Events';
 
 
@@ -43,7 +43,7 @@ describe('TimelineGenerators', () => {
 
         fit('node started down and goes up', () => {
             const data = [upEvent];
-            const events = generator.consume(data, startDate, endDate);
+            const events = generator.consume(data, startDate, endDate) as Required<ITimelineData>;
 
             const someId = '0' + id2;
             expect(events.items.length).toBe(1);
@@ -68,7 +68,7 @@ describe('TimelineGenerators', () => {
 
         fit('node started up and goes down', () => {
             const data = [downEvent];
-            const events = generator.consume(data, startDate, endDate);
+            const events = generator.consume(data, startDate, endDate) as Required<ITimelineData>;
 
             const someId = '0' + id;
 
@@ -94,7 +94,7 @@ describe('TimelineGenerators', () => {
 
         fit('node goes down and up', () => {
             const data = [upEvent, downEvent];
-            const events = generator.consume(data, startDate, endDate);
+            const events = generator.consume(data, startDate, endDate) as Required<ITimelineData>;
             const someId = '1' + id;
 
             expect(events.items.length).toBe(1);
@@ -129,7 +129,7 @@ describe('TimelineGenerators', () => {
             down4.fillFromJSON({...upEvent.raw, EventInstanceId: '4', NodeName: '4', NodeInstance: 4});
             const data = [downEvent, down1, down2, down3, down4];
 
-            const events = generator.consume(data, startDate, endDate);
+            const events = generator.consume(data, startDate, endDate) as Required<ITimelineData>;
             expect(events.items.length).toBe(5);
 
             expect(events.groups.length).toBe(1);
@@ -155,7 +155,7 @@ describe('TimelineGenerators', () => {
 
 
             const data = [upEvent, downEvent, secondUpEvent];
-            const events = generator.consume(data, startDate, endDate);
+            const events = generator.consume(data, startDate, endDate) as Required<ITimelineData>;
 
             expect(events.items.length).toBe(2);
             expect(events.items.get('2' + id)).toEqual({
@@ -225,7 +225,7 @@ describe('TimelineGenerators', () => {
 
             const data = [deactivate, down];
 
-            const events = generator.consume(data, startDate, endDateRange);
+            const events = generator.consume(data, startDate, endDateRange) as Required<ITimelineData>;
             expect(events.items.length).toBe(1);
             expect(events.potentiallyMissingEvents).toBeFalse();
         });
@@ -254,7 +254,7 @@ describe('TimelineGenerators', () => {
 
           const data = [openFailed];
 
-          const events = generator.consume(data, startDate, endDateRange);
+          const events = generator.consume(data, startDate, endDateRange) as Required<ITimelineData>;
           expect(events.items.length).toBe(1);
           expect(events.groups.length).toBe(2);
         });
@@ -318,7 +318,7 @@ describe('TimelineGenerators', () => {
 
         const data = [addedToClusterEvent, nodeUpevent, nodeDownEvent, nodeUpevent2];
 
-        const events = generator.consume(data, startDate, endDateRange);
+        const events = generator.consume(data, startDate, endDateRange) as Required<ITimelineData>;
         //the trailing NodeUp carries LastNodeDownAt = 1601 FILETIME sentinel (never been down),
         //so no synthetic down bar is generated for it - only the "added to cluster" marker remains
         expect(events.items.length).toBe(1);
@@ -359,7 +359,7 @@ describe('TimelineGenerators', () => {
 
             const data = [nodeDownEvent, removed];
 
-            const events = generator.consume(data, startDate, endDateRange);
+            const events = generator.consume(data, startDate, endDateRange) as Required<ITimelineData>;
             const content = "Node test_node down and removed from the cluster";
             const itemId = "1" + id2;
 
@@ -411,7 +411,7 @@ describe('TimelineGenerators', () => {
         })
 
         const data = [containerExitEvent];
-        const events = generator.consume(data, startDate, endDateRange);
+        const events = generator.consume(data, startDate, endDateRange) as Required<ITimelineData>;
         expect(events.items.length).toBe(1);
         expect(events.potentiallyMissingEvents).toBeFalse();
     });
@@ -452,7 +452,7 @@ describe('TimelineGenerators', () => {
 
 
       const data = [end, startUpgrade];
-      const events = generator.consume(data, startDate, endDate);
+      const events = generator.consume(data, startDate, endDate) as Required<ITimelineData>;
       const content = "Upgrade rolling forward to 25.0.0";
 
       expect(events.items.length).toBe(1);

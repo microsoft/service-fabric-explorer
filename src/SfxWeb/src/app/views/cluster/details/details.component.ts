@@ -23,14 +23,14 @@ export class DetailsComponent extends BaseControllerDirective {
   private settings = inject(SettingsService);
 
 
-  clusterUpgradeProgress: ClusterUpgradeProgress;
-  clusterLoadInformation: ClusterLoadInformation;
-  clusterHealth: ClusterHealth;
-  nodes: NodeCollection;
-  nodesStatuses: INodesStatusDetails[];
+  clusterUpgradeProgress!: ClusterUpgradeProgress;
+  clusterLoadInformation!: ClusterLoadInformation;
+  clusterHealth!: ClusterHealth;
+  nodes!: NodeCollection;
+  nodesStatuses!: INodesStatusDetails[];
 
-  nodeStatusListSettings: ListSettings;
-  upgradeProgressUnhealthyEvaluationsListSettings: ListSettings;
+  nodeStatusListSettings!: ListSettings;
+  upgradeProgressUnhealthyEvaluationsListSettings!: ListSettings;
 
   setup(){
     this.clusterUpgradeProgress = this.data.clusterUpgradeProgress;

@@ -34,9 +34,9 @@ export class Utils {
     public static groupByFunc<T>(list: T[], keyFunction: (item: T) => string): Record<string, T[]> {
         return list.reduce( (previous, current) => { const key = keyFunction(current);
                                                      if (key in previous){
-                                                        previous[key].push(current);
+                                                        (previous as any)[key].push(current);
                                                      }else{
-                                                        previous[key] = [current];
+                                                        (previous as any)[key] = [current];
                                                      }
                                                     //  previous[key] = (previous[key] || []).push(current);
                                                      return previous; }, {});
@@ -47,7 +47,7 @@ export class Utils {
      * @param key key for value
      */
     public static groupBy<T>(list: T[], key: string): Record<string, T[]> {
-        return list.reduce( (previous, current) => { const itemKey = Utils.result(current, key) ;previous[itemKey] = (previous[itemKey] || []).push(current) ; return previous; }, {});
+        return list.reduce( (previous, current) => { const itemKey = Utils.result(current, key) ;(previous as any)[itemKey] = ((previous as any)[itemKey] || []).push(current) ; return previous; }, {});
     }
 
     /**
@@ -55,15 +55,15 @@ export class Utils {
      * @param key key for value
      */
     public static keyBy<T>(list: T[], key: string): Record<string, T> {
-        return list.reduce( (previous, current) => { previous[current[key]] = current; return previous; }, {});
+        return list.reduce( (previous, current) => { (previous as any)[(current as any)[key]] = current; return previous; }, {});
     }
 
     /**
      * implements lodash keyBy in es6. returns a dictionary of lists
      * @param keyFunction function to return a key based string for each entry.
      */
-    public static keyByFromFunction<T>(list: T[], keyFunction: (T) => string): Record<string, T> {
-        return list.reduce( (previous, current) => { previous[keyFunction(current)] = current; return previous; }, {});
+    public static keyByFromFunction<T>(list: T[], keyFunction: (item: T) => string): Record<string, T> {
+        return list.reduce( (previous, current) => { (previous as any)[keyFunction(current)] = current; return previous; }, {});
     }
 
     /**
@@ -131,7 +131,7 @@ export class Utils {
     }
 
     // Convert a hex string to a byte array
-    public static hexToBytes(hex) {
+    public static hexToBytes(hex: any) {
         const bytes = [];
         for (let c = 0; c < hex.length; c += 2) {
             const value = parseInt(hex.substr(c, 2), 16);
@@ -190,7 +190,7 @@ export class Utils {
         return text;
     }
 
-    public static addToArrayAndTrim<T>(list: T[], data: T, maxLength: number, onRemoval = (item: T) => null, onAddition = (item: T) => null) {
+    public static addToArrayAndTrim<T>(list: T[], data: T, maxLength: number, onRemoval: (item: T) => void = () => {}, onAddition: (item: T) => void = () => {}) {
         if (list.length >= maxLength) {
             const r = list.splice(maxLength - 1, 1);
             onRemoval(r[0]);
@@ -227,10 +227,10 @@ export class Counter {
     private counts = {};
 
     public add(key: string | number, incrementalValue: number = 1): void {
-        if (this.counts[key] === undefined) {
-            this.counts[key]  = 0;
+        if ((this.counts as any)[key] === undefined) {
+            (this.counts as any)[key]  = 0;
         }
-        this.counts[key] += incrementalValue;
+        (this.counts as any)[key] += incrementalValue;
     }
 
     public clearAll(): void {
@@ -241,7 +241,7 @@ export class Counter {
         const l = Object.keys(this.counts).map(key => {
             return {
                 key,
-                value: this.counts[key]
+                value: (this.counts as any)[key]
             };
         });
         return l.sort(this.sortFunction);
@@ -255,7 +255,7 @@ export class Counter {
       return Object.keys(this.counts).map(key => {
           return {
               key,
-              value: this.counts[key]
+              value: (this.counts as any)[key]
           };
       });
     }

@@ -36,7 +36,7 @@ export class DetailListComponent implements OnInit, OnDestroy {
   private dialog = inject(MatDialog);
 
 
-  @Input() listSettings: ListSettings;
+  @Input() listSettings!: ListSettings;
   @Input() searchText = 'Search list';
   @Input() isLoading = false;
   @Input() successfulLoad = true;
@@ -44,7 +44,7 @@ export class DetailListComponent implements OnInit, OnDestroy {
   @Output() sorted = new EventEmitter<any[]>();
   @Output() sortOrdering = new EventEmitter<ISortOrdering>();
   
-  private iList: any[];
+  private iList!: any[];
   public sortedFilteredList: any[] = []; // actual list displayed in html.
   
   page = 1;
@@ -53,14 +53,14 @@ export class DetailListComponent implements OnInit, OnDestroy {
   cache = {}; // is injected into each cell and allows for settings to persist between refreshs
 
   debounceHandler: Subject<any[]> = new Subject<any[]>();
-  debouncerHandlerSubscription: Subscription;
-  @ViewChildren(NgbDropdown) dropdowns: QueryList<NgbDropdown>;
+  debouncerHandlerSubscription!: Subscription;
+  @ViewChildren(NgbDropdown) dropdowns!: QueryList<NgbDropdown>;
 
   @Input()
   set list(data: any[] | DataModelCollectionBase<any>) {
     if (data instanceof DataModelCollectionBase){
       data.ensureInitialized().subscribe(() => {
-        this.iList = [].concat(data.collection);
+        this.iList = ([] as any[]).concat(data.collection);
         this.updateList();
       });
     }else{
@@ -117,7 +117,7 @@ export class DetailListComponent implements OnInit, OnDestroy {
   }
 
   sort(columnSetting: ListColumnSetting) {
-    this.listSettings.sort(columnSetting.config.sortPropertyPaths);
+    this.listSettings.sort(columnSetting.config!.sortPropertyPaths!);
     this.displayPath = columnSetting.propertyPath;
     this.updateList();
 
@@ -177,7 +177,7 @@ export class DetailListComponent implements OnInit, OnDestroy {
 
     // Update each column filter values by scanning through the list and found out all unique values exist in current column
     listSettings.columnSettings.forEach((columnSetting: ListColumnSetting) => {
-        if (!columnSetting.config.enableFilter) {
+        if (!columnSetting.config!.enableFilter) {
             return;
         }
 
@@ -217,7 +217,7 @@ export class DetailListComponent implements OnInit, OnDestroy {
             );
     });
 
-    pluckedList = filter(pluckedList, (item, index) => filterMark[index]);
+    pluckedList = filter(pluckedList, (item, index) => (filterMark as any)[index]);
     return pluckedList;
   }
 
@@ -235,7 +235,7 @@ export class DetailListComponent implements OnInit, OnDestroy {
     this.debounceHandler.next(this.sortedFilteredList);
   }
 
-  updateCheckAll(columnSetting: ListColumnSetting, event) {
+  updateCheckAll(columnSetting: ListColumnSetting, event: any) {
     if(event.target.checked){
       columnSetting.checkAll();
     }

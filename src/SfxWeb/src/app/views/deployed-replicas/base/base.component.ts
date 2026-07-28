@@ -26,15 +26,15 @@ export class BaseComponent extends BaseControllerDirective implements IBaseView{
   private settings = inject(SettingsService);
   el = inject(ElementRef);
 
-  nodeName: string;
-  appId: string;
-  serviceId: string;
-  activationId: string;
+  nodeName!: string;
+  appId!: string;
+  serviceId!: string;
+  activationId!: string;
 
-  replicas: DeployedReplicaCollection;
-  listSettings: ListSettings;
+  replicas!: DeployedReplicaCollection;
+  listSettings!: ListSettings;
 
-  type: string;
+  type!: string;
 
   setup() {
     this.tree.selectTreeNode([
@@ -46,7 +46,7 @@ export class BaseComponent extends BaseControllerDirective implements IBaseView{
       IdGenerator.deployedReplicaGroup()
     ], true);
 
-    this.listSettings = null;
+    this.listSettings = null!;
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{

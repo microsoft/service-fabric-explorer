@@ -36,11 +36,11 @@ export class MessageService {
 
   getClass(severity: MessageSeverity): string {
     const colors = {};
-    colors[MessageSeverity.Info] = 'bg-info';
-    colors[MessageSeverity.Warn] = 'bg-warning';
-    colors[MessageSeverity.Err] = 'bg-danger';
+    (colors as any)[MessageSeverity.Info] = 'bg-info';
+    (colors as any)[MessageSeverity.Warn] = 'bg-warning';
+    (colors as any)[MessageSeverity.Err] = 'bg-danger';
 
-    return colors[severity];
+    return (colors as any)[severity];
   }
 
   public get suppressMessage() {
@@ -64,13 +64,13 @@ export class MessageService {
   }
 
   public getSuccessMessage(apiDesc: string, response: HttpResponse<any>): string {
-    return null;
+    return null!;
   }
 
   public getErrorMessage(apiDesc: string, response: HttpErrorResponse): string {
       if (response.status === 404) {
           // By default exclude 404 error for all get requests
-          return null;
+          return null!;
       }
       return this.getErrorMessageInternal(apiDesc, response);
   }

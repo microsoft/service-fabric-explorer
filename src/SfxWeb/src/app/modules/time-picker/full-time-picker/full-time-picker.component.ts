@@ -18,10 +18,10 @@ export interface IQuickDates {
 })
 export class FullTimePickerComponent implements OnInit, OnDestroy {
 
-  @Input() startDate: Date;
-  @Input() endDate: Date;
-  @Input() startDateMin: Date;
-  @Input() startDateMax: Date;
+  @Input() startDate!: Date;
+  @Input() endDate!: Date;
+  @Input() startDateMin!: Date;
+  @Input() startDateMax!: Date;
 
   @Output() datesChanged = new EventEmitter<IOnDateChange>();
 
@@ -34,7 +34,7 @@ export class FullTimePickerComponent implements OnInit, OnDestroy {
   ];
 
   private debounceHandler: Subject<IOnDateChange> = new Subject<IOnDateChange>();
-  private debouncerHandlerSubscription: Subscription;
+  private debouncerHandlerSubscription!: Subscription;
 
   constructor() { }
 

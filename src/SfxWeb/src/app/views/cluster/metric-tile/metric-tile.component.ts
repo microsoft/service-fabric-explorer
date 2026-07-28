@@ -9,7 +9,7 @@ import { LoadMetricInformation } from 'src/app/Models/DataModels/Shared';
     standalone: false
 })
 export class MetricTileComponent {
-  @Input() metric: LoadMetricInformation;
+  @Input() metric!: LoadMetricInformation;
   @Output() toggleSelected = new EventEmitter<void>();
 
   constructor() { }

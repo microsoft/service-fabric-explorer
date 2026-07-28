@@ -10,8 +10,8 @@ import { HealthStateConstants, NodeStatusConstants } from 'src/app/Common/Consta
 })
 export class StatusResolverComponent implements  OnInit, OnChanges {
 
-  @Input() status: string;
-  @Input() healthState: HealthStateConstants;
+  @Input() status!: string;
+  @Input() healthState!: HealthStateConstants;
   @Input() showText = true;
 
   statusIconResolver: Record<string, string> = {};

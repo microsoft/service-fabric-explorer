@@ -12,8 +12,8 @@ import { Node } from 'src/app/Models/DataModels/Node';
 export class NodeBaseControllerDirective extends BaseControllerDirective {
     protected data = inject(DataService);
 
-    nodeName: string;
-    node: Node;
+    nodeName!: string;
+    node!: Node;
 
     common(messageHandler?: IResponseMessageHandler): Observable<any> {
         return this.data.getNode(this.nodeName, true, messageHandler).pipe(mergeMap( node => {

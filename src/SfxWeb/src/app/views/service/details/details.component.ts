@@ -19,7 +19,7 @@ export class DetailsComponent extends ServiceBaseControllerDirective {
     if (this.data.clusterManifest.isBackupRestoreEnabled && this.service.isStatefulService
       && this.appTypeName !== Constants.SystemAppTypeName) {
       this.service.serviceBackupConfigurationInfoCollection.refresh(messageHandler);
-      this.data.refreshBackupPolicies(messageHandler);
+      this.data.refreshBackupPolicies(messageHandler!);
     }
 
     return forkJoin([

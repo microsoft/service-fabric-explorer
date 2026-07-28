@@ -42,14 +42,14 @@ export class ReadOnlyHeaderInterceptor implements HttpInterceptor {
 
   intercept(req: HttpRequest<any>, next: HttpHandler):
     Observable<HttpEvent<any>> {
-        return next.handle(req).pipe(map(res => {
+        return next.handle(req).pipe(map((res: any) => {
             if (res instanceof HttpResponse) {
                 if ( res.headers.has(Constants.SfxReadonlyHeaderName)) {
                     this.dataService.readOnlyHeader =  (res.headers.get(Constants.SfxReadonlyHeaderName) || res.headers.get(Constants.SfxReadonlyHeaderName.toLowerCase()) )  === '1';
                 }
 
                 if (res.headers.has(Constants.SfxClusterNameHeaderName)) {
-                    this.dataService.clusterNameMetadata = (res.headers.get(Constants.SfxClusterNameHeaderName) || res.headers.get(Constants.SfxClusterNameHeaderName).toLowerCase());
+                    this.dataService.clusterNameMetadata = (res.headers.get(Constants.SfxClusterNameHeaderName) || res.headers.get(Constants.SfxClusterNameHeaderName)!.toLowerCase());
                 }
 
               }
@@ -83,7 +83,7 @@ export class StandAloneInterceptor implements HttpInterceptor {
     const data: IHttpRequest = {
       url: req.url,
       method: req.method,
-      headers: req.headers.keys().map(key => ({name: key, value: req.headers.get(key)})),
+      headers: req.headers.keys().map(key => ({name: key, value: req.headers.get(key)!})),
       body: req.body
     }
 
@@ -92,7 +92,7 @@ export class StandAloneInterceptor implements HttpInterceptor {
       const requestData = integration.passObjectAsString ? JSON.stringify(data) : data;
       const caller = this.standaloneIntegration.getIntegrationCaller();
 
-      const handleResponse = (responseData) => {
+      const handleResponse = (responseData: any) => {
         if(integration.passObjectAsString) {
           responseData = JSON.parse(responseData);
         }
@@ -119,7 +119,7 @@ export class StandAloneInterceptor implements HttpInterceptor {
       if(integration.handleAsCallBack) {
         try {
           console.log(requestData)
-          caller({"data": requestData, "Callback": (response) => {
+          caller({"data": requestData, "Callback": (response: any) => {
             handleResponse(response);
           }
         })
@@ -132,9 +132,9 @@ export class StandAloneInterceptor implements HttpInterceptor {
           subscriber.complete();
         }
       }else{
-        caller(requestData).then((response, res) => {
+        caller(requestData).then((response: any, res: any) => {
           handleResponse(response);
-        }).catch(err => {
+        }).catch((err: any) => {
           console.log(err)
           const r = new HttpErrorResponse({
             status: 500,

@@ -27,8 +27,8 @@ export class ViewBackupComponent implements OnInit {
   dataService = inject(DataService);
 
 
-  backUpData: IViewBackUpData;
-  action: IsolatedAction;
+  backUpData!: IViewBackUpData;
+  action!: IsolatedAction;
 
   ngOnInit() {
     this.backUpData = this.data.data;

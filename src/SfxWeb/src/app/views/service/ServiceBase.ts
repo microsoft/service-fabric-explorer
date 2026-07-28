@@ -12,10 +12,10 @@ import { Service } from 'src/app/Models/DataModels/Service';
 export class ServiceBaseControllerDirective extends BaseControllerDirective {
     protected data = inject(DataService);
 
-    appId: string;
-    serviceId: string;
-    appTypeName: string;
-    service: Service;
+    appId!: string;
+    serviceId!: string;
+    appTypeName!: string;
+    service!: Service;
 
     common(messageHandler?: IResponseMessageHandler): Observable<any> {
         return this.data.getService(this.appId, this.serviceId, true, messageHandler).pipe(mergeMap(service => {

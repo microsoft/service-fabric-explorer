@@ -80,7 +80,7 @@ export class EventStoreUtils {
     /*
     Produces an html string used for vis.js timeline tooltips.
     */
-    public static tooltipFormat = (data: Record<string, any> , start: string, end: string = '', title: string= ''): string => {
+    public static tooltipFormat = (data: Record<string, any> , start: string, end: string | null = '', title: string= ''): string => {
 
         const outline = EventStoreUtils.internalToolTipFormatterObject(data);
         return `<div class="inner-tooltip">
@@ -224,8 +224,8 @@ export abstract class TimeLineGeneratorBase<T> {
     }
 
     generateTimeLineData(events: T[], startOfRange?: Date, endOfRange?: Date, nestedGroupLabel?: string): ITimelineData {
-        const data = this.consume(events, startOfRange, endOfRange);
-        EventStoreUtils.addSubGroups(data.groups);
+        const data = this.consume(events, startOfRange!, endOfRange!);
+        EventStoreUtils.addSubGroups(data.groups!);
         /*
             When we have more than one event type on the timeline we should group them by type to make it easier to visualize.
             If we set a nestedGroupLabel a group with the name of the event type will be created and gather all of its events.
@@ -239,16 +239,16 @@ export abstract class TimeLineGeneratorBase<T> {
 
             // We should not add the already nested groups to the new event type one.
             let groupsAlreadyNested: IdType[] = [];
-            data.groups.forEach(group => {
-                nestedElementGroup.nestedGroups.push(group.id);
+            data.groups!.forEach(group => {
+                nestedElementGroup.nestedGroups!.push(group.id);
                 if (group.nestedGroups){
                     groupsAlreadyNested = groupsAlreadyNested.concat(group.nestedGroups);
                 }
             });
             // If the group is already nested, we remove it from the nested groups of the new one.
-            nestedElementGroup.nestedGroups = nestedElementGroup.nestedGroups.filter(group => !groupsAlreadyNested.includes(group));
+            nestedElementGroup.nestedGroups = nestedElementGroup.nestedGroups!.filter(group => !groupsAlreadyNested.includes(group));
 
-            data.groups.add(nestedElementGroup);
+            data.groups!.add(nestedElementGroup);
         }
         return data;
     }
@@ -267,7 +267,7 @@ export class ClusterTimelineGenerator extends TimeLineGeneratorBase<ClusterEvent
         // state necessary for some events
         let previousClusterHealthReport: ClusterEvent;
         let previousClusterUpgrade: ClusterEvent;
-        let upgradeClusterStarted: ClusterEvent;
+        let upgradeClusterStarted: ClusterEvent | null = null;
         const clusterRollBacks: Record<string, {complete: ClusterEvent, start?: ClusterEvent}> = {};
 
         events.forEach((event, index) => {
@@ -299,7 +299,7 @@ export class ClusterTimelineGenerator extends TimeLineGeneratorBase<ClusterEvent
         Object.keys(clusterRollBacks).forEach(eventInstanceId => {
             const data = clusterRollBacks[eventInstanceId];
             // this.parseClusterUpgradeAndRollback(data.complete, data.start, items, startOfRange);
-            EventStoreUtils.parseUpgradeAndRollback(data.complete, events.indexOf(data.complete), data.start, items, startOfRange,
+            EventStoreUtils.parseUpgradeAndRollback(data.complete, events.indexOf(data.complete), data.start!, items, startOfRange,
                                                             ClusterTimelineGenerator.clusterUpgradeLabel, 'TargetClusterVersion');
         });
 
@@ -447,11 +447,11 @@ export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
           const nodeEvents = nodeEventMap[nodeName];
 
           //hold onto the last "state" node i.e up or down to put bounds on unexpected down events
-          let lastTransitionEvent: NodeEvent = null;
+          let lastTransitionEvent: NodeEvent | null = null;
 
-          let lastUpEvent: NodeEvent;
-          let lastDownEvent: {event: NodeEvent, end: string} = null;
-          let lastRemoved: NodeEvent;
+          let lastUpEvent: NodeEvent | null = null;
+          let lastDownEvent: {event: NodeEvent, end: string} | null = null;
+          let lastRemoved: NodeEvent | null = null;
           //repeat item filter
           const seenIds = new Set();
 
@@ -544,15 +544,17 @@ export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
             }
           })
 
-          if(lastDownEvent) {
-            items.add(this.generateDownNodeEvent(lastDownEvent.event, events.indexOf(lastDownEvent.event), lastDownEvent.event.timeStamp, lastDownEvent.end));
+          const finalDownEvent = lastDownEvent as {event: NodeEvent, end: string} | null;
+          if(finalDownEvent) {
+            items.add(this.generateDownNodeEvent(finalDownEvent.event, events.indexOf(finalDownEvent.event), finalDownEvent.event.timeStamp, finalDownEvent.end));
           }
 
-          if(lastUpEvent) {
-            const lastDown = lastUpEvent.eventProperties.LastNodeDownAt;
+          const finalUpEvent = lastUpEvent as NodeEvent | null;
+          if(finalUpEvent) {
+            const lastDown = finalUpEvent.eventProperties.LastNodeDownAt;
             //skip the synthetic down bar when LastNodeDownAt is the FILETIME epoch sentinel ("never been down")
             if(lastDown && lastDown !== NodeTimelineGenerator.FileTimeEpochSentinel) {
-              items.add(this.generateDownNodeEvent(lastUpEvent, events.indexOf(lastUpEvent), lastDown, lastUpEvent.timeStamp));
+              items.add(this.generateDownNodeEvent(finalUpEvent, events.indexOf(finalUpEvent), lastDown, finalUpEvent.timeStamp));
             }
           }
         })
@@ -598,7 +600,7 @@ export class ApplicationTimelineGenerator extends TimeLineGeneratorBase<Applicat
 
         // state necessary for some events
         let previousApplicationUpgrade: ApplicationEvent;
-        let upgradeApplicationStarted: ApplicationEvent;
+        let upgradeApplicationStarted: ApplicationEvent | null = null;
 
         const applicationRollBacks: Record<string, {complete: ApplicationEvent, start?: ApplicationEvent}> = {};
         const processExitedGroups: Record<string, DataGroup> = {};
@@ -634,7 +636,7 @@ export class ApplicationTimelineGenerator extends TimeLineGeneratorBase<Applicat
         // we gather them up and add them at the end so we can get corresponding events
         Object.keys(applicationRollBacks).forEach(eventInstanceId => {
             const data = applicationRollBacks[eventInstanceId];
-            EventStoreUtils.parseUpgradeAndRollback(data.complete, events.indexOf(data.complete), data.start, items, startOfRange, ApplicationTimelineGenerator.applicationUpgradeLabel, 'ApplicationTypeVersion');
+            EventStoreUtils.parseUpgradeAndRollback(data.complete, events.indexOf(data.complete), data.start!, items, startOfRange, ApplicationTimelineGenerator.applicationUpgradeLabel, 'ApplicationTypeVersion');
         });
 
         // Display a pending upgrade
@@ -653,7 +655,7 @@ export class ApplicationTimelineGenerator extends TimeLineGeneratorBase<Applicat
             content: ApplicationTimelineGenerator.applicationPrcoessExitedLabel,
         };
         Object.keys(processExitedGroups).forEach(groupName => {
-            nestedApplicationProcessExited.nestedGroups.push(groupName);
+            nestedApplicationProcessExited.nestedGroups!.push(groupName);
             groups.add(processExitedGroups[groupName]);
         });
 
@@ -666,7 +668,7 @@ export class ApplicationTimelineGenerator extends TimeLineGeneratorBase<Applicat
         };
 
           Object.keys(containerExitedGroups).forEach(groupName => {
-            nestedContainerProcessExited.nestedGroups.push(groupName);
+            nestedContainerProcessExited.nestedGroups!.push(groupName);
             groups.add(containerExitedGroups[groupName]);
         });
 
@@ -758,11 +760,11 @@ export class PartitionTimelineGenerator extends TimeLineGeneratorBase<PartitionE
 
         periodicEventResults.forEach(result => {
           const timelineData = generateTimelineData(result.events, result.config, startOfRange, endOfRange);
-          timelineData.groups.forEach(group => {
+          timelineData.groups!.forEach(group => {
             groups.add(group)
           })
 
-          timelineData.items.forEach(event => {
+          timelineData.items!.forEach(event => {
             items.add(event);
           })
         })
@@ -822,14 +824,14 @@ export class RepairTaskTimelineGenerator extends TimeLineGeneratorBase<RepairTas
                     id: `${index}---${task.raw.TaskId}`,
                     content: task.raw.TaskId,
                     start: task.startTime ,
-                    end: task.inProgress ? new Date() : new Date(task.raw.History.CompletedUtcTimestamp),
+                    end: task.inProgress ? new Date() : new Date(task.raw.History!.CompletedUtcTimestamp!),
                     type: 'range',
                     kind: "RepairJob",
                     group: 'job',
                     subgroup: 'stack',
                     className: task.inProgress ? 'blue' : task.raw.ResultStatus === 'Succeeded' ? 'green' : 'red',
-                    title: EventStoreUtils.tooltipFormat(task.raw, new Date(task.raw.History.ExecutingUtcTimestamp).toLocaleString(),
-                                                                new Date(task.raw.History.CompletedUtcTimestamp).toLocaleString()),
+                    title: EventStoreUtils.tooltipFormat(task.raw, new Date(task.raw.History!.ExecutingUtcTimestamp!).toLocaleString(),
+                                                                new Date(task.raw.History!.CompletedUtcTimestamp!).toLocaleString()),
                 });
             }
         });

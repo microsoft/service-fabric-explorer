@@ -11,7 +11,7 @@ import { Subscription } from 'rxjs';
 })
 export class MessageWithConfirmationComponent implements OnInit, OnDestroy, DialogBodyComponent {
 
-  @Input() inputs: {message?: string, confirmationKeyword?: string};
+  @Input() inputs!: {message?: string, confirmationKeyword?: string};
   @Output() disableSubmit = new EventEmitter<boolean>();
  
   disableSubmitSubscription: Subscription = new Subscription();
@@ -24,7 +24,7 @@ export class MessageWithConfirmationComponent implements OnInit, OnDestroy, Dial
     this.userInputChange(this.userInput);
   }
 
-  userInputChange(value) {
+  userInputChange(value: any) {
     if (this.inputs.confirmationKeyword && this.inputs.confirmationKeyword !== value.trim()) {
       this.disableSubmit.emit(true);
     }

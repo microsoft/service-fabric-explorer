@@ -75,12 +75,12 @@ export interface IDecorators {
 
 export class DataModelBase<T> implements IDataModel<T> {
     public isInitialized: boolean;
-    public actions: ActionCollection;
+    public actions!: ActionCollection;
     public raw: T;
     public parent: any;
 
     protected valueResolver: ValueResolver;
-    private refreshingPromise: Subject<any>;
+    private refreshingPromise: Subject<any> | null = null;
 
     public get isRefreshing(): boolean {
         return !!this.refreshingPromise;
@@ -111,8 +111,8 @@ export class DataModelBase<T> implements IDataModel<T> {
         return ValueResolver.unknown;
     }
 
-    public constructor(public data: DataService, raw?: T, parent?: any) {
-        this.raw = raw;
+    public constructor(public data: DataService, raw?: T | null, parent?: any) {
+        this.raw = raw!;
         this.parent = parent;
         this.valueResolver = new ValueResolver();
 
@@ -131,12 +131,12 @@ export class DataModelBase<T> implements IDataModel<T> {
             this.retrieveNewData(messageHandler).pipe(mergeMap((raw: T) => {
                 return this.update(raw);
             })).subscribe( data => {
-                this.refreshingPromise.next(this);
-                this.refreshingPromise.complete();
+                this.refreshingPromise!.next(this);
+                this.refreshingPromise!.complete();
                 this.refreshingPromise = null;
             },
             err => {
-                this.refreshingPromise.error(this);
+                this.refreshingPromise!.error(this);
                 this.refreshingPromise = null;
             });
 
@@ -161,7 +161,7 @@ export class DataModelBase<T> implements IDataModel<T> {
     }
 
     public addHealthStateFiltersForChildren(clusterHealthChunkQueryDescription: IClusterHealthChunkQueryDescription): IHealthStateFilter {
-        return null;
+        return null!;
     }
 
     public mergeHealthStateChunk(healthChunk: IHealthStateChunk): Observable<any> {

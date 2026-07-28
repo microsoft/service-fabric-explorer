@@ -22,6 +22,7 @@ export class DeployedApplicationCollection extends DataModelCollectionBase<Deplo
                 nodeHealthChunk.DeployedApplicationHealthStateChunks,
                 item => IdGenerator.deployedApp(IdUtils.nameToId(item.ApplicationName)));
         }
+        return of(true);
     }
 
     protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): Observable<any> {

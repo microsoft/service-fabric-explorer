@@ -24,7 +24,7 @@ import { ActionDialogComponent } from 'src/app/modules/action-dialog/action-dial
 
 export class ApplicationType extends DataModelBase<IRawApplicationType> {
     /*IsInUse is only set on the AppType on the appType Essential page*/
-    public isInUse: boolean = null;
+    public isInUse: boolean | null = null;
     public serviceTypes: ServiceTypeCollection;
 
     public constructor(data: DataService, raw?: IRawApplicationType) {
@@ -45,7 +45,7 @@ export class ApplicationType extends DataModelBase<IRawApplicationType> {
     }
 
     public get resourceId(): string {
-        return this.raw.ApplicationTypeMetadata?.ArmMetadata?.ArmResourceId;
+        return this.raw.ApplicationTypeMetadata?.ArmMetadata?.ArmResourceId ?? '';
     }
 
     public get isArmManaged(): boolean{
@@ -94,7 +94,7 @@ export class ApplicationType extends DataModelBase<IRawApplicationType> {
             },
             ActionDialogComponent,
             () => true,
-            null,
+            undefined,
             {
                 title: "Create app instance",
             },
@@ -141,7 +141,7 @@ export class ApplicationTypeGroup extends DataModelBase<IRawApplicationType> {
       this.apps = apps.collection.filter(app => app.raw.TypeName === this.name);
 
       if (this.apps.length > 0) {
-        this.appsHealthState = this.valueResolver.resolveHealthStatus(Utils.max(this.apps.map(app => HealthStateConstants.Values[app.healthState.text])).toString());
+        this.appsHealthState = this.valueResolver.resolveHealthStatus(Utils.max(this.apps.map(app => (HealthStateConstants.Values as any)[app.healthState.text])).toString());
       } else {
         // When there are no apps in this apptype, treat it as healthy
         this.appsHealthState = ValueResolver.healthStatuses[1];
@@ -180,10 +180,10 @@ export class ApplicationTypeGroup extends DataModelBase<IRawApplicationType> {
             () => true,
             {
                 title: 'Confirm Type Unprovision',
-                class: this.isArmManaged ? 'warning' : null
+                class: this.isArmManaged ? 'warning' : undefined
             },
             {
-                template: this.isArmManaged ? MessageWithWarningComponent : null,
+                template: this.isArmManaged ? MessageWithWarningComponent : undefined,
                 inputs: {
                     message: `Unprovision all ${this.isArmManaged ? " non-arm managed " : null} versions of application type ${this.name} from cluster ${window.location.host}?`,
                     confirmationKeyword: this.name,
@@ -196,7 +196,7 @@ export class ApplicationTypeGroup extends DataModelBase<IRawApplicationType> {
 
     private unprovision(): Observable<any> {
         return this.data.getAppTypeGroup(this.name, true).pipe(mergeMap(appTypeGroup => {
-            const unprovisonPromises = [];
+            const unprovisonPromises: any[] = [];
             appTypeGroup.appTypes.forEach(applicationType => {
                 if (!applicationType.isArmManaged) {
                     unprovisonPromises.push(applicationType.unprovision());

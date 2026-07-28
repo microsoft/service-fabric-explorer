@@ -20,18 +20,18 @@ interface ExtendedListItem extends IEssentialListItem {
     standalone: false
 })
 export class RcaOverviewComponent implements AfterViewInit, OnChanges {
-  @Input() type: string;
-  @Input() events: IConcurrentEvents[];
+  @Input() type!: string;
+  @Input() events!: IConcurrentEvents[];
 
-  @ViewChild('chart') private chartContainer: ElementRef;
-  private chart: Chart;
+  @ViewChild('chart') private chartContainer!: ElementRef;
+  private chart!: Chart;
   private preGeneratedColors = [...pregeneratedColors];
   public whiteLists = pregeneratedColors.map(c => "color-"+c).concat(['rca-summary-key']); //add all of the pregenerated safe timeline colors and the summary key item
 
   public options: Options = {
     chart: {
       type: 'pie',
-      backgroundColor: null,
+      backgroundColor: null as any,
       borderRadius: 0,
       spacingTop: 0,
       spacingBottom: 0,
@@ -58,7 +58,7 @@ export class RcaOverviewComponent implements AfterViewInit, OnChanges {
       pie: {
         borderWidth: 2,
         innerSize: '50%',
-        borderColor: null,
+        borderColor: null as any,
         allowPointSelect: true,
         cursor: 'pointer',
         dataLabels: {
@@ -72,14 +72,14 @@ export class RcaOverviewComponent implements AfterViewInit, OnChanges {
 
   public colorKey: Record<string, IPregeneratedColor> = {};
   public reasons: ExtendedListItem[] = [];
-  public timelineData: ITimelineData;
+  public timelineData!: ITimelineData;
 
   constructor() { }
 
   generateDataSet(listItems: ExtendedListItem[]) {
     return listItems.map(item => {
       return {
-        y: +item.displayText,
+        y: +item.displayText!,
         name: item.key,
         type: 'pie',
         dataLabels: {
@@ -168,7 +168,7 @@ export class RcaOverviewComponent implements AfterViewInit, OnChanges {
   }
 
   reasonTreeToList(event: IConcurrentEvents): IConcurrentEvents[] {
-    let next = event;
+    let next: IConcurrentEvents | null = event;
     const list = [];
     while (next) {
       list.push(next)

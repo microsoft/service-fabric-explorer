@@ -21,8 +21,8 @@ export class AllNodesComponent extends BaseControllerDirective {
   private settings = inject(SettingsService);
 
 
-  nodes: NodeCollection;
-  listSettings: ListSettings;
+  nodes!: NodeCollection;
+  listSettings!: ListSettings;
   tiles: IDashboardViewModel[] = [];
 
   setup() {

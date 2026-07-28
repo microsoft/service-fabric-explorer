@@ -9,9 +9,9 @@ import { Component, Input, OnChanges, OnInit, ChangeDetectionStrategy } from '@a
 })
 export class RelationViewerComponent implements OnChanges {
 
-  @Input() key: string;
+  @Input() key!: string;
 
-  split: string[];
+  split!: string[];
   constructor() { }
 
   ngOnChanges(): void {

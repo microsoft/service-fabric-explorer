@@ -12,12 +12,12 @@ import { DeployedServicePackage } from 'src/app/Models/DataModels/DeployedServic
 export class DeployedServicePackageBaseControllerDirective extends BaseControllerDirective {
     protected data = inject(DataService);
 
-    public serviceId: string;
-    public activationId: string;
-    public appId: string;
-    public nodeName: string;
+    public serviceId!: string;
+    public activationId!: string;
+    public appId!: string;
+    public nodeName!: string;
 
-    servicePackage: DeployedServicePackage;
+    servicePackage!: DeployedServicePackage;
 
     common(messageHandler?: IResponseMessageHandler): Observable<any> {
         return this.data.getDeployedServicePackage(this.nodeName, this.appId, this.serviceId, this.activationId, true, messageHandler)

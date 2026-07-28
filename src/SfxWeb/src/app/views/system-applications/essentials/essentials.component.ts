@@ -19,7 +19,7 @@ export class EssentialsComponent extends ServiceApplicationsBaseControllerDirect
   private settings = inject(SettingsService);
 
 
-  listSettings: ListSettings;
+  listSettings!: ListSettings;
   essentialItems: IEssentialListItem[] = [];
 
   setup() {

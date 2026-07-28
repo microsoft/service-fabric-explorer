@@ -19,9 +19,9 @@ export class SafetyChecksComponent implements OnChanges, OnInit, OnDestroy {
   settingsService = inject(SettingsService);
 
 
-  @Input() safetyChecks: IRawSafetyCheckDescription[];
+  @Input() safetyChecks!: IRawSafetyCheckDescription[];
 
-  settings: ListSettings;
+  settings!: ListSettings;
   safetyChecksWithData: IRawSafetyCheckDescription[] = [];
   tooManySafetyChecks = false;
 
@@ -71,7 +71,7 @@ export class SafetyChecksComponent implements OnChanges, OnInit, OnDestroy {
     this.cdr.detectChanges();
   }
 
-  safetyCheck(index, safetyCheck: IRawSafetyCheckDescription) {
+  safetyCheck(index: any, safetyCheck: IRawSafetyCheckDescription) {
     return safetyCheck.SafetyCheck.PartitionId || safetyCheck.SafetyCheck.Kind;
   }
 

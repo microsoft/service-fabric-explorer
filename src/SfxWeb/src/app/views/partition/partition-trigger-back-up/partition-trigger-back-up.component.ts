@@ -19,7 +19,7 @@ export class PartitionTriggerBackUpComponent implements OnInit {
   dialogRef = inject<MatDialogRef<PartitionTriggerBackUpComponent>>(MatDialogRef);
 
 
-  form: UntypedFormGroup;
+  form!: UntypedFormGroup;
   ngOnInit() {
     // storage gets set by nested component
     this.form = this.formBuilder.group({

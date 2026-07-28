@@ -10,14 +10,14 @@ import { Chart, Options, chart, PointOptionsObject, SeriesPieOptions } from 'hig
     standalone: false
 })
 export class HealthChartComponent implements OnInit, AfterViewInit, OnChanges {
-  @Input() data: IDashboardDataPointViewModel[];
+  @Input() data!: IDashboardDataPointViewModel[];
   @Input() width = '80';
   @Input() title: number | string = '';
   @Input() description: string = '';
 
-  @ViewChild('chart') private chartContainer: ElementRef;
+  @ViewChild('chart') private chartContainer!: ElementRef;
 
-  private chart: Chart;
+  private chart!: Chart;
 
   fontColor = {
     color: '#fff'
@@ -26,7 +26,7 @@ export class HealthChartComponent implements OnInit, AfterViewInit, OnChanges {
   public options: Options = {
     chart: {
       type: 'pie',
-      backgroundColor: null,
+      backgroundColor: null as any,
       borderRadius: 0,
       margin: [0, 0, 0, 0],
       spacingTop: 0,
@@ -110,16 +110,16 @@ export class HealthChartComponent implements OnInit, AfterViewInit, OnChanges {
   constructor() { }
 
   ngOnInit() {
-    this.options.chart.height = this.width;
-    this.options.chart.width = this.width;
-    this.options.title.text = this.description.toString();
-    this.options.subtitle.text = this.title.toString();
+    this.options.chart!.height = this.width;
+    this.options.chart!.width = this.width;
+    this.options.title!.text = this.description.toString();
+    this.options.subtitle!.text = this.title.toString();
 
     const data = this.getDataSet();
-    this.options.tooltip.enabled = data.length === 3;
-    (this.options.series[0] as SeriesPieOptions).data = data;
+    this.options.tooltip!.enabled = data.length === 3;
+    (this.options.series![0] as SeriesPieOptions).data = data;
 
-    this.options.subtitle.style.fontSize =  +this.width * .2 + 'pt';
+    this.options.subtitle!.style!.fontSize =  +this.width * .2 + 'pt';
   }
 
   ngAfterViewInit() {
@@ -137,7 +137,7 @@ export class HealthChartComponent implements OnInit, AfterViewInit, OnChanges {
       return {
         name: p.title,
         y: p.count,
-        color: colors[p.title]
+        color: (colors as any)[p.title]
       };
     });
 

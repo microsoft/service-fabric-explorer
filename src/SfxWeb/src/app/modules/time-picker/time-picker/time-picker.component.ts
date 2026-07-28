@@ -18,11 +18,11 @@ export interface IQuickDates {
 })
 export class TimePickerComponent implements OnInit, OnDestroy {
 
-  @Input() dateMin: Date;
-  @Input() dateMax: Date;
+  @Input() dateMin!: Date;
+  @Input() dateMax!: Date;
 
-  @Input() startDate: Date;
-  @Input() endDate: Date;
+  @Input() startDate!: Date;
+  @Input() endDate!: Date;
 
   @Output() dateChange = new EventEmitter<IOnDateChange>(); 
     
@@ -35,7 +35,7 @@ export class TimePickerComponent implements OnInit, OnDestroy {
   ];
 
   private debounceHandler: Subject<IOnDateChange> = new Subject<IOnDateChange>();
-  private debouncerHandlerSubscription: Subscription;
+  private debouncerHandlerSubscription!: Subscription;
 
   
   constructor() { }
