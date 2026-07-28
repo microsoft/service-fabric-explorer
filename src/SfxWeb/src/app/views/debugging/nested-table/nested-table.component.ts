@@ -15,9 +15,9 @@ export class NestedTableComponent implements DetailBaseComponent, OnInit {
   private settings = inject(SettingsService);
 
 
-  item: IRequestsData;
-  listSetting: ListColumnSetting;
-  listSettings: ListSettings;
+  item!: IRequestsData;
+  listSetting!: ListColumnSetting;
+  listSettings!: ListSettings;
 
   ngOnInit(): void {
     this.listSettings = this.settings.getNewOrExistingNetworkRequestListSettings();

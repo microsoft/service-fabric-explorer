@@ -11,7 +11,7 @@ import { IEssentialListItem } from '../../charts/essential-health-tile/essential
 })
 export class ReplicaStatusComponent implements OnChanges {
 
-  @Input() replicator: IRawRemoteReplicatorStatus;
+  @Input() replicator!: IRawRemoteReplicatorStatus;
   copyItems: IEssentialListItem[] = [];
   replicationItems: IEssentialListItem[] = [];
   lastItems: IEssentialListItem[] = [];

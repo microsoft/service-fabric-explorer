@@ -34,20 +34,20 @@ export class OrchestrationViewComponent implements OnInit, AfterViewInit {
   readonly constraintCheckEventColor = "Orange";
   readonly otherEventColor = "Red";
 
-  partitionEvents: PartitionEvent[];
-  partitionId: string;
-  selectedEvent: PartitionEvent;
+  partitionEvents!: PartitionEvent[];
+  partitionId!: string;
+  selectedEvent: PartitionEvent | null = null;
 
-  dateMin: Date;
-  startDate: Date;
-  endDate: Date;
+  dateMin!: Date;
+  startDate!: Date;
+  endDate!: Date;
 
   balancingToggle = true;
   placementToggle = true;
   constrainCheckToggle = true;
   otherToggle = true;
 
-  timeLineEventsData: ITimelineData;
+  timeLineEventsData: ITimelineData | null = null;
 
   ngOnInit(): void {
     if (!this.dataService.clusterManifest.isEventStoreEnabled) {
@@ -103,7 +103,7 @@ export class OrchestrationViewComponent implements OnInit, AfterViewInit {
 
     const partitionEventData = this.dataService.getPartitionEventData(this.partitionId);
     partitionEventData.eventsList.setEventFilter(["Operation"]);
-    partitionEventData.setDateWindow(this.startDate, this.endDate);
+    partitionEventData.setDateWindow!(this.startDate, this.endDate);
     partitionEventData.eventsList.refresh().subscribe((success) => {
       if (!success) {
         console.error("Failed to refresh event data");
@@ -114,11 +114,11 @@ export class OrchestrationViewComponent implements OnInit, AfterViewInit {
   }
 
   selectEvent(index: string) {
-    this.selectedEvent = this.partitionEvents[index];
+    this.selectedEvent = this.partitionEvents[+index];
   }
 
   private fillInOperationEventsData(partitionEventData: IEventStoreData<PartitionEventList, PartitionEvent>) {
-    this.partitionEvents = partitionEventData.getEvents().filter((event) => this.shouldIncludeEvent(event));
+    this.partitionEvents = partitionEventData.getEvents!().filter((event) => this.shouldIncludeEvent(event));
     this.addNodeNames();
     const items = this.generateTimelineItems();
     this.timeLineEventsData = {

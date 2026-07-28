@@ -18,17 +18,17 @@ export class RcaVisualizationComponent implements VisualizationComponent {
   changeDetector = inject(ChangeDetectorRef);
 
 
-  @Input() listEventStoreData: IEventStoreData<any, any>[];
+  @Input() listEventStoreData!: IEventStoreData<any, any>[];
   @Output() updateColumn = new EventEmitter<EventColumnUpdate>();
 
   public simulEvents: Record<string, IConcurrentEvents> = {};
   public simulEventsList: IConcurrentEvents[] = [];
 
   private getConcurrentEventsData() {
-    let sourceEvents = [];
+    let sourceEvents: any[] = [];
     for (const data of this.listEventStoreData) {
       if (data.eventsList.lastRefreshWasSuccessful) {
-        sourceEvents = sourceEvents.concat(data.getEvents());
+        sourceEvents = sourceEvents.concat(data.getEvents!());
       }
     }
 

@@ -16,7 +16,7 @@ export class AllComponent extends ApplicationsBaseControllerDirective {
   private settings = inject(SettingsService);
 
 
-  listSettings: ListSettings;
+  listSettings!: ListSettings;
 
   setup() {
     this.listSettings = this.settings.getNewOrExistingListSettings('apps', ['name'], [

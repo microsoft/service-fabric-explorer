@@ -29,8 +29,8 @@ export class AdvancedOptionComponent implements OnInit {
   public showBeta = environment.showBeta;
 
   status = false;
-  @ViewChild(NgbDropdown, {static: true}) dropdown: NgbDropdown;
-  @ViewChildren(NgbTooltip) tooltips: QueryList<NgbTooltip>;
+  @ViewChild(NgbDropdown, {static: true}) dropdown!: NgbDropdown;
+  @ViewChildren(NgbTooltip) tooltips!: QueryList<NgbTooltip>;
 
   ngOnInit() {
     this.status = this.storage.getValueBoolean(Constants.AdvancedModeKey, false);
@@ -50,7 +50,7 @@ export class AdvancedOptionComponent implements OnInit {
   @HostListener("document:click", ["$event"])
   handleClickEvent(event: PointerEvent) {
     try {
-      if(this.dropdown.isOpen() && !event.target['closest']("#advanced-options-container")) {
+      if(this.dropdown.isOpen() && !(event.target! as any)['closest']("#advanced-options-container")) {
         this.dropdown.close();
       }
     } catch(e) {
@@ -71,12 +71,12 @@ export class AdvancedOptionComponent implements OnInit {
     }
   }
 
-  pageSize(size) {
+  pageSize(size: any) {
     this.settingsService.paginationLimit = size;
     this.telemetryService.trackActionEvent(TelemetryEventNames.listSize, {value: size.toString()});
   }
 
-  suppressMessages(state) {
+  suppressMessages(state: any) {
     this.messageService.suppressMessage = state;
     this.telemetryService.trackActionEvent(TelemetryEventNames.supressMessage, null, TelemetryEventNames.supressMessage);
   }

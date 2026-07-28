@@ -10,6 +10,7 @@ import { NodeBaseControllerDirective } from '../NodeBase';
 import { IEssentialListItem } from 'src/app/modules/charts/essential-health-tile/essential-health-tile.component';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { INodeTypeInfo } from 'src/app/Models/DataModels/Cluster';
+import { RepairTask } from 'src/app/Models/DataModels/repairTask';
 
 @Component({
     selector: 'app-essentials',
@@ -23,16 +24,16 @@ export class EssentialsComponent extends NodeBaseControllerDirective {
   private settings = inject(SettingsService);
 
 
-  deployedApps: DeployedApplicationCollection;
-  listSettings: ListSettings;
+  deployedApps!: DeployedApplicationCollection;
+  listSettings!: ListSettings;
 
   essentialItems: IEssentialListItem[] = [];
   ringInfo: IEssentialListItem[] = [];
 
-  repairJobs = [];
-  repairJobSettings: ListSettings;
+  repairJobs: RepairTask[] = [];
+  repairJobSettings!: ListSettings;
 
-  placementProperties: INodeTypeInfo;
+  placementProperties!: INodeTypeInfo;
 
   setup() {
     this.repairJobSettings = this.settings.getNewOrExistingPendingRepairTaskListSettings();
@@ -107,7 +108,7 @@ export class EssentialsComponent extends NodeBaseControllerDirective {
         this.deployedApps = this.node.deployedApps;
       })),
       this.data.clusterManifest.ensureInitialized().pipe(mergeMap(() => {
-        this.placementProperties = this.data.clusterManifest.getNodeProperties(this.node.raw.Type);
+        this.placementProperties = this.data.clusterManifest.getNodeProperties(this.node.raw.Type)!;
         if (this.data.clusterManifest.isRepairManagerEnabled) {
           return this.data.repairCollection.refresh().pipe(map(() => {
             this.repairJobs = this.data.repairCollection.getRepairJobsForANode(this.node.name);

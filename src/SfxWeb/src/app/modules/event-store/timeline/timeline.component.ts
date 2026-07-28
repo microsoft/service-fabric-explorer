@@ -24,7 +24,7 @@ export class TimelineComponent implements VisualizationComponent {
   private timelineGeneratorFactoryService = inject(TimelineGeneratorFactoryService);
 
 
-  @Input() listEventStoreData: IEventStoreData<any, any>[];
+  @Input() listEventStoreData!: IEventStoreData<any, any>[];
   @Input() startDate: Date = new Date();
   @Input() endDate: Date = new Date();
   @Output() selectEvent = new EventEmitter<string>();
@@ -36,7 +36,7 @@ export class TimelineComponent implements VisualizationComponent {
     this.getTimelineData();
   }
 
-  public timeLineEventsData: ITimelineData;
+  public timeLineEventsData!: ITimelineData;
   public showCorrelatedBtn = false;
   public transformText = 'Category,Kind';
 
@@ -48,8 +48,8 @@ export class TimelineComponent implements VisualizationComponent {
 
   public setSearch(search?: string) {
     if (search) {
-      const item = this.timeLineEventsData.items.get(search);
-      const id = (item.id as string).split('---')[1];
+      const item = this.timeLineEventsData.items!.get(search);
+      const id = (item!.id as string).split('---')[1];
       this.selectEvent.emit(id);
     }
   }
@@ -64,7 +64,7 @@ export class TimelineComponent implements VisualizationComponent {
   }
 
   public getTimelineData() {
-    let rawEventlist = [];
+    let rawEventlist: any[] = [];
     let combinedTimelineData = this.initializeTimelineData();
     const addNestedGroups = this.listEventStoreData.length > 1;
 
@@ -78,13 +78,13 @@ export class TimelineComponent implements VisualizationComponent {
         try {
           if (!this.pshowCorrelatedEvents) {
             if (data.setDateWindow) {
-              rawEventlist = rawEventlist.concat(data.getEvents());
+              rawEventlist = rawEventlist.concat(data.getEvents!());
             }
 
           } else if (data.type) {
             // If we have more than one element in the timeline the events get grouped by the displayName of the element.
             const timelineGenerator = this.timelineGeneratorFactoryService.getTimelineGenerator(data.type);
-            const timelineData = timelineGenerator.generateTimeLineData(data.getEvents(), this.startDate, this.endDate, addNestedGroups ? data.displayName : null);
+            const timelineData = timelineGenerator.generateTimeLineData(data.getEvents!(), this.startDate, this.endDate, addNestedGroups ? data.displayName : null!);
 
             mergeTimelineData(combinedTimelineData, timelineData);
           }

@@ -18,7 +18,7 @@ export class ImagestoreComponent extends BaseControllerDirective {
   settings = inject(SettingsService);
 
 
-  imageStore: ImageStore;
+  imageStore!: ImageStore;
 
   setup() {
     this.imageStore = new ImageStore(this.data);

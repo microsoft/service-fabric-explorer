@@ -24,7 +24,7 @@ export class EventTypesUtil {
         'ReplicatorFaulted',
         'SecondaryReplicationQueueFull',
         'SecondaryReplicationQueueWarning'],
-        item => item.split('-')[0].replaceAll('*', '') );
+        item => item.split('-')[0].replace(/\*/g, '') );
     private ErrorEventTypes = Utils.keyByFromFunction( [
         '*HealthReportCreated-HealthState:Error',
         '*NewHealthReport-HealthState:Error',
@@ -32,11 +32,11 @@ export class EventTypesUtil {
         'NodeOpenFailed',
         'NodeAborted',
         'TStoreError' ],
-        item => item.split('-')[0].replaceAll('*', '') );
+        item => item.split('-')[0].replace(/\*/g, '') );
     private ResolvedEventTypes = Utils.keyByFromFunction( [
         '*HealthReportCreated-HealthState:Ok',
         '*NewHealthReport-HealthState:Ok' ],
-        item => item.split('-')[0].replaceAll('*', '') );
+        item => item.split('-')[0].replace(/\*/g, '') );
 
     private warningEventsRegExp = EventTypesUtil.constructRegExp(
         Object.keys(this.WarningEventTypes).map(e => this.WarningEventTypes[e]));
@@ -71,7 +71,7 @@ export class EventTypesUtil {
         if (match) {
             return match.filter(i => i)[1];
         }
-        return result;
+        return result!;
     }
 
     private static isPropertyMatching(event: FabricEventBase, lookupString: string): boolean {

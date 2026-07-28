@@ -1,6 +1,6 @@
 <form class="action-modal">
-    <div [class]="'modal-header ' + data.modalTitle.class">
-        <h1 class="modal-title">{{data.modalTitle.title}}</h1>
+    <div [class]="'modal-header ' + data.modalTitle?.class">
+        <h1 class="modal-title">{{data.modalTitle?.title}}</h1>
     </div>
     <div class="modal-body"> 
         <ng-template appDialogBody></ng-template>

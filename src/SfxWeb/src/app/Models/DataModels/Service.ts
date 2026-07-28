@@ -54,7 +54,7 @@ export class Service extends DataModelBase<IRawService> {
     public health: ServiceHealth;
     public description: ServiceDescription;
     public serviceBackupConfigurationInfoCollection: ServiceBackupConfigurationInfoCollection;
-    public backupPolicyName: string;
+    public backupPolicyName!: string;
     public cleanBackup: boolean;
 
     public constructor(data: DataService, raw: IRawService, public parent: Application) {
@@ -100,7 +100,7 @@ export class Service extends DataModelBase<IRawService> {
     }
 
     public get resourceId(): string {
-        return this.raw.ServiceMetadata?.ArmMetadata?.ArmResourceId;
+        return this.raw.ServiceMetadata?.ArmMetadata?.ArmResourceId ?? '';
     }
 
     public get isArmManaged(): boolean {
@@ -109,15 +109,15 @@ export class Service extends DataModelBase<IRawService> {
 
     public addHealthStateFiltersForChildren(clusterHealthChunkQueryDescription: IClusterHealthChunkQueryDescription): IServiceHealthStateFilter {
         const appFilter = this.parent.addHealthStateFiltersForChildren(clusterHealthChunkQueryDescription);
-        let serviceFilter = appFilter.ServiceFilters.find(filter => filter.ServiceNameFilter === this.name);
+        let serviceFilter = appFilter.ServiceFilters!.find(filter => filter.ServiceNameFilter === this.name);
         if (!serviceFilter) {
             serviceFilter = {
                 ServiceNameFilter: this.name,
                 PartitionFilters: []
             };
-            appFilter.ServiceFilters.push(serviceFilter);
+            appFilter.ServiceFilters!.push(serviceFilter);
         }
-        if (serviceFilter.PartitionFilters.length === 0) {
+        if (serviceFilter.PartitionFilters!.length === 0) {
             serviceFilter.PartitionFilters = [{
                 HealthStateFilter: HealthStateFilterFlags.All
             }];
@@ -173,7 +173,7 @@ export class Service extends DataModelBase<IRawService> {
                     this,
                     ActionDialogComponent,
                     () => this.isStatelessService,
-                    null,
+                    undefined,
                     {
                         title: "Scale Service",
                     },
@@ -286,7 +286,7 @@ export class ServiceType extends DataModelBase<IRawServiceType> {
 
 export class ServiceManifest extends DataModelBase<IRawServiceManifest> {
     public packages: ServiceTypePackage[] = [];
-    public serviceManifestName: string;
+    public serviceManifestName!: string;
 
     public constructor(data: DataService, public parent: DeployedServicePackage | ServiceType) {
         super(data, null, parent);
@@ -310,12 +310,12 @@ export class ServiceManifest extends DataModelBase<IRawServiceManifest> {
             const xml = parser.parseFromString(this.raw.Manifest, 'text/xml');
 
             const manifest = xml.getElementsByTagName('ServiceManifest')[0];
-            this.serviceManifestName = manifest.getAttribute('Name');
+            this.serviceManifestName = manifest.getAttribute('Name')!;
 
             // let $xml = $($.parseXML(this.raw.Manifest));
             let packType = xml.getElementsByTagName('CodePackage');
 
-            const packages = [];
+            const packages: any[] = [];
             Array.from(packType).forEach( (item: any) => {
                 packages.push(new ServiceTypePackage(this.data, 'Code', item.getAttribute('Name'), item.getAttribute('Version')));
             });
@@ -346,11 +346,11 @@ export class ServiceTypePackage extends DataModelBase<any> {
 }
 
 export class CreateServiceDescription {
-    public raw: IRawCreateServiceDescription;
+    public raw!: IRawCreateServiceDescription;
 
-    public initializationData: string;
-    public createFromTemplate: boolean;
-    public isAdvancedOptionCollapsed: boolean;
+    public initializationData!: string;
+    public createFromTemplate!: boolean;
+    public isAdvancedOptionCollapsed!: boolean;
 
     public get createDescription(): IRawCreateServiceDescription {
         const descriptionCloned = cloneDeep(this.raw);
@@ -378,7 +378,7 @@ export class CreateServiceDescription {
              
             flags ^= 0x80;
         } else {
-            delete descriptionCloned.AuxiliaryReplicaCount;
+            delete (descriptionCloned as any).AuxiliaryReplicaCount;
             if (this.raw.ServiceLoadMetrics !== null && this.raw.ServiceLoadMetrics.length > 0) {
                 descriptionCloned.ServiceLoadMetrics.forEach(metric => delete metric.AuxiliaryDefaultLoad);
             }

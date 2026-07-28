@@ -48,7 +48,7 @@ export class DeployedServicePackage extends DataModelBase<IRawDeployedServicePac
         return this.data.restClient.getDeployedServicePackage(this.parent.parent.name, this.parent.id, this.name, messageHandler)
             .pipe(map(response => {
                 return this.servicePackageActivationId
-                    ? response.find(item => this.servicePackageActivationId === item.ServicePackageActivationId)
+                    ? response.find(item => this.servicePackageActivationId === item.ServicePackageActivationId)!
                     : response[0];
             }));
     }

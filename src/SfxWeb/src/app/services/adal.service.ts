@@ -12,8 +12,8 @@ import { StringUtils } from '../Utils/StringUtils';
 export class AdalService {
   private http = inject(RestClientService);
 
-  private context: AuthenticationContext;
-  public config: AadMetadata;
+  private context!: AuthenticationContext;
+  public config!: AadMetadata;
   public aadEnabled = false;
 
   load(): Observable<AuthenticationContext> {
@@ -39,6 +39,7 @@ export class AdalService {
 
           return this.context;
         }
+        return this.context;
       }));
     }
   }
@@ -76,12 +77,12 @@ export class AdalService {
 
   public getAccessToken(endpoint: string, callbacks: (message: string, token: string) => any) {
 
-      return this.context.acquireToken(endpoint, callbacks);
+      return this.context.acquireToken(endpoint, callbacks as any);
   }
 
   public acquireTokenResilient(resource: string): Observable<any> {
     return new Observable<any>((subscriber: Subscriber<any>) => {
-      this.context.acquireToken(resource, (message: string, token: string) => {
+      this.context.acquireToken(resource, (message: string | null, token: string | null) => {
         if (token) {
           subscriber.next(token);
         } else {

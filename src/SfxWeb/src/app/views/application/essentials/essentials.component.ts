@@ -29,18 +29,18 @@ export class EssentialsComponent extends ApplicationBaseControllerDirective {
   private settings = inject(SettingsService);
 
 
-  upgradeProgress: ApplicationUpgradeProgress;
-  listSettings: ListSettings;
-  upgradeProgressUnhealthyEvaluationsListSettings: ListSettings;
-  serviceTypesListSettings: ListSettings;
+  upgradeProgress!: ApplicationUpgradeProgress;
+  listSettings!: ListSettings;
+  upgradeProgressUnhealthyEvaluationsListSettings!: ListSettings;
+  serviceTypesListSettings!: ListSettings;
 
-  servicesDashboard: IDashboardViewModel;
-  partitionsDashboard: IDashboardViewModel;
-  replicasDashboard: IDashboardViewModel;
+  servicesDashboard!: IDashboardViewModel;
+  partitionsDashboard!: IDashboardViewModel;
+  replicasDashboard!: IDashboardViewModel;
   essentialItems: IEssentialListItem[] = [];
 
-  eventStoreHandler: IEventStoreData<ApplicationEventList, ApplicationEvent>;
-  highValueEvents: IConcurrentEvents[] = null;
+  eventStoreHandler!: IEventStoreData<ApplicationEventList, ApplicationEvent>;
+  highValueEvents: IConcurrentEvents[] | null = null;
   failedToLoadEvents = false;
 
   setup() {
@@ -70,7 +70,7 @@ export class EssentialsComponent extends ApplicationBaseControllerDirective {
         this.eventStoreHandler.eventsList.setEventFilter(['ProcessDeactivated', 'ContainerDeactivated']);
         this.eventStoreHandler.eventsList.refresh().subscribe((success) => {
           if(success) {
-            this.highValueEvents = getSimultaneousEventsForEvent(RelatedEventsConfigs, this.eventStoreHandler.getEvents(), this.eventStoreHandler.getEvents());
+            this.highValueEvents = getSimultaneousEventsForEvent(RelatedEventsConfigs, this.eventStoreHandler.getEvents!(), this.eventStoreHandler.getEvents!());
           }else{
             this.failedToLoadEvents = true;
           }
@@ -90,7 +90,7 @@ export class EssentialsComponent extends ApplicationBaseControllerDirective {
   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
     this.data.clusterManifest.ensureInitialized().subscribe(() => {
       if (this.data.clusterManifest.isBackupRestoreEnabled) {
-        this.data.refreshBackupPolicies(messageHandler);
+        this.data.refreshBackupPolicies(messageHandler!);
       }
     });
 

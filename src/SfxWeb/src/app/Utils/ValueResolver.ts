@@ -33,7 +33,7 @@ export class ValueResolver {
         return this.resolve(value, ValueResolver.healthStatus, ValueResolver.healthStatus[ValueResolver.length - 1]);
     }
 
-    public resolve(value: string, options: ITextAndBadge[], defaultValue: ITextAndBadge = null): ITextAndBadge {
+    public resolve(value: string, options: ITextAndBadge[], defaultValue: ITextAndBadge | null = null): ITextAndBadge {
 
         if (Utils.isNumeric(value)) {
             const enumValue = +value;

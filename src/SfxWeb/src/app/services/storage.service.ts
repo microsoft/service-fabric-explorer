@@ -9,18 +9,18 @@ export class StorageService {
   }
 
   public getValueNumber(key: string, defaultValue: number): number {
-      return this.getValueT<number>(key, (item) => Number(item), defaultValue);
+      return this.getValueT<number>(key, (item: any) => Number(item), defaultValue);
   }
 
   public getValueString(key: string, defaultValue: string): string {
-      return this.getValueT<string>(key, (item) => item, defaultValue);
+      return this.getValueT<string>(key, (item: any) => item, defaultValue);
   }
 
   public getValueBoolean(key: string, defaultValue: boolean): boolean {
-      return this.getValueT<boolean>(key, (item) => item === 'true', defaultValue);
+      return this.getValueT<boolean>(key, (item: any) => item === 'true', defaultValue);
   }
 
-  public getValueT<T>(key: string, convert: (item) => T, defaultValue: T): T {
+  public getValueT<T>(key: string, convert: (item: any) => T, defaultValue: T): T {
       const value = localStorage.getItem(key);
       if (value !== null) {
           return convert(value);

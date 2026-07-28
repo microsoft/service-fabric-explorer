@@ -10,16 +10,16 @@ import { environment } from 'src/environments/environment';
     standalone: false
 })
 export class NodeListComponent {
-  @Input() listTemplate: TemplateRef<any>;
+  @Input() listTemplate!: TemplateRef<any>;
 
   @Input() underlineLast = true;
-  @Input() nodes: Node[];
+  @Input() nodes!: Node[];
 
   public assetBase = environment.assetBase;
 
   constructor() { }
 
-  trackByFn(index, node: Node) {
+  trackByFn(index: any, node: Node) {
     return node.uniqueId;
   }
 }

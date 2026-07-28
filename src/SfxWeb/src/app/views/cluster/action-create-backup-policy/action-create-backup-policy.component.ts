@@ -19,7 +19,7 @@ export class ActionCreateBackupPolicyComponent implements OnInit {
   private cdr = inject(ChangeDetectorRef);
 
 
-  form: UntypedFormGroup;
+  form!: UntypedFormGroup;
 
   public date = '';
   public weekDay: string[]  = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
@@ -39,7 +39,7 @@ export class ActionCreateBackupPolicyComponent implements OnInit {
     delete data.Storage.IsEmptySecondaryCredential;
 
     if (data.Schedule.ScheduleKind === 'TimeBased' && data.Schedule.ScheduleFrequencyType === 'Weekly') {
-      data.Schedule.RunDays = data.Schedule.RunDays.map( (status: boolean, index: number ) => status ? this.weekDay[index] : null).filter( day => day !== null);
+      data.Schedule.RunDays = data.Schedule.RunDays.map( (status: boolean, index: number ) => status ? this.weekDay[index] : null).filter( (day: any) => day !== null);
     }else{
       data.Schedule.RunDays = [];
     }
@@ -79,13 +79,13 @@ export class ActionCreateBackupPolicyComponent implements OnInit {
       })
     });
 
-    this.form.get('retentionPolicyRequired').valueChanges.subscribe(required => {
-      this.form.get('RetentionPolicy').get('RetentionDuration').setValidators(required ? [Validators.required, Validators.minLength(1)] : null);
-      this.form.get('RetentionPolicy').get('RetentionDuration').updateValueAndValidity();
+    this.form.get('retentionPolicyRequired')!.valueChanges.subscribe(required => {
+      this.form.get('RetentionPolicy')!.get('RetentionDuration')!.setValidators(required ? [Validators.required, Validators.minLength(1)] : null);
+      this.form.get('RetentionPolicy')!.get('RetentionDuration')!.updateValueAndValidity();
       this.cdr.detectChanges();
     });
 
-    this.form.get('Schedule').get('ScheduleKind').valueChanges.subscribe(type => {
+    this.form.get('Schedule')!.get('ScheduleKind')!.valueChanges.subscribe(type => {
       this.updateSchedule(type);
     });
 
@@ -96,7 +96,7 @@ export class ActionCreateBackupPolicyComponent implements OnInit {
           this.form.patchValue({retentionPolicyRequired : true});
         }
 
-        this.form.get('Name').disable();
+        this.form.get('Name')!.disable();
         if (this.data.data.Schedule.ScheduleFrequencyType === 'Weekly') {
           this.setDays(this.data.data.Schedule.RunDays);
         }
@@ -104,27 +104,27 @@ export class ActionCreateBackupPolicyComponent implements OnInit {
       this.setDays([]);
     }
 
-    this.updateSchedule(this.form.get('Schedule').get('ScheduleKind').value);
+    this.updateSchedule(this.form.get('Schedule')!.get('ScheduleKind')!.value);
 
     this.cdr.detectChanges();
   }
 
   updateSchedule(state: string) {
-    this.form.get('Schedule').get('ScheduleFrequencyType').setValidators(state === 'TimeBased' ? [Validators.required] : null);
-    this.form.get('Schedule').get('Interval').setValidators(state === 'FrequencyBased' ? [Validators.required] : null);
+    this.form.get('Schedule')!.get('ScheduleFrequencyType')!.setValidators(state === 'TimeBased' ? [Validators.required] : null);
+    this.form.get('Schedule')!.get('Interval')!.setValidators(state === 'FrequencyBased' ? [Validators.required] : null);
 
-    this.form.get('Schedule').get('ScheduleFrequencyType').updateValueAndValidity();
-    this.form.get('Schedule').get('Interval').updateValueAndValidity();
+    this.form.get('Schedule')!.get('ScheduleFrequencyType')!.updateValueAndValidity();
+    this.form.get('Schedule')!.get('Interval')!.updateValueAndValidity();
     this.cdr.detectChanges();
 
   }
 
   get RunTimes() {
-    return this.form.get('Schedule').get('RunTimes') as UntypedFormArray;
+    return this.form.get('Schedule')!.get('RunTimes') as UntypedFormArray;
   }
 
   get RunDays() {
-    return this.form.get('Schedule').get('RunDays') as UntypedFormArray;
+    return this.form.get('Schedule')!.get('RunDays') as UntypedFormArray;
   }
 
   addRunTime() {
@@ -141,13 +141,13 @@ export class ActionCreateBackupPolicyComponent implements OnInit {
   }
 
   getRunDaysControl() {
-    const arr = this.weekDay.map(day => this.formBuilder.control(false)); // TODO set this with initial data
+    const arr = this.weekDay.map((day: any) => this.formBuilder.control(false)); // TODO set this with initial data
     return this.formBuilder.array(arr);
   }
 
   setDays(days: string[]) {
     const runDays = this.form.get(['Schedule', 'RunDays']) as UntypedFormArray;
-    this.weekDay.forEach( (day, i) => {
+    this.weekDay.forEach( (day: any, i) => {
       runDays.at(i).setValue(days.includes(day));
     });
   }

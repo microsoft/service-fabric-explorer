@@ -23,7 +23,7 @@ export class SettingsService {
 
   private listSettings: Record<string, ListSettings>;
   private iPaginationLimit: number;
-  private iMetricsViewModel: MetricsViewModel;
+  private iMetricsViewModel!: MetricsViewModel;
   private sessionVariables: { [key: string]: any } = {};
 
   public treeWidth: ReplaySubject<string> = new ReplaySubject(1);
@@ -62,17 +62,17 @@ export class SettingsService {
 
   public getNewOrExistingListSettings(
       listName: string,
-      defaultSortProperties: string[] = [],
+      defaultSortProperties: string[] | null = [],
       columnSettings: ListColumnSetting[] = [],
       secondRowColumnSettings: ListColumnSetting[] = [],
       secondRowCollapsible: boolean = false,
-      showSecondRow: (item) => boolean = (item) => true,
+      showSecondRow: (item: any) => boolean = (item: any) => true,
       searchable: boolean = true) {
 
       // Use URL + listName as unique key to track list settings on detail pages
       const key: string = listName; // TODO fix this this.$location.path() + "/" + listName;
       if (!this.listSettings[key]) {
-          this.listSettings[key] = new ListSettings(this.paginationLimit, defaultSortProperties, listName, columnSettings, secondRowColumnSettings, secondRowCollapsible, showSecondRow, searchable);
+          this.listSettings[key] = new ListSettings(this.paginationLimit, defaultSortProperties ?? [], listName, columnSettings, secondRowColumnSettings, secondRowCollapsible, showSecondRow, searchable);
       }
       return this.listSettings[key];
   }
@@ -91,7 +91,7 @@ export class SettingsService {
   public getNewOrExistingUnhealthyEvaluationsListSettings(listKey: string = 'unhealthy Evaluations') {
       return this.getNewOrExistingListSettings(listKey, null,
           [
-              new ListColumnSettingForLink('kind', 'Kind', (item) =>  item.viewPath),
+              new ListColumnSettingForLink('kind', 'Kind', (item: any) =>  item.viewPath),
               new ListColumnSettingForBadge('healthState', 'Health State'),
               new ListColumnSettingWithCopyText('description', 'Description'),
               new ListColumnSettingWithUtcTime('sourceTimeStamp', 'Source UTC'),
@@ -116,7 +116,7 @@ export class SettingsService {
               new ListColumnSettingWithCopyText('description', 'Description', {enableFilter: false, colspan: 7})
           ],
           false,
-          (item) => item.description.length > 0
+          (item: any) => item.description.length > 0
           );
   }
 
@@ -142,7 +142,7 @@ export class SettingsService {
             enableFilter: false,
             cssClasses: "link",
             colspan: 1,
-            clickEvent: item => item.action.run()
+            clickEvent: (item: any) => item.action.run()
           }),
           new ListColumnSetting('raw.Schedule.ScheduleKind', 'ScheduleKind'),
           new ListColumnSetting('raw.Storage.StorageKind', 'StorageKind'),
@@ -192,7 +192,7 @@ export class SettingsService {
         })
     ],
     true,
-    (item) => (Object.keys(item).length > 0),
+    (item: any) => (Object.keys(item).length > 0),
     true);
   }
 
@@ -219,7 +219,7 @@ export class SettingsService {
         })
     ],
     true,
-    (item) => true,
+    (item: any) => true,
     true);
   }
 
@@ -255,7 +255,7 @@ export class SettingsService {
 
     return this.getNewOrExistingListSettings(listKey, ['raw.Version'], settings, nestedList,
       false,
-      (item) => item.raw.StatusDetails,
+      (item: any) => item.raw.StatusDetails,
       false);
   }
 

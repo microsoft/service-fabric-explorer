@@ -65,14 +65,14 @@ export class DataService {
   public appTypeGroups: ApplicationTypeGroupCollection;
   public apps: ApplicationCollection;
   public nodes: NodeCollection;
-  public imageStore: ImageStore;
+  public imageStore!: ImageStore;
   public backupPolicies: BackupPolicyCollection;
   public repairCollection: RepairTaskCollection;
   public infrastructureCollection: InfrastructureCollection;
   public infrastructureDocCollection: InfrastructureDocumentCollection;
 
-  public readOnlyHeader: boolean =  null;
-  public clusterNameMetadata: string = null;
+  public readOnlyHeader: boolean | null =  null;
+  public clusterNameMetadata: string | null = null;
 
   constructor() {
     const standalone = this.standalone;
@@ -385,7 +385,7 @@ export class DataService {
         const list = new ApplicationEventList(this, applicationId);
         const d: IEventStoreData<ApplicationEventList, ApplicationEvent> = {
             eventsList : list,
-            type : applicationId ? "Application" : null,
+            type : applicationId ? "Application" : undefined,
             displayName : applicationId ? applicationId : 'Apps',
         };
 
@@ -395,9 +395,9 @@ export class DataService {
 
     public getServiceEventData(serviceId?: string): IEventStoreData<ServiceEventList, ServiceEvent> {
         const list = new ServiceEventList(this, serviceId);
-        const d = {
+        const d: IEventStoreData<ServiceEventList, ServiceEvent> = {
             eventsList : list,
-            displayName : serviceId
+            displayName : serviceId ?? ''
         };
 
         this.addFabricEventData<ServiceEventList, ServiceEvent>(d);
@@ -409,7 +409,7 @@ export class DataService {
         const d: IEventStoreData<PartitionEventList, PartitionEvent> = {
             eventsList : list,
             type : "Partition",
-            displayName : partitionId
+            displayName : partitionId ?? ''
         };
 
         this.addFabricEventData<PartitionEventList, PartitionEvent>(d);

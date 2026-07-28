@@ -108,29 +108,29 @@ export class TreeNodeGroupViewModel implements ITreeNode {
         this.tree = tree;
         this.node = node;
         this.parent = parent;
-        this.listSettings = node.listSettings;
+        this.listSettings = node.listSettings!;
 
         if(this.listSettings){
             const nextPage = {
-                displayName: () => 'Next ' + this.node.listSettings.limit + ' items',
+                displayName: () => 'Next ' + this.node.listSettings!.limit + ' items',
                 nodeId: PaginationId.nextPage,
                 selectAction: () => this.pageDown()
             };
     
             const prevPage = {
-                displayName: () => 'Previous ' + this.node.listSettings.limit + ' items',
+                displayName: () => 'Previous ' + this.node.listSettings!.limit + ' items',
                 nodeId: PaginationId.prevPage,
                 selectAction: () => this.pageUp()
             };
     
             const firstPage = {
-                displayName: () => 'First ' + this.node.listSettings.limit + ' items',
+                displayName: () => 'First ' + this.node.listSettings!.limit + ' items',
                 nodeId: PaginationId.firstPage,
                 selectAction: () => this.pageFirst()
             };
     
             const lastPage = {
-                displayName: () => 'Last ' + this.node.listSettings.limit + ' items',
+                displayName: () => 'Last ' + this.node.listSettings!.limit + ' items',
                 nodeId: PaginationId.lastPage,
                 selectAction: () => this.pageLast()
             };
@@ -161,7 +161,7 @@ export class TreeNodeGroupViewModel implements ITreeNode {
                        !badgeState?.badgeClass;
 
        if (!isVisible) {
-           switch (badgeState.badgeClass) {
+           switch (badgeState!.badgeClass) {
                case BadgeConstants.BadgeUnknown:
                case BadgeConstants.BadgeOK:
                    isVisible = this.tree.showOkItems;
@@ -221,14 +221,14 @@ export class TreeNodeGroupViewModel implements ITreeNode {
         }
     }
     public parent: TreeNodeGroupViewModel;
-    public sortBy: () => any[];
+    public sortBy!: () => any[];
     public selected = false;
     public focused = false;
-    public leafNode: boolean;
+    public leafNode!: boolean;
     public displayName: () => string;
     public listSettings: ListSettings;
-    public badge: () => ITextAndBadge;
-    public actions: ActionCollection;
+    public badge!: () => ITextAndBadge;
+    public actions!: ActionCollection;
     public canExpandAll = false;
 
     public tree: TreeViewModel;
@@ -239,11 +239,11 @@ export class TreeNodeGroupViewModel implements ITreeNode {
     public childrenLoaded = false;
 
     private internalIsExpanded = false;
-    private currentGetChildrenPromise: Subject<any>;
-    private prevPageNode: TreeNodeGroupViewModel;
-    private nextPageNode: TreeNodeGroupViewModel;
-    private firstPageNode: TreeNodeGroupViewModel;
-    private lastPageNode: TreeNodeGroupViewModel;
+    private currentGetChildrenPromise: Subject<any> | null = null;
+    private prevPageNode!: TreeNodeGroupViewModel;
+    private nextPageNode!: TreeNodeGroupViewModel;
+    private firstPageNode!: TreeNodeGroupViewModel;
+    private lastPageNode!: TreeNodeGroupViewModel;
 
     public toggle(): Observable<any> {
         this.internalIsExpanded = !this.internalIsExpanded;
@@ -347,15 +347,15 @@ export class TreeNodeGroupViewModel implements ITreeNode {
                     this.node.listSettings.count = this.children.length;
                 }
 
-                this.currentGetChildrenPromise.next();
-                this.currentGetChildrenPromise.complete();
+                this.currentGetChildrenPromise!.next();
+                this.currentGetChildrenPromise!.complete();
                 this.currentGetChildrenPromise = null;
                 this.loadingChildren = false;
 
             },
             () => {
-                this.currentGetChildrenPromise.next();
-                this.currentGetChildrenPromise.complete();
+                this.currentGetChildrenPromise!.next();
+                this.currentGetChildrenPromise!.complete();
                 this.currentGetChildrenPromise = null;
                 this.loadingChildren = false;
             });
@@ -468,10 +468,10 @@ export class TreeNodeGroupViewModel implements ITreeNode {
     }
 
     // helper function for typeAheadSearch; returns the first element that starts with the given letter
-    private depthFirstSearch(letter: string, skipCurrent: boolean = false, stoppingNode?: TreeNodeGroupViewModel): TreeNodeGroupViewModel {
+    private depthFirstSearch(letter: string, skipCurrent: boolean = false, stoppingNode?: TreeNodeGroupViewModel): TreeNodeGroupViewModel | null {
 
         if(!skipCurrent){
-            if (this.displayName().toLowerCase().startsWith(letter.toLowerCase()) && !PaginationId[this.nodeId]) {
+            if (this.displayName().toLowerCase().startsWith(letter.toLowerCase()) && !(PaginationId as any)[this.nodeId]) {
                 return this;
             }
         }
@@ -532,10 +532,10 @@ export class TreeNodeGroupViewModel implements ITreeNode {
         this.displayName = this.node.displayName;
         this.leafNode = !this.node.childrenQuery;
         this.sortBy = node.sortBy ? node.sortBy : () => [];
-        this.listSettings = this.node.listSettings;
-        this.actions = this.node.actions;
-        this.badge = this.node.badge || null;
-        this.canExpandAll = node.canExpandAll;
+        this.listSettings = this.node.listSettings!;
+        this.actions = this.node.actions!;
+        this.badge = (this.node.badge || null)!;
+        this.canExpandAll = node.canExpandAll!;
     }
 
 
@@ -579,7 +579,7 @@ export class TreeNodeGroupViewModel implements ITreeNode {
         listSettings.currentPage = listSettings.pageCount;
     }
 
-    private moveToNextSibling(): TreeNodeGroupViewModel {
+    private moveToNextSibling(): TreeNodeGroupViewModel | null {
         const parentsChildren = this.getParentsChildren();
         const myIndex = parentsChildren.indexOf(this);
 

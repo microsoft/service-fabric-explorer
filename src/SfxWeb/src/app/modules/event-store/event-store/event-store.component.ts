@@ -31,7 +31,7 @@ export interface IEventStoreData<IVisPresentEvent, S> {
   listSettings?: ListSettings;
   getEvents?(): S[];
   setDateWindow?(startDate: Date, endDate: Date): boolean;
-  objectResolver?(id: string): IDataModel<any>; //used to determine if the data contains a given event;
+  objectResolver?(id: string): IDataModel<any> | undefined; //used to determine if the data contains a given event;
 }
 
 export interface VisReference {
@@ -50,9 +50,9 @@ export class EventStoreComponent implements OnChanges, AfterViewInit {
   dataService = inject(DataService);
 
 
-  @ViewChildren(VisualizationDirective) vizDirs: QueryList<VisualizationDirective>;
-  @Input() listEventStoreData: IEventStoreData<any, any>[];
-  @Input() optionsConfig: IOptionConfig;
+  @ViewChildren(VisualizationDirective) vizDirs!: QueryList<VisualizationDirective>;
+  @Input() listEventStoreData!: IEventStoreData<any, any>[];
+  @Input() optionsConfig!: IOptionConfig;
   @Input() vizRefs: VisReference[] =
     [
       { name: "Timeline", component: TimelineComponent },
@@ -60,11 +60,11 @@ export class EventStoreComponent implements OnChanges, AfterViewInit {
     ];
 
   public failedRefresh = false;
-  public activeTab: string;
+  public activeTab!: string;
 
-  public startDate: Date;
-  public endDate: Date;
-  public dateMin: Date;
+  public startDate!: Date;
+  public endDate!: Date;
+  public dateMin!: Date;
 
   private visualizations: VisualizationComponent[] = [];
   private visualizationsReady = false;
@@ -120,21 +120,21 @@ export class EventStoreComponent implements OnChanges, AfterViewInit {
 
   public setSearch(id: string) {
     this.listEventStoreData.forEach((list, i) => {
-      if (list.objectResolver(id)) {
+      if (list.objectResolver!(id)) {
         this.activeTab = list.displayName
         setTimeout(() =>
-          list.listSettings.search = id, 1)
+          list.listSettings!.search = id, 1)
       }
     })
   }
 
   private updateColumn(update: EventColumnUpdate) {
 
-    const listSettings = this.listEventStoreData.find(list => list.displayName === update.listName).listSettings;
-    let columnSettings = listSettings.columnSettings;
+    const listSettings = this.listEventStoreData.find(list => list.displayName === update.listName)!.listSettings;
+    let columnSettings = listSettings!.columnSettings;
 
     if (update.isSecondRow) {
-      columnSettings = listSettings.secondRowColumnSettings;
+      columnSettings = listSettings!.secondRowColumnSettings;
     }
 
     const index = columnSettings.findIndex(setting => setting.id === update.columnSetting.id);

@@ -24,11 +24,11 @@ export class MetricsViewModel implements IMetricsViewModel {
     public iShowSystemMetrics = false;
     public iNormalizeMetricsData = true;
 
-    public metricsWithCapacities = [];
-    public metricsWithoutCapacities = [];
-    public systemMetrics = [];
+    public metricsWithCapacities: LoadMetricInformation[] = [];
+    public metricsWithoutCapacities: LoadMetricInformation[] = [];
+    public systemMetrics: LoadMetricInformation[] = [];
 
-    private iMetrics: LoadMetricInformation[] = null;
+    private iMetrics: LoadMetricInformation[] | null = null;
 
     private static ensureResourceGovernanceMetrics(metrics: LoadMetricInformation[]): LoadMetricInformation[] {
         let cpuCapacityAvailable = false;
@@ -42,7 +42,7 @@ export class MetricsViewModel implements IMetricsViewModel {
             return m;
         });
         if (!cpuCapacityAvailable) {
-            const zeroCpuCapacity: LoadMetricInformation = new LoadMetricInformation(null, {
+            const zeroCpuCapacity: LoadMetricInformation = new LoadMetricInformation(null!, {
                 Name: 'servicefabric:/_CpuCores',
                 IsBalancedBefore: true,
                 IsBalancedAfter: true,
@@ -67,7 +67,7 @@ export class MetricsViewModel implements IMetricsViewModel {
             metricsWithResourceGov.unshift(zeroCpuCapacity);
         }
         if (!memoryCapacityAvailable) {
-            const zeroMemoryCapacity: LoadMetricInformation = new LoadMetricInformation(null, {
+            const zeroMemoryCapacity: LoadMetricInformation = new LoadMetricInformation(null!, {
                 Name: 'servicefabric:/_MemoryInMB',
                 IsBalancedBefore: true,
                 IsBalancedAfter: true,

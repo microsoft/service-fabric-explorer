@@ -52,7 +52,7 @@ export class ActionCollection {
                 return throwError(reason);
             }];
 
-        return action.runWithCallbacks.apply(action, params);
+        return action.runWithCallbacks.apply(action, params as any);
     }
 }
 

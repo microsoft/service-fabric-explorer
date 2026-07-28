@@ -32,7 +32,7 @@ export class DeployedReplica extends DataModelBase<IRawDeployedReplica> {
 
     public address: any;
     public detail: DeployedReplicaDetail;
-    public partition: IRawPartition;
+    public partition!: IRawPartition;
 
     public constructor(data: DataService, raw: IRawDeployedReplica, public parent: DeployedServicePackage) {
         super(data, raw, parent);
@@ -127,7 +127,7 @@ export class DeployedReplica extends DataModelBase<IRawDeployedReplica> {
     }
 
     public get replicaRoleSortPriority(): number {
-        return SortPriorities.ReplicaRolesToSortPriorities[this.raw.ReplicaRole] || 0;
+        return (SortPriorities.ReplicaRolesToSortPriorities as any)[this.raw.ReplicaRole] || 0;
     }
 
     public restartReplica(): Observable<any> {
@@ -186,8 +186,8 @@ export class DeployedReplicaDetail extends DataModelBase<IRawDeployedReplicaDeta
         ]
     };
 
-    public replicatorStatus: ReplicatorStatus;
-    public reportedLoad: LoadMetricReport[];
+    public replicatorStatus!: ReplicatorStatus;
+    public reportedLoad!: LoadMetricReport[];
 
     public get currentServiceOperationStartTimeUtc(): string {
         return TimeUtils.timestampToUTCString(this.raw.CurrentServiceOperationStartTimeUtc);
@@ -229,7 +229,7 @@ export class DeployedReplicaDetail extends DataModelBase<IRawDeployedReplicaDeta
 }
 
 export class ReplicatorStatus extends DataModelBase<IRawReplicatorStatus> {
-    public remoteReplicators: RemoteReplicatorStatus[];
+    public remoteReplicators!: RemoteReplicatorStatus[];
 
     public get LastCopyOperationReceivedTimeUtc(): string {
         return TimeUtils.timestampToUTCString(this.raw.LastCopyOperationReceivedTimeUtc);

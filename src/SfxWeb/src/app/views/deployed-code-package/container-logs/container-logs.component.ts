@@ -15,7 +15,7 @@ import { map } from 'rxjs/operators';
 export class ContainerLogsComponent extends DeployedCodePackageBaseControllerDirective {
   protected data: DataService = inject(DataService);
 
-  containerLogs: string;
+  containerLogs!: string;
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
     return this.deployedCodePackage.containerLogs.refresh(messageHandler).pipe(map(containerLogs => {

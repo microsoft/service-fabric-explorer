@@ -17,13 +17,13 @@ export class DoubleSliderComponent implements OnChanges, AfterViewInit {
 
   @Input() startDate: any;
   @Input() endDate: any;
-  @Input() minDate: Date;
+  @Input() minDate!: Date;
 
   @Output() dateChanged = new EventEmitter<IOnDateChange>();
 
-  slider: API;
+  slider!: API;
 
-  @ViewChild('slider') container: ElementRef;
+  @ViewChild('slider') container!: ElementRef;
 
 
   constructor() { }

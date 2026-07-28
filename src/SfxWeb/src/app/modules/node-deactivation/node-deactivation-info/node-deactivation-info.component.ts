@@ -20,14 +20,14 @@ export class NodeDeactivationInfoComponent implements OnInit, OnChanges {
   public readonly seedNodeQuorumMessage = "This node deactivation is waiting on a Seed Node Quorom safety check. If this deactivation is going for an irregular amount of time, consider referring to the following TSG to potentially continue progress for this deactivation."
 
   @Input() hasDescription: boolean = false;
-  @Input() deactivationInfo: IRawNodeDeactivationInfo;
+  @Input() deactivationInfo!: IRawNodeDeactivationInfo;
 
   public progress: IProgressStatus[] = [];
   public index = -1;
 
   showSeedNodeTSG = false;
 
-  settings: ListSettings;
+  settings!: ListSettings;
 
   ngOnInit(): void {
 
@@ -52,7 +52,7 @@ export class NodeDeactivationInfoComponent implements OnInit, OnChanges {
       Completed: 3
     };
 
-   this.index = phaseMap[this.deactivationInfo.NodeDeactivationStatus] + 1;
+   this.index = (phaseMap as any)[this.deactivationInfo.NodeDeactivationStatus] + 1;
 
    this.progress = [
       {

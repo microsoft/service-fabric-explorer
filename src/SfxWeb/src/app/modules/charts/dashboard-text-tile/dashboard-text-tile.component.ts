@@ -10,9 +10,9 @@ import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 export class DashboardTextTileComponent {
 
   @Input() barClass = '';
-  @Input() title: string;
-  @Input() count: string | number;
-  @Input() link: string;
+  @Input() title!: string;
+  @Input() count!: string | number;
+  @Input() link!: string;
   @Input() middleMargin = '15px 0';
   @Input() helpTextLink = '';
   constructor() { }

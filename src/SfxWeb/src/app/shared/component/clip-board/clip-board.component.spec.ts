@@ -7,7 +7,7 @@ import { ClipBoardComponent } from './clip-board.component';
 describe('ClipBoardComponent', () => {
   let component: ClipBoardComponent;
   let fixture: ComponentFixture<ClipBoardComponent>;
-  let spy;
+  let spy: any;
 
   beforeEach(waitForAsync(() => {
     spy = jasmine.createSpyObj('Clipboard', ['copy']);

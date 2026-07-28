@@ -16,7 +16,7 @@ export class NodeFilterComponent implements OnInit, OnChanges {
 
   @Input() showGroupByNodeType = true;
 
-  @Input() nodes: Node[];
+  @Input() nodes!: Node[];
   @Input() groupByNodeType = false;
   @Output() groupByNodeTypeChange = new EventEmitter();
 

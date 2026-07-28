@@ -12,10 +12,10 @@ import { DetailBaseComponent } from 'src/app/ViewModels/detail-table-base.compon
 })
 export class QuestionToolTipComponent implements  OnInit, DetailBaseComponent {
 
-  item: RepairTask;
-  listSetting: ListColumnSetting;
+  item!: RepairTask;
+  listSetting!: ListColumnSetting;
 
-  tooltipText: {tooltip: string, type: string};
+  tooltipText!: {tooltip: string, type: string};
 
   constructor() { }
 

@@ -6,7 +6,7 @@ export class AppInsightsErrorHandler implements ErrorHandler {
 private telemetry = inject(TelemetryService);
 
 
-    handleError(error) {
+    handleError(error: any) {
         console.error(error);
         this.telemetry.appInsights.trackException(error);
     }

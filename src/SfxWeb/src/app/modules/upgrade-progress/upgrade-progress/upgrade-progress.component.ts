@@ -21,12 +21,12 @@ export class UpgradeProgressComponent implements AfterViewInit, OnChanges {
   private sanitizer = inject(DomSanitizer);
 
 
-  @Input() upgradeDomains: UpgradeDomain[];
+  @Input() upgradeDomains!: UpgradeDomain[];
   @Input() showChart = false;
 
-  @ViewChild('chart') private chartContainer: ElementRef;
+  @ViewChild('chart') private chartContainer!: ElementRef;
 
-  chart: Chart;
+  chart!: Chart;
 
   tiles: ITileCount[] = [];
   displayUd: UpgradeDomain[] = [];
@@ -39,7 +39,7 @@ export class UpgradeProgressComponent implements AfterViewInit, OnChanges {
             type: 'pie',
             width: 350,
             height: 300,
-            backgroundColor: null,
+            backgroundColor: null as any,
             borderRadius: 0
         },
         title: {
@@ -116,7 +116,7 @@ export class UpgradeProgressComponent implements AfterViewInit, OnChanges {
           type: 'pie',
           name: stateName + ' : ' + entry.value,
           y: entry.value,
-          color: colors[badgeClass],
+          color: (colors as any)[badgeClass],
           dataLabels: {
             style: {
               fontSize: '13px',
@@ -131,7 +131,7 @@ export class UpgradeProgressComponent implements AfterViewInit, OnChanges {
           type: 'pie',
           name: p.prefix + p.name,
           y: 1,
-          color: colors[p.badgeClass],
+          color: (colors as any)[p.badgeClass],
           dataLabels: {
             style: {
                 fontSize: '13px',

@@ -40,7 +40,7 @@ export class ListSettings {
     }
 
     public get hasEnabledFilters(): boolean {
-        return this.columnSettings.some(cs => cs.config.enableFilter);
+        return this.columnSettings.some(cs => cs.config!.enableFilter);
     }
 
     public get currentPage(): number {
@@ -92,7 +92,7 @@ export class ListSettings {
         public columnSettings: ListColumnSetting[],
         public secondRowColumnSettings: ListColumnSetting[] = [],
         public secondRowCollapsible: boolean = false,
-        public showSecondRow: (item) => boolean = (item) => true,
+        public showSecondRow: (item: any) => boolean = (item: any) => true,
         public searchable: boolean = true,
         public showRowExpander: boolean = true,
         public rowClass: (item: any) => string = () => '') {
@@ -106,7 +106,7 @@ export class ListSettings {
     }
 
     public isSortedByColumn(columnSetting: ListColumnSetting): boolean {
-        return Utils.arraysAreEqual(this.sortPropertyPaths, columnSetting.config.sortPropertyPaths);
+        return Utils.arraysAreEqual(this.sortPropertyPaths, columnSetting.config!.sortPropertyPaths!);
     }
 
     public reset(): void {
@@ -120,11 +120,11 @@ export class ListSettings {
     public getPluckedObject(item: any): any {
         if (this.columnSettings.length > 0) {
             const newObj = {};
-            Utils.unique(this.columnSettings.concat(this.secondRowColumnSettings)).forEach(column => newObj[column.propertyPath] = column.getTextValue(item));
+            Utils.unique(this.columnSettings.concat(this.secondRowColumnSettings)).forEach(column => (newObj as any)[column.propertyPath] = column.getTextValue(item));
 
             if(this.additionalSearchableProperties) {
               this.additionalSearchableProperties.forEach(path => {
-                newObj[path] = Utils.result(item, path);
+                (newObj as any)[path] = Utils.result(item, path);
               })
             }
 
@@ -155,9 +155,9 @@ export interface IListColumnAdditionalSettings {
     enableFilter?: boolean;
     cssClasses?: string,
     colspan?: number;
-    clickEvent?: (item) => void;
+    clickEvent?: (item: any) => void;
     canNotExport?: boolean;
-    alternateExportFormat?: (item) => string;
+    alternateExportFormat?: (item: any) => string;
     id?: string;
     cellId?: (item: any) => string;
 }
@@ -176,7 +176,7 @@ export class ListColumnSetting {
     public template?: Type<DetailBaseComponent>;
 
     public get hasFilters(): boolean {
-        return this.config.enableFilter && this.filterValues.length > 0;
+        return !!(this.config!.enableFilter && this.filterValues.length > 0);
     }
 
     public get hasEffectiveFilters(): boolean {
@@ -184,7 +184,7 @@ export class ListColumnSetting {
     }
 
     public get sortable(): boolean {
-        return this.config.sortPropertyPaths.length > 0;
+        return this.config!.sortPropertyPaths!.length > 0;
     }
 
     public get allChecked() {
@@ -196,7 +196,7 @@ export class ListColumnSetting {
     }
 
     public get id() {
-        return this.config.id;
+        return this.config!.id;
     }
     /**
      * Create a column setting
@@ -211,7 +211,7 @@ export class ListColumnSetting {
         const internalConfig: IListColumnAdditionalSettings = {
             enableFilter: false,
             colspan: 1,
-            clickEvent: (item) => null,
+            clickEvent: (item: any) => null,
             canNotExport: false,
             sortPropertyPaths: [propertyPath],
             cssClasses: "",

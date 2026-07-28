@@ -13,7 +13,7 @@ export interface IInfrastructureDocumentCollectionItem {
 }
 
 export class InfrastructureDocumentCollectionItem extends DataModelBase<IInfrastructureDocumentCollectionItem> {
-    InfrastructureServiceName: string;
+    InfrastructureServiceName!: string;
     InfrastructureDocuments: InfrastructureDoc[] = [];
 
     constructor(public data: DataService, public raw: IInfrastructureDocumentCollectionItem) {

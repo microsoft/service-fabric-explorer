@@ -12,10 +12,10 @@ import { DeployedApplication } from 'src/app/Models/DataModels/DeployedApplicati
 export class DeployedAppBaseControllerDirective extends BaseControllerDirective {
     protected data = inject(DataService);
 
-    nodeName: string;
-    appId: string;
+    nodeName!: string;
+    appId!: string;
 
-    deployedApp: DeployedApplication;
+    deployedApp!: DeployedApplication;
 
     common(messageHandler?: IResponseMessageHandler): Observable<any> {
       return this.data.getDeployedApplication(this.nodeName, this.appId, true, messageHandler).pipe(mergeMap( deployedApp => {

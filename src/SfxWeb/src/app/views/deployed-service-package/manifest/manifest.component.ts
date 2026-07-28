@@ -16,7 +16,7 @@ import { ServiceManifest } from 'src/app/Models/DataModels/Service';
 export class ManifestComponent extends DeployedServicePackageBaseControllerDirective {
   protected data: DataService = inject(DataService);
 
-  serviceManifest: ServiceManifest;
+  serviceManifest!: ServiceManifest;
 
   setup() {}
 

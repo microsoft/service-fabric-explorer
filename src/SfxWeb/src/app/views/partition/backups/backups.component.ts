@@ -28,8 +28,8 @@ export class BackupsComponent extends PartitionBaseControllerDirective {
   telemetry = inject(TelemetryService);
 
 
-  partitionBackupListSettings: ListSettings;
-  actions: ActionCollection;
+  partitionBackupListSettings!: ListSettings;
+  actions!: ActionCollection;
   startDate: Date = new Date();
   endDate: Date = new Date();
   minDate: Date = new Date();
@@ -37,10 +37,10 @@ export class BackupsComponent extends PartitionBaseControllerDirective {
   startTime: any;
   endTime: any;
   backupList: any;
-  dateRefresh: boolean;
+  dateRefresh!: boolean;
 
   setup(){
-    this.partitionBackupListSettings = this.settings.getNewOrExistingListSettings('partitionBackups', [null], [
+    this.partitionBackupListSettings = this.settings.getNewOrExistingListSettings('partitionBackups', [null!], [
       new ListColumnSetting('raw.BackupId', 'BackupId', {
         enableFilter: false,
         cssClasses: "link",
@@ -73,7 +73,7 @@ export class BackupsComponent extends PartitionBaseControllerDirective {
   setNewPartitionBackupList(startDate: Date, endDate: Date)
   {
     this.backupList = this.partition.partitionBackupInfo.partitionBackupList.collection;
-    this.backupList = this.backupList.filter((info) => {
+    this.backupList = this.backupList.filter((info: any) => {
       return (new Date(info.raw.CreationTimeUtc) >= startDate && new Date(info.raw.CreationTimeUtc) <= endDate);
     });
   }
@@ -100,7 +100,7 @@ export class BackupsComponent extends PartitionBaseControllerDirective {
       this.backupList = this.partition.partitionBackupInfo.partitionBackupList.collection;
       if (this.backupList.length !== 0)
       {
-        const templist = this.backupList.sort((left, right): number => {
+        const templist = this.backupList.sort((left: any, right: any): number => {
           if (left.CreationTimeUtc < right.CreationTimeUtc) {
             return -1;
           }

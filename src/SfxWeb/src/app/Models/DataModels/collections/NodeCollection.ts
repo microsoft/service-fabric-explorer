@@ -11,8 +11,8 @@ import { HealthStateConstants, NodeStatusConstants, StatusWarningLevel, BannerWa
 import { DataModelCollectionBase } from './CollectionBase';
 import { RoutesService } from 'src/app/services/routes.service';
 
-
 const upgradeDomainNameComparer = new Intl.Collator(undefined, { numeric: true });
+
 
 export interface INodesStatusDetails {
   nodeType: string;
@@ -67,14 +67,14 @@ export class NodeStatusDetails implements INodesStatusDetails {
 export class NodeCollection extends DataModelCollectionBase<Node> {
     // make sure we only check once per session and this object will get destroyed/recreated
     private static checkedOneNodeScenario = false;
-    public healthState: ITextAndBadge;
-    public upgradeDomains: string[];
-    public faultDomains: string[];
-    public healthySeedNodes: string;
-    public seedNodeCount: number;
-    public disabledAndDisablingCount: number;
-    public disabledAndDisablingNodes: Node[];
-    public nodeTypes: string[];
+    public healthState!: ITextAndBadge;
+    public upgradeDomains!: string[];
+    public faultDomains!: string[];
+    public healthySeedNodes!: string;
+    public seedNodeCount!: number;
+    public disabledAndDisablingCount!: number;
+    public disabledAndDisablingNodes!: Node[];
+    public nodeTypes!: string[];
     public upNodes: Node[] = [];
 
     public constructor(data: DataService) {
@@ -114,9 +114,9 @@ export class NodeCollection extends DataModelCollectionBase<Node> {
                 seedNodes.add(node);
             }
             if (!(node.raw.Type in counts)) {
-                counts[node.raw.Type] = new NodeStatusDetails(node.raw.Type);
+                (counts as any)[node.raw.Type] = new NodeStatusDetails(node.raw.Type);
             }
-            counts[node.raw.Type].add(node);
+            (counts as any)[node.raw.Type].add(node);
             allNodes.add(node);
         });
 
@@ -130,7 +130,7 @@ export class NodeCollection extends DataModelCollectionBase<Node> {
             resultList.push(seedNodes);
         }
 
-        const nodeTypes = Object.keys(counts).map(key => counts[key]).sort((a: INodesStatusDetails, b: INodesStatusDetails) => a.nodeType.localeCompare(b.nodeType));
+        const nodeTypes = Object.keys(counts).map(key => (counts as any)[key]).sort((a: INodesStatusDetails, b: INodesStatusDetails) => a.nodeType.localeCompare(b.nodeType));
 
         return resultList.concat(nodeTypes);
     }
@@ -164,9 +164,9 @@ export class NodeCollection extends DataModelCollectionBase<Node> {
         let disabledNodes = 0;
         let disablingNodes = 0;
 
-        const disabled = [];
-        const disabling = [];
-        const up = [];
+        const disabled: any[] = [];
+        const disabling: any[] = [];
+        const up: any[] = [];
         this.collection.forEach(node => {
             if (node.raw.NodeStatus === NodeStatusConstants.Up) {
                 up.push(node);
@@ -236,6 +236,6 @@ export class NodeCollection extends DataModelCollectionBase<Node> {
 
     private updateNodesHealthState(): void {
         // calculates the nodes health state which is the max state value of all nodes
-        this.healthState = this.valueResolver.resolveHealthStatus(Utils.max(this.collection.map(node => HealthStateConstants.Values[node.healthState.text])).toString());
+        this.healthState = this.valueResolver.resolveHealthStatus(Utils.max(this.collection.map(node => (HealthStateConstants.Values as any)[node.healthState.text])).toString());
     }
 }

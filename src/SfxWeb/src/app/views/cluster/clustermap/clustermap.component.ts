@@ -14,8 +14,8 @@ import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 export class ClustermapComponent extends BaseControllerDirective {
   private dataService = inject(DataService);
 
-  nodes: NodeCollection;
-  filteredNodes = [];
+  nodes!: NodeCollection;
+  filteredNodes: Node[] = [];
 
   groupByNodeType = false;
 

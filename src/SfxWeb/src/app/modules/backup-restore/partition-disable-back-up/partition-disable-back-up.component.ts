@@ -22,7 +22,7 @@ export class PartitionDisableBackUpComponent {
     this.data.data.enable(this.cleanBackup).subscribe( () => {
       this.dialogRef.close(false);
     },
-    err => {
+    (err: any) => {
       console.log(err);
     });
   }

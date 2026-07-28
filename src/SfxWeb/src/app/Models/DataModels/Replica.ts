@@ -168,7 +168,7 @@ export class ReplicaOnPartition extends DataModelBase<IRawReplicaOnPartition> {
     }
 
     public get replicaRoleSortPriority(): number {
-        return SortPriorities.ReplicaRolesToSortPriorities[this.raw.ReplicaRole] || 0;
+        return (SortPriorities.ReplicaRolesToSortPriorities as any)[this.raw.ReplicaRole] || 0;
     }
 
     public get stoppedReplicaExpirationTimeUtc(): string {

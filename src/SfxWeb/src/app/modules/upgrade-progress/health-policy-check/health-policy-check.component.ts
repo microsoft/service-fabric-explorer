@@ -13,20 +13,20 @@ import { IEssentialListItem } from '../../charts/essential-health-tile/essential
 })
 export class HealthPolicyCheckComponent implements OnChanges {
 
-  @Input() healthCheckPhase: string;
-  @Input() healthCheckPhaseDuration: string;
+  @Input() healthCheckPhase!: string;
+  @Input() healthCheckPhaseDuration!: string;
   @Input() healthCheckRetryFlips: number = 0;
-  @Input() monitoringPolicy: IRawMonitoringPolicy;
+  @Input() monitoringPolicy!: IRawMonitoringPolicy;
 
 
   healthPolicyProgress: IProgressStatus[] = []
 
   healthCheckPhaseText: string = "";
-  healthCheckTimeLeft: IEssentialListItem;
+  healthCheckTimeLeft!: IEssentialListItem;
 
   //duration graph
-  healthCheckDurationLeft: number;
-  HealthCheckDurationOverall: number;
+  healthCheckDurationLeft!: number;
+  HealthCheckDurationOverall!: number;
   displayTopText: string = "";
   displayBottomText: string = "";
   color: string = "";

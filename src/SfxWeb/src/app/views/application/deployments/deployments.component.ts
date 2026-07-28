@@ -20,7 +20,7 @@ export class DeploymentsComponent extends ApplicationBaseControllerDirective {
   private settings = inject(SettingsService);
 
 
-  deployedApplicationsHealthStatesListSettings: ListSettings;
+  deployedApplicationsHealthStatesListSettings!: ListSettings;
   deployedApplicationsHealthStates: DeployedApplicationHealthState[] = [];
 
   setup() {

@@ -16,8 +16,8 @@ export class EventsComponent implements OnInit {
   settings = inject(SettingsService);
 
 
-  listEventStoreData: IEventStoreData<any, any> [];
-  optionsConfig: IOptionConfig;
+  listEventStoreData!: IEventStoreData<any, any> [];
+  optionsConfig!: IOptionConfig;
 
   ngOnInit() {
     this.listEventStoreData = [

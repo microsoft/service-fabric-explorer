@@ -19,16 +19,16 @@ export class InfrastructureJobTileComponent implements OnChanges, OnInit {
   dataService = inject(DataService);
 
 
-  @Input() job: InfrastructureJob;
+  @Input() job!: InfrastructureJob;
 
   essentialItems: IEssentialListItem[] = [];
   public progress: IProgressStatus[] = [];
   public index = -1;
-  impactingNodes: ListSettings;
+  impactingNodes!: ListSettings;
 
-  repairJobs: ListSettings;
-  repairTask: RepairTask[];
-  completed: RepairTask[];
+  repairJobs!: ListSettings;
+  repairTask!: RepairTask[];
+  completed!: RepairTask[];
   allCollapsed: boolean = true;
 
   ngOnInit()  {
@@ -67,7 +67,7 @@ export class InfrastructureJobTileComponent implements OnChanges, OnInit {
       Completed: 3
     };
 
-    this.index = phaseMap[this.job.raw.JobStatus];
+    this.index = (phaseMap as any)[this.job.raw.JobStatus];
 
     this.progress = [
       {

@@ -12,9 +12,9 @@ import { DetailBaseComponent } from 'src/app/ViewModels/detail-table-base.compon
 export class CopyTextComponent implements DetailBaseComponent, OnInit {
 
   item: any;
-  listSetting: ListColumnSetting;
+  listSetting!: ListColumnSetting;
 
-  value: string;
+  value!: string;
   constructor() { }
 
   ngOnInit() {

@@ -10,7 +10,7 @@ export interface ITimedReplication extends IRawRemoteReplicatorStatus {
 }
 
 
-const reduceReplicators = (data, replica) => {
+const reduceReplicators = (data: any, replica: any) => {
   data[replica.ReplicaId] = replica;
   return data;
 };
@@ -24,14 +24,14 @@ const reduceReplicators = (data, replica) => {
 })
 export class ReplicaStatusContainerComponent implements OnChanges, OnDestroy {
 
-  @Input() replicas: ReplicaOnPartition[];
-  sortedReplicas = [];
+  @Input() replicas!: ReplicaOnPartition[];
+  sortedReplicas: ReplicaOnPartition[] = [];
 
   replicaDict = {};
   expandedDict = {};
   cachedData: Record<string, ITimedReplication[]> = {};
 
-  primaryReplica: ReplicaOnPartition;
+  primaryReplica!: ReplicaOnPartition;
 
   overviewItems: IEssentialListItem[] = [];
   replicationStatus: IEssentialListItem[] = [];
@@ -42,7 +42,7 @@ export class ReplicaStatusContainerComponent implements OnChanges, OnDestroy {
 
   ngOnChanges(): void {
     // grab the primary on each reset
-    this.replicas.forEach(replica => {
+    this.replicas.forEach((replica: any) => {
       if (replica.raw.ReplicaRole === 'Primary') {
         this.primaryReplica = replica;
       }
@@ -116,7 +116,7 @@ export class ReplicaStatusContainerComponent implements OnChanges, OnDestroy {
     this.sub.unsubscribe();
   }
 
-  trackByFn(index, replicaStatus: IRawRemoteReplicatorStatus) {
+  trackByFn(index: any, replicaStatus: IRawRemoteReplicatorStatus) {
     return replicaStatus.ReplicaId + index;
   }
 }

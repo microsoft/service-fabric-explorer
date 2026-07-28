@@ -21,15 +21,15 @@ export class ScaleServiceComponent implements OnInit, OnDestroy, DialogBodyCompo
   private formBuilder = inject(UntypedFormBuilder);
 
 
-  @Input() inputs: { service: Service };
-  count: number;
+  @Input() inputs!: { service: Service };
+  count!: number;
 
-  updateServiceDescription: IRawUpdateServiceDescription;
+  updateServiceDescription!: IRawUpdateServiceDescription;
 
-  form: UntypedFormGroup;
+  form!: UntypedFormGroup;
   @Output() disableSubmit = new EventEmitter<boolean>();
 
-  validityCheckerSubscription: Subscription;
+  validityCheckerSubscription!: Subscription;
   disableSubmitSubscription: Subscription = new Subscription();
 
   ngOnInit() {

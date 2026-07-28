@@ -20,7 +20,7 @@ export class UpgradingComponent extends ApplicationsBaseControllerDirective {
   private settings = inject(SettingsService);
 
 
-  upgradeAppsListSettings: ListSettings;
+  upgradeAppsListSettings!: ListSettings;
   upgradeProgresses: ApplicationUpgradeProgress[] = [];
 
   setup() {

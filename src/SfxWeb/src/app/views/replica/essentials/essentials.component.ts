@@ -20,7 +20,7 @@ export class EssentialsComponent extends ReplicaBaseControllerDirective {
   protected data: DataService = inject(DataService);
   private settings = inject(SettingsService);
 
-  nodeView: string;
+  nodeView!: string;
 
   essentialItems: IEssentialListItem[] = [];
 
@@ -40,7 +40,7 @@ export class EssentialsComponent extends ReplicaBaseControllerDirective {
     map(() => {
       if (!this.isSystem) {
           const rawDataProperty = this.replica.isStatefulService ? 'DeployedServiceReplica' : 'DeployedServiceReplicaInstance';
-          const detailRaw = this.replica.detail.raw[rawDataProperty];
+          const detailRaw = (this.replica.detail.raw as any)[rawDataProperty];
 
           const serviceNameOnly = detailRaw.ServiceManifestName;
           const activationId = detailRaw.ServicePackageActivationId || null;

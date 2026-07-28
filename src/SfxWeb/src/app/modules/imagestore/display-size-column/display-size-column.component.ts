@@ -13,11 +13,11 @@ import { Utils } from 'src/app/Utils/Utils';
 })
 export class DisplaySizeColumnComponent implements OnChanges, OnInit, DetailBaseComponent {
 
-  item: ImageStoreItem;
-  listSetting: ListColumnSettingWithDisplaySize;
+  item!: ImageStoreItem;
+  listSetting!: ListColumnSettingWithDisplaySize;
 
   date: any;
-  loadButton: boolean;
+  loadButton!: boolean;
   size = '';
   loading = false;
   constructor() { }
@@ -55,8 +55,8 @@ export class DisplaySizeColumnComponent implements OnChanges, OnInit, DetailBase
                                                                                       date: new Date() };
         item.size = +size.FolderSize;
         item.displayedSize = Utils.getFriendlyFileSize(+size.FolderSize);
-        this.listSetting.imagestore.currentFolder.childrenFolders.find(folder => folder.path === item.path).size = +size.FolderSize;
-        this.listSetting.imagestore.allChildren = [].concat(this.listSetting.imagestore.allChildren);
+        this.listSetting.imagestore.currentFolder.childrenFolders.find(folder => folder.path === item.path)!.size = +size.FolderSize;
+        this.listSetting.imagestore.allChildren = ([] as ImageStoreItem[]).concat(this.listSetting.imagestore.allChildren);
         this.ngOnChanges();
       }, () => {
         this.listSetting.imagestore.cachedCurrentDirectoryFolderSizes[item.path].loading = false;

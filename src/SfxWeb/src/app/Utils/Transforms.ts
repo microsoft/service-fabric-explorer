@@ -35,7 +35,7 @@ export class Transforms {
 
   public static nullIfEmptyString(parsed: string): string {
     if(parsed === "") {
-      return null
+      return null!
     }else {
       return parsed;
     }

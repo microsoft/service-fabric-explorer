@@ -117,7 +117,7 @@
               <input type="checkbox" formControlName="retentionPolicyRequired"/>
             </dd>
           </dl>
-          <dl class="dl-horizontal" [ngStyle]="{'display': ( form.get('retentionPolicyRequired').value ? 'initial' : 'none') }" formGroupName="RetentionPolicy">
+          <dl class="dl-horizontal" [ngStyle]="{'display': ( form.get('retentionPolicyRequired')?.value ? 'initial' : 'none') }" formGroupName="RetentionPolicy">
             <dt>MinNumberOfBackups</dt>
             <dd>
               <input type="number" class="input-flat" formControlName="MinimumNumberOfBackups">

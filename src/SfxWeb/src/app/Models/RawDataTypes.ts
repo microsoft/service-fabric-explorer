@@ -25,7 +25,7 @@ export interface IRawApplication {
         ApplicationMetadata?: IRawApplicationMetadata
     }
 export class IRawBackupEntity{
-    EntityKind: BackupEntityKind;
+    EntityKind!: BackupEntityKind;
 }
 export interface IRawApplicationBackupEntity extends IRawBackupEntity{
     ApplicationName: string;
@@ -350,9 +350,9 @@ export interface IRawLoadMetricInformation {
         RemainingBufferedCapacity: number;
         IsClusterCapacityViolation: boolean;
         MinNodeLoadValue: number;
-        MinNodeLoadId: IRawId;
+        MinNodeLoadId: IRawId | null;
         MaxNodeLoadValue: number;
-        MaxNodeLoadId: IRawId;
+        MaxNodeLoadId: IRawId | null;
     }
 
 export interface IRawDeployedApplicationHealthState {
@@ -669,34 +669,34 @@ export interface IRawDeployedReplicaStatus {
     }
 
 export class IRawReplicatorStatus {
-        Kind: string;
-        IsInBuild: boolean;
-        LastCopyOperationReceivedTimeUtc: string;
-        LastReplicationOperationReceivedTimeUtc: string;
-        LastAcknowledgementSentTimeUtc: string;
-        ReplicationQueueStatus: IRawReplicatorQueueStatus;
-        CopyQueueStatus: IRawReplicatorQueueStatus;
-        RemoteReplicators: IRawRemoteReplicatorStatus[];
+        Kind!: string;
+        IsInBuild!: boolean;
+        LastCopyOperationReceivedTimeUtc!: string;
+        LastReplicationOperationReceivedTimeUtc!: string;
+        LastAcknowledgementSentTimeUtc!: string;
+        ReplicationQueueStatus!: IRawReplicatorQueueStatus;
+        CopyQueueStatus!: IRawReplicatorQueueStatus;
+        RemoteReplicators!: IRawRemoteReplicatorStatus[];
     }
 
 export class IRawReplicatorQueueStatus {
-        QueueUtilizationPercentage: string;
-        QueueMemorySize: boolean;
-        FirstSequenceNumber: string;
-        CompletedSequenceNumber: string;
-        CommittedSequenceNumber: string;
-        LastSequenceNumber: string;
+        QueueUtilizationPercentage!: string;
+        QueueMemorySize!: boolean;
+        FirstSequenceNumber!: string;
+        CompletedSequenceNumber!: string;
+        CommittedSequenceNumber!: string;
+        LastSequenceNumber!: string;
     }
 
 export class IRawRemoteReplicatorStatus {
-        ReplicaId: string;
-        IsInBuild: boolean;
-        LastAcknowledgementProcessedTimeUtc: string;
-        LastReceivedReplicationSequenceNumber: string;
-        LastAppliedReplicationSequenceNumber: string;
-        LastReceivedCopySequenceNumber: string;
-        LastAppliedCopySequenceNumber: string;
-        RemoteReplicatorAcknowledgementStatus: IRemoteReplicatorAcknowledgementStatus;
+        ReplicaId!: string;
+        IsInBuild!: boolean;
+        LastAcknowledgementProcessedTimeUtc!: string;
+        LastReceivedReplicationSequenceNumber!: string;
+        LastAppliedReplicationSequenceNumber!: string;
+        LastReceivedCopySequenceNumber!: string;
+        LastAppliedCopySequenceNumber!: string;
+        RemoteReplicatorAcknowledgementStatus!: IRemoteReplicatorAcknowledgementStatus;
     }
 
 export interface IRemoteReplicatorAcknowledgementStatus {
@@ -870,9 +870,9 @@ export interface IRawServiceHealthState {
 export interface IRawServiceLoadMetricDescription {
         Name: string;
         Weight: string;
-        PrimaryDefaultLoad: number;
-        SecondaryDefaultLoad: number;
-        AuxiliaryDefaultLoad?: number;
+        PrimaryDefaultLoad: number | null;
+        SecondaryDefaultLoad: number | null;
+        AuxiliaryDefaultLoad?: number | null;
     }
 
 export interface IRawServiceType {
@@ -1016,9 +1016,9 @@ export interface IRawUpdateServiceDescription {
         MinReplicaSetSize?: number;
         AuxiliaryReplicaCount?: number;
         InstanceCount?: number;
-        ReplicaRestartWaitDurationSeconds?: number;
-        QuorumLossWaitDurationSeconds?: number;
-        StandByReplicaKeepDurationSeconds?: number;
+        ReplicaRestartWaitDurationSeconds?: number | null;
+        QuorumLossWaitDurationSeconds?: number | null;
+        StandByReplicaKeepDurationSeconds?: number | null;
     }
 
 export interface IRawCreateServiceDescription extends IRawCreateServiceFromTemplateDescription, IRawUpdateServiceDescription {

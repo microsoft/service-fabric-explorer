@@ -19,8 +19,8 @@ export class ClipBoardComponent implements OnChanges {
   @Input() tooltipText = '';
   @Input() disabled = false;
   @Input() name = '';
-  @ViewChild('ref') ref: ElementRef;
-  @ViewChild(NgbTooltip) tooltip: NgbTooltip; // First
+  @ViewChild('ref') ref!: ElementRef;
+  @ViewChild(NgbTooltip) tooltip!: NgbTooltip; // First
   public ariaLabel = '';
               
   copy() {

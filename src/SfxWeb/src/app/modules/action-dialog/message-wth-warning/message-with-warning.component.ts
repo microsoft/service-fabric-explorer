@@ -13,20 +13,20 @@ import { ActionDialogUtils } from '../utils';
 })
 export class MessageWithWarningComponent implements AfterViewInit, OnDestroy, DialogBodyComponent {
 
-  @ViewChild(DialogBodyDirective) body: DialogBodyDirective;
-  @Input() inputs: {description: string, link: string, linkText: string, template?: Type<DialogBodyComponent>};
+  @ViewChild(DialogBodyDirective) body!: DialogBodyDirective;
+  @Input() inputs!: {description: string, link: string, linkText: string, template?: Type<DialogBodyComponent>};
   @Output() disableSubmit = new EventEmitter<boolean>();
   disableSubmitSubscription: Subscription = new Subscription();
 
-  instance: DialogBodyComponent;
+  instance!: DialogBodyComponent;
 
   ngAfterViewInit(): void {
     if (this.inputs.template) {
-      this.instance = ActionDialogUtils.createChildComponent(this.body, this.inputs, this.inputs.template, (value) => { this.emitEvent(value) });
+      this.instance = ActionDialogUtils.createChildComponent(this.body, this.inputs, this.inputs.template, (value: any) => { this.emitEvent(value) });
     }  
   }
 
-  emitEvent(value) {
+  emitEvent(value: any) {
     this.disableSubmit.emit(value);
   }
 

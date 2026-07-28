@@ -10,7 +10,7 @@ import { IEssentialListItem } from 'src/app/modules/charts/essential-health-tile
 })
 export class EssentialItemComponent {
 
-  @Input() item: IEssentialListItem;
+  @Input() item!: IEssentialListItem;
   @Input() underline = false;
 
   constructor() { }

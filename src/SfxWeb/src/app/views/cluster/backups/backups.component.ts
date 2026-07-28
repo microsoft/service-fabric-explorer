@@ -22,9 +22,9 @@ export class BackupsComponent extends BaseControllerDirective {
   private settings = inject(SettingsService);
 
 
-  backupPolicyListSettings: ListSettings;
-  backupPolicies: BackupPolicyCollection;
-  actions: ActionCollection;
+  backupPolicyListSettings!: ListSettings;
+  backupPolicies!: BackupPolicyCollection;
+  actions!: ActionCollection;
 
   setup(){
     this.backupPolicyListSettings = this.settings.getNewOrExistingBackupPolicyListSettings();

@@ -41,7 +41,7 @@ export class Application extends DataModelBase<IRawApplication> {
     public health: ApplicationHealth;
     public serviceTypes: ServiceTypeCollection;
     public applicationBackupConfigurationInfoCollection: ApplicationBackupConfigurationInfoCollection;
-    public backupPolicyName: string;
+    public backupPolicyName!: string;
     public cleanBackup: boolean;
 
     public constructor(data: DataService, raw?: IRawApplication) {
@@ -87,7 +87,7 @@ export class Application extends DataModelBase<IRawApplication> {
     }
 
     public get resourceId(): string {
-        return this.raw.ApplicationMetadata?.ArmMetadata?.ArmResourceId;
+        return this.raw.ApplicationMetadata?.ArmMetadata?.ArmResourceId ?? '';
     }
 
     public get isArmManaged(): boolean{
@@ -121,7 +121,7 @@ export class Application extends DataModelBase<IRawApplication> {
     }
 
     protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<IRawApplication> {
-        return this.data.restClient.getApplication(this.id, this.data.readOnlyHeader, messageHandler);
+        return this.data.restClient.getApplication(this.id, !!this.data.readOnlyHeader, messageHandler);
     }
 
     private setUpActions(): void {
@@ -168,7 +168,7 @@ export class Application extends DataModelBase<IRawApplication> {
     private cleanUpApplicationReplicas() {
         this.data.getNodes(true)
             .subscribe(nodes => {
-                const replicas = [];
+                const replicas: any[] = [];
 
                 const replicaQueries = nodes.collection.map((node) =>
                     this.data.restClient.getReplicasOnNode(node.name, this.id)
@@ -214,7 +214,7 @@ export class SystemApplication extends Application {
 
     public get status(): ITextAndBadge {
         // Do not show status for system application
-        return null;
+        return null!;
     }
 
     public get viewPath(): string {
@@ -243,7 +243,7 @@ export class ApplicationHealth extends HealthBase<IRawApplicationHealth> {
 
     public get deploymentsHealthState(): ITextAndBadge {
         const deployedAppsHealthStates = this.raw.DeployedApplicationHealthStates.map(app => this.valueResolver.resolveHealthStatus(app.AggregatedHealthState));
-        return this.valueResolver.resolveHealthStatus(Utils.max(deployedAppsHealthStates.map( healthState => HealthStateConstants.Values[healthState.text])).toString());
+        return this.valueResolver.resolveHealthStatus(Utils.max(deployedAppsHealthStates.map( healthState => (HealthStateConstants.Values as any)[healthState.text])).toString());
     }
 
     protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<IRawApplicationHealth> {
@@ -298,7 +298,7 @@ export class ApplicationUpgradeProgress extends DataModelBase<IRawApplicationUpg
 
     public unhealthyEvaluations: HealthEvaluation[] = [];
     public upgradeDomains: UpgradeDomain[] = [];
-    public upgradeDescription: UpgradeDescription;
+    public upgradeDescription!: UpgradeDescription;
 
     public constructor(data: DataService, public parent: Application) {
         super(data, null, parent);

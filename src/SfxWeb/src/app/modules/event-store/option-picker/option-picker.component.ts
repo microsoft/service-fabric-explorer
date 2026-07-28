@@ -27,8 +27,8 @@ export class OptionPickerComponent implements OnChanges {
   dataService = inject(DataService);
   settings = inject(SettingsService);
 
-  @Input() optionsConfig: IOptionConfig;
-  @Input() listEventStoreData: IEventStoreData<any, any>[];
+  @Input() optionsConfig!: IOptionConfig;
+  @Input() listEventStoreData!: IEventStoreData<any, any>[];
   @Output() selectedOption = new EventEmitter<IOptionData>();
   checkedStates: Record<string, boolean> = {};
   options: IEventStoreData<any, any>[] = [];

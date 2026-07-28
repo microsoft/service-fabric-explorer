@@ -38,8 +38,8 @@ export class StandaloneIntegrationService {
 
   constructor() { }
 
-  public clusterUrl: string = null;
-  public integrationConfig: IntegrationConfig = null;
+  public clusterUrl: string = null!;
+  public integrationConfig: IntegrationConfig = null!;
 
   public setConfiguration(configuration: IntegrationConfig) {
     try {
@@ -49,7 +49,7 @@ export class StandaloneIntegrationService {
     }
 
     try {
-      this.clusterUrl = configuration.clusterInfo;
+      this.clusterUrl = configuration.clusterInfo!;
       console.log(this.clusterUrl)
     } catch {
       console.log("could not load any cluster url")

@@ -9,8 +9,8 @@ import { Observable } from 'rxjs';
 // -----------------------------------------------------------------------------
 
 export class TreeViewModel {
-    public childGroupViewModel: TreeNodeGroupViewModel;
-    public selectedNode: TreeNodeGroupViewModel;
+    public childGroupViewModel!: TreeNodeGroupViewModel;
+    public selectedNode!: TreeNodeGroupViewModel;
 
     public showOkItems = true;
     public showWarningItems = true;
@@ -45,7 +45,7 @@ export class TreeViewModel {
         const baseNode: ITreeNode = {childrenQuery: this.childrenQuery,
                                      displayName: () => '',
                                     nodeId: 'base'};
-        this.childGroupViewModel = new TreeNodeGroupViewModel(this, baseNode, null);
+        this.childGroupViewModel = new TreeNodeGroupViewModel(this, baseNode, null!);
         if (this.childGroupViewModel.isCollapsed) {
             this.childGroupViewModel.toggle().subscribe(() => {
                 if (this.childGroupViewModel.children.length > 0) {
@@ -138,7 +138,7 @@ export class TreeViewModel {
                 return;
             }
 
-            let node: TreeNodeGroupViewModel = null;
+            let node: TreeNodeGroupViewModel | null = null;
             const nodes = group.children;
             for (const n of nodes) {
                 if (n.nodeId === path[currIndex]) {

@@ -13,14 +13,14 @@ import { Constants } from 'src/app/Common/Constants';
 export class ReplicaBaseControllerDirective extends BaseControllerDirective {
     protected data = inject(DataService);
 
-    public appId: string;
-    public serviceId: string;
-    public partitionId: string;
-    public replicaId: string;
-    public appTypeName: string;
-    public isSystem: boolean;
+    public appId!: string;
+    public serviceId!: string;
+    public partitionId!: string;
+    public replicaId!: string;
+    public appTypeName!: string;
+    public isSystem!: boolean;
 
-    replica: ReplicaOnPartition;
+    replica!: ReplicaOnPartition;
 
     common(messageHandler?: IResponseMessageHandler): Observable<any> {
         this.isSystem = this.appTypeName === Constants.SystemAppTypeName;

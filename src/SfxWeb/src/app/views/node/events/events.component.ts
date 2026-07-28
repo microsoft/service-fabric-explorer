@@ -15,8 +15,8 @@ export class EventsComponent extends NodeBaseControllerDirective {
   protected data: DataService = inject(DataService);
 
 
-  listEventStoreData: IEventStoreData<any, any> [];
-  optionsConfig: IOptionConfig;
+  listEventStoreData!: IEventStoreData<any, any> [];
+  optionsConfig!: IOptionConfig;
 
   setup() {
     this.listEventStoreData = [

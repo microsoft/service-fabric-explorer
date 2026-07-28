@@ -16,11 +16,11 @@ export class ApptypeViewerComponent implements OnChanges {
   private settings = inject(SettingsService);
 
 
-  @Input() activeAppTypes: ApplicationType[];
-  @Input() inactiveAppTypes: ApplicationType[];
-  allAppTypes: ApplicationType[];
-  allAppTypesListSettings: ListSettings;
-  appTypesListSettings: ListSettings;
+  @Input() activeAppTypes!: ApplicationType[];
+  @Input() inactiveAppTypes!: ApplicationType[];
+  allAppTypes!: ApplicationType[];
+  allAppTypesListSettings!: ListSettings;
+  appTypesListSettings!: ListSettings;
 
   ngOnChanges(): void { 
     this.allAppTypesListSettings = this.settings.getNewOrExistingAppTypeListSettings(true);

@@ -7,7 +7,7 @@ import { Subject } from 'rxjs';
 export class FocusService{
 
   focusObservable : Subject<ElementRef<any>> = new Subject<ElementRef<any>>();  
-  focusElement : ElementRef<any>;  
+  focusElement !: ElementRef<any>;  
 
   constructor() {
     this.focusObservable.subscribe((element) => {

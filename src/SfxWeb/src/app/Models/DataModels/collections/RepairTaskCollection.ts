@@ -15,8 +15,8 @@ export class RepairTaskCollection extends DataModelCollectionBase<RepairTask> {
     completedRepairTasks: RepairTask[] = [];
     jobsOfInterest: RepairTask[] = [];
 
-    public longRunningApprovalJob: RepairTask;
-    public longestExecutingJob: RepairTask;
+    public longRunningApprovalJob: RepairTask | null = null;
+    public longestExecutingJob: RepairTask | null = null;
 
     public constructor(data: DataService) {
         super(data, parent);
@@ -34,8 +34,8 @@ export class RepairTaskCollection extends DataModelCollectionBase<RepairTask> {
     }
 
     protected updateInternal(): Observable<any> {
-        let longRunningApprovalRepairTask: RepairTask = null;
-        let longRunningExecutingRepairTask: RepairTask = null;
+        let longRunningApprovalRepairTask: RepairTask | null = null;
+        let longRunningExecutingRepairTask: RepairTask | null = null;
 
         this.repairTasks = [];
         this.completedRepairTasks = [];
@@ -67,15 +67,15 @@ export class RepairTaskCollection extends DataModelCollectionBase<RepairTask> {
       this.longRunningApprovalJob = longRunningApprovalRepairTask;
       this.longestExecutingJob = longRunningExecutingRepairTask;
 
-      return forkJoin(this.repairTasks.map(task => task.updateInternal())).pipe(defaultIfEmpty([]), map(() => {
+      return forkJoin(this.repairTasks.map(task => task.updateInternal())).pipe(defaultIfEmpty<any[]>([]), map(() => {
         try {
           this.jobsOfInterest = this.repairTasks.filter(task => task.concerningJobInfo);
 
           const stuckJobTypeMap: Record<string, RepairTask[]> = {};
           this.jobsOfInterest.forEach(job => {
-            const jobList = (stuckJobTypeMap[job.concerningJobInfo.type] || []);
+            const jobList = (stuckJobTypeMap[job.concerningJobInfo!.type] || []);
             jobList.push(job);
-            stuckJobTypeMap[job.concerningJobInfo.type] = jobList;
+            stuckJobTypeMap[job.concerningJobInfo!.type] = jobList;
           })
 
           const messageTypes = [RepairTaskMessages.longExecutingId,

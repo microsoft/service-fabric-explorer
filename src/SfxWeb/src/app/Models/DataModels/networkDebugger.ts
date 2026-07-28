@@ -24,7 +24,7 @@ export interface IRequestsData {
 export class NetworkDebugger {
     public slowOrResponsiveNetwork = false;
     public stopRecordingRequests = false;
-    public overall: IRequestsData;
+    public overall!: IRequestsData;
     public maxRequests = 10;
     public slowAverageResponse = 100;
 
@@ -62,7 +62,7 @@ export class NetworkDebugger {
             failureCount: 0,
             requestCount: 1,
             averageDuration: 0,
-            requests: [],
+            requests: [] as IRequest[],
             isSecondRowCollapsed: true
         } as IRequestsData;
 

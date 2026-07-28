@@ -204,8 +204,8 @@ const APE: IRelevantEventsConfig[] = [
 ]
 
 Object.keys(APEmap).forEach(key => {
-  APE.push(generateConfig(key, APEmap[key]));
-  APE.push(generateConfig(forceKillPrefix + key, APEmap[key], 'but not graceful shutdown'));
+  APE.push(generateConfig(key, (APEmap as any)[key]));
+  APE.push(generateConfig(forceKillPrefix + key, (APEmap as any)[key], 'but not graceful shutdown'));
 })
 
 

@@ -14,15 +14,15 @@ export class CommandComponent implements OnInit{
   private cdr = inject(ChangeDetectorRef);
 
 
-  @Input() command: PowershellCommand;
+  @Input() command!: PowershellCommand;
   safetyLevelEnum = CommandSafetyLevel;
   BadgeConstants = BadgeConstants;
   
   inputForm: UntypedFormGroup = new UntypedFormGroup({ requiredInputs: new UntypedFormGroup({}), optionalInputs: new UntypedFormGroup({}) });
-  invalidInputs: string;
+  invalidInputs!: string;
   
-  requiredParams: PowershellCommandParameter[];
-  optionalParams: PowershellCommandParameter[];
+  requiredParams!: PowershellCommandParameter[];
+  optionalParams!: PowershellCommandParameter[];
   ngOnInit() {
  
     this.requiredParams = this.command.parameters.filter(p => p.required);

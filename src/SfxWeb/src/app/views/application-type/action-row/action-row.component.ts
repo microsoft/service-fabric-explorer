@@ -12,8 +12,8 @@ import { ApplicationType } from 'src/app/Models/DataModels/ApplicationType';
 })
 export class ActionRowComponent implements DetailBaseComponent {
 
-  item: ApplicationType;
-  listSetting: ListColumnSettingForApplicationType;
+  item!: ApplicationType;
+  listSetting!: ListColumnSettingForApplicationType;
 
   constructor() { }
 

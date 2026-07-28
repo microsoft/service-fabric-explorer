@@ -17,18 +17,18 @@ export class MapComponent extends BaseControllerDirective implements OnChanges {
 
   static readonly baseScale = 'scale(1)';
 
-  @Input() listTemplate: TemplateRef<any>;
+  @Input() listTemplate!: TemplateRef<any>;
   @Input() nodes: Node[] = [];
   @Input() groupByNodeType = false;
 
-  matrix: Record<string, Node[]>;
+  matrix!: Record<string, Node[]>;
 
   showScaleButton = false;
   scaleToFit = false;
   scale = MapComponent.baseScale;
 
-  @ViewChild('container') private container: ElementRef;
-  @ViewChild('map') private map: ElementRef;
+  @ViewChild('container') private container!: ElementRef;
+  @ViewChild('map') private map!: ElementRef;
 
   ngOnChanges() {
     this.updateNodes(this.nodes);
@@ -61,18 +61,18 @@ export class MapComponent extends BaseControllerDirective implements OnChanges {
       const matrix = {};
 
       this.data.nodes.faultDomains.forEach(fd => {
-        matrix[fd] = [];
+        (matrix as any)[fd] = [];
 
         this.data.nodes.upgradeDomains.forEach(ud => {
-          matrix[`${fd}${ud}`] = [];
-          matrix[ud] = [];
+          (matrix as any)[`${fd}${ud}`] = [];
+          (matrix as any)[ud] = [];
         });
       });
 
       nodes.forEach(node => {
-        matrix[node.faultDomain + node.upgradeDomain].push(node);
-        matrix[node.faultDomain].push(node);
-        matrix[node.upgradeDomain].push(node);
+        (matrix as any)[node.faultDomain + node.upgradeDomain].push(node);
+        (matrix as any)[node.faultDomain].push(node);
+        (matrix as any)[node.upgradeDomain].push(node);
       });
 
       this.matrix = matrix;
@@ -80,7 +80,7 @@ export class MapComponent extends BaseControllerDirective implements OnChanges {
 
   }
 
-  trackByFn(index, udOrFd: string) {
+  trackByFn(index: any, udOrFd: string) {
     return udOrFd;
   }
 }

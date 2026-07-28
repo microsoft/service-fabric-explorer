@@ -25,8 +25,8 @@ export class BackupComponent extends ApplicationBaseControllerDirective  {
   private telemetry = inject(TelemetryService);
 
 
-  applicationBackupConfigurationInfoListSettings: ListSettings;
-  actions: ActionCollection;
+  applicationBackupConfigurationInfoListSettings!: ListSettings;
+  actions!: ActionCollection;
 
   setup() {
     this.applicationBackupConfigurationInfoListSettings = this.settings.getNewOrExistingListSettings('backupConfigurationInfoCollection', ['raw.PolicyName'], [
@@ -84,9 +84,9 @@ export class BackupComponent extends ApplicationBaseControllerDirective  {
             data: this
         },
         PartitionDisableBackUpComponent,
-        () => this.app.applicationBackupConfigurationInfoCollection.collection.length && this.app.applicationBackupConfigurationInfoCollection.collection[0].raw &&
+        () => !!(this.app.applicationBackupConfigurationInfoCollection.collection.length && this.app.applicationBackupConfigurationInfoCollection.collection[0].raw &&
               this.app.applicationBackupConfigurationInfoCollection.collection[0].raw.Kind === 'Application' &&
-              this.app.applicationBackupConfigurationInfoCollection.collection[0].raw.PolicyInheritedFrom === 'Application',
+              this.app.applicationBackupConfigurationInfoCollection.collection[0].raw.PolicyInheritedFrom === 'Application'),
     ));
 
       this.actions.add(new ActionWithConfirmationDialog(
@@ -97,10 +97,10 @@ export class BackupComponent extends ApplicationBaseControllerDirective  {
         () => this.data.restClient.suspendApplicationBackup(this.app.id).pipe(map(() => {
               this.app.applicationBackupConfigurationInfoCollection.refresh();
         })),
-        () => this.app.applicationBackupConfigurationInfoCollection.collection.length && this.app.applicationBackupConfigurationInfoCollection.collection[0].raw &&
+        () => !!(this.app.applicationBackupConfigurationInfoCollection.collection.length && this.app.applicationBackupConfigurationInfoCollection.collection[0].raw &&
               this.app.applicationBackupConfigurationInfoCollection.collection[0].raw.Kind === 'Application' &&
               this.app.applicationBackupConfigurationInfoCollection.collection[0].raw.PolicyInheritedFrom === 'Application' &&
-          this.app.applicationBackupConfigurationInfoCollection.collection[0].raw.SuspensionInfo.IsSuspended === false,
+          this.app.applicationBackupConfigurationInfoCollection.collection[0].raw.SuspensionInfo.IsSuspended === false),
         {
           title:  'Confirm Application Backup Suspension'
         },
@@ -119,10 +119,10 @@ export class BackupComponent extends ApplicationBaseControllerDirective  {
         () => this.data.restClient.resumeApplicationBackup(this.app.id).pipe(map(() => {
             this.app.applicationBackupConfigurationInfoCollection.refresh();
         })),
-        () => this.app.applicationBackupConfigurationInfoCollection.collection.length && this.app.applicationBackupConfigurationInfoCollection.collection[0].raw &&
+        () => !!(this.app.applicationBackupConfigurationInfoCollection.collection.length && this.app.applicationBackupConfigurationInfoCollection.collection[0].raw &&
               this.app.applicationBackupConfigurationInfoCollection.collection[0].raw.Kind === 'Application' &&
               this.app.applicationBackupConfigurationInfoCollection.collection[0].raw.PolicyInheritedFrom === 'Application' &&
-          this.app.applicationBackupConfigurationInfoCollection.collection[0].raw.SuspensionInfo.IsSuspended === true,
+          this.app.applicationBackupConfigurationInfoCollection.collection[0].raw.SuspensionInfo.IsSuspended === true),
         {
           title:  'Confirm Application Backup Resumption'
         },
