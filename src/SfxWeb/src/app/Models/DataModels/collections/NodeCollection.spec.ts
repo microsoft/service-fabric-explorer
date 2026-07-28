@@ -36,6 +36,8 @@ describe('NodeCollection', () => {
             restClient: {
                 getNodes: () => of([
                     createNode('node-10a', '10'),
+                    createNode('node-0', '0'),
+                    createNode('node-11', '11'),
                     createNode('node-2', '2'),
                     createNode('node-1', '1'),
                     createNode('node-10b', '10')
@@ -46,6 +48,6 @@ describe('NodeCollection', () => {
 
         await nodes.ensureInitialized().toPromise();
 
-        expect(nodes.upgradeDomains).toEqual(['1', '2', '10']);
+        expect(nodes.upgradeDomains).toEqual(['0', '1', '2', '10', '11']);
     });
 });
