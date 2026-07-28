@@ -3,7 +3,7 @@ import { IRawClusterHealth, IRawClusterManifest, IRawClusterUpgradeProgress, IRa
 import { DataService } from 'src/app/services/data.service';
 import { HealthStateFilterFlags } from '../HealthChunkRawDataTypes';
 import { HealthStateConstants, StatusWarningLevel, BannerWarningID, UpgradeDomainStateRegexes, ClusterUpgradeStates, UpgradeDomainStateNames, CertExpiraryHealthEventProperty } from 'src/app/Common/Constants';
-import { HealthEvaluation, UpgradeDomain, UpgradeDescription, LoadMetricInformation } from './Shared';
+import { compareUpgradeDomainNames, HealthEvaluation, UpgradeDomain, UpgradeDescription, LoadMetricInformation } from './Shared';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Node } from './Node';
@@ -343,6 +343,9 @@ export class ClusterUpgradeProgress extends DataModelBase<IRawClusterUpgradeProg
 
         const upgradeUnits = this.isUDUpgrade ? this.raw.UpgradeDomains : this.raw.UpgradeUnits;
         const domains = upgradeUnits.map(ud => new UpgradeDomain(this.data, ud, !this.isUDUpgrade));
+        if (this.isUDUpgrade) {
+            domains.sort((left, right) => compareUpgradeDomainNames(left.name, right.name));
+        }
 
         const groupedDomains = domains.filter(ud => ud.stateName === UpgradeDomainStateNames.Completed)
             .concat(domains.filter(ud => ud.stateName === UpgradeDomainStateNames.InProgress))

@@ -12,7 +12,7 @@ import { IResponseMessageHandler, ResponseMessageHandlers } from 'src/app/Common
 import { ITextAndBadge } from 'src/app/Utils/ValueResolver';
 import { HealthBase } from './HealthEvent';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
-import { HealthEvaluation, UpgradeDescription, UpgradeDomain } from './Shared';
+import { compareUpgradeDomainNames, HealthEvaluation, UpgradeDescription, UpgradeDomain } from './Shared';
 import { Utils } from 'src/app/Utils/Utils';
 import { Observable, forkJoin, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
@@ -376,6 +376,9 @@ export class ApplicationUpgradeProgress extends DataModelBase<IRawApplicationUpg
         const upgradeUnits = this.isUDUpgrade ? this.raw.UpgradeDomains : this.raw.UpgradeUnits;
 
         const domains = upgradeUnits.map(ud => new UpgradeDomain(this.data, ud, !this.isUDUpgrade));
+        if (this.isUDUpgrade) {
+            domains.sort((left, right) => compareUpgradeDomainNames(left.name, right.name));
+        }
         const groupedDomains = domains.filter(ud => ud.stateName === UpgradeDomainStateNames.Completed)
             .concat(domains.filter(ud => ud.stateName === UpgradeDomainStateNames.InProgress))
             .concat(domains.filter(ud => ud.name === this.raw.NextUpgradeDomain))

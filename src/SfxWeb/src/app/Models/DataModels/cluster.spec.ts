@@ -220,15 +220,15 @@ describe('Cluster', () => {
                         State: 'Completed'
                     },
                     {
+                        Name: '10',
+                        State: 'Completed'
+                    },
+                    {
+                        Name: '11',
+                        State: 'Completed'
+                    },
+                    {
                         Name: '2',
-                        State: 'Completed'
-                    },
-                    {
-                        Name: '3',
-                        State: 'Completed'
-                    },
-                    {
-                        Name: '4',
                         State: 'Completed'
                     }
                 ],
@@ -285,6 +285,7 @@ describe('Cluster', () => {
             expect(clusterUpgrade.startTimestampUtc).toBe('2020-03-02T23:23:20.669Z');
             expect(clusterUpgrade.failureTimestampUtc).toBe('0001-01-01T00:00:00.000Z');
             expect(clusterUpgrade.getCompletedUpgradeDomains()).toBe(5);
+            expect(clusterUpgrade.upgradeDomains.map(domain => domain.name)).toEqual(['0', '1', '2', '10', '11']);
         });
 
         fit('completed upgrade', async () => {
