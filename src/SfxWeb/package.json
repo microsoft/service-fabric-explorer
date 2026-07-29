@@ -84,7 +84,7 @@
     "@typescript-eslint/parser": "^8.64.0",
     "angular-eslint": "^22.1.0",
     "angular-http-server": "^1.9.0",
-    "cypress": "^15.13.1",
+    "cypress": "^15.19.0",
     "eslint": "^9.39.5",
     "jasmine-core": "~3.10.0",
     "jasmine-spec-reporter": "~5.0.0",
