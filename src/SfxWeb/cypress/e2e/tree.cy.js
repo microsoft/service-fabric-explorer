@@ -22,8 +22,17 @@ context('tree', () => {
             addDefaultFixtures();
             cy.visit("");
 
+            // Wait for the tree to finish loading before interacting. During initial load
+            // Angular re-renders the selected node, which can drop focus and leave the tree
+            // panel without the 'focused' class (root cause of this test's flakiness).
+            cy.get("[data-cy=tree]").within(() => {
+                cy.contains("Applications").should("be.visible");
+                cy.contains("Nodes").should("be.visible");
+                cy.contains("System").should("be.visible");
+            });
+
             //focused highlights tree
-            cy.get(".selected").focus();
+            cy.get(".selected").focus().should("be.focused");
             evalTreePanelFocus(true);
 
             //down arrow
