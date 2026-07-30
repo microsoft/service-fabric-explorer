@@ -134,12 +134,12 @@ describe('RepairTasksComponent', () => {
     fixture.detectChanges();
   });
 
-  fit('should create', () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
     console.log(component);
   });
 
-  fit('repair tasks in proper places', () => {
+  it('repair tasks in proper places', () => {
     expect(component.repairTaskCollection.repairTasks.length).toBe(1);
     expect(component.repairTaskCollection.completedRepairTasks.length).toBe(1);
     expect(component.sortedCompletedRepairTasks.length).toBe(0);

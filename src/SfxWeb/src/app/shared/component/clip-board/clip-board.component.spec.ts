@@ -26,11 +26,11 @@ describe('ClipBoardComponent', () => {
     fixture.detectChanges();
   });
 
-  fit('should create', () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 
-  fit('copy', () => {
+  it('copy', () => {
     component.copy();
     expect(spy.copy.calls.count()).toBe(1);
   });
