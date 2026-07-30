@@ -39,7 +39,9 @@
               "nouislider",
               "highcharts",
               "dayjs",
-              "adal-angular"
+              "adal-angular",
+              "moment",
+              "vis-data"
             ],
             "scripts": [],
             "stylePreprocessorOptions": {

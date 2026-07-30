@@ -6,7 +6,6 @@ import { AppComponent } from './app.component';
 import { DataService } from './services/data.service';
 import { TreeModule } from './modules/tree/tree.module';
 import { SharedModule } from './shared/shared.module';
-import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { MatDialogModule } from '@angular/material/dialog';
 import { NgbDropdownModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { initApp } from './app-initializers';
@@ -29,7 +28,6 @@ import { ActionDialogModule } from './modules/action-dialog/action-dialog.module
         AppRoutingModule,
         TreeModule,
         SharedModule,
-        NoopAnimationsModule,
         MatDialogModule,
         NgbDropdownModule,
         ReactiveFormsModule,
