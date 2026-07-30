@@ -29,7 +29,7 @@
       <app-input (changed)="setSearchText($event)" placeholder="Type to Highlight" label="Highlight items in list"></app-input>
     </div>
   </div>
-  <div class="tree-list" #treeContainer [ngClass]="{'focused':focused}" data-cy="tree-panel">
+  <div class="tree-list" #treeContainer data-cy="tree-panel">
     @if (canExpand && !smallWindowSize) {
       <span class="expand-panel-wrapper">
         <button class="expand-panel-button" (click)="setWidth()" title="Expand view to match width of tree">
@@ -42,7 +42,7 @@
         <div  class="tree-view">
           @if (treeService.tree.childGroupViewModel) {
             <div class="tree" role="tree" data-cy="tree">
-              <app-tree-node [node]="treeService.tree.childGroupViewModel" (focusEmitter)="focusSubject.next($event)" #baseNode></app-tree-node>
+              <app-tree-node [node]="treeService.tree.childGroupViewModel" #baseNode></app-tree-node>
             </div>
           }
         </div>
