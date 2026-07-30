@@ -39,7 +39,7 @@ describe('Tree Node', () => {
 
     }));
 
-    fit('validate tree Node', () => {
+    it('validate tree Node', () => {
         testNode = new TreeNodeGroupViewModel(treeViewModel, node, parent);
 
         expect(testNode.displayName()).toBe('node1');
@@ -68,17 +68,17 @@ describe('Tree Node', () => {
             testNode.tree.orderbyHealthState = false;
         });
 
-        fit('always visible', () => {
+        it('always visible', () => {
             expect(testNode.isVisibleByBadge).toBeTruthy();
         });
 
-        fit('always visible', () => {
+        it('always visible', () => {
             node.alwaysVisible = false;
             testNode.update(node);
             expect(testNode.isVisibleByBadge).toBeTruthy();
         });
 
-        fit('Healthy', () => {
+        it('Healthy', () => {
             node.alwaysVisible = false;
 
             node.badge = () => vr.resolveHealthStatus('OK');
@@ -88,7 +88,7 @@ describe('Tree Node', () => {
             expect(testNode.isVisibleByBadge).toBeTruthy();
         });
 
-        fit('Warning', () => {
+        it('Warning', () => {
             node.alwaysVisible = false;
             node.badge = () => vr.resolveHealthStatus('Warning');
             testNode.update(node);
@@ -98,7 +98,7 @@ describe('Tree Node', () => {
             expect(testNode.isVisibleByBadge).toBeTruthy();
         });
 
-        fit('Error', () => {
+        it('Error', () => {
             node.alwaysVisible = false;
             node.badge = () => vr.resolveHealthStatus('Error');
             testNode.update(node);
@@ -113,7 +113,7 @@ describe('Tree Node', () => {
     describe('refreshing tree state', () => {
 
 
-        fit('refresh adding/removing a child', () => {
+        it('refresh adding/removing a child', () => {
             expect(testNode.displayedChildren.length).toBe(0);
             testNode.toggle();
 
@@ -135,7 +135,7 @@ describe('Tree Node', () => {
 
         });
 
-        fit('refresh updating a child', () => {
+        it('refresh updating a child', () => {
             expect(testNode.displayedChildren.length).toBe(0);
             testNode.toggle();
 
@@ -153,7 +153,7 @@ describe('Tree Node', () => {
             expect(testNode.displayedChildren[0].displayName()).toBe('child2');
         });
 
-        fit('sort children', () => {
+        it('sort children', () => {
             const child2 = {
                 displayName: () => 'child2',
                 nodeId: 'child2',
@@ -183,7 +183,7 @@ describe('Tree Node', () => {
 
         });
 
-        fit('sort children by sort health order', () => {
+        it('sort children by sort health order', () => {
             const child2 = {
                 displayName: () => 'child2',
                 nodeId: 'child2',

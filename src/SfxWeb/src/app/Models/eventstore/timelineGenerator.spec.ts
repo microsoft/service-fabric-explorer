@@ -41,7 +41,7 @@ describe('TimelineGenerators', () => {
             });
 
 
-        fit('node started down and goes up', () => {
+        it('node started down and goes up', () => {
             const data = [upEvent];
             const events = generator.consume(data, startDate, endDate) as Required<ITimelineData>;
 
@@ -66,7 +66,7 @@ describe('TimelineGenerators', () => {
             expect(events.potentiallyMissingEvents).toBeFalsy();
         });
 
-        fit('node started up and goes down', () => {
+        it('node started up and goes down', () => {
             const data = [downEvent];
             const events = generator.consume(data, startDate, endDate) as Required<ITimelineData>;
 
@@ -92,7 +92,7 @@ describe('TimelineGenerators', () => {
             expect(events.potentiallyMissingEvents).toBeFalsy();
         });
 
-        fit('node goes down and up', () => {
+        it('node goes down and up', () => {
             const data = [upEvent, downEvent];
             const events = generator.consume(data, startDate, endDate) as Required<ITimelineData>;
             const someId = '1' + id;
@@ -118,7 +118,7 @@ describe('TimelineGenerators', () => {
 
         });
 
-        fit('node goes down (5 total events)', () => {
+        it('node goes down (5 total events)', () => {
             const down1 = new NodeEvent();
             down1.fillFromJSON({...upEvent.raw, EventInstanceId: '1', NodeName: '1', NodeInstance: 1});
             const down2 = new NodeEvent();
@@ -139,7 +139,7 @@ describe('TimelineGenerators', () => {
 
         });
 
-        fit('node goes down, up, and down (2 total events)', () => {
+        it('node goes down, up, and down (2 total events)', () => {
             const secondUpEvent = new NodeEvent();
 
             const instanceId = 'test';
@@ -194,7 +194,7 @@ describe('TimelineGenerators', () => {
 
         });
 
-        fit('node deactivation', () => {
+        it('node deactivation', () => {
             const endDateRange = new Date('2020-10-17T05:41:22.8992645Z');
 
             const deactivate = new NodeEvent();
@@ -230,7 +230,7 @@ describe('TimelineGenerators', () => {
             expect(events.potentiallyMissingEvents).toBeFalse();
         });
 
-        fit('Node open failed', () => {
+        it('Node open failed', () => {
           const endDateRange = new Date('2020-10-17T05:41:22.8992645Z');
 
           const openFailed = new NodeEvent();
@@ -260,7 +260,7 @@ describe('TimelineGenerators', () => {
         });
 
 
-      fit('Node added to cluster', () => {
+      it('Node added to cluster', () => {
         const endDateRange = new Date('2020-10-17T05:41:22.8992645Z');
 
         const addedToClusterEvent = new NodeEvent();
@@ -325,7 +325,7 @@ describe('TimelineGenerators', () => {
         expect(events.groups.length).toBe(2);
       });
 
-        fit('Node  down and removed from cluster', () => {
+        it('Node  down and removed from cluster', () => {
             const endDateRange = new Date('2020-10-17T05:41:22.8992645Z');
 
             const nodeDownEvent = new NodeEvent();
@@ -384,7 +384,7 @@ describe('TimelineGenerators', () => {
 
       const generator = new ApplicationTimelineGenerator();
 
-      fit('container exit', () => {
+      it('container exit', () => {
         const endDateRange = new Date('2020-10-17T05:41:22.8992645Z');
 
         const containerExitEvent = new ApplicationEvent();
@@ -419,7 +419,7 @@ describe('TimelineGenerators', () => {
   describe('Application generator', () => {
     const generator = new ApplicationTimelineGenerator();
 
-    fit('application upgrade', () => {
+    it('application upgrade', () => {
       const startUpgrade = new ApplicationEvent();
       const EventInstanceId = "89cfb53c-a003-43e6-9899-de7603fbc972";
       startUpgrade.fillFromJSON({

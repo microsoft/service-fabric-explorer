@@ -2,7 +2,7 @@ import { ITimedReplication } from './replica-status-container/replica-status-con
 import { generateReplicationDeltas } from './replication-utils';
 
 describe('ReplicationTrendLineComponent', () => {
-  fit('should create', () => {
+  it('should create', () => {
     const items = [
       {
         date: new Date('2020-02-14T05:28:50.161Z'),

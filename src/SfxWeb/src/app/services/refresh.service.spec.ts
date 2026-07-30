@@ -15,13 +15,13 @@ describe('RefreshService', () => {
 
   beforeEach(() => TestBed.configureTestingModule({}));
 
-  fit('should be created', () => {
+  it('should be created', () => {
     const service: RefreshService = TestBed.inject(RefreshService);
     expect(service).toBeTruthy();
   });
 
 
-  fit('auto refresh', async (done) => {
+  it('auto refresh', async (done) => {
     window.localStorage.setItem(Constants.AutoRefreshIntervalStorageKey, 'OFF');
 
     const service: RefreshService = TestBed.inject(RefreshService);
@@ -38,7 +38,7 @@ describe('RefreshService', () => {
 
   });
 
-  fit('refresh all', (done) => {
+  it('refresh all', (done) => {
     window.localStorage.setItem(Constants.AutoRefreshIntervalStorageKey, 'OFF');
 
     const service: RefreshService = TestBed.inject(RefreshService);
@@ -51,7 +51,7 @@ describe('RefreshService', () => {
     service.refreshAll();
   });
 
-  fit('update refresh interval', async () => {
+  it('update refresh interval', async () => {
     window.localStorage.setItem(Constants.AutoRefreshIntervalStorageKey, '15');
     const service: RefreshService = TestBed.inject(RefreshService);
     service.init();

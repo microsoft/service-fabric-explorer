@@ -22,11 +22,11 @@ describe('DisplayDurationComponent', () => {
     fixture.detectChanges();
   });
 
-  fit('should create', () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 
-  fit('correct colors', () => {
+  it('correct colors', () => {
     fixture.componentRef.setInput('topText', 'topTextTest');
     fixture.componentRef.setInput('bottomText', 'bottomText');
     fixture.componentRef.setInput('topInMilliseconds', 1000);

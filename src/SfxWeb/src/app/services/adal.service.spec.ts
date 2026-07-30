@@ -11,12 +11,12 @@ describe('AdalService', () => {
     providers: [{provide: RestClientService, useValue: restClientMock}]
   }));
 
-  fit('should be created', () => {
+  it('should be created', () => {
     const service: AdalService = TestBed.inject(AdalService);
     expect(service).toBeTruthy();
   });
 
-  fit('load', async () => {
+  it('load', async () => {
     const service: AdalService = TestBed.inject(AdalService);
 
     restClientMock.getAADmetadata = (messageHandler: IResponseMessageHandler): Observable<AadMetadata> => {
@@ -39,7 +39,7 @@ describe('AdalService', () => {
     expect(service.aadEnabled).toBeTruthy();
   });
 
-  fit('load non aad authed', async () => {
+  it('load non aad authed', async () => {
     const service: AdalService = TestBed.inject(AdalService);
 
     restClientMock.getAADmetadata = (messageHandler: IResponseMessageHandler): Observable<AadMetadata> => {

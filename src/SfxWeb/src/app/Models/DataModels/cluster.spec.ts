@@ -26,7 +26,7 @@ describe('Cluster', () => {
             clusterManifest = new ClusterManifest(mockDataService);
         }));
 
-        fit('validate no services', async () => {
+        it('validate no services', async () => {
             restClientMock.getClusterManifest = (messageHandler?: IResponseMessageHandler): Observable<IRawClusterManifest> =>
             of({
                 Manifest: `<ClusterManifest xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -49,7 +49,7 @@ describe('Cluster', () => {
             expect(clusterManifest.isEventStoreEnabled).toBe(false);
         });
 
-        fit('back up service enabled', async () => {
+        it('back up service enabled', async () => {
             restClientMock.getClusterManifest = (messageHandler?: IResponseMessageHandler): Observable<IRawClusterManifest> =>
             of({
                 Manifest: `<ClusterManifest xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -74,7 +74,7 @@ describe('Cluster', () => {
             expect(clusterManifest.isSfrpCluster).toBe(false);
         });
 
-        fit('native image store', async () => {
+        it('native image store', async () => {
             restClientMock.getClusterManifest = (messageHandler?: IResponseMessageHandler): Observable<IRawClusterManifest> =>
             of({
                 Manifest: `<ClusterManifest xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -98,7 +98,7 @@ describe('Cluster', () => {
             expect(clusterManifest.isSfrpCluster).toBe(false);
         });
 
-        fit('back up service enabled', async () => {
+        it('back up service enabled', async () => {
             restClientMock.getClusterManifest = (messageHandler?: IResponseMessageHandler): Observable<IRawClusterManifest> =>
             of({
                 Manifest: `<ClusterManifest xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -124,7 +124,7 @@ describe('Cluster', () => {
             expect(clusterManifest.isSfrpCluster).toBe(false);
         });
 
-        fit('Repair manager enabled', async () => {
+        it('Repair manager enabled', async () => {
             restClientMock.getClusterManifest = (messageHandler?: IResponseMessageHandler): Observable<IRawClusterManifest> =>
             of({
                 Manifest: `<ClusterManifest xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -150,7 +150,7 @@ describe('Cluster', () => {
             expect(clusterManifest.isSfrpCluster).toBe(true);
         });
 
-        fit('Event store enabled', async () => {
+        it('Event store enabled', async () => {
             restClientMock.getClusterManifest = (messageHandler?: IResponseMessageHandler): Observable<IRawClusterManifest> =>
             of({
                 Manifest: `<ClusterManifest xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -172,7 +172,7 @@ describe('Cluster', () => {
             expect(clusterManifest.isEventStoreEnabled).toBeTruthy();
         });
 
-        fit('SFMC cluster is detected from paas ArmResourceId', async () => {
+        it('SFMC cluster is detected from paas ArmResourceId', async () => {
             restClientMock.getClusterManifest = (messageHandler?: IResponseMessageHandler): Observable<IRawClusterManifest> =>
             of({
                 Manifest: `<ClusterManifest xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -205,7 +205,7 @@ describe('Cluster', () => {
             clusterUpgrade = new ClusterUpgradeProgress(mockDataService);
         }));
 
-        fit('completed upgrade', async () => {
+        it('completed upgrade', async () => {
             restClientMock.getClusterUpgradeProgress = (messageHandler?: IResponseMessageHandler): Observable<IRawClusterUpgradeProgress> =>
             of({
                 CodeVersion: '7.0.457.9590',
@@ -287,7 +287,7 @@ describe('Cluster', () => {
             expect(clusterUpgrade.getCompletedUpgradeDomains()).toBe(5);
         });
 
-        fit('completed upgrade', async () => {
+        it('completed upgrade', async () => {
             restClientMock.getClusterUpgradeProgress = (messageHandler?: IResponseMessageHandler): Observable<IRawClusterUpgradeProgress> =>
             of({
                 CodeVersion: '7.0.457.9590',

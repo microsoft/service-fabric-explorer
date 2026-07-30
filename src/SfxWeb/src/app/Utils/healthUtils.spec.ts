@@ -15,7 +15,7 @@ describe('Health Utils', () => {
         }));
 
         describe('getViewPathUrl', () => {
-            fit('Nodes', () => {
+            it('Nodes', () => {
                 const health = {
                     Kind: 'Nodes'
                 } as IRawHealthEvaluation;
@@ -28,7 +28,7 @@ describe('Health Utils', () => {
                 });
             });
 
-            fit('Node', () => {
+            it('Node', () => {
                 const health = {
                     Kind: 'Node',
                     NodeName: 'test'
@@ -42,7 +42,7 @@ describe('Health Utils', () => {
                 });
             });
 
-            fit('Applications', () => {
+            it('Applications', () => {
                 const health = {
                     Kind: 'Applications',
                 } as IRawHealthEvaluation;
@@ -55,7 +55,7 @@ describe('Health Utils', () => {
                 });
             });
 
-            fit('Application', () => {
+            it('Application', () => {
                 const health = {
                     Kind: 'Application',
                     ApplicationName: 'fabric:/test'
@@ -78,7 +78,7 @@ describe('Health Utils', () => {
                 });
             });
 
-            fit('Service user app', () => {
+            it('Service user app', () => {
                 const health = {
                     Kind: 'Service',
                     Description: 'Service \'fabric:/WordCountV1/WordCountWebService\' is in Warning.',
@@ -94,7 +94,7 @@ describe('Health Utils', () => {
                 });
             });
 
-            fit('Service system app', () => {
+            it('Service system app', () => {
                 const health = {
                     Kind: 'Service',
                     AggregatedHealthState: 'Warning',
@@ -109,7 +109,7 @@ describe('Health Utils', () => {
                 });
             });
 
-            fit('Partition', () => {
+            it('Partition', () => {
                 const health = {
                     Kind: 'Partition',
                     PartitionId: '512361234123465'
@@ -123,7 +123,7 @@ describe('Health Utils', () => {
                 });
             });
 
-            fit('Replica', () => {
+            it('Replica', () => {
                 const health = {
                     Kind: 'Replica',
                     ReplicaOrInstanceId: '512361234123465'
@@ -137,7 +137,7 @@ describe('Health Utils', () => {
                 });
             });
 
-            fit('Event', () => {
+            it('Event', () => {
                 const health = {
                     Kind: 'Event'
                 } as IRawHealthEvaluation;
@@ -150,7 +150,7 @@ describe('Health Utils', () => {
                 });
             });
 
-            fit('DeployedServicePackage', () => {
+            it('DeployedServicePackage', () => {
                 const health = {
                     Kind: 'DeployedServicePackage',
                     ServiceManifestName: 'manifest'
@@ -173,7 +173,7 @@ describe('Health Utils', () => {
 
             });
 
-            fit('DeployedServicePackages', () => {
+            it('DeployedServicePackages', () => {
                 const health = {
                     Kind: 'DeployedServicePackages',
                 } as IRawHealthEvaluation;
@@ -184,7 +184,7 @@ describe('Health Utils', () => {
                     displayName: 'DeployedServicePackages',
                 });
             });
-            fit('Partitions', () => {
+            it('Partitions', () => {
                 const health = {
                     Kind: 'Partitions',
                 } as IRawHealthEvaluation;
@@ -196,7 +196,7 @@ describe('Health Utils', () => {
                 });
             });
 
-            fit('Replicas', () => {
+            it('Replicas', () => {
                 const health = {
                     Kind: 'Replicas',
                 } as IRawHealthEvaluation;
@@ -208,7 +208,7 @@ describe('Health Utils', () => {
                 });
             });
 
-            fit('Services', () => {
+            it('Services', () => {
                 const health = {
                     Kind: 'Services',
                 } as IRawHealthEvaluation;
@@ -224,7 +224,7 @@ describe('Health Utils', () => {
 
 
     describe('get health state count', () => {
-        fit('getHealthStateCount valid', async () => {
+        it('getHealthStateCount valid', async () => {
             const data = {
                 HealthEvents: [],
                 AggregatedHealthState: 'Warning',
@@ -331,7 +331,7 @@ describe('Health Utils', () => {
                 WarningCount: 0});
         });
 
-        fit('getHealthStateCount queried entity doesnt exist on list', async () => {
+        it('getHealthStateCount queried entity doesnt exist on list', async () => {
             const data = {
                 HealthEvents: [],
                 AggregatedHealthState: 'Warning',

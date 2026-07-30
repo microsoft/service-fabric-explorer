@@ -36,12 +36,12 @@ describe('RoutesService', () => {
   });
 
 
-  fit('should be created', () => {
+  it('should be created', () => {
     const service: RoutesService = TestBed.inject(RoutesService);
     expect(service).toBeTruthy();
   });
 
-  fit('start on nondefault route of entity and view different entity of same type (redirect)', async () => {
+  it('start on nondefault route of entity and view different entity of same type (redirect)', async () => {
     const service: RoutesService = TestBed.inject(RoutesService);
 
     await router.navigate(['/node/node1/details']);
@@ -56,7 +56,7 @@ describe('RoutesService', () => {
     expect(location.path()).toBe('/node/node2');
   });
 
-  fit('route to different view and back (no redirect)', async () => {
+  it('route to different view and back (no redirect)', async () => {
     const service: RoutesService = TestBed.inject(RoutesService);
 
     await router.navigate(['/node/node1/details']);
@@ -72,7 +72,7 @@ describe('RoutesService', () => {
   });
 
 
-  fit('route to different subpage. (no redirect)', async () => {
+  it('route to different subpage. (no redirect)', async () => {
     const service: RoutesService = TestBed.inject(RoutesService);
 
     await router.navigate(['/node/node1/details']);
@@ -87,7 +87,7 @@ describe('RoutesService', () => {
     expect(location.path()).toBe('/node/node1/details');
   });
 
-  fit('route to default page of same entity type (no redirect)', async () => {
+  it('route to default page of same entity type (no redirect)', async () => {
     const service: RoutesService = TestBed.inject(RoutesService);
 
     await router.navigate(['/node/node1']);

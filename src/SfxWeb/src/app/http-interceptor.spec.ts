@@ -44,7 +44,7 @@ describe('Http interceptors', () => {
     });
 
 
-    fit('readonly enabled', async () => {
+    it('readonly enabled', async () => {
         httpClient.get('/test').subscribe();
 
         const request = httpMock.expectOne('/test');
@@ -59,7 +59,7 @@ describe('Http interceptors', () => {
         expect(dataService.clusterNameMetadata).toBe('test-cluster');
     });
 
-    fit('SFRP headers lowercase', async () => {
+    it('SFRP headers lowercase', async () => {
       httpClient.get('/test').subscribe();
 
       const request = httpMock.expectOne('/test');
@@ -74,7 +74,7 @@ describe('Http interceptors', () => {
       expect(dataService.clusterNameMetadata).toBe('test-cluster');
   });
 
-    fit('readonly off', async () => {
+    it('readonly off', async () => {
         httpClient.get('/test').subscribe();
 
         const request = httpMock.expectOne('/test');
@@ -85,7 +85,7 @@ describe('Http interceptors', () => {
         expect(dataService.readOnlyHeader).toBeFalsy();
     });
 
-    fit('client headers sent', async () => {
+    it('client headers sent', async () => {
         httpClient.get('/test').subscribe();
 
         const requests = httpMock.match({ method: 'get' });
@@ -93,7 +93,7 @@ describe('Http interceptors', () => {
         expect(requests[0].request.headers.get('sfx-build')).toBe(environment.version);
     });
 
-    fit('aad auth not enabled', async () => {
+    it('aad auth not enabled', async () => {
         adalService.aadEnabled = false;
 
         httpClient.get('/test').subscribe();
@@ -102,7 +102,7 @@ describe('Http interceptors', () => {
         expect(requests[0].request.headers.get('Authorization')).toBeNull();
     });
 
-    fit('aad auth enabled', async () => {
+    it('aad auth enabled', async () => {
         adalService.aadEnabled = true;
 
         httpClient.get('/test').subscribe();
@@ -111,7 +111,7 @@ describe('Http interceptors', () => {
         expect(requests[0].request.headers.get('Authorization')).toBe('Bearer aad-token');
     });
 
-    fit('standalone interceptor does not fire', () => {
+    it('standalone interceptor does not fire', () => {
       standaloneService.setConfiguration(null!);
 
       spyOn(standaloneService, 'getIntegrationCaller');
@@ -122,7 +122,7 @@ describe('Http interceptors', () => {
 
   });
 
-  fit('standalone interceptor does fire', (done: DoneFn) => {
+  it('standalone interceptor does fire', (done: DoneFn) => {
     standaloneService.setConfiguration({passObjectAsString : true, handleAsCallBack : true, windowPath: "path"});
 
     spyOn(standaloneService, 'getIntegrationCaller').and.returnValue(
