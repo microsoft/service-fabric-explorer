@@ -35,6 +35,12 @@ describe('RoutesService', () => {
     router.initialNavigation();
   });
 
+  afterEach(async () => {
+    // RoutesService schedules redirect navigations via setTimeout(...,1). Let any pending
+    // redirect settle while the injector is alive; otherwise it runs after teardown (NG0205).
+    await new Promise(resolve => setTimeout(resolve, 50));
+  });
+
 
   it('should be created', () => {
     const service: RoutesService = TestBed.inject(RoutesService);
