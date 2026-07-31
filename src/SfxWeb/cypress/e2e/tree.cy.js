@@ -10,9 +10,6 @@ const evalExpanderRotation = (rotated, selector) => {
 
 context('tree', () => {
     describe("accessibility", () => {
-        // NOTE: This test fails when using the @angular-devkit/build-angular:application (esbuild) builder.
-        // The focus DOM event does not propagate through Angular event bindings with that builder.
-        // Keep using the browser (webpack) builder until this is resolved.
         it("keyboard navigation", () => {
             addDefaultFixtures();
             cy.visit("");
@@ -25,6 +22,11 @@ context('tree', () => {
                 cy.contains("Nodes").should("be.visible");
                 cy.contains("System").should("be.visible");
             });
+
+            // On load the app moves focus to the page heading (~200ms later, via FocusService) for
+            // accessibility. Wait for that to land before we take over, so it can't steal focus
+            // mid-test — that race (not event propagation) is what failed under the esbuild builder.
+            cy.get("h1.detail-view-title").should("be.focused");
 
             // Reliably focus the tree so the following keyboard navigation steps work.
             cy.get(".selected").focus().should("be.focused");
