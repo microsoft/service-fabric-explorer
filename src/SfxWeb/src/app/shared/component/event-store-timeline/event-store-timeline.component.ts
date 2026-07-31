@@ -3,7 +3,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { pregeneratedColors } from 'src/app/Common/Constants';
 import { ITimelineData } from 'src/app/Models/eventstore/timelineGenerators';
-import * as moment from 'moment';
+import moment from 'moment';
 import { Timeline, DataItem, DataGroup } from 'vis-timeline/peer';
 import { DataSet } from 'vis-data';
 

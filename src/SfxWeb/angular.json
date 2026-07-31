@@ -15,9 +15,12 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist",
+            "outputPath": {
+              "base": "dist",
+              "browser": ""
+            },
             "index": "src/index.html",
             "polyfills": [
               "src/polyfills.ts"
@@ -51,7 +54,7 @@
             "sourceMap": true,
             "optimization": false,
             "namedChunks": true,
-            "main": "src/main.ts"
+            "browser": "src/main.ts"
           },
           "configurations": {
             "accesstesting": {
@@ -62,6 +65,10 @@
                 }
               ],
               "index": "src/index.html",
+              "outputPath": {
+                "base": "../Sfx-Proxy/wwwroot",
+                "browser": ""
+              },
               "outputHashing": "all",
               "namedChunks": false
             },
@@ -94,7 +101,7 @@
           "defaultConfiguration": ""
         },
         "serve": {
-          "builder": "ngx-build-plus:dev-server",
+          "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
             "buildTarget": "SfxWeb:build",
             "proxyConfig": "proxy.conf.json"
@@ -103,10 +110,7 @@
             "production": {
               "buildTarget": "SfxWeb:build:production"
             }
-          },
-          "allowedCommonJsDependencies": [
-            "lodash"
-          ]
+          }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
