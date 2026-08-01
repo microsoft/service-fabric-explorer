@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { RepairTasksComponent } from './repair-tasks.component';
 import { SettingsService } from 'src/app/services/settings.service';
@@ -63,7 +63,7 @@ describe('RepairTasksComponent', () => {
     PerformRestoringHealthCheck: false
   };
 
-  beforeEach(waitForAsync(() => {
+  beforeEach(async () => {
 
     dataServiceStub = { };
     dataServiceStub.restClient = ({
@@ -118,7 +118,7 @@ describe('RepairTasksComponent', () => {
     } as any);
     dataServiceStub.repairCollection = new RepairTaskCollection(dataServiceStub as DataService);
 
-    TestBed.configureTestingModule({
+    await TestBed.configureTestingModule({
       declarations: [ RepairTasksComponent ],
       providers: [SettingsService,
                   {provide: DataService, useValue: dataServiceStub },
@@ -126,7 +126,7 @@ describe('RepairTasksComponent', () => {
       imports: [RouterTestingModule, NgbNavModule]
     })
     .compileComponents();
-  }));
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(RepairTasksComponent);

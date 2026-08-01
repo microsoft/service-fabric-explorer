@@ -2,12 +2,12 @@ import { TestBed } from '@angular/core/testing';
 import { Location } from '@angular/common';
 
 import { RoutesService } from './routes.service';
-import { provideRouter, Routes, Router } from '@angular/router';
+import { provideRouter, Routes, Router, RouterOutlet } from '@angular/router';
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 @Component({
     template: `<router-outlet></router-outlet>`,
     changeDetection: ChangeDetectionStrategy.Eager,
-    standalone: false
+    imports: [RouterOutlet]
 })
 export class AppComponent {
 }
@@ -26,7 +26,7 @@ xdescribe('RoutesService', () => {
   beforeEach(() => {
 
     TestBed.configureTestingModule({
-      declarations: [AppComponent],
+      imports: [AppComponent],
       providers: [provideRouter(routes)]
     });
 
