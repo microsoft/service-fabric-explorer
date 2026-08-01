@@ -3,13 +3,14 @@
   "compilerOptions": {
     "outDir": "./out-tsc/spec",
     "types": [
-      "jasmine",
+      "vitest/globals",
       "node"
     ]
   },
   "files": [
-    "src/test.ts",
-    "src/polyfills.ts"
+    "src/main.ts",
+    "src/polyfills.ts",
+    "src/test-providers.ts"
   ],
   "include": [
     "src/**/*.spec.ts",

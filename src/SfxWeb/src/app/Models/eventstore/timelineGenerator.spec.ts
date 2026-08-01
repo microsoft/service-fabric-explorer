@@ -227,7 +227,7 @@ describe('TimelineGenerators', () => {
 
             const events = generator.consume(data, startDate, endDateRange) as Required<ITimelineData>;
             expect(events.items.length).toBe(1);
-            expect(events.potentiallyMissingEvents).toBeFalse();
+            expect(events.potentiallyMissingEvents).toBe(false);
         });
 
         it('Node open failed', () => {
@@ -413,7 +413,7 @@ describe('TimelineGenerators', () => {
         const data = [containerExitEvent];
         const events = generator.consume(data, startDate, endDateRange) as Required<ITimelineData>;
         expect(events.items.length).toBe(1);
-        expect(events.potentiallyMissingEvents).toBeFalse();
+        expect(events.potentiallyMissingEvents).toBe(false);
     });
     })
   describe('Application generator', () => {
