@@ -10,7 +10,6 @@ describe('DisplayDurationComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ DisplayDurationComponent ],
       imports: [SharedModule]
     })
     .compileComponents();

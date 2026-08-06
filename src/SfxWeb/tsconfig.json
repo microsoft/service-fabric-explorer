@@ -10,18 +10,13 @@
     "esModuleInterop": true,
     "declaration": false,
     "experimentalDecorators": true,
-    "module": "es2020",
+    "module": "preserve",
     "moduleResolution": "bundler",
     "importHelpers": true,
-    "target": "ES2022",
-    "lib": [
-      "es2018",
-      "dom"
-    ],
-    "useDefineForClassFields": false
+    "target": "ES2022"
   },
   "angularCompilerOptions": {
-    "fullTemplateTypeCheck": true,
+    "strictTemplates": false,
     "strictInjectionParameters": true
   }
 }

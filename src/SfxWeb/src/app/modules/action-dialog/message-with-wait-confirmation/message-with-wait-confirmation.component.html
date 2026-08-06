@@ -14,7 +14,7 @@
 
     @if (!countDown) {
       <div class="check">
-        <input type="checkbox" [(ngModel)]="checked" [ngModelOptions]="{standalone: true}">
+        <input type="checkbox" [(ngModel)]="checked" [ngModelOptions]="{standalone: true}" data-cy="acknowledge">
         <div>I Acknowledge</div>
       </div>
     }

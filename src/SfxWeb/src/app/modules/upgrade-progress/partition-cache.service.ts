@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { Subject } from 'rxjs';
+import { Subject, firstValueFrom } from 'rxjs';
 import { IRawSafetyCheckDescription } from 'src/app/Models/RawDataTypes';
 import { DataService } from 'src/app/services/data.service';
 import { MessageService, MessageSeverity } from 'src/app/services/message.service';
@@ -37,15 +37,15 @@ export class PartitionCacheService {
     this.partitions[id].loading = 'inflight';
 
     try {
-      const partition = await this.restClientService.getPartitionById(id).toPromise();
-      const serviceName = await this.restClientService.getServiceNameInfo(id).toPromise();
-      const applicationName = await this.restClientService.getApplicationNameInfo(serviceName.Id).toPromise();
+      const partition = await firstValueFrom(this.restClientService.getPartitionById(id));
+      const serviceName = await firstValueFrom(this.restClientService.getServiceNameInfo(id));
+      const applicationName = await firstValueFrom(this.restClientService.getApplicationNameInfo(serviceName.Id));
 
       let app;
       if (applicationName.Id === 'System') {
-        app = await this.dataService.getSystemApp().toPromise();
+        app = await firstValueFrom(this.dataService.getSystemApp());
       }else {
-        app = await this.dataService.getApp(applicationName.Id).toPromise();
+        app = await firstValueFrom(this.dataService.getApp(applicationName.Id));
       }
 
       const route =  RoutesService.getPartitionViewPath(app.raw.TypeName, applicationName.Id,
