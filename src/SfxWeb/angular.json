@@ -23,7 +23,8 @@
             },
             "index": "src/index.html",
             "polyfills": [
-              "src/polyfills.ts"
+              "@angular/localize/init",
+              "zone.js"
             ],
             "tsConfig": "tsconfig.app.json",
             "assets": [
@@ -39,17 +40,11 @@
             ],
             "allowedCommonJsDependencies": [
               "lodash",
-              "nouislider",
               "highcharts",
               "dayjs",
               "adal-angular",
-              "moment",
-              "vis-data"
+              "moment"
             ],
-            "scripts": [],
-            "stylePreprocessorOptions": {
-              "includePaths": []
-            },
             "extractLicenses": false,
             "sourceMap": true,
             "optimization": false,
@@ -87,8 +82,8 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "2mb",
-                  "maximumError": "5mb"
+                  "maximumWarning": "3.3mb",
+                  "maximumError": "3.6mb"
                 },
                 {
                   "type": "anyComponentStyle",
@@ -102,8 +97,7 @@
                 "@angular/localize/init"
               ]
             }
-          },
-          "defaultConfiguration": ""
+          }
         },
         "serve": {
           "builder": "@angular/build:dev-server",

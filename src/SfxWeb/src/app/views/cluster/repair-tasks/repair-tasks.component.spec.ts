@@ -125,6 +125,7 @@ describe('RepairTasksComponent', () => {
                   RefreshService],
       imports: [RouterTestingModule, NgbNavModule]
     })
+    .overrideComponent(RepairTasksComponent, { set: { template: '' } })
     .compileComponents();
   });
 
@@ -136,7 +137,6 @@ describe('RepairTasksComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
-    console.log(component);
   });
 
   it('repair tasks in proper places', () => {

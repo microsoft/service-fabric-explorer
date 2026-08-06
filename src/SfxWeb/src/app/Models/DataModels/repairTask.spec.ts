@@ -122,7 +122,7 @@ describe('RepairTask', () => {
         const task = new RepairTask(dataService, testData, dateRef);
 
         expect(task.inProgress).toBe(true);
-        expect(task.history).toContain({
+        expect(task.history).toContainEqual({
             name: 'Executing',
             timestamp: '2020-07-17T03:17:48.437Z',
             status: Status.inProgress,

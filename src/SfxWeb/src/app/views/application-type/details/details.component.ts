@@ -1,7 +1,6 @@
 import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { DataService } from 'src/app/services/data.service';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
-import { ApplicationTypeGroup } from 'src/app/Models/DataModels/ApplicationType';
 import { mergeMap } from 'rxjs/operators';
 import { forkJoin, Observable } from 'rxjs';
 import { ApplicationTypeBaseControllerDirective } from '../ApplicationTypeBase';
@@ -15,9 +14,6 @@ import { ApplicationTypeBaseControllerDirective } from '../ApplicationTypeBase';
 })
 export class DetailsComponent extends ApplicationTypeBaseControllerDirective {
   protected data: DataService = inject(DataService);
-
-  appTypeName!: string;
-  appTypeGroup!: ApplicationTypeGroup;
 
   setup() { }
 

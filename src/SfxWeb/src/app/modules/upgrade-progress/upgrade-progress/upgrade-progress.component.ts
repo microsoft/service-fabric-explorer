@@ -71,7 +71,7 @@ export class UpgradeProgressComponent implements AfterViewInit, OnChanges {
         },
         tooltip: {
           formatter: (() => { const bind = this; return function(data) {
-            const ud = bind.upgradeDomains[this.point.index];
+            const ud = bind.upgradeDomains[this.index];
             return bind.sanitizer.sanitize(SecurityContext.HTML,`${this.key} <br> ${ud.stateName}`); };
           })()
         },

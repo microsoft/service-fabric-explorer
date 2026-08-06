@@ -67,7 +67,7 @@ export class RepairTaskCollection extends DataModelCollectionBase<RepairTask> {
       this.longRunningApprovalJob = longRunningApprovalRepairTask;
       this.longestExecutingJob = longRunningExecutingRepairTask;
 
-      return forkJoin(this.repairTasks.map(task => task.updateInternal())).pipe(defaultIfEmpty<any[]>([]), map(() => {
+      return forkJoin(this.repairTasks.map(task => task.updateInternal())).pipe(defaultIfEmpty([] as any[]), map(() => {
         try {
           this.jobsOfInterest = this.repairTasks.filter(task => task.concerningJobInfo);
 

@@ -249,7 +249,7 @@ export class RepairTask extends DataModelBase<IRawRepairTask> implements IRCAIte
         forkJoin(this.impactedNodes.map(id => {
           return this.dataService.getNode(id, true).pipe(catchError(err => { console.log(err); return of(null) }));
         })).pipe(
-          defaultIfEmpty<(Node | null)[]>([]),
+          defaultIfEmpty([] as (Node | null)[]),
         ).subscribe((data: (Node | null)[]) => {
           data = data.filter(node => node) as Node[];
           const nodesWithSeedNodeWarnings = data.filter(node => DeactivationUtils.hasSeedNodeSafetyCheck(node!.raw.NodeDeactivationInfo));

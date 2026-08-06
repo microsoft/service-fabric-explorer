@@ -103,8 +103,8 @@ export class RepairJobChartComponent implements OnInit, OnChanges {
     tooltip: {
       headerFormat: '<b>{series.name}</b><br />',
       formatter: (() => { const bind = this; return function() {
-        const task = bind.jobs.concat(bind.jobs)[this.point.index];
-        const formatted = bind.sanitizer.sanitize(SecurityContext.HTML, `Job ${task.id} <br> ${this.point.series.name} : ${task.getHistoryPhase(this.point.series.name).duration} <br> Total Duration :  ${task.displayDuration}`);
+        const task = bind.jobs.concat(bind.jobs)[this.index];
+        const formatted = bind.sanitizer.sanitize(SecurityContext.HTML, `Job ${task.id} <br> ${this.series.name} : ${task.getHistoryPhase(this.series.name).duration} <br> Total Duration :  ${task.displayDuration}`);
         return formatted};
       })()
     },

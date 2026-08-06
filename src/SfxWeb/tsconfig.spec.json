@@ -3,20 +3,17 @@
   "compilerOptions": {
     "outDir": "./out-tsc/spec",
     "types": [
+      "hammerjs",
       "vitest/globals",
       "node"
     ]
   },
   "files": [
     "src/main.ts",
-    "src/polyfills.ts",
     "src/test-providers.ts"
   ],
   "include": [
     "src/**/*.spec.ts",
     "src/**/*.d.ts"
-  ],
-  "angularCompilerOptions": {
-    "strictTemplates": false
-  }
+  ]
 }
