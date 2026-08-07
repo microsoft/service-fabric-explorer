@@ -33,6 +33,14 @@ export class ImagestoreViewerComponent implements OnInit {
       new ListColumnSettingWithUtcTime('modifiedDate', 'Date modified'),
       new ListColumnSetting('fileCount', 'Count of Files', {sortPropertyPaths: ['isFolder', 'fileCount']})
     ]);
+
+    this.fileListSettings.columnSettings.forEach(column => {
+      if (column instanceof ListColumnSettingWithImageStoreActions ||
+          column instanceof ListColumnSettingWithDisplayName ||
+          column instanceof ListColumnSettingWithDisplaySize) {
+        column.imagestore = this.imagestoreRoot;
+      }
+    });
   }
 
   openFolder(relativePath: string): void {

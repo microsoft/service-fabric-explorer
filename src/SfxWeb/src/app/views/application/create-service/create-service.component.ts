@@ -25,7 +25,11 @@ export class CreateServiceComponent implements OnInit {
     this.description = new CreateServiceDescription(this.serviceType, this.serviceType.parent as Application);
   }
 
-  create() {
+  create(form: HTMLFormElement) {
+    if (!form.checkValidity()) {
+      return;
+    }
+
     this.serviceType.createService(this.description).subscribe(() => {
       if (this.description) {
         // when success, reset the dialog

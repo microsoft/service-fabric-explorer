@@ -3,7 +3,7 @@
     <span id="clusterManifestName">{{manifestName}}</span>
   </h2>
   <code [attr.aria-label]="'manifest of ' + manifestName">
-    @for (line of manifestLines; track line) {
+    @for (line of manifestLines; track $index) {
       <code>{{line}}</code>
     }
   </code>
