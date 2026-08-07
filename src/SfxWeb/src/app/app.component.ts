@@ -115,7 +115,7 @@ export class AppComponent implements OnInit{
 
   collapseSide()  {
     if (this.treeWidth === '8px') {
-      this.resize(+this.previousTreeWidth.split('px')[0]);
+      this.resize(Math.max(+this.previousTreeWidth.split('px')[0] - 8, 0));
     }else{
       this.resize(0);
     }

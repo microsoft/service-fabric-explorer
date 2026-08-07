@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, ViewChildren, QueryList, AfterViewInit, Type, inject, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, AfterViewInit, ViewChildren, QueryList, Type, inject, ChangeDetectionStrategy } from '@angular/core';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { IOnDateChange } from '../../time-picker/double-slider/double-slider.component';
 import { Subject, Subscription, forkJoin } from 'rxjs';
@@ -46,7 +46,7 @@ export interface VisReference {
     changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
-export class EventStoreComponent implements OnChanges, AfterViewInit {
+export class EventStoreComponent implements OnChanges, OnInit, AfterViewInit {
   dataService = inject(DataService);
 
 
@@ -68,11 +68,16 @@ export class EventStoreComponent implements OnChanges, AfterViewInit {
 
   private visualizations: VisualizationComponent[] = [];
   private visualizationsReady = false;
+  private viewInitialized = false;
 
-  ngAfterViewInit() {
+  ngOnInit() {
     this.dataService.clusterManifest.ensureInitialized().subscribe(() => {
       this.dateMin = TimeUtils.AddDays(new Date(), -this.dataService.clusterManifest.eventStoreTimeRange);
     });
+  }
+
+  ngAfterViewInit() {
+    this.viewInitialized = true;
   }
 
   ngOnChanges(): void {
@@ -113,7 +118,7 @@ export class EventStoreComponent implements OnChanges, AfterViewInit {
     this.endDate = newDate.endDate;
     this.startDate = newDate.startDate;
     this.visualizationsReady = true;
-    this.setNewDateWindow(true);
+    queueMicrotask(() => this.setNewDateWindow(true));
   }
 
   //handle outputs from visualizations
@@ -171,7 +176,7 @@ export class EventStoreComponent implements OnChanges, AfterViewInit {
   //update loop for visualizations
   public update(): void {
 
-    if (this.visualizationsReady) {
+    if (this.visualizationsReady && this.viewInitialized) {
       this.setVisualizations();
       const timelineEventSubs = this.listEventStoreData.map(data => data.eventsList.refresh());
 
