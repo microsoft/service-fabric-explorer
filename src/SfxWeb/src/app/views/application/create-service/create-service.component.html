@@ -1,5 +1,5 @@
 @if (description) {
-  <form name="createServiceForm" class="action-modal">
+  <form #createServiceForm name="createServiceForm" class="action-modal" (submit)="$event.preventDefault()">
     <div class="modal-header">
       <h1 class="modal-title">Create Service</h1>
     </div>
@@ -20,7 +20,7 @@
         <dt>Service Name</dt>
         <dd>
           <input type="text" class="input-flat" autocomplete="off" [ngModelOptions]="{standalone: true}" [(ngModel)]="description.raw.ServiceName" name="ServiceName" title="Service name must start with application name"
-            required ng-pattern="description.serviceNamePattern" aria-label="Service Name">
+            required [pattern]="description.serviceNamePattern" aria-label="Service Name">
           </dd>
           <dt title="Service Package Activation Mode">Service Package Activation Mode</dt>
           <dd>
@@ -35,7 +35,7 @@
           <dd>
             <input type="text" class="input-flat" autocomplete="off" placeholder="Hexadecimal string with even length, e.g. 13A013FF"
               title="Hexadecimal string with even length, e.g. 13A013FF" aria-label="Initialization Data" [ngModelOptions]="{standalone: true}" [(ngModel)]="description.initializationData"
-              pattern="/^([0-9a-fA-F][0-9a-fA-F])+$/">
+              pattern="^([0-9a-fA-F]{2})+$">
             </dd>
             <dt>
               Create From Template
@@ -402,7 +402,7 @@
                         </div>
                         <div class="modal-footer">
                           <button (click)="description.reset()" title="Reset dialog with default settings" class="flat-button">Reset</button>
-                          <button type="submit" class="solid-button blue" (click)="create()" >Create</button>
+                          <button type="submit" class="solid-button blue" (click)="create(createServiceForm)" [disabled]="!createServiceForm.checkValidity()">Create</button>
                           <button type="button" class="flat-button" (click)="cancel()">Cancel</button>
                         </div>
                       </form>
