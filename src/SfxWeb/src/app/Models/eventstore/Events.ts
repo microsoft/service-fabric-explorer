@@ -90,6 +90,7 @@ export class ClusterEvent extends FabricEventBase {
 
 export class NodeEvent extends FabricEventBase {
     public nodeName: string;
+    public nodeType: string;
 
     protected extractField(name: string, value: any): boolean {
         if (super.extractField(name, value)) {
