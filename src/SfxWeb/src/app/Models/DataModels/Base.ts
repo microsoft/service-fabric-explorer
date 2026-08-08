@@ -5,12 +5,13 @@ import { Observable, of, Subject } from 'rxjs';
 import { IHealthStateChunk, IClusterHealthChunkQueryDescription, IHealthStateFilter } from '../HealthChunkRawDataTypes';
 import { mergeMap, map } from 'rxjs/operators';
 import { ActionCollection } from '../ActionCollection';
+import { HealthState, IHealthAware } from './HealthState';
 // -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
 // -----------------------------------------------------------------------------
 
-export interface IDataModel<T> {
+export interface IDataModel<T> extends IHealthAware {
     // The underlying raw object returned by service fabric REST API
     raw: T;
 
@@ -32,7 +33,7 @@ export interface IDataModel<T> {
     // The name returned from REST API
     name: string;
 
-    // The healthState of this entity
+    // The healthState of this entity as a badge for display purposes
     healthState: ITextAndBadge;
 
     // The relative URL of this entity page
@@ -102,6 +103,10 @@ export class DataModelBase<T> implements IDataModel<T> {
         return '';
     }
 
+    /**
+     * Gets the health state as a badge for display purposes.
+     * This is the legacy property for backward compatibility with existing templates and components.
+     */
     public get healthState(): ITextAndBadge {
         if (this.rawAny.HealthState) {
             return this.valueResolver.resolveHealthStatus(this.rawAny.HealthState);
@@ -109,6 +114,23 @@ export class DataModelBase<T> implements IDataModel<T> {
             return this.valueResolver.resolveHealthStatus(this.rawAny.AggregatedHealthState);
         }
         return ValueResolver.unknown;
+    }
+
+    /**
+     * Gets the unified HealthState object for this entity.
+     * This provides typed access to health state with convenience methods like isHealthy, hasWarnings, hasErrors.
+     */
+    public get healthStateValue(): HealthState {
+        const rawState = this.rawAny.HealthState || this.rawAny.AggregatedHealthState;
+        return HealthState.fromRawState(rawState);
+    }
+
+    /**
+     * Returns true if the entity is healthy (health state is OK).
+     * Implements IHealthAware interface.
+     */
+    public get isHealthy(): boolean {
+        return this.healthStateValue.isHealthy;
     }
 
     public constructor(public data: DataService, raw?: T, parent?: any) {
