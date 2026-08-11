@@ -1,4 +1,4 @@
-import { Component, ViewChild, AfterViewInit, inject, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ViewChild, AfterViewInit, inject, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { IModalData } from 'src/app/ViewModels/Modal';
 import { MessageWithConfirmationComponent } from '../message-with-confirmation/message-with-confirmation.component';
@@ -16,6 +16,7 @@ import { ActionDialogUtils } from '../utils';
 export class ActionDialogComponent implements AfterViewInit {
   dialogRef = inject<MatDialogRef<ActionDialogComponent>>(MatDialogRef);
   data = inject<IModalData>(MAT_DIALOG_DATA);
+  private changeDetectorRef = inject(ChangeDetectorRef);
 
 
   @ViewChild(DialogBodyDirective) body!: DialogBodyDirective;
@@ -49,6 +50,9 @@ export class ActionDialogComponent implements AfterViewInit {
   }
 
   setSumbitDisable(value: boolean) {
-    this.disableSubmit = value;
+    queueMicrotask(() => {
+      this.disableSubmit = value;
+      this.changeDetectorRef.detectChanges();
+    });
   }
 }
