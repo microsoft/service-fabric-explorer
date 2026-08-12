@@ -4,7 +4,7 @@ import { IRawNode } from '../../RawDataTypes';
 import { NodeCollection } from './NodeCollection';
 
 describe('NodeCollection', () => {
-    fit('sorts Cluster Map upgrade domains numerically', async () => {
+    it('sorts Cluster Map upgrade domains numerically', async () => {
         const createNode = (name: string, upgradeDomain: string): IRawNode => ({
             Name: name,
             IpAddressOrFQDN: 'localhost',
