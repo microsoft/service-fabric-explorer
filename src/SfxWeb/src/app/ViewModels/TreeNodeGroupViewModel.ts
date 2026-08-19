@@ -471,7 +471,7 @@ export class TreeNodeGroupViewModel implements ITreeNode {
     private depthFirstSearch(letter: string, skipCurrent: boolean = false, stoppingNode?: TreeNodeGroupViewModel): TreeNodeGroupViewModel | null {
 
         if(!skipCurrent){
-            if (this.displayName().toLowerCase().startsWith(letter.toLowerCase()) && !(PaginationId as any)[this.nodeId]) {
+            if (this.displayName().toLowerCase().startsWith(letter.toLowerCase()) && !PaginationId[this.nodeId as keyof typeof PaginationId]) {
                 return this;
             }
         }

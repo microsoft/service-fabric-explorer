@@ -269,12 +269,13 @@ export class RepairTaskMessages {
   public static clusterHealthCheckId = "clusterhealthcheck";
 
   public static messageMap(id: string) {
-    const map = {};
-    (map as any)[RepairTaskMessages.longExecutingId] = RepairTaskMessages.longExecutingMessage;
-    (map as any)[RepairTaskMessages.seedNodeChecksId] = RepairTaskMessages.seedNodeChecks;
-    (map as any)[RepairTaskMessages.safetyChecksId] = RepairTaskMessages.safetyChecks;
-    (map as any)[RepairTaskMessages.clusterHealthCheckId] = RepairTaskMessages.clusterHealthCheck;
-    return (map as any)[id];
+    const map: Record<string, string> = {
+      [RepairTaskMessages.longExecutingId]: RepairTaskMessages.longExecutingMessage,
+      [RepairTaskMessages.seedNodeChecksId]: RepairTaskMessages.seedNodeChecks,
+      [RepairTaskMessages.safetyChecksId]: RepairTaskMessages.safetyChecks,
+      [RepairTaskMessages.clusterHealthCheckId]: RepairTaskMessages.clusterHealthCheck
+    };
+    return map[id];
   }
 }
 

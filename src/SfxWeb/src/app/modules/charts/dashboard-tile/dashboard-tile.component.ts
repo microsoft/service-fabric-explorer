@@ -143,7 +143,7 @@ export class DashboardTileComponent implements OnInit, AfterViewInit, OnChanges 
       return {
         name: p.title,
         y: p.count,
-        color: (colors as any)[p.title]
+        color: colors[p.title as keyof typeof colors]
       };
     });
 

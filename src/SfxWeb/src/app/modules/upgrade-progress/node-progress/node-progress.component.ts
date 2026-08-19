@@ -30,7 +30,7 @@ export class NodeProgressComponent implements OnChanges {
       PostUpgradeSafetyCheck: 3
     };
 
-    this.index = (phaseMap as any)[this.node.UpgradePhase];
+    this.index = phaseMap[this.node.UpgradePhase as keyof typeof phaseMap];
 
     // given the upgrading and post upgrade safety check phases refer to completed state
     // set the index 1 further to consider them completed effectively

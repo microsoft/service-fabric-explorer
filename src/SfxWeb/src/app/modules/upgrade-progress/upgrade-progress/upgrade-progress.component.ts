@@ -116,7 +116,7 @@ export class UpgradeProgressComponent implements AfterViewInit, OnChanges {
           type: 'pie',
           name: stateName + ' : ' + entry.value,
           y: entry.value,
-          color: (colors as any)[badgeClass],
+          color: colors[badgeClass as keyof typeof colors],
           dataLabels: {
             style: {
               fontSize: '13px',
@@ -131,7 +131,7 @@ export class UpgradeProgressComponent implements AfterViewInit, OnChanges {
           type: 'pie',
           name: p.prefix + p.name,
           y: 1,
-          color: (colors as any)[p.badgeClass],
+          color: colors[p.badgeClass as keyof typeof colors],
           dataLabels: {
             style: {
                 fontSize: '13px',

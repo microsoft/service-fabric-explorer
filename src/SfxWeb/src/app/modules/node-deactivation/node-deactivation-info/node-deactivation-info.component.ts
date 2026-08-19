@@ -52,7 +52,7 @@ export class NodeDeactivationInfoComponent implements OnInit, OnChanges {
       Completed: 3
     };
 
-   this.index = (phaseMap as any)[this.deactivationInfo.NodeDeactivationStatus] + 1;
+   this.index = phaseMap[this.deactivationInfo.NodeDeactivationStatus as keyof typeof phaseMap] + 1;
 
    this.progress = [
       {

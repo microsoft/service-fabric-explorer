@@ -13,8 +13,8 @@ export class RefreshRateComponent {
 
   @Input() refresh = false;
   @Input()
-  set value( val: number) {
-    this.change( +(Object.keys(this.mapping).find(key => (this.mapping as any)[key] === val) || 4), false );
+  set value( val: string) {
+    this.change( +(Object.keys(this.mapping).find(key => this.mapping[+key] === val) || 4), false );
   }
 
   @Input() condensedVersion = false;

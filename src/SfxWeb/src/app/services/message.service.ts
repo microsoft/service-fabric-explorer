@@ -35,12 +35,13 @@ export class MessageService {
   }
 
   getClass(severity: MessageSeverity): string {
-    const colors = {};
-    (colors as any)[MessageSeverity.Info] = 'bg-info';
-    (colors as any)[MessageSeverity.Warn] = 'bg-warning';
-    (colors as any)[MessageSeverity.Err] = 'bg-danger';
+    const colors: Record<MessageSeverity, string> = {
+      [MessageSeverity.Info]: 'bg-info',
+      [MessageSeverity.Warn]: 'bg-warning',
+      [MessageSeverity.Err]: 'bg-danger'
+    };
 
-    return (colors as any)[severity];
+    return colors[severity];
   }
 
   public get suppressMessage() {

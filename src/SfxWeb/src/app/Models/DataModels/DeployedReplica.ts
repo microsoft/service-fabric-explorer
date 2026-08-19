@@ -127,7 +127,7 @@ export class DeployedReplica extends DataModelBase<IRawDeployedReplica> {
     }
 
     public get replicaRoleSortPriority(): number {
-        return (SortPriorities.ReplicaRolesToSortPriorities as any)[this.raw.ReplicaRole] || 0;
+        return SortPriorities.ReplicaRolesToSortPriorities[this.raw.ReplicaRole as keyof typeof SortPriorities.ReplicaRolesToSortPriorities] || 0;
     }
 
     public restartReplica(): Observable<any> {

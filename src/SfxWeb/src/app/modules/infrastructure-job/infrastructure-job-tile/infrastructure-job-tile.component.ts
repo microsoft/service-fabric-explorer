@@ -67,7 +67,7 @@ export class InfrastructureJobTileComponent implements OnChanges, OnInit {
       Completed: 3
     };
 
-    this.index = (phaseMap as any)[this.job.raw.JobStatus];
+    this.index = phaseMap[this.job.raw.JobStatus as keyof typeof phaseMap];
 
     this.progress = [
       {
