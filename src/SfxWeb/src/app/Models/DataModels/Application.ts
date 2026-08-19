@@ -243,7 +243,7 @@ export class ApplicationHealth extends HealthBase<IRawApplicationHealth> {
 
     public get deploymentsHealthState(): ITextAndBadge {
         const deployedAppsHealthStates = this.raw.DeployedApplicationHealthStates.map(app => this.valueResolver.resolveHealthStatus(app.AggregatedHealthState));
-        return this.valueResolver.resolveHealthStatus(Utils.max(deployedAppsHealthStates.map( healthState => (HealthStateConstants.Values as any)[healthState.text])).toString());
+        return this.valueResolver.resolveHealthStatus(Utils.max(deployedAppsHealthStates.map( healthState => HealthStateConstants.getValue(healthState.text))).toString());
     }
 
     protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<IRawApplicationHealth> {

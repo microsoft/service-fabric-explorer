@@ -74,10 +74,10 @@ export class ApplicationCollection extends DataModelCollectionBase<Application> 
     }
 
     private updateAppsHealthState(): void {
-        this.collection.map(app => HealthStateConstants.Values[app.healthState.text as keyof typeof HealthStateConstants.Values]);
+        this.collection.map(app => HealthStateConstants.getValue(app.healthState.text));
         // calculates the applications health state which is the max state value of all applications
         this.healthState = this.length > 0
-            ? this.valueResolver.resolveHealthStatus(Math.max(...this.collection.map(app => HealthStateConstants.Values[app.healthState.text as keyof typeof HealthStateConstants.Values])).toString())
+            ? this.valueResolver.resolveHealthStatus(Math.max(...this.collection.map(app => HealthStateConstants.getValue(app.healthState.text))).toString())
             : ValueResolver.healthStatuses[1];
     }
 

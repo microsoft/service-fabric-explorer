@@ -177,6 +177,10 @@ export class HealthStateConstants {
         Error: 3,
         Unknown: 4
     };
+
+    public static getValue(text: string): number {
+        return HealthStateConstants.Values[text as keyof typeof HealthStateConstants.Values];
+    }
 }
 
 export class SortPriorities {

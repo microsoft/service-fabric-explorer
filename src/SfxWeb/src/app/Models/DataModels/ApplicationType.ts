@@ -141,7 +141,7 @@ export class ApplicationTypeGroup extends DataModelBase<IRawApplicationType> {
       this.apps = apps.collection.filter(app => app.raw.TypeName === this.name);
 
       if (this.apps.length > 0) {
-        this.appsHealthState = this.valueResolver.resolveHealthStatus(Utils.max(this.apps.map(app => (HealthStateConstants.Values as any)[app.healthState.text])).toString());
+        this.appsHealthState = this.valueResolver.resolveHealthStatus(Utils.max(this.apps.map(app => HealthStateConstants.getValue(app.healthState.text))).toString());
       } else {
         // When there are no apps in this apptype, treat it as healthy
         this.appsHealthState = ValueResolver.healthStatuses[1];

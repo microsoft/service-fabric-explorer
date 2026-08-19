@@ -237,6 +237,6 @@ export class NodeCollection extends DataModelCollectionBase<Node> {
 
     private updateNodesHealthState(): void {
         // calculates the nodes health state which is the max state value of all nodes
-        this.healthState = this.valueResolver.resolveHealthStatus(Utils.max(this.collection.map(node => (HealthStateConstants.Values as any)[node.healthState.text])).toString());
+        this.healthState = this.valueResolver.resolveHealthStatus(Utils.max(this.collection.map(node => HealthStateConstants.getValue(node.healthState.text))).toString());
     }
 }
