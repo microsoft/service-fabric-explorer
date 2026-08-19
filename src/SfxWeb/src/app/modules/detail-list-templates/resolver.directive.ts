@@ -4,7 +4,8 @@ import { Directive, ViewContainerRef, inject } from '@angular/core';
     selector: '[appResolver]',
     standalone: false
 })
-export class ResolverDirective {  viewContainerRef = inject(ViewContainerRef);
+export class ResolverDirective {
+  viewContainerRef = inject(ViewContainerRef);
 
 
 }
