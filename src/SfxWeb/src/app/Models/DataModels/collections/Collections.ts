@@ -74,10 +74,10 @@ export class ApplicationCollection extends DataModelCollectionBase<Application> 
     }
 
     private updateAppsHealthState(): void {
-        this.collection.map(app => (HealthStateConstants.Values as any)[app.healthState.text]);
+        this.collection.map(app => HealthStateConstants.Values[app.healthState.text as keyof typeof HealthStateConstants.Values]);
         // calculates the applications health state which is the max state value of all applications
         this.healthState = this.length > 0
-            ? this.valueResolver.resolveHealthStatus(Math.max(...this.collection.map(app => (HealthStateConstants.Values as any)[app.healthState.text]) as number[]).toString())
+            ? this.valueResolver.resolveHealthStatus(Math.max(...this.collection.map(app => HealthStateConstants.Values[app.healthState.text as keyof typeof HealthStateConstants.Values])).toString())
             : ValueResolver.healthStatuses[1];
     }
 
@@ -117,8 +117,8 @@ export class ApplicationTypeGroupCollection extends DataModelCollectionBase<Appl
     public getAppTypeUsage(): Observable<IAppTypeUsage> {
       return this.data.getApps(true).pipe(map(() => {
           // check on refresh which appTypes are being used by at least one application
-          const activeAppTypes: any[] = [];
-          const inactiveAppTypes: any[] = [];
+          const activeAppTypes: ApplicationType[] = [];
+          const inactiveAppTypes: ApplicationType[] = [];
           this.collection.forEach(appTypeGroup => appTypeGroup.appTypes.forEach(appType => {
             if (appType.isInUse) {
               activeAppTypes.push(appType);

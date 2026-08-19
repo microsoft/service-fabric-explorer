@@ -62,7 +62,7 @@ export class DataModelCollectionBase<T extends IDataModel<any>> implements IData
         return !!this.refreshingPromise;
     }
 
-    protected get indexPropery(): string {
+    protected get indexPropery(): keyof IDataModel<any> {
         // index the collection by "uniqueId" by default
         return 'uniqueId';
     }
@@ -182,7 +182,7 @@ export class DataModelCollectionBase<T extends IDataModel<any>> implements IData
         healthChunkList: IHealthStateChunkList<P>,
         newIdSelector: (item: P) => string): Observable<any> {
 
-        if (!CollectionUtils.compareCollectionsByKeys(this.collection, healthChunkList.Items, item => (item as any)[this.indexPropery], newIdSelector)) {
+        if (!CollectionUtils.compareCollectionsByKeys(this.collection, healthChunkList.Items, item => item[this.indexPropery], newIdSelector)) {
             if (!this.isRefreshing) {
                 // If the health chunk data has different set of keys, refresh the entire collection
                 // to get full information of the new items.
@@ -193,11 +193,11 @@ export class DataModelCollectionBase<T extends IDataModel<any>> implements IData
         }
 
         // Merge health chunk data
-        const updatePromises: any[] = [];
+        const updatePromises: Observable<any>[] = [];
         CollectionUtils.updateCollection<T, P>(
             this.collection,
             healthChunkList.Items,
-            item => (item as any)[this.indexPropery],
+            item => item[this.indexPropery],
             newIdSelector,
             null, // no need to create object because a full refresh will be scheduled when new object is returned by health chunk API,
             // which is needed because the information returned by the health chunk api is not enough for us to create a full data object.

@@ -9,6 +9,7 @@ import { Observable, of } from 'rxjs';
 import { Utils } from 'src/app/Utils/Utils';
 import { HealthStateConstants, NodeStatusConstants, StatusWarningLevel, BannerWarningID } from 'src/app/Common/Constants';
 import { DataModelCollectionBase } from './CollectionBase';
+import { IDataModel } from '../Base';
 import { RoutesService } from 'src/app/services/routes.service';
 
 const upgradeDomainNameComparer = new Intl.Collator(undefined, { numeric: true });
@@ -135,7 +136,7 @@ export class NodeCollection extends DataModelCollectionBase<Node> {
         return resultList.concat(nodeTypes);
     }
 
-    protected get indexPropery(): string {
+    protected get indexPropery(): keyof IDataModel<any> {
         // node should be indexed by name
         return 'name';
     }

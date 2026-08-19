@@ -56,15 +56,16 @@ export class NetworkDebugger {
             return;
         }
         // add to overall list
-        const individualRequests = this.individualRequests[data.apiDesc] || {
+        const individualRequests: IRequestsData = this.individualRequests[data.apiDesc] || {
             apiDesc: data.apiDesc,
             failureRate: '',
             failureCount: 0,
             requestCount: 1,
             averageDuration: 0,
-            requests: [] as IRequest[],
-            isSecondRowCollapsed: true
-        } as IRequestsData;
+            requests: [],
+            isSecondRowCollapsed: true,
+            isSlowOrUnresponsive: false
+        };
 
         Utils.addToArrayAndTrim(individualRequests.requests, data, this.maxRequests,
             (item) => {
