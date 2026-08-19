@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, Input, OnChanges, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Input, OnChanges, OnInit, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { Chart, Options, chart, PointOptionsObject } from 'highcharts';
 import { IPregeneratedColor, pregeneratedColors } from 'src/app/Common/Constants';
 import { IConcurrentEvents } from 'src/app/Models/eventstore/rcaEngine';
@@ -16,6 +16,7 @@ interface ExtendedListItem extends IEssentialListItem {
     selector: 'app-rca-overview',
     templateUrl: './rca-overview.component.html',
     styleUrls: ['./rca-overview.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class RcaOverviewComponent implements AfterViewInit, OnChanges {

@@ -1,4 +1,4 @@
-import { Component, Injector } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { NodeCollection } from 'src/app/Models/DataModels/collections/NodeCollection';
 import { DataService } from 'src/app/services/data.service';
@@ -8,17 +8,16 @@ import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
     selector: 'app-clustermap',
     templateUrl: './clustermap.component.html',
     styleUrls: ['./clustermap.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class ClustermapComponent extends BaseControllerDirective {
+  private dataService = inject(DataService);
+
   nodes: NodeCollection;
   filteredNodes = [];
 
   groupByNodeType = false;
-
-  constructor(injector: Injector, private dataService: DataService) {
-    super(injector);
-   }
 
    setup() {
      this.nodes = this.dataService.nodes;

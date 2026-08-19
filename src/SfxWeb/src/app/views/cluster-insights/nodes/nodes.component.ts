@@ -1,4 +1,4 @@
-import { Component, Injector } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { forkJoin, of, Observable } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 
@@ -29,9 +29,13 @@ interface NodeDisplay {
     selector: 'app-nodes',
     templateUrl: './nodes.component.html',
     styleUrls: ['./nodes.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class NodesComponent extends BaseControllerDirective {
+  private restClient = inject(RestClientService);
+  private dataService = inject(DataService);
+
   nodes: NodeDisplay[] = [];
   seedNodes: NodeDisplay[] = [];
   nonSeedNodes: NodeDisplay[] = [];
@@ -45,10 +49,6 @@ export class NodesComponent extends BaseControllerDirective {
   isLoading = true;
 
   override fixedRefreshIntervalMs = 65000; // 65 seconds
-
-  constructor(private restClient: RestClientService, private dataService: DataService, injector: Injector) {
-    super(injector);
-  }
 
   setup(): void {
     this.setupListSettings();

@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef, Input, AfterViewInit, OnChanges } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, Input, AfterViewInit, OnChanges, ChangeDetectionStrategy } from '@angular/core';
 import { IDashboardDataPointViewModel, IDashboardViewModel } from 'src/app/ViewModels/DashboardViewModels';
 import { Chart, Options, chart, PointOptionsObject, SeriesPieOptions } from 'highcharts';
 
@@ -6,6 +6,7 @@ import { Chart, Options, chart, PointOptionsObject, SeriesPieOptions } from 'hig
     selector: 'app-health-chart',
     templateUrl: './health-chart.component.html',
     styleUrls: ['./health-chart.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class HealthChartComponent implements OnInit, AfterViewInit, OnChanges {

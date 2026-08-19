@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { DataService } from 'src/app/services/data.service';
 import { IEventStoreData } from 'src/app/modules/event-store/event-store/event-store.component';
 import { IOptionConfig } from 'src/app/modules/event-store/option-picker/option-picker.component';
@@ -8,14 +8,16 @@ import { SettingsService } from 'src/app/services/settings.service';
     selector: 'app-cluster-events',
     templateUrl: './events.component.html',
     styleUrls: ['./events.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class EventsComponent implements OnInit {
+  data = inject(DataService);
+  private settings = inject(SettingsService);
+
 
   listEventStoreData: IEventStoreData<any, any> [];
   optionsConfig: IOptionConfig;
-
-  constructor(public data: DataService, private settings: SettingsService) { }
 
   ngOnInit() {
     this.listEventStoreData = [

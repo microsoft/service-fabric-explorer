@@ -1,4 +1,4 @@
-import { Component, Injector, ChangeDetectorRef } from '@angular/core';
+import { Component, ChangeDetectorRef, inject, ChangeDetectionStrategy } from '@angular/core';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { DataService } from 'src/app/services/data.service';
 import { ApplicationUpgradeProgress, ApplicationHealth } from 'src/app/Models/DataModels/Application';
@@ -21,9 +21,13 @@ import { RelatedEventsConfigs } from 'src/app/Models/eventstore/RelatedEventsCon
     selector: 'app-essentials',
     templateUrl: './essentials.component.html',
     styleUrls: ['./essentials.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class EssentialsComponent extends ApplicationBaseControllerDirective {
+  protected data: DataService = inject(DataService);
+  private settings = inject(SettingsService);
+
 
   upgradeProgress: ApplicationUpgradeProgress;
   listSettings: ListSettings;
@@ -38,10 +42,6 @@ export class EssentialsComponent extends ApplicationBaseControllerDirective {
   eventStoreHandler: IEventStoreData<ApplicationEventList, ApplicationEvent>;
   highValueEvents: IConcurrentEvents[] = null;
   failedToLoadEvents = false;
-
-  constructor(protected data: DataService, injector: Injector, private settings: SettingsService) {
-    super(data, injector);
-  }
 
   setup() {
     this.listSettings = this.settings.getNewOrExistingListSettings('services', ['name'], [

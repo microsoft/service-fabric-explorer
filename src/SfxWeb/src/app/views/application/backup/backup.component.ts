@@ -1,4 +1,4 @@
-import { Component, OnInit, Injector } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { ApplicationBaseControllerDirective } from '../applicationBase';
 import { DataService } from 'src/app/services/data.service';
 import { SettingsService } from 'src/app/services/settings.service';
@@ -16,16 +16,17 @@ import { PartitionEnableBackUpComponent } from 'src/app/modules/backup-restore/p
     selector: 'app-backup',
     templateUrl: './backup.component.html',
     styleUrls: ['./backup.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class BackupComponent extends ApplicationBaseControllerDirective  {
+  protected data: DataService = inject(DataService);
+  private settings = inject(SettingsService);
+  private telemetry = inject(TelemetryService);
+
 
   applicationBackupConfigurationInfoListSettings: ListSettings;
   actions: ActionCollection;
-
-  constructor(protected data: DataService, injector: Injector, private settings: SettingsService, private telemetry: TelemetryService) {
-    super(data, injector);
-  }
 
   setup() {
     this.applicationBackupConfigurationInfoListSettings = this.settings.getNewOrExistingListSettings('backupConfigurationInfoCollection', ['raw.PolicyName'], [

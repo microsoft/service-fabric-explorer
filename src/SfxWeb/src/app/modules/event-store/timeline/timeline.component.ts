@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, inject } from '@angular/core';
 import { TelemetryEventNames } from 'src/app/Common/Constants';
 import { mergeTimelineData } from 'src/app/Models/eventstore/periodicEventParser';
 import { ITimelineData, ITimelineItem, parseEventsGenerically } from 'src/app/Models/eventstore/timelineGenerators';
@@ -18,6 +18,11 @@ import { VisualizationComponent, VisUpdateData } from '../visualizationComponent
     standalone: false
 })
 export class TimelineComponent implements VisualizationComponent {
+  dataService = inject(DataService);
+  private telemService = inject(TelemetryService);
+  changeDetector = inject(ChangeDetectorRef);
+  private timelineGeneratorFactoryService = inject(TimelineGeneratorFactoryService);
+
 
   @Input() listEventStoreData: IEventStoreData<any, any>[];
   @Input() startDate: Date = new Date();
@@ -36,13 +41,6 @@ export class TimelineComponent implements VisualizationComponent {
   public transformText = 'Category,Kind';
 
   private pshowCorrelatedEvents = true;
-
-
-  constructor(
-    public dataService: DataService,
-    private telemService: TelemetryService,
-    public changeDetector: ChangeDetectorRef,
-    private timelineGeneratorFactoryService: TimelineGeneratorFactoryService) { }
 
   public checkAllOption(): boolean {
     return this.listEventStoreData.some(data => !data.type);

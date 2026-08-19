@@ -1,4 +1,4 @@
-import { Component, OnChanges, Input } from '@angular/core';
+import { Component, OnChanges, Input, ChangeDetectionStrategy } from '@angular/core';
 import { IRawMonitoringPolicy } from 'src/app/Models/RawDataTypes';
 import { IProgressStatus } from 'src/app/shared/component/phase-diagram/phase-diagram.component';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
@@ -8,6 +8,7 @@ import { IEssentialListItem } from '../../charts/essential-health-tile/essential
     selector: 'app-health-policy-check',
     templateUrl: './health-policy-check.component.html',
     styleUrls: ['./health-policy-check.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class HealthPolicyCheckComponent implements OnChanges {

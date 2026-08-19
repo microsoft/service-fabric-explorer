@@ -1,4 +1,4 @@
-import { Component, Injector } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { map, mergeMap } from 'rxjs/operators';
 import { Observable, forkJoin, of } from 'rxjs';
 import { DataService } from 'src/app/services/data.service';
@@ -15,9 +15,13 @@ import { INodeTypeInfo } from 'src/app/Models/DataModels/Cluster';
     selector: 'app-essentials',
     templateUrl: './essentials.component.html',
     styleUrls: ['./essentials.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class EssentialsComponent extends NodeBaseControllerDirective {
+  protected data: DataService = inject(DataService);
+  private settings = inject(SettingsService);
+
 
   deployedApps: DeployedApplicationCollection;
   listSettings: ListSettings;
@@ -29,10 +33,6 @@ export class EssentialsComponent extends NodeBaseControllerDirective {
   repairJobSettings: ListSettings;
 
   placementProperties: INodeTypeInfo;
-
-  constructor(protected data: DataService, injector: Injector, private settings: SettingsService) {
-    super(data, injector);
-  }
 
   setup() {
     this.repairJobSettings = this.settings.getNewOrExistingPendingRepairTaskListSettings();

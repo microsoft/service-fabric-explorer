@@ -1,4 +1,4 @@
-import { Component, Injector } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { ListSettings, ListColumnSettingForLink, ListColumnSetting, ListColumnSettingWithFilter, ListColumnSettingWithCustomComponent } from 'src/app/Models/ListSettings';
 import { ApplicationUpgradeProgress } from 'src/app/Models/DataModels/Application';
 import { DataService } from 'src/app/services/data.service';
@@ -13,16 +13,15 @@ import { ApplicationsBaseControllerDirective } from '../applicationsBase';
     selector: 'app-upgrading',
     templateUrl: './upgrading.component.html',
     styleUrls: ['./upgrading.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class UpgradingComponent extends ApplicationsBaseControllerDirective {
+  private settings = inject(SettingsService);
+
 
   upgradeAppsListSettings: ListSettings;
   upgradeProgresses: ApplicationUpgradeProgress[] = [];
-
-  constructor(data: DataService, private settings: SettingsService, injector: Injector) {
-    super(data, injector);
-   }
 
   setup() {
     this.upgradeAppsListSettings = this.settings.getNewOrExistingListSettings('upgrades', ['name'], [

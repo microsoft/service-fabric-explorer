@@ -1,4 +1,4 @@
-import { Component, OnInit, Injector } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { DataService } from 'src/app/services/data.service';
 import { NodeBaseControllerDirective } from '../NodeBase';
 import { IEventStoreData } from 'src/app/modules/event-store/event-store/event-store.component';
@@ -8,16 +8,15 @@ import { IOptionConfig } from 'src/app/modules/event-store/option-picker/option-
     selector: 'app-node-events',
     templateUrl: './events.component.html',
     styleUrls: ['./events.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class EventsComponent extends NodeBaseControllerDirective {
+  protected data: DataService = inject(DataService);
+
 
   listEventStoreData: IEventStoreData<any, any> [];
   optionsConfig: IOptionConfig;
-
-  constructor(protected data: DataService, injector: Injector) {
-    super(data, injector);
-  }
 
   setup() {
     this.listEventStoreData = [

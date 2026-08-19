@@ -1,16 +1,24 @@
 <div class="essential-list-item highlight-hover " [ngClass]="{'underline': !underline, 'allow-wrap' : item.allowWrap }">
-    <div class="text-wrapper tile-item" tabindex="0">
-        <div class="tile-list-entry left-text" *ngIf="item.descriptionName">
-            {{item.descriptionName}}
-        </div>
-        <div class="middle-text">
-            <span *ngIf="!item.displaySelector">
-                {{item.displayText}}
-            </span>
-            <span *ngIf="item.displaySelector">
-              <ng-content></ng-content>
-            </span>
-        </div>
+  <div class="text-wrapper tile-item" tabindex="0">
+    @if (item.descriptionName) {
+      <div class="tile-list-entry left-text">
+        {{item.descriptionName}}
+      </div>
+    }
+    <div class="middle-text">
+      @if (!item.displaySelector) {
+        <span>
+          {{item.displayText}}
+        </span>
+      }
+      @if (item.displaySelector) {
+        <span>
+          <ng-content></ng-content>
+        </span>
+      }
     </div>
-    <app-clip-board [text]="item.copyTextValue" *ngIf="item.copyTextValue" [name]="item.descriptionName"></app-clip-board>
+  </div>
+  @if (item.copyTextValue) {
+    <app-clip-board [text]="item.copyTextValue" [name]="item.descriptionName"></app-clip-board>
+  }
 </div>

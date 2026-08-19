@@ -1,9 +1,11 @@
 
 <div class="flex-center" [ngClass]="wrapperClass">
-  <ng-container  *ngFor="let phase of progress; let l = last;">
+  @for (phase of progress; track phase; let l = $last) {
     <div class="progress-item hover-row" [ngClass]="cssClass[phase.state]" [attr.data-cy]="cssClass[phase.state] + 'phase'"
-          [disableTooltip]="!phase.tooltip" [ngbTooltip]="phase.tooltip" tooltipClass="styled-tooltip" container="body" >
-      <div class="text-description" > <i *ngIf="phase.tooltip" class="mif-info link"></i> {{phase.name}}
+      [disableTooltip]="!phase.tooltip" [ngbTooltip]="phase.tooltip" tooltipClass="styled-tooltip" container="body" >
+      <div class="text-description" > @if (phase.tooltip) {
+        <i class="mif-info link"></i>
+        } {{phase.name}}
       </div>
       <div>
         <span style="margin-right: 5px ;">{{phase.textRight}}</span>
@@ -13,6 +15,8 @@
     <div style="width: fit-content;">
       <ng-container *ngTemplateOutlet="middleItem; context: { data : phase}"></ng-container>
     </div>
-    <div class="mif-arrow-right arrow" *ngIf="!l"></div>
-  </ng-container>
+    @if (!l) {
+      <div class="mif-arrow-right arrow"></div>
+    }
+  }
 </div>

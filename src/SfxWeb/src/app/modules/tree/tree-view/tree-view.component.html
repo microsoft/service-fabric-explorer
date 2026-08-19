@@ -1,46 +1,52 @@
 <div class="tree-wrapper">
-    <div class="tree-header">
-        <div class="tree-guide">
-          <button class="toggle-button" (click)="goToTroubleshootingGuides()"><span class=" mif-info"></span> <span style="color:  var(--font-primary-color);"> Service Fabric Troubleshooting Guides</span></button>
-        </div>
-        <div class="filter-items-container">
-          <label class="toggle-wrapper ">
-            <app-health-badge [badgeClass]="'badge-ok'" [text]="'OK'"></app-health-badge>
-
-            <app-toggle [(state)]="treeService.tree.showOkItems" color="var(--dark-green)"></app-toggle>
-          </label>
-
-          <label class="toggle-wrapper ">
-            <app-health-badge [badgeClass]="'badge-warning'" [text]="'Warning'"></app-health-badge>
-            <app-toggle [(state)]="treeService.tree.showWarningItems" color="var(--badge-warning)"></app-toggle>
-          </label>
-
-          <label class="toggle-wrapper ">
-            <app-health-badge [badgeClass]="'badge-error'" [text]="'Error'"></app-health-badge>
-            <app-toggle [(state)]="treeService.tree.showErrorItems" color="var(--badge-error)"></app-toggle>
-          </label>
-
-          <label class="toggle-wrapper ">
-            Sort by Health
-            <app-toggle [(state)]="treeService.tree.orderbyHealthState" (stateChange)="sendHealthStateTelem()"></app-toggle>
-          </label>
-        </div>
-        <div class="input-wrapper">
-            <app-input (changed)="setSearchText($event)" placeholder="Type to Highlight" label="Highlight items in list"></app-input>
-        </div>
+  <div class="tree-header">
+    <div class="tree-guide">
+      <button class="toggle-button" (click)="goToTroubleshootingGuides()"><span class=" mif-info"></span> <span style="color:  var(--font-primary-color);"> Service Fabric Troubleshooting Guides</span></button>
     </div>
-    <div class="tree-list" #treeContainer [ngClass]="{'focused':focused}" data-cy="tree-panel">
-        <span class="expand-panel-wrapper" *ngIf="canExpand && !smallWindowSize">
-            <button class="expand-panel-button" (click)="setWidth()" title="Expand view to match width of tree">
-                <span class=" mif-chevron-right mif-3x"></span>
-            </button>
-        </span>
-        <div class="tree-body" #tree >
-            <div *ngIf="treeService.tree && !treeService.tree.isLoading && !treeService.tree.isEmpty"  class="tree-view">
-                <div class="tree" *ngIf="treeService.tree.childGroupViewModel" role="tree" data-cy="tree">
-                    <app-tree-node [node]="treeService.tree.childGroupViewModel" (focusEmitter)="focusSubject.next($event)" #baseNode></app-tree-node>
-                </div>
+    <div class="filter-items-container">
+      <label class="toggle-wrapper ">
+        <app-health-badge [badgeClass]="'badge-ok'" [text]="'OK'"></app-health-badge>
+
+        <app-toggle [(state)]="treeService.tree.showOkItems" color="var(--dark-green)"></app-toggle>
+      </label>
+
+      <label class="toggle-wrapper ">
+        <app-health-badge [badgeClass]="'badge-warning'" [text]="'Warning'"></app-health-badge>
+        <app-toggle [(state)]="treeService.tree.showWarningItems" color="var(--badge-warning)"></app-toggle>
+      </label>
+
+      <label class="toggle-wrapper ">
+        <app-health-badge [badgeClass]="'badge-error'" [text]="'Error'"></app-health-badge>
+        <app-toggle [(state)]="treeService.tree.showErrorItems" color="var(--badge-error)"></app-toggle>
+      </label>
+
+      <label class="toggle-wrapper ">
+        Sort by Health
+        <app-toggle [(state)]="treeService.tree.orderbyHealthState" (stateChange)="sendHealthStateTelem()"></app-toggle>
+      </label>
+    </div>
+    <div class="input-wrapper">
+      <app-input (changed)="setSearchText($event)" placeholder="Type to Highlight" label="Highlight items in list"></app-input>
+    </div>
+  </div>
+  <div class="tree-list" #treeContainer [ngClass]="{'focused':focused}" data-cy="tree-panel">
+    @if (canExpand && !smallWindowSize) {
+      <span class="expand-panel-wrapper">
+        <button class="expand-panel-button" (click)="setWidth()" title="Expand view to match width of tree">
+          <span class=" mif-chevron-right mif-3x"></span>
+        </button>
+      </span>
+    }
+    <div class="tree-body" #tree >
+      @if (treeService.tree && !treeService.tree.isLoading && !treeService.tree.isEmpty) {
+        <div  class="tree-view">
+          @if (treeService.tree.childGroupViewModel) {
+            <div class="tree" role="tree" data-cy="tree">
+              <app-tree-node [node]="treeService.tree.childGroupViewModel" (focusEmitter)="focusSubject.next($event)" #baseNode></app-tree-node>
             </div>
+          }
         </div>
+      }
     </div>
+  </div>
 </div>

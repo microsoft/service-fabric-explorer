@@ -1,4 +1,4 @@
-import { Component, ElementRef, HostListener, Injector, Input, OnChanges, TemplateRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, Input, OnChanges, TemplateRef, ViewChild, inject, ChangeDetectionStrategy } from '@angular/core';
 import { Observable } from 'rxjs';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Node } from 'src/app/Models/DataModels/Node';
@@ -9,9 +9,12 @@ import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
     selector: 'app-map',
     templateUrl: './map.component.html',
     styleUrls: ['./map.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class MapComponent extends BaseControllerDirective implements OnChanges {
+  data = inject(DataService);
+
   static readonly baseScale = 'scale(1)';
 
   @Input() listTemplate: TemplateRef<any>;
@@ -26,10 +29,6 @@ export class MapComponent extends BaseControllerDirective implements OnChanges {
 
   @ViewChild('container') private container: ElementRef;
   @ViewChild('map') private map: ElementRef;
-
-  constructor(public data: DataService, injector: Injector) {
-    super(injector);
-  }
 
   ngOnChanges() {
     this.updateNodes(this.nodes);

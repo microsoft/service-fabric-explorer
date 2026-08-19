@@ -1,4 +1,4 @@
-import { Component, OnInit, Injector } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { DataService } from 'src/app/services/data.service';
 import { ClusterUpgradeProgress, ClusterLoadInformation, ClusterHealth } from 'src/app/Models/DataModels/Cluster';
 import { tap, map } from 'rxjs/operators';
@@ -15,9 +15,13 @@ import { INodesStatusDetails, NodeCollection } from 'src/app/Models/DataModels/c
     selector: 'app-details',
     templateUrl: './details.component.html',
     styleUrls: ['./details.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class DetailsComponent extends BaseControllerDirective {
+  private data = inject(DataService);
+  private settings = inject(SettingsService);
+
 
   clusterUpgradeProgress: ClusterUpgradeProgress;
   clusterLoadInformation: ClusterLoadInformation;
@@ -27,10 +31,6 @@ export class DetailsComponent extends BaseControllerDirective {
 
   nodeStatusListSettings: ListSettings;
   upgradeProgressUnhealthyEvaluationsListSettings: ListSettings;
-
-  constructor(private data: DataService, private settings: SettingsService, injector: Injector) {
-    super(injector);
-   }
 
   setup(){
     this.clusterUpgradeProgress = this.data.clusterUpgradeProgress;

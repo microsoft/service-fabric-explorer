@@ -1,3 +1,5 @@
 <div class="detail-pane essen-pane">
-    <app-detail-view-part [data]="deployedCodePackage" *ngIf="deployedCodePackage"></app-detail-view-part>
+  @if (deployedCodePackage) {
+    <app-detail-view-part [data]="deployedCodePackage"></app-detail-view-part>
+  }
 </div>

@@ -1,3 +1,5 @@
-<div style="white-space: nowrap;" *ngIf="value">
+@if (value) {
+  <div style="white-space: nowrap;">
     <app-display-time [time]="value"></app-display-time>
-</div>
+  </div>
+}

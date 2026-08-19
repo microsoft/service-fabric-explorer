@@ -1,5 +1,5 @@
 import { DataService } from 'src/app/services/data.service';
-import { Injector, Directive } from '@angular/core';
+import { Directive, inject } from '@angular/core';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Observable, forkJoin } from 'rxjs';
 import { map, mergeMap } from 'rxjs/operators';
@@ -8,14 +8,12 @@ import { ApplicationCollection, IAppTypeUsage } from 'src/app/Models/DataModels/
 
 @Directive()
 export class ApplicationsBaseControllerDirective extends BaseControllerDirective {
+    protected data = inject(DataService);
+
 
     apps: ApplicationCollection;
     usage: IAppTypeUsage;
     hasArmManagedAppType: boolean;
-
-    constructor(protected data: DataService, injector: Injector) {
-      super(injector);
-    }
 
     common(messageHandler?: IResponseMessageHandler): Observable<any> {
         return forkJoin([

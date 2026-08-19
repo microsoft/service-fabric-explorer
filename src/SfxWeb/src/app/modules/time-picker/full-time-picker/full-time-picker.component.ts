@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnDestroy, OnChanges, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy, OnChanges, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
@@ -13,6 +13,7 @@ export interface IQuickDates {
     selector: 'app-full-time-picker',
     templateUrl: './full-time-picker.component.html',
     styleUrls: ['./full-time-picker.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class FullTimePickerComponent implements OnInit, OnDestroy {

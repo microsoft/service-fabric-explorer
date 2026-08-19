@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnDestroy, ViewChildren, ElementRef, AfterViewInit, QueryList, ViewChild, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, OnDestroy, ViewChildren, ElementRef, AfterViewInit, QueryList, ViewChild, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { Chart, Options, chart, SeriesOptionsType, Pointer, PointOptionsObject, YAxisOptions, XAxisOptions } from 'highcharts';
 import { debounceTime } from 'rxjs/operators';
 import { ListSettings } from 'src/app/Models/ListSettings';
@@ -41,9 +41,12 @@ export const resize = () => {
     selector: 'app-timeseries',
     templateUrl: './timeseries.component.html',
     styleUrls: ['./timeseries.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class TimeseriesComponent implements AfterViewInit, OnChanges, OnDestroy, OnInit {
+  private settings = inject(SettingsService);
+
 
   @Input() data: IParallelChartData;
   @ViewChildren('container') private container: QueryList<ElementRef>;
@@ -58,8 +61,6 @@ export class TimeseriesComponent implements AfterViewInit, OnChanges, OnDestroy,
   currentIndex = 0;
   currentItemsWidth = 400;
   resizer = new Subject<any>();
-
-  constructor(private settings: SettingsService) { }
 
   fontColor = {
     color: '#fff'

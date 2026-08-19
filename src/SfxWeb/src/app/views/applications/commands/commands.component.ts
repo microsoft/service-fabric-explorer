@@ -1,4 +1,4 @@
-import { Component, Injector } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { CommandFactory, CommandParamTypes, CommandSafetyLevel, PowershellCommand, PowershellCommandParameter } from 'src/app/Models/PowershellCommand';
 import { DataService } from 'src/app/services/data.service';
 import { ApplicationsBaseControllerDirective } from '../applicationsBase';
@@ -8,15 +8,12 @@ import { ApplicationsBaseControllerDirective } from '../applicationsBase';
     selector: 'app-apps-commands',
     templateUrl: './commands.component.html',
     styleUrls: ['./commands.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class CommandsComponent extends ApplicationsBaseControllerDirective {
 
   commands: PowershellCommand[] = [];
-
-  constructor(data: DataService, injector: Injector) {
-    super(data, injector);
-   }
 
   afterDataSet(): void {
     this.setUpCommands();

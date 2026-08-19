@@ -1,4 +1,4 @@
-import { Component, Injector } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { forkJoin, of, Observable } from 'rxjs';
 import { switchMap, catchError, map } from 'rxjs/operators';
 
@@ -43,9 +43,13 @@ enum ServiceName {
     selector: 'app-replica-list',
     templateUrl: './replica-list.component.html',
     styleUrls: ['./replica-list.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class ReplicaListComponent extends BaseControllerDirective {
+  private restClientService = inject(RestClientService);
+  private dataService = inject(DataService);
+
   readonly ServiceName = ServiceName;
   readonly PartitionStatus = PartitionStatusConstants;
 
@@ -69,10 +73,6 @@ export class ReplicaListComponent extends BaseControllerDirective {
 
   private getServiceState(service: string): ServiceState {
     return service === ServiceName.FailoverManager ? this.failoverManagerState : this.clusterManagerState;
-  }
-
-  constructor(private restClientService: RestClientService, private dataService: DataService, injector: Injector) {
-    super(injector);
   }
 
   setup(): void {

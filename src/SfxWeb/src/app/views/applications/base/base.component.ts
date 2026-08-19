@@ -1,4 +1,4 @@
-import { Component, ElementRef, Injector } from '@angular/core';
+import { Component, ElementRef, inject, ChangeDetectionStrategy } from '@angular/core';
 import { ITab } from 'src/app/shared/component/navbar/navbar.component';
 import { TreeService } from 'src/app/services/tree.service';
 import { IdGenerator } from 'src/app/Utils/IdGenerator';
@@ -11,9 +11,14 @@ import { ApplicationsBaseControllerDirective } from '../applicationsBase';
     selector: 'app-base',
     templateUrl: './base.component.html',
     styleUrls: ['./base.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class BaseComponent extends ApplicationsBaseControllerDirective implements IBaseView {
+  private tree = inject(TreeService);
+  private dataService: DataService = inject(DataService);
+  el = inject(ElementRef);
+
   SFXClusterName = '';
 
   tabs: ITab[] = [{
@@ -33,9 +38,6 @@ export class BaseComponent extends ApplicationsBaseControllerDirective implement
       route: './commands'
     }
   ];
-  constructor(private tree: TreeService, private dataService: DataService, injector: Injector, public el: ElementRef) {
-    super(dataService, injector);
-  }
 
   setup() {
 

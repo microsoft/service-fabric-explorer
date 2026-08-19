@@ -1,9 +1,10 @@
-import { Component, OnInit, Input, OnChanges } from '@angular/core';
+import { Component, OnInit, Input, OnChanges, ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
     selector: 'app-replica-address',
     templateUrl: './replica-address.component.html',
     styleUrls: ['./replica-address.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class ReplicaAddressComponent implements OnChanges {

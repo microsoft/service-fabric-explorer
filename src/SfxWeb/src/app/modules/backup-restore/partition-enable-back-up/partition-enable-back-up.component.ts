@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { IsolatedAction } from 'src/app/Models/Action';
 import { DataService } from 'src/app/services/data.service';
@@ -7,14 +7,16 @@ import { DataService } from 'src/app/services/data.service';
     selector: 'app-partition-enable-back-up',
     templateUrl: './partition-enable-back-up.component.html',
     styleUrls: ['./partition-enable-back-up.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class PartitionEnableBackUpComponent implements OnInit {
+  dialogRef = inject<MatDialogRef<PartitionEnableBackUpComponent>>(MatDialogRef);
+  data = inject<IsolatedAction>(MAT_DIALOG_DATA);
+  dataService = inject(DataService);
+
 
   backupPolicyName = '';
-
-  constructor(public dialogRef: MatDialogRef<PartitionEnableBackUpComponent>,
-              @Inject(MAT_DIALOG_DATA) public data: IsolatedAction, public dataService: DataService) { }
 
   ngOnInit() {
     this.dataService.backupPolicies.ensureInitialized().subscribe();

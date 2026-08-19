@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { SystemApplication, Application } from '../Models/DataModels/Application';
 import { ApplicationTypeGroupCollection, ApplicationCollection, BackupPolicyCollection, ServiceTypeCollection,
          DeployedReplicaCollection, DeployedCodePackageCollection, DeployedServicePackageCollection, ReplicaOnPartitionCollection,
@@ -47,6 +47,15 @@ import { InfrastructureDocumentCollection } from '../Models/DataModels/collectio
   providedIn: 'root'
 })
 export class DataService {
+  routes = inject(RoutesService);
+  message = inject(MessageService);
+  telemetry = inject(TelemetryService);
+  warnings = inject(StatusWarningService);
+  storage = inject(StorageService);
+  restClient = inject(RestClientService);
+  dialog = inject(MatDialog);
+  standalone = inject(StandaloneIntegrationService);
+
 
   public systemApp: SystemApplication;
   public clusterManifest: ClusterManifest;
@@ -65,16 +74,9 @@ export class DataService {
   public readOnlyHeader: boolean =  null;
   public clusterNameMetadata: string = null;
 
-  constructor(
-    public routes: RoutesService,
-    public message: MessageService,
-    public telemetry: TelemetryService,
-    public warnings: StatusWarningService,
-    public storage: StorageService,
-    public restClient: RestClientService,
-    public dialog: MatDialog,
-    public standalone: StandaloneIntegrationService,
-  ) {
+  constructor() {
+    const standalone = this.standalone;
+
     this.clusterUpgradeProgress = new ClusterUpgradeProgress(this);
     this.clusterManifest = new ClusterManifest(this);
     this.clusterLoadInformation = new ClusterLoadInformation(this);
@@ -258,7 +260,7 @@ export class DataService {
       }));
   }
 
-  // eslint-disable-next-line max-len
+   
   public getReplicaOnPartition(appId: string, serviceId: string, partitionId: string, replicaId: string, forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): Observable<ReplicaOnPartition> {
       return this.getReplicasOnPartition(appId, serviceId, partitionId, false, messageHandler).pipe(mergeMap(collection => {
           return this.tryGetValidItem(collection, IdGenerator.replica(replicaId), forceRefresh, messageHandler);
@@ -283,35 +285,35 @@ export class DataService {
       }));
   }
 
-  // eslint-disable-next-line max-len
+   
   public getDeployedServicePackage(nodeName: string, appId: string, servicePackageName: string, servicePackageActivationId: string, forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): Observable<DeployedServicePackage> {
       return this.getDeployedServicePackages(nodeName, appId, false, messageHandler).pipe(mergeMap(collection => {
           return this.tryGetValidItem(collection, IdGenerator.deployedServicePackage(servicePackageName, servicePackageActivationId), forceRefresh, messageHandler);
       }));
   }
 
-  // eslint-disable-next-line max-len
+   
   public getDeployedCodePackages(nodeName: string, appId: string, servicePackageName: string, servicePackageActivationId: string, forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): Observable<DeployedCodePackageCollection> {
       return this.getDeployedServicePackage(nodeName, appId, servicePackageName, servicePackageActivationId, false, messageHandler).pipe(mergeMap(deployedServicePackage => {
           return deployedServicePackage.deployedCodePackages.ensureInitialized(forceRefresh, messageHandler).pipe(map( () => deployedServicePackage.deployedCodePackages));
       }));
   }
 
-  // eslint-disable-next-line max-len
+   
   public getDeployedCodePackage(nodeName: string, appId: string, servicePackageName: string, servicePackageActivationId: string, codePackageName: string, forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): Observable<DeployedCodePackage> {
       return this.getDeployedCodePackages(nodeName, appId, servicePackageName, servicePackageActivationId, false, messageHandler).pipe(mergeMap(collection => {
           return this.tryGetValidItem(collection, IdGenerator.deployedCodePackage(codePackageName), forceRefresh, messageHandler);
       }));
   }
 
-// eslint-disable-next-line max-len
+ 
   public getDeployedReplicas(nodeName: string, appId: string, servicePackageName: string, servicePackageActivationId: string, forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): Observable<DeployedReplicaCollection> {
       return this.getDeployedServicePackage(nodeName, appId, servicePackageName, servicePackageActivationId, false, messageHandler).pipe(mergeMap(deployedServicePackage => {
           return deployedServicePackage.deployedReplicas.ensureInitialized(forceRefresh, messageHandler).pipe(map( () => deployedServicePackage.deployedReplicas));
       }));
   }
 
-    // eslint-disable-next-line max-len
+     
   public getDeployedReplica(nodeName: string, appId: string, servicePackageName: string, servicePackageActivationId: string, partitionId: string, forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): Observable<DeployedReplica> {
     return this.getDeployedReplicas(nodeName, appId, servicePackageName, servicePackageActivationId, false, messageHandler).pipe(mergeMap(collection => {
         return this.tryGetValidItem(collection, IdGenerator.deployedReplica(partitionId), forceRefresh, messageHandler);

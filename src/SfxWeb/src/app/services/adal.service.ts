@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { RestClientService } from './rest-client.service';
 import { Observable, Subscriber, of, Subject, ReplaySubject } from 'rxjs';
 import { retry, map } from 'rxjs/operators';
@@ -10,11 +10,11 @@ import { StringUtils } from '../Utils/StringUtils';
   providedIn: 'root'
 })
 export class AdalService {
+  private http = inject(RestClientService);
+
   private context: AuthenticationContext;
   public config: AadMetadata;
   public aadEnabled = false;
-
-  constructor(private http: RestClientService) { }
 
   load(): Observable<AuthenticationContext> {
     if (!!this.context){

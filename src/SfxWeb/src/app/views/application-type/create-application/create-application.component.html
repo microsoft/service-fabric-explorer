@@ -1,6 +1,8 @@
 <div  [formGroup]="form">
-    <p>Supply the full application name to create an application instance of {{inputs.appType.name}} :</p>
-    <input class="input-flat" type="text" placeholder="Name of application" name="userInput" style="width: 100%;"
-            formControlName="userInput" aria-label="placeHolderText">
-    <p style="color: red;" *ngIf="form.invalid">Application name must start with fabric:/</p>
-</div>
+  <p>Supply the full application name to create an application instance of {{inputs.appType.name}} :</p>
+  <input class="input-flat" type="text" placeholder="Name of application" name="userInput" style="width: 100%;"
+    formControlName="userInput" aria-label="placeHolderText">
+    @if (form.invalid) {
+      <p style="color: red;">Application name must start with fabric:/</p>
+    }
+  </div>

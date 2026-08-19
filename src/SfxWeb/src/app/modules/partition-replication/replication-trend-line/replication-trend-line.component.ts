@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, Input, OnChanges, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Input, OnChanges, OnDestroy, OnInit, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { Chart, Options, chart } from 'highcharts';
 import { interval, Subscription } from 'rxjs';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
@@ -14,6 +14,7 @@ export interface IChartData {
     selector: 'app-replication-trend-line',
     templateUrl: './replication-trend-line.component.html',
     styleUrls: ['./replication-trend-line.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class ReplicationTrendLineComponent implements AfterViewInit, OnChanges, OnInit, OnDestroy {

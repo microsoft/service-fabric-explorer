@@ -1,4 +1,4 @@
-import { Component, ElementRef, Injector } from '@angular/core';
+import { Component, ElementRef, inject, ChangeDetectionStrategy } from '@angular/core';
 import { ITab } from 'src/app/shared/component/navbar/navbar.component';
 import { ReplicaBaseControllerDirective } from '../ReplicaBase';
 import { DataService } from 'src/app/services/data.service';
@@ -11,9 +11,14 @@ import { IBaseView } from '../../BaseView';
     selector: 'app-base',
     templateUrl: './base.component.html',
     styleUrls: ['./base.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class BaseComponent extends ReplicaBaseControllerDirective implements IBaseView {
+  protected dataService: DataService = inject(DataService);
+  private tree = inject(TreeService);
+  el = inject(ElementRef);
+
 
   tabs: ITab[] = [{
     name: 'essentials',
@@ -28,10 +33,6 @@ export class BaseComponent extends ReplicaBaseControllerDirective implements IBa
       route: './commands'
     }
   ];
-
-  constructor(protected dataService: DataService, injector: Injector, private tree: TreeService, public el: ElementRef) {
-    super(dataService, injector);
-  }
 
   setup() {
     this.dataService.clusterManifest.ensureInitialized().subscribe(() => {

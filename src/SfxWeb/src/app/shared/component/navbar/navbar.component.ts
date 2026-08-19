@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, Input, ChangeDetectionStrategy, inject } from '@angular/core';
 import { ActionCollection } from 'src/app/Models/ActionCollection';
 import { Router } from '@angular/router';
 
@@ -10,13 +10,14 @@ import { Router } from '@angular/router';
     standalone: false
 })
 export class NavbarComponent {
+  private router = inject(Router);
+
 
   @Input() type = '';
   @Input() name = '';
   @Input() tabs: ITab[] = [];
   @Input() actions: ActionCollection;
   @Input() showCopy = true;
-  constructor(private router: Router) { }
 
   navigateBySpaceBar(route: string) {
     this.router.navigate([route]);

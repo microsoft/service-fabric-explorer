@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnChanges, OnDestroy, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, OnInit, Input, OnChanges, OnDestroy, ViewChild, ElementRef, AfterViewInit, ChangeDetectionStrategy } from '@angular/core';
 import { Chart, Options, chart, SeriesOptionsType, TooltipFormatterCallbackFunction } from 'highcharts';
 
 
@@ -6,6 +6,7 @@ import { Chart, Options, chart, SeriesOptionsType, TooltipFormatterCallbackFunct
     selector: 'app-bar-chart',
     templateUrl: './bar-chart.component.html',
     styleUrls: ['./bar-chart.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class BarChartComponent implements AfterViewInit, OnChanges, OnDestroy {

@@ -1,4 +1,4 @@
-import { Component, OnInit, Injector } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 import { ListSettings } from 'src/app/Models/ListSettings';
 import { DataService } from 'src/app/services/data.service';
@@ -14,17 +14,17 @@ import { ActionCreateBackupPolicyComponent } from '../action-create-backup-polic
     selector: 'app-backups',
     templateUrl: './backups.component.html',
     styleUrls: ['./backups.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class BackupsComponent extends BaseControllerDirective {
+  private data = inject(DataService);
+  private settings = inject(SettingsService);
+
 
   backupPolicyListSettings: ListSettings;
   backupPolicies: BackupPolicyCollection;
   actions: ActionCollection;
-
-  constructor(private data: DataService, private settings: SettingsService, injector: Injector) {
-    super(injector);
-   }
 
   setup(){
     this.backupPolicyListSettings = this.settings.getNewOrExistingBackupPolicyListSettings();

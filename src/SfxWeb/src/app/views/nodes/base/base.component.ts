@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { IdGenerator } from 'src/app/Utils/IdGenerator';
 import { TreeService } from 'src/app/services/tree.service';
 import { ITab } from 'src/app/shared/component/navbar/navbar.component';
@@ -10,9 +10,14 @@ import { IBaseView } from '../../BaseView';
     selector: 'app-base',
     templateUrl: './base.component.html',
     styleUrls: ['./base.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class BaseComponent implements OnInit, IBaseView{
+  tree = inject(TreeService);
+  private data = inject(DataService);
+  el = inject(ElementRef);
+
 
   tabs: ITab[] = [{
     name: 'all nodes',
@@ -23,7 +28,6 @@ export class BaseComponent implements OnInit, IBaseView{
      route: './commands' 
     }
   ];
-  constructor(public tree: TreeService, private data: DataService, public el: ElementRef) { }
 
   ngOnInit() {
     this.data.clusterManifest.ensureInitialized().subscribe(() => {

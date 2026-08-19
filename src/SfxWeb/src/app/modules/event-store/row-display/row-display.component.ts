@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ListColumnSetting } from 'src/app/Models/ListSettings';
 import { HtmlUtils } from 'src/app/Utils/HtmlUtils';
 import { DetailBaseComponent } from 'src/app/ViewModels/detail-table-base.component';
@@ -8,6 +8,7 @@ import { Utils } from 'src/app/Utils/Utils';
     selector: 'app-row-display',
     templateUrl: './row-display.component.html',
     styleUrls: ['./row-display.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class RowDisplayComponent implements OnInit, DetailBaseComponent {

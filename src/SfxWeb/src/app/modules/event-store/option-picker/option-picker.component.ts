@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter, Input, OnChanges } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, Input, OnChanges, inject, ChangeDetectionStrategy } from '@angular/core';
 import { DataService } from 'src/app/services/data.service';
 import { SettingsService } from 'src/app/services/settings.service';
 import { IEventStoreData } from '../event-store/event-store.component';
@@ -20,16 +20,18 @@ export interface IOptionConfig{
     selector: 'app-option-picker',
     templateUrl: './option-picker.component.html',
     styleUrls: ['./option-picker.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class OptionPickerComponent implements OnChanges {
+  dataService = inject(DataService);
+  settings = inject(SettingsService);
+
   @Input() optionsConfig: IOptionConfig;
   @Input() listEventStoreData: IEventStoreData<any, any>[];
   @Output() selectedOption = new EventEmitter<IOptionData>();
   checkedStates: Record<string, boolean> = {};
   options: IEventStoreData<any, any>[] = [];
-
-  constructor(public dataService: DataService, public settings: SettingsService) {}
 
   ngOnChanges(): void {
     if (this.optionsConfig.enableCluster) {

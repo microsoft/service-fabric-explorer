@@ -1,55 +1,54 @@
 <div>
-    <div role="img" alt="timeline visualization for the next table."
-        aria-label="timeline visualization for the next table.">
-        <div #visualization></div>
+  <div role="img" alt="timeline visualization for the next table."
+    aria-label="timeline visualization for the next table.">
+    <div #visualization></div>
 
-    </div>
+  </div>
 
-    <div class="button-container">
-      <ng-content select="[buttons]"></ng-content>
+  <div class="button-container">
+    <ng-content select="[buttons]"></ng-content>
 
-      <label class="toggle-wrapper" aria-label="Toggle to use UTC time">
-        UTC time
-        <app-toggle [(state)]="isUTC" (stateChange)="flipTimeZone($event)" ></app-toggle>
-      </label>
+    <label class="toggle-wrapper" aria-label="Toggle to use UTC time">
+      UTC time
+      <app-toggle [(state)]="isUTC" (stateChange)="flipTimeZone($event)" ></app-toggle>
+    </label>
 
-        <button class="simple-button flip-button" (click)="flipShowControls();">
-            <span class="mif-arrow-drop-up mif-2x" style="transition: .5s;"
-            [title]="showControls ? 'Hide Controls' : 'Show Controls'"
-                [ngClass]="{'rotated': showControls}"></span>
-            {{showControls ? 'Hide Controls' : 'Show Controls'}}
+    <button class="simple-button flip-button" (click)="flipShowControls();">
+      <span class="mif-arrow-drop-up mif-2x" style="transition: .5s;"
+        [title]="showControls ? 'Hide Controls' : 'Show Controls'"
+      [ngClass]="{'rotated': showControls}"></span>
+      {{showControls ? 'Hide Controls' : 'Show Controls'}}
+    </button>
+
+    @if (showControls) {
+      <button type="button" class="simple-button margined" (click)="fitData()"  tooltipClass="styled-tooltip"
+        ngbTooltip="Fit the timeline to only display the time range that has events.">
+        Fit Events
+      </button>
+      <button type="button" class="simple-button margined" (click)="fitWindow()"  tooltipClass="styled-tooltip"
+        ngbTooltip="Fit the timeline to display the whole time range.">
+        Fit Range
+      </button>
+      @if (displayMoveToStart) {
+        <button type="button" class="simple-button margined" (click)="moveStart()"  tooltipClass="styled-tooltip"
+          ngbTooltip="Move to the start of the timeline.">
+          Move To Start
         </button>
-
-        <ng-container  *ngIf="showControls">
-            <button type="button" class="simple-button margined" (click)="fitData()"  tooltipClass="styled-tooltip"
-            ngbTooltip="Fit the timeline to only display the time range that has events.">
-                Fit Events
-            </button>
-
-            <button type="button" class="simple-button margined" (click)="fitWindow()"  tooltipClass="styled-tooltip"
-                ngbTooltip="Fit the timeline to display the whole time range.">
-                Fit Range
-            </button>
-
-            <button type="button" class="simple-button margined" (click)="moveStart()"  tooltipClass="styled-tooltip"
-            ngbTooltip="Move to the start of the timeline." *ngIf="displayMoveToStart">
-                Move To Start
-            </button>
-
-            <button type="button" class="simple-button margined" (click)="moveEnd()"  tooltipClass="styled-tooltip"
-            ngbTooltip="Move to the end of the timeline." *ngIf="displayMoveToEnd">
-                Move To End
-            </button>
-
-            <button type="button" class="simple-button margined" (click)="moveToOldestEvent()"  tooltipClass="styled-tooltip"
-            ngbTooltip="Move to the oldest event in the time range.">
-                Move To Oldest Event
-            </button>
-
-            <button type="button" class="simple-button margined" (click)="moveToNewestEvent()"  tooltipClass="styled-tooltip"
-            ngbTooltip="Move to the newest event in the time range.">
-                Move To Newest Event
-            </button>
-        </ng-container>
-    </div>
+      }
+      @if (displayMoveToEnd) {
+        <button type="button" class="simple-button margined" (click)="moveEnd()"  tooltipClass="styled-tooltip"
+          ngbTooltip="Move to the end of the timeline.">
+          Move To End
+        </button>
+      }
+      <button type="button" class="simple-button margined" (click)="moveToOldestEvent()"  tooltipClass="styled-tooltip"
+        ngbTooltip="Move to the oldest event in the time range.">
+        Move To Oldest Event
+      </button>
+      <button type="button" class="simple-button margined" (click)="moveToNewestEvent()"  tooltipClass="styled-tooltip"
+        ngbTooltip="Move to the newest event in the time range.">
+        Move To Newest Event
+      </button>
+    }
+  </div>
 </div>

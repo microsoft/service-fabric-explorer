@@ -1,4 +1,4 @@
-import { Component, ElementRef, Injector } from '@angular/core';
+import { Component, ElementRef, inject, ChangeDetectionStrategy } from '@angular/core';
 import { ITab } from 'src/app/shared/component/navbar/navbar.component';
 import { DeployedAppBaseControllerDirective } from '../DeployedApplicationBase';
 import { DataService } from 'src/app/services/data.service';
@@ -10,9 +10,14 @@ import { IBaseView } from '../../BaseView';
     selector: 'app-base',
     templateUrl: './base.component.html',
     styleUrls: ['./base.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class BaseComponent extends DeployedAppBaseControllerDirective implements IBaseView {
+  protected data: DataService = inject(DataService);
+  private tree = inject(TreeService);
+  el = inject(ElementRef);
+
 
   tabs: ITab[] = [{
     name: 'essentials',
@@ -27,10 +32,6 @@ export class BaseComponent extends DeployedAppBaseControllerDirective implements
       route: './commands'
     }
   ];
-
-  constructor(protected data: DataService, injector: Injector, private tree: TreeService, public el: ElementRef) {
-    super(data, injector);
-  }
 
   setup() {
     this.tree.selectTreeNode([

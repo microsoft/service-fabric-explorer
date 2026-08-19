@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { StorageService } from './storage.service';
 
 export interface IStatusWarning {
@@ -15,11 +15,10 @@ export interface IStatusWarning {
   providedIn: 'root'
 })
 export class StatusWarningService {
+  storage = inject(StorageService);
+
 
   notifications: IStatusWarning[] = [];
-
-  constructor(public storage: StorageService) {
-  }
 
   public addNotification(notification: IStatusWarning) {
       this.notifications.push(notification);

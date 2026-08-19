@@ -1,4 +1,4 @@
-import { Component, Injector, OnInit } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { ServiceBaseControllerDirective } from '../ServiceBase';
 import { DataService } from 'src/app/services/data.service';
 import { IResourceItem } from 'src/app/modules/charts/resources-tile/resources-tile.component';
@@ -10,14 +10,11 @@ import { Observable } from 'rxjs';
     selector: 'app-service-resources',
     templateUrl: './resources.component.html',
     styleUrls: ['./resources.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class ResourcesComponent extends ServiceBaseControllerDirective {
-
-  constructor(protected data: DataService, injector: Injector) {
-    super(data, injector);
-  }
-
+  protected data: DataService = inject(DataService);
   public static readonly cpuCoresKey: string = "CpuCores=";
   public static readonly cpuCoresLimitKey: string = "CpuCoresLimit=";
   public static readonly memoryKey: string = "MemoryInMB=";

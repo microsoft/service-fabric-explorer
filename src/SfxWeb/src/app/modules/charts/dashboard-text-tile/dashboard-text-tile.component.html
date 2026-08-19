@@ -1,24 +1,47 @@
 <ng-template #internal>
-    <div class="dashboard-wrapper">
+  <div class="dashboard-wrapper">
 
-        <div class="dashboard dashboard-small" style="padding: 11px 7px;">
-            <div class="dashboard-tile">
-                <div class="dashboard-tile-inner">
-                    <div class="dashboard-tile-leftbar" [ngClass]="barClass"></div>
-                    <div class="dashboard-tile-title">{{title}}
-                      <a target="_blank" style="float: right;" [href]="helpTextLink" *ngIf="helpTextLink" [attr.aria-label]="'learn about' + title">
-                        <span class="mif-info link"></span>
-                      </a>
-                    </div>
-                    <div class="dashboard-tile-number" [style.margin]="middleMargin">{{count}}</div>
-                    <ng-content></ng-content>
+    <div class="dashboard dashboard-small" style="padding: 11px 7px;">
+      <div class="dashboard-tile">
+        <div class="dashboard-tile-inner">
+          <div class="dashboard-tile-leftbar" [ngClass]="barClass"></div>
+          <div class="dashboard-tile-title">{{title}}
+            @if (helpTextLink) {
+              <a target="_blank" style="float: right;" [href]="helpTextLink" [attr.aria-label]="'learn about' + title">
+                <span class="mif-info link"></span>
+              </a>
+            }
+          </div>
+          <div class="dashboard-tile-number" [style.margin]="middleMargin">{{count}}</div>
+          <ng-content></ng-content>
 
-                </div>
-            </div>
         </div>
+      </div>
     </div>
+  </div>
 </ng-template>
 
-<a *ngIf="link; else internal" [routerLink]="link">
+@if (link) {
+  <a [routerLink]="link">
     <ng-container *ngTemplateOutlet="internal"></ng-container>
-</a>
+  </a>
+} @else {
+  <div class="dashboard-wrapper">
+    <div class="dashboard dashboard-small" style="padding: 11px 7px;">
+      <div class="dashboard-tile">
+        <div class="dashboard-tile-inner">
+          <div class="dashboard-tile-leftbar" [ngClass]="barClass"></div>
+          <div class="dashboard-tile-title">{{title}}
+            @if (helpTextLink) {
+              <a target="_blank" style="float: right;" [href]="helpTextLink" [attr.aria-label]="'learn about' + title">
+                <span class="mif-info link"></span>
+              </a>
+            }
+          </div>
+          <div class="dashboard-tile-number" [style.margin]="middleMargin">{{count}}</div>
+          <ng-content></ng-content>
+        </div>
+      </div>
+    </div>
+  </div>
+}

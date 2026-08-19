@@ -1,4 +1,4 @@
-import { Component, OnInit, Injector } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { ServiceBaseControllerDirective } from '../ServiceBase';
 import { ListSettings, ListColumnSetting } from 'src/app/Models/ListSettings';
 import { DataService } from 'src/app/services/data.service';
@@ -16,16 +16,16 @@ import { TelemetryService } from 'src/app/services/telemetry.service';
     selector: 'app-backup',
     templateUrl: './backup.component.html',
     styleUrls: ['./backup.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class BackupComponent extends ServiceBaseControllerDirective {
+  protected data: DataService = inject(DataService);
+  private settings = inject(SettingsService);
+  telemetry = inject(TelemetryService);
+
   serviceBackupConfigurationInfoListSettings: ListSettings;
   actions: ActionCollection;
-
-
-  constructor(protected data: DataService, injector: Injector, private settings: SettingsService, public telemetry: TelemetryService) {
-    super(data, injector);
-  }
 
   setup() {
     this.serviceBackupConfigurationInfoListSettings = this.settings.getNewOrExistingListSettings('serviceBackupConfigurationInfoListSettings', ['raw.PolicyName'], [

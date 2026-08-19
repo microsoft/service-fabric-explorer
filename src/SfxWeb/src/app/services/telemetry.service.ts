@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { ApplicationInsights } from '@microsoft/applicationinsights-web';
 import { StorageService } from './storage.service';
 import { environment } from 'src/environments/environment';
@@ -9,9 +9,11 @@ import { StringUtils } from '../Utils/StringUtils';
   providedIn: 'root'
 })
 export class TelemetryService {
+  private storage = inject(StorageService);
+  routing = inject(Router);
 
-  constructor(private storage: StorageService,
-              public routing: Router) {
+
+  constructor() {
 
     this.telemetryEnabled = this.storage.getValueBoolean(TelemetryService.localStorageKey, true);
 

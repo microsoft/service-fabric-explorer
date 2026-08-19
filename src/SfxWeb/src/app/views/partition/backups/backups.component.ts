@@ -1,4 +1,4 @@
-import { Component, OnInit, Injector } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { ListSettings, ListColumnSetting } from 'src/app/Models/ListSettings';
 import { DataService } from 'src/app/services/data.service';
 import { SettingsService } from 'src/app/services/settings.service';
@@ -19,9 +19,14 @@ import { IOnDateChange } from 'src/app/modules/time-picker/double-slider/double-
     selector: 'app-backups',
     templateUrl: './backups.component.html',
     styleUrls: ['./backups.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class BackupsComponent extends PartitionBaseControllerDirective {
+  protected data: DataService = inject(DataService);
+  private settings = inject(SettingsService);
+  telemetry = inject(TelemetryService);
+
 
   partitionBackupListSettings: ListSettings;
   actions: ActionCollection;
@@ -31,10 +36,6 @@ export class BackupsComponent extends PartitionBaseControllerDirective {
   maxDate: Date = new Date();
   startTime: any;
   endTime: any;
-
-  constructor(protected data: DataService, injector: Injector, private settings: SettingsService, public telemetry: TelemetryService) {
-    super(data, injector);
-  }
   backupList: any;
   dateRefresh: boolean;
 

@@ -1,4 +1,4 @@
-import { Component, Injector } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Observable } from 'rxjs';
 import { DataService } from 'src/app/services/data.service';
@@ -9,15 +9,13 @@ import { map } from 'rxjs/operators';
     selector: 'app-container-logs',
     templateUrl: './container-logs.component.html',
     styleUrls: ['./container-logs.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class ContainerLogsComponent extends DeployedCodePackageBaseControllerDirective {
+  protected data: DataService = inject(DataService);
+
   containerLogs: string;
-
-  constructor(protected data: DataService, injector: Injector) {
-    super(data, injector);
-  }
-
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
     return this.deployedCodePackage.containerLogs.refresh(messageHandler).pipe(map(containerLogs => {

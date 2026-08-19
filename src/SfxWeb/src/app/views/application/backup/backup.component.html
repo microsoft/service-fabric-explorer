@@ -1,9 +1,13 @@
-<div *ngIf="actions" style="height: 50px;">
+@if (actions) {
+  <div style="height: 50px;">
     <app-action-collection-drop-down [actionCollection]="actions" style="float: right;"
-                                    displayText="Backup Actions"></app-action-collection-drop-down>
-</div>
+    displayText="Backup Actions"></app-action-collection-drop-down>
+  </div>
+}
 
-<div class="detail-pane essen-pane" *ngIf="app">
+@if (app) {
+  <div class="detail-pane essen-pane">
     <h2>Application Backup Configuration</h2>
     <app-detail-list [list]="app.applicationBackupConfigurationInfoCollection.collection" [listSettings]="applicationBackupConfigurationInfoListSettings"></app-detail-list>
-</div>
+  </div>
+}

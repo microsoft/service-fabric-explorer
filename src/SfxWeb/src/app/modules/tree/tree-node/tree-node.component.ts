@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, inject, ChangeDetectionStrategy } from '@angular/core';
 import { PaginationId, TreeNodeGroupViewModel } from 'src/app/ViewModels/TreeNodeGroupViewModel';
 import { TreeService } from 'src/app/services/tree.service';
 import { environment } from 'src/environments/environment';
@@ -7,9 +7,12 @@ import { environment } from 'src/environments/environment';
     selector: 'app-tree-node',
     templateUrl: './tree-node.component.html',
     styleUrls: ['./tree-node.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class TreeNodeComponent {
+  treeService = inject(TreeService);
+
   @Input() node: TreeNodeGroupViewModel;
   @Output() focusEmitter = new EventEmitter<boolean>();
 
@@ -17,8 +20,6 @@ export class TreeNodeComponent {
 
   public assetBase = environment.assetBase;
   higherZIndex = -1;
-
-  constructor(public treeService: TreeService) { }
   
   trackById(index: number, node: TreeNodeGroupViewModel) {
     return node.nodeId;

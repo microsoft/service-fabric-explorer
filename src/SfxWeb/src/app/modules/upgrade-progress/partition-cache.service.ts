@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Subject } from 'rxjs';
 import { IRawSafetyCheckDescription } from 'src/app/Models/RawDataTypes';
 import { DataService } from 'src/app/services/data.service';
@@ -11,14 +11,13 @@ import { IPartitionData } from './safety-checks/safety-checks.component';
   providedIn: 'root'
 })
 export class PartitionCacheService {
+  private dataService = inject(DataService);
+  private restClientService = inject(RestClientService);
+  private messageService = inject(MessageService);
+
 
   partitions: Record<string, IPartitionData> = {};
   public partitionDataChanges: Subject<string> = new Subject();
-
-  constructor(private dataService: DataService,
-              private restClientService: RestClientService,
-              private messageService: MessageService
-    ) { }
 
   checkCache(partition: string) {
     return partition in this.partitions;

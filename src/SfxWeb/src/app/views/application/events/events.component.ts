@@ -1,4 +1,4 @@
-import { Component, OnInit, Injector } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { ApplicationBaseControllerDirective } from '../applicationBase';
 import { DataService } from 'src/app/services/data.service';
 import { IEventStoreData } from 'src/app/modules/event-store/event-store/event-store.component';
@@ -8,17 +8,16 @@ import { IOptionConfig } from 'src/app/modules/event-store/option-picker/option-
     selector: 'app-app-events',
     templateUrl: './events.component.html',
     styleUrls: ['./events.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class EventsComponent extends ApplicationBaseControllerDirective {
+  protected data: DataService = inject(DataService);
+
 
   listEventStoreData: IEventStoreData<any, any> [];
   visEventStoreData: IEventStoreData<any, any> [];
   optionsConfig: IOptionConfig;
-
-  constructor(protected data: DataService, injector: Injector) {
-    super(data, injector);
-  }
 
   setup() {
     // grab event data for all nodes for concurrent events visualization tool

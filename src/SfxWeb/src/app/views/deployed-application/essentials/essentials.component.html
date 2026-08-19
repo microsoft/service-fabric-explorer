@@ -1,14 +1,15 @@
 <div class="tile-container">
-  <app-essential-health-tile [healthState]="deployedApp.health.healthState" *ngIf="deployedApp?.isInitialized"
-    class="long" [listItems]="essentialItems">
-    <ng-template appEssentialTemplate id="appTypeViewPath">
-      <a [routerLink]="deployedApp.appTypeViewPath" [title]="deployedApp.raw.TypeName">{{deployedApp.raw.TypeName}}</a>
-    </ng-template>
-
-    <ng-template appEssentialTemplate id="status">
-      <app-status-resolver [status]="deployedApp.raw.Status"></app-status-resolver>
-    </ng-template>
-  </app-essential-health-tile>
+  @if (deployedApp?.isInitialized) {
+    <app-essential-health-tile [healthState]="deployedApp.health.healthState"
+      class="long" [listItems]="essentialItems">
+      <ng-template appEssentialTemplate id="appTypeViewPath">
+        <a [routerLink]="deployedApp.appTypeViewPath" [title]="deployedApp.raw.TypeName">{{deployedApp.raw.TypeName}}</a>
+      </ng-template>
+      <ng-template appEssentialTemplate id="status">
+        <app-status-resolver [status]="deployedApp.raw.Status"></app-status-resolver>
+      </ng-template>
+    </app-essential-health-tile>
+  }
 </div>
 
 <div class="detail-pane essen-pane" data-cy="health">
@@ -17,7 +18,9 @@
       <h2>Health Evaluations</h2>
     </div>
     <div collapse-body>
-      <app-health-viewer *ngIf="deployedApp && deployedApp.health" [healthyEvaluations]="deployedApp.health.healthEvents" [unhealthyEvaluations]="deployedApp.health.unhealthyEvaluations" ></app-health-viewer>
+      @if (deployedApp && deployedApp.health) {
+        <app-health-viewer [healthyEvaluations]="deployedApp.health.healthEvents" [unhealthyEvaluations]="deployedApp.health.unhealthyEvaluations" ></app-health-viewer>
+      }
     </div>
   </app-collapse-container>
 </div>
@@ -28,8 +31,10 @@
       <h2>Deployed Service Packages</h2>
     </div>
     <div collapse-body>
-      <app-detail-list [list]="deployedApp.deployedServicePackages" [listSettings]="listSettings"
-        *ngIf="deployedApp?.deployedServicePackages.isInitialized"></app-detail-list>
+      @if (deployedApp?.deployedServicePackages.isInitialized) {
+        <app-detail-list [list]="deployedApp.deployedServicePackages" [listSettings]="listSettings"
+        ></app-detail-list>
+      }
     </div>
   </app-collapse-container>
 </div>

@@ -1,4 +1,4 @@
-import { Component, OnInit, Injector } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { PartitionBaseControllerDirective } from '../PartitionBase';
 import { DataService } from 'src/app/services/data.service';
 import { PartitionTimelineGenerator } from 'src/app/Models/eventstore/timelineGenerators';
@@ -9,16 +9,15 @@ import { IOptionConfig } from 'src/app/modules/event-store/option-picker/option-
     selector: 'app-partition-events',
     templateUrl: './events.component.html',
     styleUrls: ['./events.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class EventsComponent extends PartitionBaseControllerDirective {
+  protected data: DataService = inject(DataService);
+
 
   listEventStoreData: IEventStoreData<any, any> [];
   optionsConfig: IOptionConfig;
-
-  constructor(protected data: DataService, injector: Injector) {
-    super(data, injector);
-  }
 
   setup() {
     this.listEventStoreData = [

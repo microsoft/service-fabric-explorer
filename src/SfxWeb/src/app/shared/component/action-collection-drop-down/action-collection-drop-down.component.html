@@ -1,13 +1,17 @@
 <div ngbDropdown [placement]="treeView ? 'left' : 'bottom-right bottom-left' " #myDrop="ngbDropdown" (openChange)="closeChange($event)">
-    <button class="simple-button" ngbDropdownToggle [ngClass]="{'tree-view': treeView}" (click)="$event.stopPropagation(); emitFocus()" tabindex="0" [attr.aria-haspopup]="false" (blur)="emitBlur()"
-        aria-label="Actions" placement="left right" ngbTooltip="Possible commands to perform"  tooltipClass="styled-tooltip" [tabindex]="tabindex">{{treeView ? '' : ( (displayText || actionCollection.title))}}</button>
-    <div ngbDropdownMenu>
-        <div *ngFor="let action of actionCollection.collection; let last = last;">
-            <button *ngIf="!action.isAdvanced || dataService.actionsAdvancedEnabled()" ngbDropdownItem
-                (click)="actionCollection.runWithTelemetry(action, 'ActionsButton')"
-                [disabled]="!action.canRun()" [attr.disabled]="action.canRun() ? null: ''" (keydown.tab)="last ? myDrop.close() : null" [attr.aria-disabled]="!action.canRun()">
-                {{action.title}}
-            </button>
-        </div>
-    </div>
+  <button class="simple-button" ngbDropdownToggle [ngClass]="{'tree-view': treeView}" (click)="$event.stopPropagation(); emitFocus()" tabindex="0" [attr.aria-haspopup]="false" (blur)="emitBlur()"
+  aria-label="Actions" placement="left right" ngbTooltip="Possible commands to perform"  tooltipClass="styled-tooltip" [tabindex]="tabindex">{{treeView ? '' : ( (displayText || actionCollection.title))}}</button>
+  <div ngbDropdownMenu>
+    @for (action of actionCollection.collection; track action; let last = $last) {
+      <div>
+        @if (!action.isAdvanced || dataService.actionsAdvancedEnabled()) {
+          <button ngbDropdownItem
+            (click)="actionCollection.runWithTelemetry(action, 'ActionsButton')"
+            [disabled]="!action.canRun()" [attr.disabled]="action.canRun() ? null: ''" (keydown.tab)="last ? myDrop.close() : null" [attr.aria-disabled]="!action.canRun()">
+            {{action.title}}
+          </button>
+        }
+      </div>
+    }
+  </div>
 </div>

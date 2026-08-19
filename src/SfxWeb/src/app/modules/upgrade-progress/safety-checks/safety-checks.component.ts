@@ -1,4 +1,4 @@
-import { Component, Input, ChangeDetectionStrategy, ChangeDetectorRef, OnChanges, SimpleChanges, OnInit, OnDestroy } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy, ChangeDetectorRef, OnChanges, SimpleChanges, OnInit, OnDestroy, inject } from '@angular/core';
 import { IRawSafetyCheckDescription } from 'src/app/Models/RawDataTypes';
 import { SettingsService } from 'src/app/services/settings.service';
 import { ListColumnSetting, ListColumnSettingForLink, ListColumnSettingWithCustomComponent, ListSettings } from 'src/app/Models/ListSettings';
@@ -10,9 +10,14 @@ import { Subscription } from 'rxjs';
     selector: 'app-safety-checks',
     templateUrl: './safety-checks.component.html',
     styleUrls: ['./safety-checks.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class SafetyChecksComponent implements OnChanges, OnInit, OnDestroy {
+  partitionCache = inject(PartitionCacheService);
+  private cdr = inject(ChangeDetectorRef);
+  settingsService = inject(SettingsService);
+
 
   @Input() safetyChecks: IRawSafetyCheckDescription[];
 
@@ -21,10 +26,6 @@ export class SafetyChecksComponent implements OnChanges, OnInit, OnDestroy {
   tooManySafetyChecks = false;
 
   sub: Subscription = new Subscription();
-
-  constructor(public partitionCache: PartitionCacheService,
-              private cdr: ChangeDetectorRef,
-              public settingsService: SettingsService) { }
 
   ngOnInit() {
     this.settings = this.settingsService.getNewOrExistingListSettings('safety-checks', null,

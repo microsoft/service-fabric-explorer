@@ -1,4 +1,4 @@
-import { Component, Input, ChangeDetectionStrategy, AfterViewInit, ViewChild, ElementRef, OnChanges, SecurityContext } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy, AfterViewInit, ViewChild, ElementRef, OnChanges, SecurityContext, inject } from '@angular/core';
 import { UpgradeDomain } from 'src/app/Models/DataModels/Shared';
 import { Chart, Options, chart, PointOptionsObject } from 'highcharts';
 import { Counter } from 'src/app/Utils/Utils';
@@ -18,6 +18,8 @@ interface ITileCount {
     standalone: false
 })
 export class UpgradeProgressComponent implements AfterViewInit, OnChanges {
+  private sanitizer = inject(DomSanitizer);
+
 
   @Input() upgradeDomains: UpgradeDomain[];
   @Input() showChart = false;
@@ -28,8 +30,6 @@ export class UpgradeProgressComponent implements AfterViewInit, OnChanges {
 
   tiles: ITileCount[] = [];
   displayUd: UpgradeDomain[] = [];
-
-  constructor(private sanitizer: DomSanitizer) {}
 
   ngAfterViewInit() {
     if (this.showChart) {

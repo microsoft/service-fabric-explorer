@@ -1,4 +1,4 @@
-import { Component, OnInit, Injector } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 import { DataService } from 'src/app/services/data.service';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
@@ -19,9 +19,13 @@ interface IChartSeries {
     selector: 'app-metrics',
     templateUrl: './metrics.component.html',
     styleUrls: ['./metrics.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class MetricsComponent extends BaseControllerDirective {
+  private data = inject(DataService);
+  private settings = inject(SettingsService);
+
 
   clusterLoadInformation: ClusterLoadInformation;
   nodes: NodeCollection;
@@ -36,10 +40,6 @@ export class MetricsComponent extends BaseControllerDirective {
   // groupByNodeType = false;
   showOptions = true;
   filteredNodes = [];
-
-  constructor(private data: DataService, private settings: SettingsService, injector: Injector) {
-    super(injector);
-  }
 
   setup() {
     this.clusterLoadInformation = this.data.clusterLoadInformation;

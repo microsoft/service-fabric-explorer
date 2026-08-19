@@ -1,10 +1,14 @@
 <div class="detail-pane essen-pane">
-    <div *ngIf="actions">
-        <app-action-collection-drop-down [actionCollection]="actions" style="float: right;"
-                                         displayText="Backup Actions"></app-action-collection-drop-down>
+  @if (actions) {
+    <div>
+      <app-action-collection-drop-down [actionCollection]="actions" style="float: right;"
+      displayText="Backup Actions"></app-action-collection-drop-down>
     </div>
-    <div class="detail-pane" *ngIf="service">
-        <h2>Service Backup Configuration</h2>
-        <app-detail-list [list]="service.serviceBackupConfigurationInfoCollection" [listSettings]="serviceBackupConfigurationInfoListSettings"></app-detail-list>
+  }
+  @if (service) {
+    <div class="detail-pane">
+      <h2>Service Backup Configuration</h2>
+      <app-detail-list [list]="service.serviceBackupConfigurationInfoCollection" [listSettings]="serviceBackupConfigurationInfoListSettings"></app-detail-list>
     </div>
+  }
 </div>

@@ -1,19 +1,21 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { IExportInfo, exportInfo } from './utils';
 @Component({
     selector: 'app-export-modal',
     templateUrl: './export-modal.component.html',
     styleUrls: ['./export-modal.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class ExportModalComponent implements OnInit {
+  data = inject<IExportInfo>(MAT_DIALOG_DATA);
+  dialogRef = inject<MatDialogRef<ExportModalComponent>>(MatDialogRef);
+
 
   public text = [];
   public copyText = '';
   public selected: Record<string, boolean> = {};
-  constructor(@Inject(MAT_DIALOG_DATA) public data: IExportInfo,
-              public dialogRef: MatDialogRef<ExportModalComponent>) { }
 
   ngOnInit(): void {
     this.selected = this.data.config.columnSettings.reduce((previous, current) => { previous[current.displayName] = true; return previous; }, {});

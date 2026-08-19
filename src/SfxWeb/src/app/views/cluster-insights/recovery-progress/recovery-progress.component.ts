@@ -1,4 +1,4 @@
-import { Component, Injector } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { forkJoin, of, Observable } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
@@ -29,9 +29,13 @@ enum RecoveryStepName {
     selector: 'app-recovery-progress',
     templateUrl: './recovery-progress.component.html',
     styleUrls: ['./recovery-progress.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class RecoveryProgressComponent extends BaseControllerDirective {
+  private restClient = inject(RestClientService);
+  private dataService = inject(DataService);
+
   recoverySteps: RecoveryStep[] = [
     { name: RecoveryStepName.SeedNodesQuorum, status: 'pending' },
     { name: RecoveryStepName.FailoverManager, status: 'pending' },
@@ -42,10 +46,6 @@ export class RecoveryProgressComponent extends BaseControllerDirective {
 
   isLoading = true;
   override fixedRefreshIntervalMs = 65000; // 65 seconds
-
-  constructor(private restClient: RestClientService, private dataService: DataService, injector: Injector) {
-    super(injector);
-  }
 
   refresh(): Observable<any> {
     this.isLoading = true;

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ChangeDetectionStrategy } from '@angular/core';
 import { DialogBodyComponent } from '../DialogBodyComponent';
 import { Subscription } from 'rxjs';
 
@@ -6,6 +6,7 @@ import { Subscription } from 'rxjs';
     selector: 'app-message-with-confirmation',
     templateUrl: './message-with-confirmation.component.html',
     styleUrls: ['./message-with-confirmation.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class MessageWithConfirmationComponent implements OnInit, OnDestroy, DialogBodyComponent {

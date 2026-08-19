@@ -1,4 +1,4 @@
-import { Component, OnInit, Injector } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { DataService } from 'src/app/services/data.service';
 import { DeployedReplicaBaseControllerDirective } from '../DeployedReplicaBase';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
@@ -10,17 +10,16 @@ import { IEssentialListItem } from 'src/app/modules/charts/essential-health-tile
     selector: 'app-essentials',
     templateUrl: './essentials.component.html',
     styleUrls: ['./essentials.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class EssentialsComponent extends DeployedReplicaBaseControllerDirective {
+  protected data: DataService = inject(DataService);
+
   appView: string;
 
   essentialItems: IEssentialListItem[] = [];
   essentialItems2: IEssentialListItem[] = [];
-
-  constructor(protected data: DataService, injector: Injector) {
-    super(data, injector);
-  }
 
   setup() {
     this.essentialItems = [];

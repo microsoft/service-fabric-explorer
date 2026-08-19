@@ -1,5 +1,7 @@
-<div *ngIf="servicePackage"> 
+@if (servicePackage) {
+  <div>
     <div class="detail-pane essen-pane">
-        <app-detail-view-part [data]="servicePackage"></app-detail-view-part>
+      <app-detail-view-part [data]="servicePackage"></app-detail-view-part>
     </div>
-</div>
+  </div>
+}

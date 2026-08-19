@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnChanges, OnDestroy } from '@angular/core';
+import { Component, OnInit, Input, OnChanges, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 import { IRawReplicatorStatus, IRawRemoteReplicatorStatus } from 'src/app/Models/RawDataTypes';
 import { ReplicaOnPartition } from 'src/app/Models/DataModels/Replica';
 import { Utils } from 'src/app/Utils/Utils';
@@ -19,6 +19,7 @@ const reduceReplicators = (data, replica) => {
     selector: 'app-replica-status-container',
     templateUrl: './replica-status-container.component.html',
     styleUrls: ['./replica-status-container.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class ReplicaStatusContainerComponent implements OnChanges, OnDestroy {

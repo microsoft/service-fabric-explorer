@@ -1,13 +1,16 @@
 import { LiveAnnouncer } from '@angular/cdk/a11y';
-import { Component, Input, Output, EventEmitter, OnChanges, OnInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnChanges, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
     selector: 'app-collapse-container',
     templateUrl: './collapse-container.component.html',
     styleUrls: ['./collapse-container.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class CollapseContainerComponent implements OnChanges, OnInit{
+  private liveAnnouncer = inject(LiveAnnouncer);
+
 
   @Input() collapsed = false;
   @Input() disabled = false;
@@ -15,8 +18,6 @@ export class CollapseContainerComponent implements OnChanges, OnInit{
   @Output() collapsedChange = new EventEmitter<boolean>();
 
   displayText = '';
-
-  constructor(private liveAnnouncer: LiveAnnouncer) {}
 
   ngOnChanges() {
     this.setText();
