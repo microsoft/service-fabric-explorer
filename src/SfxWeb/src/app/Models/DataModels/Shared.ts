@@ -82,7 +82,7 @@ export class LoadMetricInformation extends DataModelBase<IRawLoadMetricInformati
     }
 
     public get hasCapacity(): boolean {
-        return (this.raw.ClusterCapacity && +this.raw.ClusterCapacity > 0) as unknown as boolean;
+        return !!this.raw.ClusterCapacity && +this.raw.ClusterCapacity > 0;
     }
 
     public get isResourceGovernanceMetric(): boolean {

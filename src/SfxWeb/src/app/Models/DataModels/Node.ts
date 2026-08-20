@@ -290,7 +290,7 @@ export class NodeLoadMetricInformation extends DataModelBase<IRawNodeLoadMetricI
         ]
     };
     public get hasCapacity(): boolean {
-        return (this.raw.NodeCapacity && +this.raw.NodeCapacity > 0) as unknown as boolean;
+        return !!this.raw.NodeCapacity && +this.raw.NodeCapacity > 0;
     }
 
     public get isSystemMetric(): boolean {
