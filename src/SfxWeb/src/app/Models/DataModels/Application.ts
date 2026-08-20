@@ -1,6 +1,6 @@
 import {
     IRawApplication, IRawApplicationHealth, IRawApplicationManifest, IRawDeployedApplicationHealthState,
-    IRawApplicationUpgradeProgress, IRawApplicationBackupConfigurationInfo
+    IRawApplicationUpgradeProgress, IRawApplicationBackupConfigurationInfo, IRawDeployedReplica
 } from '../RawDataTypes';
 import { DataModelBase, IDecorators } from './Base';
 import { HtmlUtils } from 'src/app/Utils/HtmlUtils';
@@ -168,7 +168,7 @@ export class Application extends DataModelBase<IRawApplication> {
     private cleanUpApplicationReplicas() {
         this.data.getNodes(true)
             .subscribe(nodes => {
-                const replicas: any[] = [];
+                const replicas: { Replica: IRawDeployedReplica; NodeName: string }[] = [];
 
                 const replicaQueries = nodes.collection.map((node) =>
                     this.data.restClient.getReplicasOnNode(node.name, this.id)

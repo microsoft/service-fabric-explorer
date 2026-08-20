@@ -57,7 +57,7 @@ export class TimeseriesComponent implements AfterViewInit, OnChanges, OnDestroy,
   subscriptions: Subscription = new Subscription();
   listSettings!: ListSettings;
 
-  currentItems?: any[] | null;
+  currentItems?: unknown[] | null;
   currentIndex = 0;
   currentItemsWidth = 400;
   resizer = new Subject<any>();

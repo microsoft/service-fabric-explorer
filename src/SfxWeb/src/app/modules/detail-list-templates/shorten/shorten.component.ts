@@ -14,10 +14,10 @@ export class ShortenComponent implements DetailBaseComponent, OnInit {
 
   item!: RepairTask;
   listSetting!: ListColumnSettingWithShorten;
-  value!: string | any[];
+  value!: string | string[];
   cache: any;
 
-  displayValue!: string | any[];
+  displayValue!: string | string[];
   overflow = false;
   constructor() { }
 

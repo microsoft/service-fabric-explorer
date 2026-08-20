@@ -17,7 +17,7 @@ export interface ITreeNode {
     badge?: () => ITextAndBadge;
     alwaysVisible?: boolean;
     startExpanded?: boolean;
-    sortBy?: () => any[];
+    sortBy?: () => (string | number)[];
     listSettings?: ListSettings;
     actions?: ActionCollection;
     // If current node is expanded, update the health chunk query to include health status queries for its children.

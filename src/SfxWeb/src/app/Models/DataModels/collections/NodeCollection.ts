@@ -165,9 +165,9 @@ export class NodeCollection extends DataModelCollectionBase<Node> {
         let disabledNodes = 0;
         let disablingNodes = 0;
 
-        const disabled: any[] = [];
-        const disabling: any[] = [];
-        const up: any[] = [];
+        const disabled: Node[] = [];
+        const disabling: Node[] = [];
+        const up: Node[] = [];
         this.collection.forEach(node => {
             if (node.raw.NodeStatus === NodeStatusConstants.Up) {
                 up.push(node);

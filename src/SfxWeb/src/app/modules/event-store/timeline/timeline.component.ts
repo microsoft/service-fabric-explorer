@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, In
 import { TelemetryEventNames } from 'src/app/Common/Constants';
 import { mergeTimelineData } from 'src/app/Models/eventstore/periodicEventParser';
 import { ITimelineData, ITimelineItem, parseEventsGenerically } from 'src/app/Models/eventstore/timelineGenerators';
+import { FabricEvent } from 'src/app/Models/eventstore/Events';
 import { DataService } from 'src/app/services/data.service';
 import { TelemetryService } from 'src/app/services/telemetry.service';
 import { TimelineGeneratorFactoryService } from 'src/app/services/timeline-generator-factory.service';
@@ -64,7 +65,7 @@ export class TimelineComponent implements VisualizationComponent {
   }
 
   public getTimelineData() {
-    let rawEventlist: any[] = [];
+    let rawEventlist: FabricEvent[] = [];
     let combinedTimelineData = this.initializeTimelineData();
     const addNestedGroups = this.listEventStoreData.length > 1;
 

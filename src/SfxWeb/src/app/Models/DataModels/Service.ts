@@ -315,7 +315,7 @@ export class ServiceManifest extends DataModelBase<IRawServiceManifest> {
             // let $xml = $($.parseXML(this.raw.Manifest));
             let packType = xml.getElementsByTagName('CodePackage');
 
-            const packages: any[] = [];
+            const packages: ServiceTypePackage[] = [];
             Array.from(packType).forEach( (item: any) => {
                 packages.push(new ServiceTypePackage(this.data, 'Code', item.getAttribute('Name'), item.getAttribute('Version')));
             });

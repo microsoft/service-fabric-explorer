@@ -13,7 +13,7 @@ import { Utils } from 'src/app/Utils/Utils';
 
 export class HealthEvaluation extends DataModelBase<IRawHealthEvaluation> {
     public viewPathUrl = '';
-    public children!: any[];
+    public children!: HealthEvaluation[];
     public displayName!: string;
     public constructor(raw: IRawHealthEvaluation, public level: number = 0, parent: HealthEvaluation | null = null, viewPathUrl: string = '') {
         super(null!, raw, parent);

@@ -287,7 +287,7 @@ export class RepairTask extends DataModelBase<IRawRepairTask> implements IRCAIte
     })
   }
 
-    updateInternal(): Observable<any> {
+    updateInternal(): Observable<void> {
         if (this.raw.Impact && this.raw.Impact.Kind === 'Node' && Array.isArray((this.raw.Impact as IRawNodeRepairImpactDescription).NodeImpactList)) {
             const nodeImpactList = (this.raw.Impact as IRawNodeRepairImpactDescription).NodeImpactList;
             this.impactedNodes = nodeImpactList.map(node => node.NodeName);

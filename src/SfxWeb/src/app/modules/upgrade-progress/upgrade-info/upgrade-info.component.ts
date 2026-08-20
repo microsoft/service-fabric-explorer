@@ -86,7 +86,7 @@ export class UpgradeInfoComponent implements OnChanges, OnInit {
     }
 
 
-    let entitySpecificInformation: any[] = [];
+    let entitySpecificInformation: IEssentialListItem[] = [];
     if (this.upgradeProgress instanceof ClusterUpgradeProgress) {
       entitySpecificInformation = [
         {

@@ -902,7 +902,7 @@ function parseAndAddGroupIdByString(event: FabricEvent, groupIds: any, query: st
 
 export function parseEventsGenerically(events: FabricEvent[], textSearch: string, idPrefix: string = Math.random().toString()): ITimelineData {
   const items = new DataSet<ITimelineItem>();
-  const groupIds: any[] = [];
+  const groupIds: DataGroup[] = [];
 
     events.forEach( (event, index) => {
        const groupId = parseAndAddGroupIdByString(event, groupIds, textSearch, idPrefix);

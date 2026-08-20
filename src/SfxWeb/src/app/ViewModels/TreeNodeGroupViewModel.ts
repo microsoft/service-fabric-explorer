@@ -221,7 +221,7 @@ export class TreeNodeGroupViewModel implements ITreeNode {
         }
     }
     public parent: TreeNodeGroupViewModel;
-    public sortBy!: () => any[];
+    public sortBy!: () => (string | number)[];
     public selected = false;
     public focused = false;
     public leafNode!: boolean;

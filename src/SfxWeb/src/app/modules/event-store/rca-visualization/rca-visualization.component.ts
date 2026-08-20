@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, EventEmitter, Input, Output, inject, ChangeDetectionStrategy } from '@angular/core';
-import { getSimultaneousEventsForEvent, IConcurrentEvents } from 'src/app/Models/eventstore/rcaEngine';
+import { getSimultaneousEventsForEvent, IConcurrentEvents, IRCAItem } from 'src/app/Models/eventstore/rcaEngine';
 import { RelatedEventsConfigs } from 'src/app/Models/eventstore/RelatedEventsConfigs';
 import { ListColumnSettingWithEmbeddedVis } from 'src/app/Models/ListSettings';
 import { VisualizationLogoComponent } from '../../concurrent-events-visualization/visualization-logo/visualization-logo.component';
@@ -25,7 +25,7 @@ export class RcaVisualizationComponent implements VisualizationComponent {
   public simulEventsList: IConcurrentEvents[] = [];
 
   private getConcurrentEventsData() {
-    let sourceEvents: any[] = [];
+    let sourceEvents: IRCAItem[] = [];
     for (const data of this.listEventStoreData) {
       if (data.eventsList.lastRefreshWasSuccessful) {
         sourceEvents = sourceEvents.concat(data.getEvents!());

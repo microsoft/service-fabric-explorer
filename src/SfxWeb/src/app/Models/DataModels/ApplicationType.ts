@@ -196,7 +196,7 @@ export class ApplicationTypeGroup extends DataModelBase<IRawApplicationType> {
 
     private unprovision(): Observable<any> {
         return this.data.getAppTypeGroup(this.name, true).pipe(mergeMap(appTypeGroup => {
-            const unprovisonPromises: any[] = [];
+            const unprovisonPromises: Observable<any>[] = [];
             appTypeGroup.appTypes.forEach(applicationType => {
                 if (!applicationType.isArmManaged) {
                     unprovisonPromises.push(applicationType.unprovision());
