@@ -60,7 +60,7 @@ export class DetailListComponent implements OnInit, OnDestroy {
   set list(data: any[] | DataModelCollectionBase<any>) {
     if (data instanceof DataModelCollectionBase){
       data.ensureInitialized().subscribe(() => {
-        this.iList = ([] as any[]).concat(data.collection);
+        this.iList = data.collection.slice();
         this.updateList();
       });
     }else{

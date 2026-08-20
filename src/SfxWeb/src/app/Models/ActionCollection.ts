@@ -42,7 +42,7 @@ export class ActionCollection {
     }
 
     private runInternal(action: Action, source: string): Observable<any> {
-        const params: any[] = [
+        return action.runWithCallbacks(
             // success handler
             (result: any) => {
             },
@@ -50,9 +50,7 @@ export class ActionCollection {
             (reason: any) => {
                 const result = reason && reason.statusText && reason.status && reason.status + ': ' + reason.statusText || false;
                 return throwError(reason);
-            }];
-
-        return action.runWithCallbacks.apply(action, params as any);
+            });
     }
 }
 
