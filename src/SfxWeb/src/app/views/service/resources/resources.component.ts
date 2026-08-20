@@ -60,7 +60,7 @@ export class ResourcesComponent extends ServiceBaseControllerDirective {
   }
 
   getAppManifestParameters(manifest: string) : { [key: string]: string }  {
-    let parameters = {};
+    let parameters: Record<string, string> = {};
     let tagStart = "<Parameters>", tagEnd = "</Parameters>";
     let start = manifest.indexOf(tagStart);
     let end = manifest.indexOf(tagEnd);
@@ -80,7 +80,7 @@ export class ResourcesComponent extends ServiceBaseControllerDirective {
       let name  = row.match(/Name="([^"]+)"/);
       let value = row.match(/DefaultValue="([^"]+)"/);
       if (name && value) {
-        (parameters as any)[name[1]]=value[1];
+        parameters[name[1]]=value[1];
       }
       content = content.substring(i2+1);
     }

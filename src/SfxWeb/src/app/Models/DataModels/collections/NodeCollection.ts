@@ -106,7 +106,7 @@ export class NodeCollection extends DataModelCollectionBase<Node> {
     }
 
     public getNodeStateCounts(includeAllNodes: boolean = true, includeSeedNoddes: boolean = true): INodesStatusDetails[] {
-        const counts = {};
+        const counts: Record<string, NodeStatusDetails> = {};
         const allNodes = new NodeStatusDetails(NodeStatusDetails.allNodeText);
         const seedNodes = new NodeStatusDetails(NodeStatusDetails.allSeedNodesText);
 
@@ -115,9 +115,9 @@ export class NodeCollection extends DataModelCollectionBase<Node> {
                 seedNodes.add(node);
             }
             if (!(node.raw.Type in counts)) {
-                (counts as any)[node.raw.Type] = new NodeStatusDetails(node.raw.Type);
+                counts[node.raw.Type] = new NodeStatusDetails(node.raw.Type);
             }
-            (counts as any)[node.raw.Type].add(node);
+            counts[node.raw.Type].add(node);
             allNodes.add(node);
         });
 
@@ -131,7 +131,7 @@ export class NodeCollection extends DataModelCollectionBase<Node> {
             resultList.push(seedNodes);
         }
 
-        const nodeTypes = Object.keys(counts).map(key => (counts as any)[key]).sort((a: INodesStatusDetails, b: INodesStatusDetails) => a.nodeType.localeCompare(b.nodeType));
+        const nodeTypes = Object.keys(counts).map(key => counts[key]).sort((a: INodesStatusDetails, b: INodesStatusDetails) => a.nodeType.localeCompare(b.nodeType));
 
         return resultList.concat(nodeTypes);
     }

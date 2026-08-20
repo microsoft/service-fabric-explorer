@@ -117,14 +117,14 @@ export class ListSettings {
         this.currentPage = 1;
     }
 
-    public getPluckedObject(item: any): any {
+    public getPluckedObject<T>(item: T): Record<string, string> | T {
         if (this.columnSettings.length > 0) {
-            const newObj = {};
-            Utils.unique(this.columnSettings.concat(this.secondRowColumnSettings)).forEach(column => (newObj as any)[column.propertyPath] = column.getTextValue(item));
+            const newObj: Record<string, string> = {};
+            Utils.unique(this.columnSettings.concat(this.secondRowColumnSettings)).forEach(column => newObj[column.propertyPath] = column.getTextValue(item));
 
             if(this.additionalSearchableProperties) {
               this.additionalSearchableProperties.forEach(path => {
-                (newObj as any)[path] = Utils.result(item, path);
+                newObj[path] = Utils.result(item, path);
               })
             }
 

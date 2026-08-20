@@ -58,21 +58,21 @@ export class MapComponent extends BaseControllerDirective implements OnChanges {
 
   public updateNodes(nodes: Node[]) {
     this.data.nodes.ensureInitialized().subscribe(() => {
-      const matrix = {};
+      const matrix: Record<string, Node[]> = {};
 
       this.data.nodes.faultDomains.forEach(fd => {
-        (matrix as any)[fd] = [];
+        matrix[fd] = [];
 
         this.data.nodes.upgradeDomains.forEach(ud => {
-          (matrix as any)[`${fd}${ud}`] = [];
-          (matrix as any)[ud] = [];
+          matrix[`${fd}${ud}`] = [];
+          matrix[ud] = [];
         });
       });
 
       nodes.forEach(node => {
-        (matrix as any)[node.faultDomain + node.upgradeDomain].push(node);
-        (matrix as any)[node.faultDomain].push(node);
-        (matrix as any)[node.upgradeDomain].push(node);
+        matrix[node.faultDomain + node.upgradeDomain].push(node);
+        matrix[node.faultDomain].push(node);
+        matrix[node.upgradeDomain].push(node);
       });
 
       this.matrix = matrix;

@@ -32,11 +32,11 @@ export class Utils {
      * implements lodash groupBy in es6. returns a dictionary of lists
      */
     public static groupByFunc<T>(list: T[], keyFunction: (item: T) => string): Record<string, T[]> {
-        return list.reduce( (previous, current) => { const key = keyFunction(current);
+        return list.reduce<Record<string, T[]>>( (previous, current) => { const key = keyFunction(current);
                                                      if (key in previous){
-                                                        (previous as any)[key].push(current);
+                                                        previous[key].push(current);
                                                      }else{
-                                                        (previous as any)[key] = [current];
+                                                        previous[key] = [current];
                                                      }
                                                     //  previous[key] = (previous[key] || []).push(current);
                                                      return previous; }, {});
@@ -47,7 +47,7 @@ export class Utils {
      * @param key key for value
      */
     public static groupBy<T>(list: T[], key: string): Record<string, T[]> {
-        return list.reduce( (previous, current) => { const itemKey = Utils.result(current, key) ;(previous as any)[itemKey] = ((previous as any)[itemKey] || []).push(current) ; return previous; }, {});
+        return Utils.groupByFunc(list, current => Utils.result(current, key));
     }
 
     /**
@@ -55,7 +55,7 @@ export class Utils {
      * @param key key for value
      */
     public static keyBy<T>(list: T[], key: string): Record<string, T> {
-        return list.reduce( (previous, current) => { (previous as any)[(current as any)[key]] = current; return previous; }, {});
+        return list.reduce<Record<string, T>>( (previous, current) => { previous[Utils.result(current, key)] = current; return previous; }, {});
     }
 
     /**
@@ -63,7 +63,7 @@ export class Utils {
      * @param keyFunction function to return a key based string for each entry.
      */
     public static keyByFromFunction<T>(list: T[], keyFunction: (item: T) => string): Record<string, T> {
-        return list.reduce( (previous, current) => { (previous as any)[keyFunction(current)] = current; return previous; }, {});
+        return list.reduce<Record<string, T>>( (previous, current) => { previous[keyFunction(current)] = current; return previous; }, {});
     }
 
     /**
@@ -224,13 +224,10 @@ export interface ICounterMostCommonEntry {
 }
 
 export class Counter {
-    private counts = {};
+    private counts: Record<string | number, number> = {};
 
     public add(key: string | number, incrementalValue: number = 1): void {
-        if ((this.counts as any)[key] === undefined) {
-            (this.counts as any)[key]  = 0;
-        }
-        (this.counts as any)[key] += incrementalValue;
+        this.counts[key] = (this.counts[key] || 0) + incrementalValue;
     }
 
     public clearAll(): void {
@@ -241,7 +238,7 @@ export class Counter {
         const l = Object.keys(this.counts).map(key => {
             return {
                 key,
-                value: (this.counts as any)[key]
+                value: this.counts[key]
             };
         });
         return l.sort(this.sortFunction);
@@ -255,7 +252,7 @@ export class Counter {
       return Object.keys(this.counts).map(key => {
           return {
               key,
-              value: (this.counts as any)[key]
+              value: this.counts[key]
           };
       });
     }

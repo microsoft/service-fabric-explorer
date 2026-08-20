@@ -18,7 +18,7 @@ export class ExportModalComponent implements OnInit {
   public selected: Record<string, boolean> = {};
 
   ngOnInit(): void {
-    this.selected = this.data.config.columnSettings.reduce((previous, current) => { (previous as any)[current.displayName] = true; return previous; }, {});
+    this.selected = this.data.config.columnSettings.reduce<Record<string, boolean>>((previous, current) => { previous[current.displayName] = true; return previous; }, {});
   }
 
   updateCheckAll(event: any) {

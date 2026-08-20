@@ -217,7 +217,7 @@ export class DetailListComponent implements OnInit, OnDestroy {
             );
     });
 
-    pluckedList = filter(pluckedList, (item, index) => (filterMark as any)[index]);
+    pluckedList = filter(pluckedList, (item, index) => filterMark[+index]);
     return pluckedList;
   }
 

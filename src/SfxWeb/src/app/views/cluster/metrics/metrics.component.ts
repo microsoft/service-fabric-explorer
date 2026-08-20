@@ -73,7 +73,7 @@ export class MetricsComponent extends BaseControllerDirective {
 
     //for some of the metrics, we normailize and show their value so its necessary to have both.
     let addNormalizationTooltip = false;
-    const tooltipMap =  {};
+    const tooltipMap: Record<string, string> =  {};
 
     this.metricsViewModel.filteredNodeLoadInformation(this.filteredNodes).sort((a, b) => a.name.localeCompare(b.name)).forEach(metric => {
       this.metricsViewModel.selectedMetrics.forEach((selectedmetric, index) => {
@@ -87,7 +87,7 @@ export class MetricsComponent extends BaseControllerDirective {
 
           const d = selectedNodeLoadMetricInfo;
           const tooltip = `${d!.parent.name}: ${d!.raw.NodeLoad}${d!.hasCapacity ? ` / ${d!.raw.NodeCapacity} (${d!.loadCapacityRatioString})` : ""}`;
-          (tooltipMap as any)[`${metric.raw.NodeName}-${selectedmetric.displayName}`] = tooltip;
+          tooltipMap[`${metric.raw.NodeName}-${selectedmetric.displayName}`] = tooltip;
 
         } else if (selectedmetric.hasCapacity) {
           dataPoint = Math.max(+selectedNodeLoadMetricInfo!.raw.NodeLoad, +selectedNodeLoadMetricInfo!.raw.NodeCapacity);
@@ -102,7 +102,7 @@ export class MetricsComponent extends BaseControllerDirective {
 
     if (addNormalizationTooltip) {
       this.tableData.tooltipFunction = function(this: any) {
-        return (tooltipMap as any)[`${this.x}-${this.series.name}`]
+        return tooltipMap[`${this.x}-${this.series.name}`]
       }
     }
 

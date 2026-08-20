@@ -191,9 +191,9 @@ export class TimeseriesComponent implements AfterViewInit, OnChanges, OnDestroy,
 
   private generateChartData() {
     const ref = this;
-    const colorMap = {};
+    const colorMap: Record<string, string> = {};
     this.data.dataSets.forEach(dataset => {
-      (colorMap as any)[dataset.name] = Utils.randomColor();
+      colorMap[dataset.name] = Utils.randomColor();
     })
 
     return this.data.series.map((chartData, index: any) => {
@@ -238,7 +238,7 @@ export class TimeseriesComponent implements AfterViewInit, OnChanges, OnDestroy,
           dataLabels: {
             style: this.fontColor,
           },
-          color: (colorMap as any)[dataset.name]
+          color: colorMap[dataset.name]
         }
       })
 
