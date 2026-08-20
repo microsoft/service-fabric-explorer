@@ -39,7 +39,7 @@ export class UpgradeProgressComponent implements AfterViewInit, OnChanges {
             type: 'pie',
             width: 350,
             height: 300,
-            backgroundColor: null as any,
+            backgroundColor: 'transparent',
             borderRadius: 0
         },
         title: {

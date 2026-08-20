@@ -68,7 +68,7 @@ export class TimeseriesComponent implements AfterViewInit, OnChanges, OnDestroy,
 
   public options: Options = {
     chart: {
-      backgroundColor: null as any,
+      backgroundColor: 'transparent',
       height: 200,
       zooming: {
         type: 'x'

@@ -26,7 +26,7 @@ export class HealthChartComponent implements OnInit, AfterViewInit, OnChanges {
   public options: Options = {
     chart: {
       type: 'pie',
-      backgroundColor: null as any,
+      backgroundColor: 'transparent',
       borderRadius: 0,
       margin: [0, 0, 0, 0],
       spacingTop: 0,

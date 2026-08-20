@@ -24,7 +24,7 @@ export class DashboardTileComponent implements OnInit, AfterViewInit, OnChanges 
   public options: Options = {
     chart: {
       type: 'pie',
-      backgroundColor: null as any,
+      backgroundColor: 'transparent',
       borderRadius: 0,
     },
     title: {

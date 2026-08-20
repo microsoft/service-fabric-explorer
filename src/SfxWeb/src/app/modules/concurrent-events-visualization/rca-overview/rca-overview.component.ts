@@ -31,7 +31,7 @@ export class RcaOverviewComponent implements AfterViewInit, OnChanges {
   public options: Options = {
     chart: {
       type: 'pie',
-      backgroundColor: null as any,
+      backgroundColor: 'transparent',
       borderRadius: 0,
       spacingTop: 0,
       spacingBottom: 0,
@@ -58,7 +58,7 @@ export class RcaOverviewComponent implements AfterViewInit, OnChanges {
       pie: {
         borderWidth: 2,
         innerSize: '50%',
-        borderColor: null as any,
+        borderColor: 'transparent',
         allowPointSelect: true,
         cursor: 'pointer',
         dataLabels: {

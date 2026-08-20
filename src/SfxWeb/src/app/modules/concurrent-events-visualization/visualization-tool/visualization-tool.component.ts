@@ -34,7 +34,7 @@ export class VisualizationToolComponent implements OnChanges, AfterViewInit, Det
   public options: Options = {
       chart: {
         inverted: true,
-        backgroundColor: null as any,
+        backgroundColor: 'transparent',
         margin: [0, 0, 0, 0],
         spacingTop: 0,
         spacingBottom: 0,
@@ -144,7 +144,7 @@ export class VisualizationToolComponent implements OnChanges, AfterViewInit, Det
       for (let i = 0; i < levels; i++) {
           let newLevelComponent = {
               level: i,
-              color: null as any,
+              color: undefined,
           }
           config.levels!.push(newLevelComponent);
       }

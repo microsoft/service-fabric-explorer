@@ -49,7 +49,7 @@ export class ReplicationTrendLineComponent implements AfterViewInit, OnChanges, 
   ngAfterViewInit(): void {
     const options: Options = {
       chart: {
-        backgroundColor: null as any,
+        backgroundColor: 'transparent',
         type: 'area',
       },
       title: {

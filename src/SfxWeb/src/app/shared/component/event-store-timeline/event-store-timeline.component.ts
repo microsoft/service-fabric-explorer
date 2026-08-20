@@ -4,7 +4,7 @@ import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { pregeneratedColors } from 'src/app/Common/Constants';
 import { ITimelineData } from 'src/app/Models/eventstore/timelineGenerators';
 import * as moment from 'moment';
-import { Timeline, DataItem, DataGroup } from 'vis-timeline/peer';
+import { Timeline, DataItem, DataGroup, TimelineOptionsCluster } from 'vis-timeline/peer';
 import { DataSet } from 'vis-data';
 
 @Component({
@@ -205,7 +205,7 @@ export class EventStoreTimelineComponent implements AfterViewInit, OnChanges, On
           clusterCriteria(firstItem: any, secondItem: any) {
             return firstItem.kind === secondItem.kind
           }
-        } : false as any,
+        } : false as unknown as TimelineOptionsCluster, // vis-timeline's cluster type omits `false`, the value that disables clustering
       }
       this.timeline.setOptions(options);
       setTimeout(() => {
