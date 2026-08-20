@@ -157,7 +157,7 @@ export class RcaOverviewComponent implements AfterViewInit, OnChanges {
 
     this.timelineData = {
       groups,
-      items: items as any,
+      items,
       allowClustering: true
     }
 

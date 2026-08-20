@@ -124,7 +124,7 @@ const generateItems = ( property: IDiffProperty, states: IRCAItem[], startDate: 
 
   let groups: DataGroup[] = Array.from(uniqueValues).map(value => {
     return {
-      id: (value as any).toString(), content: (value as any).toString()
+      id: String(value), content: String(value)
     }
   })
 
@@ -161,6 +161,6 @@ const getValues = (item: IRCAItem, property:IDiffProperty): any[] => {
   if (values && property.delimiter) {
     return (values as string).split(property.delimiter);
   } else {
-    return values as any[];
+    return values;
   }
 }

@@ -198,7 +198,7 @@ export class ReplicaListComponent extends BaseControllerDirective {
         existing.raw = replica;
         existing.nodeStatus = nodeStatus;
         existing.isSeedNode = node?.raw.IsSeedNode ?? false;
-        existing.replicaRoleSortPriority = (SortPriorities.ReplicaRolesToSortPriorities as any)[replica.ReplicaRole] || 0;
+        existing.replicaRoleSortPriority = SortPriorities.ReplicaRolesToSortPriorities[replica.ReplicaRole as keyof typeof SortPriorities.ReplicaRolesToSortPriorities] || 0;
         existing.replicaStatusBadge = {
           text: replica.ReplicaStatus,
           badgeClass: replica.ReplicaStatus === 'Ready' ? 'badge-ok' : 'badge-error'
@@ -222,7 +222,7 @@ export class ReplicaListComponent extends BaseControllerDirective {
         raw: replica,
         nodeStatus,
         isSeedNode: node?.raw.IsSeedNode ?? false,
-        replicaRoleSortPriority: (SortPriorities.ReplicaRolesToSortPriorities as any)[replica.ReplicaRole] || 0,
+        replicaRoleSortPriority: SortPriorities.ReplicaRolesToSortPriorities[replica.ReplicaRole as keyof typeof SortPriorities.ReplicaRolesToSortPriorities] || 0,
         replicaStatusBadge: {
           text: replica.ReplicaStatus,
           badgeClass: replica.ReplicaStatus === 'Ready' ? 'badge-ok' : 'badge-error'

@@ -378,7 +378,7 @@ export class CreateServiceDescription {
              
             flags ^= 0x80;
         } else {
-            delete (descriptionCloned as any).AuxiliaryReplicaCount;
+            delete (descriptionCloned as Partial<typeof descriptionCloned>).AuxiliaryReplicaCount;
             if (this.raw.ServiceLoadMetrics !== null && this.raw.ServiceLoadMetrics.length > 0) {
                 descriptionCloned.ServiceLoadMetrics.forEach(metric => delete metric.AuxiliaryDefaultLoad);
             }

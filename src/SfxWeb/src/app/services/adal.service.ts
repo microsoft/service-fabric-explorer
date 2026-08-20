@@ -74,9 +74,9 @@ export class AdalService {
       return this.context.getLoginError();
   }
 
-  public getAccessToken(endpoint: string, callbacks: (message: string, token: string) => any) {
+  public getAccessToken(endpoint: string, callbacks: (message: string | null, token: string | null) => any) {
 
-      return this.context.acquireToken(endpoint, callbacks as any);
+      return this.context.acquireToken(endpoint, callbacks);
   }
 
   public acquireTokenResilient(resource: string): Observable<any> {

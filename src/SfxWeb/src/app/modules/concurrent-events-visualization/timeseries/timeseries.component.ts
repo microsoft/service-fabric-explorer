@@ -1,5 +1,5 @@
 import { Component, Input, OnChanges, OnDestroy, ViewChildren, ElementRef, AfterViewInit, QueryList, ViewChild, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
-import { Chart, Options, chart, SeriesOptionsType, Pointer, PointOptionsObject, YAxisOptions, XAxisOptions } from 'highcharts';
+import { Chart, Options, chart, SeriesOptionsType, Pointer, PointOptionsObject, YAxisOptions, XAxisOptions, Axis } from 'highcharts';
 import { debounceTime } from 'rxjs/operators';
 import { ListSettings } from 'src/app/Models/ListSettings';
 import { SettingsService } from 'src/app/services/settings.service';
@@ -117,10 +117,10 @@ export class TimeseriesComponent implements AfterViewInit, OnChanges, OnDestroy,
       }
     },
     tooltip: {
-      positioner: function () {
+      positioner: function (labelWidth) {
         return {
           // right aligned
-          x: this.chart.chartWidth - (this as any).label.width - 10,
+          x: this.chart.chartWidth - labelWidth - 10,
           y: 10 // align to title
         };
       },
@@ -208,6 +208,7 @@ export class TimeseriesComponent implements AfterViewInit, OnChanges, OnDestroy,
             events: {
               click: function (e: any) {
                 const points = this.series.chart.series.map(series => {
+                  // searchPoint is a Highcharts internal method absent from the public types
                   return (series as any).searchPoint(e, true)
                 }).filter(point => !!point).map(p => {
                   return {
@@ -295,7 +296,7 @@ export class TimeseriesComponent implements AfterViewInit, OnChanges, OnDestroy,
       if (e.trigger !== 'syncExtremes') { // Prevent feedback loop
         compRef.charts.forEach((chart) => {
           if (chart !== thisChart) {
-            if ((chart.xAxis[0] as any).setExtremes) { // It is null while updating
+            if ((chart.xAxis[0] as Axis | undefined)?.setExtremes) { // It is null while updating
               chart.xAxis[0].setExtremes(
                 e.min,
                 e.max,
@@ -322,6 +323,7 @@ export class TimeseriesComponent implements AfterViewInit, OnChanges, OnDestroy,
     const originChart = this.charts[chartIndex];
     const event = originChart.pointer.normalize(e);
     const points = originChart.series.map(series => {
+      // searchPoint is a Highcharts internal method absent from the public types
       return (series as any).searchPoint(event, false)
     }).filter(point => !!point);
 

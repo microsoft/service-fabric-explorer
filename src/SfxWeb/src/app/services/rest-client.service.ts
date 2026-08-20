@@ -884,7 +884,7 @@ export class RestClientService {
       if (!messageHandler) {
           messageHandler = ResponseMessageHandlers.getResponseMessageHandler;
       }
-      return this.handleResponse<T>(apiDesc, result as any, messageHandler);
+      return this.handleResponse<T>(apiDesc, result, messageHandler);
   }
 
   private post<T>(url: string, apiDesc: string, data?: any, messageHandler?: IResponseMessageHandler): Observable<T> {
@@ -892,7 +892,7 @@ export class RestClientService {
       if (!messageHandler) {
           messageHandler = ResponseMessageHandlers.postResponseMessageHandler;
       }
-      return this.handleResponse<T>(apiDesc, result as any, messageHandler);
+      return this.handleResponse<T>(apiDesc, result, messageHandler);
   }
 
   private put<T>(url: string, apiDesc: string, data?: any, messageHandler?: IResponseMessageHandler): Observable<T> {
@@ -900,7 +900,7 @@ export class RestClientService {
       if (!messageHandler) {
           messageHandler = ResponseMessageHandlers.putResponseMessageHandler;
       }
-      return this.handleResponse<T>(apiDesc, result as any, messageHandler);
+      return this.handleResponse<T>(apiDesc, result, messageHandler);
   }
 
   private delete<T>(url: string, apiDesc: string, messageHandler?: IResponseMessageHandler): Observable<T> {
@@ -908,7 +908,7 @@ export class RestClientService {
       if (!messageHandler) {
           messageHandler = ResponseMessageHandlers.deleteResponseMessageHandler;
       }
-      return this.handleResponse<T>(apiDesc, result as any, messageHandler);
+      return this.handleResponse<T>(apiDesc, result, messageHandler);
   }
 
   private handleResponse<T>(apiDesc: string, resultPromise: Observable<any>, messageHandler?: IResponseMessageHandler): Observable<T> {

@@ -114,7 +114,7 @@ export class OrchestrationViewComponent implements OnInit, AfterViewInit {
   }
 
   selectEvent(index: string) {
-    this.selectedEvent = this.partitionEvents[index as any];
+    this.selectedEvent = this.partitionEvents[+index];
   }
 
   private fillInOperationEventsData(partitionEventData: IEventStoreData<PartitionEventList, PartitionEvent>) {

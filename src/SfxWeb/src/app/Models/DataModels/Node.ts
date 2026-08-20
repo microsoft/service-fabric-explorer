@@ -90,11 +90,11 @@ export class Node extends DataModelBase<IRawNode> {
     public addHealthStateFiltersForChildren(clusterHealthChunkQueryDescription: IClusterHealthChunkQueryDescription): IHealthStateFilter {
         // To get all deployed applications on this node, we need to add deployed application filters in all existing application filters.
         // (There will be at least one application filter there by default which is returned by DataService.getInitialClusterHealthChunkQueryDescription)
-        Object.keys(clusterHealthChunkQueryDescription.ApplicationFilters).forEach(filter => {
-            if (!(clusterHealthChunkQueryDescription.ApplicationFilters as any)[filter].DeployedApplicationFilters) {
-                (clusterHealthChunkQueryDescription.ApplicationFilters as any)[filter].DeployedApplicationFilters = [];
+        clusterHealthChunkQueryDescription.ApplicationFilters.forEach(appFilter => {
+            if (!appFilter.DeployedApplicationFilters) {
+                appFilter.DeployedApplicationFilters = [];
             }
-            (clusterHealthChunkQueryDescription.ApplicationFilters as any)[filter].DeployedApplicationFilters.push(
+            appFilter.DeployedApplicationFilters.push(
                 {
                     NodeNameFilter: this.name
                 });

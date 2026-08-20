@@ -174,7 +174,7 @@ export class DataModelBase<T> implements IDataModel<T> {
     }
 
     protected get rawAny(): any {
-        return this.raw as any;
+        return this.raw;
     }
 
     // Derived class should override this function to retrieve new version of raw data.

@@ -105,7 +105,7 @@ export class VisualizationToolComponent implements OnChanges, AfterViewInit, Det
               let currEvent = queue.shift();
               let action = currEvent!.reasonForEvent ? "<b>Reason: </b>" + currEvent!.reasonForEvent + "</br>" : "";
               let timestamp = "<b>Timestamp: </b>" + currEvent!.timeStamp;
-              let newNodeComponent : SeriesSankeyNodesOptionsObject = {
+              let newNodeComponent : SeriesSankeyNodesOptionsObject & { opacity: number } = {
                   id: idPrefix + currEvent!.eventInstanceId + "</p>",
                   title: eventTitlePrefix + currEvent!.kind + "</p>",
                   description: descriptionPrefix + action + timestamp +"</p>",
@@ -116,7 +116,7 @@ export class VisualizationToolComponent implements OnChanges, AfterViewInit, Det
                     enabled: true,
                     className: 'inner-tooltip'
                   }
-              } as any;
+              };
 
               // root node should not be hanging - this messes up the diagram
               if (currSize == 1) {
