@@ -30,7 +30,7 @@ export class SectionOverviewComponent implements OnChanges {
 
   dataPoints: IDashboardDataPointViewModel[] = [];
   public constants = NodeStatusConstants;
-  repairInfo: any;
+  repairInfo?: { inProgress: number; recent: number };
 
   ngOnChanges(): void {
     const nodeInfo = new NodeStatusDetails('');

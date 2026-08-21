@@ -26,7 +26,7 @@ export class MessageWithWarningComponent implements AfterViewInit, OnDestroy, Di
     }  
   }
 
-  emitEvent(value: any) {
+  emitEvent(value: boolean) {
     this.disableSubmit.emit(value);
   }
 

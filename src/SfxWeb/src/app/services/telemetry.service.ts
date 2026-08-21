@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { ApplicationInsights } from '@microsoft/applicationinsights-web';
 import { StorageService } from './storage.service';
 import { environment } from 'src/environments/environment';
-import { Router, NavigationEnd, ActivationEnd } from '@angular/router';
+import { Router, NavigationEnd, ActivationEnd, ActivatedRouteSnapshot } from '@angular/router';
 import { StringUtils } from '../Utils/StringUtils';
 
 @Injectable({
@@ -43,11 +43,11 @@ export class TelemetryService {
         try {
           let name =  '';
           // build up the URL this way to avoid passing in PII about stuff running in the cluster
-          let snapshot: any = lastActivationEnd!.snapshot;
+          let snapshot: ActivatedRouteSnapshot | null = lastActivationEnd!.snapshot;
           while (snapshot) {
-            const path = snapshot.routeConfig.path;
-            if (path.length > 0) {
-              name +=  StringUtils.EnsureStartsWith(snapshot.routeConfig.path, '/');
+            const path = snapshot.routeConfig?.path;
+            if (path && path.length > 0) {
+              name +=  StringUtils.EnsureStartsWith(path, '/');
             }
             snapshot = snapshot.firstChild;
           }

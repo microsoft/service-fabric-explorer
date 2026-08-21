@@ -1,4 +1,5 @@
 import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ContentChildren, Directive, Input, OnChanges, OnInit, QueryList, TemplateRef, inject } from '@angular/core';
+import { ITextAndBadge } from 'src/app/Utils/ValueResolver';
 
 export interface IEssentialListItem {
   displayText?: string;
@@ -38,7 +39,7 @@ export class EssentialHealthTileComponent implements AfterViewInit, OnChanges {
   private detectorRef = inject(ChangeDetectorRef);
 
 
-  @Input() healthState: any;
+  @Input() healthState?: ITextAndBadge;
   @Input() listItems: IEssentialListItem[] = [];
   @Input() templateRefs!: Record<string, TemplateRef<any>>;
   @ContentChildren(EssentialTemplateDirective, { descendants: true } ) test!: QueryList<EssentialTemplateDirective>;

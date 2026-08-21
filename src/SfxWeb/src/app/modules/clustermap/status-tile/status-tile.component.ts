@@ -1,4 +1,5 @@
 import { Component, Input, OnChanges, OnInit, TemplateRef, ChangeDetectionStrategy } from '@angular/core';
+import { KeyValue } from '@angular/common';
 import { NodeStatusConstants } from 'src/app/Common/Constants';
 import { NodeStatusDetails } from 'src/app/Models/DataModels/collections/NodeCollection';
 import { RepairTaskCollection } from 'src/app/Models/DataModels/collections/RepairTaskCollection';
@@ -46,7 +47,7 @@ export class StatusTileComponent implements OnChanges {
     }
   }
 
-  trackByFn(index: any, node: any) {
+  trackByFn(index: number, node: KeyValue<string, NodeStatusDetails>) {
     return node.key;
   }
 }

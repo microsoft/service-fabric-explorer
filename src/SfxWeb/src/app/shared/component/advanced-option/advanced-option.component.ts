@@ -71,12 +71,12 @@ export class AdvancedOptionComponent implements OnInit {
     }
   }
 
-  pageSize(size: any) {
+  pageSize(size: number) {
     this.settingsService.paginationLimit = size;
     this.telemetryService.trackActionEvent(TelemetryEventNames.listSize, {value: size.toString()});
   }
 
-  suppressMessages(state: any) {
+  suppressMessages(state: boolean) {
     this.messageService.suppressMessage = state;
     this.telemetryService.trackActionEvent(TelemetryEventNames.supressMessage, null, TelemetryEventNames.supressMessage);
   }

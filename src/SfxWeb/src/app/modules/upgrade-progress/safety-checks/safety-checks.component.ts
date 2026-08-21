@@ -71,7 +71,7 @@ export class SafetyChecksComponent implements OnChanges, OnInit, OnDestroy {
     this.cdr.detectChanges();
   }
 
-  safetyCheck(index: any, safetyCheck: IRawSafetyCheckDescription) {
+  safetyCheck(index: number, safetyCheck: IRawSafetyCheckDescription) {
     return safetyCheck.SafetyCheck.PartitionId || safetyCheck.SafetyCheck.Kind;
   }
 

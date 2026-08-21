@@ -21,8 +21,8 @@ export class ExportModalComponent implements OnInit {
     this.selected = this.data.config.columnSettings.reduce<Record<string, boolean>>((previous, current) => { previous[current.displayName] = true; return previous; }, {});
   }
 
-  updateCheckAll(event: any) {
-    if (event.target.checked) {
+  updateCheckAll(event: Event) {
+    if ((event.target as HTMLInputElement).checked) {
       this.selectAll();
     } else {
       this.unselectAll();

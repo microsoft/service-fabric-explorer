@@ -235,8 +235,8 @@ export class DetailListComponent implements OnInit, OnDestroy {
     this.debounceHandler.next(this.sortedFilteredList);
   }
 
-  updateCheckAll(columnSetting: ListColumnSetting, event: any) {
-    if(event.target.checked){
+  updateCheckAll(columnSetting: ListColumnSetting, event: Event) {
+    if((event.target as HTMLInputElement).checked){
       columnSetting.checkAll();
     }
     else{

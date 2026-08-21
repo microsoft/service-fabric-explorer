@@ -62,7 +62,7 @@ export class DataModelCollectionBase<T extends IDataModel<any>> implements IData
         return !!this.refreshingPromise;
     }
 
-    protected get indexPropery(): keyof IDataModel<any> {
+    protected get indexPropery(): keyof T & string {
         // index the collection by "uniqueId" by default
         return 'uniqueId';
     }

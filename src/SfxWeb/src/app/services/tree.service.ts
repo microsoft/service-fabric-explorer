@@ -119,7 +119,7 @@ export class TreeService {
 
         private getGroupNodes(): Observable<ITreeNode[]> {
 
-            const getAppsPromise = this.data.getApps().pipe(map(apps => {
+            const getAppsPromise = this.data.getApps().pipe(map((apps): ITreeNode => {
               return {
                     nodeId: IdGenerator.appGroup(),
                     displayName: () => 'Applications',
@@ -131,7 +131,7 @@ export class TreeService {
                 };
             }));
 
-            const getNodesPromise = this.data.getNodes().pipe(map(nodes => {
+            const getNodesPromise = this.data.getNodes().pipe(map((nodes): ITreeNode => {
               return {
                     nodeId: IdGenerator.nodeGroup(),
                     displayName: () => 'Nodes',
@@ -147,7 +147,7 @@ export class TreeService {
                             catchError(err => {
                 return of(null);
             }),
-            map(systemApp => {
+            map((systemApp): ITreeNode | null => {
               if (systemApp) {
                 return {
                     nodeId: IdGenerator.systemAppGroup(),
@@ -174,11 +174,7 @@ export class TreeService {
 
 
             return forkJoin([getAppsPromise, getNodesPromise, systemNodePromise]).pipe(map(resp => {
-                if (resp[2] === null) {
-                    resp.splice(2);
-                    return resp as ITreeNode[];
-                }
-                return resp as ITreeNode[];
+                return resp.filter((node): node is ITreeNode => node !== null);
             }));
         }
 

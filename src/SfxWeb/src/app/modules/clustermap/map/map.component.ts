@@ -80,7 +80,7 @@ export class MapComponent extends BaseControllerDirective implements OnChanges {
 
   }
 
-  trackByFn(index: any, udOrFd: string) {
+  trackByFn(index: number, udOrFd: string) {
     return udOrFd;
   }
 }

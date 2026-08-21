@@ -17,7 +17,7 @@ export class UpgradeDomainProgressComponent{
 
   constructor() { }
 
-  nodeTrackBy(index: any, node: IRawNodeUpgradeProgress) {
+  nodeTrackBy(index: number, node: IRawNodeUpgradeProgress) {
     return node.NodeName;
   }
 

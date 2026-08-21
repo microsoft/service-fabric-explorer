@@ -73,7 +73,7 @@ export class RepairTaskViewComponent implements OnInit, DetailBaseComponent, OnD
     return forkJoin(nodeIds.map(id => {
       return this.dataService.getNode(id, true).pipe(catchError(err => of(null)));
     })).pipe(map(data => {
-      this.nodes = data.filter(node => node) as Node[];
+      this.nodes = data.filter((node): node is Node => !!node);
     }));
   }
 }

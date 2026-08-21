@@ -1,10 +1,18 @@
 import { Component, Input, OnChanges, OnDestroy, ViewChildren, ElementRef, AfterViewInit, QueryList, ViewChild, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
-import { Chart, Options, chart, SeriesOptionsType, Pointer, PointOptionsObject, YAxisOptions, XAxisOptions, Axis } from 'highcharts';
+import { Chart, Options, chart, SeriesOptionsType, Pointer, PointOptionsObject, YAxisOptions, XAxisOptions, Axis, PointClickEventObject, Point, Series } from 'highcharts';
 import { debounceTime } from 'rxjs/operators';
 import { ListSettings } from 'src/app/Models/ListSettings';
 import { SettingsService } from 'src/app/services/settings.service';
 import { Utils } from 'src/app/Utils/Utils';
 import { Subscription, Subject, merge } from 'rxjs';
+
+declare module 'highcharts' {
+  // itemData: attached by us via the point's options; clientX: set at runtime by Series.searchPoint’s k-d-tree lookup
+  interface Point {
+    itemData?: any;
+    clientX: number;
+  }
+}
 
 export interface IdataFormatter {
   name: string;
@@ -25,6 +33,13 @@ export interface IParallelChartData {
   series: IdataFormatter[];
   dataSets: IDataSet[];
   listSettings: ListSettings;
+}
+
+interface ISelectedItem {
+  item: any;
+  pointData: Point;
+  series: Series;
+  tags: { x: number; y: number; label?: string }[];
 }
 
 Pointer.prototype.reset = function () {
@@ -57,10 +72,10 @@ export class TimeseriesComponent implements AfterViewInit, OnChanges, OnDestroy,
   subscriptions: Subscription = new Subscription();
   listSettings!: ListSettings;
 
-  currentItems?: unknown[] | null;
+  currentItems?: ISelectedItem[] | null;
   currentIndex = 0;
   currentItemsWidth = 400;
-  resizer = new Subject<any>();
+  resizer = new Subject<number>();
 
   fontColor = {
     color: '#fff'
@@ -159,7 +174,7 @@ export class TimeseriesComponent implements AfterViewInit, OnChanges, OnDestroy,
   private generateCharts() {
     const data = this.generateChartData();
 
-    this.container.forEach((element, index: any) => {
+    this.container.forEach((element, index: number) => {
       const chart = this.charts[index];
       const chartData = data[index];
 
@@ -182,7 +197,7 @@ export class TimeseriesComponent implements AfterViewInit, OnChanges, OnDestroy,
     })
   }
 
-  private pickDataPoints(item: any, formatter: IdataFormatter) {
+  private pickDataPoints(item: any, formatter: IdataFormatter): { x: number; y: number } {
     return {
       x: Utils.result2(item, formatter.xProperty),
       y: Utils.result2(item, formatter.yProperty)
@@ -196,7 +211,7 @@ export class TimeseriesComponent implements AfterViewInit, OnChanges, OnDestroy,
       colorMap[dataset.name] = Utils.randomColor();
     })
 
-    return this.data.series.map((chartData, index: any) => {
+    return this.data.series.map((chartData, index: number) => {
       const dataSet: SeriesOptionsType[] = this.data.dataSets.map(dataset => {
         const values: PointOptionsObject[] = dataset.values.map((item: any) => {
           const point = this.pickDataPoints(item, chartData);
@@ -206,11 +221,10 @@ export class TimeseriesComponent implements AfterViewInit, OnChanges, OnDestroy,
             y: point.y,
             itemData: item,
             events: {
-              click: function (e: any) {
+              click: function (e: PointClickEventObject) {
                 const points = this.series.chart.series.map(series => {
-                  // searchPoint is a Highcharts internal method absent from the public types
-                  return (series as any).searchPoint(e, true)
-                }).filter(point => !!point).map(p => {
+                  return series.searchPoint(e, true)
+                }).filter((point): point is Point => !!point).map(p => {
                   return {
                     item: p.itemData,
                     pointData: p,
@@ -323,9 +337,8 @@ export class TimeseriesComponent implements AfterViewInit, OnChanges, OnDestroy,
     const originChart = this.charts[chartIndex];
     const event = originChart.pointer.normalize(e);
     const points = originChart.series.map(series => {
-      // searchPoint is a Highcharts internal method absent from the public types
-      return (series as any).searchPoint(event, false)
-    }).filter(point => !!point);
+      return series.searchPoint(event, false)
+    }).filter((point): point is Point => !!point);
 
     if (points.length > 0) {
       let closestPoint = points[0];
@@ -363,7 +376,7 @@ export class TimeseriesComponent implements AfterViewInit, OnChanges, OnDestroy,
     this.resizer.next(width);
   }
 
-  itemTrackBy(index: any, item: any) {
+  itemTrackBy(index: number, item: ISelectedItem) {
     return item.series.name;
   }
 }

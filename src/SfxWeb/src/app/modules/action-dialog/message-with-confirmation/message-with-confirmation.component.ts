@@ -24,7 +24,7 @@ export class MessageWithConfirmationComponent implements OnInit, OnDestroy, Dial
     this.userInputChange(this.userInput);
   }
 
-  userInputChange(value: any) {
+  userInputChange(value: string) {
     if (this.inputs.confirmationKeyword && this.inputs.confirmationKeyword !== value.trim()) {
       this.disableSubmit.emit(true);
     }

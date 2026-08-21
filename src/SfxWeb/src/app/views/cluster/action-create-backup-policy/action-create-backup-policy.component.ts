@@ -39,7 +39,8 @@ export class ActionCreateBackupPolicyComponent implements OnInit {
     delete data.Storage.IsEmptySecondaryCredential;
 
     if (data.Schedule.ScheduleKind === 'TimeBased' && data.Schedule.ScheduleFrequencyType === 'Weekly') {
-      data.Schedule.RunDays = data.Schedule.RunDays.map( (status: boolean, index: number ) => status ? this.weekDay[index] : null).filter( (day: any) => day !== null);
+      const runDays: boolean[] = data.Schedule.RunDays;
+      data.Schedule.RunDays = runDays.map((status, index) => status ? this.weekDay[index] : null).filter((day): day is string => day !== null);
     }else{
       data.Schedule.RunDays = [];
     }

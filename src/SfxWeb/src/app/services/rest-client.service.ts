@@ -352,7 +352,7 @@ export class RestClientService {
       return this.get(this.getApiUrl(url), 'Get application manifest for application type');
   }
 
-  public provisionApplication(name: string, appTypeName: string, appTypeVersion: any, messageHandler?: IResponseMessageHandler): Observable<any> {
+  public provisionApplication(name: string, appTypeName: string, appTypeVersion: string, messageHandler?: IResponseMessageHandler): Observable<any> {
       const url = 'Applications/$/Create';
 
       const body: any = {

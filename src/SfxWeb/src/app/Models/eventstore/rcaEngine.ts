@@ -169,10 +169,10 @@ export const getSimultaneousEventsForEvent = (configs: IConcurrentEventsConfig[]
 }
 
 export const getPeriodicEvent = (configs: IDiffAnalysis[], inputEvents: IRCAItem[]): IAnalysisResultDiff[] => {
-  const results = configs.map(config => {
+  const results = configs.map((config): IAnalysisResultDiff => {
     return {
       config,
-      events: [] as IRCAItem[]
+      events: []
     }
   })
 

@@ -1,5 +1,6 @@
 import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { ListSettings, ListColumnSetting } from 'src/app/Models/ListSettings';
+import { PartitionBackup } from 'src/app/Models/DataModels/PartitionBackupInfo';
 import { DataService } from 'src/app/services/data.service';
 import { SettingsService } from 'src/app/services/settings.service';
 import { PartitionBaseControllerDirective } from '../PartitionBase';
@@ -36,7 +37,7 @@ export class BackupsComponent extends PartitionBaseControllerDirective {
   maxDate: Date = new Date();
   startTime: any;
   endTime: any;
-  backupList: any;
+  backupList: PartitionBackup[] = [];
   dateRefresh!: boolean;
 
   setup(){
@@ -73,7 +74,7 @@ export class BackupsComponent extends PartitionBaseControllerDirective {
   setNewPartitionBackupList(startDate: Date, endDate: Date)
   {
     this.backupList = this.partition.partitionBackupInfo.partitionBackupList.collection;
-    this.backupList = this.backupList.filter((info: any) => {
+    this.backupList = this.backupList.filter((info) => {
       return (new Date(info.raw.CreationTimeUtc) >= startDate && new Date(info.raw.CreationTimeUtc) <= endDate);
     });
   }
@@ -100,11 +101,11 @@ export class BackupsComponent extends PartitionBaseControllerDirective {
       this.backupList = this.partition.partitionBackupInfo.partitionBackupList.collection;
       if (this.backupList.length !== 0)
       {
-        const templist = this.backupList.sort((left: any, right: any): number => {
-          if (left.CreationTimeUtc < right.CreationTimeUtc) {
+        const templist = this.backupList.sort((left, right): number => {
+          if (left.raw.CreationTimeUtc < right.raw.CreationTimeUtc) {
             return -1;
           }
-          if (left.CreationTimeUtc > right.CreationTimeUtc) {
+          if (left.raw.CreationTimeUtc > right.raw.CreationTimeUtc) {
             return 1;
           }
           return 0;

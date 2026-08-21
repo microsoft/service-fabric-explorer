@@ -177,10 +177,10 @@ export class RoutesService {
   }
 
    getPathData(snapshot: ActivatedRouteSnapshot | null): { params: {}, pathPostFix: string, lastPaths: Type<any>[] } {
-    const data = {
+    const data: { params: {}, pathPostFix: string, lastPaths: Type<any>[] } = {
         params: snapshot!.params,
         pathPostFix: '',
-        lastPaths: [] as Type<any>[]
+        lastPaths: []
     };
 
     while (snapshot !== null) {

@@ -16,6 +16,13 @@ interface IChartSeries {
   data: number[];
 }
 
+interface IMetricsTableData {
+  dataPoints: IChartSeries[];
+  categories: string[];
+  title: string;
+  tooltipFunction: (() => any) | null;
+}
+
 @Component({
     selector: 'app-metrics',
     templateUrl: './metrics.component.html',
@@ -31,7 +38,7 @@ export class MetricsComponent extends BaseControllerDirective {
   clusterLoadInformation!: ClusterLoadInformation;
   nodes!: NodeCollection;
   metricsViewModel!: MetricsViewModel;
-  tableData: { dataPoints: IChartSeries[]; categories: string[]; title: string; tooltipFunction: (() => any) | null } = {
+  tableData: IMetricsTableData = {
     dataPoints: [],
     categories: [],
     title: '',
@@ -101,7 +108,7 @@ export class MetricsComponent extends BaseControllerDirective {
     });
 
     if (addNormalizationTooltip) {
-      this.tableData.tooltipFunction = function(this: any) {
+      this.tableData.tooltipFunction = function(this: { x: string | number; series: { name: string } }) {
         return tooltipMap[`${this.x}-${this.series.name}`]
       }
     }

@@ -19,7 +19,7 @@ export class NodeListComponent {
 
   constructor() { }
 
-  trackByFn(index: any, node: Node) {
+  trackByFn(index: number, node: Node) {
     return node.uniqueId;
   }
 }

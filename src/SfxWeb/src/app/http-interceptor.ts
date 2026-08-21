@@ -6,7 +6,7 @@ import { finalize, map, mergeMap } from 'rxjs/operators';
 import { DataService } from './services/data.service';
 import { Constants } from './Common/Constants';
 import { environment } from 'src/environments/environment';
-import { IHttpRequest, StandaloneIntegrationService } from './services/standalone-integration.service';
+import { IHttpRequest, IHttpResponse, StandaloneIntegrationService } from './services/standalone-integration.service';
 
 /*
 The will intercept and allow the modification of every http request going in and out.
@@ -42,7 +42,7 @@ export class ReadOnlyHeaderInterceptor implements HttpInterceptor {
 
   intercept(req: HttpRequest<any>, next: HttpHandler):
     Observable<HttpEvent<any>> {
-        return next.handle(req).pipe(map((res: any) => {
+        return next.handle(req).pipe(map((res: HttpEvent<any>) => {
             if (res instanceof HttpResponse) {
                 if ( res.headers.has(Constants.SfxReadonlyHeaderName)) {
                     this.dataService.readOnlyHeader =  (res.headers.get(Constants.SfxReadonlyHeaderName) || res.headers.get(Constants.SfxReadonlyHeaderName.toLowerCase()) )  === '1';
@@ -92,24 +92,22 @@ export class StandAloneInterceptor implements HttpInterceptor {
       const requestData = integration.passObjectAsString ? JSON.stringify(data) : data;
       const caller = this.standaloneIntegration.getIntegrationCaller();
 
-      const handleResponse = (responseData: any) => {
-        if(integration.passObjectAsString) {
-          responseData = JSON.parse(responseData);
-        }
+      const handleResponse = (responseData: IHttpResponse | string) => {
+        const response: IHttpResponse = typeof responseData === 'string' ? JSON.parse(responseData) : responseData;
 
-        if(responseData.statusCode.toString().startsWith("2")) {
+        if(response.statusCode.toString().startsWith("2")) {
           const httpResponse = new HttpResponse({
             url: req.url,
-            status: responseData.statusCode,
-            body: responseData.data
+            status: response.statusCode,
+            body: response.data
           })
           subscriber.next(httpResponse);
           subscriber.complete();
         }else{
           const r = new HttpErrorResponse({
-            status: responseData.statusCode,
-            statusText: responseData.statusMessage,
-            error: responseData.data
+            status: response.statusCode,
+            statusText: response.statusMessage,
+            error: response.data
           });
           subscriber.error(r);
           subscriber.complete();

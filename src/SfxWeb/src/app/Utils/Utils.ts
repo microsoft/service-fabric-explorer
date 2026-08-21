@@ -131,7 +131,7 @@ export class Utils {
     }
 
     // Convert a hex string to a byte array
-    public static hexToBytes(hex: any) {
+    public static hexToBytes(hex: string) {
         const bytes = [];
         for (let c = 0; c < hex.length; c += 2) {
             const value = parseInt(hex.substr(c, 2), 16);
