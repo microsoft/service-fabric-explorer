@@ -15,11 +15,11 @@ export interface ISection {
 export class DisplayDurationComponent implements OnChanges {
 
   @Input() topText = '';
-  @Input() topInMilliseconds: number;
+  @Input() topInMilliseconds!: number;
   @Input() topHelpText = '';
 
   @Input() bottomText = '';
-  @Input() bottomInMilliseconds: number;
+  @Input() bottomInMilliseconds!: number;
   @Input() bottomHelpText = '';
   @Input() bottomHelpTextLink = '';
 
@@ -58,7 +58,7 @@ export class DisplayDurationComponent implements OnChanges {
     ]
   }
 
-  setColorCode(percent): string {
+  setColorCode(percent: any): string {
     const direction = Object.entries(this.colorMap).sort((a,b) => {
       return +b[0] - +a[0];
     });

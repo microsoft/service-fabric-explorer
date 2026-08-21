@@ -11,9 +11,9 @@ export class ApplicationsBaseControllerDirective extends BaseControllerDirective
     protected data = inject(DataService);
 
 
-    apps: ApplicationCollection;
-    usage: IAppTypeUsage;
-    hasArmManagedAppType: boolean;
+    apps!: ApplicationCollection;
+    usage!: IAppTypeUsage;
+    hasArmManagedAppType!: boolean;
 
     common(messageHandler?: IResponseMessageHandler): Observable<any> {
         return forkJoin([

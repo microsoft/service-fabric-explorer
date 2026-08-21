@@ -17,7 +17,7 @@ export class ClusterUpgradeBannerComponent implements OnInit {
 
   displayMiddleText = true;
   displayAllText = true;
-  @Input() clusterUpgradeProgress: ClusterUpgradeProgress;
+  @Input() clusterUpgradeProgress!: ClusterUpgradeProgress;
 
   ngOnInit() {
     this.refreshService.refreshSubject.subscribe(() => this.refresh().subscribe());

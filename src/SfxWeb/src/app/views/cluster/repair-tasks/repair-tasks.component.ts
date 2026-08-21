@@ -35,7 +35,7 @@ export class RepairTasksComponent extends BaseControllerDirective {
   private telemService = inject(TelemetryService);
   private timelineGeneratorFactoryService = inject(TimelineGeneratorFactoryService);
 
-  public repairTaskCollection: RepairTaskCollection;
+  public repairTaskCollection!: RepairTaskCollection;
 
   longestRunning: ITileListItem[] = [];
   MostCommonActions: ICounterMostCommonEntry[] = [];
@@ -44,16 +44,16 @@ export class RepairTasksComponent extends BaseControllerDirective {
   sortedRepairTasks: RepairTask[] = [];
   sortedCompletedRepairTasks: RepairTask[] = [];
 
-  repairTaskListSettings: ListSettings;
-  completedRepairTaskListSettings: ListSettings;
+  repairTaskListSettings!: ListSettings;
+  completedRepairTaskListSettings!: ListSettings;
 
-  timelineData: ITimelineData;
+  timelineData!: ITimelineData;
   chartJobs: RepairTask[] = [];
 
-  timelineGenerator: RepairTaskTimelineGenerator;
+  timelineGenerator!: RepairTaskTimelineGenerator;
 
   // will be initially set by detail list component.
-  ordering: ISortOrdering;
+  ordering!: ISortOrdering;
 
   setup() {
     this.repairTaskCollection = this.data.repairCollection;

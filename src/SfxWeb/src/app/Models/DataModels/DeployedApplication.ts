@@ -57,13 +57,13 @@ export class DeployedApplication extends DataModelBase<IRawDeployedApplication> 
             };
             clusterHealthChunkQueryDescription.ApplicationFilters.push(appFilter);
         }
-        let deployedApplicationFilter = appFilter.DeployedApplicationFilters.find(filter => filter.NodeNameFilter === this.parent.name);
+        let deployedApplicationFilter = appFilter.DeployedApplicationFilters!.find(filter => filter.NodeNameFilter === this.parent.name);
         if (!deployedApplicationFilter) {
             deployedApplicationFilter = {
                 NodeNameFilter: this.parent.name,
                 DeployedServicePackageFilters: []
             };
-            appFilter.DeployedApplicationFilters.push(deployedApplicationFilter);
+            appFilter.DeployedApplicationFilters!.push(deployedApplicationFilter);
         }
         if (deployedApplicationFilter.DeployedServicePackageFilters && deployedApplicationFilter.DeployedServicePackageFilters.length === 0) {
             deployedApplicationFilter.DeployedServicePackageFilters = [{

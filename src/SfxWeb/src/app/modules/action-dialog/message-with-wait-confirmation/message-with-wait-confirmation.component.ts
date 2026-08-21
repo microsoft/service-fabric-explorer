@@ -27,7 +27,7 @@ export class MessageWithWaitConfirmationComponent implements OnInit, DialogBodyC
   checked = false;
   countDown = false;
   countDownLeft = this.countdownTime;
-  timerSubscription: Subscription;
+  timerSubscription!: Subscription;
 
   ngOnInit(): void {
     this.dialogRef.beforeClosed().subscribe(() => {

@@ -13,8 +13,8 @@ import { FabricEventBase } from 'src/app/Models/eventstore/Events';
 export class FullDescriptionComponent implements DetailBaseComponent, OnInit {
 
   copyText = '';
-  @Input() item: FabricEventBase;
-  listSetting: ListColumnSetting;
+  @Input() item!: FabricEventBase;
+  listSetting!: ListColumnSetting;
 
   color =  'white';
   constructor() { }

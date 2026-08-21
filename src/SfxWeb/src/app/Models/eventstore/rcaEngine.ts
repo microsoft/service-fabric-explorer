@@ -34,7 +34,7 @@ export interface IConcurrentEventsConfig {
 }
 
 export interface IConcurrentEvents extends IRCAItem {
-  reason: IConcurrentEvents // possibly related events now this could be recursive, i.e a node is down but that node down concurrent event would have its own info on whether it was due to a restart or a cluster upgrade
+  reason: IConcurrentEvents | null | undefined // possibly related events now this could be recursive, i.e a node is down but that node down concurrent event would have its own info on whether it was due to a restart or a cluster upgrade
   reasonForEvent: string;
   inputEvent: IRCAItem;
 }
@@ -90,7 +90,7 @@ export const getSimultaneousEventsForEvent = (configs: IConcurrentEventsConfig[]
 
     let action = "";
     let reasonForEvent = "";
-    let reason = null;
+    let reason: IConcurrentEvents | null | undefined = null;
     let moreSpecificReason = "";
 
     // iterate through all configurations
@@ -169,7 +169,7 @@ export const getSimultaneousEventsForEvent = (configs: IConcurrentEventsConfig[]
 }
 
 export const getPeriodicEvent = (configs: IDiffAnalysis[], inputEvents: IRCAItem[]): IAnalysisResultDiff[] => {
-  const results = configs.map(config => {
+  const results = configs.map((config): IAnalysisResultDiff => {
     return {
       config,
       events: []

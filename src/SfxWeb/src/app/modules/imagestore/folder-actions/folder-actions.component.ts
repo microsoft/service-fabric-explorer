@@ -17,8 +17,8 @@ export class FolderActionsComponent  implements DetailBaseComponent {
 
 
 
-  item: ImageStoreItem;
-  listSetting: ListColumnSettingWithImageStoreActions;
+  item!: ImageStoreItem;
+  listSetting!: ListColumnSettingWithImageStoreActions;
 
   deleteItem() {
     new ActionWithConfirmationDialog(

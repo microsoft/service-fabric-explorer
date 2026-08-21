@@ -16,8 +16,8 @@ export class RequestLoggingComponent implements OnInit {
   networkService = inject(RestClientService);
 
 
-  listSettings: ListSettings;
-  listSettingsRecent: ListSettings;
+  listSettings!: ListSettings;
+  listSettingsRecent!: ListSettings;
 
   ngOnInit(): void {
     this.listSettingsRecent = this.settings.getNewOrExistingNetworkRequestListSettings(true);

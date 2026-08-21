@@ -25,15 +25,15 @@ export class TreeService {
         private focusService = inject(FocusService);
 
 
-        public containerRef: ElementRef;
-        public tree: TreeViewModel;
-        private clusterHealth: ClusterHealth;
+        public containerRef!: ElementRef;
+        public tree!: TreeViewModel;
+        private clusterHealth!: ClusterHealth;
         // controller views can get instantiated before this service and so a request to set the tree location might
         // get requested before the init function is called 
         private selectTreeNodeCalled = false;
-        private cachedTreeSelection: {path: string[], skipSelectAction?: boolean};
+        private cachedTreeSelection!: {path: string[], skipSelectAction?: boolean};
 
-        public get cachedTreeNodeSelection(): string {
+        public get cachedTreeNodeSelection(): string | null | undefined {
             return this.cachedTreeSelection ? this.cachedTreeSelection.path.slice(-1).pop() : null;
         }
 
@@ -119,7 +119,7 @@ export class TreeService {
 
         private getGroupNodes(): Observable<ITreeNode[]> {
 
-            const getAppsPromise = this.data.getApps().pipe(map(apps => {
+            const getAppsPromise = this.data.getApps().pipe(map((apps): ITreeNode => {
               return {
                     nodeId: IdGenerator.appGroup(),
                     displayName: () => 'Applications',
@@ -131,7 +131,7 @@ export class TreeService {
                 };
             }));
 
-            const getNodesPromise = this.data.getNodes().pipe(map(nodes => {
+            const getNodesPromise = this.data.getNodes().pipe(map((nodes): ITreeNode => {
               return {
                     nodeId: IdGenerator.nodeGroup(),
                     displayName: () => 'Nodes',
@@ -147,7 +147,7 @@ export class TreeService {
                             catchError(err => {
                 return of(null);
             }),
-            map(systemApp => {
+            map((systemApp): ITreeNode | null => {
               if (systemApp) {
                 return {
                     nodeId: IdGenerator.systemAppGroup(),
@@ -174,11 +174,7 @@ export class TreeService {
 
 
             return forkJoin([getAppsPromise, getNodesPromise, systemNodePromise]).pipe(map(resp => {
-                if (resp[2] === null) {
-                    resp.splice(2);
-                    return resp;
-                }
-                return resp;
+                return resp.filter((node): node is ITreeNode => node !== null);
             }));
         }
 
@@ -288,7 +284,7 @@ export class TreeService {
         }
 
         private getDeployedServiceChildrenGroupNodes(nodeName: string, applicationId: string, servicePackageName: string, servicePackageActivationId: string): Observable<ITreeNode[]> {
-            let codePkgNode;
+            let codePkgNode!: ITreeNode;
             // No health chunk data for deployed code packages, need to do force refresh to retrieve health data from server
             const getCodePkgsPromise = this.data.getDeployedCodePackages(nodeName, applicationId, servicePackageName, servicePackageActivationId, true).pipe(map(codePkgs => {
                 codePkgNode = {
@@ -299,7 +295,7 @@ export class TreeService {
                 };
             }));
 
-            let replicasNode;
+            let replicasNode!: ITreeNode;
             // No health chunk data for deployed replicas, need to do force refresh to retrieve health data from server
             const getReplicasPromise = this.data.getDeployedReplicas(nodeName, applicationId, servicePackageName, servicePackageActivationId, true).pipe(map(replicas => {
                 replicasNode = {

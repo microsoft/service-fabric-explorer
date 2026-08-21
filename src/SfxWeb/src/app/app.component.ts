@@ -33,7 +33,7 @@ export class AppComponent implements OnInit{
   private focusService = inject(FocusService);
 
 
-  @ViewChild('main') main: ElementRef;
+  @ViewChild('main') main!: ElementRef;
 
   smallScreenSize = false;
   smallScreenLeftPanelWidth = '0%';

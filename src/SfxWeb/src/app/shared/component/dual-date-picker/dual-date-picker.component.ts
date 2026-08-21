@@ -13,23 +13,23 @@ export class DualDatePickerComponent implements OnInit, OnChanges {
   formatter = inject(NgbDateParserFormatter);
 
 
-  @Input() minDate: Date;
-  @Input() maxDate: Date;
+  @Input() minDate!: Date;
+  @Input() maxDate!: Date;
 
-  @Input() currentStartDate: Date;
-  @Input() currentEndDate: Date;
+  @Input() currentStartDate!: Date;
+  @Input() currentEndDate!: Date;
 
   @Output() dateChanged = new EventEmitter<{endDate: Date, startDate: Date}>();
 
-  private internalMinDate: NgbDateStruct;
-  private internalMaxDate: NgbDateStruct;
+  private internalMinDate!: NgbDateStruct;
+  private internalMaxDate!: NgbDateStruct;
 
-  hoveredDate: NgbDate;
+  hoveredDate!: NgbDate;
 
-  fromDate: NgbDate;
-  toDate: NgbDate;
-  currentStartTime: string;
-  currentEndTime: string;
+  fromDate!: NgbDate;
+  toDate!: NgbDate;
+  currentStartTime!: string;
+  currentEndTime!: string;
 
   ngOnChanges(simple: SimpleChanges) {
     this.toDate = this.dateToNgbDate(this.currentEndDate);
@@ -48,7 +48,7 @@ export class DualDatePickerComponent implements OnInit, OnChanges {
       year: date.getFullYear(),
       month: date.getMonth() + 1,
       day: date.getDate()
-    });
+    })!;
   }
 
   onDateSelection(date: NgbDate) {
@@ -57,7 +57,7 @@ export class DualDatePickerComponent implements OnInit, OnChanges {
     } else if (this.fromDate && !this.toDate && !date.before(this.fromDate)) {
       this.toDate = date;
     } else {
-      this.toDate = null;
+      this.toDate = null!;
       this.fromDate = date;
     }
     if (this.fromDate && this.toDate){
@@ -97,7 +97,7 @@ export class DualDatePickerComponent implements OnInit, OnChanges {
 
   validateInput(currentValue: NgbDate, input: string): NgbDate {
     const parsed = this.formatter.parse(input);
-    return parsed && this.calendar.isValid(NgbDate.from(parsed)) ? NgbDate.from(parsed) : currentValue;
+    return parsed && this.calendar.isValid(NgbDate.from(parsed)) ? NgbDate.from(parsed)! : currentValue;
   }
 
   isDisabled = (date: NgbDate, current: {month: number}) => {

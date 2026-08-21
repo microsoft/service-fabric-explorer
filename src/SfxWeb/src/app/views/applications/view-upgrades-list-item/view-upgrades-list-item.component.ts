@@ -11,8 +11,8 @@ import { DetailBaseComponent } from 'src/app/ViewModels/detail-table-base.compon
     standalone: false
 })
 export class ViewUpgradesListItemComponent implements DetailBaseComponent {
-  listSetting: ListColumnSetting;
-  item: ApplicationUpgradeProgress;
+  listSetting!: ListColumnSetting;
+  item!: ApplicationUpgradeProgress;
 
   constructor() { }
 

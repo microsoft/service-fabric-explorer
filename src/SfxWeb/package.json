@@ -76,6 +76,8 @@
     "@istanbuljs/nyc-config-typescript": "^1.0.1",
     "@types/adal": "^1.0.29",
     "@types/jasmine": "3.10",
+    "@types/lodash": "^4.17.24",
+    "@types/luxon": "^3.7.2",
     "@types/node": "^18.19.130",
     "@types/nouislider": "^9.0.6",
     "@typescript-eslint/eslint-plugin": "^8.64.0",

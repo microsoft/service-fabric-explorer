@@ -352,7 +352,7 @@ export class RestClientService {
       return this.get(this.getApiUrl(url), 'Get application manifest for application type');
   }
 
-  public provisionApplication(name: string, appTypeName: string, appTypeVersion, messageHandler?: IResponseMessageHandler): Observable<any> {
+  public provisionApplication(name: string, appTypeName: string, appTypeVersion: string, messageHandler?: IResponseMessageHandler): Observable<any> {
       const url = 'Applications/$/Create';
 
       const body: any = {
@@ -385,12 +385,12 @@ export class RestClientService {
       url =  url + `?ExcludeApplicationParameters=true`;
     }
 
-    return this.getFullCollection<IRawApplication>(url, 'Get applications', null, messageHandler);
+    return this.getFullCollection<IRawApplication>(url, 'Get applications', null!, messageHandler);
   }
 
   public getServices(applicationId: string, messageHandler?: IResponseMessageHandler): Observable<IRawService[]> {
       const url = 'Applications/' + encodeURIComponent(applicationId) + '/$/GetServices';
-      return this.getFullCollection<IRawService>(url, 'Get services', null, messageHandler);
+    return this.getFullCollection<IRawService>(url, 'Get services', null!, messageHandler);
   }
 
   public getService(applicationId: string, serviceId: string, messageHandler?: IResponseMessageHandler): Observable<IRawService> {
@@ -504,7 +504,7 @@ export class RestClientService {
       return this.post(this.getApiUrl(url, RestClientService.apiVersion64), 'Partition Backup trigger', { BackupStorage: storage }, messageHandler);
   }
 
-  public restorePartitionBackup(partitionId: string, storage: IRawStorage, timeOut: number, backupId: string, backupLocation: string, messageHandler?: IResponseMessageHandler): Observable<{}> {
+  public restorePartitionBackup(partitionId: string, storage: IRawStorage | null, timeOut: number | null, backupId: string, backupLocation: string, messageHandler?: IResponseMessageHandler): Observable<{}> {
       let url = 'Partitions/' + encodeURIComponent(partitionId) + '/$/Restore';
       if (timeOut) {
           url += '?RestoreTimeout=' + timeOut.toString();
@@ -600,7 +600,7 @@ export class RestClientService {
           + '/$/GetServices/' + encodeURIComponent(serviceId)
           + '/$/GetPartitions';
 
-      return this.getFullCollection<IRawPartition>(url, 'Get partitions', null, messageHandler);
+    return this.getFullCollection<IRawPartition>(url, 'Get partitions', null!, messageHandler);
   }
 
   public getPartition(applicationId: string, serviceId: string, partitionId: string, messageHandler?: IResponseMessageHandler): Observable<IRawPartition> {
@@ -655,7 +655,7 @@ export class RestClientService {
           + '/$/GetPartitions/' + encodeURIComponent(partitionId)
           + '/$/GetReplicas';
 
-      return this.getFullCollection<IRawReplicaOnPartition>(url, 'Get replicas on partition', null, messageHandler);
+    return this.getFullCollection<IRawReplicaOnPartition>(url, 'Get replicas on partition', null!, messageHandler);
   }
 
   public getReplicaOnPartition(applicationId: string, serviceId: string, partitionId: string, replicaId: string, messageHandler?: IResponseMessageHandler): Observable<IRawReplicaOnPartition> {
@@ -802,10 +802,10 @@ export class RestClientService {
     return this.get(this.getApiUrl(url, RestClientService.apiVersion114), 'Get Failover Manager Manager (FMM) information', messageHandler);
   }
 
-  private getEvents<T extends FabricEventBase>(eventType: new () => T, url: string, startTime: Date, endTime: Date, eventsTypesFilter: string[], messageHandler?: IResponseMessageHandler, apiVersion?: string): Observable<T[]> {
+  private getEvents<T extends FabricEventBase>(eventType: new () => T, url: string, startTime: Date | null, endTime: Date | null, eventsTypesFilter: string[], messageHandler?: IResponseMessageHandler, apiVersion?: string): Observable<T[]> {
       const paramObject = {
-        'starttimeutc': startTime.toISOString().substring(0, 19) + 'Z',
-        'endtimeutc': endTime.toISOString().substr(0, 19) + 'Z',
+        'starttimeutc': startTime!.toISOString().substring(0, 19) + 'Z',
+        'endtimeutc': endTime!.toISOString().substr(0, 19) + 'Z',
         ...(eventsTypesFilter.length && { eventsTypesFilter: eventsTypesFilter.join() })
       }
 
@@ -818,8 +818,8 @@ export class RestClientService {
       }
 
 
-      const fullUrl = this.getApiUrl(url + '?' + params.toString(), apiVersion, null, true);
-      return this.get<IRawList<{}>>(fullUrl, null, messageHandler).pipe(map(response => {
+    const fullUrl = this.getApiUrl(url + '?' + params.toString(), apiVersion, null!, true);
+    return this.get<IRawList<{}>>(fullUrl, null!, messageHandler).pipe(map(response => {
           return new EventsResponseAdapter(eventType).getEvents(response);
         }));
   }
@@ -884,7 +884,7 @@ export class RestClientService {
       if (!messageHandler) {
           messageHandler = ResponseMessageHandlers.getResponseMessageHandler;
       }
-      return this.handleResponse<T>(apiDesc, result as any, messageHandler);
+      return this.handleResponse<T>(apiDesc, result, messageHandler);
   }
 
   private post<T>(url: string, apiDesc: string, data?: any, messageHandler?: IResponseMessageHandler): Observable<T> {
@@ -892,7 +892,7 @@ export class RestClientService {
       if (!messageHandler) {
           messageHandler = ResponseMessageHandlers.postResponseMessageHandler;
       }
-      return this.handleResponse<T>(apiDesc, result as any, messageHandler);
+      return this.handleResponse<T>(apiDesc, result, messageHandler);
   }
 
   private put<T>(url: string, apiDesc: string, data?: any, messageHandler?: IResponseMessageHandler): Observable<T> {
@@ -900,7 +900,7 @@ export class RestClientService {
       if (!messageHandler) {
           messageHandler = ResponseMessageHandlers.putResponseMessageHandler;
       }
-      return this.handleResponse<T>(apiDesc, result as any, messageHandler);
+      return this.handleResponse<T>(apiDesc, result, messageHandler);
   }
 
   private delete<T>(url: string, apiDesc: string, messageHandler?: IResponseMessageHandler): Observable<T> {
@@ -908,7 +908,7 @@ export class RestClientService {
       if (!messageHandler) {
           messageHandler = ResponseMessageHandlers.deleteResponseMessageHandler;
       }
-      return this.handleResponse<T>(apiDesc, result as any, messageHandler);
+      return this.handleResponse<T>(apiDesc, result, messageHandler);
   }
 
   private handleResponse<T>(apiDesc: string, resultPromise: Observable<any>, messageHandler?: IResponseMessageHandler): Observable<T> {
@@ -923,7 +923,7 @@ export class RestClientService {
     return resultPromise.pipe(catchError((err: HttpErrorResponse) => {
         const header = `${err.status.toString()} : ${apiDesc}`;
 
-        const message = messageHandler.getErrorMessage(apiDesc, err);
+        const message = messageHandler!.getErrorMessage(apiDesc, err);
         let displayMessage = '';
         if (message) {
             displayMessage = message;

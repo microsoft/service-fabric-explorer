@@ -8,6 +8,7 @@ import { map, tap, catchError } from 'rxjs/operators';
 import { ReplicaBaseControllerDirective } from '../ReplicaBase';
 import { RoutesService } from 'src/app/services/routes.service';
 import { IEssentialListItem } from 'src/app/modules/charts/essential-health-tile/essential-health-tile.component';
+import { IRawInstanceInfo, IRawReplicaInfo } from 'src/app/Models/RawDataTypes';
 
 @Component({
     selector: 'app-essentials',
@@ -20,7 +21,7 @@ export class EssentialsComponent extends ReplicaBaseControllerDirective {
   protected data: DataService = inject(DataService);
   private settings = inject(SettingsService);
 
-  nodeView: string;
+  nodeView!: string;
 
   essentialItems: IEssentialListItem[] = [];
 
@@ -39,11 +40,12 @@ export class EssentialsComponent extends ReplicaBaseControllerDirective {
   const safeDetailRefresh$ = this.replica.detail.refresh(messageHandler).pipe(
     map(() => {
       if (!this.isSystem) {
-          const rawDataProperty = this.replica.isStatefulService ? 'DeployedServiceReplica' : 'DeployedServiceReplicaInstance';
-          const detailRaw = this.replica.detail.raw[rawDataProperty];
+          const detailRaw = this.replica.isStatefulService
+              ? (this.replica.detail.raw as IRawReplicaInfo).DeployedServiceReplica
+              : (this.replica.detail.raw as IRawInstanceInfo).DeployedServiceReplicaInstance;
 
           const serviceNameOnly = detailRaw.ServiceManifestName;
-          const activationId = detailRaw.ServicePackageActivationId || null;
+          const activationId = detailRaw.ServicePackageActivationId;
           this.nodeView = RoutesService.getDeployedReplicaViewPath(this.replica.raw.NodeName, this.appId, serviceNameOnly, activationId, this.partitionId, this.replicaId);
       }
       return true;

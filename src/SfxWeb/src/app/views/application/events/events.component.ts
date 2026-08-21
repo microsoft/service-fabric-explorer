@@ -15,9 +15,9 @@ export class EventsComponent extends ApplicationBaseControllerDirective {
   protected data: DataService = inject(DataService);
 
 
-  listEventStoreData: IEventStoreData<any, any> [];
-  visEventStoreData: IEventStoreData<any, any> [];
-  optionsConfig: IOptionConfig;
+  listEventStoreData!: IEventStoreData<any, any> [];
+  visEventStoreData!: IEventStoreData<any, any> [];
+  optionsConfig!: IOptionConfig;
 
   setup() {
     // grab event data for all nodes for concurrent events visualization tool

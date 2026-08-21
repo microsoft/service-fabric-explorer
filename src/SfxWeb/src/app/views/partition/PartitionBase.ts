@@ -12,12 +12,12 @@ import { Partition } from 'src/app/Models/DataModels/Partition';
 export class PartitionBaseControllerDirective extends BaseControllerDirective {
     protected data = inject(DataService);
 
-    public appId: string;
-    public serviceId: string;
-    public partitionId: string;
-    public appTypeName: string;
+    public appId!: string;
+    public serviceId!: string;
+    public partitionId!: string;
+    public appTypeName!: string;
 
-    partition: Partition;
+    partition!: Partition;
 
     common(messageHandler?: IResponseMessageHandler): Observable<any> {
         return this.data.getPartition(this.appId, this.serviceId, this.partitionId, true, messageHandler)

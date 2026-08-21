@@ -23,31 +23,31 @@ export class Action {
         public name: string,
         public title: string,
         public runningTitle: string,
-        protected execute: (...params: any[]) => Observable<any>,
+        protected execute: () => Observable<any>,
         public canRun: () => boolean,
         public isAdvanced: boolean = false) {
 
         this.running = false;
     }
 
-    public run(...params: any[]) {
-       this.runInternal(() => null, () => null, params).subscribe();
+    public run() {
+       this.runInternal(() => null, () => null)!.subscribe();
     }
 
-    public runWithCallbacks(success: (result: any) => void, error: (reason: string) => void, ...params: any[]): Observable<any> {
-        return this.runInternal(success, error, params);
+    public runWithCallbacks(success: (result: any) => void, error: (reason: string) => void): Observable<any> {
+        return this.runInternal(success, error)!;
     }
 
-    public runWithFinalNotification(...params: any[]) {
+    public runWithFinalNotification() {
       return new Observable(subscriber => {
-        this.runInternal(() => null, () => null, params).subscribe(data => {
+                this.runInternal(() => null, () => null)!.subscribe(data => {
           subscriber.next(data);
           subscriber.complete();
         });
       });
     }
 
-    protected runInternal(success: (result: any) => void, error: (reason: string) => void, ...params: any[]): Observable<any> {
+        protected runInternal(success: (result: any) => void, error: (reason: string) => void): Observable<any> | undefined {
 
         if (this.canRun()) {
             this.running = true;
@@ -77,20 +77,20 @@ export class ActionWithDialog extends Action {
         public name: string,
         public title: string,
         public runningTitle: string,
-        public execute: (...params: any[]) => Observable<any>,
+        public execute: () => Observable<any>,
         public canRun: () => boolean,
         public beforeOpen?: () => Observable<any>) {
 
         super(name, title, runningTitle, execute, canRun);
     }
 
-    protected runInternal(success: (result: any) => void, error: (reason: string) => void, ...params: any[]): Observable<any> {
+    protected runInternal(success: (result: any) => void, error: (reason: string) => void): Observable<any> {
         if (this.canRun()) {
             return of(this.beforeOpen ? this.beforeOpen() : true).pipe(mergeMap(() => {
                 const dialogRef = this.dialog.open(this.template, {data: this, panelClass: 'mat-dialog-container-wrapper'});
                 return dialogRef.afterClosed().pipe(mergeMap( (data: boolean) => {
                     if (data){
-                        return super.runInternal(success, error, params);
+                        return super.runInternal(success, error)!;
                     }
                     return of(null);
                 }));
@@ -107,7 +107,7 @@ export class ActionWithConfirmationDialog extends ActionWithDialog implements IM
         public name: string,
         public title: string,
         public runningTitle: string,
-        public execute: (...params: any[]) => Observable<any>,
+        public execute: () => Observable<any>,
         public canRun: () => boolean,
         public modalTitle : IModalTitle,
         public modalBody?: IModalBody,
@@ -130,11 +130,11 @@ export class IsolatedAction extends Action implements IModalData{
         public modalBody?: IModalBody,
         ) {
 
-        super(name, title, runningTitle, null, canRun);
+        super(name, title, runningTitle, null!, canRun);
     }
 
 
-    protected runInternal(success: (result: any) => void, error: (reason: string) => void, ...params: any[]): Observable<any> {
+    protected runInternal(success: (result: any) => void, error: (reason: string) => void): Observable<any> {
         if (this.canRun()) {
           this.running = true;
           return (!!this.beforeOpen ? this.beforeOpen() : of(null)).pipe(mergeMap(() => {

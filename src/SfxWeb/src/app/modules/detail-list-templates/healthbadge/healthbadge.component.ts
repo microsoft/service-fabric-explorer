@@ -13,9 +13,9 @@ import { DetailBaseComponent } from 'src/app/ViewModels/detail-table-base.compon
 export class HealthbadgeComponent implements OnInit, DetailBaseComponent {
 
   item: any;
-  listSetting: ListColumnSettingForBadge;
+  listSetting!: ListColumnSettingForBadge;
 
-  value: ITextAndBadge;
+  value!: ITextAndBadge;
 
   constructor() { }
 

@@ -18,13 +18,13 @@ export class ActionDialogComponent implements AfterViewInit {
   data = inject<IModalData>(MAT_DIALOG_DATA);
 
 
-  @ViewChild(DialogBodyDirective) body: DialogBodyDirective;
+  @ViewChild(DialogBodyDirective) body!: DialogBodyDirective;
   disableSubmit = false;
-  modalBody: DialogBodyComponent;
+  modalBody!: DialogBodyComponent;
 
   ngAfterViewInit() {
     if (!this.data.modalBody?.template) {
-      this.modalBody = ActionDialogUtils.createChildComponent(this.body, this.data.modalBody.inputs, MessageWithConfirmationComponent, (value) => { this.setSumbitDisable(value) });
+      this.modalBody = ActionDialogUtils.createChildComponent(this.body, this.data.modalBody!.inputs, MessageWithConfirmationComponent, (value) => { this.setSumbitDisable(value) });
     }
     else {
       this.modalBody = ActionDialogUtils.createChildComponent(this.body, this.data.modalBody.inputs, this.data.modalBody.template, (value) => { this.setSumbitDisable(value) });

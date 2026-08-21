@@ -20,10 +20,10 @@ export class CreateApplicationComponent implements OnInit, OnDestroy {
   private formBuilder = inject(UntypedFormBuilder);
 
 
-  @Input() inputs: { appType: ApplicationType };
-  form: UntypedFormGroup;
+  @Input() inputs!: { appType: ApplicationType };
+  form!: UntypedFormGroup;
   @Output() disableSubmit = new EventEmitter<boolean>();
-  validityCheckerSubscription: Subscription;
+  validityCheckerSubscription!: Subscription;
   disableSubmitSubscription: Subscription = new Subscription();
 
   ngOnInit(): void {

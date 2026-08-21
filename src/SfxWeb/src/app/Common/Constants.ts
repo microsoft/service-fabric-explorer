@@ -1,4 +1,4 @@
-﻿// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
 // -----------------------------------------------------------------------------
@@ -177,6 +177,10 @@ export class HealthStateConstants {
         Error: 3,
         Unknown: 4
     };
+
+    public static getValue(text: string): number {
+        return HealthStateConstants.Values[text as keyof typeof HealthStateConstants.Values];
+    }
 }
 
 export class SortPriorities {
@@ -265,11 +269,12 @@ export class RepairTaskMessages {
   public static clusterHealthCheckId = "clusterhealthcheck";
 
   public static messageMap(id: string) {
-    const map = {};
-    map[RepairTaskMessages.longExecutingId] = RepairTaskMessages.longExecutingMessage;
-    map[RepairTaskMessages.seedNodeChecksId] = RepairTaskMessages.seedNodeChecks;
-    map[RepairTaskMessages.safetyChecksId] = RepairTaskMessages.safetyChecks;
-    map[RepairTaskMessages.clusterHealthCheckId] = RepairTaskMessages.clusterHealthCheck;
+    const map: Record<string, string> = {
+      [RepairTaskMessages.longExecutingId]: RepairTaskMessages.longExecutingMessage,
+      [RepairTaskMessages.seedNodeChecksId]: RepairTaskMessages.seedNodeChecks,
+      [RepairTaskMessages.safetyChecksId]: RepairTaskMessages.safetyChecks,
+      [RepairTaskMessages.clusterHealthCheckId]: RepairTaskMessages.clusterHealthCheck
+    };
     return map[id];
   }
 }

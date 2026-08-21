@@ -12,15 +12,15 @@ import { DeployedReplica } from 'src/app/Models/DataModels/DeployedReplica';
 export class DeployedReplicaBaseControllerDirective extends BaseControllerDirective {
     protected data = inject(DataService);
 
-    replicaStatus: number;
+    replicaStatus!: number;
 
-    nodeName: string;
-    applicationId: string;
-    partitionId: string;
-    serviceId: string;
-    activationId: string;
+    nodeName!: string;
+    applicationId!: string;
+    partitionId!: string;
+    serviceId!: string;
+    activationId!: string;
 
-    replica: DeployedReplica;
+    replica!: DeployedReplica;
 
     common(messageHandler?: IResponseMessageHandler): Observable<any> {
         return this.data.getDeployedReplica(this.nodeName, this.applicationId, this.serviceId, this.activationId, this.partitionId, true, messageHandler)

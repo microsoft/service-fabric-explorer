@@ -14,8 +14,8 @@ export class LoadCellComponent {
   cacheService = inject(PartitionCacheService);
 
 
-  item: IPartitionData;
-  listSetting: ListColumnSetting;
+  item!: IPartitionData;
+  listSetting!: ListColumnSetting;
 
   load() {
     this.cacheService.getPartitionInfo(this.item.SafetyCheck.PartitionId, this.item);

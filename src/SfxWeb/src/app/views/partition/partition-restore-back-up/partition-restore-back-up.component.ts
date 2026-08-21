@@ -19,7 +19,7 @@ export class PartitionRestoreBackUpComponent implements OnInit {
   dialogRef = inject<MatDialogRef<PartitionRestoreBackUpComponent>>(MatDialogRef);
 
 
-  form: UntypedFormGroup;
+  form!: UntypedFormGroup;
 
   ngOnInit() {
     this.form = this.formBuilder.group({

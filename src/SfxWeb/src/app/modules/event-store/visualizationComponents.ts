@@ -15,7 +15,7 @@ export interface VisUpdateData {
     endDate: Date;
 }
 export interface VisualizationComponent {
-    update(data: VisUpdateData);
+    update(data: VisUpdateData): void;
     selectEvent?: EventEmitter<any>;
     updateColumn?: EventEmitter<EventColumnUpdate>;
 }

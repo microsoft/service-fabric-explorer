@@ -60,7 +60,7 @@ export class ResourcesComponent extends ServiceBaseControllerDirective {
   }
 
   getAppManifestParameters(manifest: string) : { [key: string]: string }  {
-    let parameters = {};
+    let parameters: Record<string, string> = {};
     let tagStart = "<Parameters>", tagEnd = "</Parameters>";
     let start = manifest.indexOf(tagStart);
     let end = manifest.indexOf(tagEnd);
@@ -200,7 +200,7 @@ export class ResourcesComponent extends ServiceBaseControllerDirective {
       case 0:
         return "Value has not been specified by the cluster owner.";
       default:
-        return null;
+        return null!;
     }
   }
 

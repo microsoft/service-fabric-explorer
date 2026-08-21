@@ -13,7 +13,7 @@ import { IRawPartition, IRawServiceDescription } from 'src/app/Models/RawDataTyp
 export class StateInfoComponent {
 
   @Input() stateful = false;
-  @Input() data: IRawServiceDescription | IRawPartition;
+  @Input() data!: IRawServiceDescription | IRawPartition;
 
   constructor() { }
 }

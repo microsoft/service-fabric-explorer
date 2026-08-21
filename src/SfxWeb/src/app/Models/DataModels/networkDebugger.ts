@@ -24,7 +24,7 @@ export interface IRequestsData {
 export class NetworkDebugger {
     public slowOrResponsiveNetwork = false;
     public stopRecordingRequests = false;
-    public overall: IRequestsData;
+    public overall!: IRequestsData;
     public maxRequests = 10;
     public slowAverageResponse = 100;
 
@@ -56,15 +56,16 @@ export class NetworkDebugger {
             return;
         }
         // add to overall list
-        const individualRequests = this.individualRequests[data.apiDesc] || {
+        const individualRequests: IRequestsData = this.individualRequests[data.apiDesc] || {
             apiDesc: data.apiDesc,
             failureRate: '',
             failureCount: 0,
             requestCount: 1,
             averageDuration: 0,
             requests: [],
-            isSecondRowCollapsed: true
-        } as IRequestsData;
+            isSecondRowCollapsed: true,
+            isSlowOrUnresponsive: false
+        };
 
         Utils.addToArrayAndTrim(individualRequests.requests, data, this.maxRequests,
             (item) => {

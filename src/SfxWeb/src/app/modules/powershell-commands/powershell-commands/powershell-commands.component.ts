@@ -29,8 +29,8 @@ export class PowershellCommandsComponent implements IModalData, OnChanges{
   activeId:any = 1;
   safetyLevelEnum = CommandSafetyLevel;
   
-  @Input() commands: PowershellCommand[];
-  @ViewChild('nav') nav: NgbNav;
+  @Input() commands!: PowershellCommand[];
+  @ViewChild('nav') nav!: NgbNav;
   
   safeCommands: PowershellCommand[] = [];
   unsafeCommands: PowershellCommand[] = [];

@@ -47,8 +47,8 @@ export class DataModelCollectionBase<T extends IDataModel<any>> implements IData
     protected valueResolver: ValueResolver = new ValueResolver();
 
     private appendOnly: boolean;
-    private hash: Record<string, T>;
-    private refreshingPromise: Subject<any>;
+    private hash!: Record<string, T>;
+    private refreshingPromise?: Subject<any> | null;
 
     public get viewPath(): string {
         return '';
@@ -62,7 +62,7 @@ export class DataModelCollectionBase<T extends IDataModel<any>> implements IData
         return !!this.refreshingPromise;
     }
 
-    protected get indexPropery(): string {
+    protected get indexPropery(): keyof T & string {
         // index the collection by "uniqueId" by default
         return 'uniqueId';
     }
@@ -92,8 +92,8 @@ export class DataModelCollectionBase<T extends IDataModel<any>> implements IData
                     this.collection = [];
                 }
                 this.lastRefreshWasSuccessful = success;
-                this.refreshingPromise.next(success);
-                this.refreshingPromise.complete();
+                this.refreshingPromise!.next(success);
+                this.refreshingPromise!.complete();
                 this.refreshingPromise = null;
             });
             // , error => {
@@ -161,7 +161,7 @@ export class DataModelCollectionBase<T extends IDataModel<any>> implements IData
         if (this.hash) {
             return this.hash[uniqueId];
         }
-        return null;
+        return null!;
     }
 
     public mergeClusterHealthStateChunk(clusterHealthChunk: IClusterHealthChunk): Observable<any> {
@@ -193,7 +193,7 @@ export class DataModelCollectionBase<T extends IDataModel<any>> implements IData
         }
 
         // Merge health chunk data
-        const updatePromises = [];
+        const updatePromises: Observable<any>[] = [];
         CollectionUtils.updateCollection<T, P>(
             this.collection,
             healthChunkList.Items,
@@ -210,6 +210,6 @@ export class DataModelCollectionBase<T extends IDataModel<any>> implements IData
 
     // Derived class should implement this if it is going to use details-view directive as child and call showDetails(itemId).
     protected getDetailsList(item: any): IDataModelCollection<any> {
-        return null;
+        return null!;
     }
 }

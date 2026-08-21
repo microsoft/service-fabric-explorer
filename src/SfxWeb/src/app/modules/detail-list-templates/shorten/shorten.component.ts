@@ -12,12 +12,12 @@ import { DetailBaseComponent } from 'src/app/ViewModels/detail-table-base.compon
 })
 export class ShortenComponent implements DetailBaseComponent, OnInit {
 
-  item: RepairTask;
-  listSetting: ListColumnSettingWithShorten;
-  value: string | any[];
+  item!: RepairTask;
+  listSetting!: ListColumnSettingWithShorten;
+  value!: string | string[];
   cache: any;
 
-  displayValue: string | any[];
+  displayValue!: string | string[];
   overflow = false;
   constructor() { }
 

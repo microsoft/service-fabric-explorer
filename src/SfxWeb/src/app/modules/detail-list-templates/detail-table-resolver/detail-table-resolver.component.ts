@@ -12,14 +12,14 @@ import { ListColumnSetting } from 'src/app/Models/ListSettings';
     standalone: false
 })
 export class DetailTableResolverComponent implements OnInit {
-  @Input() cache: Record<string, any>;
+  @Input() cache!: Record<string, any>;
 
   @Input() item: any;
-  @Input() setting: ListColumnSetting;
-  @Input() template: Type<any>;
+  @Input() setting!: ListColumnSetting;
+  @Input() template!: Type<any>;
   @Input() itemValue: any;
 
-  @ViewChild(ResolverDirective, {static: true}) templateHost: ResolverDirective;
+  @ViewChild(ResolverDirective, {static: true}) templateHost!: ResolverDirective;
 
 
   constructor() { }

@@ -24,7 +24,8 @@ export class EventTypesUtil {
         'ReplicatorFaulted',
         'SecondaryReplicationQueueFull',
         'SecondaryReplicationQueueWarning'],
-        item => item.split('-')[0].replaceAll('*', '') );
+        // `as any`: es2018 lib lacks String.replaceAll — dropped in part 3 (pr/3-build-vitest) when es2018 is removed
+        item => (item.split('-')[0] as any).replaceAll('*', '') );
     private ErrorEventTypes = Utils.keyByFromFunction( [
         '*HealthReportCreated-HealthState:Error',
         '*NewHealthReport-HealthState:Error',
@@ -32,11 +33,11 @@ export class EventTypesUtil {
         'NodeOpenFailed',
         'NodeAborted',
         'TStoreError' ],
-        item => item.split('-')[0].replaceAll('*', '') );
+        item => (item.split('-')[0] as any).replaceAll('*', '') );
     private ResolvedEventTypes = Utils.keyByFromFunction( [
         '*HealthReportCreated-HealthState:Ok',
         '*NewHealthReport-HealthState:Ok' ],
-        item => item.split('-')[0].replaceAll('*', '') );
+        item => (item.split('-')[0] as any).replaceAll('*', '') );
 
     private warningEventsRegExp = EventTypesUtil.constructRegExp(
         Object.keys(this.WarningEventTypes).map(e => this.WarningEventTypes[e]));
@@ -71,7 +72,7 @@ export class EventTypesUtil {
         if (match) {
             return match.filter(i => i)[1];
         }
-        return result;
+        return result!;
     }
 
     private static isPropertyMatching(event: FabricEventBase, lookupString: string): boolean {

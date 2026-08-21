@@ -12,13 +12,13 @@ import { DeployedCodePackage } from 'src/app/Models/DataModels/DeployedCodePacka
 export class DeployedCodePackageBaseControllerDirective extends BaseControllerDirective {
     protected data = inject(DataService);
 
-    serviceId: string;
-    activationId: string;
-    appId: string;
-    nodeName: string;
-    codePackageName: string;
+    serviceId!: string;
+    activationId!: string;
+    appId!: string;
+    nodeName!: string;
+    codePackageName!: string;
 
-    deployedCodePackage: DeployedCodePackage;
+    deployedCodePackage!: DeployedCodePackage;
 
     common(messageHandler?: IResponseMessageHandler): Observable<any> {
         return this.data.getDeployedCodePackage(this.nodeName, this.appId, this.serviceId, this.activationId, this.codePackageName, true, messageHandler)

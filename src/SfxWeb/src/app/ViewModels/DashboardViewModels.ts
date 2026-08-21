@@ -77,7 +77,7 @@ export class DashboardViewModel implements IDashboardViewModel {
         private routes?: RoutesService,
         viewPath?: string) {
 
-        this.viewPath = viewPath;
+        this.viewPath = viewPath!;
         this.count = dataPoints.reduce((sum, d) => sum + d.count, 0);
         this.adjustCount();
         this.acessibilityText = `${title} has ${dataPoints[0].count} in error, ${dataPoints[1].count} in warning and ${dataPoints[2].count} are healthy.`

@@ -25,14 +25,14 @@ export class PowershellCommand{
             else if (param.type === CommandParamTypes.string) {
                 value = `"${param.value}"`;
             }
-            else value = param.value.toString();
+            else value = param.value!.toString();
      
             return { name, value };
         })
     }
     
     getParam(name: string): PowershellCommandParameter {
-        return this.parameters.find(param => param.name === name);
+        return this.parameters.find(param => param.name === name)!;
     }
 
     getScript(): string {

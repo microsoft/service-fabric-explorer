@@ -9,10 +9,11 @@ import { Observable, of } from 'rxjs';
 import { Utils } from 'src/app/Utils/Utils';
 import { HealthStateConstants, NodeStatusConstants, StatusWarningLevel, BannerWarningID } from 'src/app/Common/Constants';
 import { DataModelCollectionBase } from './CollectionBase';
+import { IDataModel } from '../Base';
 import { RoutesService } from 'src/app/services/routes.service';
 
-
 const upgradeDomainNameComparer = new Intl.Collator(undefined, { numeric: true });
+
 
 export interface INodesStatusDetails {
   nodeType: string;
@@ -67,14 +68,14 @@ export class NodeStatusDetails implements INodesStatusDetails {
 export class NodeCollection extends DataModelCollectionBase<Node> {
     // make sure we only check once per session and this object will get destroyed/recreated
     private static checkedOneNodeScenario = false;
-    public healthState: ITextAndBadge;
-    public upgradeDomains: string[];
-    public faultDomains: string[];
-    public healthySeedNodes: string;
-    public seedNodeCount: number;
-    public disabledAndDisablingCount: number;
-    public disabledAndDisablingNodes: Node[];
-    public nodeTypes: string[];
+    public healthState!: ITextAndBadge;
+    public upgradeDomains!: string[];
+    public faultDomains!: string[];
+    public healthySeedNodes!: string;
+    public seedNodeCount!: number;
+    public disabledAndDisablingCount!: number;
+    public disabledAndDisablingNodes!: Node[];
+    public nodeTypes!: string[];
     public upNodes: Node[] = [];
 
     public constructor(data: DataService) {
@@ -105,7 +106,7 @@ export class NodeCollection extends DataModelCollectionBase<Node> {
     }
 
     public getNodeStateCounts(includeAllNodes: boolean = true, includeSeedNoddes: boolean = true): INodesStatusDetails[] {
-        const counts = {};
+        const counts: Record<string, NodeStatusDetails> = {};
         const allNodes = new NodeStatusDetails(NodeStatusDetails.allNodeText);
         const seedNodes = new NodeStatusDetails(NodeStatusDetails.allSeedNodesText);
 
@@ -135,7 +136,7 @@ export class NodeCollection extends DataModelCollectionBase<Node> {
         return resultList.concat(nodeTypes);
     }
 
-    protected get indexPropery(): string {
+    protected get indexPropery(): keyof IDataModel<any> {
         // node should be indexed by name
         return 'name';
     }
@@ -164,9 +165,9 @@ export class NodeCollection extends DataModelCollectionBase<Node> {
         let disabledNodes = 0;
         let disablingNodes = 0;
 
-        const disabled = [];
-        const disabling = [];
-        const up = [];
+        const disabled: Node[] = [];
+        const disabling: Node[] = [];
+        const up: Node[] = [];
         this.collection.forEach(node => {
             if (node.raw.NodeStatus === NodeStatusConstants.Up) {
                 up.push(node);
@@ -236,6 +237,6 @@ export class NodeCollection extends DataModelCollectionBase<Node> {
 
     private updateNodesHealthState(): void {
         // calculates the nodes health state which is the max state value of all nodes
-        this.healthState = this.valueResolver.resolveHealthStatus(Utils.max(this.collection.map(node => HealthStateConstants.Values[node.healthState.text])).toString());
+        this.healthState = this.valueResolver.resolveHealthStatus(Utils.max(this.collection.map(node => HealthStateConstants.getValue(node.healthState.text))).toString());
     }
 }

@@ -16,7 +16,7 @@ import { IEssentialListItem } from 'src/app/modules/charts/essential-health-tile
 export class EssentialsComponent extends DeployedReplicaBaseControllerDirective {
   protected data: DataService = inject(DataService);
 
-  appView: string;
+  appView!: string;
 
   essentialItems: IEssentialListItem[] = [];
   essentialItems2: IEssentialListItem[] = [];

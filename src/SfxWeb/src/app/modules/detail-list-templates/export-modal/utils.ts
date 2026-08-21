@@ -9,7 +9,7 @@ export interface IExportInfo {
 const delimiter = ',';
 
 export const exportInfo = (info: IExportInfo, selected: Record<string, boolean>) => {
-    const selectedColumns = info.config.columnSettings.filter(column => selected[column.displayName] && !column.config.canNotExport);
+    const selectedColumns = info.config.columnSettings.filter(column => selected[column.displayName] && !column.config!.canNotExport);
 
     const header = selectedColumns.map(column => column.displayName);
 
@@ -17,8 +17,8 @@ export const exportInfo = (info: IExportInfo, selected: Record<string, boolean>)
         const row = selectedColumns.map(column => {
             let value = Utils.result(item, column.propertyPath);
 
-            if (column.config.alternateExportFormat !== undefined) {
-                value = column.config.alternateExportFormat(value);
+            if (column.config!.alternateExportFormat !== undefined) {
+                value = column.config!.alternateExportFormat(value);
             }
 
             return value;

@@ -12,9 +12,9 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 export class InputComponent implements OnInit, OnDestroy {
 
   debounceHandler: Subject<string> = new Subject<string>();
-  debouncerHandlerSubscription: Subscription;
+  debouncerHandlerSubscription!: Subscription;
 
-  modelValue: string;
+  modelValue!: string;
 
   @Input() placeholder = 'Search list';
   @Input() label = 'Search list';

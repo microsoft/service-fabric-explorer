@@ -16,9 +16,9 @@ import { RoutesService } from 'src/app/services/routes.service';
 // -----------------------------------------------------------------------------
 
 export class DeployedCodePackage extends DataModelBase<IRawDeployedCodePackage> {
-    public mainEntryPoint: CodePackageEntryPoint;
-    public setupEntryPoint: CodePackageEntryPoint;
-    public containerLogs: ContainerLogs;
+    public mainEntryPoint!: CodePackageEntryPoint;
+    public setupEntryPoint!: CodePackageEntryPoint;
+    public containerLogs!: ContainerLogs;
     public containerLogsTail: string;
 
     public constructor(data: DataService, raw: IRawDeployedCodePackage, public parent: DeployedServicePackage) {
@@ -46,7 +46,7 @@ export class DeployedCodePackage extends DataModelBase<IRawDeployedCodePackage> 
     protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<IRawDeployedCodePackage> {
         return this.data.restClient.getDeployedCodePackage(this.parent.parent.parent.name, this.parent.parent.id, this.parent.name, this.name, messageHandler)
             .pipe(map(response => {
-                return response.find(raw => raw.ServicePackageActivationId === this.parent.servicePackageActivationId);
+                return response.find(raw => raw.ServicePackageActivationId === this.parent.servicePackageActivationId)!;
             }));
     }
 

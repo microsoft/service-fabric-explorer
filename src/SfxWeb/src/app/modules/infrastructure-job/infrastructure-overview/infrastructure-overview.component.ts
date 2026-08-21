@@ -15,12 +15,12 @@ import { InfrastructureCollectionItem } from 'src/app/Models/DataModels/collecti
 export class InfrastructureOverviewComponent implements OnInit {
   private settings = inject(SettingsService);
 
-  @Input() collection: InfrastructureCollectionItem;
-  @Input() jobs: InfrastructureJob[];
-  @Input() repairCollection: RepairTaskCollection;
+  @Input() collection!: InfrastructureCollectionItem;
+  @Input() jobs!: InfrastructureJob[];
+  @Input() repairCollection!: RepairTaskCollection;
 
-  allPendingMRJobsList: ListSettings;
-  completedMRJobsList: ListSettings;
+  allPendingMRJobsList!: ListSettings;
+  completedMRJobsList!: ListSettings;
 
   ngOnInit(): void {
     this.allPendingMRJobsList = this.settings.getNewOrExistingInfrastructureSettings();

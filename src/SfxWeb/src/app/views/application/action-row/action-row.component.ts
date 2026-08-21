@@ -17,8 +17,8 @@ export class ActionRowComponent implements DetailBaseComponent {
   private data = inject(DataService);
 
 
-  item: ServiceType;
-  listSetting: ListColumnSettingForApplicationServiceRow;
+  item!: ServiceType;
+  listSetting!: ListColumnSettingForApplicationServiceRow;
 
   createService() {
     new IsolatedAction(

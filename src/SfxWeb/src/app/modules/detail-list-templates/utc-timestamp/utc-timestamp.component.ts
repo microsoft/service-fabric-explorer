@@ -12,7 +12,7 @@ import { ListColumnSettingWithUtcTime } from 'src/app/Models/ListSettings';
 export class UtcTimestampComponent implements DetailBaseComponent, OnInit {
 
   item: any;
-  listSetting: ListColumnSettingWithUtcTime;
+  listSetting!: ListColumnSettingWithUtcTime;
   value: any;
 
   constructor() { }

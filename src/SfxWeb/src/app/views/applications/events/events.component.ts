@@ -13,8 +13,8 @@ import { ApplicationsBaseControllerDirective } from '../applicationsBase';
 })
 export class EventsComponent extends ApplicationsBaseControllerDirective {
 
-  listEventStoreData: IEventStoreData<any, any> [];
-  optionsConfig: IOptionConfig;
+  listEventStoreData!: IEventStoreData<any, any> [];
+  optionsConfig!: IOptionConfig;
 
    setup() {
     this.listEventStoreData = [

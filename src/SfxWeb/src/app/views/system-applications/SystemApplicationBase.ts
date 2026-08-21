@@ -11,9 +11,9 @@ import { ListSettings } from 'src/app/Models/ListSettings';
 export class ServiceApplicationsBaseControllerDirective extends BaseControllerDirective {
     protected data = inject(DataService);
 
-    systemApp: SystemApplication;
-    listSettings: ListSettings;
-    unhealthyEvaluationsListSettings: ListSettings;
+    systemApp!: SystemApplication;
+    listSettings!: ListSettings;
+    unhealthyEvaluationsListSettings!: ListSettings;
 
     common(messageHandler?: IResponseMessageHandler): Observable<any> {
         return this.data.getSystemApp(true, messageHandler).pipe(map(systemApp => {

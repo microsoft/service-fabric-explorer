@@ -23,9 +23,9 @@ export class EssentialsComponent extends ServiceBaseControllerDirective {
   private settings = inject(SettingsService);
 
 
-  listSettings: ListSettings;
-  partitionsDashboard: IDashboardViewModel;
-  replicasDashboard: IDashboardViewModel;
+  listSettings!: ListSettings;
+  partitionsDashboard!: IDashboardViewModel;
+  replicasDashboard!: IDashboardViewModel;
 
   essentialItems: IEssentialListItem[] = [];
 

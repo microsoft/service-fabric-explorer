@@ -17,18 +17,18 @@ export class MapComponent extends BaseControllerDirective implements OnChanges {
 
   static readonly baseScale = 'scale(1)';
 
-  @Input() listTemplate: TemplateRef<any>;
+  @Input() listTemplate!: TemplateRef<any>;
   @Input() nodes: Node[] = [];
   @Input() groupByNodeType = false;
 
-  matrix: Record<string, Node[]>;
+  matrix!: Record<string, Node[]>;
 
   showScaleButton = false;
   scaleToFit = false;
   scale = MapComponent.baseScale;
 
-  @ViewChild('container') private container: ElementRef;
-  @ViewChild('map') private map: ElementRef;
+  @ViewChild('container') private container!: ElementRef;
+  @ViewChild('map') private map!: ElementRef;
 
   ngOnChanges() {
     this.updateNodes(this.nodes);
@@ -58,7 +58,7 @@ export class MapComponent extends BaseControllerDirective implements OnChanges {
 
   public updateNodes(nodes: Node[]) {
     this.data.nodes.ensureInitialized().subscribe(() => {
-      const matrix = {};
+      const matrix: Record<string, Node[]> = {};
 
       this.data.nodes.faultDomains.forEach(fd => {
         matrix[fd] = [];
@@ -80,7 +80,7 @@ export class MapComponent extends BaseControllerDirective implements OnChanges {
 
   }
 
-  trackByFn(index, udOrFd: string) {
+  trackByFn(index: number, udOrFd: string) {
     return udOrFd;
   }
 }

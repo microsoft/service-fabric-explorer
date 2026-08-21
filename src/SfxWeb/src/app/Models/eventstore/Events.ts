@@ -19,15 +19,15 @@ export interface IEventPropertiesCollection {
 }
 
 export abstract class FabricEventBase implements IFabricEventMetadata, IEventPropertiesCollection {
-    public hasCorrelatedEvents: boolean;
+    public hasCorrelatedEvents!: boolean;
     public eventProperties: { [key: string]: any; } = {};
-    public kind: string;
-    public eventInstanceId: string;
-    public timeStamp: string;
-    public category: string;
+    public kind!: string;
+    public eventInstanceId!: string;
+    public timeStamp!: string;
+    public category!: string;
     public raw: { [key: string]: any; } = {};
     public get timeStampString() {  return TimeUtils.datetimeToString(this.timeStamp); }
-    public time: Date;
+    public time!: Date;
 
     public fillFromJSON(responseItem: any) {
         this.raw = responseItem;
@@ -79,7 +79,7 @@ export class FabricEventInstanceModel<T extends FabricEventBase> extends DataMod
     public get uniqueId() { return this.raw.kind + this.raw.eventInstanceId + this.raw.timeStamp; }
     public get id() { return this.raw.eventInstanceId; }
     public get name() { return `${this.raw.kind} (${this.raw.eventInstanceId})`; }
-    public eventInstanceId: string;
+    public eventInstanceId!: string;
 }
 
 export class FabricEvent extends FabricEventBase {
@@ -89,7 +89,7 @@ export class ClusterEvent extends FabricEventBase {
 }
 
 export class NodeEvent extends FabricEventBase {
-    public nodeName: string;
+    public nodeName!: string;
 
     protected extractField(name: string, value: any): boolean {
         if (super.extractField(name, value)) {
@@ -109,7 +109,7 @@ export class NodeEvent extends FabricEventBase {
 }
 
 export class ApplicationEvent extends FabricEventBase {
-    public applicationId: string;
+    public applicationId!: string;
 
     protected extractField(name: string, value: any): boolean {
         if (super.extractField(name, value)) {
@@ -129,7 +129,7 @@ export class ApplicationEvent extends FabricEventBase {
 }
 
 export class ServiceEvent extends FabricEventBase {
-    public serviceId: string;
+    public serviceId!: string;
 
     protected extractField(name: string, value: any): boolean {
         if (super.extractField(name, value)) {
@@ -149,7 +149,7 @@ export class ServiceEvent extends FabricEventBase {
 }
 
 export class PartitionEvent extends FabricEventBase {
-    public partitionId: string;
+    public partitionId!: string;
 
     protected extractField(name: string, value: any): boolean {
         if (super.extractField(name, value)) {
@@ -169,8 +169,8 @@ export class PartitionEvent extends FabricEventBase {
 }
 
 export class ReplicaEvent extends FabricEventBase {
-    public partitionId: string;
-    public replicaId: string;
+    public partitionId!: string;
+    public replicaId!: string;
 
     protected extractField(name: string, value: any): boolean {
         if (super.extractField(name, value)) {

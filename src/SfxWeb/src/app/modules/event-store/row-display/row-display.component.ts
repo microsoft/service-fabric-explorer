@@ -14,7 +14,7 @@ import { Utils } from 'src/app/Utils/Utils';
 export class RowDisplayComponent implements OnInit, DetailBaseComponent {
 
   item: any; // FabricEventInstanceModel
-  listSetting: ListColumnSetting;
+  listSetting!: ListColumnSetting;
 
   color =  'white';
   value = '';

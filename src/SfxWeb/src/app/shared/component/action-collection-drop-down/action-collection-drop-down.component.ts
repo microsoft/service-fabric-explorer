@@ -16,8 +16,8 @@ export class ActionCollectionDropDownComponent {
   private liveAnnouncer = inject(LiveAnnouncer);
 
   @Input() treeView = false;
-  @Input() actionCollection: ActionCollection;
-  @Input() displayText: string;
+  @Input() actionCollection!: ActionCollection;
+  @Input() displayText!: string;
   @Input() tabindex = 0;
   @Output() changedState = new EventEmitter();
   @Output() actionFocus = new EventEmitter();

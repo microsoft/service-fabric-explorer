@@ -17,15 +17,15 @@ export class PartitionBackupInfo {
     public partitionBackupConfigurationInfo: PartitionBackupConfigurationInfo;
     public partitionBackupList: PartitionBackupCollection;
     public latestPartitionBackup: SinglePartitionBackupCollection;
-    public backupPolicyName: string;
+    public backupPolicyName!: string;
     public cleanBackup: boolean;
-    public storage: IRawStorage;
-    public backupId: string;
-    public backupLocation: string;
+    public storage!: IRawStorage;
+    public backupId!: string;
+    public backupLocation!: string;
     public partitionBackupProgress: PartitionBackupProgress;
     public partitionRestoreProgress: PartitionRestoreProgress;
-    public BackupTimeout: number;
-    public RestoreTimeout: number;
+    public BackupTimeout!: number;
+    public RestoreTimeout!: number;
 
     public constructor(data: DataService, public parent: Partition) {
 
@@ -99,7 +99,7 @@ export class PartitionBackup extends DataModelBase<IRawPartitionBackup> {
                 () => true
             );
         } else {
-            this.action = null;
+            this.action = null!;
         }
     }
 

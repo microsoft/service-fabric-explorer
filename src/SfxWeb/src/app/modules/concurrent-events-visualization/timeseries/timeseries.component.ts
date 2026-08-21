@@ -1,10 +1,18 @@
 import { Component, Input, OnChanges, OnDestroy, ViewChildren, ElementRef, AfterViewInit, QueryList, ViewChild, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
-import { Chart, Options, chart, SeriesOptionsType, Pointer, PointOptionsObject, YAxisOptions, XAxisOptions } from 'highcharts';
+import { Chart, Options, chart, SeriesOptionsType, Pointer, PointOptionsObject, YAxisOptions, XAxisOptions, Axis, PointClickEventObject, Point, Series } from 'highcharts';
 import { debounceTime } from 'rxjs/operators';
 import { ListSettings } from 'src/app/Models/ListSettings';
 import { SettingsService } from 'src/app/services/settings.service';
 import { Utils } from 'src/app/Utils/Utils';
 import { Subscription, Subject, merge } from 'rxjs';
+
+declare module 'highcharts' {
+  // itemData: attached by us via the point's options; clientX: set at runtime by Series.searchPoint’s k-d-tree lookup
+  interface Point {
+    itemData?: any;
+    clientX: number;
+  }
+}
 
 export interface IdataFormatter {
   name: string;
@@ -25,6 +33,13 @@ export interface IParallelChartData {
   series: IdataFormatter[];
   dataSets: IDataSet[];
   listSettings: ListSettings;
+}
+
+interface ISelectedItem {
+  item: any;
+  pointData: Point;
+  series: Series;
+  tags: { x: number; y: number; label?: string }[];
 }
 
 Pointer.prototype.reset = function () {
@@ -48,19 +63,19 @@ export class TimeseriesComponent implements AfterViewInit, OnChanges, OnDestroy,
   private settings = inject(SettingsService);
 
 
-  @Input() data: IParallelChartData;
-  @ViewChildren('container') private container: QueryList<ElementRef>;
+  @Input() data!: IParallelChartData;
+  @ViewChildren('container') private container!: QueryList<ElementRef>;
 
-  @ViewChild('inner') private inner: ElementRef<HTMLDivElement>;
+  @ViewChild('inner') private inner!: ElementRef<HTMLDivElement>;
 
   private charts: Chart[] = [];
   subscriptions: Subscription = new Subscription();
-  listSettings: ListSettings;
+  listSettings!: ListSettings;
 
-  currentItems: any[];
+  currentItems?: ISelectedItem[] | null;
   currentIndex = 0;
   currentItemsWidth = 400;
-  resizer = new Subject<any>();
+  resizer = new Subject<number>();
 
   fontColor = {
     color: '#fff'
@@ -68,7 +83,7 @@ export class TimeseriesComponent implements AfterViewInit, OnChanges, OnDestroy,
 
   public options: Options = {
     chart: {
-      backgroundColor: null,
+      backgroundColor: 'transparent',
       height: 200,
       zooming: {
         type: 'x'
@@ -117,10 +132,10 @@ export class TimeseriesComponent implements AfterViewInit, OnChanges, OnDestroy,
       }
     },
     tooltip: {
-      positioner: function () {
+      positioner: function (labelWidth) {
         return {
           // right aligned
-          x: this.chart.chartWidth - (this as any).label.width - 10,
+          x: this.chart.chartWidth - labelWidth - 10,
           y: 10 // align to title
         };
       },
@@ -159,7 +174,7 @@ export class TimeseriesComponent implements AfterViewInit, OnChanges, OnDestroy,
   private generateCharts() {
     const data = this.generateChartData();
 
-    this.container.forEach((element, index) => {
+    this.container.forEach((element, index: number) => {
       const chart = this.charts[index];
       const chartData = data[index];
 
@@ -168,10 +183,10 @@ export class TimeseriesComponent implements AfterViewInit, OnChanges, OnDestroy,
           if (chartData.series.every(set => set.name !== series.name)) {
             series.remove();
           } else {
-            series.update(chartData.series.find(set => set.name === series.name));
+            series.update(chartData.series.find(set => set.name === series.name)!);
           }
         });
-        chartData.series.forEach(item => {
+        chartData.series.forEach((item: any) => {
           if (chart.series.every(set => set.name !== item.name)) {
             chart.addSeries(item);
           }
@@ -182,7 +197,7 @@ export class TimeseriesComponent implements AfterViewInit, OnChanges, OnDestroy,
     })
   }
 
-  private pickDataPoints(item: any, formatter: IdataFormatter) {
+  private pickDataPoints(item: any, formatter: IdataFormatter): { x: number; y: number } {
     return {
       x: Utils.result2(item, formatter.xProperty),
       y: Utils.result2(item, formatter.yProperty)
@@ -191,14 +206,14 @@ export class TimeseriesComponent implements AfterViewInit, OnChanges, OnDestroy,
 
   private generateChartData() {
     const ref = this;
-    const colorMap = {};
+    const colorMap: Record<string, string> = {};
     this.data.dataSets.forEach(dataset => {
       colorMap[dataset.name] = Utils.randomColor();
     })
 
-    return this.data.series.map((chartData, index) => {
+    return this.data.series.map((chartData, index: number) => {
       const dataSet: SeriesOptionsType[] = this.data.dataSets.map(dataset => {
-        const values: PointOptionsObject[] = dataset.values.map(item => {
+        const values: PointOptionsObject[] = dataset.values.map((item: any) => {
           const point = this.pickDataPoints(item, chartData);
 
           return {
@@ -206,10 +221,10 @@ export class TimeseriesComponent implements AfterViewInit, OnChanges, OnDestroy,
             y: point.y,
             itemData: item,
             events: {
-              click: function (e) {
+              click: function (e: PointClickEventObject) {
                 const points = this.series.chart.series.map(series => {
-                  return (series as any).searchPoint(e, true)
-                }).filter(point => !!point).map(p => {
+                  return series.searchPoint(e, true)
+                }).filter((point): point is Point => !!point).map(p => {
                   return {
                     item: p.itemData,
                     pointData: p,
@@ -252,11 +267,11 @@ export class TimeseriesComponent implements AfterViewInit, OnChanges, OnDestroy,
       }
 
       if (chartData.yUnits) {
-        yAxis.labels.format = `{value} ${chartData.yUnits}`
+        yAxis.labels!.format = `{value} ${chartData.yUnits}`
       }
 
       if (chartData.yLabel) {
-        yAxis.title.text = chartData.yLabel
+        yAxis.title!.text = chartData.yLabel
       }
 
       const xAxis: XAxisOptions = {
@@ -269,11 +284,11 @@ export class TimeseriesComponent implements AfterViewInit, OnChanges, OnDestroy,
       }
 
       if (chartData.xUnits) {
-        xAxis.labels.format = `{value} ${chartData.xUnits}`
+        xAxis.labels!.format = `{value} ${chartData.xUnits}`
       }
 
       if (chartData.xLabel) {
-        xAxis.title.text = chartData.xLabel
+        xAxis.title!.text = chartData.xLabel
       }
       return {
             ...this.options, series: dataSet, yAxis,
@@ -290,12 +305,12 @@ export class TimeseriesComponent implements AfterViewInit, OnChanges, OnDestroy,
 
   getSync() {
     const compRef = this;
-    return function syncExtremes(e) {
+    return function syncExtremes(this: any, e: any) {
       var thisChart = this.chart;
       if (e.trigger !== 'syncExtremes') { // Prevent feedback loop
         compRef.charts.forEach((chart) => {
           if (chart !== thisChart) {
-            if (chart.xAxis[0].setExtremes) { // It is null while updating
+            if ((chart.xAxis[0] as Axis | undefined)?.setExtremes) { // It is null while updating
               chart.xAxis[0].setExtremes(
                 e.min,
                 e.max,
@@ -322,8 +337,8 @@ export class TimeseriesComponent implements AfterViewInit, OnChanges, OnDestroy,
     const originChart = this.charts[chartIndex];
     const event = originChart.pointer.normalize(e);
     const points = originChart.series.map(series => {
-      return (series as any).searchPoint(event, false)
-    }).filter(point => !!point);
+      return series.searchPoint(event, false)
+    }).filter((point): point is Point => !!point);
 
     if (points.length > 0) {
       let closestPoint = points[0];
@@ -339,11 +354,11 @@ export class TimeseriesComponent implements AfterViewInit, OnChanges, OnDestroy,
       let closestSeries = closestPoint.series;
 
       this.charts.forEach(chart => {
-        const referencePoint = chart.series.find(series => series.name === closestSeries.name).data[closestPoint.index];
+        const referencePoint = chart.series.find(series => series.name === closestSeries.name)!.data[closestPoint.index];
         if (referencePoint) {
           referencePoint.onMouseOver(); // Show the hover marker
           chart.tooltip.refresh(referencePoint); // Show the tooltip
-          chart.xAxis[0].drawCrosshair(null, referencePoint); // Show the crosshair
+          chart.xAxis[0].drawCrosshair(null!, referencePoint); // Show the crosshair
         }
       })
     }
@@ -361,7 +376,7 @@ export class TimeseriesComponent implements AfterViewInit, OnChanges, OnDestroy,
     this.resizer.next(width);
   }
 
-  itemTrackBy(index, item) {
+  itemTrackBy(index: number, item: ISelectedItem) {
     return item.series.name;
   }
 }

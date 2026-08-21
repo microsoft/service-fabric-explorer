@@ -16,8 +16,8 @@ import { ApplicationTypeBaseControllerDirective } from '../ApplicationTypeBase';
 export class DetailsComponent extends ApplicationTypeBaseControllerDirective {
   protected data: DataService = inject(DataService);
 
-  appTypeName: string;
-  appTypeGroup: ApplicationTypeGroup;
+  appTypeName!: string;
+  appTypeGroup!: ApplicationTypeGroup;
 
   setup() { }
 

@@ -12,8 +12,8 @@ export class SeletedNodeDirective implements OnChanges {
   private focusService = inject(FocusService);
 
 
-  @Input() selected: boolean;
-  @Input() focused: boolean;
+  @Input() selected!: boolean;
+  @Input() focused!: boolean;
 
   ngOnChanges() {
     if (this.selected) {

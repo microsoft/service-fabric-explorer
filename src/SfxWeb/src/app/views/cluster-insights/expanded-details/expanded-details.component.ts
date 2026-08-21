@@ -11,7 +11,7 @@ import { ListColumnSetting } from 'src/app/Models/ListSettings';
 })
 export class ExpandedDetailsComponent implements DetailBaseComponent {
   item: any;
-  listSetting: ListColumnSetting;
+  listSetting!: ListColumnSetting;
 }
 
 export class ListColumnSettingForExpandedDetails extends ListColumnSetting {
