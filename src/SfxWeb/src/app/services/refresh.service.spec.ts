@@ -1,8 +1,8 @@
-import { TestBed } from '@angular/core/testing';
+import { TestBed, fakeAsync, tick, flush, discardPeriodicTasks } from '@angular/core/testing';
 
 import { RefreshService } from './refresh.service';
 import { StorageService } from './storage.service';
-import { of, timer, throwError } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Constants } from '../Common/Constants';
 
@@ -15,30 +15,41 @@ describe('RefreshService', () => {
 
   beforeEach(() => TestBed.configureTestingModule({}));
 
-  fit('should be created', () => {
+  afterEach(() => {
+    // Stop any auto-refresh interval a spec started so it can't tick after teardown (NG0911).
+    TestBed.inject(RefreshService).updateRefreshInterval('0');
+  });
+
+  it('should be created', () => {
     const service: RefreshService = TestBed.inject(RefreshService);
     expect(service).toBeTruthy();
   });
 
 
-  fit('auto refresh', async (done) => {
+  it('auto refresh', fakeAsync(() => {
     window.localStorage.setItem(Constants.AutoRefreshIntervalStorageKey, 'OFF');
 
     const service: RefreshService = TestBed.inject(RefreshService);
     expect(service.refreshTick).toBe(0);
 
+    const emittedTicks: number[] = [];
+    const subscription = service.refreshSubject.subscribe(value => emittedTicks.push(value));
+
+    // A positive interval emits once immediately, then once per interval period.
     service.updateRefreshInterval('2');
+    tick(2000);
+    tick(2000);
 
-    await timer(3000).toPromise();
+    expect(emittedTicks).toEqual([0, 1, 2]);
 
-    service.refreshSubject.subscribe(tick => {
-      expect(tick).toBe(2);
-      done();
-    });
+    // Stop the recurring interval so it can't fire after the module is destroyed (NG0911).
+    service.updateRefreshInterval('OFF');
+    subscription.unsubscribe();
+    discardPeriodicTasks();
+    flush();
+  }));
 
-  });
-
-  fit('refresh all', (done) => {
+  it('refresh all', (done) => {
     window.localStorage.setItem(Constants.AutoRefreshIntervalStorageKey, 'OFF');
 
     const service: RefreshService = TestBed.inject(RefreshService);
@@ -51,7 +62,7 @@ describe('RefreshService', () => {
     service.refreshAll();
   });
 
-  fit('update refresh interval', async () => {
+  it('update refresh interval', async () => {
     window.localStorage.setItem(Constants.AutoRefreshIntervalStorageKey, '15');
     const service: RefreshService = TestBed.inject(RefreshService);
     service.init();

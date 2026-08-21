@@ -55,7 +55,7 @@ describe('RepairTask', () => {
         };
     }));
 
-    fit('validate complete repairTask', () => {
+    it('validate complete repairTask', () => {
         const task = new RepairTask(dataService, testData);
 
         expect(task.couldParseExecutorData).toBe(true);
@@ -73,7 +73,7 @@ describe('RepairTask', () => {
         expect(task.historyPhases[2].startCollapsed).toBeTruthy();
     });
 
-    fit('validate in progress repairTask', () => {
+    it('validate in progress repairTask', () => {
         testData.State = 'Executing';
         (testData.Impact as IRawNodeRepairImpactDescription).NodeImpactList = [
             {
@@ -88,7 +88,7 @@ describe('RepairTask', () => {
         expect(task.inProgress).toBe(true);
     });
 
-    fit('validate external repair impact', () => {
+    it('validate external repair impact', () => {
         testData.State = 'Executing';
         testData.Impact = {
             Kind: 'External',
@@ -103,7 +103,7 @@ describe('RepairTask', () => {
         expect(task.impactedNodes).toEqual([]);
     });
 
-    fit('validate repairTask history in executing', () => {
+    it('validate repairTask history in executing', () => {
         testData.State = 'Executing';
         testData.History = {
             CreatedUtcTimestamp: '2020-07-17T03:17:33.342Z',
@@ -144,7 +144,7 @@ describe('RepairTask', () => {
     });
 
     describe("stuck jobs", () => {
-      fit("long executing", () => {
+      it("long executing", () => {
         testData.State = 'Executing';
         testData.History = {
             CreatedUtcTimestamp: '2020-07-17T03:17:33.342Z',
@@ -163,7 +163,7 @@ describe('RepairTask', () => {
         expect(task.concerningJobInfo!.type).toBe("longExecuting");
       })
 
-      fit("seed node", () => {
+      it("seed node", () => {
         dataService.getNode = (name, refresh, messegage) => {
           return of({ raw: {
             NodeDeactivationInfo: {
@@ -199,7 +199,7 @@ describe('RepairTask', () => {
         expect(task.concerningJobInfo!.type).toBe("seedNode");
       })
 
-      fit("health check (not seed node)", () => {
+      it("health check (not seed node)", () => {
         dataService.getNode = (name, refresh, messegage) => {
           return of({ raw: {
             NodeDeactivationInfo: {
@@ -235,7 +235,7 @@ describe('RepairTask', () => {
         expect(task.concerningJobInfo!.type).toBe("safetychecks");
       })
 
-      fit("stuck preparing", () => {
+      it("stuck preparing", () => {
         dataService.getDefaultClusterHealth = () => {
           return of({
             raw: {
@@ -266,7 +266,7 @@ describe('RepairTask', () => {
     })
 
     describe("repair task targeting and impact methods", () => {
-      fit("isNodeTargeted returns true for Node target", () => {
+      it("isNodeTargeted returns true for Node target", () => {
         testData.Target = {
           Kind: 'Node',
           NodeNames: ['_nt_0', '_nt_1']
@@ -275,7 +275,7 @@ describe('RepairTask', () => {
         expect(task.isNodeTargeted()).toBe(true);
       });
 
-      fit("isNodeTargeted returns false for External target", () => {
+      it("isNodeTargeted returns false for External target", () => {
         testData.Target = {
           Kind: 'External'
         };
@@ -283,7 +283,7 @@ describe('RepairTask', () => {
         expect(task.isNodeTargeted()).toBe(false);
       });
 
-      fit("hasNodeImpact returns true for Node impact with NodeImpactList", () => {
+      it("hasNodeImpact returns true for Node impact with NodeImpactList", () => {
         testData.Impact = {
           Kind: 'Node',
           NodeImpactList: [
@@ -294,7 +294,7 @@ describe('RepairTask', () => {
         expect(task.hasNodeImpact()).toBe(true);
       });
 
-      fit("hasNodeImpact returns false for External impact", () => {
+      it("hasNodeImpact returns false for External impact", () => {
         testData.Impact = {
           Kind: 'External',
           ExternalImpactInfo: {
@@ -305,7 +305,7 @@ describe('RepairTask', () => {
         expect(task.hasNodeImpact()).toBe(false);
       });
 
-      fit("hasNodeImpact returns false for Node impact without NodeImpactList", () => {
+      it("hasNodeImpact returns false for Node impact without NodeImpactList", () => {
         testData.Impact = {
           Kind: 'Node',
           NodeImpactList: null
@@ -314,7 +314,7 @@ describe('RepairTask', () => {
         expect(task.hasNodeImpact()).toBe(false);
       });
 
-      fit("getTargetNodeNames returns node names for Node target", () => {
+      it("getTargetNodeNames returns node names for Node target", () => {
         testData.Target = {
           Kind: 'Node',
           NodeNames: ['_nt_0', '_nt_1', '_nt_2']
@@ -323,7 +323,7 @@ describe('RepairTask', () => {
         expect(task.getTargetNodeNames()).toEqual(['_nt_0', '_nt_1', '_nt_2']);
       });
 
-      fit("getTargetNodeNames returns empty array for External target", () => {
+      it("getTargetNodeNames returns empty array for External target", () => {
         testData.Target = {
           Kind: 'External'
         };
@@ -331,7 +331,7 @@ describe('RepairTask', () => {
         expect(task.getTargetNodeNames()).toEqual([]);
       });
 
-      fit("getTargetNodeNames returns empty array when NodeNames is undefined", () => {
+      it("getTargetNodeNames returns empty array when NodeNames is undefined", () => {
         testData.Target = {
           Kind: 'Node',
           NodeNames: undefined
@@ -340,7 +340,7 @@ describe('RepairTask', () => {
         expect(task.getTargetNodeNames()).toEqual([]);
       });
 
-      fit("getNodeImpactList returns impact list for Node impact", () => {
+      it("getNodeImpactList returns impact list for Node impact", () => {
         const impactList = [
           { NodeName: '_nt_0', ImpactLevel: 'Restart' },
           { NodeName: '_nt_1', ImpactLevel: 'RemoveNode' }
@@ -353,7 +353,7 @@ describe('RepairTask', () => {
         expect(task.getNodeImpactList()).toEqual(impactList);
       });
 
-      fit("getNodeImpactList returns empty array for External impact", () => {
+      it("getNodeImpactList returns empty array for External impact", () => {
         testData.Impact = {
           Kind: 'External',
           ExternalImpactInfo: {
@@ -364,7 +364,7 @@ describe('RepairTask', () => {
         expect(task.getNodeImpactList()).toEqual([]);
       });
 
-      fit("affectsNode returns true when node is in target", () => {
+      it("affectsNode returns true when node is in target", () => {
         testData.Target = {
           Kind: 'Node',
           NodeNames: ['_nt_0', '_nt_1']
@@ -379,7 +379,7 @@ describe('RepairTask', () => {
         expect(task.affectsNode('_nt_1')).toBe(true);
       });
 
-      fit("affectsNode returns true when node is in impacted nodes", () => {
+      it("affectsNode returns true when node is in impacted nodes", () => {
         testData.Target = {
           Kind: 'Node',
           NodeNames: ['_nt_0']
@@ -394,7 +394,7 @@ describe('RepairTask', () => {
         expect(task.affectsNode('_nt_1')).toBe(true);
       });
 
-      fit("affectsNode returns false when node is not affected", () => {
+      it("affectsNode returns false when node is not affected", () => {
         testData.Target = {
           Kind: 'Node',
           NodeNames: ['_nt_0']
@@ -409,7 +409,7 @@ describe('RepairTask', () => {
         expect(task.affectsNode('_nt_2')).toBe(false);
       });
 
-      fit("affectsNode returns false for External repair task", () => {
+      it("affectsNode returns false for External repair task", () => {
         testData.Target = {
           Kind: 'External'
         };

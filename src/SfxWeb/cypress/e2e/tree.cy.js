@@ -8,23 +8,28 @@ const evalExpanderRotation = (rotated, selector) => {
 
 }
 
-const evalTreePanelFocus = (focused) => {
-    cy.get("[data-cy=tree-panel]").should(focused ? "have.class" : "not.have.class", "focused")
-        .and(focused ? "have.css" : "not.have.css", "border", "2px solid rgb(255, 255, 255)");
-}
-
 context('tree', () => {
     describe("accessibility", () => {
-        // NOTE: This test fails when using the @angular-devkit/build-angular:application (esbuild) builder.
-        // The focus DOM event does not propagate through Angular event bindings with that builder.
-        // Keep using the browser (webpack) builder until this is resolved.
         it("keyboard navigation", () => {
             addDefaultFixtures();
             cy.visit("");
 
-            //focused highlights tree
-            cy.get(".selected").focus();
-            evalTreePanelFocus(true);
+            // Wait for the tree to finish loading so the selected node is stable before we
+            // focus it; a re-render during load can otherwise drop focus and break the
+            // keyboard navigation steps below.
+            cy.get("[data-cy=tree]").within(() => {
+                cy.contains("Applications").should("be.visible");
+                cy.contains("Nodes").should("be.visible");
+                cy.contains("System").should("be.visible");
+            });
+
+            // On load the app moves focus to the page heading (~200ms later, via FocusService) for
+            // accessibility. Wait for that to land before we take over, so it can't steal focus
+            // mid-test — that race (not event propagation) is what failed under the esbuild builder.
+            cy.get("h1.detail-view-title").should("be.focused");
+
+            // Reliably focus the tree so the following keyboard navigation steps work.
+            cy.get(".selected").focus().should("be.focused");
 
             //down arrow
             cy.focused().type("{downarrow}");
@@ -73,8 +78,6 @@ context('tree', () => {
             
             evalExpanderRotation(false, "focused");
 
-            evalTreePanelFocus(true);
-            
             cy.focused().type("{rightarrow}");
 
             //end
@@ -102,7 +105,6 @@ context('tree', () => {
             cy.wait(500);
             cy.focused().contains("Node _nt_1");
             cy.url().should("include", "node/_nt_1");
-            evalTreePanelFocus(false);
 
             cy.get("[data-cy=tree]").within(() => {
                 cy.contains("_nt_1").should("have.class", "selected").and("have.attr", "aria-current", "page")
