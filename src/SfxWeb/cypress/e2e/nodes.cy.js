@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-import { apiUrl, addDefaultFixtures, checkTableSize, FIXTURE_REF_NODES, addRoute, FIXTURE_REF_MANIFEST, checkCommand } from './util.cy';
+import { apiUrl, addDefaultFixtures, checkTableSize, FIXTURE_REF_NODES, FIXTURE_REF_MANIFEST, checkCommand, getNodeThrottlingEvents } from './util.cy';
 
 context('nodes list page', () => {
     beforeEach(() => {
@@ -25,7 +25,7 @@ context('nodes list page', () => {
 
     describe("events", () => {
         it('view events', () => {
-            addRoute("events", "empty-list.json", apiUrl(`/EventsStore/Nodes/Events?*`));
+            cy.intercept('GET', apiUrl(`/EventsStore/Nodes/Events?*`), getNodeThrottlingEvents(['_nt_0', '_nt_1'])).as('getevents');
 
             cy.wait([FIXTURE_REF_NODES, FIXTURE_REF_MANIFEST]);
 
@@ -33,8 +33,13 @@ context('nodes list page', () => {
                 cy.contains('events').click();
             })
 
-            cy.wait('@getevents');
+            cy.wait('@getevents').then(interception => {
+                expect(interception.request.url).to.include('eventsTypesFilter=NodeMessageThrottlingStarted,NodeMessageThrottlingEnded');
+            });
             cy.url().should('include', 'events');
+            cy.contains('Node Throttling (4)');
+            cy.contains('_nt_0');
+            cy.contains('_nt_1');
         })
     })
 

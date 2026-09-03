@@ -37,7 +37,7 @@ import { ApplicationEvent, ClusterEvent, FabricEventBase, NodeEvent, PartitionEv
 import { EventType, IEventStoreData } from '../modules/event-store/event-store/event-store.component';
 import { SettingsService } from './settings.service';
 import { RepairTask } from '../Models/DataModels/repairTask';
-import { ApplicationTimelineGenerator, ClusterTimelineGenerator, NodeTimelineGenerator, PartitionTimelineGenerator, RepairTaskTimelineGenerator } from '../Models/eventstore/timelineGenerators';
+import { ApplicationTimelineGenerator, ClusterTimelineGenerator, NodeTimelineGenerator, NodeThrottlingTimelineGenerator, PartitionTimelineGenerator, RepairTaskTimelineGenerator } from '../Models/eventstore/timelineGenerators';
 import groupBy from 'lodash/groupBy';
 import { StandaloneIntegrationService } from './standalone-integration.service';
 import { InfrastructureCollection } from '../Models/DataModels/collections/infrastructureCollection';
@@ -375,6 +375,19 @@ export class DataService {
             eventsList: list,
             type: "Node",
             displayName: nodeName ? nodeName : 'Nodes',
+        };
+
+        this.addFabricEventData<NodeEventList, NodeEvent>(d);
+        return d;
+    }
+
+    public getNodeThrottlingEventData(nodeName?: string): IEventStoreData<NodeEventList, NodeEvent>{
+        const list = new NodeEventList(this, nodeName);
+        list.setEventFilter(NodeThrottlingTimelineGenerator.eventKinds);
+        const d: IEventStoreData<NodeEventList, NodeEvent> = {
+            eventsList: list,
+            type: "NodeThrottling",
+            displayName: 'Node Throttling',
         };
 
         this.addFabricEventData<NodeEventList, NodeEvent>(d);

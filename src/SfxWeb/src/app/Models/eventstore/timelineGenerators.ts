@@ -347,6 +347,78 @@ const NodeDeactivateCompleted = 'NodeDeactivateCompleted';
 const NodeRemovedFromCluster = 'NodeRemovedFromCluster';
 const NodeAddedToCluster = 'NodeAddedToCluster';
 const NodeOpenFailed = "NodeOpenFailed";
+const NodeMessageThrottlingStarted = 'NodeMessageThrottlingStarted';
+const NodeMessageThrottlingEnded = 'NodeMessageThrottlingEnded';
+
+export class NodeThrottlingTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
+  static readonly NodesThrottlingLabel = 'Node Throttling';
+  static readonly eventKinds = [NodeMessageThrottlingStarted, NodeMessageThrottlingEnded];
+
+  private generateThrottlingEvent(event: NodeEvent, eventIndex: number, start: string, end: string): ITimelineItem {
+    const label = `Node ${event.nodeName} throttling`;
+    return {
+      id: `${eventIndex}---${event.eventInstanceId}`,
+      content: label,
+      start,
+      end,
+      kind: event.kind,
+      group: NodeThrottlingTimelineGenerator.NodesThrottlingLabel,
+      type: 'range',
+      title: EventStoreUtils.tooltipFormat(event.eventProperties, start, end, label),
+      className: 'orange',
+      subgroup: 'stack'
+    };
+  }
+
+  consume(events: NodeEvent[], startOfRange: Date, endOfRange: Date): ITimelineData {
+    const items = new DataSet<ITimelineItem>();
+    const nodeEventMap: Record<string, NodeEvent[]> = {};
+    let potentiallyMissingEvents = false;
+
+    events
+      .filter(event => NodeThrottlingTimelineGenerator.eventKinds.includes(event.kind))
+      .forEach(event => {
+        if (!(event.nodeName in nodeEventMap)) {
+          nodeEventMap[event.nodeName] = [];
+        }
+        nodeEventMap[event.nodeName].push(event);
+      });
+
+    Object.values(nodeEventMap).forEach(nodeEvents => {
+      let startedEvent: NodeEvent | null = null;
+
+      const sortedEvents = nodeEvents.sort((a, b) => Date.parse(a.timeStamp) - Date.parse(b.timeStamp));
+      for (const event of sortedEvents) {
+        if (event.kind === NodeMessageThrottlingStarted) {
+          startedEvent ??= event;
+        } else if (startedEvent) {
+          items.add(this.generateThrottlingEvent(startedEvent, events.indexOf(startedEvent), startedEvent.timeStamp, event.timeStamp));
+          startedEvent = null;
+        } else {
+          items.add(this.generateThrottlingEvent(event, events.indexOf(event), startOfRange.toISOString(), event.timeStamp));
+          potentiallyMissingEvents = true;
+        }
+      }
+
+      if (startedEvent) {
+        items.add(this.generateThrottlingEvent(startedEvent, events.indexOf(startedEvent), startedEvent.timeStamp, endOfRange.toISOString()));
+      }
+    });
+
+    return {
+      groups: new DataSet<DataGroup>([
+        {
+          id: NodeThrottlingTimelineGenerator.NodesThrottlingLabel,
+          content: NodeThrottlingTimelineGenerator.NodesThrottlingLabel,
+          subgroupStack: {stack: true}
+        }
+      ]),
+      items,
+      potentiallyMissingEvents
+    };
+  }
+}
+
 export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
   static readonly NodesDownLabel = 'Node Down';
   static readonly NodesRemoved = 'Node Removed';

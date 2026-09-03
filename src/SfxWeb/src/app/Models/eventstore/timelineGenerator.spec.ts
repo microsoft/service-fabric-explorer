@@ -1,4 +1,4 @@
-import { NodeTimelineGenerator, EventStoreUtils, ApplicationTimelineGenerator, ITimelineData } from './timelineGenerators';
+import { NodeTimelineGenerator, NodeThrottlingTimelineGenerator, EventStoreUtils, ApplicationTimelineGenerator, ITimelineData } from './timelineGenerators';
 import { ApplicationEvent, NodeEvent } from './Events';
 
 
@@ -10,6 +10,79 @@ describe('TimelineGenerators', () => {
     const id = '---29dd383d-fdd4-4499-8e69-b7b40de04bd2';
     const id2 = "---29dd383d-fdd4-4499-8e69-b7b40de04bd3";
     const groupId = 'Node Down';
+    describe('Node throttling generator', () => {
+      const generator = new NodeThrottlingTimelineGenerator();
+
+      const createEvent = (kind: string, nodeName: string, eventInstanceId: string, timeStamp: string) => {
+        const event = new NodeEvent();
+        event.fillFromJSON({
+          Kind: kind,
+          NodeName: nodeName,
+          EventInstanceId: eventInstanceId,
+          TimeStamp: timeStamp,
+          Category: 'StateTransition',
+          HasCorrelatedEvents: false,
+          ErrorInfo: 'test counters'
+        });
+        return event;
+      };
+
+      it('renders a completed throttling interval', () => {
+        const started = createEvent('NodeMessageThrottlingStarted', 'node0', 'started', '2020-05-01T02:00:00Z');
+        const ended = createEvent('NodeMessageThrottlingEnded', 'node0', 'ended', '2020-05-01T03:00:00Z');
+
+        const events = generator.consume([ended, started], startDate, endDate) as Required<ITimelineData>;
+        const item = events.items.get()[0];
+
+        expect(events.items.length).toBe(1);
+        expect(item).toEqual(jasmine.objectContaining({
+          content: 'Node node0 throttling',
+          start: started.timeStamp,
+          end: ended.timeStamp,
+          kind: started.kind,
+          group: NodeThrottlingTimelineGenerator.NodesThrottlingLabel,
+          type: 'range',
+          className: 'orange'
+        }));
+      });
+
+      it('extends an ongoing throttling interval to the selected range end', () => {
+        const started = createEvent('NodeMessageThrottlingStarted', 'node0', 'started', '2020-05-01T02:00:00Z');
+
+        const events = generator.consume([started], startDate, endDate) as Required<ITimelineData>;
+        const item = events.items.get()[0];
+
+        expect(events.items.length).toBe(1);
+        expect(item.start).toBe(started.timeStamp);
+        expect(item.end).toBe(endDate.toISOString());
+      });
+
+      it('bounds throttling that started before the selected range', () => {
+        const ended = createEvent('NodeMessageThrottlingEnded', 'node0', 'ended', '2020-05-01T03:00:00Z');
+
+        const events = generator.consume([ended], startDate, endDate) as Required<ITimelineData>;
+        const item = events.items.get()[0];
+
+        expect(events.items.length).toBe(1);
+        expect(item.start).toBe(startDate.toISOString());
+        expect(item.end).toBe(ended.timeStamp);
+        expect(events.potentiallyMissingEvents).toBeTrue();
+      });
+
+      it('aggregates throttling intervals for multiple nodes', () => {
+        const node0Started = createEvent('NodeMessageThrottlingStarted', 'node0', 'node0-started', '2020-05-01T02:00:00Z');
+        const node0Ended = createEvent('NodeMessageThrottlingEnded', 'node0', 'node0-ended', '2020-05-01T03:00:00Z');
+        const node1Started = createEvent('NodeMessageThrottlingStarted', 'node1', 'node1-started', '2020-05-02T02:00:00Z');
+        const node1Ended = createEvent('NodeMessageThrottlingEnded', 'node1', 'node1-ended', '2020-05-02T03:00:00Z');
+
+        const events = generator.consume([node1Ended, node0Ended, node1Started, node0Started], startDate, endDate) as Required<ITimelineData>;
+        const labels = events.items.get().map(item => item.content).sort();
+
+        expect(events.items.length).toBe(2);
+        expect(labels).toEqual(['Node node0 throttling', 'Node node1 throttling']);
+      });
+    });
+
     describe('Node generator', () => {
         const generator = new NodeTimelineGenerator();
         const nodeDownGroups = {id: NodeTimelineGenerator.NodesDownLabel, content: NodeTimelineGenerator.NodesDownLabel, subgroupStack: {stack: true}};

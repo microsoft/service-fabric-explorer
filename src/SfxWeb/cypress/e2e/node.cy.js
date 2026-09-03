@@ -1,7 +1,7 @@
 /// <reference types="cypress" />
 
 import { apiUrl, addDefaultFixtures, checkTableSize, FIXTURE_REF_NODES, nodes_route, FIXTURE_NODES, addRoute, checkCommand,
-         OPTION_PICKER, CLUSTER_TAB_NAME, SELECT_EVENT_TYPES, xssPrefix,  watchForAlert, xssEncoded, FIXTURE_REF_MANIFEST } from './util.cy';
+         getNodeThrottlingEvents, xssPrefix, watchForAlert, xssEncoded, FIXTURE_REF_MANIFEST } from './util.cy';
 
 const nodeName = "_nt_0"
 const nodeInfoRef = "@getnodeInfo"
@@ -160,7 +160,7 @@ context('node page', () => {
 
     describe("events", () => {
       it('view events', () => {
-        addRoute("events", "empty-list.json", apiUrl(`/EventsStore/Nodes/${nodeName}/$/Events?*`));
+        cy.intercept('GET', apiUrl(`/EventsStore/Nodes/${nodeName}/$/Events?*`), getNodeThrottlingEvents([nodeName])).as('getevents');
 
         cy.visit(`/#/node/${nodeName}`);
 
@@ -170,8 +170,13 @@ context('node page', () => {
           cy.contains('events').click();
         });
 
-        cy.wait("@getevents");
+        cy.wait("@getevents").then(interception => {
+          expect(interception.request.url).to.include('eventsTypesFilter=NodeMessageThrottlingStarted,NodeMessageThrottlingEnded');
+        });
         cy.url().should('include', 'events');
+        cy.contains('Node Throttling (2)');
+        cy.contains('NodeMessageThrottlingStarted');
+        cy.contains('NodeMessageThrottlingEnded');
       })
 
     })
@@ -210,18 +215,15 @@ context('node page', () => {
     it('url', () => {
       addDefaultFixtures();
 
-      addRoute('events', 'cluster-page/eventstore/cluster-events.json', apiUrl(`/EventsStore/Cluster/Events?*`))
-      addRoute("events", "empty-list.json", apiUrl(`/EventsStore/Nodes/**/$/Events?**`));
+      const unsafeNodeName = '<img src="1">';
+      cy.intercept('GET', apiUrl(`/EventsStore/Nodes/**/$/Events?**`), getNodeThrottlingEvents([unsafeNodeName])).as('getevents');
 
-      cy.visit(`/#/node/${xssEncoded}/events`);
+      watchForAlert(() => {
+        cy.visit(`/#/node/${xssEncoded}/events`);
+      });
 
-      cy.get(SELECT_EVENT_TYPES).click()
-      cy.get(OPTION_PICKER).within(() => {
-        cy.contains(CLUSTER_TAB_NAME)
-        cy.get('[type=checkbox]').eq(0).check({ force: true })
-      })
-
-      cy.contains(`<img src="1">`)
+      cy.wait('@getevents');
+      cy.contains(unsafeNodeName);
     })
   })
 

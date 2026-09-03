@@ -64,6 +64,40 @@ export const addRoute = (fixtureName, fixtureFileName, route, requestType = 'GET
     cy.intercept(requestType, route, {fixture: fixtureFileName}).as(fixtureRequestFormatter(fixtureName))
 }
 
+export const getNodeThrottlingEvents = (nodeNames) => {
+  const rangeEnd = Date.now() - (5 * 60 * 1000);
+  return nodeNames.flatMap((nodeName, index) => {
+    const startedAt = new Date(rangeEnd - ((index + 1) * 60 * 60 * 1000)).toISOString();
+    const endedAt = new Date(rangeEnd - (index * 30 * 60 * 1000)).toISOString();
+    const idPrefix = String(index + 1).padStart(11, '0');
+
+    return [
+      {
+        NodeId: `${index + 1}`,
+        NodeInstance: index + 1,
+        ErrorInfo: 'test counters',
+        NodeName: nodeName,
+        Kind: 'NodeMessageThrottlingEnded',
+        EventInstanceId: `00000000-0000-0000-0000-${idPrefix}2`,
+        TimeStamp: endedAt,
+        Category: 'StateTransition',
+        HasCorrelatedEvents: false
+      },
+      {
+        NodeId: `${index + 1}`,
+        NodeInstance: index + 1,
+        ErrorInfo: 'test counters',
+        NodeName: nodeName,
+        Kind: 'NodeMessageThrottlingStarted',
+        EventInstanceId: `00000000-0000-0000-0000-${idPrefix}1`,
+        TimeStamp: startedAt,
+        Category: 'StateTransition',
+        HasCorrelatedEvents: false
+      }
+    ];
+  });
+}
+
 export const addDefaultFixtures = (prefix = "") => {
     addRoute(FIXTURE_AAD, prefix + 'aad.json', aad_route)
     addRoute(FIXTURE_APPS, prefix + 'applications.json', apps_route)
