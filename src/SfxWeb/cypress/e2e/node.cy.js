@@ -14,6 +14,7 @@ const setup = (node, prefix = "") => {
   addRoute("nodehealthInfo", prefix + "node-page/health.json", apiUrl(`/Nodes/${node}/$/GetHealth?*`));
   addRoute("apps", prefix + "node-page/apps.json", apiUrl(`/Nodes/${node}/$/GetApplications?*`));
   addRoute("nodeLoad", prefix + "node-load/get-node-load-information.json", apiUrl(`/Nodes/${node}/$/GetLoadInformation?*`));
+  cy.intercept('GET', apiUrl(`/EventsStore/Nodes/${node}/$/Events?*`), []).as('getNodeEvents');
 }
 
 context('node page', () => {
@@ -67,6 +68,30 @@ context('node page', () => {
           cy.contains("NodeTypeName : nt")
         })
 
+        cy.get('[data-cy=node-throttling-warning]').should('not.exist');
+
+      })
+
+      it('shows a warning while the node is throttling', () => {
+        const startedEvent = getNodeThrottlingEvents([nodeName]).find(event => event.Kind === 'NodeMessageThrottlingStarted');
+        cy.intercept('GET', apiUrl(`/EventsStore/Nodes/${nodeName}/$/Events?*`), [startedEvent]).as('getNodeThrottlingState');
+
+        cy.visit(`/#/node/${nodeName}`);
+
+        cy.wait('@getNodeThrottlingState');
+        cy.get('[data-cy=node-throttling-warning]').within(() => {
+          cy.get('.warning-icon');
+          cy.contains('Node is Throttling');
+        });
+      })
+
+      it('hides the warning after throttling ends', () => {
+        cy.intercept('GET', apiUrl(`/EventsStore/Nodes/${nodeName}/$/Events?*`), getNodeThrottlingEvents([nodeName])).as('getNodeThrottlingState');
+
+        cy.visit(`/#/node/${nodeName}`);
+
+        cy.wait('@getNodeThrottlingState');
+        cy.get('[data-cy=node-throttling-warning]').should('not.exist');
       })
 
       it('down node', () => {
@@ -160,7 +185,20 @@ context('node page', () => {
 
     describe("events", () => {
       it('view events', () => {
-        cy.intercept('GET', apiUrl(`/EventsStore/Nodes/${nodeName}/$/Events?*`), getNodeThrottlingEvents([nodeName])).as('getevents');
+        const nodeDownEvent = {
+          NodeName: nodeName,
+          Kind: 'NodeDown',
+          EventInstanceId: '00000000-0000-0000-0000-000000000003',
+          TimeStamp: new Date().toISOString(),
+          Category: 'StateTransition',
+          HasCorrelatedEvents: false
+        };
+        cy.intercept('GET', apiUrl(`/EventsStore/Nodes/${nodeName}/$/Events?*`), request => {
+          request.reply([...getNodeThrottlingEvents([nodeName]), nodeDownEvent]);
+          if (!request.query.eventsTypesFilter) {
+            request.alias = 'getevents';
+          }
+        });
 
         cy.visit(`/#/node/${nodeName}`);
 
@@ -171,10 +209,11 @@ context('node page', () => {
         });
 
         cy.wait("@getevents").then(interception => {
-          expect(interception.request.url).to.include('eventsTypesFilter=NodeMessageThrottlingStarted,NodeMessageThrottlingEnded');
+          expect(interception.request.url).not.to.include('eventsTypesFilter');
         });
         cy.url().should('include', 'events');
-        cy.contains('Node Throttling (2)');
+        cy.contains(`${nodeName} (3)`);
+        cy.contains('NodeDown');
         cy.contains('NodeMessageThrottlingStarted');
         cy.contains('NodeMessageThrottlingEnded');
       })

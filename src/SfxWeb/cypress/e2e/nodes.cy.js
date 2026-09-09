@@ -25,7 +25,15 @@ context('nodes list page', () => {
 
     describe("events", () => {
         it('view events', () => {
-            cy.intercept('GET', apiUrl(`/EventsStore/Nodes/Events?*`), getNodeThrottlingEvents(['_nt_0', '_nt_1'])).as('getevents');
+            const nodeDownEvent = {
+                NodeName: '_nt_0',
+                Kind: 'NodeDown',
+                EventInstanceId: '00000000-0000-0000-0000-000000000005',
+                TimeStamp: new Date().toISOString(),
+                Category: 'StateTransition',
+                HasCorrelatedEvents: false
+            };
+            cy.intercept('GET', apiUrl(`/EventsStore/Nodes/Events?*`), [...getNodeThrottlingEvents(['_nt_0', '_nt_1']), nodeDownEvent]).as('getevents');
 
             cy.wait([FIXTURE_REF_NODES, FIXTURE_REF_MANIFEST]);
 
@@ -34,10 +42,11 @@ context('nodes list page', () => {
             })
 
             cy.wait('@getevents').then(interception => {
-                expect(interception.request.url).to.include('eventsTypesFilter=NodeMessageThrottlingStarted,NodeMessageThrottlingEnded');
+                expect(interception.request.url).not.to.include('eventsTypesFilter');
             });
             cy.url().should('include', 'events');
-            cy.contains('Node Throttling (4)');
+            cy.contains('Nodes (5)');
+            cy.contains('NodeDown');
             cy.contains('_nt_0');
             cy.contains('_nt_1');
         })

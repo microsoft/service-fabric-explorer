@@ -1,7 +1,8 @@
-import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { DataService } from 'src/app/services/data.service';
 import { NodeBaseControllerDirective } from '../NodeBase';
 import { IEventStoreData } from 'src/app/modules/event-store/event-store/event-store.component';
+import { IOptionConfig } from 'src/app/modules/event-store/option-picker/option-picker.component';
 
 @Component({
     selector: 'app-node-events',
@@ -15,11 +16,17 @@ export class EventsComponent extends NodeBaseControllerDirective {
 
 
   listEventStoreData!: IEventStoreData<any, any> [];
+  optionsConfig!: IOptionConfig;
 
   setup() {
     this.listEventStoreData = [
-      this.data.getNodeThrottlingEventData(this.nodeName)
+      this.data.getNodeEventData(this.nodeName)
     ];
+
+    this.optionsConfig = {
+      enableCluster: true,
+      enableRepairTasks: true
+    };
   }
 
 }

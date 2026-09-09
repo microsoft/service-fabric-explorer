@@ -2,7 +2,7 @@ import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { map, mergeMap } from 'rxjs/operators';
 import { Observable, forkJoin, of } from 'rxjs';
 import { DataService } from 'src/app/services/data.service';
-import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
+import { IResponseMessageHandler, ResponseMessageHandlers } from 'src/app/Common/ResponseMessageHandlers';
 import { ListSettings, ListColumnSetting, ListColumnSettingForLink, ListColumnSettingForBadge, ListColumnSettingWithFilter } from 'src/app/Models/ListSettings';
 import { SettingsService } from 'src/app/services/settings.service';
 import { DeployedApplicationCollection } from 'src/app/Models/DataModels/collections/DeployedApplicationCollection';
@@ -11,6 +11,7 @@ import { IEssentialListItem } from 'src/app/modules/charts/essential-health-tile
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { INodeTypeInfo } from 'src/app/Models/DataModels/Cluster';
 import { RepairTask } from 'src/app/Models/DataModels/repairTask';
+import { NodeThrottlingTimelineGenerator } from 'src/app/Models/eventstore/timelineGenerators';
 
 @Component({
     selector: 'app-essentials',
@@ -34,6 +35,9 @@ export class EssentialsComponent extends NodeBaseControllerDirective {
   repairJobSettings!: ListSettings;
 
   placementProperties!: INodeTypeInfo;
+  isNodeThrottling = false;
+
+  private nodeThrottlingEventData!: ReturnType<DataService['getNodeThrottlingEventData']>;
 
   setup() {
     this.repairJobSettings = this.settings.getNewOrExistingPendingRepairTaskListSettings();
@@ -48,6 +52,8 @@ export class EssentialsComponent extends NodeBaseControllerDirective {
     this.essentialItems = [];
     this.ringInfo = [];
     this.repairJobs = [];
+    this.isNodeThrottling = false;
+    this.nodeThrottlingEventData = this.data.getNodeThrottlingEventData(this.nodeName);
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
@@ -106,6 +112,9 @@ export class EssentialsComponent extends NodeBaseControllerDirective {
       this.node.loadInformation.refresh(messageHandler),
       this.node.deployedApps.refresh(messageHandler).pipe(map(() => {
         this.deployedApps = this.node.deployedApps;
+      })),
+      this.nodeThrottlingEventData.eventsList.refresh(ResponseMessageHandlers.silentResponseMessageHandler).pipe(map(success => {
+        this.isNodeThrottling = success && NodeThrottlingTimelineGenerator.isCurrentlyThrottling(this.nodeThrottlingEventData.getEvents!());
       })),
       this.data.clusterManifest.ensureInitialized().pipe(mergeMap(() => {
         this.placementProperties = this.data.clusterManifest.getNodeProperties(this.node.raw.Type)!;

@@ -354,6 +354,15 @@ export class NodeThrottlingTimelineGenerator extends TimeLineGeneratorBase<NodeE
   static readonly NodesThrottlingLabel = 'Node Throttling';
   static readonly eventKinds = [NodeMessageThrottlingStarted, NodeMessageThrottlingEnded];
 
+  static isCurrentlyThrottling(events: NodeEvent[]): boolean {
+    const latestEvent = events
+      .filter(event => NodeThrottlingTimelineGenerator.eventKinds.includes(event.kind))
+      .reduce<NodeEvent | null>((latest, event) =>
+        !latest || Date.parse(event.timeStamp) > Date.parse(latest.timeStamp) ? event : latest, null);
+
+    return latestEvent?.kind === NodeMessageThrottlingStarted;
+  }
+
   private generateThrottlingEvent(event: NodeEvent, eventIndex: number, start: string, end: string): ITimelineItem {
     const label = `Node ${event.nodeName} throttling`;
     return {
@@ -429,6 +438,7 @@ export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
   //FILETIME epoch sentinel emitted for LastNodeDownAt when a node has never been down
   static readonly FileTimeEpochSentinel = '1601-01-01T00:00:00Z';
   static readonly transitions = [NodeUp, NodeDown, NodeDeactivateCompleted, NodeRemovedFromCluster, NodeAddedToCluster, NodeOpenFailed];
+  private readonly throttlingGenerator = new NodeThrottlingTimelineGenerator();
 
   generateNodeOpenFailedEvent(event: NodeEvent, eventIndex: number) {
     const item = {
@@ -651,10 +661,16 @@ export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
           })
         }
 
+        const throttlingData = this.throttlingGenerator.consume(events, startOfRange, endOfRange);
+        if (throttlingData.items!.length > 0) {
+          throttlingData.items!.forEach(item => items.add(item));
+          throttlingData.groups!.forEach(group => groups.add(group));
+        }
+
         return {
             groups,
             items,
-            potentiallyMissingEvents: false
+            potentiallyMissingEvents: throttlingData.potentiallyMissingEvents
         };
     }
 }

@@ -81,6 +81,15 @@ describe('TimelineGenerators', () => {
         expect(events.items.length).toBe(2);
         expect(labels).toEqual(['Node node0 throttling', 'Node node1 throttling']);
       });
+
+      it('uses the latest transition to determine the current throttling state', () => {
+        const started = createEvent('NodeMessageThrottlingStarted', 'node0', 'started', '2020-05-01T02:00:00Z');
+        const ended = createEvent('NodeMessageThrottlingEnded', 'node0', 'ended', '2020-05-01T03:00:00Z');
+
+        expect(NodeThrottlingTimelineGenerator.isCurrentlyThrottling([started])).toBeTrue();
+        expect(NodeThrottlingTimelineGenerator.isCurrentlyThrottling([started, ended])).toBeFalse();
+        expect(NodeThrottlingTimelineGenerator.isCurrentlyThrottling([ended, started])).toBeFalse();
+      });
     });
 
     describe('Node generator', () => {
@@ -210,6 +219,33 @@ describe('TimelineGenerators', () => {
 
             expect(events.potentiallyMissingEvents).toBeFalsy();
 
+        });
+
+        it('adds throttling intervals without replacing existing node timeline events', () => {
+            const throttlingStarted = new NodeEvent();
+            throttlingStarted.fillFromJSON({
+              Kind: 'NodeMessageThrottlingStarted',
+              NodeName: 'test_node',
+              EventInstanceId: 'throttling-started',
+              TimeStamp: '2020-05-05T01:00:00Z',
+              Category: 'StateTransition',
+              HasCorrelatedEvents: false
+            });
+            const throttlingEnded = new NodeEvent();
+            throttlingEnded.fillFromJSON({
+              Kind: 'NodeMessageThrottlingEnded',
+              NodeName: 'test_node',
+              EventInstanceId: 'throttling-ended',
+              TimeStamp: '2020-05-05T02:00:00Z',
+              Category: 'StateTransition',
+              HasCorrelatedEvents: false
+            });
+
+            const events = generator.consume([downEvent, throttlingEnded, throttlingStarted], startDate, endDate) as Required<ITimelineData>;
+
+            expect(events.items.length).toBe(2);
+            expect(events.groups.get(NodeTimelineGenerator.NodesDownLabel)).toBeTruthy();
+            expect(events.groups.get(NodeThrottlingTimelineGenerator.NodesThrottlingLabel)).toBeTruthy();
         });
 
         it('node goes down, up, and down (2 total events)', () => {
