@@ -1,4 +1,5 @@
-import { Component, OnInit, Input, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnChanges, Input, ChangeDetectionStrategy, inject } from '@angular/core';
+import { ExperienceService } from 'src/app/services/experience.service';
 
 @Component({
     selector: 'app-manifest-viewer',
@@ -7,7 +8,8 @@ import { Component, OnInit, Input, ChangeDetectionStrategy } from '@angular/core
     changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
-export class ManifestComponent implements OnInit {
+export class ManifestComponent implements OnChanges {
+  experience = inject(ExperienceService);
 
   @Input() manifestName = '';
   @Input() manifest = '';
@@ -15,7 +17,7 @@ export class ManifestComponent implements OnInit {
   manifestLines: Array<string> = [];
   constructor() { }
 
-  ngOnInit() {
+  ngOnChanges() {
     this.manifestLines = this.manifest.split(/\r?\n/).map(line => line + '\n');
   }
 

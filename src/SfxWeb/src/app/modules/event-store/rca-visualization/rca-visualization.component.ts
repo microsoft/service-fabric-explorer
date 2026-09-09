@@ -6,6 +6,7 @@ import { VisualizationLogoComponent } from '../../concurrent-events-visualizatio
 import { VisualizationToolComponent } from '../../concurrent-events-visualization/visualization-tool/visualization-tool.component';
 import { IEventStoreData } from '../event-store/event-store.component';
 import { EventColumnUpdate, VisualizationComponent, VisUpdateData } from '../visualizationComponents';
+import { ExperienceService } from 'src/app/services/experience.service';
 
 @Component({
     selector: 'app-rca-visualization',
@@ -15,6 +16,10 @@ import { EventColumnUpdate, VisualizationComponent, VisUpdateData } from '../vis
     standalone: false
 })
 export class RcaVisualizationComponent implements VisualizationComponent {
+  experience = inject(ExperienceService);
+  @Output() selectEvent = new EventEmitter<string>();
+  public get loading(): boolean { return this.listEventStoreData?.some(source => source.eventsList.isRefreshing) || false; }
+  public get failed(): boolean { return this.listEventStoreData?.some(source => !source.eventsList.lastRefreshWasSuccessful) || false; }
   changeDetector = inject(ChangeDetectorRef);
 
 
@@ -33,6 +38,7 @@ export class RcaVisualizationComponent implements VisualizationComponent {
     }
 
     // refresh vis-event-list
+    this.simulEvents = {};
     this.simulEventsList = getSimultaneousEventsForEvent(RelatedEventsConfigs, sourceEvents, sourceEvents);
    
     this.simulEventsList.forEach(event => {

@@ -33,3 +33,15 @@
 .detail-row {
   display: contents;
 }
+.partition-query { display: flex; align-items: flex-end; flex-wrap: wrap; gap: 12px; }
+.partition-query label { display: grid; gap: 6px; flex: 1 1 300px; max-width: 520px; }
+.partition-query input { max-width: none !important; }
+.stage-filters { display: flex; align-items: center; flex-wrap: wrap; gap: 16px; margin: 16px 0; }
+.stage-filters label { display: flex; align-items: center; gap: 8px; }
+.orchestration-empty { padding: 24px 0; color: #8b949e; }
+.partition-intro { color: #8b949e; font-size: 15px; margin: 8px 0 16px; }
+.partition-mode { display: flex; flex-wrap: wrap; gap: 4px; margin: 16px 0; }
+.partition-mode button { background: transparent; color: #c9d1d9; border: 1px solid #30363d; border-radius: 5px; padding: 8px 12px; font-size: 15px; cursor: pointer; }
+.partition-mode button.active { background: #21262d; border-color: #58a6ff; color: #e6edf3; }
+.operation-status { color: #8b949e; margin-top: 16px; }
+.operation-error { color: #ff7b72; margin-top: 16px; }

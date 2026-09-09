@@ -5,15 +5,35 @@ import { IdGenerator } from 'src/app/Utils/IdGenerator';
 import { DataService } from 'src/app/services/data.service';
 import { Constants } from 'src/app/Common/Constants';
 import { IBaseView } from '../../BaseView';
+import { ExperienceService } from 'src/app/services/experience.service';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-base',
     templateUrl: './base.component.html',
     styleUrls: ['./base.component.scss'],
     changeDetection: ChangeDetectionStrategy.Eager,
-    standalone: false
+    standalone: false,
+    host: { '[class.cluster-modern]': 'experience.isNew()' }
 })
 export class BaseComponent implements OnInit, IBaseView {
+  experience = inject(ExperienceService);
+  private router = inject(Router);
+  public get pageInfo(): { title: string; description: string } | undefined {
+    const route = this.router.url.split(/[?#]/)[0].split('/').filter(Boolean).join('/');
+    return ({
+      '': { title: 'Cluster overview', description: 'Health, capacity, upgrades, and activity at a glance.' },
+      details: { title: 'Cluster details', description: 'Upgrade state, node distribution, and cluster load.' },
+      metrics: { title: 'Metrics', description: 'Explore resource capacity and load across your nodes.' },
+      clustermap: { title: 'Cluster map', description: 'Explore node placement across fault and upgrade domains.' },
+      imagestore: { title: 'Image store', description: 'Browse application packages and files stored in the cluster.' },
+      manifest: { title: 'Cluster manifest', description: 'Inspect the cluster configuration. This viewer does not edit the manifest.' },
+      commands: { title: 'PowerShell commands', description: 'Prepare commands for your cluster. Commands are generated here, not executed.' },
+      orchestration: { title: 'Orchestration', description: 'Investigate placement, balancing, and constraint decisions for a partition.' },
+      repairtasks: { title: 'Repair jobs', description: 'Track repair progress, duration, and completed work.' },
+      infrastructure: { title: 'Infrastructure jobs', description: 'Review platform maintenance, active jobs, and coordination details.' }
+    } as Record<string, { title: string; description: string }>)[route];
+  }
   tree = inject(TreeService);
   dataService = inject(DataService);
   el = inject(ElementRef);

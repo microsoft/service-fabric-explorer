@@ -1,7 +1,13 @@
+@if (experience.isNew()) {
+  @if (dateMin) {
+    <app-event-query-bar [minimum]="dateMin" [start]="startDate" [end]="endDate" [config]="optionsConfig" [selectedSources]="listEventStoreData"
+      (rangeChange)="setDate($event)" (sourceChange)="processData($event)"></app-event-query-bar>
+  }
+} @else {
 <div class="essen-pane detail-pane">
   @if (dateMin) {
     <div style="margin-bottom: 10px;">
-      <app-time-picker [dateMin]="dateMin" (dateChange)="setDate($event)"></app-time-picker>
+      <app-time-picker [dateMin]="dateMin" [startDate]="startDate" [endDate]="endDate" (dateChange)="setDate($event)"></app-time-picker>
     </div>
   }
   @if (optionsConfig) {
@@ -14,11 +20,12 @@
   }
   <br>
 
-  </div>
+   </div>
+}
 
-  @for (ref of vizRefs; track ref) {
+   @for (ref of vizRefs; track ref) {
     <div>
-      <app-collapse-container class="essen-pane detail-pane" [sectionName]="ref.name">
+      <app-collapse-container [class]="experience.isNew() && (ref.name === 'Timeline' || ref.name === 'RCA Summary') ? 'modern-visualization' : 'essen-pane detail-pane'" [disabled]="experience.isNew() && (ref.name === 'Timeline' || ref.name === 'RCA Summary')" [sectionName]="ref.name">
         <h2 collapse-header>
           {{ref.name}}
         </h2>
@@ -29,6 +36,9 @@
     </div>
   }
 
+  @if (experience.isNew()) {
+    <app-event-results [sources]="listEventStoreData" [version]="resultsVersion" [refreshing]="isRefreshing" [selectedId]="selectedEventId" [selectionVersion]="selectionVersion"></app-event-results>
+  } @else {
   <div class="essen-pane">
     <div style="height: 20px;">
       <span style="float: right;"
@@ -76,3 +86,4 @@
       </div>
     </div>
   </div>
+  }

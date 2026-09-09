@@ -1,0 +1,48 @@
+<div class="query-bar">
+  <div class="range-control">
+    <button #rangeButton type="button" class="trigger" aria-label="Choose event query range" [attr.aria-expanded]="panel === 'range'" (click)="toggle('range')">
+      <svg aria-hidden="true" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6"></circle><path d="M8 4v4l3 2"></path></svg>
+      {{label}} <span class="chevron" aria-hidden="true"></span>
+    </button>
+    @if (panel === 'range') {
+      <div class="popover range-popover" role="region" aria-label="Choose time range">
+        @if (!custom) {
+          <div class="popover-heading">Query time range</div>
+          <p class="helper">Presets end at the current time.</p>
+          @for (preset of presets; track preset.hours) {
+            <button type="button" class="preset" (click)="applyPreset(preset.hours)">{{preset.label}}</button>
+          }
+          <div class="divider"></div>
+          <button type="button" class="preset" (click)="openCustom()">Custom range <span aria-hidden="true">&rarr;</span></button>
+        } @else {
+          <form (ngSubmit)="applyCustom()" novalidate>
+            <div class="popover-heading">Custom range <span>{{utc ? 'UTC' : 'Local time'}}</span></div>
+            <label class="date-field">Start<input type="datetime-local" step="1" name="queryStart" [(ngModel)]="draftStart" required></label>
+            <label class="date-field">End<input type="datetime-local" step="1" name="queryEnd" [(ngModel)]="draftEnd" required></label>
+            <p class="helper">Available since {{format(minimum)}} {{utc ? 'UTC' : 'Local'}}</p>
+            <div class="actions"><button type="button" (click)="close(true)">Cancel</button><button type="submit" class="primary">Apply range</button></div>
+          </form>
+        }
+        @if (error) { <p class="error" role="alert">{{error}}</p> }
+      </div>
+    }
+  </div>
+
+  <div class="range-summary" aria-label="Applied query range"><time>{{format(start)}}</time><span class="range-arrow" aria-label="to">&rarr;</span><time>{{format(end)}}</time></div>
+  <label class="zone"><span class="sr-only">Query timezone</span><select aria-label="Query timezone" [ngModel]="utc" (ngModelChange)="changeZone($event)" [disabled]="panel === 'range' && custom"><option [ngValue]="true">UTC</option><option [ngValue]="false">Local</option></select></label>
+
+  @if (sources.length) {
+    <div class="source-control">
+      <button #sourcesButton type="button" class="trigger" [attr.aria-expanded]="panel === 'sources'" (click)="toggle('sources')">Event types <span class="count">{{sourceCount}}</span><span class="chevron" aria-hidden="true"></span></button>
+      @if (panel === 'sources') {
+        <div class="popover source-popover" role="group" aria-label="Event types">
+          <div class="popover-heading">Include events from</div>
+          @for (source of sources; track source.displayName) {
+            <label class="source-option"><input type="checkbox" [checked]="isSelected(source)" (change)="toggleSource(source, $event)"><span>{{source.displayName}}</span></label>
+          }
+          <p class="helper">Changes reload the event data.</p>
+        </div>
+      }
+    </div>
+  }
+</div>

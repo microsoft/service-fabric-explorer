@@ -3,7 +3,8 @@
   <button class="skip-to-content-link" (click)="setMainFocus()" role="button">
     Skip to content
   </button>
-  <header class="header-bar">
+  <header class="header-bar" [class.modern-header]="experience.isNew()">
+    <div class="header-branding">
     <a href="https://aka.ms/portalsfx" target="_blank" tabindex="0" sfx-tree-set-focus selected="true" >
       <div [class]="'navbar-brand navbar-brand-azure' + (shrinkAllHeaderItem ? ' navbar-brand-small' : '')">
         <span>
@@ -20,15 +21,34 @@
       }
     </a>
 
-    <app-cluster-upgrade-banner style="margin: auto;" [clusterUpgradeProgress]="dataService.clusterUpgradeProgress"></app-cluster-upgrade-banner>
+    </div>
+    <div class="header-status">
+      @if (experience.isNew()) {
+        @if (dataService.clusterUpgradeProgress.isInitialized && dataService.clusterUpgradeProgress.isUpgrading) {
+          <a class="upgrade-status" routerLink="/details" title="View cluster upgrade details" data-cy="upgradebanner">
+            <span class="status-indicator" aria-hidden="true"></span>
+            <span>Upgrade in progress</span>
+            <span class="upgrade-count">{{dataService.clusterUpgradeProgress.getCompletedUpgradeDomains()}} / {{dataService.clusterUpgradeProgress.upgradeDomains.length}} {{dataService.clusterUpgradeProgress.isUDUpgrade ? 'domains' : 'nodes'}}</span>
+          </a>
+        }
+      } @else {
+        <app-cluster-upgrade-banner [clusterUpgradeProgress]="dataService.clusterUpgradeProgress"></app-cluster-upgrade-banner>
+      }
+    </div>
 
-    <!-- push stuff to align right -->
-    <div style="margin-left: auto;"></div>
-    <div>
+    <div class="header-controls">
+    <div class="header-refresh">
       <app-refresh-rate [value]="refreshService.refreshRate" (rateChange)="refreshService.updateRefreshInterval($event)" [condensedVersion]="shrinkAllHeaderItem"
-      [refresh]="refreshService.isRefreshing" (forceRefreshed)="attemptForceRefresh()"></app-refresh-rate>
+      [modern]="experience.isNew()" [refresh]="refreshService.isRefreshing" (forceRefreshed)="attemptForceRefresh()"></app-refresh-rate>
     </div>
     <app-advanced-option></app-advanced-option>
+    <label class="experience-control">
+      <span>Experience</span>
+      <select aria-label="SFX experience" [value]="experience.isNew() ? 'new' : 'classic'" (change)="experience.setNew($any($event.target).value === 'new')">
+        <option value="new">New</option>
+        <option value="classic">Classic</option>
+      </select>
+    </label>
 
     @if (adalService.aadEnabled) {
       <div ngbDropdown display="'static'" placement="'bottom-left'">
@@ -61,6 +81,7 @@
           <a href="https://aka.ms/servicefabric/createsupportcase" target="_blank">Open a Support Case</a>
         </li>
       </ul>
+    </div>
     </div>
 
   </header>

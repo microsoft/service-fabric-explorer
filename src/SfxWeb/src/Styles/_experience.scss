@@ -1,0 +1,178 @@
+// Body scope is intentional: Material overlays and portaled menus are body siblings.
+body.sfx-new {
+  app-partition-picker .choices select:disabled {
+    background: #21262d;
+    color: #8b949e;
+    border-color: #30363d;
+    opacity: 1;
+    cursor: not-allowed;
+  }
+  app-partition-picker .choices label.unavailable { color: #8b949e; }
+  --primary-background-color: #161b22;
+  --accent-background-color: #0d1117;
+  --font-primary-color: #e6edf3;
+  --font-accent-color: #c9d1d9;
+  --font-placeholder-color: #8b949e;
+  --font-list-item-color: #c9d1d9;
+  --accent-underline: #30363d;
+  --accent-lightblue: #58a6ff;
+  --link-color: #58a6ff;
+  --badge-ok: #3fb950;
+  --badge-warning: #d29922;
+  --badge-error: #f85149;
+  --font-size-default: 15px;
+  --font-size-small: 15px;
+  --font-size-medium: 16px;
+  --font-size-large: 20px;
+  --primary-box-shadow: none;
+  background: #0d1117;
+  color: #e6edf3;
+  color-scheme: dark;
+
+  app-root .header-bar { background: #161b22; border-bottom: 1px solid #30363d; box-shadow: none; }
+  app-root .navbar-brand { font-weight: 500; }
+  app-root .left-panel { background: #0d1117; border-right: 1px solid #30363d; }
+  app-root .right-panel { background: #0d1117; }
+  app-root .slider-bar { background: #161b22; border-left: 1px solid #30363d; }
+  app-root .slider-bar:hover { background: #30363d; }
+  app-root .utc-time { font-size: 15px; color: #8b949e; background: #0d1117; }
+  app-root .sidenav-button { min-height: 28px; padding: 2px 6px; background: #21262d; border: 1px solid #484f58; border-radius: 4px; }
+  app-tree-view { font-size: 15px; }
+  app-tree-view .tree-header { padding: 12px 8px; border-bottom: 1px solid #30363d; }
+  app-tree-view .filter-items-container { display: flex; flex-wrap: wrap; gap: 8px; }
+  app-tree-view input { background: #161b22; border: 1px solid #484f58; color: #e6edf3; font-size: 15px; padding: 7px 10px; border-radius: 5px; }
+  .tree-health-filters { border: 0; padding: 0; margin: 0 0 12px; min-width: 0; }
+  .tree-health-filters legend { float: none; width: auto; font-size: 15px; color: #8b949e; margin-bottom: 6px; }
+  .tree-health-filters .health-choices { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tree-health-sort { display: flex; align-items: center; gap: 8px; font-size: 15px; color: #c9d1d9; margin: 0 0 12px; cursor: pointer; }
+  .tree-health-sort input { width: 15px; height: 15px; padding: 0; accent-color: #58a6ff; }
+  .health-choices label.health-filter-choice {
+    --health-color: #3fb950;
+    display: flex; align-items: center; gap: 7px; padding: 6px 8px;
+    border: 1px solid #30363d; border-left: 3px solid var(--health-color); border-radius: 5px;
+    color: #8b949e; background: #0d1117; font-size: 15px; white-space: nowrap; cursor: pointer;
+  }
+  .health-choices label.health-filter-choice[data-health=Warning] { --health-color: #d29922; }
+  .health-choices label.health-filter-choice[data-health=Error] { --health-color: #f85149; }
+  .health-choices label.health-filter-choice.enabled {
+    color: #e6edf3;
+    background: color-mix(in srgb, var(--health-color) 12%, #0d1117);
+  }
+  .health-choices label.health-filter-choice input {
+    width: 15px; height: 15px; padding: 0; margin: 0; flex-shrink: 0;
+    accent-color: var(--health-color);
+  }
+  app-tree-node .node > .self { min-height: 30px; line-height: 30px; border-radius: 4px; }
+  app-tree-node .node > .self:hover { background: #21262d; }
+  app-tree-node .node.selected > .self { background: #1f3a53 !important; box-shadow: inset 3px 0 #58a6ff; }
+  app-tree-node .node > .self .expander { min-width: 24px; min-height: 28px; }
+  app-tree-node .right-action { min-width: 28px; min-height: 28px; }
+  app-tree-node .disabled { color: #8b949e; }
+  app-refresh-rate .toggle-wrapper, app-tree-view .toggle-wrapper { box-shadow: none; background: #21262d; border: 1px solid #30363d; border-radius: 5px; }
+  .toast, .toast-header { background: #161b22; color: #e6edf3; border-color: #484f58; }
+  .toast { box-shadow: 0 8px 24px #01040980; }
+
+  // Portaled filters, tooltips and dialogs must not retain the Material light theme.
+  .dropdown-menu { background: #161b22; border: 1px solid #484f58; color: #e6edf3; border-radius: 6px; font-size: 15px; box-shadow: 0 8px 24px #01040960; }
+  .dropdown-item { color: #e6edf3; }
+  .dropdown-item:hover, .dropdown-item:focus { background: #30363d; color: #fff; }
+  .tooltip-inner { background: #21262d; color: #e6edf3; border: 1px solid #484f58; font-size: 15px; }
+  .mat-mdc-dialog-container {
+    --mat-dialog-container-color: #161b22;
+    --mat-dialog-subhead-color: #e6edf3;
+    --mat-dialog-supporting-text-color: #c9d1d9;
+    --mdc-dialog-container-color: #161b22;
+    --mdc-dialog-subhead-color: #e6edf3;
+    --mdc-dialog-supporting-text-color: #c9d1d9;
+    color: #e6edf3;
+  }
+  .mat-mdc-dialog-surface { background: #161b22 !important; color: #e6edf3; border: 1px solid #484f58; border-radius: 8px; }
+  .action-modal { background: #161b22; color: #e6edf3; width: 100%; max-width: 760px; font-size: 15px; }
+  .action-modal .modal-header { background: #161b22 !important; color: #e6edf3 !important; border-bottom: 1px solid #30363d !important; padding: 20px !important; }
+  .action-modal .modal-header.warning { border-top: 4px solid #d29922 !important; }
+  .action-modal .modal-header.error { border-top: 4px solid #f85149 !important; }
+  .action-modal .modal-title { font-size: 22px; line-height: 1.4; font-weight: 600; }
+  .action-modal .modal-body { padding: 20px !important; max-height: 65vh; overflow: auto; }
+  .action-modal .modal-footer { display: flex; flex-wrap: wrap; gap: 8px; padding: 16px 20px !important; border-top: 1px solid #30363d !important; }
+  .cdk-overlay-container input:not([type=checkbox]):not([type=radio]), .cdk-overlay-container select, .cdk-overlay-container textarea {
+    background: #0d1117; color: #e6edf3; border: 1px solid #484f58; border-radius: 5px; padding: 8px; font-size: 15px; max-width: 100%;
+  }
+  .cdk-overlay-container .simple-button, .action-modal .solid-button, .action-modal .modal-footer .flat-button {
+    background: #21262d; color: #e6edf3; border: 1px solid #484f58; border-radius: 5px; padding: 7px 12px; min-height: 36px; font-size: 15px;
+  }
+  .action-modal .solid-button.blue { background: #238636; border-color: #2ea043; }
+  .action-modal:has(.modal-header.error) .solid-button { background: #b62324; border-color: #f85149; }
+  .cdk-overlay-container button:disabled { opacity: .45; cursor: default; }
+  .cdk-overlay-container .dl-horizontal { margin: 0; }
+  .cdk-overlay-container .dl-horizontal dt { color: #c9d1d9; font-size: 15px; }
+  .cdk-overlay-container pre { color: #c9d1d9; background: #0d1117; border: 1px solid #30363d; padding: 12px; border-radius: 5px; max-height: 360px; overflow: auto; }
+  .cdk-overlay-container .essen-pane { background: #0d1117; border: 1px solid #30363d; box-shadow: none; }
+  .cdk-overlay-container table { color: #e6edf3; }
+  button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px solid #58a6ff; outline-offset: 2px; }
+
+  // Entity details, forms and operational views retain their existing bindings.
+  app-navbar .detail-view-title h1 { font-size: 24px; font-weight: 500; line-height: 1.4; margin: 0; }
+  app-navbar .actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; float: none; height: auto; margin: 8px 12px; }
+  app-detail-view-part .table-responsive { margin-top: 0; }
+  app-detail-view-part .nested-table-container { margin: 8px 0 0; padding-left: 12px; border-left: 2px solid #30363d; }
+  app-detail-view-part table.detail-list > tbody > tr > th:not([colspan]) { width: 32%; overflow-wrap: anywhere; }
+  app-detail-view-part table td { overflow-wrap: anywhere; }
+  app-detail-view-part table.detail-array > thead > tr > th,
+  app-detail-view-part table.detail-array > tbody > tr > td {
+    width: auto;
+    min-width: 130px;
+    overflow-wrap: normal;
+    word-break: normal;
+  }
+  app-detail-view-part table .table-responsive { border: 0; }
+  app-detail-view-part h3.heading { font-size: 16px; margin: 4px 0 10px; }
+  app-powershell-commands .nav-wrapper { padding: 0 8px; }
+  app-command .command-name { color: #e6edf3; font-size: 18px; }
+  app-command .command-title, app-command .param-title { font-size: 15px; }
+  app-command .input-group { display: flex; flex-wrap: wrap; gap: 10px; max-width: 100%; padding: 0; }
+  app-command .card { background: #0d1117; border: 1px solid #30363d; border-radius: 5px; padding: 12px; color: #c9d1d9; }
+  app-command .param-value { font-family: var(--font-family-mono); font-size: 15px; }
+  app-command .detail-pane.safe { border-color: #30363d; border-left: 3px solid #3fb950; }
+  app-command .detail-pane.unsafe { border-color: #30363d; border-left: 3px solid #d29922; }
+  app-command .detail-pane.danger { border-color: #30363d; border-left: 3px solid #f85149; }
+  app-storage-form, app-partition-enable-back-up, app-partition-disable-back-up, app-partition-trigger-back-up, app-partition-restore-back-up { font-size: 15px; }
+  app-storage-form label, app-partition-enable-back-up label { line-height: 1.5; }
+  app-storage-form .form-group, app-partition-enable-back-up .form-group { margin-bottom: 16px; }
+  app-view-backup .detail-pane, app-backupinfo .detail-pane { overflow-wrap: anywhere; }
+  app-container-logs .tail-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; padding: 12px; background: #161b22; border: 1px solid #30363d; border-radius: 6px; }
+  app-container-logs pre { min-height: 240px; max-height: 65vh; }
+  app-naming-viewer .panel-container { display: flex; flex-wrap: wrap; gap: 16px; }
+  app-naming-viewer .panel { background: #161b22; border: 1px solid #30363d; border-radius: 6px; padding: 16px; min-width: 0; }
+  app-naming-viewer .operation-container { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  app-naming-viewer .dropdown-container.show { display: flex; flex-direction: column; align-items: stretch; gap: 8px; }
+  app-timeseries .layout-container, app-timeseries .chart-container { min-width: 0; }
+  app-timeseries .selectedItems { background: #0d1117; border: 1px solid #30363d; border-radius: 5px; padding: 8px; }
+  app-timeseries .drag-bar { background: #30363d; }
+  app-cluster-insights { display: block; padding: 20px; background: #0d1117; color: #e6edf3; }
+  app-request-logging { display: block; padding: 20px; }
+  app-request-logging .panel-wrapper { flex-wrap: wrap; gap: 16px; padding-top: 12px; }
+  app-request-logging .wrap label { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+  app-request-logging input[type=number] { width: 90px !important; }
+  app-cluster-insights > app-warning { display: block; margin: 16px 0; }
+  app-replica-status-container, app-replica-tile, app-service-resources-tile { font-size: 15px; }
+  app-warning { color: #c9d1d9; font-size: 15px; }
+  app-metrics .modern-metrics .layout-container { margin: 0; }
+  app-metrics .node-selection app-node-filter { display: block; }
+  app-metrics .node-selection app-node-filter input[type=text] { width: 100%; }
+  .view-container [style*='min-width: 600px'], .view-container [style*='min-width: 400px'] { min-width: 0 !important; }
+  @media (max-width: 700px) {
+    app-root .right-panel { padding-left: 12px; padding-right: 12px; }
+    app-navbar .detail-view-title h1 { font-size: 20px; white-space: normal; overflow-wrap: anywhere; }
+    .cdk-overlay-pane { max-width: calc(100vw - 24px) !important; }
+    .action-modal .modal-body .dl-horizontal dt, .action-modal .modal-body .dl-horizontal dd { display: block; width: 100%; float: none; }
+    .action-modal .modal-body { padding: 16px !important; }
+    app-detail-view-part .nested-table-container { padding-left: 6px; }
+    app-command .input-group { display: grid; grid-template-columns: minmax(0, 1fr); }
+    app-naming-viewer .panel { width: 100%; }
+    app-cluster-insights, app-request-logging { padding: 12px; }
+    app-storage-form dl dt, app-storage-form dl dd { width: 100%; display: block; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .view-container *, app-tree-node .expander { transition: none !important; }
+  }
+}

@@ -1,3 +1,27 @@
+@if (compact) {
+  <div class="compact-node-filter">
+    <input type="search" aria-label="Filter nodes by name" placeholder="Filter nodes by name" [(ngModel)]="filter" (ngModelChange)="updateNodes()">
+    <div ngbDropdown [autoClose]="'outside'">
+      <button type="button" class="node-type-button" ngbDropdownToggle>Node types</button>
+      <div ngbDropdownMenu class="node-type-menu">
+        @for (type of data.nodes.nodeTypes; track type) {
+          <label><input type="checkbox" [(ngModel)]="nodeTypeFilter[type]" (ngModelChange)="updateNodes()">{{type}}</label>
+        }
+      </div>
+    </div>
+    <fieldset><legend>Health</legend><div class="health-choices">
+      @for (health of healthOptions; track health) {
+        <label class="health-filter-choice" [attr.data-health]="health" [class.enabled]="healthFilter[health]">
+          <input type="checkbox" [(ngModel)]="healthFilter[health]" (ngModelChange)="updateNodes()">
+          {{health === 'OK' ? 'Healthy' : health}}
+        </label>
+      }
+    </div></fieldset>
+    @if (showGroupByNodeType) {
+      <label class="group-node-types" data-cy="nodetype-filter"><input type="checkbox" [(ngModel)]="groupByNodeType" (ngModelChange)="updateNodes()"> Group by node type</label>
+    }
+  </div>
+} @else {
 <div class="layout">
   <app-input data-cy="filter" placeholder="Filter nodes" [model]="filter" (changed)="filter = $event; updateNodes();">
   </app-input>
@@ -45,3 +69,4 @@
         </div>
       </div>
     </div>
+}

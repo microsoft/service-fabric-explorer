@@ -1,7 +1,23 @@
-@if (dataset.dataSets.length > 0) {
+@if (experience.isNew()) {
+  <p class="naming-intro">Naming Service reports request counts, average latency, and response sizes. Choose which partitions and operations to compare below.</p>
+}
+@if (dataset.dataSets.length > 0 || (experience.isNew() && overviewPanels.length > 0)) {
   <div>
     <div class="panel-container">
-      @for (panel of overviewPanels; track panel) {
+      @for (panel of overviewPanels; track panel.sourceName) {
+        @if (experience.isNew()) {
+          <section class="naming-partition" data-cy="overviewpanel" [class.excluded]="!panel.toggled">
+            <header><label class="partition-choice"><input type="checkbox" [(ngModel)]="panel.toggled" (ngModelChange)="updateData()"> Partition {{panel.name}}</label><span>{{panel.reportCount}} reports</span></header>
+            <div class="partition-source" [title]="panel.sourceName">{{panel.sourceName}}</div>
+            <div class="request-count"><strong>{{panel.requestCount | number}}</strong> requests reported</div>
+            <fieldset [disabled]="!panel.toggled"><legend>Operations shown ({{getToggled(panel.nestedOptions)}} of {{panel.nestedOptions.length}})</legend>
+              @for (operation of panel.nestedOptions; track operation.name) {
+                <label class="naming-operation"><input type="checkbox" [(ngModel)]="operation.toggled" (ngModelChange)="updateData()">{{operation.name}}</label>
+              }
+            </fieldset>
+            @if (!panel.toggled) { <p class="partition-excluded">Not shown in charts. Select this partition to include it.</p> }
+          </section>
+        } @else {
         <div class="panel" data-cy="overviewpanel">
           <div class="text-container">
             <label ngbTooltip="Set where the partition is visible in the charts below" title="Set where the partition is visible in the charts below" tooltipClass="styled-tooltip">
@@ -13,10 +29,10 @@
           <div>
             <div class="operation-container">
               <div ngbDropdown #myDrop="ngbDropdown" [autoClose]="'outside'">
-                <button class="flat-button" ngbDropdownToggle [attr.aria-label]="'toggle operations ' + getToggled(panel.nestedOptions) + ' / ' + panel.nestedOptions.length + ' for ' + panel.name">
+                <button type="button" class="flat-button" ngbDropdownToggle [id]="'naming-operations-' + $index" [attr.aria-label]="'toggle operations ' + getToggled(panel.nestedOptions) + ' / ' + panel.nestedOptions.length + ' for ' + panel.name">
                   toggle operations ({{getToggled(panel.nestedOptions)}} / {{panel.nestedOptions.length}})
                 </button>
-                <ul ngbDropdownMenu aria-labelledby="dropdownBasic1" class="dropdown-container">
+                <ul ngbDropdownMenu [attr.aria-labelledby]="'naming-operations-' + $index" class="dropdown-container">
                   <li role="menuitem" class="check-options item">
                     <button aria-label="Check all options" class="flat-button"
                     (click)="bulkToggleStateChange(panel, true)">Check All</button>
@@ -38,9 +54,23 @@
             </div>
           </div>
         </div>
+        }
       }
     </div>
-    <app-timeseries [data]="dataset"></app-timeseries>
+    @if (dataset.dataSets.length > 0) {
+      @if (experience.isNew()) {
+        <p class="naming-chart-caption" role="status">Showing {{selectedReportCount}} reports across {{dataset.dataSets.length}} operation series.</p>
+        @if (hasSingleSampleSeries) { <p class="naming-sparse">Some operations have only one report in this range. A single point is a sample, not a trend. Widen the query range to look for more reports.</p> }
+      }
+      <app-timeseries [data]="dataset"></app-timeseries>
+    } @else {
+      <div class="naming-empty" role="status"><strong>No metrics selected</strong><p>Select a partition and at least one operation above to display its reports.</p><button type="button" class="simple-button" (click)="showAllMetrics()">Show all reported metrics</button></div>
+    }
+  </div>
+} @else if (experience.isNew()) {
+  <div class="naming-empty" role="status">
+    <strong>{{!hasLoaded ? 'Loading naming metrics...' : failedSources ? 'Naming metrics are unavailable' : 'No naming metrics in this range'}}</strong>
+    <p>{{!hasLoaded ? 'Waiting for naming metric reports.' : failedSources ? 'Some event sources failed to load. Refresh or try another time range.' : 'No naming metric reports were returned. Choose another time range to look for activity.'}}</p>
   </div>
 } @else {
   <div class="text-center">

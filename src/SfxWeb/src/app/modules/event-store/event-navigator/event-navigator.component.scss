@@ -1,0 +1,115 @@
+:host {
+  // GitHub Dark palette, scoped to the navigator rather than the surrounding app.
+  --font-primary-color: #e6edf3;
+  --font-accent-color: #8b949e;
+  --font-placeholder-color: #8b949e;
+  --primary-background-color: #161b22;
+  --accent-background-color: #0d1117;
+  --accent-underline: #30363d;
+  --accent-darkblue: #58a6ff;
+  --accent-lightblue: #58a6ff;
+  --link-color: #58a6ff;
+  --badge-ok: #3fb950;
+  --badge-warning: #d29922;
+  --badge-error: #f85149;
+  color-scheme: dark;
+  display: block;
+  margin-bottom: 16px;
+  color: var(--font-primary-color);
+  font: 15px/1.5 var(--font-family-ui);
+}
+* { box-sizing: border-box; }
+.navigator {
+  --muted: var(--font-accent-color);
+  --line: var(--accent-underline);
+  --focus: var(--accent-lightblue);
+  --header-surface: #161b22;
+  --plot-surface: #0d1117;
+  background: var(--primary-background-color);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  overflow: hidden;
+}
+.heading { padding: 20px 24px 16px; background: var(--header-surface); }
+.eyebrow { font-size: 15px; letter-spacing: .1em; color: var(--muted); font-weight: 600; }
+h2 { margin: 0; font-size: 22px; font-weight: 600; color: var(--font-primary-color); }
+.tools { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; padding: 0 24px 18px; background: var(--header-surface); }
+button, input, select { font: inherit; color: inherit; }
+button { border: 0; border-radius: 3px; background: transparent; padding: 7px 10px; cursor: pointer; transition: background .12s; }
+button:hover { background: #30363d; }
+button:disabled { opacity: .4; cursor: default; }
+button:focus-visible, input:focus-visible, select:focus-visible, .chart:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.search { display: flex; align-items: center; gap: 8px; background: var(--accent-background-color); border: 1px solid var(--line); border-radius: 4px; padding: 0 10px; margin: 0; flex: 1 1 240px; max-width: 360px; }
+.search svg { flex-shrink: 0; color: var(--muted); }
+.search input { width: 100%; min-width: 0; background: transparent; border: 0; padding: 9px 0; }
+.search input::placeholder { color: var(--font-placeholder-color); }
+.navigation { display: flex; align-items: center; gap: 2px; border: 1px solid var(--line); background: #21262d; border-radius: 6px; padding: 2px; }
+.separator { width: 1px; height: 18px; background: var(--line); margin: 0 4px; }
+.icon { font-size: 18px; min-width: 34px; line-height: 22px; }
+.zone { margin: 0 0 0 auto; }
+.zone select { background: #21262d; border: 1px solid var(--line); border-radius: 6px; padding: 8px; }
+.window-caption { padding: 12px 24px; border-top: 1px solid var(--line); display: flex; align-items: center; flex-wrap: wrap; gap: 12px; color: var(--muted); font-size: 15px; font-variant-numeric: tabular-nums; background: var(--primary-background-color); }
+.arrow { padding: 0 8px; color: var(--muted); }
+.window-duration { margin-left: auto; color: var(--focus); }
+.chart { display: grid; grid-template-columns: 200px minmax(0, 1fr); max-height: 520px; overflow-y: auto; overflow-x: hidden; background: var(--plot-surface); }
+.labels { position: relative; z-index: 2; background: var(--primary-background-color); border-right: 1px solid var(--line); }
+.axis-label { height: 44px; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; color: var(--muted); font-size: 15px; letter-spacing: .1em; }
+.axis-label span { color: var(--font-primary-color); }
+.track-label { display: flex; align-items: center; justify-content: space-between; padding: 8px 16px; gap: 8px; border-top: 1px solid var(--line); font-size: 15px; }
+.track-label span { overflow-wrap: anywhere; }
+.track-label small { color: var(--muted); font-variant-numeric: tabular-nums; }
+.plot { position: relative; min-width: 0; min-height: 180px; touch-action: pan-y; cursor: crosshair; user-select: none; }
+.axis { height: 44px; position: relative; color: var(--muted); font: 15px/1.5 var(--font-family-mono); background: var(--header-surface); }
+.axis > span { position: absolute; top: 14px; transform: translateX(-50%); white-space: nowrap; }
+.axis > .first { transform: none; padding-left: 8px; }
+.axis > .last { transform: translateX(-100%); padding-right: 8px; }
+.grid { position: absolute; inset: 44px 0 0; pointer-events: none; overflow: hidden; }
+.grid i { position: absolute; height: 100%; width: 1px; background: var(--line); opacity: .35; }
+.track { position: relative; border-top: 1px solid var(--line); }
+.mark { position: absolute; height: 28px; padding: 3px 0; background: transparent; border-radius: 4px; --tone: var(--accent-darkblue); cursor: pointer; }
+.mark[data-tone=success] { --tone: var(--badge-ok); }
+.mark[data-tone=warning] { --tone: var(--badge-warning); }
+.mark[data-tone=error] { --tone: var(--badge-error); }
+.mark-fill { display: block; height: 100%; border: 1px solid var(--tone); border-left: 3px solid var(--tone); border-radius: 3px; background: color-mix(in srgb, var(--tone) 25%, var(--accent-background-color)); }
+.point .mark-fill { width: 12px; margin: auto; background: var(--tone); border: 0; border-radius: 2px; }
+.mark:hover { background: #21262d; }
+.mark.chosen { outline: 2px solid var(--focus); outline-offset: 1px; }
+.selection { position: absolute; inset-block: 44px 0; border: 1px solid var(--focus); background: rgb(56 139 253 / 15%); pointer-events: none; }
+.selection span { position: absolute; top: 4px; left: 4px; white-space: nowrap; background: var(--primary-background-color); padding: 2px 6px; color: var(--font-primary-color); border-radius: 3px; }
+.empty { padding: 38px 20px; text-align: center; position: relative; }
+.empty strong, .empty span { display: block; }
+.empty span { color: var(--muted); font-size: 15px; margin-top: 4px; }
+.chart-footer { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; padding: 12px 24px; color: var(--muted); border-top: 1px solid var(--line); font-size: 15px; }
+.chart-footer b { color: var(--font-primary-color); }
+.chart-footer i { padding: 0 8px; font-style: normal; }
+.inspector { margin: 0 16px 16px; border: 1px solid var(--line); border-radius: 6px; background: var(--accent-background-color); padding: 16px; }
+.inspector-heading { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+h3 { margin: 4px 0 0; font-size: 16px; line-height: 1.4; font-weight: 600; color: var(--font-primary-color); }
+.event-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; color: var(--muted); font-size: 15px; margin-top: 8px; }
+.text-action { margin-left: auto; padding: 4px 0; color: var(--link-color); }
+.text-action:hover { background: transparent; text-decoration: underline; }
+.inspector-properties { margin-top: 12px; max-height: 420px; min-height: 100px; overflow: auto; resize: vertical; border-top: 1px solid var(--line); }
+.inspector-properties:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.inspector-properties dl { margin: 0; min-width: 100%; width: max-content; }
+.inspector-properties dl > div { display: grid; grid-template-columns: 260px minmax(320px, 1fr); gap: 20px; padding: 9px 0; border-bottom: 1px solid var(--line); }
+.inspector-properties dt, .inspector-properties dd { display: block; width: auto; min-width: 0; margin: 0; font-size: 15px; white-space: pre; overflow-wrap: normal; word-break: normal; }
+.inspector-properties dt { font-weight: 400; color: var(--muted); }
+.inspector-properties dd { font-family: var(--font-family-mono); }
+.sr-only { position: absolute; width: 1px; height: 1px; clip-path: inset(50%); overflow: hidden; white-space: nowrap; }
+@media (max-width: 700px) {
+  .heading { padding: 16px; }
+  h2 { font-size: 20px; }
+  .tools { padding: 0 16px 14px; gap: 8px; }
+  .search { max-width: none; flex-basis: 100%; }
+  .navigation { flex-wrap: wrap; font-size: 15px; }
+  .zone { margin-left: 0; }
+  .window-caption { padding: 12px 16px; }
+  .window-duration { margin-left: 0; }
+  .chart { grid-template-columns: 125px minmax(0,1fr); }
+  .track-label { padding: 8px; font-size: 15px; }
+  .axis-label { padding: 0 8px; font-size: 15px; }
+  .chart-footer { padding: 12px 16px; }
+  .text-action { margin-left: 0; }
+}
+@media (prefers-reduced-motion: reduce) { button { transition: none; } }
+@media (forced-colors: active) { .mark-fill { forced-color-adjust: none; background: Highlight; border-color: Highlight; }.mark.chosen { outline-color: Highlight; } }

@@ -1,3 +1,13 @@
+@if (modern) {
+  <div class="modern-refresh" data-cy="refreshrate">
+    <label><span>Auto-refresh</span><select aria-label="Auto-refresh interval" [ngModel]="refreshRate" (ngModelChange)="change(+$event)">
+      <option [ngValue]="0">Off</option><option [ngValue]="1">5 min</option><option [ngValue]="2">1 min</option><option [ngValue]="3">30 sec</option><option [ngValue]="4">10 sec</option><option [ngValue]="5">5 sec</option>
+    </select></label>
+    <button type="button" data-cy="refresh" aria-label="Refresh now" [disabled]="refresh" (click)="forceRefresh()" [title]="refresh ? 'Refreshing' : 'Refresh now'">
+      <svg aria-hidden="true" viewBox="0 0 24 24" [class.rotate]="refresh"><path d="M20 7v5h-5M4 17v-5h5M6.1 7a7 7 0 0 1 11.6-1L20 9M4 15l2.3 3A7 7 0 0 0 18 17"/></svg>
+    </button>
+  </div>
+} @else {
 <ng-template #refreshOptions>
   <button (click)="change(0)" class="flat-button rounded-button" ngbTooltip="Turn off refresh rate"  tooltipClass="styled-tooltip"> Off </button>
   <input [(ngModel)]="refreshRate" type="range" list="tickmarks" step="1" min="0" max="5" (click)="changed()" class="rate-picker"
@@ -38,3 +48,4 @@
       <option value="4"></option>
       <option value="5"></option>
     </datalist>
+}

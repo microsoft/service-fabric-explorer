@@ -12,10 +12,18 @@ import { TimelineComponent } from './timeline/timeline.component';
 import { TimePickerModule } from '../time-picker/time-picker.module';
 import { VisualizationDirective } from './visualization.directive';
 import { RcaVisualizationComponent } from './rca-visualization/rca-visualization.component';
+import { EventNavigatorComponent } from './event-navigator/event-navigator.component';
+import { EventQueryBarComponent } from './event-query-bar/event-query-bar.component';
+import { EventResultsComponent } from './event-results/event-results.component';
+import { EventAnalysisComponent } from './event-analysis/event-analysis.component';
 
 @NgModule({
   declarations: [EventStoreComponent, RowDisplayComponent, OptionPickerComponent, TimelineComponent, VisualizationDirective, RcaVisualizationComponent],
   imports: [
+    EventNavigatorComponent,
+    EventQueryBarComponent,
+    EventResultsComponent,
+    EventAnalysisComponent,
     CommonModule,
     DetailListTemplatesModule,
     FormsModule,

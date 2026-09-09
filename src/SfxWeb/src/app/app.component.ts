@@ -1,4 +1,5 @@
-import { Component, OnInit, HostListener, ViewChild, ElementRef, inject, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, HostListener, ViewChild, ElementRef, inject, ChangeDetectionStrategy, effect } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
 import { TreeService } from './services/tree.service';
 import { RefreshService } from './services/refresh.service';
 import { AdalService } from './services/adal.service';
@@ -12,6 +13,7 @@ import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
 import { TelemetrySnackBarComponent } from './telemetry-snack-bar/telemetry-snack-bar.component';
 import { SettingsService } from './services/settings.service';
 import { FocusService } from './services/focus.service';
+import { ExperienceService } from './services/experience.service';
 
 @Component({
     selector: 'app-root',
@@ -21,6 +23,12 @@ import { FocusService } from './services/focus.service';
     standalone: false
 })
 export class AppComponent implements OnInit{
+  experience = inject(ExperienceService);
+  private document = inject(DOCUMENT);
+  private themeEffect = effect(onCleanup => {
+    this.document.body.classList.toggle('sfx-new', this.experience.isNew());
+    onCleanup(() => this.document.body.classList.remove('sfx-new'));
+  });
   treeService = inject(TreeService);
   refreshService = inject(RefreshService);
   adalService = inject(AdalService);

@@ -1,4 +1,6 @@
-import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy, ViewChild, ElementRef } from '@angular/core';
+import { CollapseContainerComponent } from 'src/app/shared/component/collapse-container/collapse-container.component';
+import { DetailListComponent } from 'src/app/modules/detail-list-templates/detail-list/detail-list.component';
 import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 import { DataService } from 'src/app/services/data.service';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
@@ -15,6 +17,7 @@ import { TelemetryService } from 'src/app/services/telemetry.service';
 import { TelemetryEventNames } from 'src/app/Common/Constants';
 import { EventType } from 'src/app/modules/event-store/event-store/event-store.component';
 import { TimelineGeneratorFactoryService } from 'src/app/services/timeline-generator-factory.service';
+import { ExperienceService } from 'src/app/services/experience.service';
 
 interface ITileListItem {
   primaryText: string;
@@ -30,6 +33,34 @@ interface ITileListItem {
     standalone: false
 })
 export class RepairTasksComponent extends BaseControllerDirective {
+  experience = inject(ExperienceService);
+  @ViewChild('pendingSection') pendingSection?: CollapseContainerComponent;
+  @ViewChild('completedSection') completedSection?: CollapseContainerComponent;
+  @ViewChild('pendingList') pendingList?: DetailListComponent;
+  @ViewChild('completedList') completedList?: DetailListComponent;
+  private host = inject(ElementRef<HTMLElement>);
+  private inspectTimer?: ReturnType<typeof setTimeout>;
+  openRepair(id: string) {
+    const separator = id.indexOf('---');
+    const taskId = separator < 0 ? id : id.slice(separator + 3);
+    const task = this.repairTaskCollection.collection.find(item => item.raw.TaskId === taskId);
+    if (!task) { return; }
+    const completed = task.raw.State === 'Completed';
+    const section = completed ? this.completedSection : this.pendingSection;
+    if (section?.collapsed) { section.changeCollapseState(); }
+    task.isSecondRowCollapsed = false;
+    (completed ? this.completedRepairTaskListSettings : this.repairTaskListSettings).search = taskId;
+    clearTimeout(this.inspectTimer);
+    this.inspectTimer = setTimeout(() => {
+      const list = completed ? this.completedList : this.pendingList;
+      list?.resetAll();
+      if (list) { list.page = 1; }
+      (completed ? this.completedRepairTaskListSettings : this.repairTaskListSettings).search = taskId;
+      list?.updateList();
+      this.host.nativeElement.querySelector(completed ? '[data-cy=completedjobs]' : '.pending-task-results')?.scrollIntoView({ block: 'center' });
+    });
+  }
+  override ngOnDestroy() { clearTimeout(this.inspectTimer); super.ngOnDestroy(); }
   private data = inject(DataService);
   private settings = inject(SettingsService);
   private telemService = inject(TelemetryService);

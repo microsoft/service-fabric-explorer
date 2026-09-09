@@ -84,7 +84,7 @@ export class RcaOverviewComponent implements AfterViewInit, OnChanges {
         type: 'pie',
         dataLabels: {
           style: {
-            fontSize: '10px',
+            fontSize: '15px',
             fontColor: '#fff'
           }
         },

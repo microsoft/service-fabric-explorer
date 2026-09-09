@@ -1,11 +1,19 @@
+@if (!experience.isNew()) {
 <div style="margin: 15px 0px;">
   <a href="https://docs.microsoft.com/azure/service-fabric/infrastructure-service-faq#faqs" target="_blank"
     class="essen-pane info-box">
     <span class="mif-info link"></span> Click here to learn more about Infrastructure jobs.
   </a>
 </div>
+}
 
-@if (collection.isInitialized) {
+@if (experience.isNew() && collection.isRefreshing && !collection.isInitialized) {
+  <div class="infrastructure-state" role="status"><h2>Loading infrastructure jobs</h2><p>Discovering infrastructure services and their job history.</p></div>
+} @else if (experience.isNew() && !collection.isRefreshing && !collection.lastRefreshWasSuccessful) {
+  <div class="infrastructure-state" role="alert"><h2>Could not load infrastructure jobs</h2><p>The infrastructure query did not succeed. Check cluster connectivity and try again.</p><button type="button" class="simple-button" (click)="retry()">Retry</button></div>
+} @else if (experience.isNew() && !collection.collection.length) {
+  <div class="infrastructure-state"><h2>No infrastructure services found</h2><p>This cluster has no Infrastructure Service instances to query. There are no infrastructure jobs to display.</p><a href="https://learn.microsoft.com/azure/service-fabric/infrastructure-service-faq" target="_blank" rel="noopener noreferrer">About infrastructure jobs &rarr;</a></div>
+} @else if (collection.isInitialized) {
   <div class="essen-pane">
     <div ngbNav #nav="ngbNav" class="nav-wrapper" activeIndex="0">
       @for (infra of collection.collection; track infra; let i = $index; let l = $last) {
@@ -47,7 +55,7 @@
     <div [ngbNavOutlet]="nav" style="margin-top: 10px"></div>
   </div>
 }
-@if (infrastructureDocumentCollection.isInitialized) {
+@if (infrastructureDocumentCollection.isInitialized && (!experience.isNew() || infrastructureDocumentCollection.collection.length > 0)) {
   <div class="essen-pane">
     <app-infrastructure-docs [infrastructureDocumentCollection]="infrastructureDocumentCollection"></app-infrastructure-docs>
   </div>

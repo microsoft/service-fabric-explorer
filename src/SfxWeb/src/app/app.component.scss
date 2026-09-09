@@ -216,3 +216,43 @@ $right-panel-min-width: 200px !default;
     transform: rotate(270deg);
   }
 }
+.experience-control {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 8px;
+  flex-shrink: 0;
+  font-size: 15px;
+  color: #c9d1d9;
+  select {
+    background: #21262d;
+    color: #e6edf3;
+    border: 1px solid #484f58;
+    border-radius: 5px;
+    padding: 5px 7px;
+    min-height: 32px;
+  }
+  select:focus-visible { outline: 2px solid #58a6ff; outline-offset: 2px; }
+}
+@media (max-width: 1100px) { .experience-control > span { display: none; } }
+.header-branding, .header-controls { display: flex; align-items: center; flex-shrink: 0; }
+.header-status { margin: 0 auto; min-width: 0; }
+.header-controls { margin-left: auto; }
+.modern-header {
+  padding-right: 12px;
+  gap: 16px;
+  .header-branding { gap: 12px; }
+  .navbar-brand { display: flex; align-items: center; height: 50px; padding: 0 12px; font-size: 16px; }
+  .navbar-brand-azure { background: transparent; color: #c9d1d9; border-right: 1px solid #30363d; }
+  .navbar-brand-icon { width: 26px !important; }
+  .header-controls { gap: 8px; }
+  .header-refresh { padding-right: 12px; border-right: 1px solid #30363d; }
+  .experience-control { margin: 0; gap: 8px; }
+  .experience-control > span { color: #8b949e; }
+  .upgrade-status { display: flex; align-items: center; gap: 8px; min-height: 32px; padding: 4px 10px; border: 1px solid #30363d; border-radius: 5px; background: #21262d; color: #c9d1d9; font-size: 15px; white-space: nowrap; }
+  .status-indicator { width: 8px; height: 8px; background: #d29922; border-radius: 50%; flex-shrink: 0; }
+  .upgrade-count { color: #8b949e; }
+  @media (max-width: 1400px) { .upgrade-count { display: none; } }
+  @media (max-width: 1000px) { gap: 8px; .header-branding { gap: 0; }.header-status { max-width: 180px; overflow: hidden; }.upgrade-status { overflow: hidden; text-overflow: ellipsis; } }
+  @media (max-width: 700px) { .header-branding > a:first-child { display: none; }.header-status { display: none; }.header-controls { gap: 4px; }.header-refresh { padding-right: 6px; }.navbar-brand { padding: 0 6px; } }
+}

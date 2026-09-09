@@ -1,3 +1,8 @@
+@if (experience.isNew()) {
+  @if (dateMin) {
+    <app-event-query-bar [minimum]="dateMin" [start]="startDate" [end]="endDate" (rangeChange)="setDate($event)"></app-event-query-bar>
+  }
+} @else {
 <div class="detail-pane essen-pane">
   @if (dateMin) {
     <div style="margin-bottom: 10px;">
@@ -5,16 +10,38 @@
     </div>
   }
 </div>
+}
 
 <div class="detail-pane essen-pane">
   <h2>Partition Operations</h2>
-  <div style="margin-top: 15px; margin-bottom: 15px;">
+  @if (experience.isNew()) {
+    <p class="partition-intro">Choose a partition to inspect its placement and balancing decisions.</p>
+    <div class="partition-mode" role="group" aria-label="Choose partition input method">
+      <button type="button" [class.active]="browsePartitions" [attr.aria-pressed]="browsePartitions" (click)="browsePartitions = true">Browse partitions</button>
+      <button type="button" [class.active]="!browsePartitions" [attr.aria-pressed]="!browsePartitions" (click)="browsePartitions = false">Enter partition ID</button>
+    </div>
+  }
+  @if (experience.isNew() && browsePartitions) {
+    <app-partition-picker (partitionChosen)="choosePartition($event)"></app-partition-picker>
+  } @else {
+  <div style="margin-top: 15px; margin-bottom: 15px;" [class.partition-query]="experience.isNew()">
     <label>Partition ID
       <input type="text" class="input-flat" style="width: 100%; max-width: 320px; margin-right: 15px;" [placeholder]="'partition id'" [(ngModel)]="partitionId" data-cy="partition-input">
     </label>
     <!-- <app-input class="input-wrapper" [placeholder]="'partition id'" (changed)="partitionId = $event" data-cy="partition-input"></app-input> -->
     <button class="simple-button" (click)="search(true)" data-cy="confirm-button">Confirm</button>
   </div>
+  }
+  @if (experience.isNew() && loadingOperations) { <p class="operation-status" role="status">Loading partition operations...</p> }
+  @if (experience.isNew() && operationsError) { <p class="operation-error" role="alert">{{operationsError}}</p> }
+  @if (experience.isNew()) {
+    <div class="stage-filters" role="group" aria-label="Operation stages">
+      <label><input type="checkbox" [(ngModel)]="balancingToggle" (ngModelChange)="search()"> Balancing</label>
+      <label><input type="checkbox" [(ngModel)]="placementToggle" (ngModelChange)="search()"> Placement</label>
+      <label><input type="checkbox" [(ngModel)]="constrainCheckToggle" (ngModelChange)="search()"> Constraint check</label>
+      <label><input type="checkbox" [(ngModel)]="otherToggle" (ngModelChange)="search()"> Other operations</label>
+    </div>
+  } @else {
   <label style="display: block; margin-top: 15px; margin-bottom: 15px;">
     <app-toggle [(state)]="balancingToggle" [color]="balancingEventColor"
     (stateChange)="updateBalancingToggle($event)" data-cy="balancing-toggle"></app-toggle>
@@ -35,9 +62,16 @@
     (stateChange)="updateOtherToggle($event)" data-cy="other-toggle"></app-toggle>
     Show Other (ClientAPI) Operations
   </label>
+  }
   @if (timeLineEventsData) {
+    @if (experience.isNew()) {
+      <app-event-navigator [events]="timeLineEventsData" inspectLabel="Show operation details" (inspectEvent)="selectEvent($event)"></app-event-navigator>
+    } @else {
     <app-event-store-timeline [events]="timeLineEventsData"
-    (itemClicked)="selectEvent($event)" class="orchestration-view-timeline" data-cy="orchestration-timeline"></app-event-store-timeline>
+     (itemClicked)="selectEvent($event)" class="orchestration-view-timeline" data-cy="orchestration-timeline"></app-event-store-timeline>
+    }
+  } @else if (experience.isNew()) {
+    @if (!loadingOperations && !operationsError) { <p class="orchestration-empty">Select a partition above, then load its operations. You can also enter an ID directly for partitions not listed here.</p> }
   }
 </div>
 

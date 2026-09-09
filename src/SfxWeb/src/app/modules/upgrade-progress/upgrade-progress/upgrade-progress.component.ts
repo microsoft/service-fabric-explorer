@@ -119,7 +119,7 @@ export class UpgradeProgressComponent implements AfterViewInit, OnChanges {
           color: colors[badgeClass as keyof typeof colors],
           dataLabels: {
             style: {
-              fontSize: '13px',
+              fontSize: '15px',
               fontColor: '#fff'
             }
           }
@@ -134,7 +134,7 @@ export class UpgradeProgressComponent implements AfterViewInit, OnChanges {
           color: colors[p.badgeClass as keyof typeof colors],
           dataLabels: {
             style: {
-                fontSize: '13px',
+                fontSize: '15px',
                 fontColor: '#fff'
             }
         },

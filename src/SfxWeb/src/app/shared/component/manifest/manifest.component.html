@@ -1,3 +1,6 @@
+@if (experience.isNew()) {
+  <app-manifest-document [name]="manifestName" [xml]="manifest"></app-manifest-document>
+} @else {
 <div class="detail-pane essen-pane">
   <h2>
     <span id="clusterManifestName">{{manifestName}}</span>
@@ -8,3 +11,4 @@
     }
   </code>
 </div>
+}

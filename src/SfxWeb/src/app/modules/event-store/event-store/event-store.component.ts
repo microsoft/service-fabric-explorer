@@ -10,6 +10,7 @@ import { EventColumnUpdate, VisualizationComponent } from '../visualizationCompo
 import { VisualizationDirective } from '../visualization.directive';
 import { TimelineComponent } from '../timeline/timeline.component';
 import { RcaVisualizationComponent } from '../rca-visualization/rca-visualization.component';
+import { ExperienceService } from 'src/app/services/experience.service';
 
 export interface IQuickDates {
   display: string;
@@ -47,6 +48,7 @@ export interface VisReference {
     standalone: false
 })
 export class EventStoreComponent implements OnChanges, AfterViewInit {
+  experience = inject(ExperienceService);
   dataService = inject(DataService);
 
 
@@ -60,6 +62,10 @@ export class EventStoreComponent implements OnChanges, AfterViewInit {
     ];
 
   public failedRefresh = false;
+  public resultsVersion = 0;
+  public selectedEventId = '';
+  public selectionVersion = 0;
+  public get isRefreshing(): boolean { return this.listEventStoreData?.some(source => source.eventsList.isRefreshing) || false; }
   public activeTab!: string;
 
   public startDate!: Date;
@@ -72,6 +78,10 @@ export class EventStoreComponent implements OnChanges, AfterViewInit {
   ngAfterViewInit() {
     this.dataService.clusterManifest.ensureInitialized().subscribe(() => {
       this.dateMin = TimeUtils.AddDays(new Date(), -this.dataService.clusterManifest.eventStoreTimeRange);
+      if (!this.startDate || !this.endDate) {
+        const endDate = new Date();
+        this.setDate({ startDate: new Date(Math.max(+this.dateMin, +endDate - 7 * 86400000)), endDate });
+      }
     });
   }
 
@@ -110,6 +120,7 @@ export class EventStoreComponent implements OnChanges, AfterViewInit {
 
   /* date determines the data */
   public setDate(newDate: IOnDateChange) {
+    if (this.visualizationsReady && +this.startDate === +newDate.startDate && +this.endDate === +newDate.endDate) { return; }
     this.endDate = newDate.endDate;
     this.startDate = newDate.startDate;
     this.visualizationsReady = true;
@@ -119,8 +130,11 @@ export class EventStoreComponent implements OnChanges, AfterViewInit {
   //handle outputs from visualizations
 
   public setSearch(id: string) {
+    if (!id) { return; }
+    this.selectedEventId = id;
+    this.selectionVersion++;
     this.listEventStoreData.forEach((list, i) => {
-      if (list.objectResolver!(id)) {
+      if (list.objectResolver?.(id)) {
         this.activeTab = list.displayName
         setTimeout(() =>
           list.listSettings!.search = id, 1)
@@ -176,6 +190,7 @@ export class EventStoreComponent implements OnChanges, AfterViewInit {
       const timelineEventSubs = this.listEventStoreData.map(data => data.eventsList.refresh());
 
       forkJoin(timelineEventSubs).subscribe((refreshList) => {
+        this.resultsVersion++;
         this.failedRefresh = refreshList.some(e => !e);
         this.visualizations.forEach(visualization => {
           visualization.update({listEventStoreData: this.listEventStoreData, startDate: this.startDate, endDate: this.endDate});

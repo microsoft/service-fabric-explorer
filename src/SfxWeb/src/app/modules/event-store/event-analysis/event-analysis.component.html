@@ -1,0 +1,19 @@
+<section class="analysis" aria-label="Event analysis">
+  <header><div><h2>Event analysis</h2></div><span class="badge">{{explained}} explained / {{scenarios.length}} supported events</span></header>
+  @if (loading) { <p class="status" role="status">Analyzing loaded events...</p> }
+  @else {
+    @if (failed) { <p class="warning" role="status">Some sources failed to load. Analysis may be incomplete.</p> }
+    @if (!scenarios.length) {
+      <div class="empty"><strong>{{events.length ? 'No supported scenarios in this range' : 'No events available for analysis'}}</strong><p>{{events.length ? 'The loaded events do not match an available analysis rule. Inspect individual records below.' : 'Select another range or include additional event sources.'}}</p></div>
+    } @else {
+      <div class="scenarios">
+        @for (item of scenarios; track $index) {
+          <details><summary><span>{{name(item.event.kind)}}</span><time>{{item.event.timeStamp | date:'MMM d, HH:mm:ss':'UTC'}} UTC</time><span class="badge">{{item.event.reason ? 'Related activity found' : 'Reason unknown'}}</span></summary>
+            <ol>@for (step of item.steps; track $index) { <li><strong>{{step.name}}</strong><p>{{step.explanation || 'No explanation available for this event.'}}</p></li> }</ol>
+            <button type="button" (click)="selectEvent.emit(item.event.eventInstanceId)">Inspect event</button>
+          </details>
+        }
+      </div>
+    }
+  }
+</section>

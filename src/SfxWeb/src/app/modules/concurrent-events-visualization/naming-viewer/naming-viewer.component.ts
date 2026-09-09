@@ -5,6 +5,7 @@ import { ReplicaEvent } from 'src/app/Models/eventstore/Events';
 import { VisualizationComponent, VisUpdateData } from 'src/app/modules/event-store/visualizationComponents';
 import { SettingsService } from 'src/app/services/settings.service';
 import { ListColumnSetting, ListColumnSettingWithEventStoreFullDescription, ListColumnSettingWithUtcTime } from 'src/app/Models/ListSettings';
+import { ExperienceService } from 'src/app/services/experience.service';
 
 export interface INestedDataSetOption {
   name: string;
@@ -13,8 +14,11 @@ export interface INestedDataSetOption {
 }
 
 export interface IOverviewPanel {
+  sourceName: string;
   name: string;
   displayContent: string;
+  requestCount: number;
+  reportCount: number;
   toggled: boolean;
   nestedOptions: INestedDataSetOption[];
 }
@@ -27,6 +31,9 @@ export interface IOverviewPanel {
     standalone: false
 })
 export class NamingViewerComponent implements VisualizationComponent {
+  experience = inject(ExperienceService);
+  public hasLoaded = false;
+  public failedSources = false;
   private settings = inject(SettingsService);
 
   public startDate!: Date;
@@ -63,22 +70,29 @@ export class NamingViewerComponent implements VisualizationComponent {
 
   overviewPanels: IOverviewPanel[] = []
   localData!: VisUpdateData;
+  public get selectedReportCount(): number { return this.dataset.dataSets.reduce((count, data) => count + data.values.length, 0); }
+  public get hasSingleSampleSeries(): boolean { return this.dataset.dataSets.some(data => data.values.length === 1); }
+
+  public showAllMetrics() {
+    this.overviewPanels.forEach(panel => { panel.toggled = true; panel.nestedOptions.forEach(option => option.toggled = true); });
+    this.updateData();
+  }
 
   generateOverviewPanel(data: VisUpdateData) {
     const previousOverviewPanels = this.overviewPanels;
     this.overviewPanels = [];
-    data.listEventStoreData.forEach((partition, index) => {
+    data.listEventStoreData.forEach(partition => {
       const splitData = this.splitData(partition.eventsList.collection);
       let volume = 0;
 
       Object.entries(splitData).forEach(entry => {
         entry[1].forEach(event => {
-          volume += event.raw.eventProperties.RequestCount;
+          volume += Number(event.raw.eventProperties.RequestCount) || 0;
         })
       })
       if(Object.keys(splitData).length) {
         const name = partition.displayName.slice(32, 37);
-        const previousPanelState = previousOverviewPanels.find(panel => panel.name === name);
+        const previousPanelState = previousOverviewPanels.find(panel => panel.sourceName === partition.displayName);
 
         let toggled = true;
         const nestedOptions = Object.entries(splitData).map(d => {
@@ -99,8 +113,11 @@ export class NamingViewerComponent implements VisualizationComponent {
         }
 
         this.overviewPanels.push({
+          sourceName: partition.displayName,
           name,
           displayContent: `Total Volume: ${volume}`,
+          requestCount: volume,
+          reportCount: Object.values(splitData).reduce((count, reports) => count + reports.length, 0),
           toggled,
           nestedOptions
         })
@@ -126,9 +143,9 @@ export class NamingViewerComponent implements VisualizationComponent {
     ],
     true);
     let dataSets: IDataSet[] = [];
-    this.overviewPanels.forEach((panel, index) => {
-
-      dataSets = dataSets.concat(this.sortAndFilterData(panel, this.localData.listEventStoreData[index].eventsList.collection));
+    this.overviewPanels.forEach(panel => {
+      const source = this.localData.listEventStoreData.find(item => item.displayName === panel.sourceName);
+      if (source) { dataSets = dataSets.concat(this.sortAndFilterData(panel, source.eventsList.collection)); }
     })
 
     this.dataset = {
@@ -173,6 +190,8 @@ export class NamingViewerComponent implements VisualizationComponent {
   }
 
   update(data: VisUpdateData) {
+    this.hasLoaded = true;
+    this.failedSources = data.listEventStoreData.some(source => source.eventsList.lastRefreshWasSuccessful === false);
     this.generateOverviewPanel(data);
     this.localData = data;
     this.updateData();

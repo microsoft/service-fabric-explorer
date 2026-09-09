@@ -1,0 +1,141 @@
+// Shared routed-content treatment, enabled only by the New experience.
+body.sfx-new app-root .view-container {
+  --primary-background-color: #161b22;
+  --accent-background-color: #0d1117;
+  --font-primary-color: #e6edf3;
+  --font-accent-color: #c9d1d9;
+  --font-placeholder-color: #8b949e;
+  --font-list-item-color: #c9d1d9;
+  --accent-underline: #30363d;
+  --accent-lightblue: #58a6ff;
+  --link-color: #58a6ff;
+  --badge-ok: #3fb950;
+  --badge-warning: #d29922;
+  --badge-error: #f85149;
+  --font-size-default: 15px;
+  --font-size-small: 15px;
+  --font-size-medium: 16px;
+  --font-size-large: 20px;
+  --primary-box-shadow: none;
+  display: block;
+  min-height: 100%;
+  background: #0d1117;
+  color: #e6edf3;
+  font: 15px/1.55 var(--font-family-ui);
+  color-scheme: dark;
+  .main-view { padding: 20px; }
+  .flex-child { min-width: 0; }
+  .cluster-page-heading { margin: 0 0 20px; }
+  .cluster-page-heading h1 { font-size: 26px; font-weight: 600; margin: 0 0 4px; color: #e6edf3; }
+  .cluster-page-heading p { margin: 0; color: #8b949e; font-size: 15px; }
+  app-navbar .detail-view-title-bar { background: #0d1117; padding: 12px 20px; border-bottom: 1px solid #30363d; }
+  app-navbar div.detail-view-title { padding: 0; border: 0; }
+  app-navbar .main-header .detail-view-navbar { display: flex; flex-wrap: wrap; gap: 4px; }
+  app-navbar .main-header .detail-view-navbar .detail-view-navbar-tab { padding: 8px 10px !important; font-size: 15px; border-bottom: 2px solid transparent; }
+  app-navbar .main-header .detail-view-navbar .detail-view-navbar-tab.current { border-bottom-color: #f78166; background: #161b22; }
+  .essen-pane { background: #161b22; border: 1px solid #30363d; border-radius: 6px; padding: 16px; box-shadow: none; }
+  .detail-pane { margin-bottom: 16px; }
+  .essen-pane .essen-pane { background: #0d1117; }
+  .detail-pane h2, .detail-pane h4, .detail-pane .heading { font-size: 20px; line-height: 1.4; color: #e6edf3; font-weight: 600; }
+  .nested-header { margin: 12px 0 !important; }
+  .base-header { gap: 6px; min-height: 36px; }
+  .base-header .status-icon { width: 28px; height: 28px; flex-shrink: 0; }
+  .simple-button, .timeline-button, .page-link {
+    background: #21262d; border: 1px solid #484f58; border-radius: 5px; color: #e6edf3;
+    padding: 7px 12px; min-height: 36px; font-size: 15px; box-shadow: none;
+  }
+  .simple-button:hover, .timeline-button:hover, .page-link:hover { background: #30363d; }
+  button:disabled { opacity: .5; cursor: default; }
+  button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px solid #58a6ff; outline-offset: 2px; }
+  input:not([type=checkbox]):not([type=radio]):not([type=range]), select, textarea {
+    background: #0d1117; color: #e6edf3; border: 1px solid #484f58; border-radius: 5px;
+    font-size: 15px; line-height: 1.5; padding: 7px 10px; min-height: 36px; max-width: 100%;
+  }
+  input::placeholder, textarea::placeholder { color: #8b949e; font-style: normal; }
+  input[type=checkbox], input[type=radio] { accent-color: #58a6ff; }
+  .toggle-wrapper { background: #21262d; border: 1px solid #30363d; box-shadow: none; padding: 6px 10px; border-radius: 5px; }
+  .nav-wrapper { border-bottom: 1px solid #30363d; margin-bottom: 12px; }
+  .nav-wrapper .nav-link { color: #c9d1d9; padding: 10px 12px; }
+  .nav-wrapper .nav-link.active { border-bottom: 2px solid #f78166; color: #fff; }
+  .dropdown-menu { background: #161b22; border: 1px solid #484f58; border-radius: 6px; font-size: 15px; padding: 6px; }
+  .dropdown-item { color: #e6edf3; padding: 7px 10px; }
+  .dropdown-item:hover { background: #30363d; color: #fff; }
+  .table-responsive { border: 1px solid #30363d; border-radius: 5px; overflow: auto; margin-top: 12px; }
+  table.detail-list, table.default-table { background: #0d1117; width: 100%; border-collapse: collapse; font-size: 15px; }
+  table.detail-list th, table.default-table th { background: #161b22; color: #c9d1d9; padding: 12px; font-weight: 600; border-bottom: 1px solid #30363d; }
+  table.detail-list td, table.default-table td { padding: 12px; border-top: 1px solid #30363d; }
+  table.detail-list tr.hover-row:hover { background: #161b22; }
+  table.detail-list .row-expander { min-width: 28px; min-height: 28px; margin-right: 6px; }
+  app-detail-list .detail-list-container { margin-top: 12px !important; }
+  app-detail-list .list-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+  app-detail-list .input-wrapper { flex: 1 1 240px; max-width: 420px; }
+  app-detail-list .simple-button { float: none !important; }
+  app-detail-list th .flat-button { color: #c9d1d9; font-size: 15px; }
+  pre, code { font-family: var(--font-family-mono); font-size: 15px; line-height: 1.6; color: #c9d1d9; }
+  pre { background: #0d1117 !important; border: 1px solid #30363d !important; border-radius: 5px; padding: 14px !important; max-height: 600px; overflow: auto; }
+  .tile-container { grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr)); grid-auto-flow: row; gap: 16px; grid-auto-rows: minmax(160px, auto); }
+  .tile-container > * { min-width: 0; }
+  .dashboard-datapoints { margin: 14px; }
+  .dashboard-datapoint-title { font-size: 15px; line-height: 1.5; }
+  .dashboard-datapoint-number { font-size: 24px; line-height: 1.3; }
+  .tile-container .essen-pane { height: 100%; }
+  app-essentials [style*='min-width: 600px'], app-infrastructure-job-tile [style*='min-width: 600px'], app-repair-task-view [style*='min-width: 400px'] { min-width: 0 !important; }
+  app-essentials .essen-table th { font-size: 15px; padding-bottom: 6px; }
+  app-essentials .essen-table td { padding: 8px 12px 8px 0; }
+  app-metrics .layout-container { background: #161b22; border: 1px solid #30363d; border-radius: 6px; padding: 16px; }
+  app-metrics .options-panel { background: #161b22; border-radius: 6px; }
+  app-metric-tile { display: block; margin: 8px 0; }
+  app-metrics .metrics-column { padding: 0 12px; box-sizing: border-box; }
+  app-map { display: block; overflow-x: auto; padding: 12px 0; }
+  app-map table.default-table.map-table { width: auto; }
+  app-map table.default-table.map-table td { padding: 6px; }
+  app-map table.default-table.map-table td.header { color: #c9d1d9; background: #161b22; }
+  app-clustermap > div { padding: 16px; background: #161b22; border: 1px solid #30363d; border-radius: 6px; }
+  app-node-filter { font-size: 15px; }
+  app-imagestore-viewer .essen-table { table-layout: auto; }
+  app-imagestore-viewer .essen-table td { overflow-wrap: anywhere; }
+  app-imagestore-viewer a { font-size: 15px; }
+  app-imagestore-viewer .detail-pane .detail-pane { margin-bottom: 8px; }
+  app-command .form-group, app-command-input { font-size: 15px; }
+  app-command .input-wrapper { padding-left: 0; }
+  app-command .essen-pane { margin-top: 12px; }
+  app-repair-tasks .example-wrapper { min-width: 0; flex: 1; }
+  app-repair-tasks [style*='flex-direction: row'] { flex-wrap: wrap; gap: 8px; }
+  app-infrastructure-job-tile [style*='justify-content: space-between'] { flex-wrap: wrap; gap: 12px; }
+  app-infrastructure-job-tile [style*='width: 80%'] { width: 100% !important; }
+  app-infrastructure-docs select { margin: 10px 0; }
+  app-infrastructure-view .nav-link { overflow-wrap: anywhere; }
+  .highcharts-background { fill: #161b22; }
+  .highcharts-title, .highcharts-subtitle, .highcharts-axis-labels text, .highcharts-legend-item text { fill: #c9d1d9 !important; font-size: 15px !important; }
+  .highcharts-grid-line { stroke: #30363d; }
+  .highcharts-axis-line, .highcharts-tick { stroke: #484f58; }
+  .highcharts-data-label text { font-size: 15px !important; }
+  @media (max-width: 900px) {
+    .main-view { padding: 12px; }
+    app-navbar .detail-view-title-bar { padding: 10px 12px; }
+    app-navbar .main-header { position: static; }
+    app-navbar .main-header .detail-view-navbar { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 4px; }
+    app-navbar .detail-view-navbar > * { flex-shrink: 0; }
+    .tile-container .long { grid-column: 1 / -1; }
+    app-metrics .layout-container { flex-basis: 100%; margin: 16px 0 0; min-width: 0; }
+    app-metrics .metrics-column, app-metrics [style*='width: 300px'] { width: 100% !important; }
+    app-metrics .options-panel { width: min(100%, 420px); }
+    .essen-pane { padding: 12px; }
+    app-essentials .essen-table th, app-essentials .essen-table td { width: auto; }
+  }
+}
+
+// Slightly larger text for all new Events surfaces, including non-cluster routes.
+app-event-navigator {
+  font-size: 15px !important;
+  .track-label, .event-meta, dd { font-size: 15px !important; }
+  .axis-label, dt, .eyebrow { font-size: 15px !important; }
+}
+app-event-query-bar {
+  font-size: 15px !important;
+  .range-summary, .helper, .date-field, .zone select { font-size: 15px !important; }
+}
+app-event-results, app-event-analysis {
+  font-size: 15px !important;
+  p, th, .time, .category, .filters, .coverage, footer, pre, .badge { font-size: 15px !important; }
+}

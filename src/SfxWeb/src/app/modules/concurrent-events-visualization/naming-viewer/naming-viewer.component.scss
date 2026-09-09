@@ -35,3 +35,31 @@
 li {
   font-size: var(--font-size-default);
 }
+
+.naming-empty {
+  padding: 16px 4px 4px;
+  color: #c9d1d9;
+  font-size: 15px;
+  line-height: 1.5;
+  strong { font-weight: 500; }
+  p { margin: 4px 0 0; color: #8b949e; }
+}
+
+.naming-intro { margin: 12px 0 16px; color: #c9d1d9; font-size: 15px; max-width: 900px; }
+.naming-partition { border: 1px solid #30363d; border-radius: 6px; background: #0d1117; padding: 16px; flex: 1 1 320px; max-width: 520px; min-width: 0; font-size: 15px; }
+.naming-partition header { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.partition-choice, .naming-operation { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+.partition-choice { font-weight: 600; }
+.naming-partition input { width: 16px; height: 16px; flex-shrink: 0; accent-color: #58a6ff; }
+.naming-partition header > span, .partition-source, .partition-excluded { color: #8b949e; }
+.partition-source { margin-top: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.request-count { margin: 12px 0; color: #c9d1d9; }
+.request-count strong { color: #e6edf3; font-size: 20px; margin-right: 4px; }
+.naming-partition fieldset { margin: 0; padding: 12px 0 0; border: 0; border-top: 1px solid #30363d; min-width: 0; }
+.naming-partition legend { float: none; width: auto; font-size: 15px; margin-bottom: 8px; color: #c9d1d9; }
+.naming-operation { padding: 6px 0; }
+.naming-partition fieldset:disabled { opacity: .5; }
+.partition-excluded { margin: 8px 0 0; }
+.naming-chart-caption { margin: 16px 0 8px; font-size: 15px; color: #c9d1d9; }
+.naming-sparse { padding: 12px; border-left: 3px solid #d29922; background: #0d1117; color: #c9d1d9; font-size: 15px; }
+.naming-empty button { margin-top: 12px; }

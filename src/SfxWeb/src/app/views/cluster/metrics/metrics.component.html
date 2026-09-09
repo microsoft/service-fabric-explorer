@@ -1,6 +1,43 @@
 @if (metricsViewModel) {
   <div>
-    <div style="display: flex; max-width: 100%; flex-wrap: wrap;">
+    <div #metricsLayout style="display: flex; max-width: 100%; flex-wrap: wrap;" [class.modern-metrics]="experience.isNew()" [style.--metric-sidebar-width]="sidebarWidth + 'px'">
+      @if (experience.isNew()) {
+        <aside id="metric-selection-panel" class="metric-sidebar" aria-label="Metric selection">
+          <header><h2>Metrics</h2><span>{{metricsViewModel.selectedMetrics.length}} selected</span></header>
+          <div class="sidebar-section node-selection">
+            <h3>Nodes</h3>
+            <app-node-filter [nodes]="nodes.collection" [compact]="true" (filteredNodes)="setNodes($event)" [showGroupByNodeType]="false"></app-node-filter>
+            <p>{{filteredNodes.length}} of {{nodes.collection.length}} nodes included</p>
+          </div>
+          <div class="sidebar-section">
+            <input class="metric-search" type="search" aria-label="Find a metric" placeholder="Find a metric" [(ngModel)]="metricSearch">
+            <label class="normalize-option"><input type="checkbox" [(ngModel)]="metricsViewModel.normalizeMetricsData" (ngModelChange)="updateViewMetric()"> Show capacity as a ratio</label>
+            <p>Select metrics from one group to compare their node values.</p>
+          </div>
+          @for (group of metricGroups; track group.name) {
+            @if (group.metrics.length) {
+              <section class="metric-group" [attr.aria-label]="group.name">
+                <h3>{{group.name}}</h3>
+                @for (metric of group.metrics; track metric.name) {
+                  <label class="metric-option" [class.checked]="metric.selected" [title]="metric.displayName">
+                    <input type="checkbox" [checked]="metric.selected" (change)="updateSelectedMetric(metric, group.name === 'Resource capacity' ? metricsViewModel.metricsWithCapacities : group.name === 'Load metrics' ? metricsViewModel.metricsWithoutCapacities : metricsViewModel.systemMetrics)">
+                    <span>{{metric.displayName}}</span>
+                    @if (metric.hasCapacity) { <small>{{metric.loadCapacityRatioString}}</small> }
+                  </label>
+                }
+              </section>
+            }
+          }
+          @if (metricSearch && !metricGroups[0].metrics.length && !metricGroups[1].metrics.length && !metricGroups[2].metrics.length) {
+            <p class="sidebar-empty">No matching metrics.</p>
+          }
+          <p class="metric-footnote">Count metrics exclude services that report custom metrics.</p>
+        </aside>
+        <div class="sidebar-resizer" role="separator" tabindex="0" aria-label="Resize metric selection panel" aria-orientation="vertical"
+          aria-controls="metric-selection-panel" aria-valuemin="320" aria-valuemax="680" [attr.aria-valuenow]="sidebarWidth"
+          (pointerdown)="startSidebarResize($event)" (pointermove)="resizeSidebar($event, metricsLayout)" (pointerup)="endSidebarResize($event)" (pointercancel)="endSidebarResize($event)"
+          (keydown)="keyboardSidebarResize($event, metricsLayout)"></div>
+      } @else {
       <div>
         <div>
           <label class="toggle-wrapper" aria-label="Hide metric chart options">
@@ -18,7 +55,7 @@
             </div>
             <div collapse-body>
               <label style="margin-top: 10px;">
-                <app-toggle [(state)]="metricsViewModel.normalizeMetricsData"></app-toggle> Normalize metric
+                <app-toggle [(state)]="metricsViewModel.normalizeMetricsData" (stateChange)="updateViewMetric()"></app-toggle> Normalize metric
                 data
               </label>
               <div class="metrics-column">
@@ -61,6 +98,7 @@
           </app-collapse-container>
         </div>
       </div>
+      }
       <div class="layout-container" data-cy="tabs">
         <div ngbNav #nav="ngbNav" [destroyOnHide]="false" class="nav-wrapper">
           <div [ngbNavItem]="1">
@@ -68,9 +106,16 @@
               Chart
             </a>
             <ng-template ngbNavContent>
+              @if (experience.isNew() && (loadingMetrics || !metricsViewModel.selectedMetrics.length || !tableData.categories.length || !hasChartValues)) {
+                <div class="metrics-empty" role="status">
+                  <strong>{{loadingMetrics ? 'Loading node metrics...' : !metricsViewModel.selectedMetrics.length ? 'Select a metric' : !filteredNodes.length ? 'No nodes match your filters' : 'No reported values for this selection'}}</strong>
+                  <p>{{loadingMetrics ? 'Fetching load information from the selected nodes.' : 'Choose a metric on the left or adjust the node filters.'}}</p>
+                </div>
+              } @else {
               <app-bar-chart class="dynamic-bar-chart" [xAxisCategories]="tableData.categories"
                 [dataSet]="tableData.dataPoints" [title]="tableData.title" [tooltip]="tableData.tooltipFunction">
               </app-bar-chart>
+              }
             </ng-template>
           </div>
           <div [ngbNavItem]="2">
