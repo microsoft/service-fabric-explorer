@@ -1,4 +1,4 @@
-import { TestBed, fakeAsync, tick, flush, discardPeriodicTasks } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
 
 import { RefreshService } from './refresh.service';
 import { StorageService } from './storage.service';
@@ -16,8 +16,9 @@ describe('RefreshService', () => {
   beforeEach(() => TestBed.configureTestingModule({}));
 
   afterEach(() => {
-    // Stop any auto-refresh interval a spec started so it can't tick after teardown (NG0911).
+    // Stop any auto-refresh interval a spec started so it can't leak into later tests.
     TestBed.inject(RefreshService).updateRefreshInterval('0');
+    vi.useRealTimers();
   });
 
   it('should be created', () => {
@@ -26,7 +27,8 @@ describe('RefreshService', () => {
   });
 
 
-  it('auto refresh', fakeAsync(() => {
+  it('auto refresh', () => {
+    vi.useFakeTimers();
     window.localStorage.setItem(Constants.AutoRefreshIntervalStorageKey, 'OFF');
 
     const service: RefreshService = TestBed.inject(RefreshService);
@@ -37,19 +39,17 @@ describe('RefreshService', () => {
 
     // A positive interval emits once immediately, then once per interval period.
     service.updateRefreshInterval('2');
-    tick(2000);
-    tick(2000);
+    vi.advanceTimersByTime(2000);
+    vi.advanceTimersByTime(2000);
 
     expect(emittedTicks).toEqual([0, 1, 2]);
 
-    // Stop the recurring interval so it can't fire after the module is destroyed (NG0911).
+    // Stop the recurring interval so it can't leak into later tests.
     service.updateRefreshInterval('OFF');
     subscription.unsubscribe();
-    discardPeriodicTasks();
-    flush();
-  }));
+  });
 
-  it('refresh all', (done) => {
+  it('refresh all', () => new Promise<void>((done) => {
     window.localStorage.setItem(Constants.AutoRefreshIntervalStorageKey, 'OFF');
 
     const service: RefreshService = TestBed.inject(RefreshService);
@@ -60,7 +60,7 @@ describe('RefreshService', () => {
     });
 
     service.refreshAll();
-  });
+  }));
 
   it('update refresh interval', async () => {
     window.localStorage.setItem(Constants.AutoRefreshIntervalStorageKey, '15');

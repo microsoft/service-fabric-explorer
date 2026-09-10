@@ -15,12 +15,16 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular/build:application",
           "options": {
-            "outputPath": "dist",
+            "outputPath": {
+              "base": "dist",
+              "browser": ""
+            },
             "index": "src/index.html",
             "polyfills": [
-              "src/polyfills.ts"
+              "@angular/localize/init",
+              "zone.js"
             ],
             "tsConfig": "tsconfig.app.json",
             "assets": [
@@ -36,22 +40,16 @@
             ],
             "allowedCommonJsDependencies": [
               "lodash",
-              "nouislider",
               "highcharts",
               "dayjs",
               "adal-angular",
-              "moment",
-              "vis-data"
+              "moment"
             ],
-            "scripts": [],
-            "stylePreprocessorOptions": {
-              "includePaths": []
-            },
             "extractLicenses": false,
             "sourceMap": true,
             "optimization": false,
             "namedChunks": true,
-            "main": "src/main.ts"
+            "browser": "src/main.ts"
           },
           "configurations": {
             "accesstesting": {
@@ -62,6 +60,10 @@
                 }
               ],
               "index": "src/index.html",
+              "outputPath": {
+                "base": "../Sfx-Proxy/wwwroot",
+                "browser": ""
+              },
               "outputHashing": "all",
               "namedChunks": false
             },
@@ -80,8 +82,8 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "2mb",
-                  "maximumError": "5mb"
+                  "maximumWarning": "3.3mb",
+                  "maximumError": "3.6mb"
                 },
                 {
                   "type": "anyComponentStyle",
@@ -89,12 +91,16 @@
                   "maximumError": "10kb"
                 }
               ]
+            },
+            "test": {
+              "polyfills": [
+                "@angular/localize/init"
+              ]
             }
-          },
-          "defaultConfiguration": ""
+          }
         },
         "serve": {
-          "builder": "ngx-build-plus:dev-server",
+          "builder": "@angular/build:dev-server",
           "options": {
             "buildTarget": "SfxWeb:build",
             "proxyConfig": "proxy.conf.json"
@@ -103,32 +109,20 @@
             "production": {
               "buildTarget": "SfxWeb:build:production"
             }
-          },
-          "allowedCommonJsDependencies": [
-            "lodash"
-          ]
+          }
         },
         "extract-i18n": {
-          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "builder": "@angular/build:extract-i18n",
           "options": {
             "buildTarget": "SfxWeb:build"
           }
         },
         "test": {
-          "builder": "@angular-devkit/build-angular:karma",
+          "builder": "@angular/build:unit-test",
           "options": {
-            "main": "src/test.ts",
-            "polyfills": "src/polyfills.ts",
+            "buildTarget": "SfxWeb:build:test",
             "tsConfig": "tsconfig.spec.json",
-            "karmaConfig": "karma.conf.js",
-            "assets": [
-              "src/favicon.ico",
-              "src/assets"
-            ],
-            "styles": [
-              "src/styles.scss"
-            ],
-            "scripts": []
+            "providersFile": "src/test-providers.ts"
           }
         },
         "lint": {

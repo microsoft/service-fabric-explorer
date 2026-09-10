@@ -54,7 +54,7 @@ export class DashboardTileComponent implements OnInit, AfterViewInit, OnChanges 
       enabled: false,
       animation: false,
       formatter() {
-        return `${this.point.name} : ${this.y}`;
+        return `${this.name} : ${this.y}`;
       }
     },
     credits: { enabled: false },

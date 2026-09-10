@@ -92,7 +92,7 @@ context('service', () => {
         }).as("deleteService");
 
         cy.get(".action-modal").within(() => {
-          cy.get('input').click();
+          cy.get('[data-cy=acknowledge]').check();
           cy.get("[data-cy=confirm]").click();
         })
 
@@ -119,7 +119,7 @@ context('service', () => {
         }).as("deleteService");
 
         cy.get(".action-modal").within(() => {
-          cy.get('input').click();
+          cy.get('[data-cy=acknowledge]').check();
           cy.get("[data-cy=confirm]").click();
         })
 

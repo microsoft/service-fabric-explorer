@@ -1,5 +1,6 @@
 import { Injectable, inject } from '@angular/core';
-import { Subject } from 'rxjs';
+import { Observable, Subject, forkJoin, of } from 'rxjs';
+import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { IRawSafetyCheckDescription } from 'src/app/Models/RawDataTypes';
 import { DataService } from 'src/app/services/data.service';
 import { MessageService, MessageSeverity } from 'src/app/services/message.service';
@@ -33,45 +34,50 @@ export class PartitionCacheService {
 
   }
 
-  async getPartitionInfo(id: string, check: IRawSafetyCheckDescription) {
+  getPartitionInfo(id: string, check: IRawSafetyCheckDescription): Observable<IPartitionData> {
     this.partitions[id].loading = 'inflight';
 
-    try {
-      const partition = await this.restClientService.getPartitionById(id).toPromise();
-      const serviceName = await this.restClientService.getServiceNameInfo(id).toPromise();
-      const applicationName = await this.restClientService.getApplicationNameInfo(serviceName.Id).toPromise();
+    return forkJoin({
+      partition: this.restClientService.getPartitionById(id),
+      serviceName: this.restClientService.getServiceNameInfo(id),
+    }).pipe(
+      switchMap(({ partition, serviceName }) =>
+        this.restClientService.getApplicationNameInfo(serviceName.Id).pipe(
+          switchMap(applicationName => {
+            const app$ = applicationName.Id === 'System'
+              ? this.dataService.getSystemApp()
+              : this.dataService.getApp(applicationName.Id);
 
-      let app;
-      if (applicationName.Id === 'System') {
-        app = await this.dataService.getSystemApp().toPromise();
-      }else {
-        app = await this.dataService.getApp(applicationName.Id).toPromise();
-      }
+            return app$.pipe(
+              map(app => {
+                this.partitions[id] = {
+                  ...check,
+                  serviceName: serviceName.Id,
+                  applicationName: applicationName.Id,
+                  partition: partition.PartitionInformation.Id,
+                  link: RoutesService.getPartitionViewPath(app.raw.TypeName, applicationName.Id,
+                    serviceName.Id, partition.PartitionInformation.Id),
+                  applicationLink: RoutesService.getAppViewPath(app.raw.TypeName, applicationName.Id),
+                  serviceLink: RoutesService.getServiceViewPath(app.raw.TypeName, applicationName.Id, serviceName.Id),
+                  loading: 'loaded',
+                };
 
-      const route =  RoutesService.getPartitionViewPath(app.raw.TypeName, applicationName.Id,
-        serviceName.Id, partition.PartitionInformation.Id);
+                return this.partitions[id];
+              })
+            );
+          })
+        )
+      ),
+      catchError(() => {
+        this.messageService.showMessage('There was an issue getting partition info', MessageSeverity.Err);
+        this.partitions[id] = {
+          ...check,
+          loading: 'failed',
+        };
 
-      this.partitions[id] = {
-        ...check,
-        serviceName: serviceName.Id,
-        applicationName: applicationName.Id,
-        partition: partition.PartitionInformation.Id,
-        link: route,
-        applicationLink: RoutesService.getAppViewPath(app.raw.TypeName, applicationName.Id),
-        serviceLink: RoutesService.getServiceViewPath(app.raw.TypeName, applicationName.Id, serviceName.Id),
-        loading: 'loaded',
-      };
-
-    } catch {
-      this.messageService.showMessage('There was an issue getting partition info', MessageSeverity.Err);
-      this.partitions[id] = {
-        ...check,
-        loading: 'failed',
-      };
-    }
-
-    this.partitionDataChanges.next(id);
-
-    return this.partitions[id];
+        return of(this.partitions[id]);
+      }),
+      tap(() => this.partitionDataChanges.next(id)),
+    );
   }
 }

@@ -1,11 +1,9 @@
 import { defineConfig } from 'cypress'
 
 export default defineConfig({
-  env: {
-    coverage: false,
-    API_PREFIX: '',
-  },
+  allowCypressEnv: false,
   expose: {
+    coverage: false,
     API_PREFIX: '',
   },
   requestTimeout: 10000,
@@ -16,10 +14,9 @@ export default defineConfig({
   viewportWidth: 1600,
   viewportHeight: 1000,
   e2e: {
-    // We've imported your old cypress plugins here.
-    // You may want to clean this up later by importing these.
     setupNodeEvents(on, config) {
-      return require('./cypress/plugins/index.js')(on, config)
+      require('@cypress/code-coverage/task')(on, config)
+      return config
     },
     baseUrl: 'http://localhost:3000',
   },

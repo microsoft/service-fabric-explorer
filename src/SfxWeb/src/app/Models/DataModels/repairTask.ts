@@ -250,7 +250,7 @@ export class RepairTask extends DataModelBase<IRawRepairTask> implements IRCAIte
           return this.dataService.getNode(id, true).pipe(catchError(err => { console.log(err); return of(null) }));
         })).pipe(
           map(nodes => nodes.filter((node): node is Node => !!node)),
-          defaultIfEmpty<Node[]>([]),
+          defaultIfEmpty<Node[], Node[]>([]),
         ).subscribe((data: Node[]) => {
           const nodesWithSeedNodeWarnings = data.filter(node => DeactivationUtils.hasSeedNodeSafetyCheck(node.raw.NodeDeactivationInfo));
           const nodesWithSafetyChecks = data.filter(node => node.raw.NodeDeactivationInfo.PendingSafetyChecks.length > 0);

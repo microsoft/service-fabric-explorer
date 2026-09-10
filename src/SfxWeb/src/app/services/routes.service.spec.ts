@@ -2,12 +2,12 @@ import { TestBed } from '@angular/core/testing';
 import { Location } from '@angular/common';
 
 import { RoutesService } from './routes.service';
-import { provideRouter, Routes, Router } from '@angular/router';
+import { provideRouter, Routes, Router, RouterOutlet } from '@angular/router';
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 @Component({
     template: `<router-outlet></router-outlet>`,
     changeDetection: ChangeDetectionStrategy.Eager,
-    standalone: false
+    imports: [RouterOutlet]
 })
 export class AppComponent {
 }
@@ -16,9 +16,7 @@ const routes: Routes = [
   { path: '', loadChildren: () => import(`./routes.service.testData`).then(m => m.ApplicationModule2) },
   ];
 
-// Quarantined under Karma: these lazy loadChildren + setTimeout redirect specs race Angular 22's
-// TestBed teardown (NG0205) and are not deterministically drainable under Karma. Re-enabled under Vitest.
-xdescribe('RoutesService', () => {
+describe('RoutesService', () => {
   let location: Location;
   let router: Router;
   let fixture;
@@ -26,7 +24,7 @@ xdescribe('RoutesService', () => {
   beforeEach(() => {
 
     TestBed.configureTestingModule({
-      declarations: [AppComponent],
+      imports: [AppComponent],
       providers: [provideRouter(routes)]
     });
 
