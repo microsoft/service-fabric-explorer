@@ -30,9 +30,11 @@ interface NavigatorTrack {
 })
 export class EventNavigatorComponent implements OnChanges, AfterViewInit, OnDestroy {
   @Input() events!: ITimelineData;
+  @Input() heading = 'Event navigator';
   @Input() inspectLabel = 'Open in event table';
   @Output() inspectEvent = new EventEmitter<string>();
   @ViewChild('plot') plot!: ElementRef<HTMLElement>;
+  @ViewChild('timeline') timeline!: ElementRef<HTMLElement>;
   private readonly cdr = inject(ChangeDetectorRef);
   private observer?: ResizeObserver;
   private all: NavigatorEvent[] = [];
@@ -42,6 +44,8 @@ export class EventNavigatorComponent implements OnChanges, AfterViewInit, OnDest
   private queryEnd?: number;
   private drag?: { id: number; x: number; start: number; end: number };
   private moved = false;
+  private panelDrag?: { id: number; x: number; width: number; percent: number };
+  public timelinePercent = 60;
   public search = '';
   public utc = true;
   public selected?: NavigatorEvent;
@@ -55,6 +59,7 @@ export class EventNavigatorComponent implements OnChanges, AfterViewInit, OnDest
   public visibleCount = 0;
   public brush?: { x: number; width: number; from: number; to: number };
   public announcement = '';
+  public timelineHeight?: number;
 
   ngOnChanges() {
     const root = document.createElement('div');
@@ -115,11 +120,17 @@ export class EventNavigatorComponent implements OnChanges, AfterViewInit, OnDest
 
   ngAfterViewInit() {
     this.observer = new ResizeObserver(entries => {
-      this.width = Math.max(1, entries[0].contentRect.width);
-      this.layout();
+      for (const entry of entries) {
+        if (entry.target === this.plot.nativeElement) {
+          this.width = Math.max(1, entry.contentRect.width);
+          this.layout();
+        }
+      }
+      this.timelineHeight = this.timeline.nativeElement.getBoundingClientRect().height;
       this.cdr.markForCheck();
     });
     this.observer.observe(this.plot.nativeElement);
+    this.observer.observe(this.timeline.nativeElement);
   }
 
   ngOnDestroy() { this.observer?.disconnect(); }
@@ -228,6 +239,34 @@ export class EventNavigatorComponent implements OnChanges, AfterViewInit, OnDest
     else if (event.key === '+' || event.key === '=') { this.zoom(0.5); }
     else if (event.key === '-') { this.zoom(2); }
     else if (event.key === 'Home') { this.focusEvents(); }
+    else { return; }
+    event.preventDefault();
+    event.stopPropagation();
+  }
+
+  public resizePanels(event: PointerEvent) {
+    const handle = event.currentTarget as HTMLElement;
+    if (event.type === 'pointerdown') {
+      if (event.button !== 0) { return; }
+      this.panelDrag = { id: event.pointerId, x: event.clientX, width: handle.parentElement!.clientWidth, percent: this.timelinePercent };
+      handle.setPointerCapture(event.pointerId);
+      handle.focus({ preventScroll: true });
+      event.preventDefault();
+    } else if (this.panelDrag?.id === event.pointerId) {
+      if (event.type === 'pointermove') {
+        this.timelinePercent = Math.max(40, Math.min(70, this.panelDrag.percent + (event.clientX - this.panelDrag.x) / this.panelDrag.width * 100));
+      } else {
+        this.panelDrag = undefined;
+        if (handle.hasPointerCapture(event.pointerId)) { handle.releasePointerCapture(event.pointerId); }
+      }
+    }
+  }
+
+  public resizePanelsKey(event: KeyboardEvent) {
+    if (event.key === 'ArrowLeft') { this.timelinePercent = Math.max(40, this.timelinePercent - 2); }
+    else if (event.key === 'ArrowRight') { this.timelinePercent = Math.min(70, this.timelinePercent + 2); }
+    else if (event.key === 'Home') { this.timelinePercent = 40; }
+    else if (event.key === 'End') { this.timelinePercent = 70; }
     else { return; }
     event.preventDefault();
     event.stopPropagation();

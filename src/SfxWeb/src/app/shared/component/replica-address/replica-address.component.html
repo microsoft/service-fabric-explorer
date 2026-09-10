@@ -2,7 +2,7 @@
   <div class="detail-pane">
     <h2>Address</h2>
     @if (!isString) {
-      <app-detail-view-part noFixedLayout="true" [data]="address" [useLink]="true"></app-detail-view-part>
+      <app-detail-view-part noFixedLayout="true" [data]="address" [useLink]="true" [tableView]="true"></app-detail-view-part>
     }
     @if (isString) {
       <span>{{address}}</span>

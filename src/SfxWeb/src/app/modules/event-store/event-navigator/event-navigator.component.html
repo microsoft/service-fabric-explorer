@@ -1,6 +1,7 @@
-<section class="navigator" aria-label="Event timeline navigator" (keydown)="key($event)">
+<div class="navigator-layout" [class.has-selection]="!!selected" [style.--timeline-width]="timelinePercent + '%'" (keydown)="key($event)">
+  <section #timeline class="navigator navigator-main" aria-label="Event timeline navigator">
   <header class="heading">
-    <div><h2>Event navigator</h2></div>
+    <div><h2>{{heading}}</h2></div>
   </header>
 
   <div class="tools">
@@ -45,13 +46,19 @@
   </div>
 
   <footer class="chart-footer"><span><b>{{visibleCount}}</b> of {{count}} events in view</span><span>Drag to zoom <i>·</i> Click to inspect <i>·</i> No data is changed</span></footer>
+  </section>
 
   @if (selected; as event) {
-    <section class="inspector" aria-label="Navigator event details">
+    <div class="panel-resizer" role="separator" tabindex="0" aria-label="Resize event navigator and selected event" aria-orientation="vertical"
+      aria-valuemin="40" aria-valuemax="70" [attr.aria-valuenow]="timelinePercent" [attr.aria-valuetext]="'Timeline width ' + timelinePercent.toFixed(0) + ' percent'"
+      title="Drag or use Left and Right arrow keys to resize"
+      (pointerdown)="resizePanels($event)" (pointermove)="resizePanels($event)" (pointerup)="resizePanels($event)" (pointercancel)="resizePanels($event)" (lostpointercapture)="resizePanels($event)"
+      (keydown)="resizePanelsKey($event)"></div>
+    <section class="inspector" [style.height.px]="timelineHeight" aria-label="Navigator event details">
       <div class="inspector-heading"><div><span class="eyebrow">SELECTED EVENT</span><h3>{{event.name}}</h3></div><button type="button" class="icon" aria-label="Close event inspector" (click)="selected = undefined">&times;</button></div>
       <div class="event-meta"><span>{{timestamp(event.start, true)}} {{utc ? 'UTC' : 'Local'}}</span><span>{{duration(event.end - event.start)}}</span>@if (inspectEvent.observers.length) { <button type="button" class="text-action" (click)="inspectEvent.emit('' + event.id)">{{inspectLabel}} &rarr;</button> }</div>
       @if (event.facts.length) { <div class="inspector-properties" tabindex="0" role="region" aria-label="Selected event properties"><dl>@for (fact of event.facts; track $index) { <div><dt>{{fact.name}}</dt><dd>{{fact.value}}</dd></div> }</dl></div> }
     </section>
   }
   <span class="sr-only" aria-live="polite">{{announcement}}</span>
-</section>
+</div>

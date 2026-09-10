@@ -1,5 +1,27 @@
 @if (replica) {
-  <div>
+  <div class="replica-essentials">
+    @if (experience.isNew()) {
+      @if (replica.isInitialized) {
+        <section class="replica-summary detail-pane essen-pane" aria-label="Replica summary">
+          <header><h2>Overview</h2><span class="replica-health" [attr.data-health]="replica.healthState.badgeClass">{{replica.healthState.text}}</span></header>
+          <dl>
+            @for (item of essentialItems; track item.descriptionName) {
+              @if (item.descriptionName) {
+                <div class="replica-property">
+                  <dt>{{item.descriptionName}}</dt>
+                  <dd>
+                    @if (item.selectorName === 'nodeName') { <a [routerLink]="replica.nodeViewPath">{{replica.raw.NodeName}}</a> }
+                    @else { <span>{{item.displayText}}</span> }
+                    @if (item.copyTextValue) { <app-clip-board [text]="item.copyTextValue" [name]="item.descriptionName"></app-clip-board> }
+                  </dd>
+                </div>
+              }
+            }
+          </dl>
+          @if (nodeView) { <a class="replica-node-link" [routerLink]="nodeView">View on Node</a> }
+        </section>
+      }
+    } @else {
     <div class="tile-container">
       @if (replica && replica.isInitialized) {
         <app-essential-health-tile [healthState]="$safeNavigationMigration(replica?.healthState)"
@@ -16,6 +38,7 @@
         </app-essential-health-tile>
       }
     </div>
+    }
     @if (replica.address) {
       <div class="detail-pane essen-pane" data-cy="address">
         <app-replica-address [address]="replica.address"></app-replica-address>

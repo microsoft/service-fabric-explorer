@@ -12,6 +12,7 @@ import { DetailListTemplatesModule } from '../detail-list-templates/detail-list-
 import { TimeseriesItemComponent } from './timeseries-item/timeseries-item.component';
 import { NamingViewerComponent } from './naming-viewer/naming-viewer.component';
 import { FormsModule } from '@angular/forms';
+import { EventNavigatorComponent } from '../event-store/event-navigator/event-navigator.component';
 
 @NgModule({
   declarations: [
@@ -25,6 +26,7 @@ import { FormsModule } from '@angular/forms';
     NamingViewerComponent
   ],
   imports: [
+    EventNavigatorComponent,
     CommonModule,
     SharedModule,
     NgbNavModule,

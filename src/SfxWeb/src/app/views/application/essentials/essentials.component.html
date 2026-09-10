@@ -24,9 +24,15 @@
 </div>
 
 @if (eventStoreHandler) {
-  <app-collapse-container class="essen-pane detail-pane" sectionName="Recent Application and Container Exit Event Reasons">
-    <h2 collapse-header>Recent Application and Container Exit Event Reasons</h2>
+  <app-collapse-container class="essen-pane detail-pane" [sectionName]="experience.isNew() ? 'Recent exit events' : 'Recent Application and Container Exit Event Reasons'">
+    <h2 collapse-header>{{experience.isNew() ? 'Recent exit events' : 'Recent Application and Container Exit Event Reasons'}}</h2>
     <div collapse-body>
+      @if (experience.isNew()) {
+        <div class="exit-links">
+          <a routerLink="./events">All application events</a>
+          <a href="https://docs.microsoft.com/azure/service-fabric/service-fabric-diagnostics-code-package-errors" target="_blank" rel="noopener noreferrer">About exit events</a>
+        </div>
+      } @else {
       <div style="margin-left: 30px">
         <a routerLink="./events">
           <i class="mif-link"></i>
@@ -40,6 +46,7 @@
           learn more about exit events
         </a>
       </div>
+      }
       @if (eventStoreHandler.eventsList.isRefreshing) {
         <div>
           Loading information about any recent Application Process Exit or Container Exit Events
@@ -48,7 +55,7 @@
       @if (eventStoreHandler.eventsList.isInitialized && highValueEvents) {
         <div>
           @if (highValueEvents.length > 0) {
-            <div style="min-height: 200px">
+            <div [style.min-height.px]="experience.isNew() ? null : 200">
               <app-rca-summary [events]="highValueEvents"></app-rca-summary>
             </div>
           }

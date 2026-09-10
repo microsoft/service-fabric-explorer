@@ -4,6 +4,7 @@ import { Observable, forkJoin } from 'rxjs';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { SettingsService } from 'src/app/services/settings.service';
 import { NodeBaseControllerDirective } from '../NodeBase';
+import { ExperienceService } from 'src/app/services/experience.service';
 
 @Component({
     selector: 'app-details',
@@ -13,6 +14,7 @@ import { NodeBaseControllerDirective } from '../NodeBase';
     standalone: false
 })
 export class DetailsComponent extends NodeBaseControllerDirective {
+  public experience = inject(ExperienceService);
   protected data: DataService = inject(DataService);
   private settings = inject(SettingsService);
 

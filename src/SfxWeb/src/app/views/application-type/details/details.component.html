@@ -1,3 +1,28 @@
+@if (experience.isNew()) {
+  <div class="resource-details-layout">
+    @if (appTypeGroup) {
+      @for (appType of appTypeGroup.appTypes; track appType) {
+        <section class="resource-detail-card" aria-label="Package Versions">
+          <header class="resource-detail-header"><h2>Package Versions</h2></header>
+          <div class="resource-detail-body">
+            <app-detail-view-part [data]="{ Name: appType.raw.Name, Version: appType.raw.Version }"></app-detail-view-part>
+            @for (service of appType.serviceTypes.collection; track service) {
+              <details class="resource-package-group">
+                <summary>{{service.raw.ServiceManifestName}} · {{service.raw.ServiceManifestVersion}}</summary>
+                <div class="resource-package-table" tabindex="0" role="region" aria-label="Packages">
+                  <table>
+                    <thead><tr><th scope="col">Type</th><th scope="col">Name</th><th scope="col">Version</th></tr></thead>
+                    <tbody>@for (package of service.manifest.packages; track package) { <tr><td>{{package.Type}}</td><td>{{package.Name}}</td><td>{{package.Version}}</td></tr> }</tbody>
+                  </table>
+                </div>
+              </details>
+            }
+          </div>
+        </section>
+      }
+    }
+  </div>
+} @else {
 <h2 style="font-size: var(--font-size-large);">
   Package Versions
 </h2>
@@ -69,3 +94,4 @@
     </div>
   }
 </div>
+}

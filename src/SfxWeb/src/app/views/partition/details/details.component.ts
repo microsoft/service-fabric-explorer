@@ -4,6 +4,7 @@ import { DataService } from 'src/app/services/data.service';
 import { SettingsService } from 'src/app/services/settings.service';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { PartitionBaseControllerDirective } from '../PartitionBase';
+import { ExperienceService } from 'src/app/services/experience.service';
 
 @Component({
     selector: 'app-details',
@@ -13,6 +14,7 @@ import { PartitionBaseControllerDirective } from '../PartitionBase';
     standalone: false
 })
 export class DetailsComponent extends PartitionBaseControllerDirective {
+  public experience = inject(ExperienceService);
   protected data: DataService = inject(DataService);
   private settings = inject(SettingsService);
 

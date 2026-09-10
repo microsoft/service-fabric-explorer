@@ -1,7 +1,8 @@
-import { Component, Input, OnChanges, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Input, OnChanges, ChangeDetectionStrategy, inject } from '@angular/core';
 import { IConcurrentEvents } from 'src/app/Models/eventstore/rcaEngine';
 import { RelatedEventsConfigs } from 'src/app/Models/eventstore/RelatedEventsConfigs';
 import { Utils } from 'src/app/Utils/Utils';
+import { ExperienceService } from 'src/app/services/experience.service';
 
 @Component({
     selector: 'app-rca-summary',
@@ -11,6 +12,7 @@ import { Utils } from 'src/app/Utils/Utils';
     standalone: false
 })
 export class RcaSummaryComponent implements OnChanges {
+  public experience = inject(ExperienceService);
 
   @Input() events: IConcurrentEvents[] = [];
 

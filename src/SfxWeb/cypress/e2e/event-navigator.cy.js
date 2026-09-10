@@ -36,8 +36,17 @@ describe('Independent event navigator', () => {
     cy.get(`${navigator} .inspector`).should('not.exist');
     cy.get(`${navigator} .mark`).first().click();
     cy.get(`${navigator} .inspector`).should('contain', 'Node Added To Cluster').and('contain', 'test-node-0');
-    cy.get(`${navigator} .inspector-properties dd`).first().should('have.css', 'white-space', 'pre').and('have.css', 'width').then(width => expect(parseFloat(width)).to.be.at.least(320));
-    cy.get(`${navigator} .inspector-properties`).should('have.css', 'resize', 'vertical');
+    cy.get(`${navigator} .inspector-properties dt, ${navigator} .inspector-properties dd`).each(element => {
+      expect(element).to.have.css('font-size', '15px');
+      expect(element).to.have.css('font-weight', '400');
+    });
+    cy.get(`${navigator} .inspector-properties`).should(properties => {
+      expect(properties).to.have.css('resize', 'none');
+      expect(properties).to.have.css('max-height', 'none');
+      expect(properties).to.have.css('scrollbar-width', 'none');
+      expect(properties[0].scrollWidth).to.be.at.most(properties[0].clientWidth + 1);
+      expect(properties[0].scrollHeight).to.be.at.most(properties[0].clientHeight + 1);
+    });
     cy.get(`${navigator} [aria-label="Close event inspector"]`).click({ scrollBehavior: 'center' });
     cy.get(`${navigator} .inspector`).should('not.exist');
   });
@@ -54,6 +63,13 @@ describe('Independent event navigator', () => {
   });
 
   it('filters locally and recovers from no matches', () => {
+    cy.get(`${navigator} .search`).should('have.css', 'border-top-width', '1px');
+    cy.get(`${navigator} .search input`).should(input => {
+      expect(input).to.have.css('border-top-width', '0px');
+      expect(input).to.have.css('box-shadow', 'none');
+    }).focus();
+    cy.get(`${navigator} .search`).should('have.css', 'outline-width', '2px');
+    cy.get(`${navigator} .search input`).should('have.css', 'outline-style', 'none');
     cy.get(`${navigator} input`).type('test-node-3');
     cy.get(`${navigator} .mark`).should('have.length', 1);
     cy.get(`${navigator} input`).clear().type('no-such-event');
@@ -90,6 +106,67 @@ describe('Independent event navigator', () => {
       expect(mark[0].getBoundingClientRect().height).to.be.at.least(28);
     }).click();
     cy.get(`${navigator} .inspector`).should('be.visible');
+    cy.get(`${navigator} .inspector, ${navigator} .inspector-properties`).each(element => {
+      expect(element[0].scrollWidth).to.be.at.most(element[0].clientWidth + 1);
+      expect(element[0].scrollHeight).to.be.at.most(element[0].clientHeight + 1);
+    });
+  });
+
+  it('docks the inspector only when the navigator itself is wide enough', () => {
+    cy.viewport(2400, 1200);
+    cy.get(`${navigator} .mark`).first().click();
+    cy.get(`${navigator} .navigator-main`).then(main => {
+      cy.get(`${navigator} .inspector`).should(inspector => {
+        expect(inspector[0].getBoundingClientRect().left - main[0].getBoundingClientRect().right).to.be.at.least(16);
+        expect(inspector[0].parentElement).to.equal(main[0].parentElement);
+        expect(inspector[0].closest('.navigator')).to.equal(null);
+        expect(inspector[0].getBoundingClientRect().top).to.equal(main[0].getBoundingClientRect().top);
+        expect(inspector[0].getBoundingClientRect().height).to.be.closeTo(main[0].getBoundingClientRect().height, 1);
+        expect(inspector[0].scrollWidth).to.be.at.most(inspector[0].clientWidth + 1);
+        expect(inspector[0].scrollHeight).to.be.at.most(inspector[0].clientHeight + 1);
+      });
+    });
+    cy.viewport(1000, 1000);
+    cy.get(`${navigator} .navigator-main`).then(main => {
+      cy.get(`${navigator} .inspector`).should(inspector => {
+        expect(inspector[0].getBoundingClientRect().top - main[0].getBoundingClientRect().bottom).to.be.at.least(16);
+        expect(inspector[0].getBoundingClientRect().height).to.be.closeTo(main[0].getBoundingClientRect().height, 1);
+      });
+    });
+    cy.get(`${navigator} [aria-label="Close event inspector"]`).click({ scrollBehavior: 'center' });
+    cy.get(`${navigator} .navigator-layout`).should('not.have.class', 'has-selection');
+  });
+
+  it('resizes the cards with pointer and keyboard without changing the time window', () => {
+    cy.viewport(2400, 1200);
+    cy.get(`${navigator} .mark`).first().click();
+    cy.get(`${navigator} .window-caption`).invoke('text').then(caption => {
+      cy.get(`${navigator} .inspector`).invoke('outerWidth').then(before => {
+        cy.get(`${navigator} .panel-resizer`).should('be.visible').then(handle => {
+          const rect = handle[0].getBoundingClientRect();
+          const options = { pointerId: 1, button: 0, eventConstructor: 'PointerEvent', clientY: rect.top + 30, clientX: rect.left + 8 };
+          cy.wrap(handle).trigger('pointerdown', options);
+          cy.wrap(handle).trigger('pointermove', { ...options, clientX: options.clientX - 150 });
+          cy.wrap(handle).trigger('pointerup', { ...options, clientX: options.clientX - 150 });
+        });
+        cy.get(`${navigator} .inspector`).should(inspector => expect(inspector.outerWidth()).to.be.greaterThan(before + 100));
+      });
+      cy.get(`${navigator} .panel-resizer`).focus().type('{home}').should('have.attr', 'aria-valuenow', '40');
+      cy.get(`${navigator} .panel-resizer`).type('{leftarrow}').should('have.attr', 'aria-valuenow', '40');
+      cy.get(`${navigator} .panel-resizer`).type('{end}{rightarrow}').should('have.attr', 'aria-valuenow', '70');
+      cy.get(`${navigator} .panel-resizer`).type('{leftarrow}').should('have.attr', 'aria-valuenow', '68');
+      cy.get(`${navigator} .navigator-layout`).should(layout => {
+        const main = layout[0].querySelector('.navigator-main').getBoundingClientRect();
+        const inspector = layout[0].querySelector('.inspector').getBoundingClientRect();
+        expect(inspector.height).to.be.closeTo(main.height, 1);
+        expect(layout[0].scrollWidth).to.be.at.most(layout[0].clientWidth + 1);
+      });
+      cy.get(`${navigator} .window-caption`).should('have.text', caption);
+    });
+    cy.viewport(390, 1000);
+    cy.get(`${navigator} .panel-resizer`).should('not.be.visible');
+    cy.get(`${navigator} [aria-label="Close event inspector"]`).click({ scrollBehavior: 'center' });
+    cy.get(`${navigator} .panel-resizer`).should('not.exist');
   });
 
   it('switches between the new navigator and the original timeline', () => {

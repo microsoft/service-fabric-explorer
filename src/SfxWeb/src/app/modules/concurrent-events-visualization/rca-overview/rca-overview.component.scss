@@ -9,3 +9,14 @@
 h3 {
   font-size: var(--font-size-large);
 }
+
+.exit-overview { font: 15px/1.5 var(--font-family-ui); color: #e6edf3; }
+.exit-reasons p { color: #8b949e; }
+.exit-reasons { margin-top: 16px; }
+.exit-reasons h4 { font-size: 16px; margin: 0; }
+.exit-reasons p { margin: 6px 0 12px; }
+.exit-reason { display: grid; grid-template-columns: 90px minmax(0, 1fr) auto; align-items: start; gap: 16px; padding: 12px 0; border-top: 1px solid #30363d; }
+.reason-label { color: #8b949e; white-space: nowrap; }
+.reason-text { overflow-wrap: break-word; }
+.reason-count { white-space: nowrap; color: #c9d1d9; }
+@media (max-width: 600px) { .exit-reason { grid-template-columns: minmax(0, 1fr) auto; gap: 8px; }.reason-text { grid-column: 1 / -1; grid-row: 2; } }

@@ -1,4 +1,5 @@
-import { Component, Input, OnChanges, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Input, OnChanges, ChangeDetectionStrategy, inject } from '@angular/core';
+import { ExperienceService } from 'src/app/services/experience.service';
 import { HtmlUtils } from 'src/app/Utils/HtmlUtils';
 import { Constants } from 'src/app/Common/Constants';
 import { Utils } from 'src/app/Utils/Utils';
@@ -27,9 +28,26 @@ export class ResolvedObject {
     standalone: false
 })
 export class DetailViewPartComponent implements OnChanges {
+  public experience = inject(ExperienceService);
+
+  public arrayColumns(rows: ResolvedObject[]): string[] {
+    const columns = new Set<string>();
+    rows.forEach(row => Object.keys(row || {}).forEach(key => columns.add(key)));
+    return [...columns];
+  }
+
+  public hasNestedRecords(rows: ResolvedObject[]): boolean {
+    return rows.some(row => Object.keys(row || {}).some(key => ['Object', 'Array'].includes(this.getResolvedPropertyType(row[key]))));
+  }
+
+  public recordLabel(record: ResolvedObject, index: number): string {
+    const key = ['Replica Id', 'Instance Id', 'Node Name', 'Name', 'Id'].find(name => record?.[name] !== undefined);
+    return key ? `${key.replace(/ Id$/, '')} ${record[key]}` : `Record ${index + 1}`;
+  }
 
   @Input() noFixedLayout = false;
   @Input() useLink = false;
+  @Input() tableView = false;
 
   resolvedData: any;
 

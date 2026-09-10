@@ -14,21 +14,38 @@
   --badge-error: #f85149;
   color-scheme: dark;
   display: block;
+  container: event-navigator / inline-size;
   margin-bottom: 16px;
   color: var(--font-primary-color);
   font: 15px/1.5 var(--font-family-ui);
 }
 * { box-sizing: border-box; }
-.navigator {
+.navigator-layout {
   --muted: var(--font-accent-color);
   --line: var(--accent-underline);
   --focus: var(--accent-lightblue);
   --header-surface: #161b22;
   --plot-surface: #0d1117;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+.navigator {
   background: var(--primary-background-color);
   border: 1px solid var(--line);
   border-radius: 6px;
   overflow: hidden;
+}
+.navigator-main { min-width: 0; }
+.inspector { min-width: 0; }
+.panel-resizer { display: none; align-self: stretch; position: relative; cursor: col-resize; touch-action: none; user-select: none; }
+.panel-resizer::after { content: ''; position: absolute; top: 0; bottom: 0; left: 7px; width: 2px; border-radius: 2px; background: var(--line); }
+.panel-resizer:hover::after, .panel-resizer:focus-visible::after { background: var(--focus); }
+.panel-resizer:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px; border-radius: 3px; }
+@container event-navigator (min-width: 1400px) {
+  .navigator-layout.has-selection { grid-template-columns: minmax(0, calc(var(--timeline-width) - 8px)) 16px minmax(0, 1fr); column-gap: 0; }
+  .panel-resizer { display: block; }
 }
 .heading { padding: 20px 24px 16px; background: var(--header-surface); }
 .eyebrow { font-size: 15px; letter-spacing: .1em; color: var(--muted); font-weight: 600; }
@@ -41,7 +58,9 @@ button:disabled { opacity: .4; cursor: default; }
 button:focus-visible, input:focus-visible, select:focus-visible, .chart:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 .search { display: flex; align-items: center; gap: 8px; background: var(--accent-background-color); border: 1px solid var(--line); border-radius: 4px; padding: 0 10px; margin: 0; flex: 1 1 240px; max-width: 360px; }
 .search svg { flex-shrink: 0; color: var(--muted); }
-.search input { width: 100%; min-width: 0; background: transparent; border: 0; padding: 9px 0; }
+.search:focus-within { outline: 2px solid var(--focus); outline-offset: 2px; }
+// The wrapper owns the border and focus ring, including under shared form styles.
+.search input { width: 100%; min-width: 0; background: transparent !important; border: 0 !important; border-radius: 0 !important; box-shadow: none !important; outline: none !important; padding: 9px 0 !important; }
 .search input::placeholder { color: var(--font-placeholder-color); }
 .navigation { display: flex; align-items: center; gap: 2px; border: 1px solid var(--line); background: #21262d; border-radius: 6px; padding: 2px; }
 .separator { width: 1px; height: 18px; background: var(--line); margin: 0 4px; }
@@ -82,19 +101,22 @@ button:focus-visible, input:focus-visible, select:focus-visible, .chart:focus-vi
 .chart-footer { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; padding: 12px 24px; color: var(--muted); border-top: 1px solid var(--line); font-size: 15px; }
 .chart-footer b { color: var(--font-primary-color); }
 .chart-footer i { padding: 0 8px; font-style: normal; }
-.inspector { margin: 0 16px 16px; border: 1px solid var(--line); border-radius: 6px; background: var(--accent-background-color); padding: 16px; }
-.inspector-heading { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.inspector { display: flex; flex-direction: column; overflow: hidden; margin: 0; border: 1px solid var(--line); border-radius: 6px; background: var(--accent-background-color); padding: 16px; }
+.inspector-heading { display: flex; flex-shrink: 0; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.inspector-heading > div { min-width: 0; overflow-wrap: anywhere; }
+.inspector-heading .icon { flex-shrink: 0; }
 h3 { margin: 4px 0 0; font-size: 16px; line-height: 1.4; font-weight: 600; color: var(--font-primary-color); }
-.event-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; color: var(--muted); font-size: 15px; margin-top: 8px; }
+.event-meta { display: flex; flex-shrink: 0; flex-wrap: wrap; align-items: center; gap: 16px; color: var(--muted); font-size: 15px; margin-top: 8px; }
 .text-action { margin-left: auto; padding: 4px 0; color: var(--link-color); }
 .text-action:hover { background: transparent; text-decoration: underline; }
-.inspector-properties { margin-top: 12px; max-height: 420px; min-height: 100px; overflow: auto; resize: vertical; border-top: 1px solid var(--line); }
+.inspector-properties { min-height: 0; overflow: auto; scrollbar-width: none; margin-top: 10px; border-top: 1px solid var(--line); }
+.inspector-properties::-webkit-scrollbar { display: none; }
 .inspector-properties:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
-.inspector-properties dl { margin: 0; min-width: 100%; width: max-content; }
-.inspector-properties dl > div { display: grid; grid-template-columns: 260px minmax(320px, 1fr); gap: 20px; padding: 9px 0; border-bottom: 1px solid var(--line); }
-.inspector-properties dt, .inspector-properties dd { display: block; width: auto; min-width: 0; margin: 0; font-size: 15px; white-space: pre; overflow-wrap: normal; word-break: normal; }
+.inspector-properties dl { margin: 0; width: 100%; }
+.inspector-properties dl > div { display: grid; grid-template-columns: minmax(0, 30%) minmax(0, 1fr); gap: 12px; padding: 5px 0; border-bottom: 1px solid var(--line); }
+.inspector-properties dt, .inspector-properties dd { display: block; width: auto; min-width: 0; margin: 0; font-size: 15px; line-height: 1.45; white-space: pre-wrap; overflow-wrap: anywhere; word-break: normal; font-weight: 400; }
 .inspector-properties dt { font-weight: 400; color: var(--muted); }
-.inspector-properties dd { font-family: var(--font-family-mono); }
+.inspector-properties dt, .inspector-properties dd { font-family: var(--font-family-ui); }
 .sr-only { position: absolute; width: 1px; height: 1px; clip-path: inset(50%); overflow: hidden; white-space: nowrap; }
 @media (max-width: 700px) {
   .heading { padding: 16px; }

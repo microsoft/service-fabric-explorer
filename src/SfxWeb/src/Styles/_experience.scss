@@ -39,11 +39,22 @@ body.sfx-new {
   app-root .sidenav-button { min-height: 28px; padding: 2px 6px; background: #21262d; border: 1px solid #484f58; border-radius: 4px; }
   app-tree-view { font-size: 15px; }
   app-tree-view .tree-header { padding: 12px 8px; border-bottom: 1px solid #30363d; }
+  app-tree-view .tree-header > * { width: 100%; max-width: 480px; box-sizing: border-box; }
+  app-tree-view .tree-header .input-wrapper { padding: 0; }
+  app-tree-view .tree-header app-input { display: block; width: 100%; }
+  app-tree-view .tree-header .input-container { display: block; max-width: none; }
+  app-tree-view .tree-header label.health-filter-choice {
+    flex: 1 1 90px; justify-content: flex-start; gap: 8px; padding: 8px 12px;
+    min-height: 38px; border: 1px solid #30363d; border-radius: 8px; text-align: left;
+  }
+  app-tree-view .tree-header .health-filter-choice:hover { border-color: #8b949e; }
+  app-tree-view .tree-header .health-filter-choice:focus-within { outline: 2px solid #58a6ff; outline-offset: 2px; }
+  app-tree-view .tree-guide .toggle-button { width: 100%; text-align: left; border-radius: 4px; }
   app-tree-view .filter-items-container { display: flex; flex-wrap: wrap; gap: 8px; }
   app-tree-view input { background: #161b22; border: 1px solid #484f58; color: #e6edf3; font-size: 15px; padding: 7px 10px; border-radius: 5px; }
   .tree-health-filters { border: 0; padding: 0; margin: 0 0 12px; min-width: 0; }
   .tree-health-filters legend { float: none; width: auto; font-size: 15px; color: #8b949e; margin-bottom: 6px; }
-  .tree-health-filters .health-choices { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tree-health-filters .health-choices { display: flex; flex-wrap: wrap; gap: 12px; }
   .tree-health-sort { display: flex; align-items: center; gap: 8px; font-size: 15px; color: #c9d1d9; margin: 0 0 12px; cursor: pointer; }
   .tree-health-sort input { width: 15px; height: 15px; padding: 0; accent-color: #58a6ff; }
   .health-choices label.health-filter-choice {
@@ -73,9 +84,12 @@ body.sfx-new {
   .toast { box-shadow: 0 8px 24px #01040980; }
 
   // Portaled filters, tooltips and dialogs must not retain the Material light theme.
-  .dropdown-menu { background: #161b22; border: 1px solid #484f58; color: #e6edf3; border-radius: 6px; font-size: 15px; box-shadow: 0 8px 24px #01040960; }
-  .dropdown-item { color: #e6edf3; }
+  .dropdown-menu { background: #161b22; border: 1px solid #484f58; color: #e6edf3; border-radius: 10px; font-size: 15px; box-shadow: 0 8px 24px #01040980; min-width: min(280px, calc(100vw - 24px)); width: max-content; max-width: calc(100vw - 24px); padding: 6px; margin-top: 8px !important; }
+  .dropdown-menu[data-popper-placement^='top'] { margin-top: 0 !important; margin-bottom: 8px !important; }
+  .dropdown-item { color: #e6edf3; padding: 10px 12px; min-height: 40px; border-radius: 5px; white-space: normal; overflow-wrap: break-word; }
   .dropdown-item:hover, .dropdown-item:focus { background: #30363d; color: #fff; }
+  .dropdown-menu .item { padding: 6px 10px; }
+  .dropdown-menu label { display: flex; align-items: center; gap: 10px; margin: 0; }
   .tooltip-inner { background: #21262d; color: #e6edf3; border: 1px solid #484f58; font-size: 15px; }
   .mat-mdc-dialog-container {
     --mat-dialog-container-color: #161b22;
@@ -111,6 +125,97 @@ body.sfx-new {
   button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px solid #58a6ff; outline-offset: 2px; }
 
   // Entity details, forms and operational views retain their existing bindings.
+  app-root .view-container app-essentials {
+    .essen-pane { --essentials-inset: 16px; }
+    @media (max-width: 900px) { .essen-pane { --essentials-inset: 12px; } }
+    .resource-summary { --essentials-inset: 16px; }
+    .resource-summary,
+    .essen-pane:not(.essen-pane .essen-pane) {
+      > header,
+      > h2:first-child,
+      > app-collapse-container > div > .flex-center:first-child,
+      &:is(app-collapse-container) > div > .flex-center:first-child,
+      > app-replica-address > .detail-pane > h2:first-child {
+        margin: calc(-1 * var(--essentials-inset)) calc(-1 * var(--essentials-inset)) 12px;
+        padding: 12px var(--essentials-inset);
+        background: #1c2128;
+        border-bottom: 1px solid #30363d;
+        border-radius: 5px 5px 0 0;
+        > h2,
+        > .header-wrapper > [collapse-header],
+        > .header-wrapper > [collapse-header] h2 { margin: 0; }
+      }
+    }
+    .resource-summary > header + app-essential-item,
+    .replica-summary > dl > .replica-property:first-child { border-top: 0; }
+  }
+  .resource-details-layout { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 560px), 1fr)); gap: 24px; align-items: stretch; max-width: 1464px; margin-bottom: 24px; }
+  .resource-details-layout > :only-child { max-width: 720px; width: 100%; box-sizing: border-box; }
+  .resource-detail-card { min-width: 0; background: #161b22; border: 1px solid #30363d; border-radius: 6px; overflow: hidden; }
+  .resource-detail-header { padding: 12px 16px; background: #1c2128; border-bottom: 1px solid #30363d; }
+  .resource-detail-header h2 { margin: 0; color: #e6edf3; font: 600 18px/1.5 var(--font-family-ui); }
+  .resource-detail-body { padding: 16px; }
+  .resource-package-group { margin-top: 12px; }
+  .resource-package-group > summary { padding: 8px 10px; border-radius: 6px; background: #1c2128; color: #e6edf3; font: 600 15px/1.5 var(--font-family-ui); cursor: pointer; overflow-wrap: anywhere; }
+  .resource-package-group > summary:hover { background: #262c36; }
+  .resource-package-group > summary:focus-visible, .resource-package-table:focus-visible { outline: 2px solid #58a6ff; outline-offset: 2px; }
+  .resource-package-table { max-width: 100%; overflow: auto; }
+  .resource-package-table table { width: 100%; border-collapse: collapse; font: 400 15px/1.5 var(--font-family-ui); }
+  .resource-package-table th, .resource-package-table td { padding: 10px 16px 10px 0; text-align: left; color: #e6edf3; white-space: nowrap; }
+  .resource-package-table th { color: #8b949e; font-weight: 500; }
+  app-root .view-container > app-base:not(.cluster-modern) {
+    > app-navbar .detail-view-title-bar { border-bottom: 0; }
+    > app-navbar .detail-view-title-bar { padding-bottom: 0; }
+    > app-navbar .detail-view-title-bar > div:first-child { flex: 1 1 auto; min-width: 0; }
+    > app-navbar .detail-view-navbar.nav-wrapper { width: 100%; border-bottom: 1px solid #30363d; margin-bottom: 0; padding-bottom: 0; }
+    > app-navbar .main-header .detail-view-navbar .detail-view-navbar-tab { margin-bottom: -1px; }
+    > app-navbar .main-header .detail-view-navbar .detail-view-navbar-tab.current { background: transparent; font-weight: 600; }
+    app-essentials .tile-container { display: flex; flex-wrap: wrap; align-items: stretch; gap: 16px; }
+    app-essentials .tile-container > * { flex: 0 1 280px; min-width: 0; max-width: 100%; }
+    app-essentials .tile-container > app-essential-health-tile { flex-basis: 720px; }
+    .replica-summary, .essen-pane:has(> app-replica-address),
+    app-details .essen-pane:has(app-detail-view-part):not(:has(.property-record-table, app-detail-list)) { width: 100%; max-width: 720px; box-sizing: border-box; }
+    .detail-pane h2 { font-size: 18px; }
+    app-health-viewer .nav-link { border-bottom: 2px solid transparent !important; }
+    app-health-viewer .nav-link.active { border-bottom-color: #f78166 !important; }
+    app-health-viewer .nav-link:hover:not(.active) { border-bottom-color: #484f58 !important; }
+    app-health-viewer table.detail-list th { background: #161b22; color: #8b949e; font-weight: 500; }
+    app-health-viewer table.detail-list td { background: #161b22; color: #e6edf3; }
+    app-replica-address > .detail-pane { margin: 0; }
+    app-replica-address .table-responsive, app-replica-address .nested-table-container { border: 0; padding: 0; margin: 0; }
+    app-replica-address table.detail-table, app-replica-address table.detail-table th, app-replica-address table.detail-table td { background: transparent; }
+    app-replica-address table.detail-table td[colspan] { padding: 0; border: 0; }
+    app-replica-address h3.heading { font-size: 15px; font-weight: 400; color: #8b949e; margin: 0 0 8px; }
+    app-replica-address table.detail-table th { width: 30%; color: #8b949e; font-weight: 400; }
+    app-replica-address table.detail-table td { color: #e6edf3; }
+    app-replica-address table.detail-table > tbody:last-child > tr:last-child > th,
+    app-replica-address table.detail-table > tbody:last-child > tr:last-child > td { border-bottom: 0 !important; }
+  }
+  .resource-summary { container: resource-summary / inline-size; box-sizing: border-box; height: 100%; padding: 16px; background: #161b22; border: 1px solid #30363d; border-radius: 6px; font: 400 15px/1.5 var(--font-family-ui); }
+  .resource-summary header { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 12px; }
+  .resource-summary header h2 { margin: 0; font-size: 18px; font-weight: 600; color: #e6edf3; }
+  .resource-health { display: inline-flex; align-items: center; gap: 8px; color: #8b949e; }
+  .resource-health::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+  .resource-health[data-health=badge-ok] { color: #3fb950; }
+  .resource-health[data-health=badge-warning] { color: #d29922; }
+  .resource-health[data-health=badge-error] { color: #f85149; }
+  .resource-summary app-essential-item { display: block; border-top: 1px solid #30363d; }
+  .resource-summary .essential-list-item { display: flex; justify-content: flex-start; gap: 8px; padding: 10px 0; border: 0; }
+  .resource-summary .text-wrapper { flex: 0 1 auto; display: flex; min-width: 0; height: auto; overflow: visible; gap: 16px; }
+  .resource-summary .text-wrapper .left-text { flex: 0 0 200px; white-space: normal; overflow-wrap: anywhere; color: #8b949e; font-weight: 400; }
+  .resource-summary .text-wrapper .middle-text { flex: 0 1 auto; min-width: 0; text-align: left; white-space: normal; overflow-wrap: anywhere; color: #e6edf3; }
+  .resource-summary app-clip-board { flex-shrink: 0; }
+  .resource-summary a { color: #58a6ff; }
+  @media (max-width: 600px) {
+    .resource-summary .text-wrapper .left-text { flex-basis: 100px; }
+    .resource-summary .text-wrapper { gap: 8px; }
+  }
+  @container resource-summary (max-width: 300px) {
+    .resource-summary .text-wrapper { flex-direction: column; align-items: flex-start; gap: 4px; }
+    .resource-summary .text-wrapper .left-text { flex-basis: auto; }
+    .resource-summary .text-wrapper .middle-text { max-width: 100%; }
+    .resource-summary .essential-list-item { align-items: flex-end; }
+  }
   app-navbar .detail-view-title h1 { font-size: 24px; font-weight: 500; line-height: 1.4; margin: 0; }
   app-navbar .actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; float: none; height: auto; margin: 8px 12px; }
   app-detail-view-part .table-responsive { margin-top: 0; }

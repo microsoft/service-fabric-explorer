@@ -1,3 +1,11 @@
+@if (experience.isNew()) {
+  <section class="resource-summary">
+    <header><h2>{{healthState ? 'Overview' : 'Properties'}}</h2>@if (healthState) { <span class="resource-health" [attr.data-health]="healthState.badgeClass">{{healthState.text}}</span> }</header>
+    @for (item of internalList; track $index) {
+      <app-essential-item [item]="item"><ng-container *ngTemplateOutlet="item.ref"></ng-container></app-essential-item>
+    }
+  </section>
+} @else {
 <div class="dashboard-wrapper">
   <div class="dashboard dashboard-medium">
     <div class="dashboard-tile flex-center" style="height: 100%;">
@@ -17,3 +25,5 @@
       </div>
     </div>
   </div>
+</div>
+}

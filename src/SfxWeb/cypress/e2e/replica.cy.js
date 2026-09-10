@@ -51,6 +51,81 @@ context('replica', () => {
 
         })
 
+        it('uses aligned New essentials and restores Classic', () => {
+            cy.wait([waitRequest, '@getdetails', '@getreplicaHealth']);
+            cy.get('[aria-label="SFX experience"]').select('new');
+            cy.get('.replica-summary').should('contain', '_nt_1').and('contain', 'Ready');
+            cy.get('.replica-health').should('have.text', 'OK').and('have.css', 'color', 'rgb(63, 185, 80)');
+            cy.get('.replica-essentials app-essential-health-tile').should('not.exist');
+            cy.get('.replica-property dd').then(values => {
+                const left = values[0].getBoundingClientRect().left;
+                [...values].forEach(value => expect(value.getBoundingClientRect().left).to.equal(left));
+            });
+            cy.get('.replica-property app-clip-board').should('have.length', 3);
+            cy.get('.replica-summary').should(card => expect(card[0].getBoundingClientRect().width).to.be.at.most(720));
+            cy.get('.replica-property dd').each(value => {
+                const text = value[0].firstElementChild.getBoundingClientRect();
+                const copy = value[0].querySelector('app-clip-board').getBoundingClientRect();
+                expect(copy.left - text.right).to.be.within(0, 12);
+            });
+            cy.get('app-navbar .detail-view-title-bar').should('have.css', 'border-bottom-width', '0px');
+            cy.get('[data-cy=address]').should(card => expect(card[0].getBoundingClientRect().width).to.be.at.most(720));
+            cy.get('.replica-node-link').should('have.attr', 'href').and('include', '/node/');
+            cy.get('[data-cy=address] a').should('have.length', 0);
+            cy.get('[data-cy=navtabs] .current').should('have.css', 'border-bottom-color', 'rgb(247, 129, 102)');
+            cy.get('app-health-viewer .nav-link.active').should('have.css', 'border-bottom-color', 'rgb(247, 129, 102)');
+            cy.contains('app-health-viewer', 'No items to display.');
+            cy.contains('app-health-viewer .nav-link', 'All').click();
+            cy.contains('app-health-viewer', 'Partition is healthy.');
+            cy.viewport(390, 1000);
+            cy.get('.replica-summary').should(summary => expect(summary[0].scrollWidth).to.be.at.most(summary[0].clientWidth + 1));
+            cy.get('[aria-label="SFX experience"]').select('classic');
+            cy.get('.replica-summary').should('not.exist');
+            cy.get('.replica-essentials app-essential-health-tile img').should('have.css', 'width', '75px');
+        });
+
+        it('renders remote replicators as readable records instead of nested table cells', () => {
+            cy.fixture('replica-page/stateful-replica-detail.json').then(detail => {
+                const acknowledgement = { AverageReceiveDuration: 0, AverageApplyDuration: 0, NotReceivedCount: 0, ReceivedAndAppliedCount: 100 };
+                detail.ReplicatorStatus = {
+                    Kind: 'Primary',
+                    RemoteReplicators: ['134334705266988632', '134334705266988633'].map(ReplicaId => ({
+                        ReplicaId, LastAcknowledgementProcessedTimeUtc: '2026-09-10T00:35:46.361Z',
+                        LastReceivedReplicationSequenceNumber: 100, LastAppliedReplicationSequenceNumber: 100, IsInBuild: false,
+                        RemoteReplicatorAcknowledgementStatus: {
+                            ReplicationStreamAcknowledgementDetail: acknowledgement,
+                            CopyStreamAcknowledgementDetail: acknowledgement
+                        }
+                    }))
+                };
+                cy.intercept('GET', apiUrl(`/Nodes/_nt_1/$/GetPartitions/${partitionId}/$/GetReplicas/${replicaId}/$/GetDetail?*`), detail);
+            });
+            cy.reload();
+            cy.get('[aria-label="SFX experience"]').select('new');
+            cy.get('[data-cy=navtabs]').contains('details').click();
+            cy.get('[aria-label="Remote Replicators"] .property-record-table').should('not.exist');
+            cy.get('[aria-label="Remote Replicators"] .property-record').should('have.length', 2);
+            cy.get('[aria-label="Remote Replicators"] > summary').should('contain', '2 records');
+            cy.get('[aria-label="Remote Replicators"] .property-record').first().find('summary').first().should('have.text', 'Replica 134334705266988632').click();
+            cy.get('[aria-label="Remote Replicators"] .property-record').first().should('not.have.attr', 'open');
+            cy.get('[aria-label="Remote Replicators"] .property-record').first().find('summary').first().focus().type('{enter}');
+            cy.get('[aria-label="Remote Replicators"] .property-record').first().should('have.attr', 'open');
+            cy.get('[aria-label="Remote Replicators"] .property-record').first().within(() => {
+                cy.contains('dd', '134334705266988632');
+                cy.contains('dd', 'false');
+                cy.get('[aria-label="Replication Stream Acknowledgement Detail"]').should('contain', 'Average Receive Duration').and('contain', '100');
+                cy.get('[aria-label="Copy Stream Acknowledgement Detail"]').should('exist');
+            });
+            [1600, 390].forEach(width => {
+                cy.viewport(width, 1000);
+                cy.get('[aria-label="Remote Replicators"] .property-record').should(records => {
+                    [...records].forEach(record => expect(record.scrollWidth).to.be.at.most(record.clientWidth + 1));
+                });
+            });
+            cy.get('[aria-label="SFX experience"]').select('classic');
+            cy.get('app-details .detail-array').should('exist');
+        });
+
         it('view details', () => {
             cy.wait(waitRequest);
 
@@ -174,6 +249,21 @@ context('replica', () => {
                 cy.get("a").should('have.length', 2);
             })
         })
+
+        it('flattens New endpoint tables without losing links', () => {
+            cy.wait([waitRequest, '@getdetails']);
+            cy.get('[aria-label="SFX experience"]').select('new');
+            cy.get('[data-cy=address] a').should('have.length', 2).each(link => {
+                expect(link.attr('href')).to.match(/^http:\/\/10\.0\.0\.7:8081\/visualobjects\//);
+                expect(link).to.have.css('color', 'rgb(88, 166, 255)');
+            });
+            cy.get('[data-cy=address] .table-responsive, [data-cy=address] .nested-table-container').should('not.exist');
+            cy.get('[data-cy=address] .property-row').each(row => expect(row).to.have.css('border-bottom-width', '0px'));
+            cy.viewport(390, 1000);
+            cy.get('[data-cy=address]').should(card => expect(card[0].scrollWidth).to.be.at.most(card[0].clientWidth + 1));
+            cy.get('[aria-label="SFX experience"]').select('classic');
+            cy.get('[data-cy=address] a').should('have.length', 2);
+        });
 
         it('view commands', () => {
             cy.wait(waitRequest)

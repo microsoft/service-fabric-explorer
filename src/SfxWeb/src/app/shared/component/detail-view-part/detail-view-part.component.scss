@@ -1,0 +1,32 @@
+.property-sheet { container: property-sheet / inline-size; color: #e6edf3; font: 400 15px/1.5 var(--font-family-ui); }
+.property-row { display: grid; grid-template-columns: minmax(0, 46%) minmax(0, 1fr); gap: 20px; margin: 0; padding: 7px 0; border: 0; }
+.property-row dt, .property-row dd { display: block; float: none; width: auto; min-width: 0; margin: 0; font: inherit; white-space: normal; overflow-wrap: anywhere; }
+.property-row dt { color: #8b949e; }
+.property-section { margin: 0; padding: 12px 0 0; border: 0; background: transparent; }
+.property-section-title, .property-record-title { padding: 8px 10px; margin: 0; border-radius: 6px; color: #e6edf3; font: 600 15px/1.5 var(--font-family-ui); cursor: pointer; overflow-wrap: anywhere; background: #1c2128; }
+.property-section-title::marker, .property-record-title::marker { color: #8b949e; }
+.property-section-title:hover, .property-record-title:hover { background: #262c36; }
+.property-section-title:focus-visible, .property-record-title:focus-visible { outline: 2px solid #58a6ff; outline-offset: 2px; }
+.property-section-body { margin-left: 10px; padding-left: 14px; }
+// Only expandable buckets own connectors; the final bucket stops at its header.
+.property-section-body > .property-section,
+.property-record-list > .property-record { position: relative; --branch-y: 18px; }
+.property-section-body > .property-section { --branch-y: 31px; }
+.property-section-body > .property-section::before,
+.property-record-list > .property-record::before { content: ''; position: absolute; left: -14px; top: 0; bottom: 0; border-left: 1px solid #30363d; pointer-events: none; }
+.property-section-body > .property-section:not(:has(~ .property-section))::before,
+.property-record-list > .property-record:last-child::before { bottom: auto; height: var(--branch-y); }
+.property-section-body > .property-section::after,
+.property-record-list > .property-record::after { content: ''; position: absolute; left: -14px; top: calc(var(--branch-y) - 5px); width: 10px; height: 6px; border-left: 1px solid #30363d; border-bottom: 1px solid #30363d; border-bottom-left-radius: 5px; pointer-events: none; }
+.property-count { margin-left: 8px; color: #8b949e; font-weight: 400; white-space: nowrap; }
+.property-sheet a { color: #58a6ff; }
+.property-records { max-width: 100%; overflow: auto; }
+.property-record-list { padding-top: 8px; }
+.property-record { min-width: 0; max-width: 720px; padding-bottom: 12px; }
+.property-records:focus-visible { outline: 2px solid #58a6ff; outline-offset: 2px; }
+.property-record-table { width: 100%; border-collapse: collapse; font: inherit; }
+.property-record-table th, .property-record-table td { min-width: 130px; padding: 10px 16px 10px 0; text-align: left; vertical-align: top; background: transparent; color: #e6edf3; border: 0; }
+.property-record-table td { white-space: nowrap; }
+.property-record-table th { color: #8b949e; font-weight: 500; border-bottom: 1px solid #30363d; }
+.property-record-table tbody tr + tr td { border-top: 1px solid #30363d; }
+@container property-sheet (max-width: 360px) { .property-row { grid-template-columns: minmax(0, 1fr); gap: 4px; padding: 10px 0; }.property-section-body { margin-left: 4px; } }

@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, Input, OnChanges, OnInit, ViewChild, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ElementRef, Input, OnChanges, OnDestroy, ViewChild, ChangeDetectionStrategy, inject } from '@angular/core';
 import { Chart, Options, chart, PointOptionsObject } from 'highcharts';
 import { IPregeneratedColor, pregeneratedColors } from 'src/app/Common/Constants';
 import { IConcurrentEvents } from 'src/app/Models/eventstore/rcaEngine';
@@ -7,6 +7,7 @@ import { Utils } from 'src/app/Utils/Utils';
 import { DataGroup } from 'vis-timeline/peer';
 import { DataSet } from 'vis-data';
 import { IEssentialListItem } from '../../charts/essential-health-tile/essential-health-tile.component';
+import { ExperienceService } from 'src/app/services/experience.service';
 
 interface ExtendedListItem extends IEssentialListItem {
   key: string;
@@ -19,12 +20,19 @@ interface ExtendedListItem extends IEssentialListItem {
     changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
-export class RcaOverviewComponent implements AfterViewInit, OnChanges {
+export class RcaOverviewComponent implements OnChanges, OnDestroy {
+  experience = inject(ExperienceService);
   @Input() type!: string;
   @Input() events!: IConcurrentEvents[];
 
-  @ViewChild('chart') private chartContainer!: ElementRef;
-  private chart!: Chart;
+  @ViewChild('chart') private set chartContainer(container: ElementRef | undefined) {
+    this.chart?.destroy();
+    this.chart = undefined;
+    if (container) {
+      this.chart = chart(container.nativeElement, { ...this.options, series: [{ data: this.generateDataSet(this.reasons), type: 'pie' }] });
+    }
+  }
+  private chart?: Chart;
   private preGeneratedColors = [...pregeneratedColors];
   public whiteLists = pregeneratedColors.map(c => "color-"+c).concat(['rca-summary-key']); //add all of the pregenerated safe timeline colors and the summary key item
 
@@ -73,6 +81,7 @@ export class RcaOverviewComponent implements AfterViewInit, OnChanges {
   public colorKey: Record<string, IPregeneratedColor> = {};
   public reasons: ExtendedListItem[] = [];
   public timelineData!: ITimelineData;
+  public navigatorData!: ITimelineData;
 
   constructor() { }
 
@@ -93,11 +102,7 @@ export class RcaOverviewComponent implements AfterViewInit, OnChanges {
     })
   }
 
-  ngAfterViewInit() {
-    const data = this.generateDataSet(this.reasons);
-    this.options.series = [{ data, type: 'pie' }]
-    this.chart = chart(this.chartContainer.nativeElement, this.options);
-  }
+  ngOnDestroy() { this.chart?.destroy(); }
 
   ngOnChanges(): void {
     const grouped = Object.entries(Utils.groupByFunc(this.events, item => {
@@ -160,6 +165,23 @@ export class RcaOverviewComponent implements AfterViewInit, OnChanges {
       items,
       allowClustering: true
     }
+    const navigatorItems = new DataSet<ITimelineItem>();
+    const navigatorGroups = new DataSet<DataGroup>();
+    const escape = (value: string) => {
+      const element = document.createElement('div');
+      element.textContent = value;
+      return element.innerHTML;
+    };
+    // Compact track labels map to full explanations below; Classic keeps its color swatches.
+    grouped.forEach(([reason, events], index) => {
+      navigatorGroups.add({ id: reason, content: `Reason ${index + 1}` });
+      events.forEach(event => {
+        const item = items.get(`${index}---${event.eventInstanceId}`)!;
+        const explanation = `<table><tbody><tr><td>Reported reason</td><td>${escape(reason)}</td></tr></tbody></table>`;
+        navigatorItems.add({ ...item, title: explanation + (item.title || '') });
+      });
+    });
+    this.navigatorData = { items: navigatorItems, groups: navigatorGroups };
 
     if (this.chart) {
       const data = this.generateDataSet(this.reasons);
@@ -170,7 +192,9 @@ export class RcaOverviewComponent implements AfterViewInit, OnChanges {
   reasonTreeToList(event: IConcurrentEvents): IConcurrentEvents[] {
     let next: IConcurrentEvents | null | undefined = event;
     const list = [];
-    while (next) {
+    const seen = new Set<IConcurrentEvents>();
+    while (next && !seen.has(next)) {
+      seen.add(next);
       list.push(next)
       next = next.reason;
     }

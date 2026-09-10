@@ -1,5 +1,6 @@
 import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ContentChildren, Directive, Input, OnChanges, OnInit, QueryList, TemplateRef, inject } from '@angular/core';
 import { ITextAndBadge } from 'src/app/Utils/ValueResolver';
+import { ExperienceService } from 'src/app/services/experience.service';
 
 export interface IEssentialListItem {
   displayText?: string;
@@ -36,6 +37,7 @@ export class EssentialTemplateDirective {
     standalone: false
 })
 export class EssentialHealthTileComponent implements AfterViewInit, OnChanges {
+  public experience = inject(ExperienceService);
   private detectorRef = inject(ChangeDetectorRef);
 
 

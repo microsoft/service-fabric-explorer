@@ -31,8 +31,9 @@ body.sfx-new app-root .view-container {
   app-navbar .detail-view-title-bar { background: #0d1117; padding: 12px 20px; border-bottom: 1px solid #30363d; }
   app-navbar div.detail-view-title { padding: 0; border: 0; }
   app-navbar .main-header .detail-view-navbar { display: flex; flex-wrap: wrap; gap: 4px; }
-  app-navbar .main-header .detail-view-navbar .detail-view-navbar-tab { padding: 8px 10px !important; font-size: 15px; border-bottom: 2px solid transparent; }
-  app-navbar .main-header .detail-view-navbar .detail-view-navbar-tab.current { border-bottom-color: #f78166; background: #161b22; }
+  app-navbar .main-header .detail-view-navbar .detail-view-navbar-tab { padding: 8px 10px !important; font-size: 15px; border-bottom: 2px solid transparent !important; }
+  app-navbar .main-header .detail-view-navbar .detail-view-navbar-tab.current { border-bottom-color: #f78166 !important; background: #161b22; }
+  app-navbar .main-header .detail-view-navbar .detail-view-navbar-tab:hover:not(.current) { border-bottom-color: #484f58 !important; }
   .essen-pane { background: #161b22; border: 1px solid #30363d; border-radius: 6px; padding: 16px; box-shadow: none; }
   .detail-pane { margin-bottom: 16px; }
   .essen-pane .essen-pane { background: #0d1117; }
@@ -57,8 +58,8 @@ body.sfx-new app-root .view-container {
   .nav-wrapper { border-bottom: 1px solid #30363d; margin-bottom: 12px; }
   .nav-wrapper .nav-link { color: #c9d1d9; padding: 10px 12px; }
   .nav-wrapper .nav-link.active { border-bottom: 2px solid #f78166; color: #fff; }
-  .dropdown-menu { background: #161b22; border: 1px solid #484f58; border-radius: 6px; font-size: 15px; padding: 6px; }
-  .dropdown-item { color: #e6edf3; padding: 7px 10px; }
+  .dropdown-menu { background: #161b22; border: 1px solid #484f58; border-radius: 10px; font-size: 15px; padding: 6px; }
+  .dropdown-item { color: #e6edf3; padding: 10px 12px; }
   .dropdown-item:hover { background: #30363d; color: #fff; }
   .table-responsive { border: 1px solid #30363d; border-radius: 5px; overflow: auto; margin-top: 12px; }
   table.detail-list, table.default-table { background: #0d1117; width: 100%; border-collapse: collapse; font-size: 15px; }
@@ -100,6 +101,26 @@ body.sfx-new app-root .view-container {
   app-command .input-wrapper { padding-left: 0; }
   app-command .essen-pane { margin-top: 12px; }
   app-repair-tasks .example-wrapper { min-width: 0; flex: 1; }
+  .replica-essentials {
+    font: 400 15px/1.5 var(--font-family-ui);
+    .detail-pane h2 { font-size: 18px; font-weight: 600; margin: 0 0 12px; }
+    .replica-summary header h2 { margin: 0; }
+    a { color: #58a6ff; }
+    app-replica-address > .detail-pane { margin: 0; }
+    app-replica-address .table-responsive { border: 0; border-radius: 0; margin: 0; }
+    app-replica-address .nested-table-container { border: 0; padding: 0; margin: 0; }
+    app-replica-address table.detail-table { background: transparent; }
+    app-replica-address table.detail-table td[colspan] { padding: 0; border: 0; }
+    app-replica-address h3.heading { font-size: 15px; font-weight: 400; color: #8b949e; margin: 0 0 8px; }
+    app-replica-address table.detail-table th { width: 200px; background: transparent; color: #8b949e; font-weight: 400; padding: 10px 16px 10px 0; }
+    app-replica-address table.detail-table td:not([colspan]) { background: transparent; color: #e6edf3; padding: 10px 0; }
+    app-health-viewer .nav-link { border-bottom: 2px solid transparent !important; }
+    app-health-viewer .nav-link.active { border-bottom-color: #f78166 !important; }
+    app-health-viewer .nav-link:hover:not(.active) { border-bottom-color: #484f58 !important; }
+    app-health-viewer table.detail-list th { background: #161b22; color: #8b949e; font-weight: 500; }
+    app-health-viewer table.detail-list td { background: #161b22; color: #e6edf3; }
+    @media (max-width: 600px) { app-replica-address table.detail-table th { width: 30%; } }
+  }
   app-repair-tasks [style*='flex-direction: row'] { flex-wrap: wrap; gap: 8px; }
   app-infrastructure-job-tile [style*='justify-content: space-between'] { flex-wrap: wrap; gap: 12px; }
   app-infrastructure-job-tile [style*='width: 80%'] { width: 100% !important; }
@@ -128,8 +149,8 @@ body.sfx-new app-root .view-container {
 // Slightly larger text for all new Events surfaces, including non-cluster routes.
 app-event-navigator {
   font-size: 15px !important;
-  .track-label, .event-meta, dd { font-size: 15px !important; }
-  .axis-label, dt, .eyebrow { font-size: 15px !important; }
+  .track-label, .event-meta { font-size: 15px !important; }
+  .axis-label, .eyebrow { font-size: 15px !important; }
 }
 app-event-query-bar {
   font-size: 15px !important;
