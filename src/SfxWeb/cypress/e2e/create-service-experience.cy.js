@@ -26,7 +26,7 @@ describe('Create Service New styling (fixtures only)', () => {
   beforeEach(() => {
     // Unmatched API requests must not reach a cluster or the static server.
     // Specific fixture routes below take precedence over this fallback.
-    cy.intercept(apiUrl('/**'), { statusCode: 501, body: {} }).as('unmatchedApi');
+    cy.intercept({ url: apiUrl('/**'), resourceType: /^(xhr|fetch)$/ }, { statusCode: 501, body: {} }).as('unmatchedApi');
     addDefaultFixtures();
     addRoute('app', 'app-page/app-type.json', apiUrl(`/Applications/${appName}/?a*`));
     addRoute('appParams', 'app-page/app-type-excluded-params.json', apiUrl(`/Applications/${appName}/?ExcludeApplicationParameters=true*`));

@@ -56,7 +56,7 @@ export class DisplaySizeColumnComponent implements OnChanges, OnInit, DetailBase
         item.size = +size.FolderSize;
         item.displayedSize = Utils.getFriendlyFileSize(+size.FolderSize);
         this.listSetting.imagestore.currentFolder.childrenFolders.find(folder => folder.path === item.path)!.size = +size.FolderSize;
-        this.listSetting.imagestore.allChildren = [...this.listSetting.imagestore.allChildren];
+        this.listSetting.imagestore.currentFolder.allChildren = [...this.listSetting.imagestore.currentFolder.allChildren];
         this.ngOnChanges();
       }, () => {
         this.listSetting.imagestore.cachedCurrentDirectoryFolderSizes[item.path].loading = false;
