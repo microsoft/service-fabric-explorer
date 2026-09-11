@@ -5,7 +5,7 @@ describe('Operation discovery and empty states', () => {
   it('finishes infrastructure loading when there are no infrastructure services', () => {
     cy.intercept('GET', apiUrl('/Applications/System/$/GetServices?*'), { Items: [] }).as('systemServices');
     cy.visit('/#/');
-    cy.get('[aria-label="SFX experience"]').select('new');
+    cy.setExperience('new');
     cy.get('[data-cy=navtabs]').contains('infrastructure').click();
     cy.wait('@systemServices');
     cy.contains('.infrastructure-state', 'No infrastructure services found').should('be.visible');
@@ -20,17 +20,18 @@ describe('Operation discovery and empty states', () => {
     cy.intercept('GET', '**/EventsStore/Partitions/**', []).as('operations');
     cy.visit('/#/');
     cy.get('[data-cy=navtabs]').contains('orchestration').click();
-    cy.get('[aria-label="Partition service"]').should('be.disabled').and('contain', 'Select an application first').and('have.css', 'background-color', 'rgb(33, 38, 45)');
-    cy.get('[aria-label="Choose partition"]').should('be.disabled').and('contain', 'Select a service first');
-    cy.get('[aria-label="Partition application"]').select('Example');
+    cy.get('button[aria-label="Partition service"]').should('be.disabled').and('contain', 'Select an application first').and('have.css', 'background-color', 'rgb(33, 38, 45)');
+    cy.get('button[aria-label="Choose partition"]').should('be.disabled').and('contain', 'Select a service first');
+    cy.selectMenu('Partition application', 'fabric:/Example');
     cy.wait('@services');
-    cy.get('[aria-label="Partition service"]').should('not.be.disabled');
-    cy.get('[aria-label="Choose partition"]').should('be.disabled');
-    cy.get('[aria-label="Partition service"]').select('Example/Worker');
+    cy.get('button[aria-label="Partition service"]').should('not.be.disabled');
+    cy.get('button[aria-label="Choose partition"]').should('be.disabled');
+    cy.selectMenu('Partition service', 'fabric:/Example/Worker');
     cy.wait('@partitions');
-    cy.get('[aria-label="Choose partition"]').should('not.be.disabled');
-    cy.get('[aria-label="Choose partition"]').select(id);
-    cy.get('app-partition-picker .choices select').should(selects => {
+    cy.get('button[aria-label="Choose partition"]').should('not.be.disabled');
+    cy.selectMenu('Choose partition', id);
+    cy.viewport(390, 1000);
+    cy.get('app-partition-picker .choices .select-trigger').should(selects => {
       const rects = [...selects].map(select => select.getBoundingClientRect());
       expect(rects).to.have.length(3);
       rects.forEach(rect => expect(rect.width).to.be.at.most(520));
@@ -39,6 +40,7 @@ describe('Operation discovery and empty states', () => {
       expect(rects[1].left).to.equal(rects[0].left);
       expect(rects[2].left).to.equal(rects[0].left);
     });
+    cy.get('app-partition-picker').should(picker => expect(picker[0].scrollWidth).to.be.at.most(picker[0].clientWidth + 1));
     cy.contains('app-partition-picker button', 'Load operations').click();
     cy.wait('@operations');
     cy.get('app-orchestration-view app-event-navigator').should('be.visible');

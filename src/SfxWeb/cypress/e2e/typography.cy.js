@@ -27,10 +27,10 @@ describe('Minimum text size', () => {
     it(`uses at least 15px for ${experience} lists and export dialogs`, () => {
       addDefaultFixtures();
       cy.visit('/#/nodes');
-      cy.get('[aria-label="SFX experience"]').select(experience);
+      cy.setExperience(experience);
       cy.get('table.detail-list tbody tr').should('have.length.at.least', 1);
       cy.get('body').should('have.css', 'font-family').and('include', '-apple-system').and('include', 'Segoe UI');
-      cy.get('[aria-label="SFX experience"]').should('have.css', 'font-family').and('include', '-apple-system');
+      cy.get('select[aria-label="SFX experience"], button[aria-label="SFX experience"]').should('have.css', 'font-family').and('include', '-apple-system');
       checkText();
       cy.contains('app-detail-list button', 'Export').first().click();
       cy.get('.action-modal').should('be.visible');

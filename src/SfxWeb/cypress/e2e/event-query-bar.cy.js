@@ -50,19 +50,19 @@ describe('Navigator query bar', () => {
   });
 
   it('updates included event sources', () => {
-    cy.contains('app-event-query-bar button', 'Event types').click();
-    cy.contains('app-event-query-bar .source-option', 'Nodes').find('input').uncheck();
+    cy.contains('app-event-query-bar button', 'Event types').click({ scrollBehavior: 'center' });
+    cy.contains('app-event-query-bar .source-option', 'Nodes').find('input').uncheck({ scrollBehavior: 'center' });
     cy.get('app-event-results .source-tabs').should('not.contain', 'Nodes');
-    cy.contains('app-event-query-bar .source-option', 'Nodes').find('input').check();
+    cy.contains('app-event-query-bar .source-option', 'Nodes').find('input').check({ scrollBehavior: 'center' });
     cy.wait('@nodeEvents');
     cy.get('app-event-results .source-tabs').should('contain', 'Nodes');
   });
 
   it('restores classic controls when switching views', () => {
-    cy.get('[aria-label="SFX experience"]').select('classic');
+    cy.setExperience('classic');
     cy.get('app-event-query-bar').should('not.exist');
     cy.get('app-time-picker .slider-wrapper').should('exist');
-    cy.get('[aria-label="SFX experience"]').select('new');
+    cy.setExperience('new');
     cy.get('app-event-query-bar').should('be.visible');
   });
 

@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { DataSet } from 'vis-data';
+import { DataGroup } from 'vis-timeline';
 import { ITimelineItem } from 'src/app/Models/eventstore/timelineGenerators';
 import { EventNavigatorComponent } from './event-navigator.component';
 
@@ -81,15 +82,18 @@ describe('EventNavigatorComponent', () => {
   it('preserves literal markup in DOM content instead of parsing it again', () => {
     const content = document.createElement('span');
     content.textContent = '<img src=x onerror=alert(1)> & literal text';
-    component.events = { items: new DataSet<ITimelineItem>([{ id: 'literal', start, content }]) };
+    component.events = {
+      groups: new DataSet<DataGroup>([{ id: 'literal-group', content }]),
+      items: new DataSet<ITimelineItem>([{ id: 'literal', group: 'literal-group', kind: 'NodeUp', start, content: '' }])
+    };
     component.ngOnChanges();
-    expect(component.tracks[0].marks[0].event.name).toBe(content.textContent);
+    expect(component.tracks[0].marks[0].event.lane).toBe(content.textContent);
     fixture.detectChanges();
     expect(fixture.nativeElement.querySelector('img')).toBeNull();
   });
 
   it('decodes HTML string content only once', () => {
-    component.events = { items: new DataSet<ITimelineItem>([{ id: 'html', start, content: '<b>&lt;node&gt; &amp; text</b>' }]) };
+    component.events = { items: new DataSet<ITimelineItem>([{ id: 'html', kind: '', start, content: '<b>&lt;node&gt; &amp; text</b>' }]) };
     component.ngOnChanges();
     expect(component.tracks[0].marks[0].event.name).toBe('<node> & text');
   });

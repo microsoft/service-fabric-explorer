@@ -1,20 +1,28 @@
 import { addDefaultFixtures, apiUrl } from './util.cy';
 
+const navigator = 'app-event-navigator';
+const openNavigator = fixture => {
+  addDefaultFixtures();
+  cy.fixture(`event-navigator/${fixture}.json`).then(events => {
+    // Keep fixture spacing while moving the records inside the current query range.
+    const offset = Date.now() - 3600000 - Date.parse(events[0].TimeStamp);
+    cy.intercept('GET', apiUrl('/EventsStore/Nodes/Events?*'), events.map(event => ({
+      ...event, TimeStamp: new Date(Date.parse(event.TimeStamp) + offset).toISOString()
+    }))).as('nodes');
+  });
+  cy.intercept('GET', apiUrl('/EventsStore/Cluster/Events?*'), []);
+  cy.visit('/#/');
+  cy.setExperience('new');
+  cy.get('[data-cy=navtabs]').contains('events').click();
+  cy.wait('@nodes');
+  cy.get(`${navigator} .chart-footer`).should('contain', '5 of 5 events in view');
+};
+
 describe('Independent event navigator', () => {
-  const navigator = 'app-event-navigator';
   beforeEach(() => {
-    addDefaultFixtures();
-    const now = Date.now();
-    const events = Array.from({ length: 5 }, (_, i) => ({
-      Kind: 'NodeAddedToCluster', EventInstanceId: `node-event-${i}`, NodeName: `test-node-${i}`,
-      TimeStamp: new Date(now - 3600000 + i * 10).toISOString(), Category: 'StateTransition', HasCorrelatedEvents: false
-    }));
-    cy.intercept('GET', apiUrl('/EventsStore/Cluster/Events?*'), []);
-    cy.intercept('GET', apiUrl('/EventsStore/Nodes/Events?*'), events).as('nodes');
-    cy.visit('/#/');
-    cy.get('[data-cy=navtabs]').contains('events').click();
-    cy.wait('@nodes');
+    openNavigator('distinct');
     cy.get(`${navigator} .mark`).should('have.length', 5);
+    cy.get(`${navigator} .mark.cluster`).should('not.exist');
   });
 
   it('renders an independent chart with no overlapping markers', () => {
@@ -170,13 +178,73 @@ describe('Independent event navigator', () => {
   });
 
   it('switches between the new navigator and the original timeline', () => {
-    cy.get('[aria-label="SFX experience"]').select('classic');
+    cy.setExperience('classic');
     cy.get(navigator).should('not.exist');
     cy.get('app-event-store-timeline .vis-timeline').should('be.visible');
     cy.contains('app-event-store-timeline button', 'Show Controls').should('be.visible');
     cy.get('app-time-picker .slider-wrapper').should('exist');
-    cy.get('[aria-label="SFX experience"]').select('new');
+    cy.setExperience('new');
     cy.get(`${navigator} .mark`).should('have.length', 5);
     cy.get('app-event-store-timeline').should('not.exist');
+  });
+});
+
+describe('Clustered event navigator', () => {
+  beforeEach(() => {
+    openNavigator('grouped');
+    cy.get(`${navigator} .mark`).should('have.length', 1).and('have.class', 'cluster').and('contain', '5');
+  });
+
+  it('inspects all grouped records and opens the chosen event in the table', () => {
+    cy.get(`${navigator} .mark.cluster`).should('have.attr', 'aria-label').and('include', '5 events');
+    cy.get(`${navigator} .mark.cluster`).click().should('have.attr', 'aria-pressed', 'true');
+    cy.get(`${navigator} .inspector-heading`).should('contain', 'EVENT GROUP').and('contain', '5 events');
+    cy.get(`${navigator} .group-event`).should('have.length', 5).each((event, index) => {
+      expect(event).to.contain(`group-node-${index}`);
+    });
+    cy.contains(`${navigator} .group-event`, 'group-node-3').click();
+    cy.get(`${navigator} .inspector-heading`).should('contain', 'Node Added To Cluster');
+    cy.contains(`${navigator} .inspector-properties dt`, 'Context').next('dd').should('have.text', 'Node group-node-3 added to cluster');
+    cy.contains(`${navigator} button`, 'Back to 5 events').click();
+    cy.get(`${navigator} .group-event`).should('have.length', 5);
+    cy.contains(`${navigator} .group-event`, 'group-node-3').click();
+    cy.contains(`${navigator} button`, 'Open in event table').click();
+    cy.get('app-event-results pre').should('contain', 'group-event-3').and('contain', 'group-node-3');
+    cy.get('app-event-results .row-toggle').should('have.length', 1).and('be.focused');
+  });
+
+  it('keeps grouped records selectable on narrow screens', () => {
+    cy.viewport(390, 1000);
+    cy.get(`${navigator} .mark.cluster`).should('have.length', 1).and('contain', '5').click();
+    cy.get(`${navigator} .group-event`).should('have.length', 5);
+    cy.contains(`${navigator} .group-event`, 'group-node-4').click({ scrollBehavior: 'center' });
+    cy.get(`${navigator} .inspector-properties`).should('contain', 'group-node-4');
+    cy.get(`${navigator} .navigator-main, ${navigator} .inspector`).each(element => {
+      expect(element[0].scrollWidth).to.be.at.most(element[0].clientWidth + 1);
+    });
+    cy.get(`${navigator} [aria-label="Close event inspector"]`).click({ scrollBehavior: 'center' });
+    cy.get(`${navigator} .inspector`).should('not.exist');
+    cy.get(`${navigator} .mark.cluster`).should('have.attr', 'aria-pressed', 'false');
+  });
+
+  it('zooms a group locally and recovers all records after filtering', () => {
+    cy.get(`${navigator} .mark.cluster`).click();
+    cy.get('@nodes.all').then(requests => {
+      const count = requests.length;
+      cy.get(`${navigator} .window-caption`).invoke('text').then(before => {
+        cy.contains(`${navigator} button`, 'Zoom to group').click();
+        cy.get(`${navigator} .window-caption`).should(caption => expect(caption.text()).not.to.equal(before));
+      });
+      cy.get(`${navigator} .chart-footer`).should('contain', '5 of 5 events in view');
+      cy.get(`${navigator} .group-event`).should('have.length', 5);
+      cy.get(`${navigator} [aria-label="Close event inspector"]`).click();
+      cy.get(`${navigator} input`).type('group-node-2');
+      cy.get(`${navigator} .mark`).should('have.length', 1).and('not.have.class', 'cluster').click();
+      cy.get(`${navigator} .inspector-properties`).should('contain', 'group-node-2');
+      cy.get(`${navigator} input`).clear();
+      cy.get(`${navigator} .chart`).focus().type('{home}');
+      cy.get(`${navigator} .mark.cluster`).should('have.length', 1).and('contain', '5');
+      cy.get('@nodes.all').should('have.length', count);
+    });
   });
 });

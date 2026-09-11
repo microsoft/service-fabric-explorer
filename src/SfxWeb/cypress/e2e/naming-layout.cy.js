@@ -8,7 +8,7 @@ describe('Naming metrics layout', () => {
     cy.intercept('GET', apiUrl('/Applications/System/$/GetServices/System%2FNamingService/$/GetPartitions?*'), { fixture: 'cluster-page/naming/naming-partitions.json' });
     cy.intercept('GET', apiUrl('/EventsStore/Partitions/00000000-0000-0000-0000-000000001000/$/Replicas/Events?*'), { fixture }).as('namingEvents');
     cy.visit('/#/');
-    cy.get('[aria-label="SFX experience"]').select('new');
+    cy.setExperience('new');
     cy.get('[data-cy=navtabs]').contains('naming').click();
     cy.wait('@namingEvents');
   };
@@ -25,15 +25,21 @@ describe('Naming metrics layout', () => {
 
   it('keeps selection controls available when all partitions are hidden', () => {
     openNaming('cluster-page/naming/naming-partition-1000.json');
-    cy.get('app-naming-viewer .partition-choice input').first().uncheck();
+    cy.contains('app-naming-viewer .naming-toolbar button', 'Partitions').should('contain', '1 / 1').click({ scrollBehavior: 'center' });
+    cy.get('app-naming-viewer .naming-menu[aria-label="Partitions"].show .naming-choice input').should('have.length', 1).uncheck({ scrollBehavior: 'center' });
     cy.get('app-naming-viewer .naming-empty').should('contain', 'No metrics selected');
-    cy.get('app-naming-viewer .partition-choice input').first().should('be.visible').check();
+    cy.contains('app-naming-viewer .naming-toolbar button', 'Partitions').should('contain', '0 / 1');
+    cy.contains('app-naming-viewer .naming-toolbar button', 'Operations').should('be.disabled');
+    cy.get('app-naming-viewer app-timeseries').should('not.exist');
+    cy.get('app-naming-viewer .naming-menu[aria-label="Partitions"].show .naming-choice input').should('be.visible').check({ scrollBehavior: 'center' });
+    cy.contains('app-naming-viewer .naming-toolbar button', 'Partitions').should('contain', '1 / 1').click({ scrollBehavior: 'center' });
+    cy.contains('app-naming-viewer .naming-toolbar button', 'Operations').should('be.enabled');
     cy.get('app-naming-viewer app-timeseries').should('be.visible');
   });
 
   it('closes the operation menu using its trigger, outside click, or Escape', () => {
     openNaming('cluster-page/naming/naming-partition-1000.json');
-    cy.get('[aria-label="SFX experience"]').select('classic');
+    cy.setExperience('classic');
     const trigger = 'app-naming-viewer [ngbDropdownToggle]';
     const menu = 'app-naming-viewer .dropdown-container';
     cy.get(menu).should('not.be.visible');
