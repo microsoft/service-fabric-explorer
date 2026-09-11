@@ -99,13 +99,13 @@ export class EventNavigatorComponent implements OnChanges, AfterViewInit, OnDest
   public timelineHeight?: number;
 
   ngOnChanges() {
-    const root = document.createElement('div');
     const plain = (value: string | HTMLElement | undefined) => {
-      // Parse into an inert template. Never insert event-provided HTML into the page.
+      // DOM content is already decoded text and must not be parsed as HTML again.
+      if (typeof value !== 'string') { return value?.textContent?.trim() || ''; }
+      // Parse HTML strings once in an inert template; never insert them into the page.
       const template = document.createElement('template');
-      template.innerHTML = typeof value === 'string' ? value : value?.textContent || '';
-      root.textContent = template.content.textContent || '';
-      return root.textContent.trim();
+      template.innerHTML = value;
+      return template.content.textContent?.trim() || '';
     };
     const humanize = (value: string) => value.replace(/([a-z0-9])([A-Z])/g, '$1 $2').replace(/([A-Z])([A-Z][a-z])/g, '$1 $2');
     const lanes = new Map(this.events.groups?.get().map(group => [group.id, plain(group.content)]) || []);

@@ -78,6 +78,22 @@ describe('EventNavigatorComponent', () => {
     expect(component.selected!.facts).toEqual([{ name: 'Target / Kind', value: 'Node' }, { name: 'Target / Node Name', value: 'long-node-name' }]);
   });
 
+  it('preserves literal markup in DOM content instead of parsing it again', () => {
+    const content = document.createElement('span');
+    content.textContent = '<img src=x onerror=alert(1)> & literal text';
+    component.events = { items: new DataSet<ITimelineItem>([{ id: 'literal', start, content }]) };
+    component.ngOnChanges();
+    expect(component.tracks[0].marks[0].event.name).toBe(content.textContent);
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('img')).toBeNull();
+  });
+
+  it('decodes HTML string content only once', () => {
+    component.events = { items: new DataSet<ITimelineItem>([{ id: 'html', start, content: '<b>&lt;node&gt; &amp; text</b>' }]) };
+    component.ngOnChanges();
+    expect(component.tracks[0].marks[0].event.name).toBe('<node> & text');
+  });
+
   it('applies keyboard navigation only once', () => {
     const span = component.to - component.from;
     fixture.nativeElement.querySelector('.chart').dispatchEvent(new KeyboardEvent('keydown', { key: '+', bubbles: true }));
