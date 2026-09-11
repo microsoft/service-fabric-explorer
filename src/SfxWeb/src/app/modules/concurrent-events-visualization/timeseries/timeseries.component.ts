@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnDestroy, ViewChildren, ElementRef, AfterViewInit, QueryList, ViewChild, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Input, OnChanges, OnDestroy, ViewChildren, ElementRef, AfterViewInit, QueryList, ViewChild, OnInit, inject, ChangeDetectionStrategy, SimpleChanges } from '@angular/core';
 import { Chart, Options, chart, SeriesOptionsType, Pointer, PointOptionsObject, YAxisOptions, XAxisOptions, Axis, PointClickEventObject, Point, Series } from 'highcharts';
 import { debounceTime } from 'rxjs/operators';
 import { ListSettings } from 'src/app/Models/ListSettings';
@@ -228,7 +228,13 @@ export class TimeseriesComponent implements AfterViewInit, OnChanges, OnDestroy,
     this.container.forEach(element => this.chartResize?.observe(element.nativeElement));
   }
 
-  ngOnChanges() {
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes.modern && !changes.modern.firstChange) {
+      // Recreate charts to discard mode-specific options and stale point references.
+      this.charts.forEach(chart => chart.destroy());
+      this.charts = [];
+      this.currentItems = null;
+    }
     if (this.modern) {
       this.currentItems = null;
       if (!this.data.dataSets.some(set => set.name === this.dataSeries)) { this.dataSeries = this.data.dataSets[0]?.name || ''; }

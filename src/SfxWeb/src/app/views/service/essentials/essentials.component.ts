@@ -5,7 +5,7 @@ import { SettingsService } from 'src/app/services/settings.service';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Observable, forkJoin, of } from 'rxjs';
 import { ServiceBaseControllerDirective } from '../ServiceBase';
-import { map } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 import { HealthUtils, HealthStatisticsEntityKind } from 'src/app/Utils/healthUtils';
 import { IDashboardViewModel, DashboardViewModel } from 'src/app/ViewModels/DashboardViewModels';
 import { ServiceHealth } from 'src/app/Models/DataModels/Service';
@@ -67,7 +67,11 @@ export class EssentialsComponent extends ServiceBaseControllerDirective {
     this.setOverviewItems();
 
     return forkJoin([
-      this.service.description.refresh(messageHandler).pipe(map(() => this.setOverviewItems())),
+      this.service.description.refresh(messageHandler).pipe(
+        map(() => this.setOverviewItems()),
+        // The REST client reports the error; keep independent health updates subscribed.
+        catchError(() => of(null))
+      ),
       this.service.health.refresh(messageHandler).pipe(map((replicaHealth: ServiceHealth) => {
         const partitionsDashboard = HealthUtils.getHealthStateCount(replicaHealth.raw, HealthStatisticsEntityKind.Partition);
         this.partitionsDashboard = DashboardViewModel.fromHealthStateCount('Partitions', 'Partition', false, partitionsDashboard);
