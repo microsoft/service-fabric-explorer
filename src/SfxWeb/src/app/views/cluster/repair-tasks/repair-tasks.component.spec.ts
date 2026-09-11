@@ -89,15 +89,18 @@ class RepairJobChartStubComponent {
   @Input() sortOrder!: ISortOrdering;
 }
 
+// eslint-disable-next-line @angular-eslint/directive-selector -- Test double must match the ng-bootstrap selector used by the production template.
 @Directive({ selector: '[ngbNav]', exportAs: 'ngbNav', standalone: false })
 class NavStubDirective {
   @Input() destroyOnHide = true;
   @Output() navChange = new EventEmitter<NgbNavChangeEvent>();
 }
 
+// eslint-disable-next-line @angular-eslint/directive-selector -- Test double must match the ng-bootstrap selectors used by the production template.
 @Directive({ selector: '[ngbNavItem], [ngbNavLink]', standalone: false })
 class NavItemStubDirective {}
 
+// eslint-disable-next-line @angular-eslint/directive-selector -- Test double must match the ng-bootstrap selector used by the production template.
 @Directive({ selector: '[ngbNavContent]', standalone: false })
 class NavContentStubDirective implements OnInit {
   private template = inject(TemplateRef<unknown>);
@@ -109,6 +112,7 @@ class NavContentStubDirective implements OnInit {
   }
 }
 
+// eslint-disable-next-line @angular-eslint/directive-selector -- Test double must match the ng-bootstrap selector used by the production template.
 @Directive({ selector: '[ngbNavOutlet]', standalone: false })
 class NavOutletStubDirective {
   @Input() ngbNavOutlet!: NavStubDirective;
