@@ -105,7 +105,7 @@
             <h2>Deployed Applications</h2>
           </div>
           <div collapse-body>
-            <app-detail-list [list]="deployedApps.collection" [listSettings]="listSettings" data-cy="appsList">
+            <app-detail-list [list]="deployedApps.collection" [listSettings]="listSettings" [toolbarFilterProperties]="experience.isNew() ? ['health.healthState', 'raw.Status'] : []" data-cy="appsList">
             </app-detail-list>
           </div>
         </app-collapse-container>

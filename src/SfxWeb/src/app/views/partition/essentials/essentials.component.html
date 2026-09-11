@@ -72,7 +72,7 @@
             </app-warning>
           }
           @if (partition.replicas.isInitialized) {
-            <app-detail-list [list]="replicaViewModels" [listSettings]="listSettings"
+            <app-detail-list [list]="replicaViewModels" [listSettings]="listSettings" [toolbarFilterProperties]="experience.isNew() ? ['raw.NodeName', 'role', 'healthState', 'raw.ReplicaStatus'] : []"
             ></app-detail-list>
           }
         </div>

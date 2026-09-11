@@ -8,8 +8,14 @@
     <div style="border-bottom: 1px solid white; padding: 3px;">{{tooltipText.type}}</div>
     {{tooltipText.tooltip}}
   </ng-template>
-  <app-clip-board [text]="item.raw.TaskId" name="repair job task id" style="display: inline-block;"></app-clip-board>
-  {{item.raw.TaskId}} @if (tooltipText?.tooltip.length > 0) {
+  @if (!experience.isNew()) {
+    <app-clip-board [text]="item.raw.TaskId" name="repair job task id" style="display: inline-block;"></app-clip-board>
+  }
+  {{item.raw.TaskId}}
+  @if (experience.isNew()) {
+    <app-clip-board [text]="item.raw.TaskId" name="repair job task id" style="display: inline-block;"></app-clip-board>
+  }
+  @if (tooltipText?.tooltip.length > 0) {
   <span class="mif-info" style="color: #70daf8;"  tooltipClass="styled-tooltip" [ngbTooltip]="tipContent" container="body" tabindex="0"></span>
 }
 </div>

@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, ViewChildren, QueryList, ViewChild, ElementRef, inject, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, OnChanges, SimpleChanges, ViewChildren, QueryList, ViewChild, ElementRef, inject, ChangeDetectionStrategy, TemplateRef } from '@angular/core';
 import { ListSettings, ListColumnSetting, FilterValue } from 'src/app/Models/ListSettings';
 import { DataModelCollectionBase } from 'src/app/Models/DataModels/collections/CollectionBase';
 import fill from 'lodash/fill';
@@ -18,6 +18,7 @@ import { NgbDropdown } from '@ng-bootstrap/ng-bootstrap';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { MatDialog } from '@angular/material/dialog';
 import { ExportModalComponent } from '../export-modal/export-modal.component';
+import { ExperienceService } from 'src/app/services/experience.service';
 
 export interface ISortOrdering {
   direction: boolean;
@@ -31,7 +32,54 @@ export interface ISortOrdering {
     changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
-export class DetailListComponent implements OnInit, OnDestroy {
+export class DetailListComponent implements OnInit, OnDestroy, OnChanges {
+  public experience = inject(ExperienceService);
+  public columnWidths = new Map<ListColumnSetting, number>();
+  private columnDrag?: { pointer: number; x: number; width: number; column: ListColumnSetting };
+  get resizedTableWidth() {
+    return this.experience.isNew() && this.listSettings.columnSettings.every(column => this.columnWidths.has(column))
+      ? this.listSettings.columnSettings.reduce((total, column) => total + this.columnWidths.get(column)!, 0) : null;
+  }
+
+  private measureColumns(handle: HTMLElement) {
+    const table = handle.closest('table')!;
+    const headers = table.tHead!.rows[0].cells;
+    this.listSettings.columnSettings.forEach((column, index) => {
+      this.columnWidths.set(column, headers[index].getBoundingClientRect().width);
+    });
+  }
+
+  resizeColumn(event: PointerEvent, column: ListColumnSetting) {
+    if (!this.experience.isNew()) { return; }
+    const handle = event.currentTarget as HTMLElement;
+    if (event.type === 'pointerdown') {
+      if (event.button !== 0) { return; }
+      this.measureColumns(handle);
+      this.columnDrag = { pointer: event.pointerId, x: event.clientX, width: this.columnWidths.get(column)!, column };
+      handle.setPointerCapture(event.pointerId);
+      handle.focus({ preventScroll: true });
+      event.preventDefault();
+    } else if (this.columnDrag?.pointer === event.pointerId) {
+      if (event.type === 'pointermove') {
+        this.columnWidths.set(this.columnDrag.column, Math.max(80, Math.min(1200, this.columnDrag.width + event.clientX - this.columnDrag.x)));
+      } else {
+        this.columnDrag = undefined;
+        if (handle.hasPointerCapture(event.pointerId)) { handle.releasePointerCapture(event.pointerId); }
+      }
+    }
+    event.stopPropagation();
+  }
+
+  resizeColumnKey(event: KeyboardEvent, column: ListColumnSetting) {
+    if (!this.experience.isNew() || !['ArrowLeft', 'ArrowRight', 'Home'].includes(event.key)) { return; }
+    event.preventDefault();
+    event.stopPropagation();
+    if (event.key === 'Home') { this.resetColumnWidths(); return; }
+    if (this.resizedTableWidth === null) { this.measureColumns(event.currentTarget as HTMLElement); }
+    this.columnWidths.set(column, Math.max(80, Math.min(1200, this.columnWidths.get(column)! + (event.key === 'ArrowRight' ? 20 : -20))));
+  }
+
+  resetColumnWidths() { this.columnDrag = undefined; this.columnWidths.clear(); }
   private liveAnnouncer = inject(LiveAnnouncer);
   private dialog = inject(MatDialog);
 
@@ -41,10 +89,15 @@ export class DetailListComponent implements OnInit, OnDestroy {
   @Input() isLoading = false;
   @Input() successfulLoad = true;
   @Input() showTopOptions = true;
+  @Input() toolbarTemplate?: TemplateRef<unknown>;
+  @Input() toolbarFilterProperties: string[] = [];
+  get toolbarFilterColumns() { return this.listSettings.columnSettings.filter(column => this.toolbarFilterProperties.includes(column.propertyPath)); }
+  get hasToolbarFilterOptions() { return this.toolbarFilterColumns.some(column => column.hasFilters); }
+  get toolbarFiltersActive() { return this.toolbarFilterColumns.some(column => column.hasEffectiveFilters); }
   @Output() sorted = new EventEmitter<any[]>();
   @Output() sortOrdering = new EventEmitter<ISortOrdering>();
   
-  private iList!: any[];
+  private iList: any[] = [];
   public sortedFilteredList: any[] = []; // actual list displayed in html.
   
   page = 1;
@@ -85,7 +138,12 @@ export class DetailListComponent implements OnInit, OnDestroy {
    });
   }
 
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes.listSettings) { this.updateList(); }
+  }
+
   ngOnDestroy() {
+    this.columnDrag = undefined;
     if (this.debouncerHandlerSubscription){
       this.debouncerHandlerSubscription.unsubscribe();
     }

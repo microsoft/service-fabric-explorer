@@ -49,3 +49,8 @@ tbody tr.highlighted-row {
     background-color: rgba(241, 157, 3, 0.25) !important;
   }
 }
+.resizable-table th { position: relative; }
+.column-resizer { position: absolute; right: 0; top: 0; bottom: 0; width: 8px; cursor: col-resize; touch-action: none; user-select: none; z-index: 1; }
+.column-resizer::after { content: ''; position: absolute; right: 1px; top: 25%; bottom: 25%; width: 1px; background: #484f58; }
+.column-resizer:hover::after, .column-resizer:focus-visible::after { background: #58a6ff; width: 2px; }
+.column-resizer:focus-visible { outline: 2px solid #58a6ff; outline-offset: -2px; }

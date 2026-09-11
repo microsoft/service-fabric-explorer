@@ -88,6 +88,7 @@ body.sfx-new {
   .toast, .toast-header { background: #161b22; color: #e6edf3; border-color: #484f58; }
   .toast { box-shadow: 0 8px 24px #01040980; }
   app-toast-container.modern-toasts .notification.toast { margin: 0; background: #161b22; border: 1px solid #30363d; border-top: 2px solid var(--notification-accent); border-radius: 8px; box-shadow: 0 8px 24px #01040980; }
+  app-toast-container.modern-toasts .notification.toast[data-severity=bg-danger] { border-top: 1px solid #30363d; }
   app-toast-container.modern-toasts .notification .toast-header { padding: 12px 16px; background: #1c2128; border-bottom: 1px solid #30363d; border-radius: 7px 7px 0 0; font-family: var(--font-family-ui); }
   app-toast-container.modern-toasts .notification .toast-body { padding: 14px 16px; }
   app-toast-container.modern-toasts .notification .btn-close { flex-shrink: 0; margin-left: auto; padding: 8px; filter: invert(1) grayscale(100%) brightness(200%); opacity: .75; }
@@ -106,6 +107,22 @@ body.sfx-new {
   .dropdown-item:hover, .dropdown-item:focus { background: #30363d; color: #fff; }
   .dropdown-menu .item { padding: 6px 10px; }
   .dropdown-menu label { display: flex; align-items: center; gap: 10px; margin: 0; }
+  .dropdown-menu.table-filter-menu { min-width: 160px; max-width: min(320px, calc(100vw - 24px)); padding: 6px; border-radius: 6px; max-height: 360px; overflow-y: auto; }
+  .table-filter-menu .item { padding: 0; }
+  .table-filter-menu .item label { justify-content: flex-start; border: 0; padding: 8px 10px; margin: 0; border-radius: 4px; font-weight: 400; white-space: normal; overflow-wrap: anywhere; cursor: pointer; }
+  .table-filter-menu .item label:hover, .table-filter-menu .item label:focus-within { background: #21262d; }
+  .table-filter-menu .item input { flex-shrink: 0; margin: 0; accent-color: #58a6ff; }
+  .table-filter-menu .table-filter-group { border: 0; margin: 0; padding: 0; min-width: 0; }
+  .table-filter-menu .table-filter-group + .table-filter-group { margin-top: 8px; }
+  .table-filter-menu .table-filter-group legend { float: none; width: auto; margin: 0; padding: 4px 10px; color: #8b949e; font: 600 15px/1.5 var(--font-family-ui); }
+  .table-filter-menu .table-filter-group ul { list-style: none; margin: 0; padding: 0; }
+  .dropdown-menu.table-filter-grid { width: 480px; max-width: calc(100vw - 24px); max-height: min(560px, 70vh); }
+  .table-filter-grid.show { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; align-items: start; }
+  .table-filter-grid .table-filter-group + .table-filter-group { margin-top: 0; }
+  .table-filter-grid .table-filter-group ul { max-height: 200px; overflow-y: auto; }
+  @media (max-width: 480px) { .table-filter-grid.show { grid-template-columns: minmax(0, 1fr); } }
+  app-root .view-container app-health-viewer app-display-time .timestamp { min-width: max-content; }
+  app-root .view-container app-health-viewer app-display-time .timestamp-value time { white-space: nowrap; overflow-wrap: normal; }
   .tooltip-inner { background: #21262d; color: #e6edf3; border: 1px solid #484f58; font-size: 15px; }
   .mat-mdc-dialog-container {
     --mat-dialog-container-color: #161b22;
@@ -138,6 +155,49 @@ body.sfx-new {
   .cdk-overlay-container pre { color: #c9d1d9; background: #0d1117; border: 1px solid #30363d; padding: 12px; border-radius: 5px; max-height: 360px; overflow: auto; }
   .cdk-overlay-container .essen-pane { background: #0d1117; border: 1px solid #30363d; box-shadow: none; }
   .cdk-overlay-container table { color: #e6edf3; }
+  .cdk-overlay-pane:has(app-create-service) { width: 820px; max-width: calc(100vw - 32px) !important; }
+  app-create-service .action-modal {
+    display: flex; flex-direction: column; max-width: none; max-height: calc(100dvh - 32px); margin: 0;
+    .modal-header { flex-shrink: 0; padding: 12px 16px !important; background: #1c2128 !important; }
+    .modal-title { margin: 0; font: 600 18px/1.5 var(--font-family-ui); }
+    .modal-body { flex: 1 1 auto; min-height: 0; max-height: none; padding: 16px !important; }
+    .modal-footer { flex-shrink: 0; padding: 12px 16px !important; background: #1c2128; }
+    .modal-body .dl-horizontal {
+      display: grid; grid-template-columns: minmax(0, 200px) minmax(0, 1fr); gap: 12px 20px; align-items: start;
+      > dt, > dd { display: block; float: none; width: auto !important; min-width: 0; margin: 0; padding: 0; font: 400 15px/1.5 var(--font-family-ui); overflow-wrap: anywhere; }
+      > dt { padding-top: 7px; color: #8b949e; }
+      > dd { color: #e6edf3; }
+      > dd:not(:has(input, table, .radio-btns)) { padding-top: 7px; }
+      > dt:has(+ dd > .table-responsive), > dd:has(> .table-responsive) { grid-column: 1 / -1; }
+      > dt:has(+ dd > .table-responsive) { margin-top: 8px; color: #e6edf3; font-weight: 600; }
+      &.short { grid-template-columns: minmax(0, 100px) minmax(0, 1fr); margin-top: 12px; }
+    }
+    .input-flat { box-sizing: border-box; min-height: 36px; font: 400 15px/1.5 var(--font-family-ui); }
+    .input-flat::placeholder { font-style: normal; color: #8b949e; }
+    .radio-btns { align-items: center; gap: 8px; margin: 6px 16px 6px 0; }
+    .modal-body .dl-horizontal dd .radio-btns { display: inline-flex; width: max-content; max-width: 100%; vertical-align: middle; }
+    .modal-body .dl-horizontal dd .radio-btns input[type=radio] { flex: 0 0 16px; width: 16px; min-width: 16px; }
+    .modal-body .dl-horizontal dd .radio-btns label { flex: 0 0 auto; width: auto; margin: 0; white-space: nowrap; overflow-wrap: normal; }
+    input[type=radio], input[type=checkbox] { width: 16px; height: 16px; flex-shrink: 0; margin: 0; accent-color: #58a6ff; }
+    .checkbox-container-default { padding-top: 8px !important; }
+    app-collapse-container { display: block; margin-top: 20px; }
+    app-collapse-container .base-header { gap: 4px; padding: 8px 0; margin-bottom: 12px; }
+    app-collapse-container [collapse-header] { margin: 0; font: 600 15px/1.5 var(--font-family-ui); }
+    app-collapse-container .status-icon { font-size: 18px; }
+    .modal-body .dl-horizontal dd .table-responsive { margin: 0; border: 1px solid #30363d; border-radius: 6px; overflow-x: auto; }
+    table.default-table { min-width: 420px; border-collapse: collapse; }
+    table.default-table th { padding: 8px 10px; background: #1c2128; color: #c9d1d9; font-weight: 500; }
+    table.default-table td { padding: 8px 10px; border-color: #30363d; }
+    table.default-table td[colspan] { color: #8b949e; }
+    table.default-table th:last-child, table.default-table td:last-child:not([colspan]) { width: 1%; white-space: nowrap; }
+    table.default-table .input-flat { min-width: 90px; }
+    table.default-table .flat-button { min-height: 32px; padding: 5px 8px; color: #c9d1d9; }
+    @media (max-width: 600px) {
+      .modal-body .dl-horizontal, .modal-body .dl-horizontal.short { grid-template-columns: minmax(0, 1fr); gap: 6px; }
+      .modal-body .dl-horizontal > dd { margin-bottom: 8px; }
+      .modal-body .dl-horizontal > dt { padding-top: 0; }
+    }
+  }
   button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px solid #58a6ff; outline-offset: 2px; }
 
   // Entity details, forms and operational views retain their existing bindings.
@@ -244,10 +304,26 @@ body.sfx-new {
     app-detail-list .list-toolbar .input-wrapper { flex: 0 1 360px; width: 100%; max-width: 360px; padding: 0; margin: 0; }
     app-detail-list .list-toolbar .input-container { display: block; max-width: none; }
     app-detail-list .list-toolbar .simple-button { margin: 0; }
+    app-detail-list .list-toolbar-extra { margin-left: auto; min-width: 0; max-width: 100%; text-align: right; }
+    app-detail-list .list-toolbar-extra a { color: #8b949e; font-size: 15px; overflow-wrap: anywhere; }
+    app-detail-list .list-toolbar-extra a:hover { color: #58a6ff; }
     app-health-viewer table.detail-list th:has(button[title^='Sort by Kind']) { width: 180px; }
     app-health-viewer table.detail-list th:has(button[title^='Sort by Health State']) { width: 150px; }
     app-health-viewer table.detail-list th:has(button[title^='Sort by Source UTC']) { width: 220px; }
     app-health-viewer table.detail-list th:has(button[title^='Sort by Description']) { width: auto; }
+    app-health-viewer .modern-health-events .table-responsive > table.detail-list {
+      table-layout: auto; width: auto;
+      > thead > tr > th, > tbody > tr > td { padding: 8px; }
+      > thead > tr > th { width: auto; }
+      th:first-child, td:first-child { min-width: 96px; }
+      th:nth-child(2), td:nth-child(2), th:nth-child(3), td:nth-child(3) { min-width: 90px; max-width: 160px; overflow-wrap: anywhere; }
+      th:nth-child(4), td:nth-child(4) { width: 240px; max-width: 240px; }
+      th:nth-child(5), td:nth-child(5) { min-width: 270px; white-space: nowrap; }
+      th:nth-child(6), td:nth-child(6) { min-width: 110px; }
+      th:nth-child(7), td:nth-child(7) { min-width: 165px; white-space: nowrap; }
+      th:nth-child(8), td:nth-child(8) { min-width: 145px; }
+      th:nth-child(9), td:nth-child(9) { min-width: 85px; }
+    }
   }
   // The bordered wrapper owns the bottom edge, not the legacy IE table spacer.
   app-detail-list .table-responsive > table.detail-list { margin-bottom: 0; border-bottom: 0; }
@@ -255,6 +331,15 @@ body.sfx-new {
   app-root .view-container app-detail-list .table-responsive > table.detail-list > thead > tr > th { background: #1c2128; color: #c9d1d9; font-weight: 500; padding: 10px 12px; }
   app-root .view-container app-detail-list .table-responsive > table.detail-list > tbody > tr > td { background: transparent; color: #e6edf3; padding: 10px 12px; border-top: 1px solid #30363d; }
   app-root .view-container app-detail-list .table-responsive > table.detail-list > tbody > tr.hover-row:hover { background: #21262d; }
+  app-root .view-container app-detail-list .table-responsive > table.detail-list.columns-resized {
+    table-layout: fixed !important;
+    > thead > tr > th, > tbody > tr > td { width: auto !important; min-width: 0 !important; max-width: none !important; overflow: hidden; }
+    > thead > tr > th > .header-wrapper { overflow: hidden; margin-right: 6px; }
+    > tbody > tr > td > .item-wrapper { max-width: 100%; overflow-x: auto; }
+    > tbody > tr > td > .item-wrapper > app-detail-table-resolver { flex: 1 1 auto; min-width: 0; }
+    app-health-description { display: block; width: 100%; }
+    app-health-description .message { min-width: 0; max-width: none; width: 100%; }
+  }
   app-root .view-container app-essentials,
   app-root .view-container app-repair-tasks,
   app-root .view-container app-imagestore-viewer,
