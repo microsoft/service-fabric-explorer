@@ -11,7 +11,7 @@
   </div>
   <div class="filters">
     <input type="search" aria-label="Search event records" placeholder="Search type, entity, ID, or event data" [(ngModel)]="query" (ngModelChange)="filter()">
-    <label><span class="sr-only">Category</span><select aria-label="Event category" [(ngModel)]="category" (ngModelChange)="filter()"><option value="">All categories</option>@for (value of categories; track value) { <option [value]="value">{{value}}</option> }</select></label>
+    <app-select-menu label="Event category" [(value)]="category" (valueChange)="filter()" [options]="categoryOptions"></app-select-menu>
     @if (query || category) { <button type="button" class="link" (click)="clear()">Clear filters</button> }
     <div class="zone">Time zone <app-select-menu label="Event records timezone" [(value)]="utc" [options]="[{value: true, label: 'UTC'}, {value: false, label: 'Local'}]"></app-select-menu></div>
   </div>
@@ -32,7 +32,7 @@
       </tbody>
     </table>
   </div>
-  <footer><span>{{filtered.length}} matching events</span><label>Rows <select aria-label="Rows per page" [(ngModel)]="pageSize" (ngModelChange)="page = 1"><option [ngValue]="25">25</option><option [ngValue]="50">50</option><option [ngValue]="100">100</option></select></label><div class="pagination"><button type="button" [disabled]="page <= 1" (click)="page = page - 1">Previous</button><span>{{page}} / {{pages}}</span><button type="button" [disabled]="page >= pages" (click)="page = page + 1">Next</button></div></footer>
+  <footer><span>{{filtered.length}} matching events</span><label>Rows <app-select-menu label="Rows per page" [(value)]="pageSize" (valueChange)="page = 1" [options]="[{value: 25, label: '25'}, {value: 50, label: '50'}, {value: 100, label: '100'}]"></app-select-menu></label><div class="pagination"><button type="button" [disabled]="page <= 1" (click)="page = page - 1">Previous</button><span>{{page}} / {{pages}}</span><button type="button" [disabled]="page >= pages" (click)="page = page + 1">Next</button></div></footer>
   <details class="coverage"><summary>About event coverage</summary><p>Queries return up to 500 events per source. Data loss or operations crossing the selected boundaries can leave incomplete timelines. An empty result does not prove that no activity occurred.</p></details>
   <span class="sr-only" aria-live="polite">{{copyStatus}}</span>
 </section>

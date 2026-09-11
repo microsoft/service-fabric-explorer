@@ -1,6 +1,7 @@
 import { Component, OnInit, Input, OnChanges, ChangeDetectorRef, ChangeDetectionStrategy, OnDestroy, inject } from '@angular/core';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { interval, Subscription } from 'rxjs';
+import { ExperienceService } from 'src/app/services/experience.service';
 
 @Component({
     selector: 'app-display-time',
@@ -10,6 +11,7 @@ import { interval, Subscription } from 'rxjs';
     standalone: false
 })
 export class DisplayTimeComponent implements OnInit, OnChanges, OnDestroy {
+  public experience = inject(ExperienceService);
   private cdr = inject(ChangeDetectorRef);
 
 

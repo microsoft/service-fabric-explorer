@@ -338,6 +338,12 @@ body.sfx-new {
   .overview-property-grid dd > span { min-width: 0; }
   .overview-property-grid app-clip-board { flex-shrink: 0; }
   .overview-link { margin-top: 12px; }
+  app-root .view-container app-repair-task-view .repair-detail {
+    .repair-tabs .nav-link { border: 0 !important; border-bottom: 2px solid transparent !important; background: transparent; }
+    .repair-tabs .nav-link.active { border-bottom-color: #f78166 !important; }
+    .repair-history app-collapse-container .header-wrapper { flex: 1; min-width: 0; }
+    .repair-history app-collapse-container .base-header { padding: 8px 0; }
+  }
   // Scalar properties use spacing, while record tables retain their separators.
   app-root .view-container {
     app-essential-item .essential-list-item,

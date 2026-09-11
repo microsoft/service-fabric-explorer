@@ -40,6 +40,7 @@ export class EventResultsComponent implements OnChanges, OnDestroy {
   public rows: EventRow[] = [];
   public filtered: EventRow[] = [];
   public categories: string[] = [];
+  public get categoryOptions() { return [{ value: '', label: 'All categories' }, ...this.categories.map(value => ({ value, label: value }))]; }
   public copyStatus = '';
 
   public get source() { return this.sources.find(source => source.displayName === this.active); }
