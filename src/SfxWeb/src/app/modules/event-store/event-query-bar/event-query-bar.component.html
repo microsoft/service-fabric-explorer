@@ -29,7 +29,7 @@
   </div>
 
   <div class="range-summary" aria-label="Applied query range"><time>{{format(start)}}</time><span class="range-arrow" aria-label="to">&rarr;</span><time>{{format(end)}}</time></div>
-  <label class="zone"><span class="sr-only">Query timezone</span><select aria-label="Query timezone" [ngModel]="utc" (ngModelChange)="changeZone($event)" [disabled]="panel === 'range' && custom"><option [ngValue]="true">UTC</option><option [ngValue]="false">Local</option></select></label>
+  <div class="zone"><app-select-menu label="Query timezone" [value]="utc" (valueChange)="changeZone($event)" [disabled]="panel === 'range' && custom" [options]="[{value: true, label: 'UTC'}, {value: false, label: 'Local'}]"></app-select-menu></div>
 
   @if (sources.length) {
     <div class="source-control">

@@ -1,5 +1,11 @@
 $detail-table-header-color: #939393;
 
+// Classic hides header edges with surface-colored borders. New draws every cell,
+// including the merged top-left corner, with one consistent grid line.
+table.default-table.map-table.modern-map > tbody > tr > td {
+  border: 1px solid #30363d !important;
+}
+
 .sticky {
   position: sticky;
   left: 0px;

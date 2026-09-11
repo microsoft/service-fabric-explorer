@@ -117,8 +117,6 @@ body.sfx-new app-root .view-container {
     app-health-viewer .nav-link { border-bottom: 2px solid transparent !important; }
     app-health-viewer .nav-link.active { border-bottom-color: #f78166 !important; }
     app-health-viewer .nav-link:hover:not(.active) { border-bottom-color: #484f58 !important; }
-    app-health-viewer table.detail-list th { background: #161b22; color: #8b949e; font-weight: 500; }
-    app-health-viewer table.detail-list td { background: #161b22; color: #e6edf3; }
     @media (max-width: 600px) { app-replica-address table.detail-table th { width: 30%; } }
   }
   app-repair-tasks [style*='flex-direction: row'] { flex-wrap: wrap; gap: 8px; }

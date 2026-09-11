@@ -34,30 +34,6 @@ interface IMetricsTableData {
 export class MetricsComponent extends BaseControllerDirective {
   experience = inject(ExperienceService);
   public metricSearch = '';
-  public sidebarWidth = 420;
-  private sidebarDrag?: { id: number; x: number; width: number };
-  public resizeSidebar(event: PointerEvent, container: HTMLElement) {
-    if (!this.sidebarDrag || event.pointerId !== this.sidebarDrag.id) { return; }
-    this.sidebarWidth = Math.max(320, Math.min(680, container.clientWidth - 340, this.sidebarDrag.width + event.clientX - this.sidebarDrag.x));
-  }
-  public startSidebarResize(event: PointerEvent) {
-    if (event.button !== 0) { return; }
-    this.sidebarDrag = { id: event.pointerId, x: event.clientX, width: this.sidebarWidth };
-    (event.currentTarget as HTMLElement).setPointerCapture(event.pointerId);
-    event.preventDefault();
-  }
-  public endSidebarResize(event: PointerEvent) {
-    this.sidebarDrag = undefined;
-    const handle = event.currentTarget as HTMLElement;
-    if (handle.hasPointerCapture(event.pointerId)) { handle.releasePointerCapture(event.pointerId); }
-    window.dispatchEvent(new Event('resize'));
-  }
-  public keyboardSidebarResize(event: KeyboardEvent, container: HTMLElement) {
-    if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight' && event.key !== 'Home') { return; }
-    event.preventDefault();
-    this.sidebarWidth = Math.max(320, Math.min(680, container.clientWidth - 340, event.key === 'Home' ? 420 : this.sidebarWidth + (event.key === 'ArrowRight' ? 20 : -20)));
-    window.dispatchEvent(new Event('resize'));
-  }
   public loadingMetrics = true;
   private initialSelectionDone = false;
   public get metricGroups() {
@@ -66,7 +42,15 @@ export class MetricsComponent extends BaseControllerDirective {
       { name: 'Resource capacity', metrics: this.metricsViewModel.metricsWithCapacities },
       { name: 'Load metrics', metrics: this.metricsViewModel.metricsWithoutCapacities },
       { name: 'System metrics', metrics: this.metricsViewModel.systemMetrics }
-    ].map(group => ({ ...group, metrics: group.metrics.filter(metric => metric.displayName.toLowerCase().includes(this.metricSearch.toLowerCase())) }));
+    ].map(group => ({
+      ...group,
+      selectedCount: group.metrics.filter(metric => metric.selected).length,
+      visible: group.metrics.filter(metric => metric.displayName.toLowerCase().includes(this.metricSearch.trim().toLowerCase()))
+    }));
+  }
+  public removeMetric(metric: LoadMetricInformation) {
+    const group = this.metricGroups.find(group => group.metrics.includes(metric));
+    if (group) { this.updateSelectedMetric(metric, group.metrics); }
   }
   public get hasChartValues(): boolean { return this.tableData.dataPoints.some(series => series.data.some(value => value !== null)); }
   private data = inject(DataService);

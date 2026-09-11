@@ -169,6 +169,30 @@ $right-panel-min-width: 200px !default;
     }
 }
 
+.modern-header .report .issue-report-menu {
+  width: 340px;
+  min-width: 0;
+  max-width: calc(100vw - 24px);
+  padding: 6px;
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  .dropdown-item {
+    display: block;
+    padding: 10px 12px;
+    border: 0;
+    border-radius: 4px;
+    color: #e6edf3;
+    font: 400 15px/1.5 var(--font-family-ui);
+    white-space: normal;
+    overflow-wrap: anywhere;
+    text-decoration: none;
+    &:hover, &:focus { background: #21262d; color: #e6edf3; }
+    &:focus-visible { outline: 2px solid #58a6ff; outline-offset: -2px; }
+  }
+}
+
+
 .utc-time {
   position: absolute;
   right: 5px;
@@ -241,10 +265,13 @@ $right-panel-min-width: 200px !default;
 .modern-header {
   padding-right: 12px;
   gap: 16px;
-  .header-branding { gap: 12px; }
+  .navigation-toggle { display: flex; align-items: center; justify-content: center; flex-shrink: 0; width: 32px; height: 32px; margin-left: 12px; padding: 0; border: 0; border-radius: 4px; background: transparent; color: #8b949e; cursor: pointer; }
+  .navigation-toggle:hover { background: #21262d; color: #e6edf3; }
+  .navigation-toggle:focus-visible { outline: 2px solid #58a6ff; outline-offset: 2px; }
+  .header-branding { gap: 4px; }
   .navbar-brand { display: flex; align-items: center; height: 50px; padding: 0 12px; font-size: 16px; }
-  .navbar-brand-azure { background: transparent; color: #c9d1d9; border-right: 1px solid #30363d; }
-  .navbar-brand-icon { width: 26px !important; }
+  .navbar-brand-azure { background: transparent; color: #8b949e; border: 0; font-size: 15px; font-weight: 400; }
+  .navbar-brand-icon { width: 22px !important; }
   .header-controls { gap: 8px; }
   .header-refresh { padding-right: 12px; border-right: 1px solid #30363d; }
   .experience-control { margin: 0; gap: 8px; }

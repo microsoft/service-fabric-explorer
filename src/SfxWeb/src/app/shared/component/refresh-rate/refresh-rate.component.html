@@ -1,8 +1,6 @@
 @if (modern) {
   <div class="modern-refresh" data-cy="refreshrate">
-    <label><span>Auto-refresh</span><select aria-label="Auto-refresh interval" [ngModel]="refreshRate" (ngModelChange)="change(+$event)">
-      <option [ngValue]="0">Off</option><option [ngValue]="1">5 min</option><option [ngValue]="2">1 min</option><option [ngValue]="3">30 sec</option><option [ngValue]="4">10 sec</option><option [ngValue]="5">5 sec</option>
-    </select></label>
+    <label><span>Auto-refresh</span><app-select-menu label="Auto-refresh interval" [value]="refreshRate" (valueChange)="change(+$event)" [options]="[{value: 0, label: 'Off'}, {value: 1, label: '5 min'}, {value: 2, label: '1 min'}, {value: 3, label: '30 sec'}, {value: 4, label: '10 sec'}, {value: 5, label: '5 sec'}]"></app-select-menu></label>
     <button type="button" data-cy="refresh" aria-label="Refresh now" [disabled]="refresh" (click)="forceRefresh()" [title]="refresh ? 'Refreshing' : 'Refresh now'">
       <svg aria-hidden="true" viewBox="0 0 24 24" [class.rotate]="refresh"><path d="M20 7v5h-5M4 17v-5h5M6.1 7a7 7 0 0 1 11.6-1L20 9M4 15l2.3 3A7 7 0 0 0 18 17"/></svg>
     </button>

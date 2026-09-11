@@ -6,6 +6,7 @@ export interface IEssentialListItem {
   displayText?: string;
   copyTextValue?: string;
   descriptionName?: string;
+  valueUrl?: string;
   selectorName?: string;
   displaySelector?: boolean;
   allowWrap?: boolean;

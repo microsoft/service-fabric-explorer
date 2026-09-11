@@ -1,6 +1,6 @@
 <div data-cy="clustermap-container">
-  <div style="max-width: 400px;" [class.essen-pane]="!experience.isNew()">
-    <app-node-filter [nodes]="nodes.collection" [compact]="experience.isNew()" (filteredNodes)="setNodes($event)"
+  <div [style.max-width]="experience.isNew() ? null : '400px'" [class.essen-pane]="!experience.isNew()">
+    <app-node-filter [nodes]="nodes.collection" [compact]="experience.isNew()" [healthDropdown]="experience.isNew()" (filteredNodes)="setNodes($event)"
       [(groupByNodeType)]="groupByNodeType"></app-node-filter>
   </div>
   <app-map [nodes]="filteredNodes" [groupByNodeType]="groupByNodeType"></app-map>

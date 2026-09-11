@@ -1,19 +1,24 @@
 @if (replica) {
   <div>
     <div class="tile-container">
-      <app-essential-health-tile [listItems]="essentialItems" class="long">
+      <app-essential-health-tile [listItems]="experience.isNew() ? overviewItems : essentialItems" class="long">
         <ng-template appEssentialTemplate id="status">
           <app-status-resolver [status]="replica.raw.ReplicaStatus"></app-status-resolver>
         </ng-template>
         <ng-template appEssentialTemplate id="view">
           <a [routerLink]="appView">View on Application</a>
         </ng-template>
+        <ng-template appEssentialTemplate id="serviceName">
+          <a [routerLink]="replica.serviceViewPath">{{replica.raw.ServiceName}}</a>
+        </ng-template>
       </app-essential-health-tile>
+      @if (!experience.isNew()) {
       <app-essential-health-tile [listItems]="essentialItems2" class="long">
         <ng-template appEssentialTemplate id="serviceName">
           <a [routerLink]="replica.serviceViewPath">{{replica.raw.ServiceName}}</a>
         </ng-template>
       </app-essential-health-tile>
+      }
     </div>
     @if (replica.address) {
       <div class="essen-pane">

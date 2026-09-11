@@ -1,4 +1,5 @@
-import { Component, OnInit, Input, OnChanges, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, Input, OnChanges, OnDestroy, ChangeDetectionStrategy, inject } from '@angular/core';
+import { ExperienceService } from 'src/app/services/experience.service';
 import { IRawReplicatorStatus, IRawRemoteReplicatorStatus } from 'src/app/Models/RawDataTypes';
 import { ReplicaOnPartition } from 'src/app/Models/DataModels/Replica';
 import { Utils } from 'src/app/Utils/Utils';
@@ -23,11 +24,34 @@ const reduceReplicators = (data: Record<string, IRawRemoteReplicatorStatus>, rep
     standalone: false
 })
 export class ReplicaStatusContainerComponent implements OnChanges, OnDestroy {
+  public experience = inject(ExperienceService);
 
   @Input() replicas!: ReplicaOnPartition[];
   sortedReplicas: ReplicaOnPartition[] = [];
+  search = '';
+  page = 1;
+  readonly pageSize = 12;
+  filteredReplicas: ReplicaOnPartition[] = [];
+  visibleReplicas: ReplicaOnPartition[] = [];
+  pageCount = 1;
+  selectedReplica?: ReplicaOnPartition;
 
-  replicaDict = {};
+  selectReplicaId(id: string) {
+    this.selectedReplica = this.visibleReplicas.find(replica => replica.id === id && this.replicaDict[replica.name]);
+  }
+
+  updatePage(page = this.page) {
+    const query = this.search.trim().toLowerCase();
+    this.filteredReplicas = this.sortedReplicas.filter(replica => !query || `${replica.id} ${replica.raw.NodeName} ${replica.role} ${replica.raw.ReplicaStatus}`.toLowerCase().includes(query));
+    this.pageCount = Math.max(1, Math.ceil(this.filteredReplicas.length / this.pageSize));
+    this.page = Math.max(1, Math.min(page, this.pageCount));
+    this.visibleReplicas = this.filteredReplicas.slice((this.page - 1) * this.pageSize, this.page * this.pageSize);
+    if (this.selectedReplica) {
+      this.selectedReplica = this.visibleReplicas.find(replica => replica.id === this.selectedReplica!.id && this.replicaDict[replica.name]);
+    }
+  }
+
+  replicaDict: Record<string, IRawRemoteReplicatorStatus> = {};
   expandedDict = {};
   cachedData: Record<string, ITimedReplication[]> = {};
 
@@ -66,14 +90,19 @@ export class ReplicaStatusContainerComponent implements OnChanges, OnDestroy {
             this.cachedData[replicator.ReplicaId] = [];
           }
 
-          if (this.cachedData[replicator.ReplicaId].length > 20) {
+          if (this.cachedData[replicator.ReplicaId].length >= 20) {
             this.cachedData[replicator.ReplicaId].shift();
           }
 
           this.cachedData[replicator.ReplicaId].push(cacheData);
         });
 
-        this.sortedReplicas = this.replicas.sort((a, b) => a.replicaRoleSortPriority - b.replicaRoleSortPriority);
+        this.sortedReplicas = [...this.replicas].sort((a, b) => a.replicaRoleSortPriority - b.replicaRoleSortPriority);
+        this.updatePage();
+        const activeIds = new Set(replicatorData.RemoteReplicators.map(replica => replica.ReplicaId));
+        Object.keys(this.cachedData).forEach(id => {
+          if (!activeIds.has(id)) { delete this.cachedData[id]; }
+        });
 
         // ref for shorter lines below
         const ref = this.primaryReplica.detail.replicatorStatus.raw.ReplicationQueueStatus;

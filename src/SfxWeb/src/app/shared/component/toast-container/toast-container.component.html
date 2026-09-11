@@ -1,6 +1,15 @@
 @for (toast of toastService.toasts; track toast) {
-  <ngb-toast
-    [header]="toast.header" [autohide]="true" [delay]="toast.duration"
-    (hide)="toastService.remove(toast)" [class]="toast.class"
-  >{{toast.body}}</ngb-toast>
+  @if (experience.isNew()) {
+    <ngb-toast [autohide]="true" [delay]="toast.duration" (hide)="toastService.remove(toast)"
+      class="notification" [attr.data-severity]="toast.class" [attr.role]="toast.class === 'bg-danger' ? 'alert' : 'status'">
+      <ng-template ngbToastHeader>
+        <span class="notification-icon" aria-hidden="true">{{toast.class === 'bg-info' ? 'i' : '!'}}</span>
+        <strong class="notification-title">{{toast.header}}</strong>
+      </ng-template>
+      <div class="notification-message">{{toast.body}}</div>
+    </ngb-toast>
+  } @else {
+    <ngb-toast [header]="toast.header" [autohide]="true" [delay]="toast.duration"
+      (hide)="toastService.remove(toast)" [class]="toast.class">{{toast.body}}</ngb-toast>
+  }
 }

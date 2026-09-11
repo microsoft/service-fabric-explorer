@@ -16,6 +16,7 @@ import { HealthUtils, HealthStatisticsEntityKind } from 'src/app/Utils/healthUti
 import { RepairTaskCollection } from 'src/app/Models/DataModels/collections/RepairTaskCollection';
 import { IEssentialListItem } from 'src/app/modules/charts/essential-health-tile/essential-health-tile.component';
 import { InfrastructureCollection } from 'src/app/Models/DataModels/collections/infrastructureCollection';
+import { ExperienceService } from 'src/app/services/experience.service';
 
 @Component({
     selector: 'app-essentials',
@@ -25,6 +26,7 @@ import { InfrastructureCollection } from 'src/app/Models/DataModels/collections/
     standalone: false
 })
 export class EssentialsComponent extends BaseControllerDirective {
+  public experience = inject(ExperienceService);
   data = inject(DataService);
   settings = inject(SettingsService);
   private routes = inject(RoutesService);

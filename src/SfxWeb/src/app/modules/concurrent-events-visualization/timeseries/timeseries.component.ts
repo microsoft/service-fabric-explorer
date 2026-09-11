@@ -64,6 +64,55 @@ export class TimeseriesComponent implements AfterViewInit, OnChanges, OnDestroy,
 
 
   @Input() data!: IParallelChartData;
+  @Input() modern = false;
+  public chartHeights: Record<string, number> = {};
+  private heightDrag?: { pointer: number; y: number; height: number; name: string };
+  public hiddenSeries = new Map<string, Set<string>>();
+
+  public resizeChartHeight(event: PointerEvent, name: string) {
+    const handle = event.currentTarget as HTMLElement;
+    if (event.type === 'pointerdown') {
+      if (event.button !== 0 || !this.modern) { return; }
+      this.heightDrag = { pointer: event.pointerId, y: event.clientY, height: this.chartHeights[name] || 260, name };
+      handle.setPointerCapture(event.pointerId);
+      handle.focus({ preventScroll: true });
+      event.preventDefault();
+    } else if (this.heightDrag?.pointer === event.pointerId) {
+      if (event.type === 'pointermove') {
+        this.setChartHeight(this.heightDrag.name, this.heightDrag.height + event.clientY - this.heightDrag.y);
+      } else {
+        this.heightDrag = undefined;
+        if (handle.hasPointerCapture(event.pointerId)) { handle.releasePointerCapture(event.pointerId); }
+      }
+    }
+  }
+
+  private setChartHeight(name: string, height: number) {
+    this.chartHeights[name] = Math.max(200, Math.min(800, Math.round(height)));
+    this.charts[this.data.series.findIndex(series => series.name === name)]?.setSize(undefined, this.chartHeights[name], false);
+  }
+
+  public resizeChartKey(event: KeyboardEvent, name: string) {
+    const height = this.chartHeights[name] || 260;
+    if (event.key === 'ArrowDown') { this.setChartHeight(name, height + 20); }
+    else if (event.key === 'ArrowUp') { this.setChartHeight(name, height - 20); }
+    else if (event.key === 'Home') { this.setChartHeight(name, 260); }
+    else { return; }
+    event.preventDefault();
+    event.stopPropagation();
+  }
+
+  public seriesColor(name: string) { return this.seriesColors.get(name) || '#58a6ff'; }
+  public toggleSeries(chartName: string, seriesName: string) {
+    const hidden = this.hiddenSeries.get(chartName) || new Set<string>();
+    if (hidden.has(seriesName)) { hidden.delete(seriesName); } else { hidden.add(seriesName); }
+    this.hiddenSeries.set(chartName, hidden);
+    this.charts[this.data.series.findIndex(series => series.name === chartName)]?.series.find(series => series.name === seriesName)?.setVisible(!hidden.has(seriesName), true);
+  }
+  public dataSeries = '';
+  public get selectedDataSet() { return this.data.dataSets.find(set => set.name === this.dataSeries) || this.data.dataSets[0]; }
+  private readonly seriesColors = new Map<string, string>();
+  private chartResize?: ResizeObserver;
   @ViewChildren('container') private container!: QueryList<ElementRef>;
 
   @ViewChild('inner') private inner!: ElementRef<HTMLDivElement>;
@@ -163,9 +212,27 @@ export class TimeseriesComponent implements AfterViewInit, OnChanges, OnDestroy,
 
   ngAfterViewInit() {
     this.generateCharts();
+    this.subscriptions.add(this.container.changes.subscribe(() => {
+      this.charts.forEach(chart => chart.destroy());
+      this.charts = [];
+      this.currentItems = null;
+      this.generateCharts();
+      this.observeCharts();
+    }));
+    this.chartResize = new ResizeObserver(() => this.charts.forEach(chart => chart.reflow()));
+    this.observeCharts();
+  }
+
+  private observeCharts() {
+    this.chartResize?.disconnect();
+    this.container.forEach(element => this.chartResize?.observe(element.nativeElement));
   }
 
   ngOnChanges() {
+    if (this.modern) {
+      this.currentItems = null;
+      if (!this.data.dataSets.some(set => set.name === this.dataSeries)) { this.dataSeries = this.data.dataSets[0]?.name || ''; }
+    }
     if(this.container) {
       this.generateCharts();
     }
@@ -179,18 +246,19 @@ export class TimeseriesComponent implements AfterViewInit, OnChanges, OnDestroy,
       const chartData = data[index];
 
       if (chart) {
-        chart.series.forEach(series => {
+        [...chart.series].forEach(series => {
           if (chartData.series.every(set => set.name !== series.name)) {
-            series.remove();
+            series.remove(false);
           } else {
-            series.update(chartData.series.find(set => set.name === series.name)!);
+            series.update(chartData.series.find(set => set.name === series.name)!, false);
           }
         });
         chartData.series.forEach((item: any) => {
           if (chart.series.every(set => set.name !== item.name)) {
-            chart.addSeries(item);
+            chart.addSeries(item, false);
           }
         });
+        chart.redraw(false);
       } else {
         this.charts.push(new Chart(element.nativeElement, chartData));
       }
@@ -208,7 +276,11 @@ export class TimeseriesComponent implements AfterViewInit, OnChanges, OnDestroy,
     const ref = this;
     const colorMap: Record<string, string> = {};
     this.data.dataSets.forEach(dataset => {
-      colorMap[dataset.name] = Utils.randomColor();
+      if (this.modern) {
+        const palette = ['#58a6ff', '#3fb950', '#bc8cff', '#e3b341', '#f778ba', '#79c0ff', '#ffa657'];
+        if (!this.seriesColors.has(dataset.name)) { this.seriesColors.set(dataset.name, palette[this.seriesColors.size % palette.length]); }
+        colorMap[dataset.name] = this.seriesColors.get(dataset.name)!;
+      } else { colorMap[dataset.name] = Utils.randomColor(); }
     })
 
     return this.data.series.map((chartData, index: number) => {
@@ -249,6 +321,9 @@ export class TimeseriesComponent implements AfterViewInit, OnChanges, OnDestroy,
         return {
           name: dataset.name,
           type: 'line',
+          animation: this.modern ? false : undefined,
+          ...(this.modern ? { visible: !this.hiddenSeries.get(chartData.name)?.has(dataset.name) } : {}),
+          ...(this.modern ? { marker: { enabled: values.length === 1 } } : {}),
           data: values,
           dataLabels: {
             style: this.fontColor,
@@ -291,7 +366,13 @@ export class TimeseriesComponent implements AfterViewInit, OnChanges, OnDestroy,
         xAxis.title!.text = chartData.xLabel
       }
       return {
-            ...this.options, series: dataSet, yAxis,
+            ...this.options, series: dataSet, yAxis: this.modern ? { ...yAxis, gridLineColor: '#30363d', labels: { ...yAxis.labels, style: { color: '#8b949e', fontSize: '15px' } } } : yAxis,
+            ...(this.modern ? {
+              chart: { ...this.options.chart, height: this.chartHeights[chartData.name] || 260, animation: false },
+              legend: { enabled: false },
+              tooltip: { backgroundColor: '#21262d', borderColor: '#484f58', borderWidth: 1, style: { color: '#e6edf3', fontSize: '15px' }, outside: false },
+              xAxis: { ...this.options.xAxis as XAxisOptions, lineColor: '#30363d', tickColor: '#30363d', labels: { style: { color: '#8b949e', fontSize: '15px' } } }
+            } : {}),
             title: { text: chartData.name, style: { color: 'white', opacity: 0 } },
             accessibility: {
               enabled: true,
@@ -326,6 +407,7 @@ export class TimeseriesComponent implements AfterViewInit, OnChanges, OnDestroy,
   }
 
   ngOnDestroy() {
+    this.chartResize?.disconnect();
     this.charts.forEach(chart => {
       chart.destroy();
     })
@@ -335,6 +417,7 @@ export class TimeseriesComponent implements AfterViewInit, OnChanges, OnDestroy,
 
   interactionEvent(e: MouseEvent, chartIndex: number) {
     const originChart = this.charts[chartIndex];
+    if (!originChart) { return; }
     const event = originChart.pointer.normalize(e);
     const points = originChart.series.map(series => {
       return series.searchPoint(event, false)
@@ -354,7 +437,7 @@ export class TimeseriesComponent implements AfterViewInit, OnChanges, OnDestroy,
       let closestSeries = closestPoint.series;
 
       this.charts.forEach(chart => {
-        const referencePoint = chart.series.find(series => series.name === closestSeries.name)!.data[closestPoint.index];
+        const referencePoint = chart.series.find(series => series.name === closestSeries.name)?.data[closestPoint.index];
         if (referencePoint) {
           referencePoint.onMouseOver(); // Show the hover marker
           chart.tooltip.refresh(referencePoint); // Show the tooltip

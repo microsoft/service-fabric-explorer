@@ -1,6 +1,19 @@
+@if (experience.isNew()) {
+  <button #ref type="button" class="modern-copy" [class.copied]="copyState === 'copied'" [class.failed]="copyState === 'failed'"
+    (click)="copy()" [disabled]="disabled"
+    [attr.aria-label]="copyState === 'copied' ? 'Copied to clipboard' : copyState === 'failed' ? 'Copy failed. Try again' : tooltipText || 'Copy ' + (name || 'text')"
+    [ngbTooltip]="copyState === 'copied' ? 'Copied!' : copyState === 'failed' ? 'Copy failed. Try again' : tooltipText || 'Copy to clipboard'" container="body">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+      @if (copyState === 'copied') { <path d="m3 8 3 3 7-7"/> }
+      @else if (copyState === 'failed') { <circle cx="8" cy="8" r="6"/><path d="M8 4.5v4M8 11.5h0"/> }
+      @else { <rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M10.5 3.5V3A1.5 1.5 0 0 0 9 1.5H3A1.5 1.5 0 0 0 1.5 3v6A1.5 1.5 0 0 0 3 10.5h.5"/> }
+    </svg>
+  </button>
+} @else {
 <label [for]="ariaLabel" style="display: none;">Copy {{text}}</label>
 
 <div [ngbTooltip]="this.tooltipText ? this.tooltipText : 'copy to clipboard'" style="display: inline-block;">
         <button #ref (click)="copy()" class="mif-copy link copy-text" tooltipClass="styled-tooltip" [attr.aria-label]="tooltipText ? tooltipText : 'copy ' + name + ':' + text + ' to clip board'"
                 tabindex="0"  [attr.aria-labelledby]="ariaLabel" container="body" [disabled]="disabled"></button>
 </div>
+}

@@ -15,3 +15,14 @@
 h4 {
   padding-bottom: 10px;
 }
+.connection-help { color: #58a6ff; font: inherit; }
+.connection-property { display: grid; grid-template-columns: minmax(0, 220px) minmax(0, 1fr); gap: 20px; padding: 7px 0; margin: 0; }
+.connection-property dt, .connection-property dd { width: auto; float: none; margin: 0; font: 400 15px/1.5 var(--font-family-ui); overflow-wrap: anywhere; }
+.connection-property dt { color: #8b949e; }.connection-property dd { color: #e6edf3; }
+.store-location { display: flex; align-items: baseline; gap: 16px; padding: 4px 0 12px; }
+.store-path { display: flex; flex: 1; min-width: 0; flex-wrap: wrap; align-items: center; gap: 8px; color: #8b949e; }
+.store-path button { padding: 4px 6px; border: 0; border-radius: 4px; background: transparent; color: #58a6ff; font: 400 15px/1.5 var(--font-family-ui); cursor: pointer; overflow-wrap: anywhere; }
+.store-path button:disabled { color: #c9d1d9; opacity: 1; cursor: default; }.store-path button:hover:not(:disabled) { background: #21262d; }
+.store-path button:focus-visible { outline: 2px solid #58a6ff; outline-offset: 2px; }
+.store-loading { flex: 0 0 120px; color: #8b949e; font: 400 15px/1.5 var(--font-family-ui); }
+@media (max-width: 600px) { .connection-property { grid-template-columns: minmax(0, 1fr); gap: 4px; } }

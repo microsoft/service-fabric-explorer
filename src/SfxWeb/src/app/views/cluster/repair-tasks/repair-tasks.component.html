@@ -1,5 +1,24 @@
 @if (repairTaskCollection) {
   <div>
+    @if (experience.isNew()) {
+      <div class="repair-summary" data-cy="tiles">
+        @if (repairTaskCollection.isInitialized) {
+          <section class="resource-detail-card"><header class="resource-detail-header"><h2>Jobs in progress</h2></header><div class="repair-count">{{repairTaskCollection.repairTasks.length}}</div></section>
+        }
+        @if (MostCommonActions.length) {
+          <section class="resource-detail-card" data-cy="top"><header class="resource-detail-header"><h2>Top Repair Job Actions</h2></header><div class="repair-summary-body">
+            @for (line of MostCommonActions; track line.key) { <div class="repair-action"><strong>{{line.value}}</strong><span>{{line.key}}</span><app-clip-board [text]="line.key" name="Repair action"></app-clip-board></div> }
+          </div></section>
+        }
+        @if (longestRunning.length) {
+          <section class="resource-detail-card" data-cy="long"><header class="resource-detail-header"><h2>Longest Running</h2></header><div class="repair-summary-body">
+            @for (line of longestRunning; track line.primaryText) { <div class="repair-long"><strong>{{line.primaryText}}</strong><span>{{line.topCorner}}</span><span>{{line.secondaryText}}</span><app-clip-board [text]="line.secondaryText" [name]="line.primaryText"></app-clip-board></div> }
+          </div></section>
+        }
+      </div>
+      @if (timelineData) { <app-event-navigator heading="Repair Timeline" [events]="timelineData" inspectLabel="Open in repair table" (inspectEvent)="openRepair($event)"></app-event-navigator> }
+      <app-repair-duration [jobs]="chartJobs" (inspectJob)="openRepair($event)"></app-repair-duration>
+    } @else {
     <div class="tile-container" data-cy="tiles">
       @if (repairTaskCollection.isInitialized) {
         <app-dashboard-text-tile
@@ -119,6 +138,7 @@
         </div>
       </app-collapse-container>
     </div>
+    }
     <div class="detail-pane essen-pane pending-task-results" data-cy="pendingjobs">
       <app-collapse-container #pendingSection sectionName="Pending Repair Tasks">
         <h2 collapse-header>

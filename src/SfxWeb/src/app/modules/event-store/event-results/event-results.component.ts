@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnChanges, OnDestroy, SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef, ElementRef, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { SelectMenuComponent } from 'src/app/shared/component/select-menu/select-menu.component';
 import type { IEventStoreData } from '../event-store/event-store.component';
 
 interface EventRow {
@@ -14,7 +15,7 @@ interface EventRow {
 }
 
 @Component({
-  selector: 'app-event-results', standalone: true, imports: [CommonModule, FormsModule],
+  selector: 'app-event-results', standalone: true, imports: [CommonModule, FormsModule, SelectMenuComponent],
   templateUrl: './event-results.component.html', styleUrls: ['./event-results.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })

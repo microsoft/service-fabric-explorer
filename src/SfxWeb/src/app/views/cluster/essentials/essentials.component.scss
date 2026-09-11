@@ -28,3 +28,15 @@ $border-radius: 5px;
   margin-bottom: -20px;
   margin-top: 10px;
 }
+.cluster-activity { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 16px; margin-bottom: 16px; }
+.activity-card { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; gap: 16px; padding: 16px; min-height: 72px; box-sizing: border-box; background: #161b22; border: 1px solid #30363d; border-radius: 6px; color: #c9d1d9; font: 400 15px/1.5 var(--font-family-ui); text-decoration: none; }
+.activity-card strong { color: #e6edf3; font-size: 26px; line-height: 1.2; font-weight: 600; font-variant-numeric: tabular-nums; }
+.activity-card.has-activity strong { color: #58a6ff; }
+.activity-arrow { color: #8b949e; }
+.activity-card:hover { background: #1c2128; border-color: #8b949e; }
+.activity-card:focus-visible { outline: 2px solid #58a6ff; outline-offset: 2px; }
+.cluster-properties { margin-bottom: 16px; }
+.cluster-property-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr)); gap: 12px 24px; padding: 16px; margin: 0; }
+.cluster-property-grid dt, .cluster-property-grid dd { width: auto; float: none; margin: 0; font: 400 15px/1.5 var(--font-family-ui); }
+.cluster-property-grid dt { color: #8b949e; margin-bottom: 6px; }
+.cluster-property-grid dd { display: flex; align-items: center; gap: 8px; color: #e6edf3; overflow-wrap: anywhere; }

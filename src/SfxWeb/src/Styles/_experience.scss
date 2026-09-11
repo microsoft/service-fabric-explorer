@@ -31,18 +31,23 @@ body.sfx-new {
 
   app-root .header-bar { background: #161b22; border-bottom: 1px solid #30363d; box-shadow: none; }
   app-root .navbar-brand { font-weight: 500; }
-  app-root .left-panel { background: #0d1117; border-right: 1px solid #30363d; }
+  app-root .left-panel { background: #0d1117; border-right: 0; }
   app-root .right-panel { background: #0d1117; }
-  app-root .slider-bar { background: #161b22; border-left: 1px solid #30363d; }
-  app-root .slider-bar:hover { background: #30363d; }
+  app-root .tree-container { margin-right: 8px; }
+  app-root .slider-bar { width: 8px; background: transparent; border: 0; }
+  app-root .slider-bar::after { content: ''; position: absolute; top: 0; bottom: 0; right: 0; width: 1px; background: #30363d; pointer-events: none; }
+  app-root .slider-bar[appDrag]:hover::after,
+  app-root .slider-bar[appDrag]:active::after { width: 2px; background: #58a6ff; }
   app-root .utc-time { font-size: 15px; color: #8b949e; background: #0d1117; }
   app-root .sidenav-button { min-height: 28px; padding: 2px 6px; background: #21262d; border: 1px solid #484f58; border-radius: 4px; }
   app-tree-view { font-size: 15px; }
-  app-tree-view .tree-header { padding: 12px 8px; border-bottom: 1px solid #30363d; }
+  app-tree-view .tree-header { padding: 12px; border-bottom: 0; }
   app-tree-view .tree-header > * { width: 100%; max-width: 480px; box-sizing: border-box; }
   app-tree-view .tree-header .input-wrapper { padding: 0; }
   app-tree-view .tree-header app-input { display: block; width: 100%; }
   app-tree-view .tree-header .input-container { display: block; max-width: none; }
+  app-tree-view .tree-header input.input-flat { height: 34px; min-height: 0; padding: 5px 10px; border-color: #30363d; background: #0d1117; font-style: normal; }
+  app-tree-view .tree-header input.input-flat::placeholder { color: #8b949e; font-style: normal; }
   app-tree-view .tree-header label.health-filter-choice {
     flex: 1 1 90px; justify-content: flex-start; gap: 8px; padding: 8px 12px;
     min-height: 38px; border: 1px solid #30363d; border-radius: 8px; text-align: left;
@@ -55,7 +60,7 @@ body.sfx-new {
   .tree-health-filters { border: 0; padding: 0; margin: 0 0 12px; min-width: 0; }
   .tree-health-filters legend { float: none; width: auto; font-size: 15px; color: #8b949e; margin-bottom: 6px; }
   .tree-health-filters .health-choices { display: flex; flex-wrap: wrap; gap: 12px; }
-  .tree-health-sort { display: flex; align-items: center; gap: 8px; font-size: 15px; color: #c9d1d9; margin: 0 0 12px; cursor: pointer; }
+  .tree-health-sort { display: flex; align-items: center; gap: 6px; font-size: 15px; color: #8b949e; margin: 0 0 12px; cursor: pointer; }
   .tree-health-sort input { width: 15px; height: 15px; padding: 0; accent-color: #58a6ff; }
   .health-choices label.health-filter-choice {
     --health-color: #3fb950;
@@ -82,8 +87,19 @@ body.sfx-new {
   app-refresh-rate .toggle-wrapper, app-tree-view .toggle-wrapper { box-shadow: none; background: #21262d; border: 1px solid #30363d; border-radius: 5px; }
   .toast, .toast-header { background: #161b22; color: #e6edf3; border-color: #484f58; }
   .toast { box-shadow: 0 8px 24px #01040980; }
+  app-toast-container.modern-toasts .notification.toast { margin: 0; background: #161b22; border: 1px solid #30363d; border-top: 2px solid var(--notification-accent); border-radius: 8px; box-shadow: 0 8px 24px #01040980; }
+  app-toast-container.modern-toasts .notification .toast-header { padding: 12px 16px; background: #1c2128; border-bottom: 1px solid #30363d; border-radius: 7px 7px 0 0; font-family: var(--font-family-ui); }
+  app-toast-container.modern-toasts .notification .toast-body { padding: 14px 16px; }
+  app-toast-container.modern-toasts .notification .btn-close { flex-shrink: 0; margin-left: auto; padding: 8px; filter: invert(1) grayscale(100%) brightness(200%); opacity: .75; }
+  app-toast-container.modern-toasts .notification .btn-close:hover { opacity: 1; }
 
   // Portaled filters, tooltips and dialogs must not retain the Material light theme.
+  .dropdown-menu.sfx-select-options { min-width: 160px; width: max-content; max-width: min(480px, calc(100vw - 24px)); max-height: min(360px, 65vh); overflow-y: auto; overflow-x: hidden; padding: 6px; }
+  .sfx-select-options .dropdown-item { display: flex; align-items: flex-start; gap: 8px; min-height: 36px; font: 400 15px/1.5 var(--font-family-ui); }
+  .sfx-select-options .dropdown-item[aria-selected=true] { background: #21262d; color: #e6edf3; }
+  .sfx-select-options .option-check { flex: 0 0 16px; color: #58a6ff; }
+  .sfx-select-options .option-label { min-width: 0; white-space: normal; overflow-wrap: anywhere; }
+  .sfx-select-options .select-empty { display: block; padding: 10px; color: #8b949e; }
   .dropdown-menu { background: #161b22; border: 1px solid #484f58; color: #e6edf3; border-radius: 10px; font-size: 15px; box-shadow: 0 8px 24px #01040980; min-width: min(280px, calc(100vw - 24px)); width: max-content; max-width: calc(100vw - 24px); padding: 6px; margin-top: 8px !important; }
   .dropdown-menu[data-popper-placement^='top'] { margin-top: 0 !important; margin-bottom: 8px !important; }
   .dropdown-item { color: #e6edf3; padding: 10px 12px; min-height: 40px; border-radius: 5px; white-space: normal; overflow-wrap: break-word; }
@@ -125,7 +141,125 @@ body.sfx-new {
   button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px solid #58a6ff; outline-offset: 2px; }
 
   // Entity details, forms and operational views retain their existing bindings.
-  app-root .view-container app-essentials {
+  app-root .view-container app-map table.map-table > tbody > tr > td.legend { text-align: center; vertical-align: middle !important; }
+  app-root .view-container app-map .upgrade-domain { position: static; transform: none; width: auto; min-width: 150px; margin: 0; white-space: nowrap; }
+  app-root .view-container app-map {
+    table.map-table { border-collapse: collapse; border-spacing: 0; font: 400 15px/1.5 var(--font-family-ui); }
+    table.map-table > tbody > tr > td { background: #0d1117; border-color: #30363d; padding: 10px; }
+    table.map-table > tbody > tr > td.header { background: #1c2128; color: #e6edf3; padding: 12px; }
+    table.map-table > tbody > tr > td.legend { background: #161b22; color: #8b949e; font-weight: 500; border-right: 1px solid #30363d; border-bottom: 1px solid #30363d; }
+    app-section-overview .title-display { margin: 0 0 8px; padding-bottom: 8px; color: #e6edf3; font-weight: 600; border-color: #30363d; }
+    app-section-overview .small-icon-text { color: #c9d1d9; font-variant-numeric: tabular-nums; }
+    app-node-list [data-cy=node] { padding: 6px; border-color: #30363d; }
+    app-node-list [data-cy=node]:hover { background: #21262d; border-radius: 4px; }
+    app-node-list a { color: #58a6ff; }
+    app-status-tile .base-header { border-radius: 4px; }
+    app-status-tile .base-header:hover { background: #21262d; }
+  }
+  app-root .view-container .package-versions {
+    .resource-detail-body { padding: 12px 16px; }
+    .table-responsive { margin: 0; }
+    table th, table td { padding: 6px 10px; vertical-align: top !important; font-size: 15px; line-height: 1.5; }
+    table th { font-weight: 500; }
+    td:has(> .table-responsive) { padding: 0; }
+    td > .table-responsive { border: 0; border-radius: 0; }
+    table table { background: transparent; }
+    table table th { background: transparent; }
+  }
+  app-root .view-container {
+    app-upgrade-info > .detail-pane { margin-bottom: 0; }
+    app-upgrade-info .layout-container { justify-content: flex-start; gap: 20px; }
+    app-upgrade-info .domain-container { flex: 0 1 374px; max-width: 374px; min-width: 0; }
+    app-upgrade-info .domain-container > app-upgrade-progress { display: block; width: 100%; min-width: 0; }
+    app-upgrade-info .domain-container > app-upgrade-progress > div { max-width: 100%; }
+    app-upgrade-info .overview-container { flex: 1 1 360px; min-width: 0; max-width: 460px; }
+    app-upgrade-info .layout-container > div:last-child:not(.domain-container):not(.overview-container):not(.node-list) { flex: 1 1 340px; min-width: 0; max-width: 400px; }
+    app-upgrade-info .layout-container { align-items: flex-start; }
+    app-details .cluster-detail-sections > [data-cy=upgradeDetails] { width: 100%; max-width: 1440px; box-sizing: border-box; }
+    app-upgrade-info h3 { text-align: left; font: 600 16px/1.5 var(--font-family-ui); margin: 0 0 8px; }
+    app-upgrade-info .essential-list-item { gap: 8px; }
+    app-upgrade-info .text-wrapper { height: auto; min-height: 35px; overflow: visible; gap: 16px; }
+    app-upgrade-info .text-wrapper .left-text { font: 400 15px/1.5 var(--font-family-ui); white-space: normal; color: #8b949e; }
+    app-upgrade-info .text-wrapper .middle-text { font: 400 15px/1.5 var(--font-family-ui); white-space: normal; overflow-wrap: anywhere; }
+    app-imagestore-viewer .folder-size-note { clear: both; padding-top: 16px; }
+    app-imagestore-viewer .folder-size-note > div { float: none !important; display: flex; align-items: flex-start; gap: 8px; padding: 12px !important; background: #1c2128; border-radius: 6px; color: #8b949e; font: 400 15px/1.5 var(--font-family-ui); }
+    app-event-query-bar .query-bar { background: #1c2128; }
+    app-naming-viewer .naming-partition > header { margin: -16px -16px 12px; padding: 12px 16px; background: #1c2128; border-bottom: 1px solid #30363d; border-radius: 5px 5px 0 0; }
+    app-naming-viewer .partition-choice { margin: 0; }
+    app-naming-viewer app-timeseries .chart { border: 1px solid #30363d; border-radius: 6px; overflow: hidden; }
+    app-naming-viewer app-timeseries .chart > span { display: block; padding: 12px 16px; background: #1c2128; border-bottom: 1px solid #30363d; font-weight: 600; }
+  }
+  app-root .view-container app-clustermap .compact-node-filter {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px;
+    > input[type=search] { flex: 1 1 240px; width: auto; max-width: 360px; }
+    > fieldset { display: flex; align-items: center; gap: 10px; position: relative; }
+    > fieldset > legend { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+    .health-choices { gap: 10px; }
+    .health-filter-choice { border: 1px solid #30363d; border-radius: 8px; padding: 8px 12px; }
+    .group-node-types { margin: 0; white-space: nowrap; }
+  }
+  app-root .view-container > app-base.cluster-modern > app-navbar .detail-view-title-bar { border-bottom: 0; padding-bottom: 0; }
+  app-root .view-container > app-base.cluster-modern > app-navbar .detail-view-navbar { margin-bottom: 0; }
+  app-root .view-container > app-base.cluster-modern .tile-container.cluster-health-grid { grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr)); grid-auto-rows: auto; gap: 16px; }
+  app-root .view-container app-apptypes {
+    .tile-container { display: flex; flex-wrap: wrap; gap: 16px; }
+    .tile-container > app-dashboard-text-tile { flex: 0 1 320px; min-width: 0; max-width: 100%; }
+    .dashboard-wrapper .dashboard.dashboard-small { padding: 0 !important; border: 1px solid #30363d; border-radius: 6px; }
+    .dashboard-wrapper .dashboard .dashboard-tile .dashboard-tile-inner { padding-left: 0; }
+    .dashboard-tile-leftbar { display: none; }
+    .dashboard-wrapper .dashboard .dashboard-tile .dashboard-tile-title { padding: 12px 16px; margin: 0; background: #1c2128; color: #e6edf3; border-bottom: 1px solid #30363d; font: 600 18px/1.5 var(--font-family-ui); }
+    .dashboard-wrapper .dashboard .dashboard-tile .dashboard-tile-number { margin: 0 !important; padding: 20px 16px; color: #e6edf3; font-size: 32px; line-height: 1.2; }
+  }
+  app-root .view-container {
+    app-service-resources .card-container { display: flex; flex-wrap: wrap; gap: 16px; margin-bottom: 16px; }
+    app-service-resources .card-container > app-service-resources-tile { flex: 0 1 560px; min-width: 0; max-width: 100%; }
+    app-service-resources-tile .resources-tile { width: 100% !important; box-sizing: border-box; padding: 0; border: 1px solid #30363d; border-radius: 6px; overflow: hidden; }
+    app-service-resources-tile .dashboard,
+    app-service-resources-tile .dashboard-tile-inner { padding: 0; width: 100%; }
+    app-service-resources-tile .dashboard-tile-inner > div { width: 100%; min-width: 0; }
+    app-service-resources-tile app-resource-item { display: block; border: 0; }
+    app-service-resources-tile .essential-list-item { padding: 8px 16px; border: 0; }
+    app-service-resources-tile .resource-text-wrapper { width: 100%; min-width: 0; gap: 16px; }
+    app-service-resources-tile .resource-text-wrapper .left-text { white-space: normal; font-weight: 400; color: #8b949e; }
+    app-service-resources-tile .resource-text-wrapper .middle-text { min-width: 0; white-space: normal; overflow-wrap: anywhere; color: #e6edf3; }
+    app-service-resources-tile .essential-list-item:has(h2) { padding: 12px 16px; background: #1c2128; border-bottom: 1px solid #30363d; }
+    app-service-resources-tile .essential-list-item h2 { margin: 0; color: #e6edf3; font: 600 18px/1.5 var(--font-family-ui); }
+
+    app-tile-wrapper:has(app-state-info) .dashboard-wrapper .dashboard.dashboard-small { padding: 0; border: 1px solid #30363d; border-radius: 6px; }
+    app-state-info .title-wrapper { margin: 0; padding: 12px 16px; border-bottom: 1px solid #30363d; background: #1c2128; text-align: left; color: #e6edf3; font: 600 18px/1.5 var(--font-family-ui); }
+    app-state-info .title-wrapper + .flex-center { padding: 16px 12px; }
+
+    app-dashboard-text-scale-tile:has(.placement-constraint-wrapper) .dashboard { padding: 0 !important; border: 1px solid #30363d; border-radius: 6px; }
+    app-dashboard-text-scale-tile:has(.placement-constraint-wrapper) .dashboard-tile-inner { padding-left: 0 !important; }
+    app-dashboard-text-scale-tile:has(.placement-constraint-wrapper) .dashboard-tile-title:empty { display: none; }
+    app-dashboard-text-scale-tile .placement-constraint-wrapper .title { margin: 0; padding: 12px 16px; background: #1c2128; border-bottom: 1px solid #30363d; text-align: left; color: #e6edf3; font: 600 18px/1.5 var(--font-family-ui); }
+    app-dashboard-text-scale-tile .placement-constraint-wrapper > .text-center > div { padding: 16px; text-align: left; overflow-wrap: anywhere; }
+    app-dashboard-text-scale-tile .placement-constraint-wrapper > div:last-child:not(.text-center) { padding: 12px 16px; }
+  }
+  app-root .view-container {
+    .main-view > .flex-child, .main-view > .cluster-page-heading { width: 100%; max-width: 1440px; min-width: 0; box-sizing: border-box; }
+    app-navbar .detail-view-title-bar { max-width: 1480px; box-sizing: border-box; }
+    > app-cluster-insights, > app-request-logging { max-width: 1480px; box-sizing: border-box; }
+    app-detail-list .list-toolbar { justify-content: flex-start; gap: 8px; }
+    app-detail-list .list-toolbar .input-wrapper { flex: 0 1 360px; width: 100%; max-width: 360px; padding: 0; margin: 0; }
+    app-detail-list .list-toolbar .input-container { display: block; max-width: none; }
+    app-detail-list .list-toolbar .simple-button { margin: 0; }
+    app-health-viewer table.detail-list th:has(button[title^='Sort by Kind']) { width: 180px; }
+    app-health-viewer table.detail-list th:has(button[title^='Sort by Health State']) { width: 150px; }
+    app-health-viewer table.detail-list th:has(button[title^='Sort by Source UTC']) { width: 220px; }
+    app-health-viewer table.detail-list th:has(button[title^='Sort by Description']) { width: auto; }
+  }
+  // The bordered wrapper owns the bottom edge, not the legacy IE table spacer.
+  app-detail-list .table-responsive > table.detail-list { margin-bottom: 0; border-bottom: 0; }
+  app-root .view-container app-detail-list .table-responsive > table.detail-list { background: #161b22; color: #e6edf3; border-collapse: collapse; }
+  app-root .view-container app-detail-list .table-responsive > table.detail-list > thead > tr > th { background: #1c2128; color: #c9d1d9; font-weight: 500; padding: 10px 12px; }
+  app-root .view-container app-detail-list .table-responsive > table.detail-list > tbody > tr > td { background: transparent; color: #e6edf3; padding: 10px 12px; border-top: 1px solid #30363d; }
+  app-root .view-container app-detail-list .table-responsive > table.detail-list > tbody > tr.hover-row:hover { background: #21262d; }
+  app-root .view-container app-essentials,
+  app-root .view-container app-repair-tasks,
+  app-root .view-container app-imagestore-viewer,
+  app-root .view-container app-orchestration-view,
+  app-root .view-container app-event-store {
     .essen-pane { --essentials-inset: 16px; }
     @media (max-width: 900px) { .essen-pane { --essentials-inset: 12px; } }
     .resource-summary { --essentials-inset: 16px; }
@@ -134,6 +268,7 @@ body.sfx-new {
       > header,
       > h2:first-child,
       > app-collapse-container > div > .flex-center:first-child,
+      > app-apptype-viewer > app-collapse-container > div > .flex-center:first-child,
       &:is(app-collapse-container) > div > .flex-center:first-child,
       > app-replica-address > .detail-pane > h2:first-child {
         margin: calc(-1 * var(--essentials-inset)) calc(-1 * var(--essentials-inset)) 12px;
@@ -146,11 +281,10 @@ body.sfx-new {
         > .header-wrapper > [collapse-header] h2 { margin: 0; }
       }
     }
-    .resource-summary > header + app-essential-item,
-    .replica-summary > dl > .replica-property:first-child { border-top: 0; }
   }
-  .resource-details-layout { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 560px), 1fr)); gap: 24px; align-items: stretch; max-width: 1464px; margin-bottom: 24px; }
+  .resource-details-layout { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 560px), 1fr)); gap: 24px; align-items: stretch; max-width: 1440px; margin-bottom: 24px; }
   .resource-details-layout > :only-child { max-width: 720px; width: 100%; box-sizing: border-box; }
+  .resource-details-layout.service-details-layout { align-items: start; }
   .resource-detail-card { min-width: 0; background: #161b22; border: 1px solid #30363d; border-radius: 6px; overflow: hidden; }
   .resource-detail-header { padding: 12px 16px; background: #1c2128; border-bottom: 1px solid #30363d; }
   .resource-detail-header h2 { margin: 0; color: #e6edf3; font: 600 18px/1.5 var(--font-family-ui); }
@@ -172,15 +306,14 @@ body.sfx-new {
     > app-navbar .main-header .detail-view-navbar .detail-view-navbar-tab.current { background: transparent; font-weight: 600; }
     app-essentials .tile-container { display: flex; flex-wrap: wrap; align-items: stretch; gap: 16px; }
     app-essentials .tile-container > * { flex: 0 1 280px; min-width: 0; max-width: 100%; }
-    app-essentials .tile-container > app-essential-health-tile { flex-basis: 720px; }
-    .replica-summary, .essen-pane:has(> app-replica-address),
+    app-essentials .tile-container > app-essential-health-tile,
+    app-essentials .tile-container > .node-count-grid { flex: 0 0 100%; width: 100%; }
+    .essen-pane:has(> app-replica-address),
     app-details .essen-pane:has(app-detail-view-part):not(:has(.property-record-table, app-detail-list)) { width: 100%; max-width: 720px; box-sizing: border-box; }
     .detail-pane h2 { font-size: 18px; }
     app-health-viewer .nav-link { border-bottom: 2px solid transparent !important; }
     app-health-viewer .nav-link.active { border-bottom-color: #f78166 !important; }
     app-health-viewer .nav-link:hover:not(.active) { border-bottom-color: #484f58 !important; }
-    app-health-viewer table.detail-list th { background: #161b22; color: #8b949e; font-weight: 500; }
-    app-health-viewer table.detail-list td { background: #161b22; color: #e6edf3; }
     app-replica-address > .detail-pane { margin: 0; }
     app-replica-address .table-responsive, app-replica-address .nested-table-container { border: 0; padding: 0; margin: 0; }
     app-replica-address table.detail-table, app-replica-address table.detail-table th, app-replica-address table.detail-table td { background: transparent; }
@@ -188,8 +321,6 @@ body.sfx-new {
     app-replica-address h3.heading { font-size: 15px; font-weight: 400; color: #8b949e; margin: 0 0 8px; }
     app-replica-address table.detail-table th { width: 30%; color: #8b949e; font-weight: 400; }
     app-replica-address table.detail-table td { color: #e6edf3; }
-    app-replica-address table.detail-table > tbody:last-child > tr:last-child > th,
-    app-replica-address table.detail-table > tbody:last-child > tr:last-child > td { border-bottom: 0 !important; }
   }
   .resource-summary { container: resource-summary / inline-size; box-sizing: border-box; height: 100%; padding: 16px; background: #161b22; border: 1px solid #30363d; border-radius: 6px; font: 400 15px/1.5 var(--font-family-ui); }
   .resource-summary header { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 12px; }
@@ -199,23 +330,29 @@ body.sfx-new {
   .resource-health[data-health=badge-ok] { color: #3fb950; }
   .resource-health[data-health=badge-warning] { color: #d29922; }
   .resource-health[data-health=badge-error] { color: #f85149; }
-  .resource-summary app-essential-item { display: block; border-top: 1px solid #30363d; }
-  .resource-summary .essential-list-item { display: flex; justify-content: flex-start; gap: 8px; padding: 10px 0; border: 0; }
-  .resource-summary .text-wrapper { flex: 0 1 auto; display: flex; min-width: 0; height: auto; overflow: visible; gap: 16px; }
-  .resource-summary .text-wrapper .left-text { flex: 0 0 200px; white-space: normal; overflow-wrap: anywhere; color: #8b949e; font-weight: 400; }
-  .resource-summary .text-wrapper .middle-text { flex: 0 1 auto; min-width: 0; text-align: left; white-space: normal; overflow-wrap: anywhere; color: #e6edf3; }
-  .resource-summary app-clip-board { flex-shrink: 0; }
+  .overview-property-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr)); gap: 12px 24px; margin: 0; padding: 0; }
+  .overview-property-grid > div { min-width: 0; }
+  .overview-property-grid dt, .overview-property-grid dd { width: auto; float: none; margin: 0; font: 400 15px/1.5 var(--font-family-ui); overflow-wrap: anywhere; }
+  .overview-property-grid dt { color: #8b949e; margin-bottom: 6px; }
+  .overview-property-grid dd { display: flex; align-items: center; gap: 8px; color: #e6edf3; }
+  .overview-property-grid dd > span { min-width: 0; }
+  .overview-property-grid app-clip-board { flex-shrink: 0; }
+  .overview-link { margin-top: 12px; }
+  // Scalar properties use spacing, while record tables retain their separators.
+  app-root .view-container {
+    app-essential-item .essential-list-item,
+    app-state-info .line-item-seperator,
+    .partition-essentials-modern [data-cy="quorum-loss-tile"] .quorum-info-row.line-item-separator,
+    app-fmm-info [data-cy="fmm-info"] .line-item-separator,
+    app-replica-list .replica-stats-container > .replica-set-box > .line-item-separator,
+    app-event-navigator .inspector-properties > dl > div { border-top: 0; border-bottom: 0; }
+    app-detail-view-part table.detail-list,
+    app-detail-view-part table.detail-list > tbody > tr > th,
+    app-detail-view-part table.detail-list > tbody > tr > td,
+    app-repair-task-view [data-cy="jobinfo"] > table.detail-table > tbody > tr > th,
+    app-repair-task-view [data-cy="jobinfo"] > table.detail-table > tbody > tr > td { border-top: 0 !important; border-bottom: 0 !important; }
+  }
   .resource-summary a { color: #58a6ff; }
-  @media (max-width: 600px) {
-    .resource-summary .text-wrapper .left-text { flex-basis: 100px; }
-    .resource-summary .text-wrapper { gap: 8px; }
-  }
-  @container resource-summary (max-width: 300px) {
-    .resource-summary .text-wrapper { flex-direction: column; align-items: flex-start; gap: 4px; }
-    .resource-summary .text-wrapper .left-text { flex-basis: auto; }
-    .resource-summary .text-wrapper .middle-text { max-width: 100%; }
-    .resource-summary .essential-list-item { align-items: flex-end; }
-  }
   app-navbar .detail-view-title h1 { font-size: 24px; font-weight: 500; line-height: 1.4; margin: 0; }
   app-navbar .actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; float: none; height: auto; margin: 8px 12px; }
   app-detail-view-part .table-responsive { margin-top: 0; }

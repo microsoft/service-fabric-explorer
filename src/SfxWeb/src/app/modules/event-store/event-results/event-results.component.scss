@@ -1,9 +1,29 @@
 :host { display: block; margin-bottom: 16px; color: #e6edf3; font: 15px/1.5 var(--font-family-ui); color-scheme: dark; }
-* { box-sizing: border-box; }.results { border: 1px solid #30363d; border-radius: 6px; background: #0d1117; overflow: hidden; }
-header { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 20px; background: #161b22; }h2 { font-size: 20px; margin: 0; color: #e6edf3; }header p { margin: 4px 0 0; color: #8b949e; font-size: 15px; }
+* { box-sizing: border-box; }.results { border: 1px solid #30363d; border-radius: 6px; background: #161b22; overflow: hidden; }
+header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; padding: 12px 16px; background: #1c2128; border-bottom: 1px solid #30363d; }h2 { font: 600 18px/1.5 var(--font-family-ui); margin: 0; color: #e6edf3; }header p { margin: 4px 0 0; color: #8b949e; font-size: 15px; }
 button, input, select { font: inherit; color: inherit; }button, select { border: 1px solid #30363d; border-radius: 5px; background: #21262d; padding: 6px 10px; }button { cursor: pointer; }button:hover { background: #30363d; }button:disabled { opacity: .4; cursor: default; }button:focus-visible, input:focus-visible, select:focus-visible, summary:focus-visible, pre:focus-visible { outline: 2px solid #58a6ff; outline-offset: 2px; }
 .source-tabs { display: flex; gap: 4px; flex-wrap: wrap; border-bottom: 1px solid #30363d; padding: 0 16px; background: #161b22; }.source-tabs button { border: 0; border-bottom: 2px solid transparent; border-radius: 0; padding: 10px 12px; background: transparent; }.source-tabs button.active { border-bottom-color: #f78166; font-weight: 600; }.badge { display: inline-block; padding: 0 6px; border-radius: 12px; background: #30363d; color: #c9d1d9; font-size: 15px; margin-left: 6px; }.source-status, .error { font-size: 15px; }.error { color: #ff7b72; }
 .filters { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding: 16px 20px; }.filters input { background: #0d1117; border: 1px solid #30363d; border-radius: 5px; padding: 8px 10px; min-width: 200px; width: 340px; max-width: 100%; }.filters label { margin: 0; }.zone { display: flex; gap: 8px; align-items: center; margin-left: auto !important; color: #8b949e; }.link { border: 0; background: transparent; color: #58a6ff; }
-.notice { margin: 0 20px 12px; padding: 10px 12px; background: #161b22; border: 1px solid #30363d; border-radius: 4px; font-size: 15px; }.table-scroll { overflow: auto; }table { border-collapse: collapse; width: 100%; min-width: 720px; }th { background: #161b22; color: #8b949e; text-align: left; font-size: 15px; font-weight: 600; }th, td { padding: 12px 16px; border-top: 1px solid #30363d; }th button { background: transparent; border: 0; padding: 0; }td { vertical-align: top; }tbody tr:hover { background: #161b22; }.row-toggle { display: flex; gap: 12px; align-items: baseline; border: 0; background: transparent; padding: 0; text-align: left; }.row-toggle span { color: #8b949e; width: 12px; }.category { border: 1px solid #30363d; border-radius: 12px; padding: 2px 8px; font-size: 15px; white-space: nowrap; }.entity { max-width: 260px; overflow-wrap: anywhere; color: #c9d1d9; }.time { white-space: nowrap; font-size: 15px; font-variant-numeric: tabular-nums; }.selected { background: #161b22; }.detail-row td { background: #161b22; padding: 16px 24px; }.detail-heading { display: flex; gap: 16px; justify-content: space-between; align-items: center; }.detail-heading span { display: block; color: #8b949e; font-size: 15px; overflow-wrap: anywhere; }pre { background: #0d1117; color: #c9d1d9; padding: 12px; margin: 12px 0 0; border: 1px solid #30363d; border-radius: 4px; max-height: 320px; overflow: auto; font-size: 15px; }.empty { text-align: center; padding: 40px; color: #8b949e; }
+.notice { margin: 0 16px 12px; padding: 10px 12px; background: #161b22; border: 1px solid #30363d; border-radius: 4px; font-size: 15px; }
+.table-scroll { overflow: auto; margin: 0 16px 16px; border: 1px solid #30363d; border-radius: 5px; }
+table { border-collapse: collapse; width: 100%; min-width: 720px; background: #161b22; color: #e6edf3; }
+th { background: #1c2128; color: #c9d1d9; text-align: left; font-size: 15px; font-weight: 500; border-bottom: 1px solid #30363d; }
+th, td { padding: 10px 12px; }
+th button { background: transparent; border: 0; padding: 0; }
+td { vertical-align: middle; border-top: 1px solid #30363d; }
+tbody tr:not(.detail-row):hover { background: #21262d; }
+.row-toggle { display: flex; gap: 12px; align-items: baseline; border: 0; background: transparent; padding: 0; text-align: left; color: #e6edf3; }
+.row-toggle:hover { color: #fff; background: transparent; }
+.row-chevron { color: #8b949e; flex-shrink: 0; }
+.row-chevron.expanded { transform: rotate(90deg); }
+.category { font-size: 15px; white-space: nowrap; }
+.entity { max-width: 260px; overflow-wrap: anywhere; color: #e6edf3; }
+.time { white-space: nowrap; font-size: 15px; font-variant-numeric: tabular-nums; }
+tbody tr.selected, tbody tr.selected:hover { background: #1b3045; }
+.detail-row td { background: #161b22; padding: 16px; }
+.detail-heading { display: flex; gap: 16px; justify-content: space-between; align-items: center; }
+.detail-heading span { display: block; color: #8b949e; font-size: 15px; overflow-wrap: anywhere; }
+pre { background: #0d1117; color: #c9d1d9; padding: 12px; margin: 12px 0 0; border: 1px solid #30363d; border-radius: 4px; max-height: 320px; overflow: auto; font-size: 15px; }
+.empty { text-align: left; padding: 10px 12px; color: #e6edf3; }
 footer { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; padding: 12px 20px; border-top: 1px solid #30363d; color: #8b949e; font-size: 15px; }footer label { margin: 0; display: flex; gap: 8px; align-items: center; }.pagination { margin-left: auto; display: flex; gap: 12px; align-items: center; }.coverage { padding: 12px 20px; border-top: 1px solid #30363d; color: #8b949e; font-size: 15px; }.coverage summary { cursor: pointer; }.coverage p { margin: 8px 0 0; max-width: 900px; }.sr-only { position: absolute; width: 1px; height: 1px; clip-path: inset(50%); overflow: hidden; }
 @media (max-width: 600px) { header { padding: 16px; }.filters { padding: 12px; }.filters input { width: 100%; }.zone { margin-left: 0 !important; }.pagination { margin-left: 0; }.source-tabs { padding: 0 6px; }.source-tabs button { padding: 8px; } }

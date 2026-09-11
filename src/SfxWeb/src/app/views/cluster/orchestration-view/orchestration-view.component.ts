@@ -56,6 +56,7 @@ export class OrchestrationViewComponent implements OnInit, AfterViewInit, OnDest
   placementToggle = true;
   constrainCheckToggle = true;
   otherToggle = true;
+  get selectedStageCount() { return [this.balancingToggle, this.placementToggle, this.constrainCheckToggle, this.otherToggle].filter(Boolean).length; }
 
   timeLineEventsData?: ITimelineData | null;
 

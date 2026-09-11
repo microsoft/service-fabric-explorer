@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, OnChanges, OnDestroy, ViewChild, ChangeDetectionStrategy, inject } from '@angular/core';
+import { Component, ElementRef, Input, Output, EventEmitter, OnChanges, OnDestroy, ViewChild, ChangeDetectionStrategy, inject } from '@angular/core';
 import { Chart, Options, chart, PointOptionsObject } from 'highcharts';
 import { IPregeneratedColor, pregeneratedColors } from 'src/app/Common/Constants';
 import { IConcurrentEvents } from 'src/app/Models/eventstore/rcaEngine';
@@ -11,6 +11,7 @@ import { ExperienceService } from 'src/app/services/experience.service';
 
 interface ExtendedListItem extends IEssentialListItem {
   key: string;
+  label: string;
 }
 
 @Component({
@@ -23,6 +24,13 @@ interface ExtendedListItem extends IEssentialListItem {
 export class RcaOverviewComponent implements OnChanges, OnDestroy {
   experience = inject(ExperienceService);
   @Input() type!: string;
+  @Input() canInspect = false;
+  @Output() selectEvent = new EventEmitter<string>();
+
+  inspect(id: string) {
+    const separator = id.indexOf('---');
+    this.selectEvent.emit(separator < 0 ? id : id.slice(separator + 3));
+  }
   @Input() events!: IConcurrentEvents[];
 
   @ViewChild('chart') private set chartContainer(container: ElementRef | undefined) {
@@ -82,6 +90,7 @@ export class RcaOverviewComponent implements OnChanges, OnDestroy {
   public reasons: ExtendedListItem[] = [];
   public timelineData!: ITimelineData;
   public navigatorData!: ITimelineData;
+  public trackDescriptions: Record<string, string> = {};
 
   constructor() { }
 
@@ -129,10 +138,14 @@ export class RcaOverviewComponent implements OnChanges, OnDestroy {
         copyTextValue: reason[0] + ' ' + reason[1].length.toString(),
         descriptionName: "",
         key: reason[0],
+        label: reason[0],
         displaySelector: true,
         allowWrap: true
       }
     })
+
+    this.trackDescriptions = {};
+    this.reasons.forEach(reason => this.trackDescriptions[reason.label] = reason.key);
 
     const items = new DataSet<ITimelineItem>();
     const groups = new DataSet<DataGroup>();
@@ -174,7 +187,7 @@ export class RcaOverviewComponent implements OnChanges, OnDestroy {
     };
     // Compact track labels map to full explanations below; Classic keeps its color swatches.
     grouped.forEach(([reason, events], index) => {
-      navigatorGroups.add({ id: reason, content: `Reason ${index + 1}` });
+      navigatorGroups.add({ id: reason, content: escape(this.reasons[index].label) });
       events.forEach(event => {
         const item = items.get(`${index}---${event.eventInstanceId}`)!;
         const explanation = `<table><tbody><tr><td>Reported reason</td><td>${escape(reason)}</td></tr></tbody></table>`;

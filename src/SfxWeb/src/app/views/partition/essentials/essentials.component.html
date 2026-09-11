@@ -1,15 +1,15 @@
 @if (partition) {
-  <div >
+  <div [class.partition-essentials-modern]="experience.isNew()">
     <div class="tile-container">
       @if (partition && partition.isInitialized) {
         <app-essential-health-tile [healthState]="$safeNavigationMigration(partition?.healthState)"
-          class="long" [listItems]="essentialItems">
+          class="long" [listItems]="experience.isNew() ? overviewItems : essentialItems">
           <ng-template appEssentialTemplate id="status">
             <app-status-resolver [status]="partition.raw.PartitionStatus"></app-status-resolver>
           </ng-template>
         </app-essential-health-tile>
       }
-      @if (partition?.raw) {
+      @if (!experience.isNew() && partition?.raw) {
         <app-tile-wrapper>
           <app-state-info [stateful]="partition.isStatefulService" [data]="partition.raw"></app-state-info>
         </app-tile-wrapper>
@@ -43,6 +43,9 @@
       </app-collapse-container>
     </div>
     @if (partition.isStatefulService) {
+      @if (experience.isNew()) {
+        <app-replica-status-container [replicas]="partition.replicas.collection"></app-replica-status-container>
+      } @else {
       <div class="replicator-section">
         <app-collapse-container sectionName="Replicator Status" data-cy="replicator">
           <div collapse-header>
@@ -55,6 +58,7 @@
           </div>
         </app-collapse-container>
       </div>
+      }
     }
     <div class="detail-pane essen-pane" data-cy="replicas">
       <app-collapse-container [sectionName]="partition.isStatelessService ? 'Instances' : 'Replicas'">

@@ -1,4 +1,5 @@
-import { Component, Input, ChangeDetectionStrategy, AfterViewInit, ViewChild, ElementRef, OnChanges, SecurityContext, inject } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy, AfterViewInit, ViewChild, ElementRef, OnChanges, OnDestroy, SecurityContext, inject, effect } from '@angular/core';
+import { ExperienceService } from 'src/app/services/experience.service';
 import { UpgradeDomain } from 'src/app/Models/DataModels/Shared';
 import { Chart, Options, chart, PointOptionsObject } from 'highcharts';
 import { Counter } from 'src/app/Utils/Utils';
@@ -17,8 +18,39 @@ interface ITileCount {
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: false
 })
-export class UpgradeProgressComponent implements AfterViewInit, OnChanges {
+export class UpgradeProgressComponent implements AfterViewInit, OnChanges, OnDestroy {
   private sanitizer = inject(DomSanitizer);
+  public experience = inject(ExperienceService);
+  private resizeObserver?: ResizeObserver;
+  private chartMode?: boolean;
+
+  constructor() {
+    effect(() => {
+      this.experience.isNew();
+      this.resizeChart();
+    });
+  }
+
+  private resizeChart() {
+    if (!this.chart) { return; }
+    const modern = this.experience.isNew();
+    const width = modern ? Math.round(this.chartContainer.nativeElement.parentElement.clientWidth) - 24 : 350;
+    if (!width) { return; }
+    const modeChanged = this.chartMode !== modern;
+    if (modeChanged) {
+      this.chartMode = modern;
+      this.chart.update({
+        chart: { animation: !modern, spacing: modern ? [12, 12, 12, 12] : [10, 10, 15, 10] },
+        plotOptions: { series: { animation: !modern, dataLabels: { enabled: true } }, pie: { size: null, dataLabels: { enabled: true, distance: 30 } } }
+      }, false);
+    }
+    const height = 300;
+    if (this.chart.chartWidth !== width || this.chart.chartHeight !== height) {
+      this.chart.setSize(width, height, false);
+    } else if (modeChanged) { this.chart.redraw(false); }
+  }
+
+  ngOnDestroy() { this.resizeObserver?.disconnect(); this.chart?.destroy(); }
 
 
   @Input() upgradeDomains!: UpgradeDomain[];
@@ -33,12 +65,14 @@ export class UpgradeProgressComponent implements AfterViewInit, OnChanges {
 
   ngAfterViewInit() {
     if (this.showChart) {
+      const modern = this.experience.isNew();
       const dataSet = this.getDataSet();
       this.chart = chart(this.chartContainer.nativeElement, {
         chart: {
             type: 'pie',
-            width: 350,
+            width: modern ? Math.max(1, this.chartContainer.nativeElement.parentElement.clientWidth - 24) : 350,
             height: 300,
+            animation: !modern,
             backgroundColor: 'transparent',
             borderRadius: 0
         },
@@ -53,11 +87,13 @@ export class UpgradeProgressComponent implements AfterViewInit, OnChanges {
         credits: { enabled: false },
         plotOptions: {
             pie: {
+                animation: !modern,
                 borderWidth: 2,
                 innerSize: '50%',
                 borderColor:  '#262626'
             },
             series: {
+              animation: !modern,
               dataLabels: {
                   enabled: true,
                   color: 'white',
@@ -71,16 +107,15 @@ export class UpgradeProgressComponent implements AfterViewInit, OnChanges {
         },
         tooltip: {
           formatter: (() => { const bind = this; return function(data) {
-            const ud = bind.upgradeDomains[this.point.index];
-            return bind.sanitizer.sanitize(SecurityContext.HTML,`${this.key} <br> ${ud.stateName}`); };
+            const state = this.point.options.custom?.state || '';
+            return bind.sanitizer.sanitize(SecurityContext.HTML,`${this.key} <br> ${state}`); };
           })()
         },
         accessibility: {
           point: {
             // Provide the same content as the tooltip for screen readers.
             descriptionFormatter: (() => { const bind = this; return function(point: any) {
-              const ud = bind.upgradeDomains[point.index];
-              const stateName = ud ? ud.stateName : '';
+              const stateName = point.options.custom?.state || '';
               return bind.sanitizer.sanitize(SecurityContext.HTML, `${point.name}. ${stateName}.`);
             }; })()
           }
@@ -90,6 +125,9 @@ export class UpgradeProgressComponent implements AfterViewInit, OnChanges {
         }],
 
     } as Options);
+      this.resizeChart();
+      this.resizeObserver = new ResizeObserver(() => this.resizeChart());
+      this.resizeObserver.observe(this.chartContainer.nativeElement.parentElement);
     }
   }
 
@@ -117,6 +155,7 @@ export class UpgradeProgressComponent implements AfterViewInit, OnChanges {
           name: stateName + ' : ' + entry.value,
           y: entry.value,
           color: colors[badgeClass as keyof typeof colors],
+          custom: { state: stateName },
           dataLabels: {
             style: {
               fontSize: '15px',
@@ -132,6 +171,7 @@ export class UpgradeProgressComponent implements AfterViewInit, OnChanges {
           name: p.prefix + p.name,
           y: 1,
           color: colors[p.badgeClass as keyof typeof colors],
+          custom: { state: p.stateName },
           dataLabels: {
             style: {
                 fontSize: '15px',
@@ -149,7 +189,8 @@ export class UpgradeProgressComponent implements AfterViewInit, OnChanges {
         type: 'pie',
         name: '',
         y: 1,
-        color: 'gray',
+          color: 'gray',
+          custom: { state: '' },
         dataLabels: {
           style: {
             fontSize: '20px',
@@ -164,7 +205,7 @@ export class UpgradeProgressComponent implements AfterViewInit, OnChanges {
 
   ngOnChanges() {
     if (this.chart){
-      this.chart.series[0].setData(this.getDataSet());
+      this.chart.series[0].setData(this.getDataSet(), true, this.experience.isNew() ? false : undefined);
     }else{
       const ref: Record<string, ITileCount> = {};
       ref[UpgradeDomainStateNames.Pending] = {
@@ -197,6 +238,7 @@ export class UpgradeProgressComponent implements AfterViewInit, OnChanges {
       this.upgradeDomains.forEach(unit => {
         ref[unit.stateName].uds.push(unit);
       });
+      if (this.showChart) { this.getDataSet(); }
     }
   }
 

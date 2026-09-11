@@ -1,3 +1,21 @@
+@if (experience.isNew()) {
+  <div class="replication-metrics">
+    <section data-cy="current-state"><h4>Current state</h4><ng-container *ngTemplateOutlet="metricFields; context: { $implicit: lastItems }"></ng-container></section>
+    <section class="replication-group">
+      <button type="button" class="replication-button" [attr.aria-expanded]="!copy" (click)="copy = !copy">Replication acknowledgement</button>
+      @if (!copy) { <ng-container *ngTemplateOutlet="metricFields; context: { $implicit: replicationItems }"></ng-container> }
+    </section>
+    <section class="replication-group">
+      <button type="button" class="replication-button" [attr.aria-expanded]="copy" (click)="copy = !copy">Copy acknowledgement</button>
+      @if (copy) { <ng-container *ngTemplateOutlet="metricFields; context: { $implicit: copyItems }"></ng-container> }
+    </section>
+  </div>
+  <ng-template #metricFields let-items>
+    <dl class="replication-fields">@for (item of items; track item.descriptionName) {
+      <div class="replication-field"><dt>{{item.descriptionName}}</dt><dd><span>{{item.displayText}}</span><app-clip-board [text]="item.copyTextValue" [name]="item.descriptionName"></app-clip-board></dd></div>
+    }</dl>
+  </ng-template>
+} @else {
 <div style="justify-content: space-between;height: 100%;" class="flex-column">
   <div style="flex: 1;
   min-height: 0px;
@@ -41,3 +59,4 @@
     </div>
   </div>
 </div>
+}

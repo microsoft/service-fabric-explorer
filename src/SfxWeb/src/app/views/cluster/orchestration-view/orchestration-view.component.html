@@ -14,8 +14,8 @@
 
 <div class="detail-pane essen-pane">
   <h2>Partition Operations</h2>
+  <div [class.partition-controls]="experience.isNew()">
   @if (experience.isNew()) {
-    <p class="partition-intro">Choose a partition to inspect its placement and balancing decisions.</p>
     <div class="partition-mode" role="group" aria-label="Choose partition input method">
       <button type="button" [class.active]="browsePartitions" [attr.aria-pressed]="browsePartitions" (click)="browsePartitions = true">Browse partitions</button>
       <button type="button" [class.active]="!browsePartitions" [attr.aria-pressed]="!browsePartitions" (click)="browsePartitions = false">Enter partition ID</button>
@@ -35,11 +35,14 @@
   @if (experience.isNew() && loadingOperations) { <p class="operation-status" role="status">Loading partition operations...</p> }
   @if (experience.isNew() && operationsError) { <p class="operation-error" role="alert">{{operationsError}}</p> }
   @if (experience.isNew()) {
-    <div class="stage-filters" role="group" aria-label="Operation stages">
-      <label><input type="checkbox" [(ngModel)]="balancingToggle" (ngModelChange)="search()"> Balancing</label>
-      <label><input type="checkbox" [(ngModel)]="placementToggle" (ngModelChange)="search()"> Placement</label>
-      <label><input type="checkbox" [(ngModel)]="constrainCheckToggle" (ngModelChange)="search()"> Constraint check</label>
-      <label><input type="checkbox" [(ngModel)]="otherToggle" (ngModelChange)="search()"> Other operations</label>
+    <div class="stage-filter-dropdown" ngbDropdown [autoClose]="'outside'" placement="bottom-start">
+      <button type="button" class="stage-filter-trigger" ngbDropdownToggle>Operations <span>{{selectedStageCount}} / 4</span></button>
+      <div ngbDropdownMenu class="stage-filter-menu" role="group" aria-label="Operation stages">
+        <label><input type="checkbox" [(ngModel)]="balancingToggle" (ngModelChange)="search()"> Balancing</label>
+        <label><input type="checkbox" [(ngModel)]="placementToggle" (ngModelChange)="search()"> Placement</label>
+        <label><input type="checkbox" [(ngModel)]="constrainCheckToggle" (ngModelChange)="search()"> Constraint check</label>
+        <label><input type="checkbox" [(ngModel)]="otherToggle" (ngModelChange)="search()"> Other operations</label>
+      </div>
     </div>
   } @else {
   <label style="display: block; margin-top: 15px; margin-bottom: 15px;">
@@ -63,6 +66,7 @@
     Show Other (ClientAPI) Operations
   </label>
   }
+  </div>
   @if (timeLineEventsData) {
     @if (experience.isNew()) {
       <app-event-navigator [events]="timeLineEventsData" inspectLabel="Show operation details" (inspectEvent)="selectEvent($event)"></app-event-navigator>
@@ -70,8 +74,6 @@
     <app-event-store-timeline [events]="timeLineEventsData"
      (itemClicked)="selectEvent($event)" class="orchestration-view-timeline" data-cy="orchestration-timeline"></app-event-store-timeline>
     }
-  } @else if (experience.isNew()) {
-    @if (!loadingOperations && !operationsError) { <p class="orchestration-empty">Select a partition above, then load its operations. You can also enter an ID directly for partitions not listed here.</p> }
   }
 </div>
 

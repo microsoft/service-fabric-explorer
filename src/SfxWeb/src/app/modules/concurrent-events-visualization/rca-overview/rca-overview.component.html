@@ -1,13 +1,9 @@
 @if (experience.isNew()) {
-  <section class="exit-overview" aria-label="Application exit event overview">
-    @if (navigatorData) { <app-event-navigator [events]="navigatorData" heading="Exit event timeline"></app-event-navigator> }
-    <section class="exit-reasons" aria-label="Reported exit reasons">
-      <h4>Reported reasons</h4>
-      <p>Analysis is best effort and may not identify the exact cause. Unknown means no matching explanation was found.</p>
-      @for (reason of reasons; track reason.key; let index = $index) {
-        <div class="exit-reason"><span class="reason-label">Reason {{index + 1}}</span><span class="reason-text">{{reason.key}}</span><span class="reason-count">{{reason.displayText}} {{reason.displayText === '1' ? 'event' : 'events'}}</span></div>
-      }
-    </section>
+  <section class="exit-overview" aria-label="RCA event overview">
+    @if (navigatorData) {
+      @if (canInspect) { <app-event-navigator [events]="navigatorData" [trackDescriptions]="trackDescriptions" heading="" (inspectEvent)="inspect($event)"></app-event-navigator> }
+      @else { <app-event-navigator [events]="navigatorData" [trackDescriptions]="trackDescriptions" heading=""></app-event-navigator> }
+    }
   </section>
 } @else {
 <div style="flex: 1;">

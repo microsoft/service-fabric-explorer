@@ -16,6 +16,8 @@ export class NodeFilterComponent implements OnInit, OnChanges {
 
   @Input() showGroupByNodeType = true;
   @Input() compact = false;
+  @Input() healthDropdown = false;
+  public get selectedHealthCount() { return this.healthOptions.filter(health => this.healthFilter[health]).length; }
   public healthOptions = ['OK', 'Warning', 'Error'];
 
   @Input() nodes!: Node[];

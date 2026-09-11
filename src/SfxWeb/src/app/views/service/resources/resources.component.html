@@ -1,3 +1,25 @@
+@if (experience.isNew()) {
+  <div class="service-resource-grid">
+    <ng-container *ngTemplateOutlet="resourceCard; context: { items: spData, title: 'Service Package Info', units: '', testId: 'servicepackage-info' }"></ng-container>
+    <ng-container *ngTemplateOutlet="resourceCard; context: { items: cpuData, title: 'CPU', units: 'cores', testId: 'cpu-info' }"></ng-container>
+    <ng-container *ngTemplateOutlet="resourceCard; context: { items: memoryData, title: 'Memory', units: 'MB', testId: 'memory-info' }"></ng-container>
+  </div>
+  <ng-template #resourceCard let-items="items" let-title="title" let-units="units" let-testId="testId">
+    <section class="service-resource-card" [attr.aria-label]="title" [attr.data-cy]="testId">
+      <header><h2>{{title}}</h2>@if (units) { <span data-cy="measure">{{units}}</span> }</header>
+      <dl>
+        @for (item of items; track item.selectorName) {
+          @if (!item.isTitle) {
+            <div class="resource-property">
+              <dt>{{item.title}} @if (item.toolTip) { <button type="button" class="resource-help" [ngbTooltip]="item.toolTip" container="body" [attr.aria-label]="'About ' + item.title">i</button> }</dt>
+              <dd [class.unspecified]="item.disabled" [attr.data-cy]="item.selectorName">{{item.displayText}}</dd>
+            </div>
+          }
+        }
+      </dl>
+    </section>
+  </ng-template>
+} @else {
 <div class="card-container ">
     
     <app-service-resources-tile [listItems]="spData" class="long" data-cy="servicepackage-info">
@@ -25,3 +47,4 @@
         </ng-template>
     </app-service-resources-tile>
 </div>
+}

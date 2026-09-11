@@ -42,3 +42,5 @@
 .badge-error {
   background-color: var(--badge-error);
 }
+.modern-domain-chart { width: 100%; min-width: 0; padding: 0 12px; box-sizing: border-box; }
+.modern-domain-chart .domain-chart-canvas { min-width: 0; height: 300px; }

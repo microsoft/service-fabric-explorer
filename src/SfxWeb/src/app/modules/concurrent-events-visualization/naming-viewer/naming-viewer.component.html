@@ -1,23 +1,41 @@
 @if (experience.isNew()) {
-  <p class="naming-intro">Naming Service reports request counts, average latency, and response sizes. Choose which partitions and operations to compare below.</p>
+  <section class="naming-controls" aria-label="Naming metric selection">
+    <div class="naming-toolbar">
+      <div ngbDropdown [autoClose]="'outside'">
+        <button type="button" ngbDropdownToggle>Partitions <span>{{selectedPartitionCount}} / {{overviewPanels.length}}</span></button>
+        <div ngbDropdownMenu class="naming-menu" aria-label="Partitions">
+          <input type="search" placeholder="Find a partition" aria-label="Find a naming partition" [(ngModel)]="partitionSearch">
+          <div class="selection-actions"><button type="button" (click)="togglePartitions(true)">Select all</button><button type="button" (click)="togglePartitions(false)">Clear</button></div>
+          <div class="naming-options">
+            @for (panel of visiblePartitions; track panel.sourceName) {
+              <label class="naming-choice"><input type="checkbox" [(ngModel)]="panel.toggled" (ngModelChange)="updateData()"><span>{{panel.sourceName}}<small>{{panel.reportCount}} reports · {{panel.requestCount | number}} requests</small></span></label>
+            } @empty { <p>No matching partitions.</p> }
+          </div>
+        </div>
+      </div>
+      <div ngbDropdown [autoClose]="'outside'">
+        <button type="button" ngbDropdownToggle [disabled]="!selectedPartitionCount">Operations <span>{{dataset.dataSets.length}} selected</span></button>
+        <div ngbDropdownMenu class="naming-menu" aria-label="Operations by partition">
+          <input type="search" placeholder="Find an operation" aria-label="Find a naming operation" [(ngModel)]="operationSearch">
+          <div class="selection-actions"><button type="button" (click)="toggleOperations(true)">Select all</button><button type="button" (click)="toggleOperations(false)">Clear</button></div>
+          <div class="naming-options">
+            @for (group of operationPanels; track group.panel.sourceName) {
+              <fieldset><legend>{{group.panel.sourceName}}</legend>
+                @for (operation of group.options; track operation.name) { <label class="naming-choice"><input type="checkbox" [(ngModel)]="operation.toggled" (ngModelChange)="updateData()"><span>{{operation.name}}</span></label> }
+              </fieldset>
+            } @empty { <p>No matching operations.</p> }
+          </div>
+        </div>
+      </div>
+      <span class="selection-note">{{selectedReportCount}} selected reports</span>
+    </div>
+  </section>
 }
 @if (dataset.dataSets.length > 0 || (experience.isNew() && overviewPanels.length > 0)) {
   <div>
+    @if (!experience.isNew()) {
     <div class="panel-container">
       @for (panel of overviewPanels; track panel.sourceName) {
-        @if (experience.isNew()) {
-          <section class="naming-partition" data-cy="overviewpanel" [class.excluded]="!panel.toggled">
-            <header><label class="partition-choice"><input type="checkbox" [(ngModel)]="panel.toggled" (ngModelChange)="updateData()"> Partition {{panel.name}}</label><span>{{panel.reportCount}} reports</span></header>
-            <div class="partition-source" [title]="panel.sourceName">{{panel.sourceName}}</div>
-            <div class="request-count"><strong>{{panel.requestCount | number}}</strong> requests reported</div>
-            <fieldset [disabled]="!panel.toggled"><legend>Operations shown ({{getToggled(panel.nestedOptions)}} of {{panel.nestedOptions.length}})</legend>
-              @for (operation of panel.nestedOptions; track operation.name) {
-                <label class="naming-operation"><input type="checkbox" [(ngModel)]="operation.toggled" (ngModelChange)="updateData()">{{operation.name}}</label>
-              }
-            </fieldset>
-            @if (!panel.toggled) { <p class="partition-excluded">Not shown in charts. Select this partition to include it.</p> }
-          </section>
-        } @else {
         <div class="panel" data-cy="overviewpanel">
           <div class="text-container">
             <label ngbTooltip="Set where the partition is visible in the charts below" title="Set where the partition is visible in the charts below" tooltipClass="styled-tooltip">
@@ -54,15 +72,15 @@
             </div>
           </div>
         </div>
-        }
       }
     </div>
+    }
     @if (dataset.dataSets.length > 0) {
       @if (experience.isNew()) {
         <p class="naming-chart-caption" role="status">Showing {{selectedReportCount}} reports across {{dataset.dataSets.length}} operation series.</p>
         @if (hasSingleSampleSeries) { <p class="naming-sparse">Some operations have only one report in this range. A single point is a sample, not a trend. Widen the query range to look for more reports.</p> }
       }
-      <app-timeseries [data]="dataset"></app-timeseries>
+      <app-timeseries [data]="dataset" [modern]="experience.isNew()"></app-timeseries>
     } @else {
       <div class="naming-empty" role="status"><strong>No metrics selected</strong><p>Select a partition and at least one operation above to display its reports.</p><button type="button" class="simple-button" (click)="showAllMetrics()">Show all reported metrics</button></div>
     }

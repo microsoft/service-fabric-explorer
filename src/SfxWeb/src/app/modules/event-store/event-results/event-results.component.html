@@ -13,7 +13,7 @@
     <input type="search" aria-label="Search event records" placeholder="Search type, entity, ID, or event data" [(ngModel)]="query" (ngModelChange)="filter()">
     <label><span class="sr-only">Category</span><select aria-label="Event category" [(ngModel)]="category" (ngModelChange)="filter()"><option value="">All categories</option>@for (value of categories; track value) { <option [value]="value">{{value}}</option> }</select></label>
     @if (query || category) { <button type="button" class="link" (click)="clear()">Clear filters</button> }
-    <label class="zone">Time zone <select aria-label="Event records timezone" [(ngModel)]="utc"><option [ngValue]="true">UTC</option><option [ngValue]="false">Local</option></select></label>
+    <div class="zone">Time zone <app-select-menu label="Event records timezone" [(value)]="utc" [options]="[{value: true, label: 'UTC'}, {value: false, label: 'Local'}]"></app-select-menu></div>
   </div>
   @if (source?.type === 'RepairTask') { <div class="notice">Repair tasks are returned independently of the selected date range.</div> }
   @if (loading) { <div class="notice" role="status">Loading {{active}} events...</div> }
@@ -24,7 +24,7 @@
       <thead><tr><th scope="col" [attr.aria-sort]="sort === 'type' ? (descending ? 'descending' : 'ascending') : 'none'"><button type="button" (click)="order('type')">Event type @if (sort === 'type') { <span>{{descending ? '↓' : '↑'}}</span> }</button></th><th scope="col" [attr.aria-sort]="sort === 'category' ? (descending ? 'descending' : 'ascending') : 'none'"><button type="button" (click)="order('category')">Category</button></th><th scope="col">Entity</th><th scope="col" [attr.aria-sort]="sort === 'time' ? (descending ? 'descending' : 'ascending') : 'none'"><button type="button" (click)="order('time')">Timestamp ({{utc ? 'UTC' : 'Local'}}) @if (sort === 'time') { <span>{{descending ? '↓' : '↑'}}</span> }</button></th></tr></thead>
       <tbody>
         @for (row of visible; track row.key) {
-          <tr [class.selected]="expanded.has(row.key)"><td><button type="button" class="row-toggle" [attr.aria-expanded]="expanded.has(row.key)" (click)="toggle(row)"><span aria-hidden="true">{{expanded.has(row.key) ? '−' : '+'}}</span>{{humanize(row.type)}}</button></td><td><span class="category">{{row.category}}</span></td><td class="entity">{{row.entity || '—'}}</td><td class="time" [title]="row.time">{{timestamp(row.time)}}</td></tr>
+          <tr [class.selected]="expanded.has(row.key)"><td><button type="button" class="row-toggle" [attr.aria-expanded]="expanded.has(row.key)" (click)="toggle(row)"><svg class="row-chevron" [class.expanded]="expanded.has(row.key)" width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false"><path d="m4 2 4 4-4 4"/></svg>{{humanize(row.type)}}</button></td><td><span class="category">{{row.category}}</span></td><td class="entity">{{row.entity || '—'}}</td><td class="time" [title]="row.time">{{timestamp(row.time)}}</td></tr>
           @if (expanded.has(row.key)) {
             <tr class="detail-row"><td colspan="4"><div class="detail-heading"><div><strong>{{row.type}}</strong><span>Event ID: {{row.id || 'Unavailable'}}</span></div><button type="button" (click)="copy(row)">Copy JSON</button></div><pre tabindex="0" aria-label="Raw event JSON">{{row.json}}</pre></td></tr>
           }

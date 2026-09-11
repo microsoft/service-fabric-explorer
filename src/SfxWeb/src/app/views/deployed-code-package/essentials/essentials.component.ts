@@ -3,6 +3,7 @@ import { of } from 'rxjs';
 import { IEssentialListItem } from 'src/app/modules/charts/essential-health-tile/essential-health-tile.component';
 import { DataService } from 'src/app/services/data.service';
 import { DeployedCodePackageBaseControllerDirective } from '../DeployedCodePackageBase';
+import { ExperienceService } from 'src/app/services/experience.service';
 
 @Component({
     selector: 'app-essentials',
@@ -12,11 +13,13 @@ import { DeployedCodePackageBaseControllerDirective } from '../DeployedCodePacka
     standalone: false
 })
 export class EssentialsComponent extends DeployedCodePackageBaseControllerDirective {
+  public experience = inject(ExperienceService);
   protected data: DataService = inject(DataService);
 
 
   essentialItems: IEssentialListItem[] = [];
   essentialItems2: IEssentialListItem[] = [];
+  overviewItems: IEssentialListItem[] = [];
 
   refresh() {
 
@@ -65,6 +68,7 @@ export class EssentialsComponent extends DeployedCodePackageBaseControllerDirect
         });
     }
 
+    this.overviewItems = [...this.essentialItems, ...this.essentialItems2];
     return of(null);
   }
 

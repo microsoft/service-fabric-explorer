@@ -1,6 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, AfterViewInit, Output, ViewChild, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, AfterViewInit, Output, ViewChild, ViewChildren, QueryList, inject } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { FormsModule } from '@angular/forms';
+import { SelectMenuComponent } from 'src/app/shared/component/select-menu/select-menu.component';
 import { ITimelineData } from 'src/app/Models/eventstore/timelineGenerators';
 
 interface NavigatorEvent {
@@ -17,13 +19,23 @@ interface NavigatorTrack {
   name: string;
   height: number;
   count: number;
-  marks: { event: NavigatorEvent; x: number; width: number; y: number; point: boolean }[];
+  marks: NavigatorMark[];
+}
+
+interface NavigatorMark {
+  event: NavigatorEvent;
+  events: NavigatorEvent[];
+  x: number;
+  width: number;
+  y: number;
+  point: boolean;
+  color: string;
 }
 
 @Component({
   selector: 'app-event-navigator',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, SelectMenuComponent],
   templateUrl: './event-navigator.component.html',
   styleUrls: ['./event-navigator.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -31,10 +43,22 @@ interface NavigatorTrack {
 export class EventNavigatorComponent implements OnChanges, AfterViewInit, OnDestroy {
   @Input() events!: ITimelineData;
   @Input() heading = 'Event navigator';
+  @Input() trackDescriptions: Record<string, string> = {};
   @Input() inspectLabel = 'Open in event table';
   @Output() inspectEvent = new EventEmitter<string>();
   @ViewChild('plot') plot!: ElementRef<HTMLElement>;
   @ViewChild('timeline') timeline!: ElementRef<HTMLElement>;
+  @ViewChildren('labelText') labelTexts!: QueryList<ElementRef<HTMLElement>>;
+  public expandedLabels = new Set<string>();
+  private labelHeights = new Map<string, number>();
+  private labelObserver?: ResizeObserver;
+  private labelChanges?: Subscription;
+
+  public toggleLabel(name: string) {
+    if (this.expandedLabels.has(name)) { this.expandedLabels.delete(name); }
+    else { this.expandedLabels.add(name); }
+    this.layout();
+  }
   private readonly cdr = inject(ChangeDetectorRef);
   private observer?: ResizeObserver;
   private all: NavigatorEvent[] = [];
@@ -49,6 +73,19 @@ export class EventNavigatorComponent implements OnChanges, AfterViewInit, OnDest
   public search = '';
   public utc = true;
   public selected?: NavigatorEvent;
+  public selectedGroup: NavigatorEvent[] = [];
+  public groupPage = 0;
+  public readonly groupPageSize = 20;
+
+  public get groupPages(): number { return Math.ceil(this.selectedGroup.length / this.groupPageSize); }
+  public get groupStart(): number { return Math.min(...this.selectedGroup.map(event => event.start)); }
+  public get groupEnd(): number { return Math.max(...this.selectedGroup.map(event => event.end)); }
+  public get groupSeverity(): string {
+    return ['error', 'warning', 'info', 'success'].map(tone => {
+      const count = this.selectedGroup.filter(event => event.color === tone).length;
+      return count ? `${count} ${tone}` : '';
+    }).filter(Boolean).join(' · ');
+  }
   public tracks: NavigatorTrack[] = [];
   public ticks: { x: number; time: number }[] = [];
   public from = 0;
@@ -107,6 +144,10 @@ export class EventNavigatorComponent implements OnChanges, AfterViewInit, OnDest
     if (this.selected) {
       this.selected = this.all.find(item => item.id === this.selected!.id && item.start === this.selected!.start && item.name === this.selected!.name);
     }
+    if (this.selectedGroup.length) {
+      this.selectedGroup = this.selectedGroup.map(previous => this.all.find(event => event.id === previous.id && event.start === previous.start && event.name === previous.name)).filter((event): event is NavigatorEvent => !!event && this.matches(event));
+      this.groupPage = Math.min(this.groupPage, Math.max(0, this.groupPages - 1));
+    }
     const changed = qStart !== this.queryStart || qEnd !== this.queryEnd;
     this.queryStart = qStart;
     this.queryEnd = qEnd;
@@ -119,6 +160,17 @@ export class EventNavigatorComponent implements OnChanges, AfterViewInit, OnDest
   }
 
   ngAfterViewInit() {
+    this.labelObserver = new ResizeObserver(entries => {
+      entries.forEach(entry => this.labelHeights.set((entry.target as HTMLElement).dataset.track!, entry.contentRect.height + 20));
+      this.layout();
+      this.cdr.markForCheck();
+    });
+    const observeLabels = () => {
+      this.labelObserver!.disconnect();
+      this.labelTexts.forEach(label => this.labelObserver!.observe(label.nativeElement));
+    };
+    observeLabels();
+    this.labelChanges = this.labelTexts.changes.subscribe(observeLabels);
     this.observer = new ResizeObserver(entries => {
       for (const entry of entries) {
         if (entry.target === this.plot.nativeElement) {
@@ -133,7 +185,7 @@ export class EventNavigatorComponent implements OnChanges, AfterViewInit, OnDest
     this.observer.observe(this.timeline.nativeElement);
   }
 
-  ngOnDestroy() { this.observer?.disconnect(); }
+  ngOnDestroy() { this.observer?.disconnect(); this.labelObserver?.disconnect(); this.labelChanges?.unsubscribe(); }
 
   private matches(item: NavigatorEvent): boolean {
     const query = this.search.trim().toLocaleLowerCase();
@@ -142,6 +194,8 @@ export class EventNavigatorComponent implements OnChanges, AfterViewInit, OnDest
 
   public filter() {
     if (this.selected && !this.matches(this.selected)) { this.selected = undefined; }
+    this.selectedGroup = this.selectedGroup.filter(event => this.matches(event));
+    this.groupPage = 0;
     this.layout();
   }
 
@@ -157,21 +211,53 @@ export class EventNavigatorComponent implements OnChanges, AfterViewInit, OnDest
     });
     const span = this.to - this.from;
     this.tracks = Array.from(rows, ([name, items]) => {
-      const ends: number[] = [];
       const marks: NavigatorTrack['marks'] = [];
-      items.filter(item => item.end >= this.from && item.start <= this.to).forEach(event => {
+      const candidates = items.filter(item => item.end >= this.from && item.start <= this.to).map(event => {
         const point = event.end - event.start < 1000;
         const left = (Math.max(this.from, event.start) - this.from) / span * this.width;
         const right = (Math.min(this.to, event.end) - this.from) / span * this.width;
         const width = Math.min(this.width, Math.max(24, point ? 24 : right - left));
         const x = Math.max(0, Math.min(this.width - width, left - (point ? 12 : 0)));
-        let slot = ends.findIndex(end => end + 6 <= x);
-        if (slot < 0) { slot = ends.length; }
-        ends[slot] = x + width;
-        marks.push({ event, x, width, y: 9 + slot * 34, point });
-        this.visibleCount++;
+        return { event, events: [event], x, width, y: 12, point, color: event.color };
+      }).sort((a, b) => a.x - b.x);
+      this.visibleCount += candidates.length;
+      const severity: Record<string, number> = { success: 0, info: 1, warning: 2, error: 3 };
+      // Merge visual collisions, including collisions introduced by a wider count label.
+      // Original timestamps and event records stay unchanged.
+      candidates.forEach(candidate => {
+        let mark: NavigatorMark = candidate;
+        while (marks.length && marks[marks.length - 1].x + marks[marks.length - 1].width + 6 > mark.x) {
+          const previous = marks.pop()!;
+          const events = previous.events.concat(mark.events);
+          const width = Math.min(this.width, Math.max(previous.width, mark.x + mark.width - previous.x, 20 + String(events.length).length * 9));
+          mark = {
+            event: previous.event, events, width, x: Math.max(0, Math.min(previous.x, this.width - width)), y: 12, point: false,
+            color: severity[previous.color] >= severity[mark.color] ? previous.color : mark.color
+          };
+        }
+        marks.push(mark);
       });
-      return { name, count: items.length, marks, height: Math.max(52, 18 + ends.length * 34) };
+      // Pairs remain directly selectable, even at identical timestamps.
+      const individualMarks = new Map(candidates.map(candidate => [candidate.event, candidate]));
+      const displayMarks: NavigatorMark[] = [];
+      let hasPair = false;
+      marks.forEach(mark => {
+        if (mark.events.length === 2) {
+          hasPair = true;
+          mark.events.forEach((event, index) => {
+            displayMarks.push({ ...individualMarks.get(event)!, y: 12 + index * 34 });
+          });
+        } else {
+          displayMarks.push(mark);
+        }
+      });
+      // Reserve space for focus rings at both plot edges, including merged groups.
+      const inset = Math.min(4, this.width / 4);
+      displayMarks.forEach(mark => {
+        mark.width = Math.min(mark.width, this.width - inset * 2);
+        mark.x = Math.max(inset, Math.min(mark.x, this.width - inset - mark.width));
+      });
+      return { name, count: items.length, marks: displayMarks, height: Math.max(hasPair ? 90 : 56, this.expandedLabels.has(name) ? this.labelHeights.get(name) || 56 : 56) };
     });
     const tickCount = Math.max(2, Math.min(7, Math.floor(this.width / 160)));
     this.ticks = Array.from({ length: tickCount }, (_, i) => ({ x: i / (tickCount - 1) * 100, time: this.from + span * i / (tickCount - 1) }));
@@ -212,6 +298,34 @@ export class EventNavigatorComponent implements OnChanges, AfterViewInit, OnDest
     this.announcement = `${event.name}, ${this.timestamp(event.start, true)}`;
   }
 
+  public selectMark(mark: NavigatorMark) {
+    if (this.moved) { return; }
+    this.selected = undefined;
+    this.selectedGroup = [];
+    this.groupPage = 0;
+    if (mark.events.length === 1) { this.select(mark.event); }
+    else {
+      this.selectedGroup = [...mark.events].sort((a, b) => a.start - b.start);
+      this.announcement = `${mark.events.length} events in ${mark.event.lane}`;
+    }
+  }
+
+  public markChosen(mark: NavigatorMark): boolean {
+    return this.selected ? mark.events.some(event => event.id === this.selected!.id) : this.selectedGroup.length > 0 && mark.events.some(event => event.id === this.selectedGroup[0].id);
+  }
+
+  public closeInspector() { this.selected = undefined; this.selectedGroup = []; }
+
+  public zoomToGroup() {
+    const padding = Math.max(500, (this.groupEnd - this.groupStart) * 0.15);
+    this.setWindow(this.groupStart - padding, this.groupEnd + padding);
+    this.announceWindow();
+  }
+
+  public entity(event: NavigatorEvent): string {
+    return event.facts.find(fact => /(?:node|application|service|partition|replica|entity).*?(?:name|id)|context/i.test(fact.name))?.value || String(event.id);
+  }
+
   public timestamp(value: number, full = false): string {
     return new Intl.DateTimeFormat('en-GB', {
       ...(full ? { day: '2-digit', month: 'short', year: 'numeric' } as const : {}),
@@ -232,7 +346,7 @@ export class EventNavigatorComponent implements OnChanges, AfterViewInit, OnDest
   private announceWindow() { this.announcement = `Showing ${this.timestamp(this.from, true)} to ${this.timestamp(this.to, true)}`; }
 
   public key(event: KeyboardEvent) {
-    if (event.key === 'Escape') { this.brush = undefined; this.drag = undefined; this.selected = undefined; }
+    if (event.key === 'Escape') { this.brush = undefined; this.drag = undefined; this.closeInspector(); }
     if (event.target !== event.currentTarget) { return; }
     if (event.key === 'ArrowLeft') { this.pan(-1); }
     else if (event.key === 'ArrowRight') { this.pan(1); }

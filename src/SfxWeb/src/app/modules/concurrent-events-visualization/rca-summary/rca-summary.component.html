@@ -7,7 +7,7 @@
           {{experience.isNew() ? (item.key === 'ApplicationProcessExited' ? 'Process exits' : item.key === 'ApplicationContainerInstanceExited' ? 'Container exits' : item.key) : item.key}} ({{item.value.length}})
         </a>
         <ng-template ngbNavContent>
-          <app-rca-overview [type]="item.key" [events]="item.value"></app-rca-overview>
+          <app-rca-overview [type]="item.key" [events]="item.value" [canInspect]="selectEvent.observers.length > 0" (selectEvent)="selectEvent.emit($event)"></app-rca-overview>
         </ng-template>
       </div>
     }

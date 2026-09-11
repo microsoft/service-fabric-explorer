@@ -72,6 +72,19 @@ export class NamingViewerComponent implements VisualizationComponent {
   localData!: VisUpdateData;
   public get selectedReportCount(): number { return this.dataset.dataSets.reduce((count, data) => count + data.values.length, 0); }
   public get hasSingleSampleSeries(): boolean { return this.dataset.dataSets.some(data => data.values.length === 1); }
+  public partitionSearch = '';
+  public operationSearch = '';
+  public get selectedPartitionCount() { return this.overviewPanels.filter(panel => panel.toggled).length; }
+  public get visiblePartitions() { return this.overviewPanels.filter(panel => panel.sourceName.toLowerCase().includes(this.partitionSearch.trim().toLowerCase())); }
+  public get operationPanels() {
+    const query = this.operationSearch.trim().toLowerCase();
+    return this.overviewPanels.filter(panel => panel.toggled).map(panel => ({ panel, options: panel.nestedOptions.filter(option => option.name.toLowerCase().includes(query)) })).filter(group => group.options.length);
+  }
+  public togglePartitions(state: boolean) { this.overviewPanels.forEach(panel => panel.toggled = state); this.updateData(); }
+  public toggleOperations(state: boolean) {
+    this.overviewPanels.filter(panel => panel.toggled).forEach(panel => panel.nestedOptions.forEach(option => option.toggled = state));
+    this.updateData();
+  }
 
   public showAllMetrics() {
     this.overviewPanels.forEach(panel => { panel.toggled = true; panel.nestedOptions.forEach(option => option.toggled = true); });
@@ -131,7 +144,6 @@ export class NamingViewerComponent implements VisualizationComponent {
       new ListColumnSetting('raw.eventProperties.AverageLatency', 'Average Latency'),
       new ListColumnSetting('raw.eventProperties.AverageResponseSize', 'Average Response Size'),
       new ListColumnSetting('raw.eventProperties.RequestCount', 'Request Count'),
-      new ListColumnSetting('raw.eventProperties.AverageLatency', 'Average Latency'),
       new ListColumnSettingWithUtcTime('raw.timeStamp', 'Time Stamp'),
       new ListColumnSetting('raw.eventProperties.NodeId1', 'Node 1'),
       new ListColumnSetting('raw.eventProperties.NodeId2', 'Node 2'),
@@ -175,7 +187,7 @@ export class NamingViewerComponent implements VisualizationComponent {
       overview.nestedOptions.forEach(option => {
         if (option.toggled && option.name in splitData) {
           filteredEvents.push({
-            name: overview.name + " " + option.name,
+            name: this.experience.isNew() ? overview.sourceName + ' · ' + option.name : overview.name + ' ' + option.name,
             values: splitData[option.name]
           })
         }

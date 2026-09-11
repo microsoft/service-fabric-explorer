@@ -1,4 +1,5 @@
-import { Component, Input, OnChanges, OnInit, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, Output, EventEmitter, ChangeDetectionStrategy, inject } from '@angular/core';
+import { ExperienceService } from 'src/app/services/experience.service';
 import { HealthStateConstants } from 'src/app/Common/Constants';
 import { ReplicaOnPartition } from 'src/app/Models/DataModels/Replica';
 import { IRawRemoteReplicatorStatus } from 'src/app/Models/RawDataTypes';
@@ -14,11 +15,13 @@ import { IChartData } from '../replication-trend-line/replication-trend-line.com
     standalone: false
 })
 export class ReplicaTileComponent implements OnChanges {
+  public experience = inject(ExperienceService);
   @Input() replica!: ReplicaOnPartition;
   @Input() replicator!: IRawRemoteReplicatorStatus;
   @Input() replicatorHistory!: ITimedReplication[];
 
   @Input() showReplication = false;
+  @Input() detailPanel = false;
   @Output() showReplicationChange = new EventEmitter<boolean>();
 
   overviewItems: IEssentialListItem[] = [];

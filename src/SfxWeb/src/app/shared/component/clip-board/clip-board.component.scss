@@ -15,3 +15,10 @@ button {
 button:disabled {
     color: var(--disabled);
 }
+.modern-copy { display: inline-flex; vertical-align: middle; align-items: center; justify-content: center; width: 28px; height: 28px; padding: 0; margin: 0; box-sizing: border-box; border: 1px solid transparent; border-radius: 6px; background: transparent; color: #8b949e; cursor: pointer; }
+.modern-copy:hover:not(:disabled) { background: #21262d; border-color: #30363d; color: #e6edf3; }
+.modern-copy:focus-visible { outline: 2px solid #58a6ff; outline-offset: 2px; }
+.modern-copy.copied { color: #3fb950; }
+.modern-copy.failed { color: #f85149; }
+.modern-copy:disabled { opacity: .4; cursor: default; }
+.modern-copy svg { flex-shrink: 0; pointer-events: none; }

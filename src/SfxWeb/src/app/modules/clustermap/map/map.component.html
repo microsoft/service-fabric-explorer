@@ -1,13 +1,11 @@
 <div class="detail-pane">
   <div data-cy="clustermap">
-    @if (showScaleButton) {
-      <label>
-        Scale Width <app-toggle [(state)]="scaleToFit" (stateChange)="onResize()"></app-toggle>
-      </label>
+    @if (showScaleButton && !experience.isNew()) {
+      <label>Scale Width <app-toggle [(state)]="scaleToFit" (stateChange)="onResize()"></app-toggle></label>
     }
-    @if (nodes.length >= 0 && matrix) {
+    @if (matrix) {
       <div class="table-responsive" #container>
-        <table class="default-table map-table" role="presentation" #map style="transform-origin: 0 0;" [ngStyle]="{'transform': scale}">
+        <table class="default-table map-table" [class.modern-map]="experience.isNew()" role="presentation" #map style="transform-origin: 0 0;" [ngStyle]="{'transform': experience.isNew() ? 'none' : scale}">
           <tbody>
             <tr>
               <td class="legend" colspan="2" rowspan="2"></td>
@@ -16,30 +14,23 @@
             <tr>
               @for (faultDomain of data.nodes.faultDomains; track trackByFn($index, faultDomain)) {
                 <td class="header top-side">
-                  <app-section-overview [nodes]="matrix[faultDomain]" [moreInfo]="false" [vertical]="false"
-                  [title]="faultDomain"></app-section-overview>
+                  <app-section-overview [nodes]="matrix[faultDomain]" [moreInfo]="false" [vertical]="false" [title]="faultDomain"></app-section-overview>
                 </td>
               }
             </tr>
             @for (upgradeDomain of data.nodes.upgradeDomains; track trackByFn($index, upgradeDomain); let isFirst = $first) {
               <tr>
                 @if (isFirst) {
-                  <td class="legend" [rowSpan]="data.nodes.upgradeDomains.length" [ngClass]="{'first': isFirst}">
-                    <div class="upgrade-domain">
-                      Upgrade Domain
-                    </div>
-                  </td>
+                  <td class="legend" [rowSpan]="data.nodes.upgradeDomains.length" [ngClass]="{'first': isFirst}"><div class="upgrade-domain">Upgrade Domain</div></td>
                 }
                 <td class="header sticky left-side">
-                  <app-section-overview [nodes]="matrix[upgradeDomain]" [moreInfo]="false" [title]="upgradeDomain"
-                  [vertical]="true"></app-section-overview>
+                  <app-section-overview [nodes]="matrix[upgradeDomain]" [moreInfo]="false" [title]="upgradeDomain" [vertical]="true"></app-section-overview>
                 </td>
                 @for (faultDomain of data.nodes.faultDomains; track trackByFn($index, faultDomain)) {
                   <td style="color: white;">
                     @if (matrix[faultDomain + upgradeDomain].length > 0) {
                       <div style="color: white;">
-                        <app-status-tile [nodes]="matrix[faultDomain + upgradeDomain]" [listTemplate]="listTemplate"
-                        [title]="faultDomain + ' : ' + upgradeDomain" [groupByNodeType]="groupByNodeType"></app-status-tile>
+                        <app-status-tile [nodes]="matrix[faultDomain + upgradeDomain]" [listTemplate]="listTemplate" [title]="faultDomain + ' : ' + upgradeDomain" [groupByNodeType]="groupByNodeType"></app-status-tile>
                       </div>
                     }
                   </td>

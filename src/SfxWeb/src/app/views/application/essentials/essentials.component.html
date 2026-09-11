@@ -1,4 +1,4 @@
-<div class="tile-container">
+<div class="tile-container application-summary">
   @if (app && app.isInitialized) {
     <app-essential-health-tile [healthState]="$safeNavigationMigration(app?.healthState)"
       class="long" [listItems]="essentialItems">
@@ -24,15 +24,10 @@
 </div>
 
 @if (eventStoreHandler) {
-  <app-collapse-container class="essen-pane detail-pane" [sectionName]="experience.isNew() ? 'Recent exit events' : 'Recent Application and Container Exit Event Reasons'">
-    <h2 collapse-header>{{experience.isNew() ? 'Recent exit events' : 'Recent Application and Container Exit Event Reasons'}}</h2>
+  <app-collapse-container class="essen-pane detail-pane" [sectionName]="experience.isNew() ? 'Event Navigator' : 'Recent Application and Container Exit Event Reasons'">
+    <h2 collapse-header>{{experience.isNew() ? 'Event Navigator' : 'Recent Application and Container Exit Event Reasons'}}</h2>
     <div collapse-body>
-      @if (experience.isNew()) {
-        <div class="exit-links">
-          <a routerLink="./events">All application events</a>
-          <a href="https://docs.microsoft.com/azure/service-fabric/service-fabric-diagnostics-code-package-errors" target="_blank" rel="noopener noreferrer">About exit events</a>
-        </div>
-      } @else {
+      @if (!experience.isNew()) {
       <div style="margin-left: 30px">
         <a routerLink="./events">
           <i class="mif-link"></i>
@@ -70,6 +65,12 @@
         <div class="text-center">
           Failed to load events
         </div>
+      }
+      @if (experience.isNew()) {
+        <footer class="exit-links">
+          <a routerLink="./events">All application events</a>
+          <a href="https://docs.microsoft.com/azure/service-fabric/service-fabric-diagnostics-code-package-errors" target="_blank" rel="noopener noreferrer">About exit events</a>
+        </footer>
       }
     </div>
   </app-collapse-container>

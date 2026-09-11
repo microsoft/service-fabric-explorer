@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, Output, EventEmitter, OnChanges, OnDestroy, HostListener, ElementRef, ViewChild, inject, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { SelectMenuComponent } from 'src/app/shared/component/select-menu/select-menu.component';
 import { Subscription } from 'rxjs';
 import { DataService } from 'src/app/services/data.service';
 import { SettingsService } from 'src/app/services/settings.service';
@@ -10,7 +11,7 @@ import type { IOptionConfig, IOptionData } from '../option-picker/option-picker.
 @Component({
   selector: 'app-event-query-bar',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+   imports: [CommonModule, FormsModule, SelectMenuComponent],
   templateUrl: './event-query-bar.component.html',
   styleUrls: ['./event-query-bar.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush

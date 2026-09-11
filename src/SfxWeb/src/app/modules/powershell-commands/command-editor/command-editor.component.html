@@ -1,0 +1,38 @@
+<section class="editor" [attr.aria-label]="command.name" data-cy="command">
+  <header><h2>{{command.name}}</h2><span class="risk" [attr.data-risk]="command.safetyLevel">{{command.safetyLevel === 'danger' ? 'Dangerous' : command.safetyLevel === 'unsafe' ? 'Unsafe' : 'Safe'}}</span>@if (command.adminOnly) { <span class="admin">Admin only</span> }</header>
+  <div class="editor-body">
+    @if (command.safetyLevel !== 'safe') { <p class="risk-notice">{{command.safetyLevel === 'danger' ? 'Executing this command can cause serious disruption. Generated output is commented out.' : 'Executing this command can change cluster state. Review its parameters and target before use.'}}</p> }
+    <form [formGroup]="form" (submit)="$event.preventDefault()">
+      @if (required.length) {
+        <h3>Required parameters</h3>
+        <div class="parameter-grid">@for (param of required; track param.name) { <ng-container *ngTemplateOutlet="parameter; context: { $implicit: param }"></ng-container> }</div>
+      }
+      @if (optional.length) {
+        <details class="optional"><summary>Optional parameters <span>{{optional.length}}</span></summary><div class="parameter-grid">@for (param of optional; track param.name) { <ng-container *ngTemplateOutlet="parameter; context: { $implicit: param }"></ng-container> }</div></details>
+      }
+      @if (!command.parameters.length) { <p class="muted">No additional parameters are needed.</p> }
+    </form>
+    <section class="script-panel" aria-label="Generated PowerShell">
+      <div class="script-heading"><h3>PowerShell</h3><app-clip-board [text]="script" [disabled]="form.invalid" [tooltipText]="form.invalid ? 'Complete the required parameters before copying' : 'Copy PowerShell'" name="PowerShell command" data-cy="clipboard"></app-clip-board></div>
+      <pre tabindex="0" data-cy="copy-text">{{script}}</pre>
+      @if (form.invalid) { <p class="validation" role="status">Complete all required parameters to enable copying.</p> }
+    </section>
+    <div class="editor-footer"><span>Configure parameters and copy the generated PowerShell.</span>@if (command.referenceUrl) { <a [href]="command.referenceUrl" target="_blank" rel="noopener noreferrer">Documentation</a> }</div>
+  </div>
+</section>
+<ng-template #parameter let-param>
+  <div class="parameter" [attr.data-cy]="param.required ? 'requiredInput' : 'optionalInput'">
+    <label [for]="fieldPrefix + param.name">{{param.name}} @if (param.required) { <span class="required-label">Required</span> }</label>
+    @if (param.type === types.bool || param.type === types.switch) {
+      <label class="toggle-field" [for]="fieldPrefix + param.name"><input [id]="fieldPrefix + param.name" type="checkbox" [formControl]="form.controls[param.name]" [attr.aria-describedby]="fieldPrefix + param.name + '-help'"><span>{{form.controls[param.name].value ? 'Included' : 'Not included'}}</span></label>
+    } @else if (param.allowCustomValAndOptions) {
+      <input [id]="fieldPrefix + param.name" [attr.list]="fieldPrefix + param.name + '-options'" type="text" [formControl]="form.controls[param.name]" placeholder="Select or enter a value" [required]="param.required" [attr.aria-invalid]="form.controls[param.name].invalid" [attr.aria-describedby]="fieldPrefix + param.name + '-help'">
+      <datalist [id]="fieldPrefix + param.name + '-options'">@for (option of param.options; track option) { <option [value]="option"></option> }</datalist>
+    } @else if (param.type === types.enum) {
+      <select [id]="fieldPrefix + param.name" [formControl]="form.controls[param.name]" [required]="param.required" [attr.aria-invalid]="form.controls[param.name].invalid" [attr.aria-describedby]="fieldPrefix + param.name + '-help'"><option value="">Select a value</option>@for (option of param.options; track option) { <option [value]="option">{{option}}</option> }</select>
+    } @else {
+      <input [id]="fieldPrefix + param.name" [type]="param.type === types.number ? 'number' : 'text'" step="any" [formControl]="form.controls[param.name]" [placeholder]="param.required ? '' : 'Not specified'" [required]="param.required" [attr.aria-invalid]="form.controls[param.name].invalid" [attr.aria-describedby]="fieldPrefix + param.name + '-help'">
+    }
+    <span class="field-help" [id]="fieldPrefix + param.name + '-help'">@if (form.controls[param.name].invalid && form.controls[param.name].touched) { Enter a value for {{param.name}}. } @else if (param.allowCustomValAndOptions) { Choose a suggestion or enter a custom value. }</span>
+  </div>
+</ng-template>

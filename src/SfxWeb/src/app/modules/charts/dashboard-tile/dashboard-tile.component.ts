@@ -1,4 +1,5 @@
-import { Component, OnInit, ViewChild, ElementRef, Input, AfterViewInit, OnChanges, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, Input, OnChanges, OnDestroy, ChangeDetectionStrategy, inject } from '@angular/core';
+import { ExperienceService } from 'src/app/services/experience.service';
 import { IDashboardViewModel } from 'src/app/ViewModels/DashboardViewModels';
 import { Chart, Options, chart, PointOptionsObject, SeriesPieOptions } from 'highcharts';
 
@@ -7,15 +8,33 @@ import { Chart, Options, chart, PointOptionsObject, SeriesPieOptions } from 'hig
     templateUrl: './dashboard-tile.component.html',
     styleUrls: ['./dashboard-tile.component.scss'],
     changeDetection: ChangeDetectionStrategy.Eager,
-    standalone: false
+    standalone: false,
+    host: { '[class.modern-health-tile]': 'experience.isNew()' }
 })
-export class DashboardTileComponent implements OnInit, AfterViewInit, OnChanges {
+export class DashboardTileComponent implements OnInit, OnChanges, OnDestroy {
 
   @Input() data!: IDashboardViewModel;
 
-  @ViewChild('chart') private chartContainer!: ElementRef;
+  @ViewChild('chart') private set chartContainer(container: ElementRef | undefined) {
+    this.chart?.destroy();
+    this.chart = undefined;
+    if (container) {
+      this.chart = chart(container.nativeElement, {
+        ...this.options,
+        title: { ...this.options.title, text: this.data.displayTitle },
+        subtitle: { ...this.options.subtitle, text: String(this.data.count) },
+        series: [{ ...(this.options.series![0] as SeriesPieOptions), type: 'pie', data: this.getDataSet() }]
+      });
+    }
+  }
 
-  private chart!: Chart;
+  private chart?: Chart;
+  public segments: { length: number; offset: number; color: string; title: string }[] = [];
+  public experience = inject(ExperienceService);
+
+  public healthColor(title: string): string {
+    return ({ Healthy: '#3fb950', Up: '#3fb950', Warning: '#d29922', Disabled: '#d29922', Error: '#f85149', Down: '#f85149' } as Record<string, string>)[title] || '#8b949e';
+  }
 
   fontColor = {
     color: '#fff'
@@ -100,8 +119,6 @@ export class DashboardTileComponent implements OnInit, AfterViewInit, OnChanges 
     }]
   };
 
-  constructor() { }
-
   ngOnInit() {
     const margin = 3;
     const width = (this.data.largeTile ? 230 : 150) + margin * 2;
@@ -122,9 +139,7 @@ export class DashboardTileComponent implements OnInit, AfterViewInit, OnChanges 
     }
   }
 
-  ngAfterViewInit() {
-    this.chart = chart(this.chartContainer.nativeElement, this.options);
-  }
+  ngOnDestroy() { this.chart?.destroy(); }
 
   getDataSet(): PointOptionsObject[] {
     const colors = {
@@ -160,6 +175,14 @@ export class DashboardTileComponent implements OnInit, AfterViewInit, OnChanges 
   }
 
   ngOnChanges() {
+    const total = this.data.dataPoints.reduce((sum, point) => sum + Math.max(0, point.count), 0);
+    let offset = 0;
+    this.segments = this.data.dataPoints.filter(point => point.count > 0).map(point => {
+      const length = total ? point.count / total * 100 : 0;
+      const segment = { length, offset: -offset, color: this.healthColor(point.title), title: `${point.title}: ${point.count}` };
+      offset += length;
+      return segment;
+    });
     if (this.chart) {
       const data = this.getDataSet();
       this.chart.tooltip.update({ enabled: data.length === 3 });

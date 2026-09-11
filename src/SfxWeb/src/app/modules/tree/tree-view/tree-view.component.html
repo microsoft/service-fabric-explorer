@@ -1,24 +1,28 @@
-<div class="tree-wrapper">
+<div class="tree-wrapper" [class.modern-tree]="experience.isNew()">
   <div class="tree-header">
+    @if (!experience.isNew()) {
     <div class="tree-guide">
       <button class="toggle-button" (click)="goToTroubleshootingGuides()"><span class=" mif-info"></span> <span style="color:  var(--font-primary-color);"> Service Fabric Troubleshooting Guides</span></button>
     </div>
+    }
     @if (experience.isNew()) {
-      <fieldset class="tree-health-filters">
-        <legend>Health</legend>
-        <div class="health-choices">
-          <label class="health-filter-choice" data-health="OK" [class.enabled]="treeService.tree.showOkItems">
+      <div class="tree-filter-toolbar">
+        <div ngbDropdown [autoClose]="'outside'" container="body" placement="bottom-start">
+          <button type="button" class="tree-health-trigger" ngbDropdownToggle aria-label="Filter tree by health">Health <span>{{(treeService.tree.showOkItems ? 1 : 0) + (treeService.tree.showWarningItems ? 1 : 0) + (treeService.tree.showErrorItems ? 1 : 0)}} / 3</span></button>
+          <div ngbDropdownMenu class="tree-health-menu" role="group" aria-label="Health filters">
+          <label class="tree-health-option" data-health="OK">
             <input type="checkbox" [checked]="treeService.tree.showOkItems" (change)="treeService.tree.showOkItems = $any($event.target).checked"> Healthy
           </label>
-          <label class="health-filter-choice" data-health="Warning" [class.enabled]="treeService.tree.showWarningItems">
+          <label class="tree-health-option" data-health="Warning">
             <input type="checkbox" [checked]="treeService.tree.showWarningItems" (change)="treeService.tree.showWarningItems = $any($event.target).checked"> Warning
           </label>
-          <label class="health-filter-choice" data-health="Error" [class.enabled]="treeService.tree.showErrorItems">
+          <label class="tree-health-option" data-health="Error">
             <input type="checkbox" [checked]="treeService.tree.showErrorItems" (change)="treeService.tree.showErrorItems = $any($event.target).checked"> Error
           </label>
         </div>
-      </fieldset>
+        </div>
       <label class="tree-health-sort"><input type="checkbox" [checked]="treeService.tree.orderbyHealthState" (change)="treeService.tree.orderbyHealthState = $any($event.target).checked; sendHealthStateTelem()"> Sort by health</label>
+      </div>
     } @else {
     <div class="filter-items-container">
       <label class="toggle-wrapper ">
@@ -44,11 +48,11 @@
     </div>
     }
     <div class="input-wrapper">
-      <app-input (changed)="setSearchText($event)" placeholder="Type to Highlight" label="Highlight items in list"></app-input>
+      <app-input (changed)="setSearchText($event)" [placeholder]="experience.isNew() ? 'Highlight nodes' : 'Type to Highlight'" label="Highlight items in list"></app-input>
     </div>
   </div>
   <div class="tree-list" #treeContainer data-cy="tree-panel">
-    @if (canExpand && !smallWindowSize) {
+    @if (!experience.isNew() && canExpand && !smallWindowSize) {
       <span class="expand-panel-wrapper">
         <button class="expand-panel-button" (click)="setWidth()" title="Expand view to match width of tree">
           <span class=" mif-chevron-right mif-3x"></span>
@@ -67,4 +71,9 @@
       }
     </div>
   </div>
+  @if (experience.isNew()) {
+    <footer class="tree-footer">
+      <button type="button" (click)="goToTroubleshootingGuides()">Service Fabric Troubleshooting Guides</button>
+    </footer>
+  }
 </div>

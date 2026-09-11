@@ -9,6 +9,16 @@
         }
       </div>
     </div>
+    @if (healthDropdown) {
+      <div ngbDropdown [autoClose]="'outside'" container="body" placement="bottom-start">
+        <button type="button" class="node-type-button" ngbDropdownToggle aria-label="Filter nodes by health">Health <span>{{selectedHealthCount}} / {{healthOptions.length}}</span></button>
+        <div ngbDropdownMenu class="node-health-menu" role="group" aria-label="Node health filters">
+          @for (health of healthOptions; track health) {
+            <label [attr.data-health]="health"><input type="checkbox" [(ngModel)]="healthFilter[health]" (ngModelChange)="updateNodes()">{{health === 'OK' ? 'Healthy' : health}}</label>
+          }
+        </div>
+      </div>
+    } @else {
     <fieldset><legend>Health</legend><div class="health-choices">
       @for (health of healthOptions; track health) {
         <label class="health-filter-choice" [attr.data-health]="health" [class.enabled]="healthFilter[health]">
@@ -17,6 +27,7 @@
         </label>
       }
     </div></fieldset>
+    }
     @if (showGroupByNodeType) {
       <label class="group-node-types" data-cy="nodetype-filter"><input type="checkbox" [(ngModel)]="groupByNodeType" (ngModelChange)="updateNodes()"> Group by node type</label>
     }

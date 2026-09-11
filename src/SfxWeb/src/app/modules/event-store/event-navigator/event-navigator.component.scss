@@ -47,9 +47,9 @@
   .navigator-layout.has-selection { grid-template-columns: minmax(0, calc(var(--timeline-width) - 8px)) 16px minmax(0, 1fr); column-gap: 0; }
   .panel-resizer { display: block; }
 }
-.heading { padding: 20px 24px 16px; background: var(--header-surface); }
+.heading { padding: 12px 16px; background: #1c2128; border-bottom: 1px solid var(--line); }
 .eyebrow { font-size: 15px; letter-spacing: .1em; color: var(--muted); font-weight: 600; }
-h2 { margin: 0; font-size: 22px; font-weight: 600; color: var(--font-primary-color); }
+h2 { margin: 0; font: 600 18px/1.5 var(--font-family-ui); color: var(--font-primary-color); }
 .tools { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; padding: 0 24px 18px; background: var(--header-surface); }
 button, input, select { font: inherit; color: inherit; }
 button { border: 0; border-radius: 3px; background: transparent; padding: 7px 10px; cursor: pointer; transition: background .12s; }
@@ -75,7 +75,11 @@ button:focus-visible, input:focus-visible, select:focus-visible, .chart:focus-vi
 .axis-label { height: 44px; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; color: var(--muted); font-size: 15px; letter-spacing: .1em; }
 .axis-label span { color: var(--font-primary-color); }
 .track-label { display: flex; align-items: center; justify-content: space-between; padding: 8px 16px; gap: 8px; border-top: 1px solid var(--line); font-size: 15px; }
-.track-label span { overflow-wrap: anywhere; }
+.track-label span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.track-label { width: 100%; text-align: left; border-radius: 0; }
+.track-label.label-expanded { align-items: flex-start; }
+.track-label.label-expanded span { white-space: normal; overflow-wrap: anywhere; }
+.track-label small { flex-shrink: 0; }
 .track-label small { color: var(--muted); font-variant-numeric: tabular-nums; }
 .plot { position: relative; min-width: 0; min-height: 180px; touch-action: pan-y; cursor: crosshair; user-select: none; }
 .axis { height: 44px; position: relative; color: var(--muted); font: 15px/1.5 var(--font-family-mono); background: var(--header-surface); }
@@ -84,15 +88,25 @@ button:focus-visible, input:focus-visible, select:focus-visible, .chart:focus-vi
 .axis > .last { transform: translateX(-100%); padding-right: 8px; }
 .grid { position: absolute; inset: 44px 0 0; pointer-events: none; overflow: hidden; }
 .grid i { position: absolute; height: 100%; width: 1px; background: var(--line); opacity: .35; }
-.track { position: relative; border-top: 1px solid var(--line); }
-.mark { position: absolute; height: 28px; padding: 3px 0; background: transparent; border-radius: 4px; --tone: var(--accent-darkblue); cursor: pointer; }
+.track { position: relative; border-top: 1px solid var(--line); overflow: hidden; }
+.mark { position: absolute; height: 34px; min-height: 0; padding: 3px 0; border: 0; box-sizing: border-box; background: transparent; border-radius: 4px; --tone: var(--accent-darkblue); cursor: pointer; }
 .mark[data-tone=success] { --tone: var(--badge-ok); }
 .mark[data-tone=warning] { --tone: var(--badge-warning); }
 .mark[data-tone=error] { --tone: var(--badge-error); }
-.mark-fill { display: block; height: 100%; border: 1px solid var(--tone); border-left: 3px solid var(--tone); border-radius: 3px; background: color-mix(in srgb, var(--tone) 25%, var(--accent-background-color)); }
+.mark-fill { display: block; height: 28px; box-sizing: border-box; border: 1px solid var(--tone); border-left: 3px solid var(--tone); border-radius: 3px; background: color-mix(in srgb, var(--tone) 25%, var(--accent-background-color)); }
 .point .mark-fill { width: 12px; margin: auto; background: var(--tone); border: 0; border-radius: 2px; }
+.cluster .mark-fill { display: flex; align-items: center; justify-content: center; border: 1px solid var(--tone); border-radius: 5px; color: var(--font-primary-color); font-size: 15px; font-weight: 600; line-height: 1; }
+.group-back { align-self: flex-start; color: var(--link-color); padding: 0 0 8px; flex-shrink: 0; }
+.group-summary { display: grid; gap: 4px; margin-top: 8px; color: var(--muted); font-size: 15px; flex-shrink: 0; }
+.group-zoom { align-self: flex-start; color: var(--link-color); margin: 8px 0; flex-shrink: 0; }
+.group-events { min-height: 0; overflow: auto; scrollbar-width: thin; }
+.group-event { display: grid; gap: 3px; width: 100%; text-align: left; border-top: 1px solid var(--line); border-radius: 0; padding: 10px 0; }
+.group-event strong { font-size: 15px; font-weight: 500; }
+.group-event time, .group-event > span { color: var(--muted); font-size: 15px; overflow-wrap: anywhere; }
+.group-pagination { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding-top: 8px; flex-shrink: 0; }
 .mark:hover { background: #21262d; }
-.mark.chosen { outline: 2px solid var(--focus); outline-offset: 1px; }
+.mark.chosen { outline: none; }
+.mark.chosen .mark-fill { box-shadow: 0 0 0 2px var(--focus); }
 .selection { position: absolute; inset-block: 44px 0; border: 1px solid var(--focus); background: rgb(56 139 253 / 15%); pointer-events: none; }
 .selection span { position: absolute; top: 4px; left: 4px; white-space: nowrap; background: var(--primary-background-color); padding: 2px 6px; color: var(--font-primary-color); border-radius: 3px; }
 .empty { padding: 38px 20px; text-align: center; position: relative; }
@@ -135,3 +149,8 @@ h3 { margin: 4px 0 0; font-size: 16px; line-height: 1.4; font-weight: 600; color
 }
 @media (prefers-reduced-motion: reduce) { button { transition: none; } }
 @media (forced-colors: active) { .mark-fill { forced-color-adjust: none; background: Highlight; border-color: Highlight; }.mark.chosen { outline-color: Highlight; } }
+.tools.without-heading { padding-top: 16px; }
+.heading + .tools { padding-top: 16px; }
+.tools.without-heading { background: #1c2128; }
+.inspector-heading { margin: -16px -16px 0; padding: 12px 16px; background: #1c2128; border-bottom: 1px solid var(--line); }
+.group-back + .inspector-heading { margin-top: 0; }

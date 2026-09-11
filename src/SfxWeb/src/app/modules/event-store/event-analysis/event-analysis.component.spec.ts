@@ -7,21 +7,19 @@ describe('EventAnalysisComponent', () => {
     const component = new EventAnalysisComponent();
     component.events = [{ kind: 'NotSupported' } as IConcurrentEvents];
     component.ngOnChanges();
-    expect(component.scenarios.length).toBe(0);
+    expect(component.supportedEvents.length).toBe(0);
     component.events = [{ kind: RelatedEventsConfigs[0].eventType, reason: null } as IConcurrentEvents];
     component.ngOnChanges();
-    expect(component.scenarios.length).toBe(1);
-    expect(component.explained).toBe(0);
+    expect(component.supportedEvents.length).toBe(1);
   });
-  it('handles recursive and self explanations without infinite traversal', () => {
+  it('passes original explanations to the shared RCA summary', () => {
     const component = new EventAnalysisComponent();
     const event = { kind: RelatedEventsConfigs[0].eventType, reasonForEvent: 'Related activity' } as IConcurrentEvents;
     event.reason = event;
     component.events = [event]; component.ngOnChanges();
-    expect(component.scenarios[0].steps.length).toBe(1);
-    expect(component.explained).toBe(1);
+    expect(component.supportedEvents[0]).toBe(event);
     event.reason = { name: 'self', reason: null } as IConcurrentEvents;
     component.ngOnChanges();
-    expect(component.scenarios[0].steps.length).toBe(1);
+    expect(component.supportedEvents[0].reason).toBe(event.reason);
   });
 });

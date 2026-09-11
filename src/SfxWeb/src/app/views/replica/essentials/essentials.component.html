@@ -1,13 +1,14 @@
 @if (replica) {
   <div class="replica-essentials">
+    <div [class.replica-summary-row]="experience.isNew()">
     @if (experience.isNew()) {
       @if (replica.isInitialized) {
         <section class="replica-summary detail-pane essen-pane" aria-label="Replica summary">
           <header><h2>Overview</h2><span class="replica-health" [attr.data-health]="replica.healthState.badgeClass">{{replica.healthState.text}}</span></header>
-          <dl>
+          <dl class="overview-property-grid">
             @for (item of essentialItems; track item.descriptionName) {
               @if (item.descriptionName) {
-                <div class="replica-property">
+                <div>
                   <dt>{{item.descriptionName}}</dt>
                   <dd>
                     @if (item.selectorName === 'nodeName') { <a [routerLink]="replica.nodeViewPath">{{replica.raw.NodeName}}</a> }
@@ -18,7 +19,6 @@
               }
             }
           </dl>
-          @if (nodeView) { <a class="replica-node-link" [routerLink]="nodeView">View on Node</a> }
         </section>
       }
     } @else {
@@ -44,6 +44,7 @@
         <app-replica-address [address]="replica.address"></app-replica-address>
       </div>
     }
+    </div>
     @if (replica.health.isInitialized) {
       <div class="detail-pane essen-pane">
         <h2>Health Evaluations</h2>
