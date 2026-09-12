@@ -1,3 +1,17 @@
+@if (experience.isNew()) {
+  <div class="resource-details-layout service-details-layout">
+    <section class="resource-detail-card" aria-label="General">
+      <header class="resource-detail-header"><h2>General</h2></header>
+      <div class="resource-detail-body"><app-detail-view-part [data]="service"></app-detail-view-part></div>
+    </section>
+    @if (service) {
+      <section class="resource-detail-card" aria-label="Service Description" data-cy="serviceDescription">
+        <header class="resource-detail-header"><h2>Service Description</h2></header>
+        <div class="resource-detail-body"><app-detail-view-part [data]="service.description.raw" [parent]="service.description"></app-detail-view-part></div>
+      </section>
+    }
+  </div>
+} @else {
 <div class="detail-pane essen-pane">
   <app-detail-view-part [data]="service"></app-detail-view-part>
 </div>
@@ -11,4 +25,5 @@
       <app-detail-view-part [data]="service.description.raw" [parent]="service.description"></app-detail-view-part>
     </div>
   </div>
+}
 }

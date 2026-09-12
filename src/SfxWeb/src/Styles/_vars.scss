@@ -30,11 +30,13 @@ $detail-pane-pre-color: #d1d1d1 !default;
 
   --dark-green: #2E8217;
   //fonts
-  --font-size-default: 10pt;
-  --font-size-small: 8pt;
-  --font-size-medium: 12pt;
-  --font-size-large: 14pt;
-  --font-size-large-title: 18pt;
+  --font-family-ui: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+  --font-family-mono: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, "Liberation Mono", monospace;
+  --font-size-default: 15px;
+  --font-size-small: 15px;
+  --font-size-medium: 16px;
+  --font-size-large: 20px;
+  --font-size-large-title: 24px;
 
   --font-weight-normal: 400;
   --font-weight-semibold: 600;

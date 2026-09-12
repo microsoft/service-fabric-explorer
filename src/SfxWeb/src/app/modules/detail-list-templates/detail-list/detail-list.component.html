@@ -1,15 +1,37 @@
 <div class="detail-list-container flex-child" style="margin-top: 15px;">
   <ng-content></ng-content>
   @if (showTopOptions) {
-    <div>
+    <div class="list-toolbar">
+      @if (toolbarFilterColumns.length) {
+          <div ngbDropdown class="hidden-toggle" container="body" display="dynamic" [autoClose]="'outside'" [title]="hasToolbarFilterOptions ? 'Filter table' : 'Filters become available when data provides filter options'" (openChange)="closeChange($event)">
+            <button type="button" class="simple-button" [class.link]="toolbarFiltersActive" ngbDropdownToggle [disabled]="!hasToolbarFilterOptions" aria-label="Filter table" title="Filter table"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 3h14v2l-5.5 6v5l-3 1v-6L3 5Z"/></svg></button>
+            <div ngbDropdownMenu class="dropdown-layout table-filter-menu" [class.table-filter-grid]="toolbarFilterColumns.length > 1">
+              @for (column of toolbarFilterColumns; track column.propertyPath) {
+              <fieldset class="table-filter-group">
+                @if (toolbarFilterColumns.length > 1) { <legend>{{column.displayName}}</legend> }
+                <ul [attr.aria-label]="column.displayName">
+              <li class="item"><label><input type="checkbox" (click)="updateCheckAll(column, $event); page = 1" [ngModel]="column.allChecked" [indeterminate]="!column.allChecked && !column.noneChecked">Check All</label></li>
+              @for (filterValue of column.filterValues; track filterValue) {
+                <li class="item"><label><input type="checkbox" [(ngModel)]="filterValue.isChecked" (ngModelChange)="updateList(); page = 1">{{filterValue.value}}</label></li>
+              }
+                </ul>
+              </fieldset>
+              }
+            </div>
+          </div>
+      }
       <app-input class="input-wrapper" [placeholder]="searchText" [model]="listSettings.search" (changed)="listSettings.search = $event; updateList(); page = 1; "></app-input>
       <button class="simple-button"  (click)="resetAll()">Reset All</button>
       <button class="simple-button" style="float: right;" (click)="export()"> <span class="mif-download2"></span> Export</button>
+      @if (toolbarTemplate) { <div class="list-toolbar-extra"><ng-container *ngTemplateOutlet="toolbarTemplate"></ng-container></div> }
     </div>
   }
   <label aria-live="polite" aria-atomic="true" class="sr-only">There are {{sortedFilteredList.length}} items in the search result    </label>
   <div class="table-responsive">
-    <table class="detail-list" [attr.aria-label]="listSettings.tableName">
+    <table class="detail-list" [class.resizable-table]="experience.isNew()" [class.columns-resized]="resizedTableWidth !== null" [style.width.px]="resizedTableWidth" [attr.aria-label]="listSettings.tableName">
+      @if (resizedTableWidth !== null) {
+        <colgroup>@for (column of listSettings.columnSettings; track column) { <col [style.width.px]="columnWidths.get(column)"> }</colgroup>
+      }
       <thead aria-live="polite">
         <tr>
           @for (columnSetting of listSettings.columnSettings; track columnSetting; let i = $index) {
@@ -26,13 +48,13 @@
                     </span>
                   }
                 </button>
-                @if (columnSetting.hasFilters) {
+                @if (columnSetting.hasFilters && !toolbarFilterProperties.includes(columnSetting.propertyPath)) {
                   <div ngbDropdown [attr.aria-hidden]="!columnSetting.hasFilters" style="display: inline-block;" class="hidden-toggle"
                     (openChange)="closeChange($event)" container="body" display="dynamic">
                     <button class="flat-button supress-hover" style="background-color: transparent;" ngbDropdownToggle aria-label="Filter" [title]="'filter by ' + columnSetting.displayName + ' options'" [attr.aria-haspopup]="false">
                       <span  class="mif-filter" [ngClass]="{'link': columnSetting.hasEffectiveFilters}" placement="bottom-left"></span>
                     </button>
-                    <ul ngbDropdownMenu role="menu" class="dropdown-layout"  >
+                    <ul ngbDropdownMenu role="menu" class="dropdown-layout table-filter-menu"  >
                       <li role="menuitem" class="item">
                         <label>
                           <input type="checkbox" (click)="updateCheckAll(columnSetting, $event)" [ngModel]="columnSetting.allChecked" [indeterminate]="!columnSetting.allChecked && !columnSetting.noneChecked"/>
@@ -51,6 +73,10 @@
                   </div>
                 }
               </div>
+              @if (experience.isNew()) {
+                <span class="column-resizer" role="separator" tabindex="0" aria-orientation="vertical" [attr.aria-label]="'Resize ' + columnSetting.displayName + ' column'" aria-valuemin="80" aria-valuemax="1200" [attr.aria-valuenow]="columnWidths.get(columnSetting) || columnSetting.fixedWidthPx || 160" title="Drag or use arrow keys to resize. Double-click or Home to reset widths."
+                  (pointerdown)="resizeColumn($event, columnSetting)" (pointermove)="resizeColumn($event, columnSetting)" (pointerup)="resizeColumn($event, columnSetting)" (pointercancel)="resizeColumn($event, columnSetting)" (lostpointercapture)="resizeColumn($event, columnSetting)" (keydown)="resizeColumnKey($event, columnSetting)" (dblclick)="resetColumnWidths(); $event.stopPropagation()" (click)="$event.stopPropagation()"></span>
+              }
             </th>
           }
         </tr>

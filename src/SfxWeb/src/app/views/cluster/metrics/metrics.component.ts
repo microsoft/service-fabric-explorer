@@ -2,7 +2,7 @@ import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/cor
 import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 import { DataService } from 'src/app/services/data.service';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
-import { Observable, forkJoin } from 'rxjs';
+import { Observable, forkJoin, of } from 'rxjs';
 import { map, mergeMap } from 'rxjs/operators';
 import { SettingsService } from 'src/app/services/settings.service';
 import { ClusterLoadInformation } from 'src/app/Models/DataModels/Cluster';
@@ -10,10 +10,11 @@ import { NodeCollection } from 'src/app/Models/DataModels/collections/NodeCollec
 import { Node } from 'src/app/Models/DataModels/Node';
 import { IMetricsViewModel, MetricsViewModel } from 'src/app/ViewModels/MetricsViewModel';
 import { LoadMetricInformation } from 'src/app/Models/DataModels/Shared';
+import { ExperienceService } from 'src/app/services/experience.service';
 
 interface IChartSeries {
   label: string;
-  data: number[];
+  data: (number | null)[];
 }
 
 interface IMetricsTableData {
@@ -31,6 +32,27 @@ interface IMetricsTableData {
     standalone: false
 })
 export class MetricsComponent extends BaseControllerDirective {
+  experience = inject(ExperienceService);
+  public metricSearch = '';
+  public loadingMetrics = true;
+  private initialSelectionDone = false;
+  public get metricGroups() {
+    if (!this.metricsViewModel) { return []; }
+    return [
+      { name: 'Resource capacity', metrics: this.metricsViewModel.metricsWithCapacities },
+      { name: 'Load metrics', metrics: this.metricsViewModel.metricsWithoutCapacities },
+      { name: 'System metrics', metrics: this.metricsViewModel.systemMetrics }
+    ].map(group => ({
+      ...group,
+      selectedCount: group.metrics.filter(metric => metric.selected).length,
+      visible: group.metrics.filter(metric => metric.displayName.toLowerCase().includes(this.metricSearch.trim().toLowerCase()))
+    }));
+  }
+  public removeMetric(metric: LoadMetricInformation) {
+    const group = this.metricGroups.find(group => group.metrics.includes(metric));
+    if (group) { this.updateSelectedMetric(metric, group.metrics); }
+  }
+  public get hasChartValues(): boolean { return this.tableData.dataPoints.some(series => series.data.some(value => value !== null)); }
   private data = inject(DataService);
   private settings = inject(SettingsService);
 
@@ -64,6 +86,7 @@ export class MetricsComponent extends BaseControllerDirective {
   }
 
   updateViewMetric() {
+    if (!this.metricsViewModel) { return; }
     this.tableData = {
       dataPoints: [],
       categories: [],
@@ -86,7 +109,11 @@ export class MetricsComponent extends BaseControllerDirective {
       this.metricsViewModel.selectedMetrics.forEach((selectedmetric, index) => {
         const normalize = selectedmetric.hasCapacity && this.metricsViewModel.normalizeMetricsData;
         const selectedNodeLoadMetricInfo = metric.nodeLoadMetricInformation.find(lmi => lmi.name === selectedmetric.name);
-        let dataPoint = +selectedNodeLoadMetricInfo!.raw.NodeLoad;
+        if (!selectedNodeLoadMetricInfo) {
+          chartMetricSeriesList[index].data.push(null);
+          return;
+        }
+        let dataPoint = +selectedNodeLoadMetricInfo.raw.NodeLoad;
 
         if (normalize) {
           addNormalizationTooltip = true;
@@ -100,7 +127,7 @@ export class MetricsComponent extends BaseControllerDirective {
           dataPoint = Math.max(+selectedNodeLoadMetricInfo!.raw.NodeLoad, +selectedNodeLoadMetricInfo!.raw.NodeCapacity);
         }
 
-          chartMetricSeriesList[index].data.push(dataPoint);
+          chartMetricSeriesList[index].data.push(Number.isFinite(dataPoint) ? dataPoint : null);
 
       });
 
@@ -124,6 +151,7 @@ export class MetricsComponent extends BaseControllerDirective {
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
+    this.loadingMetrics = true;
     return forkJoin([
       this.nodes.refresh(messageHandler),
       this.clusterLoadInformation.refresh(messageHandler)
@@ -133,8 +161,18 @@ export class MetricsComponent extends BaseControllerDirective {
       }
 
       const promises = this.nodes.collection.map(node => node.loadInformation.refresh(messageHandler));
-      return forkJoin(promises).pipe(map(() => {
+      return (promises.length ? forkJoin(promises) : of([])).pipe(map(() => {
         this.metricsViewModel.refresh();
+        if (this.experience.isNew() && !this.initialSelectionDone) {
+          if (!this.metricsViewModel.selectedMetrics.length) {
+            const available = this.metricsViewModel.metrics.filter(metric => this.nodes.collection.some(node =>
+              node.loadInformation.isInitialized && node.loadInformation.nodeLoadMetricInformation.some(item => item.name === metric.name)));
+            const metric = available.find(item => item.name === 'Count') || available.find(item => !item.hasCapacity) || available[0];
+            if (metric) { metric.selected = true; }
+          }
+          this.initialSelectionDone = true;
+        }
+        this.loadingMetrics = false;
         this.updateViewMetric();
       }));
     }));

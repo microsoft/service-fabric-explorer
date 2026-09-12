@@ -1,0 +1,15 @@
+<section class="analysis" aria-label="RCA Summary">
+  <header><h2>RCA Summary</h2></header>
+  <div class="summary-body">
+    @if (loading) { <p role="status">Analyzing loaded events...</p> }
+    @else {
+      @if (failed) { <p class="warning" role="status">Some sources failed to load. Analysis may be incomplete.</p> }
+      @if (supportedEvents.length) {
+        <app-rca-summary [events]="supportedEvents" (selectEvent)="selectEvent.emit($event)"></app-rca-summary>
+      } @else {
+        <p>{{events.length ? 'No supported scenarios in this range' : 'No events available for analysis'}}</p>
+        <p>Select another range or include additional event sources.</p>
+      }
+    }
+  </div>
+</section>

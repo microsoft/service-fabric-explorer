@@ -9,6 +9,7 @@ import { RefreshService } from 'src/app/services/refresh.service';
 import { catchError, map } from 'rxjs/operators';
 import { IEssentialListItem } from '../../charts/essential-health-tile/essential-health-tile.component';
 import { IRawNodeRepairTargetDescription } from 'src/app/Models/RawDataTypes';
+import { ExperienceService } from 'src/app/services/experience.service';
 
 @Component({
     selector: 'app-repair-task-view',
@@ -18,6 +19,7 @@ import { IRawNodeRepairTargetDescription } from 'src/app/Models/RawDataTypes';
     standalone: false
 })
 export class RepairTaskViewComponent implements OnInit, DetailBaseComponent, OnDestroy {
+  public experience = inject(ExperienceService);
   dataService = inject(DataService);
   private refreshService = inject(RefreshService);
 

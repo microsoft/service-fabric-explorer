@@ -1,4 +1,22 @@
 <ng-template #internal>
+  @if (experience.isNew()) {
+    <div class="health-card">
+      <div class="health-ring">
+        <svg viewBox="0 0 120 120" aria-hidden="true" focusable="false">
+          <circle class="ring-track" cx="60" cy="60" r="52"></circle>
+          @for (segment of segments; track $index) {
+            <circle cx="60" cy="60" r="52" pathLength="100" [attr.stroke]="segment.color" [attr.stroke-dasharray]="segment.length + ' ' + (100 - segment.length)" [attr.stroke-dashoffset]="segment.offset" transform="rotate(-90 60 60)"><title>{{segment.title}}</title></circle>
+          }
+        </svg>
+        <div class="ring-caption"><strong>{{data.count}}</strong><span>{{data.displayTitle}}</span></div>
+      </div>
+      <dl class="health-counts">
+        @for (point of data.dataPoints; track $index) {
+          <div><dt><i [style.background-color]="healthColor(point.title)" aria-hidden="true"></i>{{point.title}}</dt><dd>{{point.count}}</dd></div>
+        }
+      </dl>
+    </div>
+  } @else {
   <div class="dashboard-wrapper">
     <div class="dashboard"
       [ngClass]="{'has-view-path' : data.viewPath, 'dashboard-large': data.largeTile,  'dashboard-small': !data.largeTile}"
@@ -17,10 +35,11 @@
       </div>
     </div>
   </div>
+  }
 </ng-template>
 
 @if (data.viewPath) {
-  <a [routerLink]="data.viewPath" [attr.aria-label]="data.acessibilityText">
+  <a [class.health-card-link]="experience.isNew()" [routerLink]="data.viewPath" [attr.aria-label]="data.acessibilityText">
     <ng-container *ngTemplateOutlet="internal"></ng-container>
   </a>
 } @else {

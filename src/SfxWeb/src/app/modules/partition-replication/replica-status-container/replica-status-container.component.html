@@ -1,4 +1,52 @@
 @if (primaryReplica && primaryReplica.detail.raw) {
+  @if (experience.isNew()) {
+    <div class="replication-browser">
+      <div class="replication-split" [class.has-selection]="!!selectedReplica">
+      <section class="replication-main" aria-label="Replicator Status" data-cy="replicator">
+        <header class="replication-main-header"><h2>Replicator Status</h2><span>Primary queue</span></header>
+        <div class="replication-main-body">
+          <section class="queue-overview" data-cy="essentials" aria-label="Primary Replica Queue Status">
+            <p class="queue-primary">Node {{primaryReplica.raw.NodeName}}</p>
+          <ng-container *ngTemplateOutlet="queueFields; context: { $implicit: overviewItems }"></ng-container>
+            <h3 class="queue-subtitle">Sequence numbers</h3>
+            <ng-container *ngTemplateOutlet="queueFields; context: { $implicit: replicationStatus }"></ng-container>
+          </section>
+          <section class="replica-selection" aria-label="Choose replica to inspect">
+            <label class="replication-search">Find replicas<input type="search" placeholder="ID, node, role or status" [value]="search" (input)="search = $any($event.target).value; updatePage(1)"></label>
+            <label class="replication-picker">Inspect replication
+              <select [value]="selectedReplica?.id || ''" (change)="selectReplicaId($any($event.target).value)">
+                <option value="">Select a replica</option>
+                @for (replica of visibleReplicas; track replica.id) {
+                  <option [value]="replica.id" [disabled]="!replicaDict[replica.name]">{{replica.id}} · {{replica.raw.NodeName}}{{replicaDict[replica.name] ? '' : ' (replication unavailable)'}}</option>
+                }
+              </select>
+            </label>
+            <p class="replication-count" aria-live="polite">{{filteredReplicas.length}} of {{sortedReplicas.length}} replicas</p>
+            @if (pageCount > 1) {
+            <nav class="replication-pagination" aria-label="Replica pages">
+          <button type="button" class="replication-button" [disabled]="page === 1" (click)="updatePage(page - 1)">Previous</button>
+          <span>Page {{page}} of {{pageCount}}</span>
+          <button type="button" class="replication-button" [disabled]="page === pageCount" (click)="updatePage(page + 1)">Next</button>
+            </nav>
+            }
+            @if (!visibleReplicas.length) { <p class="replication-empty">No replicas match your search.</p> }
+          </section>
+        </div>
+      </section>
+      @if (selectedReplica; as selected) {
+        <aside class="replication-inspector" aria-label="Selected replica replication">
+          <app-replication-inspector (closed)="selectedReplica = undefined"
+            [replica]="selected" [replicator]="replicaDict[selected.name]" [history]="cachedData[selected.name] || []"></app-replication-inspector>
+        </aside>
+      }
+      </div>
+    </div>
+    <ng-template #queueFields let-items>
+      <dl class="replication-fields">@for (item of items; track item.descriptionName) {
+        <div class="replication-field"><dt>{{item.descriptionName}}</dt><dd><span>{{item.displayText}}</span><app-clip-board [text]="item.copyTextValue" [name]="item.descriptionName"></app-clip-board></dd></div>
+      }</dl>
+    </ng-template>
+  } @else {
   <div class="overview-container">
     <div class="essen-pane" style="width: 330px;" data-cy="essentials">
       <h3 class="underline-title">Primary Replica Queue Status</h3>
@@ -29,4 +77,5 @@
       </div>
     </div>
   </div>
+  }
 }

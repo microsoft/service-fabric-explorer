@@ -10,6 +10,7 @@ import { NodeStatusConstants, PartitionStatusConstants } from 'src/app/Common/Co
 import { getDownReplicaMitigationHint } from 'src/app/Utils/PartitionQuorumUtils';
 import { Node } from 'src/app/Models/DataModels/Node';
 import { IEssentialListItem } from 'src/app/modules/charts/essential-health-tile/essential-health-tile.component';
+import { ExperienceService } from 'src/app/services/experience.service';
 
 
 @Component({
@@ -20,6 +21,7 @@ import { IEssentialListItem } from 'src/app/modules/charts/essential-health-tile
     standalone: false
 })
 export class EssentialsComponent extends PartitionBaseControllerDirective {
+  public experience = inject(ExperienceService);
   protected data: DataService = inject(DataService);
   private settings = inject(SettingsService);
 
@@ -29,6 +31,7 @@ export class EssentialsComponent extends PartitionBaseControllerDirective {
   replicaViewModels: any[] = [];
 
   essentialItems: IEssentialListItem[] = [];
+  overviewItems: IEssentialListItem[] = [];
 
   setup() {
     this.setEssentialData();
@@ -106,6 +109,7 @@ export class EssentialsComponent extends PartitionBaseControllerDirective {
 
   setEssentialData() {
     this.essentialItems = [];
+    this.overviewItems = [];
 
     if (!this?.partition?.partitionInformation.isInitialized) {
       return;
@@ -151,5 +155,12 @@ export class EssentialsComponent extends PartitionBaseControllerDirective {
 
     }
 
+    this.overviewItems = [...this.essentialItems, { descriptionName: 'Service Kind', displayText: this.partition.raw.ServiceKind }];
+    const counts = this.partition.isStatefulService
+      ? [['Minimum Replica Set Size', this.partition.raw.MinReplicaSetSize], ['Target Replica Set Size', this.partition.raw.TargetReplicaSetSize]] as const
+      : [['Instance Count', this.partition.raw.InstanceCount], ['Minimum Instance Count', this.partition.raw.MinInstanceCount]] as const;
+    for (const [descriptionName, value] of counts) {
+      this.overviewItems.push({ descriptionName, displayText: value == null ? 'Not available' : String(value) });
+    }
   }
 }

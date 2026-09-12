@@ -1,0 +1,79 @@
+<div class="navigator-layout" [class.has-selection]="!!selected || selectedGroup.length > 0" [style.--timeline-width]="timelinePercent + '%'" (keydown)="key($event)">
+  <section #timeline class="navigator navigator-main" aria-label="Event timeline navigator">
+  @if (heading) {
+  <header class="heading">
+    <div><h2>{{heading}}</h2></div>
+  </header>
+  }
+
+  <div class="tools" [class.without-heading]="!heading">
+    <label class="search"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="10" cy="10" r="6"></circle><path d="m15 15 6 6"></path></svg><input aria-label="Search navigator events" placeholder="Find an event or entity" [(ngModel)]="search" (ngModelChange)="filter()"></label>
+    <div class="navigation" role="group" aria-label="Navigate time">
+      <button type="button" class="icon" aria-label="Earlier" title="Earlier" (click)="pan(-1)">&larr;</button>
+      <button type="button" (click)="focusEvents()" [disabled]="!count">Focus events</button>
+      <button type="button" class="icon" aria-label="Later" title="Later" (click)="pan(1)">&rarr;</button>
+      <span class="separator"></span>
+      <button type="button" (click)="setWindow(minimum, maximum)">Entire range</button>
+    </div>
+    <div class="zone"><app-select-menu label="Navigator timezone" [(value)]="utc" [options]="[{value: true, label: 'UTC'}, {value: false, label: 'Local time'}]"></app-select-menu></div>
+  </div>
+
+  <div class="window-caption"><span>{{timestamp(from, true)}} <span class="arrow">&rarr;</span> {{timestamp(to, true)}} {{utc ? 'UTC' : 'Local'}}</span><span class="window-duration">{{duration(to - from)}}</span></div>
+
+  <div class="chart" tabindex="0" role="region" aria-label="Time tracks. Drag to zoom. Arrow keys move through time, plus and minus zoom, Home focuses events." (keydown)="key($event)">
+    <div class="labels">
+      <div class="axis-label">EVENT TRACK <span>{{tracks.length}}</span></div>
+      @for (track of tracks; track track.name) {
+        <button type="button" class="track-label" [class.label-expanded]="expandedLabels.has(track.name)" [style.height.px]="track.height" [attr.aria-expanded]="expandedLabels.has(track.name)" [title]="trackDescriptions[track.name] || track.name" (click)="toggleLabel(track.name)"><span #labelText [attr.data-track]="track.name">{{trackDescriptions[track.name] || track.name}}</span><small>{{track.count}}</small></button>
+      }
+    </div>
+    <div #plot class="plot" (pointerdown)="pointerDown($event)" (pointermove)="pointerMove($event)" (pointerup)="pointerUp($event)" (pointercancel)="pointerUp($event, true)">
+      <div class="axis">
+        @for (tick of ticks; track $index) { <span [style.left.%]="tick.x" [class.first]="$first" [class.last]="$last">{{timestamp(tick.time)}}</span> }
+      </div>
+      <div class="grid" aria-hidden="true">@for (tick of ticks; track $index) { <i [style.left.%]="tick.x"></i> }</div>
+      @for (track of tracks; track track.name) {
+        <div class="track" [style.height.px]="track.height">
+          @for (mark of track.marks; track mark.event.id) {
+            <button type="button" class="mark" [class.point]="mark.point" [class.cluster]="mark.events.length > 1" [class.chosen]="markChosen(mark)" [attr.data-tone]="mark.color"
+              [style.left.px]="mark.x" [style.top.px]="mark.y" [style.width.px]="mark.width" [attr.aria-pressed]="markChosen(mark)"
+              [attr.aria-label]="(mark.events.length > 1 ? mark.events.length + ' events in ' + track.name : mark.event.name) + ', ' + timestamp(mark.event.start, true)" [title]="mark.events.length > 1 ? mark.events.length + ' overlapping events. Click to inspect or zoom.' : mark.event.name + ' · ' + timestamp(mark.event.start)"
+              (click)="selectMark(mark)"><span class="mark-fill">@if (mark.events.length > 1) { {{mark.events.length}} }</span></button>
+          }
+        </div>
+      }
+      @if (!visibleCount) { <div class="empty"><strong>{{count ? 'No events in this window' : 'No matching events'}}</strong><span>{{count ? 'Focus events to return to the activity.' : 'Try another search or query range.'}}</span></div> }
+      @if (brush) { <div class="selection" [style.left.px]="brush.x" [style.width.px]="brush.width"><span>{{duration(brush.to - brush.from)}}</span></div> }
+    </div>
+  </div>
+
+  <footer class="chart-footer"><span><b>{{visibleCount}}</b> of {{count}} events in view</span><span>Drag to zoom <i>·</i> Click to inspect</span></footer>
+  </section>
+
+  @if (selected || selectedGroup.length) {
+    <div class="panel-resizer" role="separator" tabindex="0" aria-label="Resize event navigator and selected event" aria-orientation="vertical"
+      aria-valuemin="40" aria-valuemax="70" [attr.aria-valuenow]="timelinePercent" [attr.aria-valuetext]="'Timeline width ' + timelinePercent.toFixed(0) + ' percent'"
+      title="Drag or use Left and Right arrow keys to resize"
+      (pointerdown)="resizePanels($event)" (pointermove)="resizePanels($event)" (pointerup)="resizePanels($event)" (pointercancel)="resizePanels($event)" (lostpointercapture)="resizePanels($event)"
+      (keydown)="resizePanelsKey($event)"></div>
+    <section class="inspector" [style.height.px]="timelineHeight" aria-label="Navigator event details">
+      @if (selected; as event) {
+      @if (selectedGroup.length) { <button type="button" class="group-back" (click)="selected = undefined">&larr; Back to {{selectedGroup.length}} events</button> }
+      <div class="inspector-heading"><div><span class="eyebrow">SELECTED EVENT</span><h3>{{event.name}}</h3></div><button type="button" class="icon" aria-label="Close event inspector" (click)="closeInspector()">&times;</button></div>
+      <div class="event-meta"><span>{{timestamp(event.start, true)}} {{utc ? 'UTC' : 'Local'}}</span><span>{{duration(event.end - event.start)}}</span>@if (inspectEvent.observers.length) { <button type="button" class="text-action" (click)="inspectEvent.emit('' + event.id)">{{inspectLabel}} &rarr;</button> }</div>
+      @if (event.facts.length) { <div class="inspector-properties" tabindex="0" role="region" aria-label="Selected event properties"><dl>@for (fact of event.facts; track $index) { <div><dt>{{fact.name}}</dt><dd>{{fact.value}}</dd></div> }</dl></div> }
+      } @else {
+        <div class="inspector-heading"><div><span class="eyebrow">EVENT GROUP</span><h3>{{selectedGroup.length}} events · {{selectedGroup[0].lane}}</h3></div><button type="button" class="icon" aria-label="Close event inspector" (click)="closeInspector()">&times;</button></div>
+        <div class="group-summary"><span>{{timestamp(groupStart, true)}} {{utc ? 'UTC' : 'Local'}}</span><span>{{duration(groupEnd - groupStart)}} · {{groupSeverity}}</span></div>
+        <button type="button" class="group-zoom" (click)="zoomToGroup()">Zoom to group</button>
+        <div class="group-events" role="region" aria-label="Events in selected group" tabindex="0">
+          @for (event of selectedGroup.slice(groupPage * groupPageSize, (groupPage + 1) * groupPageSize); track event.id) {
+            <button type="button" class="group-event" (click)="select(event)"><time>{{timestamp(event.start, true)}}</time><strong>{{event.name}}</strong><span>{{entity(event)}}</span></button>
+          }
+        </div>
+        @if (groupPages > 1) { <nav class="group-pagination" aria-label="Event group pages"><button type="button" [disabled]="groupPage === 0" (click)="groupPage = groupPage - 1">Previous</button><span>{{groupPage + 1}} / {{groupPages}}</span><button type="button" [disabled]="groupPage + 1 === groupPages" (click)="groupPage = groupPage + 1">Next</button></nav> }
+      }
+    </section>
+  }
+  <span class="sr-only" aria-live="polite">{{announcement}}</span>
+</div>

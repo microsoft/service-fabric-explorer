@@ -1,5 +1,9 @@
 @if (clusterManifest && clusterManifest.raw) {
   <div>
+    @if (experience.isNew()) {
+      <app-manifest-document [name]="clusterManifest.clusterManifestName" [xml]="clusterManifest.raw.Manifest"></app-manifest-document>
+    } @else {
     <app-manifest-viewer [manifestName]="clusterManifest.clusterManifestName" [manifest]="clusterManifest.raw.Manifest"></app-manifest-viewer>
+    }
   </div>
 }

@@ -37,6 +37,8 @@ import { EventStoreTimelineComponent } from './component/event-store-timeline/ev
 import { FocusableDirective } from './directive/focusable.directive';
 import { ArmWarningComponent } from './component/arm-warning/arm-warning.component';
 import { ResourceItemComponent } from './component/resource-item/resource-item.component';
+import { ManifestDocumentComponent } from './component/manifest-document/manifest-document.component';
+import { SelectMenuComponent } from './component/select-menu/select-menu.component';
 
 @NgModule({
   declarations: [NavbarComponent, ClipBoardComponent, HealthBadgeComponent, CandyBarCompactComponent, DetailViewPartComponent,
@@ -51,6 +53,8 @@ import { ResourceItemComponent } from './component/resource-item/resource-item.c
                  NodeFilterComponent,
                  WarningComponent, EventStoreTimelineComponent, FocusableDirective, ArmWarningComponent, ResourceItemComponent],
   imports: [
+    SelectMenuComponent,
+    ManifestDocumentComponent,
     CommonModule,
     RouterModule,
     FormsModule,
@@ -60,7 +64,7 @@ import { ResourceItemComponent } from './component/resource-item/resource-item.c
     NgbTooltipModule,
     ClipboardModule
   ],
-  exports: [NavbarComponent, ClipBoardComponent, HealthBadgeComponent, CandyBarCompactComponent, DetailViewPartComponent,
+   exports: [SelectMenuComponent, NavbarComponent, ClipBoardComponent, HealthBadgeComponent, CandyBarCompactComponent, DetailViewPartComponent,
             CollapseContainerComponent, RefreshRateComponent, DragDirective, ManifestComponent,
             ActionCollectionDropDownComponent, InputComponent, ToastContainerComponent, CheckBoxComponent,
             ClusterUpgradeBannerComponent, DualDatePickerComponent, AdvancedOptionComponent, ReplicaAddressComponent,

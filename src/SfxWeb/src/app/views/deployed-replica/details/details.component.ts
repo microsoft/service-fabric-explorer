@@ -1,6 +1,7 @@
 import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { DataService } from 'src/app/services/data.service';
 import { DeployedReplicaBaseControllerDirective } from '../DeployedReplicaBase';
+import { ExperienceService } from 'src/app/services/experience.service';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Observable } from 'rxjs';
 
@@ -12,6 +13,7 @@ import { Observable } from 'rxjs';
     standalone: false
 })
 export class DetailsComponent extends DeployedReplicaBaseControllerDirective {
+  public experience = inject(ExperienceService);
   protected data: DataService = inject(DataService);
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{

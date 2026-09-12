@@ -1,0 +1,55 @@
+<section class="inspector-card" aria-label="Selected replica replication">
+  <header class="inspector-header">
+    <h3>Replica replication</h3>
+    <app-health-badge [badgeClass]="replica.healthState.badgeClass" [text]="replica.healthState.text"></app-health-badge>
+    <app-clip-board [text]="rawJson" name="Replica JSON"></app-clip-board>
+    <button type="button" aria-label="Close replication panel" (click)="closed.emit()">&times;</button>
+  </header>
+  <div class="inspector-body">
+    <p class="identity">Replica {{replica.id}} · {{replica.raw.NodeName}}</p>
+    <section class="rate-section" aria-label="Replication rate">
+      <div class="chart-toolbar">
+        <h4>Replication rate</h4>
+        <button type="button" (click)="expanded = !expanded" [attr.aria-expanded]="expanded">{{expanded ? 'Shrink chart' : 'Expand chart'}}</button>
+        <label><input type="checkbox" [checked]="utc" (change)="setUTC($any($event.target).checked)"> UTC</label>
+      </div>
+      <p class="hint">LSN / sec · {{utc ? 'UTC' : 'Local time'}} · History clears when you leave this tab.</p>
+      <div class="chart-box" [class.expanded]="expanded">
+        <div #plot class="chart-plot"></div>
+        @if (!points.length) { <p class="chart-empty">Waiting for two replication samples.</p> }
+      </div>
+    </section>
+    <section class="current-state" data-cy="current-state">
+      <h4>Current state</h4>
+      <ng-container *ngTemplateOutlet="field; context: { label: 'Last received LSN', value: replicator.LastReceivedReplicationSequenceNumber }"></ng-container>
+      <ng-container *ngTemplateOutlet="field; context: { label: 'Last applied LSN', value: replicator.LastAppliedReplicationSequenceNumber }"></ng-container>
+    </section>
+    <section class="acknowledgement" aria-label="Acknowledgement metrics">
+      <div class="acknowledgement-tabs" role="group" aria-label="Acknowledgement stream">
+        <button type="button" [class.active]="acknowledgement === 'replication'" [attr.aria-pressed]="acknowledgement === 'replication'" (click)="acknowledgement = 'replication'">Replication</button>
+        <button type="button" [class.active]="acknowledgement === 'copy'" [attr.aria-pressed]="acknowledgement === 'copy'" (click)="acknowledgement = 'copy'">Copy</button>
+        <span>Acknowledgement</span>
+      </div>
+      <div class="acknowledgement-fields">
+      @if (acknowledgement === 'replication') {
+      <ng-container *ngTemplateOutlet="ack; context: { $implicit: replicator.RemoteReplicatorAcknowledgementStatus?.ReplicationStreamAcknowledgementDetail }"></ng-container>
+      } @else {
+      <ng-container *ngTemplateOutlet="ack; context: { $implicit: replicator.RemoteReplicatorAcknowledgementStatus?.CopyStreamAcknowledgementDetail }"></ng-container>
+      <ng-container *ngTemplateOutlet="field; context: { label: 'Last received CSN', value: replicator.LastReceivedCopySequenceNumber }"></ng-container>
+      <ng-container *ngTemplateOutlet="field; context: { label: 'Last applied CSN', value: replicator.LastAppliedCopySequenceNumber }"></ng-container>
+       }
+      </div>
+    </section>
+  </div>
+</section>
+<ng-template #ack let-data>
+  @if (data) {
+    <ng-container *ngTemplateOutlet="field; context: { label: 'Average receive duration', value: data.AverageReceiveDuration }"></ng-container>
+    <ng-container *ngTemplateOutlet="field; context: { label: 'Average apply duration', value: data.AverageApplyDuration }"></ng-container>
+    <ng-container *ngTemplateOutlet="field; context: { label: 'Not received count', value: data.NotReceivedCount }"></ng-container>
+    <ng-container *ngTemplateOutlet="field; context: { label: 'Received and not applied', value: data.ReceivedAndNotAppliedCount }"></ng-container>
+  } @else { <p class="hint">Acknowledgement data is unavailable.</p> }
+</ng-template>
+<ng-template #field let-label="label" let-value="value">
+  <dl class="metric"><dt>{{label}}</dt><dd><span>{{value ?? 'Not available'}}</span>@if (value !== null && value !== undefined) { <app-clip-board [text]="'' + value" [name]="label"></app-clip-board> }</dd></dl>
+</ng-template>

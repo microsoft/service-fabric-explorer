@@ -10,6 +10,7 @@ import { DataGroup } from 'vis-timeline/peer';
 import { DataSet } from 'vis-data';
 import { IEventStoreData } from '../event-store/event-store.component';
 import { VisualizationComponent, VisUpdateData } from '../visualizationComponents';
+import { ExperienceService } from 'src/app/services/experience.service';
 
 @Component({
     selector: 'app-timeline',
@@ -19,6 +20,7 @@ import { VisualizationComponent, VisUpdateData } from '../visualizationComponent
     standalone: false
 })
 export class TimelineComponent implements VisualizationComponent {
+  experience = inject(ExperienceService);
   dataService = inject(DataService);
   private telemService = inject(TelemetryService);
   changeDetector = inject(ChangeDetectorRef);
@@ -48,11 +50,12 @@ export class TimelineComponent implements VisualizationComponent {
   }
 
   public setSearch(search?: string) {
-    if (search) {
-      const item = this.timeLineEventsData.items!.get(search);
-      const id = (item!.id as string).split('---')[1];
-      this.selectEvent.emit(id);
-    }
+    if (!search) { return; }
+    const item = this.timeLineEventsData.items?.get(search);
+    if (!item) { return; }
+    const id = String(item.id);
+    const separator = id.indexOf('---');
+    this.selectEvent.emit(separator < 0 ? id : id.slice(separator + 3));
   }
 
   private initializeTimelineData(): ITimelineData {

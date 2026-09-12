@@ -4,6 +4,7 @@ import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers'
 import { Node } from 'src/app/Models/DataModels/Node';
 import { DataService } from 'src/app/services/data.service';
 import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
+import { ExperienceService } from 'src/app/services/experience.service';
 
 @Component({
     selector: 'app-map',
@@ -14,6 +15,7 @@ import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 })
 export class MapComponent extends BaseControllerDirective implements OnChanges {
   data = inject(DataService);
+  public experience = inject(ExperienceService);
 
   static readonly baseScale = 'scale(1)';
 
@@ -58,12 +60,14 @@ export class MapComponent extends BaseControllerDirective implements OnChanges {
 
   public updateNodes(nodes: Node[]) {
     this.data.nodes.ensureInitialized().subscribe(() => {
+      const faultDomains = [...new Set([...this.data.nodes.faultDomains, ...nodes.map(node => node.faultDomain)])].sort();
+      const upgradeDomains = [...new Set([...this.data.nodes.upgradeDomains, ...nodes.map(node => node.upgradeDomain)])].sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
       const matrix: Record<string, Node[]> = {};
 
-      this.data.nodes.faultDomains.forEach(fd => {
+      faultDomains.forEach(fd => {
         matrix[fd] = [];
 
-        this.data.nodes.upgradeDomains.forEach(ud => {
+        upgradeDomains.forEach(ud => {
           matrix[`${fd}${ud}`] = [];
           matrix[ud] = [];
         });

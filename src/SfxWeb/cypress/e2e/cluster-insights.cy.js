@@ -65,28 +65,41 @@ context('cluster-insights', () => {
 
       cy.get('app-nodes').within(() => {
         cy.contains('a.nav-link', 'All Nodes').click();
+        // The outgoing Seed Nodes pane shares node objects during the tab fade.
+        cy.contains('a.nav-link', 'All Nodes').should('have.attr', 'aria-selected', 'true')
+          .invoke('attr', 'aria-controls').then(panelId => {
+            cy.get(`[id="${panelId}"]`).should('have.class', 'active')
+              .and('have.class', 'show').as('allNodesPanel');
+          });
+      });
 
+      cy.get('@allNodesPanel').within(() => {
         // Details should not be fetched before expanding (lazy-load)
         cy.get('app-expanded-details').should('not.exist');
 
         // Click the row expander to expand the first node
-        cy.get('tbody > tr').first().within(() => {
-          cy.get('button.row-expander').click();
-        });
+        cy.get('table.detail-list > tbody > tr').should('have.length', 5).first()
+          .should($row => {
+            expect($row[0].cells[0].textContent.trim(), 'first node name').to.equal('_nt1_0');
+          }).as('firstNodeRow').within(() => {
+            cy.get('button.row-expander').should('have.attr', 'aria-expanded', 'false').click();
+          });
       });
 
       // Wait for the lazy-loaded detail requests triggered by expand
       cy.wait(['@systemReplicaOnNodes', '@deployedAppsOnNode']);
 
-      cy.get('app-nodes').within(() => {
-        cy.get('app-expanded-details').scrollIntoView().should('be.visible');
+      cy.get('@firstNodeRow').find('button.row-expander').should('have.attr', 'aria-expanded', 'true');
+      cy.get('@allNodesPanel').find('app-expanded-details').should('have.length', 1);
+      cy.get('@firstNodeRow').next('tr').should('have.length', 1)
+        .find('app-expanded-details').should('have.length', 1).as('nodeDetails');
+      cy.get('@nodeDetails').scrollIntoView();
 
-        // Fixture has 0 Primary, 4 ActiveSecondary, 1 deployed app
-        cy.get('app-expanded-details').within(() => {
-          cy.contains('System Services Primary Replicas Count').parent().should('contain', '0');
-          cy.contains('System Services Active Secondary Replicas Count').parent().should('contain', '4');
-          cy.contains('User Applications Count').parent().should('contain', '1');
-        });
+      // Fixture has 0 Primary, 4 ActiveSecondary, 1 deployed app
+      cy.get('@nodeDetails').should('be.visible').within(() => {
+        cy.contains('System Services Primary Replicas Count').parent().should('contain', '0');
+        cy.contains('System Services Active Secondary Replicas Count').parent().should('contain', '4');
+        cy.contains('User Applications Count').parent().should('contain', '1');
       });
     });
   });

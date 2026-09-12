@@ -7,6 +7,8 @@
 @use 'Styles/modal';
 @use 'Styles/navbar';
 @use 'Styles/detail_table';
+@use 'Styles/cluster-modern';
+@use 'Styles/experience';
 
 // Custom Theming for Angular Material
 @use '@angular/cdk';
@@ -25,7 +27,13 @@
 //  If you don't need the default component typographies but still want the hierarchy styles,
 //  you can delete this line and instead use:
 //    `@include mat.legacy-typography-hierarchy(mat.define-typography-config());`
-@include mat.all-component-typographies();
+@include mat.all-component-typographies(mat.m2-define-typography-config(
+  $font-family: '-apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif',
+  $body-1: mat.m2-define-typography-level(15px, 22px, 400),
+  $body-2: mat.m2-define-typography-level(15px, 22px, 400),
+  $caption: mat.m2-define-typography-level(15px, 20px, 400),
+  $button: mat.m2-define-typography-level(15px, 20px, 500)
+));
 @include mat.elevation-classes();
 @include mat.app-background();
 
@@ -72,7 +80,7 @@ body {
   overflow: auto;
   background-color: var(--accent-background-color);
   margin: 0;
-  font-family: "Segoe UI",-apple-system,"Helvetica Neue","Lucida Grande",Trebuchet,Arial,sans-serif;
+  font-family: var(--font-family-ui);
   font-size: var(--font-size-default);
   line-height: 1.42857;
   color: var(--font-primary-color);
@@ -378,7 +386,7 @@ table.detail-list {
 
 .dropdown-item {
     color: var(--font-primary-color);
-    font-size: 14px;
+    font-size: 15px;
     padding: 2px 4px;
 }
 .dropdown-item:hover {
@@ -468,7 +476,7 @@ table.detail-list {
 
 .input-flat {
     padding: 3px 6px;
-    font-size: 10pt;
+    font-size: 15px;
     border-style: solid;
     border-width: 1px;
     border-color: #727272;
@@ -645,7 +653,7 @@ table.detail-list {
         white-space: nowrap;
         color: #c9c9c9;
         font-weight: 500;
-        font-size: 14px;
+        font-size: 15px;
     }
 
     &::-webkit-scrollbar {
@@ -794,3 +802,39 @@ table.detail-list {
 .dropdown-item.disabled {
   color: #6c757d;
 }
+// Modern Events components own their headings and surfaces.
+app-event-store app-collapse-container.modern-visualization {
+  display: block;
+  padding: 0;
+  margin: 0;
+  background: transparent;
+  box-shadow: none;
+}
+app-event-store app-collapse-container.modern-visualization > div > .flex-center {
+  display: none;
+}
+
+// Vendor text sizes do not inherit the application's typography tokens.
+small, .small, .badge, .tooltip-inner, .popover, .toast, .dropdown-menu,
+.form-control, .form-select, .btn, .input-group-text, .page-link,
+.ngb-dp-weekday, .ngb-dp-week-number, .ngb-dp-day, .ngb-dp-navigation-select select,
+.noUi-tooltip, .noUi-value, .vis-tooltip,
+.mat-mdc-dialog-container, .mat-mdc-snack-bar-container {
+  font-size: 15px;
+}
+.highcharts-axis-labels text, .highcharts-legend-item text, .highcharts-data-label text,
+.highcharts-tooltip text, .highcharts-tooltip span, .highcharts-credits {
+  font-size: 15px !important;
+}
+
+// Shared typography across both experiences and body-level vendor overlays.
+button, input, select, textarea, .dropdown-menu, .tooltip, .popover,
+.mat-mdc-dialog-container, .mat-mdc-snack-bar-container, .highcharts-root {
+  font-family: var(--font-family-ui);
+}
+pre, code, kbd, samp { font-family: var(--font-family-mono); }
+h1, h2, h3, h4, h5, h6 { font-family: var(--font-family-ui); line-height: 1.4; font-weight: 600; }
+h1 { font-size: var(--font-size-large-title); }
+h2 { font-size: var(--font-size-large); }
+h3 { font-size: var(--font-size-medium); }
+h4, h5, h6 { font-size: var(--font-size-default); }

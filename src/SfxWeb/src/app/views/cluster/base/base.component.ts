@@ -5,15 +5,18 @@ import { IdGenerator } from 'src/app/Utils/IdGenerator';
 import { DataService } from 'src/app/services/data.service';
 import { Constants } from 'src/app/Common/Constants';
 import { IBaseView } from '../../BaseView';
+import { ExperienceService } from 'src/app/services/experience.service';
 
 @Component({
     selector: 'app-base',
     templateUrl: './base.component.html',
     styleUrls: ['./base.component.scss'],
     changeDetection: ChangeDetectionStrategy.Eager,
-    standalone: false
+    standalone: false,
+    host: { '[class.cluster-modern]': 'experience.isNew()' }
 })
 export class BaseComponent implements OnInit, IBaseView {
+  experience = inject(ExperienceService);
   tree = inject(TreeService);
   dataService = inject(DataService);
   el = inject(ElementRef);

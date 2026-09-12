@@ -1,4 +1,6 @@
-@if (simulEventsList.length > 0) {
+@if (experience.isNew()) {
+  <app-event-analysis [events]="simulEventsList" [loading]="loading" [failed]="failed" (selectEvent)="selectEvent.emit($event)"></app-event-analysis>
+} @else if (simulEventsList.length > 0) {
   <div>
     <app-rca-summary [events]="simulEventsList"></app-rca-summary>
   </div>

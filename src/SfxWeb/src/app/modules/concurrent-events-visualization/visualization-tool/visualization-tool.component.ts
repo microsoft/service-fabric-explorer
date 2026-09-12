@@ -14,9 +14,9 @@ import { IConcurrentEvents, IRCAItem } from 'src/app/Models/eventstore/rcaEngine
 })
 
 export class VisualizationToolComponent implements OnChanges, AfterViewInit, DetailBaseComponent {
-  private idSizePx: number = 12;
-  private eventTitleSizePx: number = 14;
-  private textSizePx: number = 12;
+  private idSizePx: number = 15;
+  private eventTitleSizePx: number = 15;
+  private textSizePx: number = 15;
   private titleSizePx: number = 20;
 
   private idColor: string = "var(--font-placeholder-color)";

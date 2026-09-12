@@ -134,10 +134,12 @@ export class MetricsViewModel implements IMetricsViewModel {
     }
 
     public refresh(): void {
+      const selected = new Set(this.metrics.filter(metric => metric.selected).map(metric => metric.name));
+      this.iMetrics = null;
+      this.metrics.forEach(metric => metric.selected = selected.has(metric.name));
       this.metricsWithCapacities = this.metrics.filter(m => !m.isSystemMetric && m.hasCapacity);
       this.metricsWithoutCapacities = this.metrics.filter(m => !m.isSystemMetric && !m.hasCapacity);
       this.systemMetrics = this.metrics.filter(m => m.isSystemMetric);
-      this.iMetrics = null;
     }
 
     public toggleMetric(metric: LoadMetricInformation, type: LoadMetricInformation[]) {

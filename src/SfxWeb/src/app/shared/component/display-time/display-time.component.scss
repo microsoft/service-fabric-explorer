@@ -1,0 +1,6 @@
+.timestamp { display: inline-flex; align-items: center; gap: 6px; max-width: 100%; vertical-align: middle; }
+.timestamp-value { display: inline-flex; align-items: center; gap: 6px; min-width: 0; font-variant-numeric: tabular-nums; }
+.timestamp-value svg { flex-shrink: 0; color: #8b949e; }
+.timestamp-value time { min-width: 0; overflow-wrap: anywhere; white-space: normal; }
+.timestamp app-clip-board { flex-shrink: 0; }
+.timestamp-value:focus-visible { outline: 2px solid #58a6ff; outline-offset: 2px; border-radius: 3px; }

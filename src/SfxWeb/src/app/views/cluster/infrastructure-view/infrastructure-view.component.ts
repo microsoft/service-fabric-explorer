@@ -8,6 +8,7 @@ import { DataService } from 'src/app/services/data.service';
 import { SettingsService } from 'src/app/services/settings.service';
 import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 import { InfrastructureDocumentCollection } from 'src/app/Models/DataModels/collections/InfrastructureDocCollection';
+import { ExperienceService } from 'src/app/services/experience.service';
 
 @Component({
     selector: 'app-infrastructure-view',
@@ -17,6 +18,7 @@ import { InfrastructureDocumentCollection } from 'src/app/Models/DataModels/coll
     standalone: false
 })
 export class InfrastructureViewComponent extends BaseControllerDirective {
+  experience = inject(ExperienceService);
   private data = inject(DataService);
   private settings = inject(SettingsService);
 
@@ -40,4 +42,6 @@ export class InfrastructureViewComponent extends BaseControllerDirective {
       this.infrastructureDocumentCollection.refresh(messageHandler)
     ])
   }
+
+  retry() { this.subscriptions.add(this.fullRefresh().subscribe()); }
 }

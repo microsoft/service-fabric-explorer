@@ -1,6 +1,7 @@
 import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { DataService } from 'src/app/services/data.service';
 import { ApplicationBaseControllerDirective } from '../applicationBase';
+import { ExperienceService } from 'src/app/services/experience.service';
 
 @Component({
     selector: 'app-details',
@@ -10,5 +11,6 @@ import { ApplicationBaseControllerDirective } from '../applicationBase';
     standalone: false
 })
 export class DetailsComponent extends ApplicationBaseControllerDirective {
+  public experience = inject(ExperienceService);
   protected data: DataService = inject(DataService);
 }

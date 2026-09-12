@@ -87,3 +87,21 @@
     padding: 3px 10px 5px 10px;
     box-shadow: var(--primary-box-shadow);
   }
+.tree-filter-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-bottom: 8px; }
+.tree-filter-toolbar > .tree-health-sort { margin: 0; }
+.tree-health-trigger { display: flex; align-items: center; gap: 8px; min-height: 32px; padding: 4px 8px; border: 1px solid #30363d; border-radius: 4px; background: transparent; color: #c9d1d9; font: 400 15px/1.5 var(--font-family-ui); cursor: pointer; }
+.tree-health-trigger:hover { background: #21262d; }
+.tree-health-trigger span { color: #8b949e; }
+.tree-health-trigger:focus-visible { outline: 2px solid #58a6ff; outline-offset: 2px; }
+.tree-health-menu .tree-health-option { display: flex; align-items: center; gap: 10px; padding: 10px 12px; margin: 0; color: #e6edf3; font: 400 15px/1.5 var(--font-family-ui); cursor: pointer; border-radius: 4px; }
+.tree-health-option:hover { background: #21262d; }
+.tree-health-option input { width: 16px; height: 16px; margin: 0; accent-color: #3fb950; }
+.tree-health-option[data-health=Warning] input { accent-color: #d29922; }
+.tree-health-option[data-health=Error] input { accent-color: #f85149; }
+.modern-tree { min-height: 0; overflow: hidden; }
+.modern-tree .tree-header { flex-shrink: 0; }
+.modern-tree .tree-list { flex: 1; min-height: 0; overflow: auto; }
+.tree-footer { flex-shrink: 0; padding: 8px 12px; }
+.tree-footer button { padding: 0; border: 0; background: transparent; color: #8b949e; text-align: left; white-space: normal; overflow-wrap: anywhere; font: 400 15px/1.5 var(--font-family-ui); cursor: pointer; }
+.tree-footer button:hover, .tree-footer button:focus-visible { color: #58a6ff; text-decoration: underline; }
+.tree-footer button:focus-visible { outline: 2px solid #58a6ff; outline-offset: 2px; }

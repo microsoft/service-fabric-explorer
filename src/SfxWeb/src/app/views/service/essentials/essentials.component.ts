@@ -5,11 +5,12 @@ import { SettingsService } from 'src/app/services/settings.service';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Observable, forkJoin, of } from 'rxjs';
 import { ServiceBaseControllerDirective } from '../ServiceBase';
-import { map } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 import { HealthUtils, HealthStatisticsEntityKind } from 'src/app/Utils/healthUtils';
 import { IDashboardViewModel, DashboardViewModel } from 'src/app/ViewModels/DashboardViewModels';
 import { ServiceHealth } from 'src/app/Models/DataModels/Service';
 import { IEssentialListItem } from 'src/app/modules/charts/essential-health-tile/essential-health-tile.component';
+import { ExperienceService } from 'src/app/services/experience.service';
 
 @Component({
     selector: 'app-essentials',
@@ -19,6 +20,7 @@ import { IEssentialListItem } from 'src/app/modules/charts/essential-health-tile
     standalone: false
 })
 export class EssentialsComponent extends ServiceBaseControllerDirective {
+  public experience = inject(ExperienceService);
   protected data: DataService = inject(DataService);
   private settings = inject(SettingsService);
 
@@ -28,6 +30,7 @@ export class EssentialsComponent extends ServiceBaseControllerDirective {
   replicasDashboard!: IDashboardViewModel;
 
   essentialItems: IEssentialListItem[] = [];
+  overviewItems: IEssentialListItem[] = [];
 
   setup() {
     this.listSettings = this.settings.getNewOrExistingListSettings('partitions', ['id'], [
@@ -61,9 +64,14 @@ export class EssentialsComponent extends ServiceBaseControllerDirective {
       }
     ];
 
-    this.service.description.refresh(messageHandler).subscribe();
+    this.setOverviewItems();
 
     return forkJoin([
+      this.service.description.refresh(messageHandler).pipe(
+        map(() => this.setOverviewItems()),
+        // The REST client reports the error; keep independent health updates subscribed.
+        catchError(() => of(null))
+      ),
       this.service.health.refresh(messageHandler).pipe(map((replicaHealth: ServiceHealth) => {
         const partitionsDashboard = HealthUtils.getHealthStateCount(replicaHealth.raw, HealthStatisticsEntityKind.Partition);
         this.partitionsDashboard = DashboardViewModel.fromHealthStateCount('Partitions', 'Partition', false, partitionsDashboard);
@@ -73,6 +81,26 @@ export class EssentialsComponent extends ServiceBaseControllerDirective {
       })),
       this.service.partitions.refresh(messageHandler)
     ]);
+  }
+
+  private setOverviewItems() {
+    const description = this.service.description.raw;
+    this.overviewItems = [...this.essentialItems];
+    if (!description) { return; }
+    this.overviewItems.push({ descriptionName: 'Service Kind', displayText: description.ServiceKind });
+    const counts = this.service.isStatefulService
+      ? [['Minimum Replica Set Size', description.MinReplicaSetSize], ['Target Replica Set Size', description.TargetReplicaSetSize]] as const
+      : [['Instance Count', description.InstanceCount], ['Minimum Instance Count', description.MinInstanceCount]] as const;
+    for (const [descriptionName, value] of counts) {
+      this.overviewItems.push({ descriptionName, displayText: value == null ? 'Not available' : String(value) });
+    }
+    if (this.service.description.isInitialized) {
+      this.overviewItems.push({
+        descriptionName: 'Placement Constraints',
+        valueUrl: 'https://learn.microsoft.com/en-us/azure/service-fabric/service-fabric-cluster-resource-manager-configure-services#placement-constraints',
+        displayText: description.PlacementConstraints || 'No placement constraints defined'
+      });
+    }
   }
 
 }

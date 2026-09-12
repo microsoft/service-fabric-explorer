@@ -1,0 +1,33 @@
+:host { display: block; margin-bottom: 16px; color: #e6edf3; font: 400 15px/1.5 var(--font-family-ui); }
+.duration-card { border: 1px solid #30363d; border-radius: 6px; background: #161b22; }
+header { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: #1c2128; border-bottom: 1px solid #30363d; border-radius: 5px 5px 0 0; }
+h2 { margin: 0; font: 600 18px/1.5 var(--font-family-ui); }
+header > span, .duration-hint, .job-action, .job-heading > span, .duration-scale, dt { color: #8b949e; }
+.duration-body { padding: 16px; }
+.duration-toolbar, .phase-legend { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; }
+.duration-toolbar input { flex: 1 1 220px; max-width: 360px; min-width: 0; }
+.duration-toolbar label { display: flex; align-items: center; gap: 8px; margin: 0; }
+button, input, select { font: inherit; color: inherit; }
+button, input, select { background: #21262d; border: 1px solid #484f58; border-radius: 6px; padding: 7px 10px; }
+button { cursor: pointer; }
+button:disabled { opacity: .45; cursor: default; }
+button:focus-visible { outline: 2px solid #58a6ff; outline-offset: 2px; }
+.phase-legend { margin-top: 12px; }
+.phase-legend > span { display: inline-flex; gap: 8px; align-items: center; }
+.phase-legend i { width: 10px; height: 10px; border-radius: 2px; }
+[data-phase=Preparing] { background: #58a6ff; }
+[data-phase=Executing] { background: #3fb950; }
+[data-phase=Restoring] { background: #bc8cff; }
+.duration-hint { margin: 10px 0; }
+.duration-scale { display: flex; justify-content: space-between; }
+.duration-row { padding: 12px 0; border-top: 1px solid #30363d; }
+.job-heading { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 16px; }
+.job-heading button { min-width: 0; flex: 1 1 240px; padding: 0; border: 0; background: none; text-align: left; color: #58a6ff; overflow-wrap: anywhere; }
+.job-heading strong { font-weight: 500; }
+.job-action { margin: 4px 0 8px; overflow-wrap: anywhere; }
+.duration-bar { display: flex; height: 14px; border-radius: 3px; overflow: hidden; background: #21262d; }
+.duration-bar > span { height: 100%; }
+.phase-values { display: flex; flex-wrap: wrap; gap: 8px 24px; margin: 8px 0 0; }
+.phase-values > div { display: flex; gap: 8px; }
+.phase-values dt, .phase-values dd { width: auto; float: none; margin: 0; font: inherit; }
+nav { display: flex; align-items: center; justify-content: flex-end; gap: 12px; margin-top: 12px; }
