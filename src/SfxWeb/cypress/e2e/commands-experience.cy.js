@@ -227,6 +227,8 @@ describe('New Commands experience (fixtures only)', () => {
     const replicaId = '132429154475414363';
     const partitionApi = `${serviceApi}/$/GetPartitions/${partitionId}`;
     const replicaApi = `${partitionApi}/$/GetReplicas/${replicaId}`;
+    const detailPath = `/Nodes/_nt_1/$/GetPartitions/${partitionId}/$/GetReplicas/${replicaId}/$/GetDetail`;
+    const cacheToken = 'commands-e2e-cache-token';
     const removeScript = `Remove-ServiceFabricReplica -ForceRemove -ServiceName fabric:/${appName}/${serviceName} -ReplicaOrInstanceId ${replicaId}`;
 
     addRoute('commandReplicaServices', 'app-page/services.json', apiUrl(`/Applications/${appName}/$/GetServices?*`));
@@ -234,7 +236,17 @@ describe('New Commands experience (fixtures only)', () => {
     addRoute('commandReplicaPartition', 'replica-page/stateful-partition-info.json', apiUrl(`${partitionApi}?*`));
     addRoute('commandIdleReplica', 'replica-page/stateful-idle-secondary-replica-info.json', apiUrl(`${replicaApi}?*`));
     addRoute('commandReplicaHealth', 'replica-page/health.json', apiUrl(`${replicaApi}/$/GetHealth?*`));
-    addRoute('commandReplicaDetail', 'replica-page/stateful-replica-detail.json', apiUrl(`/Nodes/_nt_1/$/GetPartitions/${partitionId}/$/GetReplicas/${replicaId}/$/GetDetail?api-version=6.0`));
+    cy.intercept({ method: 'GET', pathname: detailPath, middleware: true }, request => {
+      // Access-testing omits cache tokens. Fall through so the fixture still handles this request.
+      const url = new URL(request.url);
+      url.searchParams.set('_cacheToken', cacheToken);
+      request.url = url.href;
+    });
+    cy.intercept({
+      method: 'GET',
+      pathname: detailPath,
+      query: { 'api-version': '6.0' },
+    }, { fixture: 'replica-page/stateful-replica-detail.json' }).as('getcommandReplicaDetail');
     cy.fixture('replica-page/stateful-replicas-list.json').then(replicas => {
       // Keep collection refreshes consistent with the existing idle-secondary detail fixture.
       cy.intercept('GET', apiUrl(`${partitionApi}/$/GetReplicas?*`), {
@@ -245,6 +257,15 @@ describe('New Commands experience (fixtures only)', () => {
     });
     visitCommands(`/#/apptype/${appName}/app/${appName}/service/${appName}%252F${serviceName}/partition/${partitionId}/replica/${replicaId}`,
       ['@getcommandIdleReplica', '@getcommandReplicaHealth', '@getcommandReplicaDetail']);
+    cy.get('@getcommandReplicaDetail').then(({ request, response }) => {
+      const expectedUrl = new URL(`${detailPath}?api-version=6.0&_cacheToken=${cacheToken}`, Cypress.config('baseUrl')).href;
+      expect(request.url, 'replica detail request includes the cache token').to.equal(expectedUrl);
+      expect(response.statusCode).to.equal(200);
+      cy.fixture('replica-page/stateful-replica-detail.json').then(detail => {
+        expect(response.body, 'cache-token request receives the detail fixture').to.deep.equal(detail);
+      });
+      cy.log(request.url);
+    });
     cy.get(script).should('have.text', `Get-ServiceFabricReplicaHealth -PartitionId ${partitionId} -ReplicaOrInstanceId ${replicaId} `);
 
     // The shipped factory classifies force-remove as unsafe. No real factory
