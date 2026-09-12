@@ -1,4 +1,4 @@
-import { AdalService } from './services/adal.service';
+import { MsalService } from './services/msal.service';
 import { StandaloneIntegrationService, IntegrationConfig } from './services/standalone-integration.service';
 import 'highcharts';
 import 'highcharts/modules/accessibility';
@@ -11,7 +11,7 @@ declare global {
   }
 }
 
-export function initApp(aadService: AdalService, standaloneIntegrationService: StandaloneIntegrationService) {
+export function initApp(aadService: MsalService, standaloneIntegrationService: StandaloneIntegrationService) {
   return async () => {
     try {
       if("SFXintegrationConfiguration" in window) {
@@ -26,9 +26,9 @@ export function initApp(aadService: AdalService, standaloneIntegrationService: S
       await aadService.load().toPromise();
 
       if (aadService.aadEnabled) {
-        aadService.handleWindowCallback();
+        await aadService.handleWindowCallback();
         if (!aadService.isAuthenticated) {
-          aadService.login();
+          await aadService.login();
         }
       }
     } catch (e) {

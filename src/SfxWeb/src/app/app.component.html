@@ -30,7 +30,7 @@
     </div>
     <app-advanced-option></app-advanced-option>
 
-    @if (adalService.aadEnabled) {
+    @if (msalService.aadEnabled) {
       <div ngbDropdown display="'static'" placement="'bottom-left'">
         <button class="flat-button" ngbDropdownToggle title="Contains the toggle for setting advanced mode">
           <span class="mif-user"></span>
@@ -38,9 +38,9 @@
         @if (dataService.actionsEnabled()) {
           <div ngbDropdownMenu style="padding: 10px;">
             <div ngbDropdownItem style="padding-bottom: 10px;" class="repress-highlight">
-              {{adalService?.userInfo?.profile?.name}}
+              {{msalService?.userInfo?.name}}
             </div>
-            <button class="simple-button" (click)="adalService.logout()" ngbDropdownItem>
+            <button class="simple-button" (click)="msalService.logout()" ngbDropdownItem>
               Log Out
             </button>
           </div>
