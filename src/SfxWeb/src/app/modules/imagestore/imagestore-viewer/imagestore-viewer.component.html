@@ -1,6 +1,9 @@
 <div class="detail-pane" data-cy="imagestore">
   <div class="detail-pane essen-pane">
     <h2>Configuration</h2>
+    @if (experience.isNew()) {
+      <dl class="connection-property"><dt>Connection String</dt><dd><a class="connection-help" href="https://aka.ms/sfx-help-imagestore-connectionstring" target="_blank" rel="noopener noreferrer">{{imagestoreRoot.connectionString || 'Not available yet'}}</a></dd></dl>
+    } @else {
     <div class="table-responsive">
       <table class="default-table detail-table table-layout-fixed" role="presentation" style="width: 100%;">
         <tr>
@@ -11,6 +14,7 @@
           </tr>
         </table>
       </div>
+    }
     </div>
     @if (!imagestoreRoot.isNative) {
       <div class="alert alert-warning">
@@ -26,6 +30,20 @@
     @if (imagestoreRoot.isNative && imagestoreRoot.isAvailable) {
       <div class="detail-pane essen-pane">
         <h2>Store Content</h2>
+        @if (experience.isNew()) {
+          <div class="store-location">
+            <nav class="store-path" aria-label="Image Store folder path">
+              <span>Folder:</span>
+              @for (item of imagestoreRoot.pathBreadcrumbItems; track item.path; let last = $last) {
+                @if (!$first) { <span aria-hidden="true">/</span> }
+                <button type="button" (click)="openFolder(item.path)" [disabled]="last" [attr.aria-current]="last ? 'location' : null">{{item.path ? item.name : 'Root'}}</button>
+              }
+            </nav>
+            <span class="store-loading" role="status">
+              @if (imagestoreRoot.isLoadingFolderContent && (!imagestoreRoot.currentFolder.allChildren || imagestoreRoot.currentDirectoryBeingLoaded !== imagestoreRoot.currentFolder.path)) { Loading folder... }
+            </span>
+          </div>
+        } @else {
         <div class="image-store-breadcrumb">
           @if (imagestoreRoot.isLoadingFolderContent) {
             <span style="padding-right: 5px;">
@@ -53,9 +71,10 @@
               }
             </div>
           </div>
+        }
           <!-- search-text="'Search confined to current directory'" TODO add this input -->
           <app-detail-list [list]="imagestoreRoot.currentFolder.allChildren" [listSettings]="fileListSettings"></app-detail-list>
-          <div>
+          <div class="folder-size-note">
             <div style="float: right; padding: 15px 0 0 0; margin: 0px;">
               <span tabindex="0" class="mif-info"
               style="margin-right: 2px; vertical-align: top;"></span>

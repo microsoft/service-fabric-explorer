@@ -11,6 +11,7 @@ import { IEssentialListItem } from 'src/app/modules/charts/essential-health-tile
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { INodeTypeInfo } from 'src/app/Models/DataModels/Cluster';
 import { RepairTask } from 'src/app/Models/DataModels/repairTask';
+import { ExperienceService } from 'src/app/services/experience.service';
 
 @Component({
     selector: 'app-essentials',
@@ -20,6 +21,7 @@ import { RepairTask } from 'src/app/Models/DataModels/repairTask';
     standalone: false
 })
 export class EssentialsComponent extends NodeBaseControllerDirective {
+  public experience = inject(ExperienceService);
   protected data: DataService = inject(DataService);
   private settings = inject(SettingsService);
 
@@ -29,6 +31,7 @@ export class EssentialsComponent extends NodeBaseControllerDirective {
 
   essentialItems: IEssentialListItem[] = [];
   ringInfo: IEssentialListItem[] = [];
+  overviewItems: IEssentialListItem[] = [];
 
   repairJobs: RepairTask[] = [];
   repairJobSettings!: ListSettings;
@@ -102,6 +105,9 @@ export class EssentialsComponent extends NodeBaseControllerDirective {
       }
     ];
 
+    this.overviewItems = [...this.essentialItems, ...this.ringInfo,
+      { descriptionName: 'Placement Properties', displaySelector: true, selectorName: 'placementProperties' }];
+
     return forkJoin([
       this.node.loadInformation.refresh(messageHandler),
       this.node.deployedApps.refresh(messageHandler).pipe(map(() => {
@@ -109,6 +115,7 @@ export class EssentialsComponent extends NodeBaseControllerDirective {
       })),
       this.data.clusterManifest.ensureInitialized().pipe(mergeMap(() => {
         this.placementProperties = this.data.clusterManifest.getNodeProperties(this.node.raw.Type)!;
+        this.overviewItems = [...this.overviewItems];
         if (this.data.clusterManifest.isRepairManagerEnabled) {
           return this.data.repairCollection.refresh().pipe(map(() => {
             this.repairJobs = this.data.repairCollection.getRepairJobsForANode(this.node.name);

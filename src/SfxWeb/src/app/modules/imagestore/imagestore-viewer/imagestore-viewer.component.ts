@@ -5,6 +5,7 @@ import { ListColumnSetting, ListSettings, ListColumnSettingWithUtcTime } from 's
 import { ListColumnSettingWithDisplaySize } from '../display-size-column/display-size-column.component';
 import { ListColumnSettingWithDisplayName } from '../display-name-column/display-name-column.component';
 import { ListColumnSettingWithImageStoreActions } from '../folder-actions/folder-actions.component';
+import { ExperienceService } from 'src/app/services/experience.service';
 
 @Component({
     selector: 'app-imagestore-viewer',
@@ -14,6 +15,7 @@ import { ListColumnSettingWithImageStoreActions } from '../folder-actions/folder
     standalone: false
 })
 export class ImagestoreViewerComponent implements OnInit {
+  public experience = inject(ExperienceService);
   private settings = inject(SettingsService);
 
 

@@ -3,6 +3,7 @@ import { ReplicaBaseControllerDirective } from '../ReplicaBase';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Observable } from 'rxjs';
 import { DataService } from 'src/app/services/data.service';
+import { ExperienceService } from 'src/app/services/experience.service';
 
 @Component({
     selector: 'app-details',
@@ -12,6 +13,7 @@ import { DataService } from 'src/app/services/data.service';
     standalone: false
 })
 export class DetailsComponent extends ReplicaBaseControllerDirective {
+  public experience = inject(ExperienceService);
   protected data: DataService = inject(DataService);
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{

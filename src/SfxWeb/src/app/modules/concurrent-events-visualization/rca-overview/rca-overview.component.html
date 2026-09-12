@@ -1,3 +1,11 @@
+@if (experience.isNew()) {
+  <section class="exit-overview" aria-label="RCA event overview">
+    @if (navigatorData) {
+      @if (canInspect) { <app-event-navigator [events]="navigatorData" [trackDescriptions]="trackDescriptions" heading="" (inspectEvent)="inspect($event)"></app-event-navigator> }
+      @else { <app-event-navigator [events]="navigatorData" [trackDescriptions]="trackDescriptions" heading=""></app-event-navigator> }
+    }
+  </section>
+} @else {
 <div style="flex: 1;">
   <div style="display: flex; align-items: center;">
     <div>
@@ -27,3 +35,4 @@
     </div>
   }
 </div>
+}

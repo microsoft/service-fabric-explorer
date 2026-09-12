@@ -1,0 +1,9 @@
+.replica-summary header { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 12px; }
+.replica-health { display: inline-flex; align-items: center; gap: 8px; color: #8b949e; font-size: 15px; }
+.replica-health::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+.replica-health[data-health=badge-ok] { color: #3fb950; }
+.replica-health[data-health=badge-warning] { color: #d29922; }
+.replica-health[data-health=badge-error] { color: #f85149; }
+.replica-summary dl { margin: 0; }
+.replica-summary-row { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; align-items: start; margin-bottom: 16px; }
+.replica-summary-row > .detail-pane { min-width: 0; margin-bottom: 0; }

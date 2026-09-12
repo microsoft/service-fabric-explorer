@@ -1,0 +1,18 @@
+.replication-card { min-width: 0; border: 1px solid #30363d; border-radius: 8px; background: #161b22; color: #e6edf3; font: 400 15px/1.5 var(--font-family-ui); }
+.replication-card-header { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; padding: 12px 16px; background: #1c2128; border-bottom: 1px solid #30363d; border-radius: 7px 7px 0 0; }
+.replication-card-header h3 { margin: 0; flex: 1; font: 600 16px/1.5 var(--font-family-ui); }
+.replication-card-body { padding: 12px 16px; min-width: 0; }
+.replication-fields { margin: 0; }
+.replication-field { display: grid; grid-template-columns: minmax(0, 45%) minmax(0, 1fr); align-items: start; gap: 12px; padding: 8px 0; }
+.replication-field dt, .replication-field dd { display: block; float: none; min-width: 0; width: auto; margin: 0; white-space: normal; overflow-wrap: anywhere; font: inherit; }
+.replication-field dt { color: #8b949e; }
+.replication-field dd { display: flex; align-items: flex-start; gap: 6px; }
+.replication-field dd > span { min-width: 0; overflow-wrap: anywhere; }
+.replication-field app-clip-board { flex: 0 0 auto; }
+.replication-button { color: #e6edf3; background: #21262d; border: 1px solid #484f58; border-radius: 6px; padding: 7px 12px; font: inherit; cursor: pointer; }
+.replication-button:hover { background: #30363d; }
+.replication-button:focus-visible, .replication-group > summary:focus-visible { outline: 2px solid #58a6ff; outline-offset: 2px; }
+.replication-group { margin-top: 12px; }
+.replication-group > summary { padding: 10px 12px; border-radius: 6px; background: #21262d; font-weight: 600; cursor: pointer; }
+.replication-group > summary::marker { color: #8b949e; }
+.replication-group .replication-fields { padding: 8px 4px; }

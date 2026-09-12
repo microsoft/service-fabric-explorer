@@ -1,13 +1,13 @@
 <div>
-  <div ngbNav #nav="ngbNav" class="nav-wrapper" activeIndex="0">
+  <div ngbNav #nav="ngbNav" class="nav-wrapper" [class.exit-tabs]="experience.isNew()" activeIndex="0">
     @for (item of data | keyvalue; track item; let i = $index; let l = $last) {
       <div [ngbNavItem]="i"
         style="display: flex;">
         <a ngbNavLink style="font-size: 12pt;" [attr.data-cy]="item.key">
-          {{item.key}} ({{item.value.length}})
+          {{experience.isNew() ? (item.key === 'ApplicationProcessExited' ? 'Process exits' : item.key === 'ApplicationContainerInstanceExited' ? 'Container exits' : item.key) : item.key}} ({{item.value.length}})
         </a>
         <ng-template ngbNavContent>
-          <app-rca-overview [type]="item.key" [events]="item.value"></app-rca-overview>
+          <app-rca-overview [type]="item.key" [events]="item.value" [canInspect]="selectEvent.observers.length > 0" (selectEvent)="selectEvent.emit($event)"></app-rca-overview>
         </ng-template>
       </div>
     }

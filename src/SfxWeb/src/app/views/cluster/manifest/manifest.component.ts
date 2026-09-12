@@ -4,6 +4,7 @@ import { ClusterManifest } from 'src/app/Models/DataModels/Cluster';
 import { Observable } from 'rxjs';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
+import { ExperienceService } from 'src/app/services/experience.service';
 
 @Component({
     selector: 'app-manifest',
@@ -13,6 +14,7 @@ import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
     standalone: false
 })
 export class ManifestComponent extends BaseControllerDirective {
+  experience = inject(ExperienceService);
   private data = inject(DataService);
 
 

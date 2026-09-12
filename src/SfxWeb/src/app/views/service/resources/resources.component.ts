@@ -5,6 +5,7 @@ import { IResourceItem } from 'src/app/modules/charts/resources-tile/resources-t
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { map, mergeMap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
+import { ExperienceService } from 'src/app/services/experience.service';
 
 @Component({
     selector: 'app-service-resources',
@@ -14,6 +15,7 @@ import { Observable } from 'rxjs';
     standalone: false
 })
 export class ResourcesComponent extends ServiceBaseControllerDirective {
+  public experience = inject(ExperienceService);
   protected data: DataService = inject(DataService);
   public static readonly cpuCoresKey: string = "CpuCores=";
   public static readonly cpuCoresLimitKey: string = "CpuCoresLimit=";

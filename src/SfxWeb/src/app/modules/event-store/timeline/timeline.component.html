@@ -1,5 +1,8 @@
 @if (timeLineEventsData && startDate && endDate) {
   <div>
+    @if (experience.isNew()) {
+      <app-event-navigator [events]="timeLineEventsData" (inspectEvent)="setSearch($event)"></app-event-navigator>
+    } @else {
     <app-event-store-timeline [events]="timeLineEventsData" (itemClicked)="setSearch($event)">
       @if (showCorrelatedBtn) {
         <div buttons class="flex-center toggle-wrapper" >
@@ -20,5 +23,6 @@
         </div>
       }
     </app-event-store-timeline><br>
+    }
   </div>
 }

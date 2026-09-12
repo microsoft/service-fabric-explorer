@@ -1,6 +1,47 @@
 @if (metricsViewModel) {
   <div>
-    <div style="display: flex; max-width: 100%; flex-wrap: wrap;">
+    <div style="display: flex; max-width: 100%; flex-wrap: wrap;" [class.modern-metrics]="experience.isNew()">
+      @if (experience.isNew()) {
+        <section class="metric-controls" aria-label="Metric selection">
+          <header class="metric-controls-header"><h2>Metrics</h2><span aria-live="polite">{{metricsViewModel.selectedMetrics.length}} selected · {{filteredNodes.length}} of {{nodes.collection.length}} nodes</span></header>
+          <div class="metric-controls-body">
+            <div class="metric-toolbar">
+              @for (group of metricGroups; track group.name) {
+                <div ngbDropdown [autoClose]="'outside'" placement="bottom-start" (openChange)="metricSearch = ''">
+                  <button type="button" class="metric-trigger" ngbDropdownToggle [disabled]="!group.metrics.length">{{group.name}} <span class="selection-count">{{group.selectedCount}}</span></button>
+                  <div ngbDropdownMenu class="metric-options-menu" [attr.aria-label]="group.name">
+                    <input type="search" class="metric-search" [attr.aria-label]="'Find ' + group.name.toLowerCase()" placeholder="Find a metric" [(ngModel)]="metricSearch">
+                    <div class="metric-options-scroll">
+                      @for (metric of group.visible; track metric.name) {
+                        <label class="metric-option" [class.checked]="metric.selected" [title]="metric.displayName">
+                          <input type="checkbox" [checked]="metric.selected" (change)="updateSelectedMetric(metric, group.metrics)">
+                          <span>{{metric.displayName}}</span>
+                          @if (metric.hasCapacity) { <small>{{metric.loadCapacityRatioString}}</small> }
+                        </label>
+                      } @empty { <p class="menu-empty">No matching metrics.</p> }
+                    </div>
+                  </div>
+                </div>
+              }
+              <div ngbDropdown [autoClose]="'outside'" placement="bottom-end">
+                <button type="button" class="metric-trigger" ngbDropdownToggle>Nodes <span class="selection-count">{{filteredNodes.length}}</span></button>
+                <div ngbDropdownMenu class="metric-nodes-menu">
+                  <app-node-filter [nodes]="nodes.collection" [compact]="true" (filteredNodes)="setNodes($event)" [showGroupByNodeType]="false"></app-node-filter>
+                </div>
+              </div>
+              <label class="normalize-option"><input type="checkbox" [(ngModel)]="metricsViewModel.normalizeMetricsData" (ngModelChange)="updateViewMetric()"> Show capacity as a ratio</label>
+            </div>
+            @if (metricsViewModel.selectedMetrics.length) {
+              <div class="selected-metrics" aria-label="Selected metrics">
+                @for (metric of metricsViewModel.selectedMetrics; track metric.name) {
+                  <button type="button" class="selected-metric" [attr.aria-label]="'Remove ' + metric.displayName" (click)="removeMetric(metric)"><span>{{metric.displayName}}</span><span aria-hidden="true">&times;</span></button>
+                }
+              </div>
+            }
+            <p class="metric-guidance">Compare metrics within one group. Selecting another group replaces the selection. Count metrics exclude services that report custom metrics.</p>
+          </div>
+        </section>
+      } @else {
       <div>
         <div>
           <label class="toggle-wrapper" aria-label="Hide metric chart options">
@@ -18,7 +59,7 @@
             </div>
             <div collapse-body>
               <label style="margin-top: 10px;">
-                <app-toggle [(state)]="metricsViewModel.normalizeMetricsData"></app-toggle> Normalize metric
+                <app-toggle [(state)]="metricsViewModel.normalizeMetricsData" (stateChange)="updateViewMetric()"></app-toggle> Normalize metric
                 data
               </label>
               <div class="metrics-column">
@@ -61,6 +102,7 @@
           </app-collapse-container>
         </div>
       </div>
+      }
       <div class="layout-container" data-cy="tabs">
         <div ngbNav #nav="ngbNav" [destroyOnHide]="false" class="nav-wrapper">
           <div [ngbNavItem]="1">
@@ -68,9 +110,16 @@
               Chart
             </a>
             <ng-template ngbNavContent>
+              @if (experience.isNew() && (loadingMetrics || !metricsViewModel.selectedMetrics.length || !tableData.categories.length || !hasChartValues)) {
+                <div class="metrics-empty" role="status">
+                  <strong>{{loadingMetrics ? 'Loading node metrics...' : !metricsViewModel.selectedMetrics.length ? 'Select a metric' : !filteredNodes.length ? 'No nodes match your filters' : 'No reported values for this selection'}}</strong>
+                  <p>{{loadingMetrics ? 'Fetching load information from the selected nodes.' : 'Choose a metric above or adjust the node filters.'}}</p>
+                </div>
+              } @else {
               <app-bar-chart class="dynamic-bar-chart" [xAxisCategories]="tableData.categories"
                 [dataSet]="tableData.dataPoints" [title]="tableData.title" [tooltip]="tableData.tooltipFunction">
               </app-bar-chart>
+              }
             </ng-template>
           </div>
           <div [ngbNavItem]="2">

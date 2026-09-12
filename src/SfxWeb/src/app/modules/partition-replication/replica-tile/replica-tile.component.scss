@@ -1,3 +1,5 @@
+@use '../replication-card';
+
 .row-container {
   border-bottom: solid 2px white;
   border-top: solid 2px white;
@@ -80,3 +82,16 @@ app-replication-trend-line {
   flex-direction: column;
   margin-bottom: -20px;
 }
+
+.replica-overview { max-width: 720px; margin-bottom: 12px; }
+.replica-overview .replication-field { grid-template-columns: 64px minmax(0, 1fr); }
+.replication-expanded-content { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr)); gap: 24px; border-top: 1px solid #30363d; padding-top: 20px; margin-top: 16px; }
+.replication-expanded-content > * { min-width: 0; }
+.replication-chart-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+.replication-chart-toolbar h4 { flex: 1 1 180px; margin: 0; font: 600 15px/1.5 var(--font-family-ui); }
+.replication-chart-toolbar label { display: flex; align-items: center; gap: 8px; margin: 0; }
+.replication-chart p { color: #8b949e; margin: 12px 0; }
+.replication-chart-plot { height: 260px; min-width: 0; }
+.replication-chart-plot.chart-expanded { height: 460px; }
+.replication-chart-plot app-replication-trend-line { display: block; }
+.selected-replica-id { margin: 0; overflow-wrap: anywhere; color: #8b949e; }

@@ -15,6 +15,10 @@ export class NodeFilterComponent implements OnInit, OnChanges {
 
 
   @Input() showGroupByNodeType = true;
+  @Input() compact = false;
+  @Input() healthDropdown = false;
+  public get selectedHealthCount() { return this.healthOptions.filter(health => this.healthFilter[health]).length; }
+  public healthOptions = ['OK', 'Warning', 'Error'];
 
   @Input() nodes!: Node[];
   @Input() groupByNodeType = false;
@@ -53,7 +57,7 @@ export class NodeFilterComponent implements OnInit, OnChanges {
 
   public getNodesForDomains(): Node[] {
     return this.nodes.filter((node) => (node.raw.Type in this.nodeTypeFilter ? this.nodeTypeFilter[node.raw.Type] : true) &&
-      (this.filter.length > 0 ? node.name.toLowerCase().includes(this.filter) : true) &&
+      (this.filter.length > 0 ? node.name.toLowerCase().includes(this.filter.toLowerCase()) : true) &&
       (node.healthState.badgeId in this.healthFilter ? this.healthFilter[node.healthState.badgeId] : true));
   }
 

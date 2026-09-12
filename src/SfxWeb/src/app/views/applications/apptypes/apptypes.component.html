@@ -1,3 +1,11 @@
+@if (experience.isNew()) {
+  @if (usage) {
+    <div class="app-type-counts" data-cy="tiles">
+      <section class="resource-detail-card" data-cy="active-app-type"><header class="resource-detail-header"><h2>Active Application Types</h2></header><div class="app-type-count">{{usage.activeAppTypes.length}}</div></section>
+      <section class="resource-detail-card" data-cy="inactive-app-type"><header class="resource-detail-header"><h2>Unused Application Types</h2></header><div class="app-type-count">{{usage.inactiveAppTypes.length}}</div></section>
+    </div>
+  }
+} @else {
 <div class="tile-container" data-cy="tiles">
   @if (usage) {
     <app-dashboard-text-tile [barClass]="'badge-upgrade-active'" [count]="usage.activeAppTypes.length"
@@ -11,6 +19,7 @@
     </app-dashboard-text-tile>
   }
 </div>
+}
 
 @if (usage) {
   <div class="detail-pane essen-pane">

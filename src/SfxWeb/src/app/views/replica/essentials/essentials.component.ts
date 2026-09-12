@@ -9,6 +9,7 @@ import { ReplicaBaseControllerDirective } from '../ReplicaBase';
 import { RoutesService } from 'src/app/services/routes.service';
 import { IEssentialListItem } from 'src/app/modules/charts/essential-health-tile/essential-health-tile.component';
 import { IRawInstanceInfo, IRawReplicaInfo } from 'src/app/Models/RawDataTypes';
+import { ExperienceService } from 'src/app/services/experience.service';
 
 @Component({
     selector: 'app-essentials',
@@ -18,6 +19,7 @@ import { IRawInstanceInfo, IRawReplicaInfo } from 'src/app/Models/RawDataTypes';
     standalone: false
 })
 export class EssentialsComponent extends ReplicaBaseControllerDirective {
+  public experience = inject(ExperienceService);
   protected data: DataService = inject(DataService);
   private settings = inject(SettingsService);
 

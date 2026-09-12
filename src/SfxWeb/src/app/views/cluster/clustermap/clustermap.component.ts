@@ -3,6 +3,7 @@ import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers'
 import { NodeCollection } from 'src/app/Models/DataModels/collections/NodeCollection';
 import { DataService } from 'src/app/services/data.service';
 import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
+import { ExperienceService } from 'src/app/services/experience.service';
 
 @Component({
     selector: 'app-clustermap',
@@ -12,6 +13,7 @@ import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
     standalone: false
 })
 export class ClustermapComponent extends BaseControllerDirective {
+  experience = inject(ExperienceService);
   private dataService = inject(DataService);
 
   nodes!: NodeCollection;

@@ -35,3 +35,12 @@
     overflow: hidden;
     white-space: nowrap;
 }
+.repair-summary { display: grid; grid-template-columns: minmax(180px, 220px) minmax(0, 1fr); gap: 16px; max-width: 960px; margin-bottom: 16px; align-items: stretch; }
+.repair-summary > :nth-child(n+3) { grid-column: 1 / -1; }
+.repair-count { padding: 12px 16px; font: 600 32px/1.25 var(--font-family-ui); color: #e6edf3; }
+.repair-summary-body { padding: 8px 16px; }
+.repair-action { display: grid; grid-template-columns: 36px minmax(0, max-content) auto; justify-content: start; gap: 12px; align-items: center; padding: 6px 0; color: #e6edf3; }
+.repair-action > span, .repair-long > span { overflow-wrap: anywhere; }
+.repair-long { display: grid; grid-template-columns: auto auto minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 6px 0; }
+.repair-visualization { margin-bottom: 16px; }
+@media (max-width: 600px) { .repair-summary { grid-template-columns: minmax(0, 1fr); }.repair-long { grid-template-columns: minmax(0, 1fr) auto; } }

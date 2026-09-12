@@ -1,4 +1,6 @@
-import { AfterViewInit, ChangeDetectorRef, Component, OnInit, inject, ChangeDetectionStrategy } from "@angular/core";
+import { AfterViewInit, ChangeDetectorRef, Component, OnInit, OnDestroy, inject, ChangeDetectionStrategy } from "@angular/core";
+import { Subscription } from 'rxjs';
+import { finalize } from 'rxjs/operators';
 import { Router } from "@angular/router";
 import { PartitionEventList } from "src/app/Models/DataModels/collections/Collections";
 import { PartitionEvent } from "src/app/Models/eventstore/Events";
@@ -12,6 +14,7 @@ import { IOnDateChange } from "src/app/modules/time-picker/double-slider/double-
 import { DataService } from "src/app/services/data.service";
 import { TimeUtils } from "src/app/Utils/TimeUtils";
 import { DataSet } from "vis-data";
+import { ExperienceService } from 'src/app/services/experience.service';
 
 @Component({
     selector: "app-orchestration-view",
@@ -20,7 +23,14 @@ import { DataSet } from "vis-data";
     changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
-export class OrchestrationViewComponent implements OnInit, AfterViewInit {
+export class OrchestrationViewComponent implements OnInit, AfterViewInit, OnDestroy {
+  public browsePartitions = true;
+  public loadingOperations = false;
+  public operationsError = '';
+  private operationRequest?: Subscription;
+  public choosePartition(id: string) { this.partitionId = id; this.search(true); }
+  ngOnDestroy() { this.operationRequest?.unsubscribe(); }
+  experience = inject(ExperienceService);
   private dataService = inject(DataService);
   private router = inject(Router);
   private cdr = inject(ChangeDetectorRef);
@@ -46,13 +56,14 @@ export class OrchestrationViewComponent implements OnInit, AfterViewInit {
   placementToggle = true;
   constrainCheckToggle = true;
   otherToggle = true;
+  get selectedStageCount() { return [this.balancingToggle, this.placementToggle, this.constrainCheckToggle, this.otherToggle].filter(Boolean).length; }
 
   timeLineEventsData?: ITimelineData | null;
 
   ngOnInit(): void {
-    if (!this.dataService.clusterManifest.isEventStoreEnabled) {
-      this.router.navigate(["/"]);
-    }
+    this.dataService.clusterManifest.ensureInitialized().subscribe(() => {
+      if (!this.dataService.clusterManifest.isEventStoreEnabled) { this.router.navigate(["/"]); }
+    });
   }
 
   ngAfterViewInit() {
@@ -61,6 +72,8 @@ export class OrchestrationViewComponent implements OnInit, AfterViewInit {
         new Date(),
         -this.dataService.clusterManifest.eventStoreTimeRange
       );
+      this.endDate = this.endDate || new Date();
+      this.startDate = this.startDate || new Date(Math.max(+this.dateMin, +this.endDate - 7 * 86400000));
       this.cdr.detectChanges();
     });
   }
@@ -92,6 +105,8 @@ export class OrchestrationViewComponent implements OnInit, AfterViewInit {
   }
 
   search(shouldResetTimelineData: boolean = false) {
+    this.operationRequest?.unsubscribe();
+    this.operationsError = '';
     this.selectedEvent = null;
     this.cdr.detectChanges();
     if (shouldResetTimelineData) {
@@ -100,13 +115,20 @@ export class OrchestrationViewComponent implements OnInit, AfterViewInit {
     if (!this.partitionId) {
       return;
     }
+    if (this.experience.isNew() && !/^[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$/i.test(this.partitionId.trim())) {
+      this.operationsError = 'Enter a valid partition ID (GUID).';
+      return;
+    }
+    if (!this.startDate || !this.endDate) { return; }
+    this.partitionId = this.partitionId.trim();
+    this.loadingOperations = true;
 
     const partitionEventData = this.dataService.getPartitionEventData(this.partitionId);
     partitionEventData.eventsList.setEventFilter(["Operation"]);
     partitionEventData.setDateWindow!(this.startDate, this.endDate);
-    partitionEventData.eventsList.refresh().subscribe((success) => {
+    this.operationRequest = partitionEventData.eventsList.refresh().pipe(finalize(() => this.loadingOperations = false)).subscribe((success) => {
       if (!success) {
-        console.error("Failed to refresh event data");
+        this.operationsError = 'Could not load operations for this partition. Check the ID and try again.';
         return;
       }
       this.fillInOperationEventsData(partitionEventData);

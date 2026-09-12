@@ -1,3 +1,19 @@
+@if (experience.isNew()) {
+  <div class="resource-details-layout">
+    @if (node) {
+      <section class="resource-detail-card" aria-label="General">
+        <header class="resource-detail-header"><h2>General</h2></header>
+        <div class="resource-detail-body"><app-detail-view-part [data]="node.raw" [parent]="node"></app-detail-view-part></div>
+      </section>
+    }
+    @if (node && node.loadInformation.isInitialized) {
+      <section class="resource-detail-card" aria-label="Load Information" data-cy="load">
+        <header class="resource-detail-header"><h2>Load Information</h2></header>
+        <div class="resource-detail-body"><app-detail-view-part [data]="node.loadInformation.raw" [parent]="node.loadInformation"></app-detail-view-part></div>
+      </section>
+    }
+  </div>
+} @else {
 @if (node) {
   <div class="detail-pane essen-pane">
     <app-collapse-container sectionName="Node">
@@ -13,4 +29,5 @@
   <div class="detail-pane essen-pane" data-cy="load">
     <app-detail-view-part [data]="node.loadInformation.raw" [parent]="node.loadInformation" collapse-body></app-detail-view-part>
   </div>
+}
 }

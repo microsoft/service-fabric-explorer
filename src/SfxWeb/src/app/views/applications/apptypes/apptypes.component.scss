@@ -1,0 +1,2 @@
+.app-type-counts { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); gap: 16px; max-width: 720px; margin-bottom: 16px; }
+.app-type-count { padding: 16px; color: #e6edf3; font: 600 32px/1.25 var(--font-family-ui); }

@@ -1,3 +1,24 @@
+@if (experience.isNew()) {
+  <section class="resource-summary">
+    <header><h2>Overview</h2>@if (healthState) { <span class="resource-health" [attr.data-health]="healthState.badgeClass">{{healthState.text}}</span> }</header>
+    <dl class="overview-property-grid">
+      @for (item of internalList; track $index) {
+        @if (item.descriptionName) {
+          <div>
+            <dt>{{item.descriptionName}}</dt>
+            <dd>
+              <span>@if (item.displaySelector) { <ng-container *ngTemplateOutlet="item.ref"></ng-container> } @else if (item.valueUrl) { <a [href]="item.valueUrl" target="_blank" rel="noopener noreferrer">{{item.displayText}}</a> } @else { {{item.displayText}} }</span>
+              @if (item.copyTextValue) { <app-clip-board [text]="item.copyTextValue" [name]="item.descriptionName"></app-clip-board> }
+            </dd>
+          </div>
+        }
+      }
+    </dl>
+    @for (item of internalList; track $index) {
+      @if (!item.descriptionName) { <div class="overview-link"><ng-container *ngTemplateOutlet="item.ref"></ng-container></div> }
+    }
+  </section>
+} @else {
 <div class="dashboard-wrapper">
   <div class="dashboard dashboard-medium">
     <div class="dashboard-tile flex-center" style="height: 100%;">
@@ -17,3 +38,5 @@
       </div>
     </div>
   </div>
+</div>
+}

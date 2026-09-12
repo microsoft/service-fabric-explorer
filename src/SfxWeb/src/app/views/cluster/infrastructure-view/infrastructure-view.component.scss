@@ -20,3 +20,13 @@
   display: flex;
   gap: 5px;
 }
+.infrastructure-state {
+  padding: 24px;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  background: #161b22;
+  color: #e6edf3;
+  h2 { font-size: 20px; margin: 0 0 8px; }
+  p { font-size: 15px; color: #8b949e; margin: 0 0 16px; max-width: 760px; }
+  a { font-size: 15px; color: #58a6ff; }
+}

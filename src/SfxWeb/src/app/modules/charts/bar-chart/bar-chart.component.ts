@@ -78,7 +78,7 @@ export class BarChartComponent implements AfterViewInit, OnChanges, OnDestroy {
   ngOnChanges() {
     if (this.chart){
 
-      this.chart.series.forEach(series => {
+      [...this.chart.series].forEach(series => {
         if (this.dataSet.every(set => set.label !== series.name)) {
           series.remove();
         }else{
@@ -115,6 +115,7 @@ export class BarChartComponent implements AfterViewInit, OnChanges, OnDestroy {
 
   ngAfterViewInit() {
     this.chart = chart(this.container.nativeElement, this.options);
+    this.ngOnChanges();
   }
 
   ngOnDestroy() {

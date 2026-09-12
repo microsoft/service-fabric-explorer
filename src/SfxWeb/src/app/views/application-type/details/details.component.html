@@ -1,7 +1,17 @@
+@if (experience.isNew()) {
+  <section class="resource-detail-card package-versions" aria-label="Package Versions">
+    <header class="resource-detail-header"><h2>Package Versions</h2></header>
+    <div class="resource-detail-body"><ng-container *ngTemplateOutlet="packageTable"></ng-container></div>
+  </section>
+} @else {
 <h2 style="font-size: var(--font-size-large);">
   Package Versions
 </h2>
 <div class="detail-pane">
+  <ng-container *ngTemplateOutlet="packageTable"></ng-container>
+</div>
+}
+<ng-template #packageTable>
   @if (appTypeGroup) {
     <div class="table-responsive">
       <table class="default-table detail-table" style="width: 100%;">
@@ -68,4 +78,4 @@
       </table>
     </div>
   }
-</div>
+</ng-template>

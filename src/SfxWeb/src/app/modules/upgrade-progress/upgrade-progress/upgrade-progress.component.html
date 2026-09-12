@@ -24,4 +24,6 @@
     }
   </div>
 }
-<div #chart></div>
+<div [class.modern-domain-chart]="experience.isNew() && showChart">
+  <div #chart class="domain-chart-canvas"></div>
+</div>

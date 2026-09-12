@@ -1,11 +1,19 @@
 @if (node) {
   <div>
     <div class="tile-container" data-cy="tiles">
-      <app-essential-health-tile [healthState]="node.healthState" class="long" [listItems]="essentialItems" data-cy="essential-info">
+      <app-essential-health-tile [healthState]="node.healthState" class="long" [listItems]="experience.isNew() ? overviewItems : essentialItems" data-cy="essential-info">
         <ng-template appEssentialTemplate id="status">
           <app-status-resolver [status]="node.nodeStatus"  data-cy="status"></app-status-resolver>
         </ng-template>
+        <ng-template appEssentialTemplate id="placementProperties">
+          @if (placementProperties) {
+            @for (property of placementProperties.placementProperties | keyvalue; track property.key) {
+              <div>{{property.key}}: {{property.value}}</div>
+            } @empty { <span>No placement properties defined</span> }
+          } @else { <span>Not available</span> }
+        </ng-template>
       </app-essential-health-tile>
+      @if (!experience.isNew()) {
       <app-essential-health-tile [listItems]="ringInfo" data-cy="node-ring-info">
       </app-essential-health-tile>
       @if (placementProperties) {
@@ -20,7 +28,22 @@
           </div>
         </app-dashboard-text-scale-tile>
       }
+      }
       @if (node?.loadInformation?.isInitialized) {
+        @if (experience.isNew()) {
+          <div class="node-count-grid">
+            @for (metric of [
+              { title: 'Total Count', count: node.loadInformation.metrics.Count, description: 'Count of all service objects (stateless and stateful) on the node' },
+              { title: 'Primary Count', count: node.loadInformation.metrics.PrimaryCount, description: 'Count of primary replicas on the node' },
+              { title: 'Replica Count', count: node.loadInformation.metrics.ReplicaCount, description: 'Count of total stateful replicas on the node' }
+            ]; track metric.title) {
+              <section class="resource-detail-card">
+                <header class="resource-detail-header"><h2>{{metric.title}}</h2><a href="https://aka.ms/sf/loadinformation" target="_blank" rel="noopener noreferrer" [attr.aria-label]="'Learn about ' + metric.title"><span class="mif-info" aria-hidden="true"></span></a></header>
+                <div class="resource-detail-body"><div class="node-count-value">{{metric.count}}</div><p>{{metric.description}}</p></div>
+              </section>
+            }
+          </div>
+        } @else {
         <app-dashboard-text-tile [count]="node.loadInformation.metrics.Count" title="Total Count" middleMargin="0px 0"
           helpTextLink="https://aka.ms/sf/loadinformation">
           Count of all service objects (stateless and stateful) on the node
@@ -33,6 +56,7 @@
           middleMargin="0px 0" helpTextLink="https://aka.ms/sf/loadinformation">
           Count of total stateful replicas on the node
         </app-dashboard-text-tile>
+        }
       }
     </div>
     @if (node && node.isDeactivating) {
@@ -81,7 +105,7 @@
             <h2>Deployed Applications</h2>
           </div>
           <div collapse-body>
-            <app-detail-list [list]="deployedApps.collection" [listSettings]="listSettings" data-cy="appsList">
+            <app-detail-list [list]="deployedApps.collection" [listSettings]="listSettings" [toolbarFilterProperties]="experience.isNew() ? ['health.healthState', 'raw.Status'] : []" data-cy="appsList">
             </app-detail-list>
           </div>
         </app-collapse-container>

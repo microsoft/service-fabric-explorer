@@ -3,10 +3,13 @@
   <div class="tile-container">
     @if (deployedCodePackage?.isInitialized) {
       <app-essential-health-tile
-        class="long" [listItems]="essentialItems">
+        class="long" [listItems]="experience.isNew() ? overviewItems : essentialItems">
+        <ng-template appEssentialTemplate id="status">
+          <app-status-resolver [status]="deployedCodePackage.raw.Status"></app-status-resolver>
+        </ng-template>
       </app-essential-health-tile>
     }
-    @if (deployedCodePackage?.isInitialized) {
+    @if (!experience.isNew() && deployedCodePackage?.isInitialized) {
       <app-essential-health-tile
         class="long" [listItems]="essentialItems2">
         <ng-template appEssentialTemplate id="status">

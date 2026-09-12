@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve --proxy-config=proxy.conf.json --port 3000",
-    "build": "ng build",
+    "build": "npm run lint:fonts && ng build",
     "build:prod": "ng build --configuration production",
     "build:accesstesting": "ng build --configuration production --output-path=../Sfx-Proxy/wwwroot --configuration=accesstesting",
     "test": "ng test",
@@ -14,7 +14,8 @@
     "ci:test": "ng test --watch=false --browsers=ChromeHeadless",
     "ci:cy-run": "start-server-and-test ci:start-server http://localhost:3000 cy:run",
     "cy:run": "cypress run ",
-    "lint": "npx ng lint",
+    "lint": "npm run lint:fonts && npx ng lint",
+    "lint:fonts": "node scripts/check-font-sizes.cjs",
     "lint:fix": "npx ng lint --fix",
     "build:stats": "ng build --stats-json",
     "test:coverage": "npx nyc report --reporter=lcov --reporter=text-summary",

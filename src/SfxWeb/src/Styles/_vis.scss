@@ -13,7 +13,7 @@
 .vis-item,
 .vis-item.vis-line {
   color: var(--font-primary-color);
-  font-family: monospace !important;
+  font-family: var(--font-family-mono) !important;
 }
 
 .vis-cluster, .vis-point {
@@ -58,7 +58,7 @@
 }
 
 .vis-labelset .vis-label {
-  font-size: 11pt;
+  font-size: 15px;
   border: 0px solid #191919;
   border-bottom: 1px solid var(--font-primary-color);
   color: var(--font-primary-color) !important;

@@ -1,4 +1,5 @@
-import { Component, Input, OnChanges, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Input, OnChanges, ChangeDetectionStrategy, inject } from '@angular/core';
+import { ExperienceService } from 'src/app/services/experience.service';
 import { IRawRemoteReplicatorStatus } from 'src/app/Models/RawDataTypes';
 import { IEssentialListItem } from '../../charts/essential-health-tile/essential-health-tile.component';
 
@@ -10,6 +11,7 @@ import { IEssentialListItem } from '../../charts/essential-health-tile/essential
     standalone: false
 })
 export class ReplicaStatusComponent implements OnChanges {
+  public experience = inject(ExperienceService);
 
   @Input() replicator!: IRawRemoteReplicatorStatus;
   copyItems: IEssentialListItem[] = [];

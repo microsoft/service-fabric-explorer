@@ -1,8 +1,20 @@
-<div class="tile-container">
+@if (experience.isNew() && nodes.isInitialized && clusterUpgradeProgress.isInitialized) {
+  <section class="resource-detail-card cluster-properties" aria-label="Cluster overview">
+    <header class="resource-detail-header"><h2>Overview</h2></header>
+    <dl class="cluster-property-grid">
+      @for (item of essentialItems; track item.descriptionName) {
+        <div><dt>{{item.descriptionName}}</dt><dd><span>{{item.displayText}}</span>@if (item.copyTextValue) { <app-clip-board [text]="item.copyTextValue" [name]="item.descriptionName"></app-clip-board> }</dd></div>
+      }
+    </dl>
+  </section>
+}
+<div class="tile-container" [class.cluster-health-grid]="experience.isNew()">
+  @if (!experience.isNew()) {
   @if (nodes.isInitialized && clusterUpgradeProgress.isInitialized) {
     <app-essential-health-tile
       class="long" [listItems]="essentialItems">
     </app-essential-health-tile>
+  }
   }
 
   @if (nodesDashboard) {
@@ -21,6 +33,7 @@
   @if (replicasDashboard) {
     <app-dashboard-tile [data]="replicasDashboard" ></app-dashboard-tile>
   }
+  @if (!experience.isNew()) {
   <app-dashboard-text-tile [barClass]="upgradeAppsCount > 0 ? 'badge-upgrade-active' : 'badge-upgrade-inactive'"
     link="apps/upgrades" [count]="upgradeAppsCount"
     [title]="upgradeAppsCount === 1 ? 'Application Upgrade In Progress' : 'Application Upgrade In Progress'"
@@ -37,7 +50,26 @@
       [count]="nodes.disabledAndDisablingCount" title="Disabled/Disabling Nodes" style="display: block">
     </app-dashboard-text-tile>
   }
+  }
 </div>
+
+@if (experience.isNew()) {
+  <nav class="cluster-activity" aria-label="Cluster activity">
+    <a routerLink="apps/upgrades" class="activity-card" [class.has-activity]="upgradeAppsCount > 0">
+      <span>Application upgrades in progress</span><strong>{{upgradeAppsCount}}</strong><span class="activity-arrow" aria-hidden="true">&rarr;</span>
+    </a>
+    @if (repairtaskCollection.isInitialized) {
+      <a routerLink="repairtasks" class="activity-card" [class.has-activity]="repairtaskCollection.repairTasks.length > 0">
+        <span>Repair jobs in progress</span><strong>{{repairtaskCollection.repairTasks.length}}</strong><span class="activity-arrow" aria-hidden="true">&rarr;</span>
+      </a>
+    }
+    @if (nodes.isInitialized) {
+      <a routerLink="nodes" class="activity-card" [class.has-activity]="nodes.disabledAndDisablingCount > 0">
+        <span>Disabled / disabling nodes</span><strong>{{nodes.disabledAndDisablingCount}}</strong><span class="activity-arrow" aria-hidden="true">&rarr;</span>
+      </a>
+    }
+  </nav>
+}
 
 @if (repairtaskCollection.isInitialized && repairtaskCollection?.jobsOfInterest?.length > 0 || infraCollection.isInitialized && infraCollection?.throttledJobs?.length > 0) {
   <div class="essen-pane detail-pane" style="border: 2px solid var(--badge-warning);">
@@ -110,4 +142,3 @@
   <h2>Health Evaluations</h2>
   <app-health-viewer [healthyEvaluations]="clusterHealth.healthEvents" [unhealthyEvaluations]="clusterHealth.unhealthyEvaluations" ></app-health-viewer>
 </div>
-

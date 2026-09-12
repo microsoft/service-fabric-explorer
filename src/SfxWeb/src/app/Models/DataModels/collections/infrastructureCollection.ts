@@ -52,6 +52,7 @@ export class InfrastructureCollection extends DataModelCollectionBase<Infrastruc
   protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): Observable<any> {
     return this.data.getSystemServices(true, messageHandler).pipe(mergeMap(services => {
       const infrastructureServices = services.collection.filter(service => service.raw.TypeName === Constants.InfrastructureServiceType);
+      if (!infrastructureServices.length) { return of([]); }
       return forkJoin(infrastructureServices.map(service => this.data.restClient.getInfrastructureJobs(service.id).pipe
         (map(items => {
           return new InfrastructureCollectionItem(this.data, {

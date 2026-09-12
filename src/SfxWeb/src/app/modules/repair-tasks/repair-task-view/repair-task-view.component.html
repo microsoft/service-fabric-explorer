@@ -1,3 +1,76 @@
+@if (experience.isNew()) {
+  <section class="repair-detail" aria-label="Repair task details">
+    <div class="repair-toolbar"><span>Task details</span><div>Copy raw repair job <app-clip-board [text]="copyText" name="raw repair job"></app-clip-board></div></div>
+    <div class="repair-nodes">
+      @for (node of nodes; track node.name) {
+        <section class="repair-node" [attr.aria-label]="node.name">
+          <header><a [routerLink]="node.viewPath">{{node.name}}</a><app-health-badge [badgeClass]="node.healthState.badgeClass" [text]="node.healthState.text"></app-health-badge></header>
+          <dl class="repair-node-properties">
+            <div><dt>Upgrade Domain</dt><dd>{{node.raw.UpgradeDomain}}</dd></div>
+            <div><dt>Fault Domain</dt><dd>{{node.raw.FaultDomain}}</dd></div>
+            <div><dt>Deactivation Status</dt><dd>{{node.raw.NodeDeactivationInfo?.NodeDeactivationStatus}}</dd></div>
+          </dl>
+        </section>
+      }
+    </div>
+    <div ngbNav #modernNav="ngbNav" [(activeId)]="item.activeTab" class="repair-tabs">
+      <div [ngbNavItem]="1">
+        <a ngbNavLink>Condensed</a>
+        <ng-template ngbNavContent>
+          @if (item.concerningJobInfo) { <div class="repair-warning" data-cy="node-stuck-warning"><app-warning [description]="item.concerningJobInfo.description"></app-warning></div> }
+          <div class="repair-sections">
+            @if (item.raw.History) {
+              <section class="resource-detail-card" data-cy="history">
+                <header class="resource-detail-header"><h2>History</h2></header>
+                <div class="resource-detail-body repair-history">
+                  @for (phase of item.historyPhases; track phase.name) {
+                    <app-collapse-container [collapsed]="phase.startCollapsed" (collapsedChange)="item.changePhaseCollapse(phase.name, $event)" [sectionName]="phase.name + ': ' + phase.status + (phase.durationMilliseconds > 0 ? ' Duration: ' + phase.duration : '')">
+                      <div collapse-header class="repair-phase-heading"><span>{{phase.name}}</span><span class="repair-phase-status" [attr.data-status]="phase.status">{{phase.status}}</span>@if (phase.durationMilliseconds > 0) { <span class="repair-phase-duration">{{phase.duration}}</span> }</div>
+                      <div collapse-body class="repair-phase-body">
+                        <ol class="repair-steps">
+                          @for (step of phase.phases; track $index) {
+                            <li [attr.data-state]="$index + 1 < phase.currentPhase ? 'done' : $index + 1 === phase.currentPhase ? 'active' : 'pending'">
+                              <div class="repair-step-heading"><span>{{step.name}}</span><span class="repair-step-state">{{$index + 1 < phase.currentPhase ? 'Done' : $index + 1 === phase.currentPhase ? 'In progress' : 'Not started'}}</span></div>
+                              <div class="repair-step-meta">@if (step.timestamp) { <app-display-time class="repair-step-time" [time]="step.timestamp"></app-display-time> } @if (step.textRight) { <span>Duration: {{step.textRight}}</span> }</div>
+                            </li>
+                          }
+                        </ol>
+                      </div>
+                    </app-collapse-container>
+                  }
+                </div>
+              </section>
+            }
+            <div class="repair-info">
+              @if (healthCheckConfigs.length) {
+                <section class="resource-detail-card" data-cy="health-checks">
+                  <header class="resource-detail-header"><h2>Health Checks</h2></header>
+                  <div class="resource-detail-body">
+                    @for (config of healthCheckConfigs; track config.descriptionName) {
+                      <dl class="repair-property"><dt>{{config.descriptionName}}</dt><dd><span>{{config.displayText}}</span><app-clip-board [text]="config.copyTextValue" [name]="config.descriptionName"></app-clip-board></dd></dl>
+                    }
+                  </div>
+                </section>
+              }
+              @if (item.couldParseExecutorData) {
+                <section class="resource-detail-card" data-cy="jobinfo">
+                  <header class="resource-detail-header"><h2>Job Info</h2></header>
+                  <div class="resource-detail-body">
+                    <dl class="repair-property"><dt>Executor</dt><dd>{{item.raw.Executor}}</dd></dl>
+                    <dl class="repair-property"><dt>Description</dt><dd>{{item.raw.Description}}</dd></dl>
+                    <app-detail-view-part [data]="item.executorData"></app-detail-view-part>
+                  </div>
+                </section>
+              }
+            </div>
+          </div>
+        </ng-template>
+      </div>
+      <div [ngbNavItem]="2"><a ngbNavLink>Full Description</a><ng-template ngbNavContent><app-detail-view-part [data]="item.raw"></app-detail-view-part></ng-template></div>
+    </div>
+    <div [ngbNavOutlet]="modernNav"></div>
+  </section>
+} @else {
 <div style="float: right">
   Copy raw repair Job <app-clip-board [text]="copyText" name="raw repair job"></app-clip-board>
 </div>
@@ -122,3 +195,4 @@
 </div>
 </div>
 <div [ngbNavOutlet]="nav"></div>
+}

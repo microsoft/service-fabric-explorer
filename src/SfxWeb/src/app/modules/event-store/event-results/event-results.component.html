@@ -1,0 +1,38 @@
+<section class="results" aria-label="Event records">
+  <header><div><h2>Events</h2><p>Inspect individual records in the selected query range.</p></div><button type="button" (click)="exportCsv()" [disabled]="!filtered.length">Export CSV</button></header>
+  <div class="source-tabs" role="group" aria-label="Event source">
+    @for (source of sources; track source.displayName) {
+      <button type="button" [class.active]="active === source.displayName" [attr.aria-pressed]="active === source.displayName" (click)="selectSource(source.displayName)">
+        {{source.displayName}} <span class="badge">{{source.eventsList.collection.length}}</span>
+        @if (source.eventsList.isRefreshing) { <span class="source-status">Loading</span> }
+        @else if (source.eventsList.lastRefreshWasSuccessful === false) { <span class="error">Failed</span> }
+      </button>
+    }
+  </div>
+  <div class="filters">
+    <input type="search" aria-label="Search event records" placeholder="Search type, entity, ID, or event data" [(ngModel)]="query" (ngModelChange)="filter()">
+    <app-select-menu label="Event category" [(value)]="category" (valueChange)="filter()" [options]="categoryOptions"></app-select-menu>
+    @if (query || category) { <button type="button" class="link" (click)="clear()">Clear filters</button> }
+    <div class="zone">Time zone <app-select-menu label="Event records timezone" [(value)]="utc" [options]="[{value: true, label: 'UTC'}, {value: false, label: 'Local'}]"></app-select-menu></div>
+  </div>
+  @if (source?.type === 'RepairTask') { <div class="notice">Repair tasks are returned independently of the selected date range.</div> }
+  @if (loading) { <div class="notice" role="status">Loading {{active}} events...</div> }
+  @else if (failed) { <div class="notice error" role="alert">Could not load {{active}} events. Refresh to try again.</div> }
+  @if (rows.length >= 500 && source?.type !== 'RepairTask') { <div class="notice">The result may have reached the 500-event limit. Narrow the query range to inspect a smaller interval.</div> }
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th scope="col" [attr.aria-sort]="sort === 'type' ? (descending ? 'descending' : 'ascending') : 'none'"><button type="button" (click)="order('type')">Event type @if (sort === 'type') { <span>{{descending ? '↓' : '↑'}}</span> }</button></th><th scope="col" [attr.aria-sort]="sort === 'category' ? (descending ? 'descending' : 'ascending') : 'none'"><button type="button" (click)="order('category')">Category</button></th><th scope="col">Entity</th><th scope="col" [attr.aria-sort]="sort === 'time' ? (descending ? 'descending' : 'ascending') : 'none'"><button type="button" (click)="order('time')">Timestamp ({{utc ? 'UTC' : 'Local'}}) @if (sort === 'time') { <span>{{descending ? '↓' : '↑'}}</span> }</button></th></tr></thead>
+      <tbody>
+        @for (row of visible; track row.key) {
+          <tr [class.selected]="expanded.has(row.key)"><td><button type="button" class="row-toggle" [attr.aria-expanded]="expanded.has(row.key)" (click)="toggle(row)"><svg class="row-chevron" [class.expanded]="expanded.has(row.key)" width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false"><path d="m4 2 4 4-4 4"/></svg>{{humanize(row.type)}}</button></td><td><span class="category">{{row.category}}</span></td><td class="entity">{{row.entity || '—'}}</td><td class="time" [title]="row.time">{{timestamp(row.time)}}</td></tr>
+          @if (expanded.has(row.key)) {
+            <tr class="detail-row"><td colspan="4"><div class="detail-heading"><div><strong>{{row.type}}</strong><span>Event ID: {{row.id || 'Unavailable'}}</span></div><button type="button" (click)="copy(row)">Copy JSON</button></div><pre tabindex="0" aria-label="Raw event JSON">{{row.json}}</pre></td></tr>
+          }
+        } @empty { <tr><td colspan="4" class="empty">{{loading ? 'Waiting for event data...' : failed ? 'Event data unavailable.' : query || category ? 'No events match these filters.' : 'No events in this range.'}}</td></tr> }
+      </tbody>
+    </table>
+  </div>
+  <footer><span>{{filtered.length}} matching events</span><label>Rows <app-select-menu label="Rows per page" [(value)]="pageSize" (valueChange)="page = 1" [options]="[{value: 25, label: '25'}, {value: 50, label: '50'}, {value: 100, label: '100'}]"></app-select-menu></label><div class="pagination"><button type="button" [disabled]="page <= 1" (click)="page = page - 1">Previous</button><span>{{page}} / {{pages}}</span><button type="button" [disabled]="page >= pages" (click)="page = page + 1">Next</button></div></footer>
+  <details class="coverage"><summary>About event coverage</summary><p>Queries return up to 500 events per source. Data loss or operations crossing the selected boundaries can leave incomplete timelines. An empty result does not prove that no activity occurred.</p></details>
+  <span class="sr-only" aria-live="polite">{{copyStatus}}</span>
+</section>

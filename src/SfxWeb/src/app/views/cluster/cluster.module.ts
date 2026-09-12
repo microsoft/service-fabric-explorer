@@ -36,6 +36,10 @@ import { ConcurrentEventsVisualizationModule } from 'src/app/modules/concurrent-
 import { NamingViewerPageComponent } from './naming-viewer-page/naming-viewer-page.component';
 import { OrchestrationViewComponent } from './orchestration-view/orchestration-view.component';
 import { TimePickerModule } from "src/app/modules/time-picker/time-picker.module";
+import { ManifestDocumentComponent } from 'src/app/shared/component/manifest-document/manifest-document.component';
+import { EventNavigatorComponent } from 'src/app/modules/event-store/event-navigator/event-navigator.component';
+import { EventQueryBarComponent } from 'src/app/modules/event-store/event-query-bar/event-query-bar.component';
+import { PartitionPickerComponent } from './orchestration-view/partition-picker.component';
 
 @NgModule({
   declarations: [EssentialsComponent, DetailsComponent, BaseComponent, MetricsComponent, ClustermapComponent,
@@ -43,6 +47,10 @@ import { TimePickerModule } from "src/app/modules/time-picker/time-picker.module
                  StatusWarningsComponent, BackupsComponent, RepairTasksComponent, MetricTileComponent,
                  InfrastructureViewComponent, CommandsComponent, NamingViewerPageComponent, OrchestrationViewComponent],
   imports: [
+    ManifestDocumentComponent,
+    EventNavigatorComponent,
+    EventQueryBarComponent,
+    PartitionPickerComponent,
     CommonModule,
     ClusterRoutingModule,
     SharedModule,

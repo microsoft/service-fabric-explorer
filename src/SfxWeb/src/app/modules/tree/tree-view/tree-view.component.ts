@@ -4,6 +4,7 @@ import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { RestClientService } from 'src/app/services/rest-client.service';
 import { TelemetryService } from 'src/app/services/telemetry.service';
 import { TelemetryEventNames } from 'src/app/Common/Constants';
+import { ExperienceService } from 'src/app/services/experience.service';
 
 @Component({
     selector: 'app-tree-view',
@@ -13,6 +14,7 @@ import { TelemetryEventNames } from 'src/app/Common/Constants';
     standalone: false
 })
 export class TreeViewComponent implements DoCheck, AfterViewInit {
+  experience = inject(ExperienceService);
   treeService = inject(TreeService);
   private liveAnnouncer = inject(LiveAnnouncer);
   restClientService = inject(RestClientService);

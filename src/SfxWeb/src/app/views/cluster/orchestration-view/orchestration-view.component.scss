@@ -33,3 +33,30 @@
 .detail-row {
   display: contents;
 }
+.partition-query { display: flex; align-items: flex-end; flex-wrap: wrap; gap: 12px; }
+.partition-query label { display: grid; gap: 6px; flex: 1 1 300px; max-width: 520px; }
+.partition-query input { max-width: none !important; }
+.stage-filters { display: flex; align-items: center; flex-wrap: wrap; gap: 16px; margin: 16px 0; }
+.stage-filters label { display: flex; align-items: center; gap: 8px; }
+.partition-mode { display: flex; flex-wrap: wrap; gap: 4px; margin: 16px 0; }
+.partition-mode button { background: transparent; color: #c9d1d9; border: 1px solid #30363d; border-radius: 5px; padding: 8px 12px; font-size: 15px; cursor: pointer; }
+.partition-mode button.active { background: #21262d; border-color: #58a6ff; color: #e6edf3; }
+.operation-status { color: #8b949e; margin-top: 16px; }
+.operation-error { color: #ff7b72; margin-top: 16px; }
+.partition-controls { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 16px; margin-bottom: 16px; }
+.partition-controls > app-partition-picker { display: block; grid-column: 1 / -1; grid-row: 2; min-width: 0; }
+.partition-controls > .partition-mode { grid-column: 1; grid-row: 1; margin: 0; }
+.partition-controls > .partition-query { grid-column: 1 / -1; grid-row: 2; min-width: 0; margin: 0 !important; }
+.partition-controls .partition-query label { margin: 0; }
+.partition-controls .partition-query input { margin-right: 0 !important; }
+.partition-controls > .operation-status, .partition-controls > .operation-error { grid-column: 1 / -1; margin: 0; }
+.stage-filter-dropdown { grid-column: 2; grid-row: 1; }
+.stage-filter-trigger { min-height: 38px; padding: 8px 12px; background: #21262d; color: #e6edf3; border: 1px solid #484f58; border-radius: 6px; font: 400 15px/1.5 var(--font-family-ui); cursor: pointer; }
+.stage-filter-trigger > span { color: #8b949e; margin-left: 8px; }
+.stage-filter-menu label { display: flex; align-items: center; gap: 10px; padding: 10px; margin: 0; cursor: pointer; }
+.stage-filter-menu input { flex-shrink: 0; accent-color: #58a6ff; }
+@media (max-width: 600px) {
+  .partition-controls { grid-template-columns: minmax(0, 1fr); }
+  .stage-filter-dropdown { grid-column: 1; grid-row: 2; justify-self: start; }
+  .partition-controls > app-partition-picker, .partition-controls > .partition-query { grid-row: 3; }
+}

@@ -76,3 +76,17 @@ input[type="range"] {
     width: 75px;
   }
 }
+.modern-refresh {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  label { display: flex; align-items: center; gap: 8px; margin: 0; color: #8b949e; font-size: 15px; white-space: nowrap; }
+  select, button { height: 32px; border: 1px solid #30363d; border-radius: 5px; background: #21262d; color: #e6edf3; font: inherit; }
+  select { padding: 4px 6px; }
+  button { width: 34px; padding: 6px; cursor: pointer; }
+  button:hover { background: #30363d; }
+  button:disabled { opacity: .5; cursor: default; }
+  svg { display: block; width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.5; }
+  select:focus-visible, button:focus-visible { outline: 2px solid #58a6ff; outline-offset: 2px; }
+  @media (max-width: 1200px) { label > span { display: none; } }
+}

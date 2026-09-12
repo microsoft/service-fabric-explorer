@@ -9,6 +9,7 @@ import { ListSettings } from 'src/app/Models/ListSettings';
 import { SettingsService } from 'src/app/services/settings.service';
 import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 import { INodesStatusDetails, NodeCollection } from 'src/app/Models/DataModels/collections/NodeCollection';
+import { ExperienceService } from 'src/app/services/experience.service';
 
 
 @Component({
@@ -19,6 +20,7 @@ import { INodesStatusDetails, NodeCollection } from 'src/app/Models/DataModels/c
     standalone: false
 })
 export class DetailsComponent extends BaseControllerDirective {
+  public experience = inject(ExperienceService);
   private data = inject(DataService);
   private settings = inject(SettingsService);
 

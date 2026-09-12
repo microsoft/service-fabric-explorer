@@ -1,9 +1,9 @@
-<div>
+<div [class.modern-series]="modern">
   <div ngbNav #outernav="ngbNav" class="nav-wrapper" [destroyOnHide]="false">
     <div ngbNavItem>
       <a ngbNavLink>Charts</a>
       <ng-template ngbNavContent>
-        <div style="display: flex; " #inner>
+        <div style="display: flex; " #inner [class.series-layout]="modern" [class.has-selection]="!!currentItems">
           <div class="layout-container">
             <div class="helper-text">
               <span class="mif-info link"></span>
@@ -12,12 +12,35 @@
             @for (dataSet of data.series; track dataSet; let i = $index) {
               <div class="chart" data-cy="metric"
                 role="figure" [attr.aria-label]="dataSet.name + ' chart'" tabindex="0">
-                <span aria-hidden="true">{{dataSet.name}}</span>
+                <span aria-hidden="true" [class.series-heading]="modern">{{dataSet.name}}</span>
                 <div #container (mousemove)="interactionEvent($event, i)" class="chart-container"></div>
+                @if (modern) {
+                  <div class="series-legend" role="group" [attr.aria-label]="dataSet.name + ' series'">
+                    @for (series of data.dataSets; track series.name) {
+                      <button type="button" [class.series-hidden]="hiddenSeries.get(dataSet.name)?.has(series.name)" [attr.aria-pressed]="!hiddenSeries.get(dataSet.name)?.has(series.name)" (click)="toggleSeries(dataSet.name, series.name)">
+                        <i [style.background-color]="seriesColor(series.name)" aria-hidden="true"></i><span>{{series.name}}</span>
+                      </button>
+                    }
+                  </div>
+                  <div class="chart-height-handle" role="separator" tabindex="0" aria-orientation="horizontal" [attr.aria-label]="'Resize ' + dataSet.name + ' chart height'" aria-valuemin="200" aria-valuemax="800" [attr.aria-valuenow]="chartHeights[dataSet.name] || 260"
+                    title="Drag to resize. Arrow keys adjust height; Home resets."
+                    (pointerdown)="resizeChartHeight($event, dataSet.name)" (pointermove)="resizeChartHeight($event, dataSet.name)" (pointerup)="resizeChartHeight($event, dataSet.name)" (pointercancel)="resizeChartHeight($event, dataSet.name)" (lostpointercapture)="resizeChartHeight($event, dataSet.name)" (keydown)="resizeChartKey($event, dataSet.name)"></div>
+                }
               </div>
             }
           </div>
           @if (currentItems) {
+            @if (modern) {
+              <aside class="series-inspector" aria-label="Selected samples" data-cy="selecteditems">
+                <header><h3>Selected samples</h3><button type="button" (click)="clearSelectedPoint()" aria-label="Close selected samples">&times;</button></header>
+                @for (currentItem of currentItems; track itemTrackBy($index, currentItem)) {
+                  <section class="sample"><h4>{{currentItem.series.name}}</h4><app-display-time [time]="currentItem.pointData.x"></app-display-time>
+                    <dl>@for (tag of currentItem.tags; track $index) { <div><dt>{{tag.label}}</dt><dd>{{tag.y}}</dd></div> }</dl>
+                    <details><summary>Event details</summary><app-full-description [item]="currentItem.item"></app-full-description></details>
+                  </section>
+                }
+              </aside>
+            } @else {
             <div appDrag (dragFinish)="resize($event)" class="drag-bar"></div>
             <div class="selectedItems" [ngStyle]="{'width': currentItemsWidth + 'px'}" data-cy="selecteditems">
               <div class="inner">
@@ -35,6 +58,7 @@
                 </div>
               </div>
             </div>
+            }
           }
         </div>
       </ng-template>
@@ -42,6 +66,15 @@
     <div ngbNavItem>
       <a ngbNavLink>Data</a>
       <ng-template ngbNavContent>
+        @if (modern) {
+          <section class="series-data" aria-label="Naming metric data">
+            <header><h3>Metric reports</h3><label>Series <select aria-label="Data series" [(ngModel)]="dataSeries"><option value="" disabled>Select a series</option>@for (set of data.dataSets; track set.name) { <option [value]="set.name">{{set.name}} ({{set.values.length}})</option> }</select></label></header>
+            @if (selectedDataSet; as set) {
+              <p class="data-caption">{{set.name}} · {{set.values.length}} reports</p>
+              <app-detail-list [list]="set.values" [listSettings]="data.listSettings"></app-detail-list>
+            }
+          </section>
+        } @else {
         <div ngbNav #nav="ngbNav" class="nav-wrapper">
           @for (dataset of data.dataSets; track dataset) {
             <div ngbNavItem>
@@ -53,6 +86,7 @@
           }
         </div>
         <div [ngbNavOutlet]="nav"></div>
+        }
       </ng-template>
     </div>
   </div>

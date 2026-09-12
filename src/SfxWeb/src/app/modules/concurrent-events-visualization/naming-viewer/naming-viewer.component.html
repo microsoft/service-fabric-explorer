@@ -1,7 +1,41 @@
-@if (dataset.dataSets.length > 0) {
+@if (experience.isNew()) {
+  <section class="naming-controls" aria-label="Naming metric selection">
+    <div class="naming-toolbar">
+      <div ngbDropdown [autoClose]="'outside'">
+        <button type="button" ngbDropdownToggle>Partitions <span>{{selectedPartitionCount}} / {{overviewPanels.length}}</span></button>
+        <div ngbDropdownMenu class="naming-menu" aria-label="Partitions">
+          <input type="search" placeholder="Find a partition" aria-label="Find a naming partition" [(ngModel)]="partitionSearch">
+          <div class="selection-actions"><button type="button" (click)="togglePartitions(true)">Select all</button><button type="button" (click)="togglePartitions(false)">Clear</button></div>
+          <div class="naming-options">
+            @for (panel of visiblePartitions; track panel.sourceName) {
+              <label class="naming-choice"><input type="checkbox" [(ngModel)]="panel.toggled" (ngModelChange)="updateData()"><span>{{panel.sourceName}}<small>{{panel.reportCount}} reports · {{panel.requestCount | number}} requests</small></span></label>
+            } @empty { <p>No matching partitions.</p> }
+          </div>
+        </div>
+      </div>
+      <div ngbDropdown [autoClose]="'outside'">
+        <button type="button" ngbDropdownToggle [disabled]="!selectedPartitionCount">Operations <span>{{dataset.dataSets.length}} selected</span></button>
+        <div ngbDropdownMenu class="naming-menu" aria-label="Operations by partition">
+          <input type="search" placeholder="Find an operation" aria-label="Find a naming operation" [(ngModel)]="operationSearch">
+          <div class="selection-actions"><button type="button" (click)="toggleOperations(true)">Select all</button><button type="button" (click)="toggleOperations(false)">Clear</button></div>
+          <div class="naming-options">
+            @for (group of operationPanels; track group.panel.sourceName) {
+              <fieldset><legend>{{group.panel.sourceName}}</legend>
+                @for (operation of group.options; track operation.name) { <label class="naming-choice"><input type="checkbox" [(ngModel)]="operation.toggled" (ngModelChange)="updateData()"><span>{{operation.name}}</span></label> }
+              </fieldset>
+            } @empty { <p>No matching operations.</p> }
+          </div>
+        </div>
+      </div>
+      <span class="selection-note">{{selectedReportCount}} selected reports</span>
+    </div>
+  </section>
+}
+@if (dataset.dataSets.length > 0 || (experience.isNew() && overviewPanels.length > 0)) {
   <div>
+    @if (!experience.isNew()) {
     <div class="panel-container">
-      @for (panel of overviewPanels; track panel) {
+      @for (panel of overviewPanels; track panel.sourceName) {
         <div class="panel" data-cy="overviewpanel">
           <div class="text-container">
             <label ngbTooltip="Set where the partition is visible in the charts below" title="Set where the partition is visible in the charts below" tooltipClass="styled-tooltip">
@@ -13,10 +47,10 @@
           <div>
             <div class="operation-container">
               <div ngbDropdown #myDrop="ngbDropdown" [autoClose]="'outside'">
-                <button class="flat-button" ngbDropdownToggle [attr.aria-label]="'toggle operations ' + getToggled(panel.nestedOptions) + ' / ' + panel.nestedOptions.length + ' for ' + panel.name">
+                <button type="button" class="flat-button" ngbDropdownToggle [id]="'naming-operations-' + $index" [attr.aria-label]="'toggle operations ' + getToggled(panel.nestedOptions) + ' / ' + panel.nestedOptions.length + ' for ' + panel.name">
                   toggle operations ({{getToggled(panel.nestedOptions)}} / {{panel.nestedOptions.length}})
                 </button>
-                <ul ngbDropdownMenu aria-labelledby="dropdownBasic1" class="dropdown-container">
+                <ul ngbDropdownMenu [attr.aria-labelledby]="'naming-operations-' + $index" class="dropdown-container">
                   <li role="menuitem" class="check-options item">
                     <button aria-label="Check all options" class="flat-button"
                     (click)="bulkToggleStateChange(panel, true)">Check All</button>
@@ -40,7 +74,21 @@
         </div>
       }
     </div>
-    <app-timeseries [data]="dataset"></app-timeseries>
+    }
+    @if (dataset.dataSets.length > 0) {
+      @if (experience.isNew()) {
+        <p class="naming-chart-caption" role="status">Showing {{selectedReportCount}} reports across {{dataset.dataSets.length}} operation series.</p>
+        @if (hasSingleSampleSeries) { <p class="naming-sparse">Some operations have only one report in this range. A single point is a sample, not a trend. Widen the query range to look for more reports.</p> }
+      }
+      <app-timeseries [data]="dataset" [modern]="experience.isNew()"></app-timeseries>
+    } @else {
+      <div class="naming-empty" role="status"><strong>No metrics selected</strong><p>Select a partition and at least one operation above to display its reports.</p><button type="button" class="simple-button" (click)="showAllMetrics()">Show all reported metrics</button></div>
+    }
+  </div>
+} @else if (experience.isNew()) {
+  <div class="naming-empty" role="status">
+    <strong>{{!hasLoaded ? 'Loading naming metrics...' : failedSources ? 'Naming metrics are unavailable' : 'No naming metrics in this range'}}</strong>
+    <p>{{!hasLoaded ? 'Waiting for naming metric reports.' : failedSources ? 'Some event sources failed to load. Refresh or try another time range.' : 'No naming metric reports were returned. Choose another time range to look for activity.'}}</p>
   </div>
 } @else {
   <div class="text-center">

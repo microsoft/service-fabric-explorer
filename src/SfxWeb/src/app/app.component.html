@@ -3,7 +3,13 @@
   <button class="skip-to-content-link" (click)="setMainFocus()" role="button">
     Skip to content
   </button>
-  <header class="header-bar">
+  <header class="header-bar" [class.modern-header]="experience.isNew()">
+    @if (experience.isNew()) {
+      <button type="button" class="navigation-toggle" aria-label="Toggle navigation" aria-controls="navigation-tree" [attr.aria-expanded]="smallScreenSize ? smallScreenLeftPanelWidth !== '0%' : treeWidth !== '8px'" (click)="smallScreenSize ? resize(smallScreenLeftPanelWidth === '0%' ? 60 : 0) : collapseSide()">
+        <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="2" y="3" width="16" height="14" rx="2"/><path d="M7 3v14"/></svg>
+      </button>
+    }
+    <div class="header-branding">
     <a href="https://aka.ms/portalsfx" target="_blank" tabindex="0" sfx-tree-set-focus selected="true" >
       <div [class]="'navbar-brand navbar-brand-azure' + (shrinkAllHeaderItem ? ' navbar-brand-small' : '')">
         <span>
@@ -20,15 +26,38 @@
       }
     </a>
 
-    <app-cluster-upgrade-banner style="margin: auto;" [clusterUpgradeProgress]="dataService.clusterUpgradeProgress"></app-cluster-upgrade-banner>
+    </div>
+    <div class="header-status">
+      @if (experience.isNew()) {
+        @if (dataService.clusterUpgradeProgress.isInitialized && dataService.clusterUpgradeProgress.isUpgrading) {
+          <a class="upgrade-status" routerLink="/details" title="View cluster upgrade details" data-cy="upgradebanner">
+            <span class="status-indicator" aria-hidden="true"></span>
+            <span>Upgrade in progress</span>
+            <span class="upgrade-count">{{dataService.clusterUpgradeProgress.getCompletedUpgradeDomains()}} / {{dataService.clusterUpgradeProgress.upgradeDomains.length}} {{dataService.clusterUpgradeProgress.isUDUpgrade ? 'domains' : 'nodes'}}</span>
+          </a>
+        }
+      } @else {
+        <app-cluster-upgrade-banner [clusterUpgradeProgress]="dataService.clusterUpgradeProgress"></app-cluster-upgrade-banner>
+      }
+    </div>
 
-    <!-- push stuff to align right -->
-    <div style="margin-left: auto;"></div>
-    <div>
+    <div class="header-controls">
+    <div class="header-refresh">
       <app-refresh-rate [value]="refreshService.refreshRate" (rateChange)="refreshService.updateRefreshInterval($event)" [condensedVersion]="shrinkAllHeaderItem"
-      [refresh]="refreshService.isRefreshing" (forceRefreshed)="attemptForceRefresh()"></app-refresh-rate>
+      [modern]="experience.isNew()" [refresh]="refreshService.isRefreshing" (forceRefreshed)="attemptForceRefresh()"></app-refresh-rate>
     </div>
     <app-advanced-option></app-advanced-option>
+    <label class="experience-control">
+      <span>Experience</span>
+      @if (experience.isNew()) {
+        <app-select-menu label="SFX experience" value="new" (valueChange)="experience.setNew($event === 'new')" [options]="[{value: 'new', label: 'New'}, {value: 'classic', label: 'Classic'}]"></app-select-menu>
+      } @else {
+      <select aria-label="SFX experience" [value]="experience.isNew() ? 'new' : 'classic'" (change)="experience.setNew($any($event.target).value === 'new')">
+        <option value="new">New</option>
+        <option value="classic">Classic</option>
+      </select>
+      }
+    </label>
 
     @if (adalService.aadEnabled) {
       <div ngbDropdown display="'static'" placement="'bottom-left'">
@@ -48,8 +77,15 @@
       </div>
     }
 
-    <div ngbDropdown display="'static'" placement="'bottom-right'" class="report">
+    <div ngbDropdown display="dynamic" placement="bottom-end" class="report">
       <button ngbDropdownToggle class="mif-bug mif-lg flat-button round link" style="color: #70daf8" aria-label="Issue reporting options" ngbTooltip="Issue reporting options" tooltipClass="styled-tooltip"></button>
+      @if (experience.isNew()) {
+        <div ngbDropdownMenu class="issue-report-menu" aria-label="Issue reporting options">
+          <a ngbDropdownItem href="https://aka.ms/servicefabric/issues" target="_blank" rel="noopener noreferrer">Report Service Fabric Bug</a>
+          <a ngbDropdownItem href="https://aka.ms/servicefabricexplorer/issues" target="_blank" rel="noopener noreferrer">Report Service Fabric Explorer Bug</a>
+          <a ngbDropdownItem href="https://aka.ms/servicefabric/createsupportcase" target="_blank" rel="noopener noreferrer">Open a Support Case</a>
+        </div>
+      } @else {
       <ul ngbDropdownMenu style="padding: 10px;">
         <li ngbDropdownItem>
           <a href="https://aka.ms/servicefabric/issues" target="_blank">Report Service Fabric Bug</a>
@@ -61,19 +97,21 @@
           <a href="https://aka.ms/servicefabric/createsupportcase" target="_blank">Open a Support Case</a>
         </li>
       </ul>
+      }
+    </div>
     </div>
 
   </header>
 
   <div>
     <div class="left-panel left-bar"  [ngStyle]="{'width': smallScreenSize ? smallScreenLeftPanelWidth : treeWidth, 'display' : smallScreenSize ?  smallScreenTreeDisplay : treeDisplay, 'overflow' : smallScreenSize ? 'initial' : 'hidden' }">
-      @if (smallScreenSize && smallScreenLeftPanelWidth !== '0%') {
+      @if (!experience.isNew() && smallScreenSize && smallScreenLeftPanelWidth !== '0%') {
         <button class="simple-button sidenav-button close"
           (click)="resize(0)" tabindex="0" title="Close navigation tree panel">
           close
         </button>
       }
-      <nav class="tree-container" [attr.aria-hidden]="smallScreenSize ? smallScreenLeftPanelWidth === '0%' : false" role="navigation">
+      <nav id="navigation-tree" class="tree-container" [attr.aria-hidden]="smallScreenSize ? smallScreenLeftPanelWidth === '0%' : treeWidth === '8px'" role="navigation">
         <app-tree-view (treeResize)="resize($event)" [smallWindowSize]="smallScreenSize"  ></app-tree-view>
       </nav>
       @if (!smallScreenSize) {
@@ -87,11 +125,11 @@
     <div [ngStyle]="{'left': smallScreenSize ? '0px' : rightOffset }" class="right-panel main-content" >
       <main>
         <div class="expander-container" >
-          @if (!smallScreenSize) {
+          @if (!experience.isNew() && !smallScreenSize) {
             <button class="expander-icon mif-vertical-align-bottom" [ngClass]="{'flip': treeWidth === '8px'}" placement="right"
             [title]="(treeWidth === '8px' ? 'Expand' : 'Close') + ' tree view'" (click)="collapseSide()"></button>
           }
-          @if (smallScreenSize && smallScreenLeftPanelWidth === '0%') {
+          @if (!experience.isNew() && smallScreenSize && smallScreenLeftPanelWidth === '0%') {
             <button class="simple-button sidenav-button open"
               (click)="resize(60)" tabindex="0" title="Open navigation tree panel">
               menu
@@ -99,7 +137,6 @@
           }
         </div>
         <div class="view-container" (click)="smallScreenSize ? resize(0): null" (focusin)="smallScreenSize ? resize(0): null">
-
           <router-outlet id="view-container"></router-outlet>
         </div>
       </main>

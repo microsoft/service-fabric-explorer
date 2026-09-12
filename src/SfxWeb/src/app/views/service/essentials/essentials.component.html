@@ -1,20 +1,20 @@
 <div class="tile-container">
   @if (service && service.isInitialized) {
     <app-essential-health-tile [healthState]="$safeNavigationMigration(service?.healthState)" class="long"
-      [listItems]="essentialItems">
+      [listItems]="experience.isNew() ? overviewItems : essentialItems">
       <ng-template appEssentialTemplate id="status">
         <app-status-resolver [status]="service.raw.ServiceStatus"></app-status-resolver>
       </ng-template>
     </app-essential-health-tile>
   }
 
-  @if (service?.description.raw) {
+  @if (!experience.isNew() && service?.description.raw) {
     <app-tile-wrapper data-cy="state-data">
       <app-state-info [stateful]="service.isStatefulService" [data]="service.description.raw"></app-state-info>
     </app-tile-wrapper>
   }
 
-  @if (service?.description?.isInitialized) {
+  @if (!experience.isNew() && service?.description?.isInitialized) {
     <app-dashboard-text-scale-tile data-cy="placementconstraints">
       <div class="placement-constraint-wrapper">
         <div class="text-center ">

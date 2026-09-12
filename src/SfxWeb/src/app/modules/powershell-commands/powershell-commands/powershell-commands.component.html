@@ -1,39 +1,73 @@
+<div [class.modern-command-workspace]="experience.isNew()">
+@if (experience.isNew()) {
+  <p class="command-intro">Generate PowerShell for this resource. Commands are not executed in Service Fabric Explorer.</p>
+}
 <div ngbNav #nav="ngbNav" class="nav-wrapper" [(activeId)]="activeId" (navChange)="onNavChange($event)" data-cy="commandNav">
-  @if (safeCommands.length) {
+  @if (safeCommands.length || experience.isNew()) {
     <div [ngbNavItem]="1">
-      <a ngbNavLink data-cy="safeCommands">Safe Commands</a>
+      <a ngbNavLink data-cy="safeCommands">Safe Commands @if (experience.isNew()) { <span class="group-count">{{safeCommands.length}}</span> }</a>
       <ng-template ngbNavContent>
+        @if (experience.isNew()) {
+          <ng-container *ngTemplateOutlet="catalog; context: { $implicit: safeCommands }"></ng-container>
+        } @else {
         @for (command of safeCommands; track command) {
           <div>
             <app-command [command]="command" data-cy="command"></app-command>
           </div>
+        }
         }
       </ng-template>
     </div>
   }
   @if (unsafeCommands.length) {
     <div [ngbNavItem]="2">
-      <a ngbNavLink data-cy="unsafeCommands">Unsafe Commands</a>
+      <a ngbNavLink data-cy="unsafeCommands">Unsafe Commands @if (experience.isNew()) { <span class="group-count">{{unsafeCommands.length}}</span> }</a>
       <ng-template ngbNavContent>
+        @if (experience.isNew()) {
+          <ng-container *ngTemplateOutlet="catalog; context: { $implicit: unsafeCommands }"></ng-container>
+        } @else {
         @for (command of unsafeCommands; track command) {
           <div>
             <app-command [command]="command" data-cy="command"></app-command>
           </div>
+        }
         }
       </ng-template>
     </div>
   }
   @if (dangerousCommands.length) {
     <div [ngbNavItem]="3">
-      <a ngbNavLink data-cy="dangerousCommands">Dangerous Commands</a>
+      <a ngbNavLink data-cy="dangerousCommands">Dangerous Commands @if (experience.isNew()) { <span class="group-count">{{dangerousCommands.length}}</span> }</a>
       <ng-template ngbNavContent>
+        @if (experience.isNew()) {
+          <ng-container *ngTemplateOutlet="catalog; context: { $implicit: dangerousCommands }"></ng-container>
+        } @else {
         @for (command of dangerousCommands; track command) {
           <div>
             <app-command [command]="command" data-cy="command"></app-command>
           </div>
+        }
         }
       </ng-template>
     </div>
   }
 </div>
 <div [ngbNavOutlet]="nav"></div>
+<ng-template #catalog let-commands>
+  @let visible = visibleCommands(commands);
+  @let selected = selectedFor(visible);
+  <div class="command-workbench">
+    <section class="command-catalog" aria-label="Available commands">
+      <header><h2>Commands</h2><span>{{visible.length}}</span></header>
+      <div class="catalog-search"><input type="search" aria-label="Find a command" placeholder="Find a command" [(ngModel)]="search"></div>
+      <nav aria-label="Choose a command">
+        @for (command of visible; track command) {
+          <button type="button" [class.selected]="selected === command" [attr.aria-pressed]="selected === command" (click)="selectedCommand = command"><strong>{{command.name}}</strong><span>{{command.prefix.split(' ')[0]}}</span></button>
+        } @empty { <p class="catalog-empty">{{search ? 'No matching commands.' : 'No commands in this group.'}}</p> }
+      </nav>
+    </section>
+    @if (selected) { <app-command-editor [command]="selected"></app-command-editor> }
+    @else { <div class="editor-empty">{{search ? 'Try another command name.' : 'Choose another safety group to view available commands.'}}</div> }
+  </div>
+</ng-template>
+</div>

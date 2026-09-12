@@ -44,6 +44,7 @@ export class InfrastructureDocumentCollection extends DataModelCollectionBase<In
             mergeMap(services => {
                 const infrastructureServices = services.collection.filter(service => service.raw.TypeName === Constants.InfrastructureServiceType);
                 this.InfrastructureServiceList = infrastructureServices.map(service => service.raw.Name);
+                if (!infrastructureServices.length) { return of([] as InfrastructureDocumentCollectionItem[]); }
                 return forkJoin(
                     infrastructureServices.map(service =>
                         this.data.restClient.getInfrastructureDocs(service.id).pipe(

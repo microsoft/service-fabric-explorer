@@ -1,4 +1,18 @@
 @if (partition) {
+  @if (experience.isNew()) {
+    <div class="resource-details-layout">
+      <section class="resource-detail-card" aria-label="General">
+        <header class="resource-detail-header"><h2>General</h2></header>
+        <div class="resource-detail-body"><app-detail-view-part [data]="partition"></app-detail-view-part></div>
+      </section>
+      @if (partition.loadInformation && partition.loadInformation.isValid) {
+        <section class="resource-detail-card" aria-label="Load Information">
+          <header class="resource-detail-header"><h2>Load Information</h2></header>
+          <div class="resource-detail-body"><app-detail-view-part [data]="partition.loadInformation.raw" [parent]="partition.loadInformation"></app-detail-view-part></div>
+        </section>
+      }
+    </div>
+  } @else {
   <div>
     <div class="detail-pane essen-pane">
       <app-detail-view-part [data]="partition"></app-detail-view-part>
@@ -11,4 +25,5 @@
       </div>
     }
   </div>
+  }
 }

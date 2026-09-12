@@ -8,6 +8,16 @@
         </div>
     </div>
 </ng-template>
+@if (experience.isNew()) {
+  <span class="timestamp">
+    <span class="timestamp-value" [ngbTooltip]="popTemplate" container="body" tooltipClass="styled-tooltip" tabindex="0">
+      <svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false"><circle cx="10" cy="10" r="7.5"/><path d="M10 5.5V10l3 2"/></svg>
+      <time [attr.datetime]="localTime">{{time}}</time>
+    </span>
+    <app-clip-board [text]="time" name="timestamp" tooltipText="Copy timestamp"></app-clip-board>
+  </span>
+} @else {
 <div [ngbTooltip]="popTemplate" container="body"  tooltipClass="styled-tooltip" tabindex="0">
     <span class="mif-hour-glass" style="color: #70daf8;"></span> {{time}}
 </div>
+}

@@ -1,3 +1,36 @@
+@if (experience.isNew()) {
+  <section class="replication-card" [attr.data-cy]="replica.id" aria-label="Replica">
+    <header class="replication-card-header">
+      <h3>{{detailPanel ? 'Selected replica replication' : 'Replica'}}</h3><app-health-badge [badgeClass]="replica.healthState.badgeClass" [text]="replica.healthState.text"></app-health-badge>
+      <app-clip-board [text]="copyText" name="Replica JSON"></app-clip-board>
+      @if (detailPanel) { <button type="button" class="replication-button" aria-label="Close replication panel" (click)="showReplicationChange.emit(false)">&times;</button> }
+    </header>
+    <div class="replication-card-body">
+      @if (detailPanel) { <p class="selected-replica-id">Replica {{replica.id}} · {{replica.raw.NodeName}}</p> }
+      @else {
+      <dl class="replication-fields replica-overview" data-cy="main-info">
+        @for (item of overviewItems; track item.descriptionName) {
+          <div class="replication-field"><dt>{{item.descriptionName}}</dt><dd><span>{{item.displayText}}</span><app-clip-board [text]="item.copyTextValue" [name]="item.descriptionName"></app-clip-board></dd></div>
+        }
+        <div class="replication-field"><dt>Status</dt><dd><span>{{replica.raw.ReplicaStatus}}</span><app-clip-board [text]="replica.raw.ReplicaStatus" name="Status"></app-clip-board></dd></div>
+      </dl>
+      @if (replicator) {
+        <button type="button" class="replication-button" (click)="changeReplication()" [attr.aria-expanded]="showReplication" data-cy="view-replication">{{showReplication ? 'Close' : 'View'}} Replication</button>
+      }
+      }
+      @if (detailPanel && replicator) {
+        <div class="replication-expanded-content">
+          <section class="replication-chart" aria-label="Replication rate">
+            <div class="replication-chart-toolbar"><h4>LSNs replicated per second</h4><button type="button" class="replication-button" (click)="changeFullScreen()" [attr.aria-pressed]="fullScreen">{{fullScreen ? 'Shrink chart' : 'Expand chart'}}</button><label><input type="checkbox" [checked]="showUTC" (change)="showUTC = $any($event.target).checked"> UTC</label></div>
+            <p>History is recorded while this tab is open and cleared when you leave.</p>
+            <div class="replication-chart-plot" [class.chart-expanded]="fullScreen"><app-replication-trend-line [data]="replicatorHistory" [showUTC]="showUTC" [fullScreen]="fullScreen"></app-replication-trend-line></div>
+          </section>
+          <div data-cy="replicator-info"><app-replica-status [replicator]="replicator"></app-replica-status></div>
+        </div>
+      }
+    </div>
+  </section>
+} @else {
 <div class="replica-container essen-pane" [ngClass]="leftBannerColor" [attr.data-cy]="replica.id">
   <div class="top-side">
     <app-health-badge [badgeClass]="replica.healthState.badgeClass" size="25px"></app-health-badge>
@@ -55,3 +88,4 @@
   </div>
 
 </div>
+}

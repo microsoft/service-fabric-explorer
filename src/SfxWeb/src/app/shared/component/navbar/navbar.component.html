@@ -17,6 +17,7 @@
         }
       </div>
       <ng-content select="[warning]"></ng-content>
+      @if (tabs.length) {
       <div class="detail-view-navbar nav-wrapper" role="tablist" [attr.aria-label]="name" data-cy="navtabs">
         @for (tab of tabs; track tab; let i = $index) {
           <a  #rla="routerLinkActive" [attr.aria-selected]="rla.isActive" [routerLink]="tab.route"
@@ -25,6 +26,7 @@
         }
         <!-- <div ng-if="tab.superscriptInHtml" class="tab-superscript {{::tab.superscriptClass}}" sfx-bind-html-compile="tab.superscriptInHtml()"></div> -->
       </div>
+      }
     </div>
     @if (actions && actions.length > 0) {
       <div class="actions">

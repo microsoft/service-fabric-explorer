@@ -1,3 +1,6 @@
 .cell-wrapper {
     margin-bottom: 10px;
 }
+.cluster-detail-sections { display: grid; gap: 16px; }
+.cluster-detail-sections > section { min-width: 0; }
+.empty-description { margin: 0; color: #8b949e; }

@@ -5,6 +5,7 @@ import { ApplicationTypeGroup } from 'src/app/Models/DataModels/ApplicationType'
 import { mergeMap } from 'rxjs/operators';
 import { forkJoin, Observable } from 'rxjs';
 import { ApplicationTypeBaseControllerDirective } from '../ApplicationTypeBase';
+import { ExperienceService } from 'src/app/services/experience.service';
 
 @Component({
     selector: 'app-details',
@@ -14,6 +15,7 @@ import { ApplicationTypeBaseControllerDirective } from '../ApplicationTypeBase';
     standalone: false
 })
 export class DetailsComponent extends ApplicationTypeBaseControllerDirective {
+  public experience = inject(ExperienceService);
   protected data: DataService = inject(DataService);
 
   appTypeName!: string;

@@ -1,0 +1,25 @@
+<section class="duration-card" aria-label="Repair job durations">
+  <header><h2>Job Durations</h2><span>{{rows.length}} jobs</span></header>
+  <div class="duration-body">
+    <div class="duration-toolbar">
+      <input type="search" aria-label="Find jobs by ID, action or state" placeholder="Find a job or action" [value]="query" (input)="query = $any($event.target).value; update(true)">
+      <label>Order <app-select-menu label="Duration order" [value]="order" (valueChange)="order = $event; update(true)" [options]="[{value: 'longest', label: 'Longest first'}, {value: 'shortest', label: 'Shortest first'}, {value: 'table', label: 'Table order'}]"></app-select-menu></label>
+    </div>
+    <div class="phase-legend" aria-label="Repair phases">@for (phase of phases; track phase) { <span><i [attr.data-phase]="phase"></i>{{phase}}</span> }</div>
+    <p class="duration-hint">Bars compare the combined Preparing, Executing, and Restoring time. Table filters apply. Missing phases are marked unavailable.</p>
+    @if (rows.length) {
+      <div class="duration-scale"><span>0</span><span>{{duration(maximum)}}</span></div>
+      @for (row of visible; track row.id) {
+        <article class="duration-row">
+          <div class="job-heading"><button type="button" [title]="row.id" (click)="inspectJob.emit(row.id)">{{row.id}}</button><span>{{row.state}}</span><strong>{{duration(row.total)}}</strong></div>
+          <p class="job-action">{{row.action}}</p>
+          <div class="duration-bar" role="img" [attr.aria-label]="'Combined phase duration: ' + duration(row.total)">
+            @for (phase of row.phases; track phase.name) { <span [attr.data-phase]="phase.name" [style.width.%]="(phase.duration ?? 0) / maximum * 100" [title]="phase.name + ': ' + duration(phase.duration)"></span> }
+          </div>
+          <dl class="phase-values">@for (phase of row.phases; track phase.name) { <div><dt>{{phase.name}}</dt><dd>{{duration(phase.duration)}}</dd></div> }</dl>
+        </article>
+      }
+    } @else { <p class="duration-empty">{{query ? 'No jobs match this search.' : 'No repair jobs available for the duration graph.'}}</p> }
+    @if (pages > 1) { <nav aria-label="Duration graph pages"><button type="button" [disabled]="page === 1" (click)="page = page - 1">Previous</button><span>{{page}} / {{pages}}</span><button type="button" [disabled]="page === pages" (click)="page = page + 1">Next</button></nav> }
+  </div>
+</section>

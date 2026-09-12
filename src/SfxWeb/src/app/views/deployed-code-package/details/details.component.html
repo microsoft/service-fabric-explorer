@@ -1,5 +1,16 @@
+@if (experience.isNew()) {
+  @if (deployedCodePackage) {
+    <div class="resource-details-layout">
+      <section class="resource-detail-card" aria-label="General">
+        <header class="resource-detail-header"><h2>General</h2></header>
+        <div class="resource-detail-body"><app-detail-view-part [data]="deployedCodePackage"></app-detail-view-part></div>
+      </section>
+    </div>
+  }
+} @else {
 <div class="detail-pane essen-pane">
   @if (deployedCodePackage) {
     <app-detail-view-part [data]="deployedCodePackage"></app-detail-view-part>
   }
 </div>
+}

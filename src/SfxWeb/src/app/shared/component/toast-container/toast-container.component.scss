@@ -5,3 +5,10 @@
     margin: 0.5em;
     z-index: 1200;
   }
+:host(.modern-toasts) { display: flex; flex-direction: column; gap: 12px; width: min(440px, calc(100vw - 32px)); max-height: calc(100dvh - 32px); overflow-y: auto; margin: 0; bottom: 16px; right: 16px; scrollbar-width: thin; }
+.notification { --notification-accent: #58a6ff; width: 100%; flex-shrink: 0; }
+.notification[data-severity=bg-danger] { --notification-accent: #f85149; }
+.notification[data-severity=bg-warning] { --notification-accent: #d29922; }
+.notification-icon { display: inline-flex; align-items: center; justify-content: center; flex: 0 0 20px; height: 20px; border: 1px solid currentColor; border-radius: 50%; color: var(--notification-accent); font-weight: 600; margin-right: 10px; }
+.notification-title { color: #e6edf3; font-size: 15px; font-weight: 600; overflow-wrap: anywhere; }
+.notification-message { color: #c9d1d9; font: 400 15px/1.6 var(--font-family-ui); white-space: pre-wrap; overflow-wrap: anywhere; max-height: 240px; overflow-y: auto; }

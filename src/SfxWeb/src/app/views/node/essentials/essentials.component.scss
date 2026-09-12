@@ -11,3 +11,9 @@
     line-height: 1.2;
   }
 }
+.tile-container > .node-count-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; flex: 0 0 100%; max-width: 100%; }
+.node-count-grid .resource-detail-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.node-count-grid .resource-detail-header a { color: #58a6ff; }
+.node-count-value { color: #e6edf3; font: 600 28px/1.2 var(--font-family-ui); font-variant-numeric: tabular-nums; margin-bottom: 8px; }
+.node-count-grid p { margin: 0; color: #8b949e; font: 400 15px/1.5 var(--font-family-ui); overflow-wrap: anywhere; }
+@media (max-width: 1000px) { .tile-container > .node-count-grid { grid-template-columns: minmax(0, 1fr); } }

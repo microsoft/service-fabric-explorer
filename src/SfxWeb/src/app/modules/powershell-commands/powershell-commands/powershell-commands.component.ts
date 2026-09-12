@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component, Input, ViewChild, OnChanges, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, ViewChild, OnChanges, OnDestroy, inject } from '@angular/core';
+import { ExperienceService } from 'src/app/services/experience.service';
+import { Subscription } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { NgbNav, NgbNavChangeEvent } from '@ng-bootstrap/ng-bootstrap';
 import { CommandSafetyLevel, PowershellCommand } from 'src/app/Models/PowershellCommand';
@@ -13,7 +15,23 @@ import { IModalBody, IModalData, IModalTitle } from 'src/app/ViewModels/Modal';
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: false
 })
-export class PowershellCommandsComponent implements IModalData, OnChanges{
+export class PowershellCommandsComponent implements IModalData, OnChanges, OnDestroy {
+  public experience = inject(ExperienceService);
+  private cdr = inject(ChangeDetectorRef);
+  private warningSubscription?: Subscription;
+  public search = '';
+  public selectedCommand?: PowershellCommand;
+
+  visibleCommands(commands: PowershellCommand[]) {
+    const query = this.search.trim().toLowerCase();
+    return commands.filter(command => !query || `${command.name} ${command.prefix}`.toLowerCase().includes(query));
+  }
+
+  selectedFor(commands: PowershellCommand[]) {
+    return this.selectedCommand && commands.includes(this.selectedCommand) ? this.selectedCommand : commands[0];
+  }
+
+  ngOnDestroy() { this.warningSubscription?.unsubscribe(); }
   protected dialog = inject(MatDialog);
   protected settings = inject(SettingsService);
 
@@ -40,10 +58,12 @@ export class PowershellCommandsComponent implements IModalData, OnChanges{
     this.safeCommands = this.getCommandsBySafety(this.safetyLevelEnum.safe);
     this.unsafeCommands = this.getCommandsBySafety(this.safetyLevelEnum.unsafe);
     this.dangerousCommands = this.getCommandsBySafety(this.safetyLevelEnum.dangerous);
+    if (this.selectedCommand && !this.commands.includes(this.selectedCommand)) { this.selectedCommand = undefined; }
 
   }
 
   onNavChange(e: NgbNavChangeEvent) {
+    this.search = '';
     if (e.nextId == 2 && !this.settings.getSessionVariable<boolean>('unsafeCommandsWarned')) {
       e.preventDefault();
       this.modalBody.inputs.message = "The commands you are about to view are potentially unsafe, and executing them can result in undesirable results. Please ensure you understand their risks."
@@ -58,7 +78,7 @@ export class PowershellCommandsComponent implements IModalData, OnChanges{
   }
 
   getCommandsBySafety(level: CommandSafetyLevel): PowershellCommand[] {
-    return this.commands.filter(c => c.safetyLevel === level);
+    return (this.commands || []).filter(c => c.safetyLevel === level);
   }
 
   openWarningModal(warnedVar: string, navId: number) {
@@ -66,10 +86,12 @@ export class PowershellCommandsComponent implements IModalData, OnChanges{
       data: this, panelClass: 'mat-dialog-container-wrapper'
     });
   
-    dialogRef.afterClosed().subscribe(result => {
+    this.warningSubscription?.unsubscribe();
+    this.warningSubscription = dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.nav.select(navId);
         this.settings.setSessionVariable<boolean>(warnedVar, true);
+        this.nav?.select(navId);
+        this.cdr.markForCheck();
       } 
     });
   }

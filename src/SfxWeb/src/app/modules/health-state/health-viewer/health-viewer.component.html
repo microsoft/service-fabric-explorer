@@ -1,14 +1,15 @@
+<ng-template #healthHelp><a href="https://aka.ms/sfhealth" target="_blank" rel="noopener noreferrer">Learn about SF Health Reports</a></ng-template>
 <div ngbNav #nav="ngbNav" class="nav-wrapper">
     <div ngbNavItem>
         <a ngbNavLink>Unhealthy</a>
         <ng-template ngbNavContent>
-            <app-detail-list [list]="unhealthyEvaluations" [listSettings]="unhealthyEvaluationsListSettings"></app-detail-list>
+            <app-detail-list [list]="unhealthyEvaluations" [listSettings]="unhealthyEvaluationsListSettings" [toolbarTemplate]="experience.isNew() ? healthHelp : undefined"></app-detail-list>
         </ng-template>
     </div>
     <div ngbNavItem>
         <a ngbNavLink>All</a>
         <ng-template ngbNavContent>
-            <app-detail-list [list]="healthyEvaluations" [listSettings]="healthEventsListSettings"></app-detail-list>
+            <app-detail-list [class.modern-health-events]="experience.isNew()" [list]="healthyEvaluations" [listSettings]="experience.isNew() ? modernHealthEventsListSettings : healthEventsListSettings" [toolbarFilterProperties]="experience.isNew() ? ['healthState'] : []" [toolbarTemplate]="experience.isNew() ? healthHelp : undefined"></app-detail-list>
         </ng-template>
     </div>
 </div>

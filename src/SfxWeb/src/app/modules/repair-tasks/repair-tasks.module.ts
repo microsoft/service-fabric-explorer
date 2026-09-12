@@ -6,11 +6,12 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { DetailListTemplatesModule } from '../detail-list-templates/detail-list-templates.module';
 import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { RouterModule } from '@angular/router';
+import { RepairDurationComponent } from './repair-duration/repair-duration.component';
 
 
 
 @NgModule({
-  declarations: [RepairJobChartComponent, RepairTaskViewComponent],
+  declarations: [RepairJobChartComponent, RepairTaskViewComponent, RepairDurationComponent],
   imports: [
     CommonModule,
     SharedModule,
@@ -18,6 +19,6 @@ import { RouterModule } from '@angular/router';
     NgbNavModule,
     RouterModule
   ],
-  exports: [RepairJobChartComponent, RepairTaskViewComponent]
+  exports: [RepairJobChartComponent, RepairTaskViewComponent, RepairDurationComponent]
 })
 export class RepairTasksModule { }

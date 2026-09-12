@@ -1,4 +1,20 @@
 @if (replica) {
+  @if (experience.isNew()) {
+    <div class="resource-details-layout">
+    <section class="resource-detail-card" aria-labelledby="replica-general-title">
+      <header class="resource-detail-header"><h2 id="replica-general-title">General</h2></header>
+      <div class="resource-detail-body">
+        <app-detail-view-part [data]="replica"></app-detail-view-part>
+      </div>
+    </section>
+    <section class="resource-detail-card" aria-labelledby="replica-details-title">
+      <header class="resource-detail-header"><h2 id="replica-details-title">Details</h2></header>
+      <div class="resource-detail-body">
+        <app-detail-view-part [data]="replica.detail.raw" [parent]="replica.detail"></app-detail-view-part>
+      </div>
+    </section>
+    </div>
+  } @else {
   <div>
     <div class="detail-pane essen-pane">
       <app-collapse-container sectionName="General">
@@ -23,4 +39,5 @@
       </app-collapse-container>
     </div>
   </div>
+  }
 }

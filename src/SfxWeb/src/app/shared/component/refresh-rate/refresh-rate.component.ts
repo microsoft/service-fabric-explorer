@@ -18,6 +18,7 @@ export class RefreshRateComponent {
   }
 
   @Input() condensedVersion = false;
+  @Input() modern = false;
 
   @Output() rateChange = new EventEmitter<string>();
   @Output() forceRefreshed = new EventEmitter<any>();

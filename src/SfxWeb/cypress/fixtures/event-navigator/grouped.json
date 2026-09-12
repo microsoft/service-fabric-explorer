@@ -1,0 +1,7 @@
+[
+  { "Kind": "NodeAddedToCluster", "EventInstanceId": "group-event-0", "NodeName": "group-node-0", "TimeStamp": "2026-09-10T10:00:00.000Z", "Category": "StateTransition", "HasCorrelatedEvents": false },
+  { "Kind": "NodeAddedToCluster", "EventInstanceId": "group-event-1", "NodeName": "group-node-1", "TimeStamp": "2026-09-10T10:00:00.010Z", "Category": "StateTransition", "HasCorrelatedEvents": false },
+  { "Kind": "NodeAddedToCluster", "EventInstanceId": "group-event-2", "NodeName": "group-node-2", "TimeStamp": "2026-09-10T10:00:00.020Z", "Category": "StateTransition", "HasCorrelatedEvents": false },
+  { "Kind": "NodeAddedToCluster", "EventInstanceId": "group-event-3", "NodeName": "group-node-3", "TimeStamp": "2026-09-10T10:00:00.030Z", "Category": "StateTransition", "HasCorrelatedEvents": false },
+  { "Kind": "NodeAddedToCluster", "EventInstanceId": "group-event-4", "NodeName": "group-node-4", "TimeStamp": "2026-09-10T10:00:00.040Z", "Category": "StateTransition", "HasCorrelatedEvents": false }
+]

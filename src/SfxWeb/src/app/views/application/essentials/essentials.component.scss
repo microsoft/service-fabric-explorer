@@ -3,3 +3,5 @@
   font-size: var(--font-size-default);
   gap: 5px;
 }
+
+.exit-links { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px 20px; margin: 12px 0 0; font: 400 15px/1.5 var(--font-family-ui); }

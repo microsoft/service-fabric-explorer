@@ -5,6 +5,7 @@ import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers'
 import { Observable, of } from 'rxjs';
 import { RoutesService } from 'src/app/services/routes.service';
 import { IEssentialListItem } from 'src/app/modules/charts/essential-health-tile/essential-health-tile.component';
+import { ExperienceService } from 'src/app/services/experience.service';
 
 @Component({
     selector: 'app-essentials',
@@ -14,12 +15,14 @@ import { IEssentialListItem } from 'src/app/modules/charts/essential-health-tile
     standalone: false
 })
 export class EssentialsComponent extends DeployedReplicaBaseControllerDirective {
+  public experience = inject(ExperienceService);
   protected data: DataService = inject(DataService);
 
   appView!: string;
 
   essentialItems: IEssentialListItem[] = [];
   essentialItems2: IEssentialListItem[] = [];
+  overviewItems: IEssentialListItem[] = [];
 
   setup() {
     this.essentialItems = [];
@@ -88,6 +91,7 @@ export class EssentialsComponent extends DeployedReplicaBaseControllerDirective 
         displayText: this.replica.role
       });
     }
+    this.overviewItems = [...this.essentialItems, ...this.essentialItems2];
     return of(null);
   }
 }
