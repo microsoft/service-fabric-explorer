@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy, ViewChild, ElementRef } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { DataService } from 'src/app/services/data.service';
 import { ServiceType, CreateServiceDescription } from 'src/app/Models/DataModels/Service';
@@ -17,6 +17,8 @@ export class CreateServiceComponent implements OnInit {
   private dataService = inject(DataService);
 
 
+  @ViewChild('createServiceForm') form!: ElementRef<HTMLFormElement>;
+
   description!: CreateServiceDescription;
   serviceType!: ServiceType;
 
@@ -26,6 +28,10 @@ export class CreateServiceComponent implements OnInit {
   }
 
   create() {
+    if (!this.form.nativeElement.checkValidity()) {
+      return;
+    }
+
     this.serviceType.createService(this.description).subscribe(() => {
       if (this.description) {
         // when success, reset the dialog

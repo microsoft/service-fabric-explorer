@@ -4,7 +4,7 @@
       <div class="flex-center"  style="height: 100%;">
         @if (healthState) {
           <div class="badge-container">
-            <app-health-badge [badgeClass]="healthState.badgeClass" size="75px"></app-health-badge>
+            <app-health-badge [badgeClass]="healthState.badgeClass" [text]="healthState.text" [showText]="false" size="75px"></app-health-badge>
           </div>
         }
         <div class="right-side-wrapper">
