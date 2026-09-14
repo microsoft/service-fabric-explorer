@@ -9,3 +9,31 @@ updates:
       interval: "weekly"
     cooldown:
       default-days: 7
+  - package-ecosystem: "npm"
+    directory: "/src/SfxWeb"
+    groups:
+      production-dependencies:
+        dependency-type: "production"
+      development-dependencies:
+        dependency-type: "development"
+      security-updates:
+        applies-to: security-updates
+        patterns: ["*"]
+    schedule:
+      interval: "weekly"
+    cooldown:
+      default-days: 7
+  - package-ecosystem: "npm"
+    directory: "/src/Sfx-Proxy"
+    groups:
+      production-dependencies:
+        dependency-type: "production"
+      development-dependencies:
+        dependency-type: "development"
+      security-updates:
+        applies-to: security-updates
+        patterns: ["*"]
+    schedule:
+      interval: "weekly"
+    cooldown:
+      default-days: 7
