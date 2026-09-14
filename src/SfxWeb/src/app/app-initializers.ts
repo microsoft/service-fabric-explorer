@@ -27,7 +27,7 @@ export function initApp(aadService: MsalService, standaloneIntegrationService: S
 
       if (aadService.aadEnabled) {
         await aadService.handleWindowCallback();
-        if (!aadService.isAuthenticated) {
+        if (!aadService.isAuthenticated && !aadService.authError) {
           await aadService.login();
         }
       }

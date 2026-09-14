@@ -79,4 +79,25 @@ describe('MsalService', () => {
     expect(loginRedirect).toHaveBeenCalledWith(expect.objectContaining({ scopes: ['cluster-id/.default'] }));
   });
 
+  it('surfaces a SPA-registration error when token redemption fails cross-origin', async () => {
+    const service: MsalService = TestBed.inject(MsalService);
+
+    restClientMock.getAADmetadata = (): Observable<AadMetadata> => of(new AadMetadata({
+      type: 'aad',
+      metadata: { login: 'https://login.microsoftonline.com', authority: '', client: 'client-id', cluster: 'cluster-id', redirect: '', tenant: 'tenant-id' }
+    }));
+
+    await service.load().toPromise();
+
+    vi.spyOn(service.authContext, 'handleRedirectPromise').mockRejectedValue({
+      errorCode: 'invalid_request',
+      errorMessage: "AADSTS9002326: Cross-origin token redemption is permitted only for the 'Single-Page Application' client-type."
+    });
+
+    await service.handleWindowCallback();
+
+    expect(service.authError).toContain('Single-page application');
+    expect(service.isAuthenticated).toBeFalsy();
+  });
+
 });
