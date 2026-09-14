@@ -1,0 +1,51 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "siteName": { "type": "string", "defaultValue": "servicefabricexplorerv2" },
+    "planName": { "type": "string", "defaultValue": "davidzhang-sfx-preview-plan" },
+    "location": { "type": "string", "defaultValue": "canadacentral" },
+    "sku": { "type": "string", "defaultValue": "F1", "allowedValues": ["F1", "B1"] }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Web/serverfarms", "apiVersion": "2023-12-01",
+      "name": "[parameters('planName')]", "location": "[parameters('location')]",
+      "sku": { "name": "[parameters('sku')]", "capacity": 1 },
+      "properties": { "reserved": false },
+      "tags": { "purpose": "SFX snapshot PR preview", "owner": "davidzhang" }
+    },
+    {
+      "type": "Microsoft.Web/sites", "apiVersion": "2023-12-01",
+      "name": "[parameters('siteName')]", "location": "[parameters('location')]",
+      "dependsOn": ["[resourceId('Microsoft.Web/serverfarms', parameters('planName'))]"],
+      "tags": { "purpose": "SFX snapshot PR preview", "owner": "davidzhang" },
+      "properties": {
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('planName'))]",
+        "httpsOnly": true,
+        "publicNetworkAccess": "Enabled",
+        "siteConfig": {
+          "minTlsVersion": "1.2", "scmMinTlsVersion": "1.2", "ftpsState": "Disabled",
+          "ipSecurityRestrictions": [{ "ipAddress": "CorpNetPublic", "tag": "ServiceTag", "action": "Allow", "priority": 100, "name": "CorpNetPublic-only" }],
+          "ipSecurityRestrictionsDefaultAction": "Deny",
+          "scmIpSecurityRestrictionsUseMain": true,
+          "scmIpSecurityRestrictionsDefaultAction": "Deny",
+          "appSettings": [{ "name": "SCM_DO_BUILD_DURING_DEPLOYMENT", "value": "false" }]
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Web/sites/basicPublishingCredentialsPolicies", "apiVersion": "2023-12-01",
+      "name": "[concat(parameters('siteName'), '/scm')]",
+      "dependsOn": ["[resourceId('Microsoft.Web/sites', parameters('siteName'))]"],
+      "properties": { "allow": false }
+    },
+    {
+      "type": "Microsoft.Web/sites/basicPublishingCredentialsPolicies", "apiVersion": "2023-12-01",
+      "name": "[concat(parameters('siteName'), '/ftp')]",
+      "dependsOn": ["[resourceId('Microsoft.Web/sites', parameters('siteName'))]"],
+      "properties": { "allow": false }
+    }
+  ],
+  "outputs": { "url": { "type": "string", "value": "[concat('https://', reference(resourceId('Microsoft.Web/sites', parameters('siteName'))).defaultHostName)]" } }
+}

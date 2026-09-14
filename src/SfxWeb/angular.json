@@ -54,6 +54,27 @@
             "main": "src/main.ts"
           },
           "configurations": {
+            "preview": {
+              "optimization": {
+                "scripts": true,
+                "styles": { "minify": true, "inlineCritical": false },
+                "fonts": true
+              },
+              "main": "src/main.preview.ts",
+              "tsConfig": "tsconfig.preview.json",
+              "outputPath": "dist-preview",
+              "scripts": ["src/preview/snapshot.js"],
+              "assets": [
+                "src/favicon.png",
+                "src/assets",
+                { "glob": "snapshot.json", "input": "preview-data", "output": "preview" },
+                { "glob": "web.config", "input": "src/preview", "output": "/" }
+              ],
+              "fileReplacements": [
+                { "replace": "src/environments/environment.ts", "with": "src/environments/environment.preview.ts" },
+                { "replace": "src/app/services/telemetry.service.ts", "with": "src/preview/telemetry.service.ts" }
+              ]
+            },
             "accesstesting": {
               "fileReplacements": [
                 {

@@ -289,3 +289,13 @@ __pycache__/
 
 playbackRecordings/
 src/sfxWeb/.nyc_output
+
+# Local cluster snapshots and generated preview artifacts (never commit cluster data).
+src/SfxWeb/preview-data/
+src/SfxWeb/dist-preview/
+src/SfxWeb/preview-artifacts/
+
+# Local-only helpers and planning documents.
+/sfx-live-proxy.ps1
+/CAPABILITY_CONTRACT.md
+/capability_contract.md
