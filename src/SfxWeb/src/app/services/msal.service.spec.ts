@@ -111,7 +111,7 @@ describe('MsalService', () => {
 
     await service.handleWindowCallback();
 
-    expect(service.authError).toContain('Single-page application');
+    expect(service.authErrorCode).toBe('9002326');
     expect(service.isAuthenticated).toBeFalsy();
   });
 

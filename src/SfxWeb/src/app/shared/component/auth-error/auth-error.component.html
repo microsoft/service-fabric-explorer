@@ -1,0 +1,35 @@
+<div class="auth-error">
+  <div class="detail-pane essen-pane" role="alert">
+    @if (isSpaRegistrationError) {
+      <h2>Sign-in could not complete</h2>
+      <p>
+        This cluster's Microsoft Entra app registration (client id <strong>{{ clientId }}</strong>) does not have the
+        reply URL <strong>{{ redirectUri }}</strong> registered under the <strong>Single-page application</strong> platform. To fix
+        it, open the app registration in the Azure portal &rarr; <strong>Authentication</strong>, add
+        <strong>{{ redirectUri }}</strong> as a <strong>Single-page application</strong> redirect URI (removing
+        it from <strong>Web</strong> if present), then reload this page.
+      </p>
+      <p>
+        Service Fabric Explorer runs entirely in your browser and finishes sign-in using
+        <strong>cross-origin token redemption</strong> &mdash; it exchanges the authorization code for a
+        token by calling Microsoft Entra directly from this page's script. Microsoft Entra only permits
+        cross-origin token redemption for reply URLs registered under the
+        <strong>Single-page application</strong> platform.
+      </p>
+      <p>
+        Service Fabric Explorer previously signed in with ADAL (Azure AD Authentication Library), which is
+        now deprecated. ADAL redeemed the token in a way that worked with reply URLs registered under the
+        <strong>Web</strong> platform, so this app registration was likely configured for ADAL. The current,
+        standards-compliant MSAL (Microsoft Authentication Library) uses the OAuth 2.0 authorization code
+        flow with PKCE for single-page apps, so a <strong>Web</strong>-registered reply URL that worked
+        under ADAL is now rejected.
+      </p>
+    } @else {
+      <h2>Sign-in failed</h2>
+      <p>Sign-in did not complete. Reload the page to try again.</p>
+      @if (errorCode) {
+        <p>Error code: {{ errorCode }}</p>
+      }
+    }
+  </div>
+</div>

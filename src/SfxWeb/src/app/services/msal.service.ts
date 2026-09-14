@@ -24,7 +24,7 @@ export class MsalService {
   private context!: PublicClientApplication;
   public config!: AadMetadata;
   public aadEnabled = false;
-  public authError: string | null = null;
+  public authErrorCode: string | null = null;
   private scopes: string[] = [];
 
   load(): Observable<PublicClientApplication | undefined> {
@@ -86,26 +86,16 @@ export class MsalService {
         }
       }
     } catch (e) {
-      this.authError = this.describeAuthError(e);
+      // Report only the error code; the auth-error component renders the matching guidance.
+      if (e instanceof ServerError && e.errorNo) {
+        this.authErrorCode = String(e.errorNo);
+      } else if (e instanceof AuthError) {
+        this.authErrorCode = e.errorCode;
+      } else {
+        this.authErrorCode = 'unknown';
+      }
       console.error(e);
     }
-  }
-
-  // AADSTS9002326 is returned by the /token call when the reply URL is registered under "Web"
-  // instead of "Single-page application"; MSAL surfaces it as a ServerError with errorNo 9002326.
-  private describeAuthError(e: unknown): string {
-    const redirectUri = window.location.origin + window.location.pathname;
-
-    if (e instanceof ServerError && String(e.errorNo) === '9002326') {
-      return `Sign-in could not complete. This cluster's Microsoft Entra app registration has the `
-        + `Service Fabric Explorer reply URL "${redirectUri}" registered under the "Web" platform, but `
-        + `browser sign-in requires it under "Single-page application". In the Azure portal, open the app `
-        + `registration (client id ${this.config.raw.metadata.cluster}) -> Authentication, add "${redirectUri}" `
-        + `as a Single-page application redirect URI, then reload.`;
-    }
-
-    const errorCode = e instanceof AuthError ? e.errorCode : undefined;
-    return `Sign-in failed${errorCode ? ` (${errorCode})` : ''}. Reload to try again.`;
   }
 
   logout(): void {

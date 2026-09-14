@@ -1,4 +1,7 @@
 
+@if (msalService.authErrorCode) {
+  <app-auth-error></app-auth-error>
+} @else {
 <div>
   <button class="skip-to-content-link" (click)="setMainFocus()" role="button">
     Skip to content
@@ -99,9 +102,6 @@
           }
         </div>
         <div class="view-container" (click)="smallScreenSize ? resize(0): null" (focusin)="smallScreenSize ? resize(0): null">
-          @if (msalService.authError) {
-            <app-warning [description]="msalService.authError"></app-warning>
-          }
           <router-outlet id="view-container"></router-outlet>
         </div>
       </main>
@@ -113,3 +113,4 @@
     <app-local-time></app-local-time>
   </div>
 </div>
+}
