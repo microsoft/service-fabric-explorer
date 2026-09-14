@@ -53,10 +53,15 @@ export class MsalService {
       };
 
       this.scopes = [`${data.raw.metadata.cluster}/.default`];
-      this.context = new PublicClientApplication(config);
-      this.aadEnabled = true;
+      const context = new PublicClientApplication(config);
 
-      return from(this.context.initialize()).pipe(map(() => this.context));
+      // Only expose the context and enable auth after initialize() resolves; otherwise the
+      // interceptor would call acquireTokenSilent on an uninitialized MSAL context.
+      return from(context.initialize()).pipe(map(() => {
+        this.context = context;
+        this.aadEnabled = true;
+        return this.context;
+      }));
     }));
   }
 
