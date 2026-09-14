@@ -116,8 +116,8 @@ export class MsalService {
     return this.context;
   }
 
-  public get userInfo(): AccountInfo | null {
-    return this.context.getActiveAccount() ?? this.context.getAllAccounts()[0] ?? null;
+  public get userInfo(): AccountInfo | undefined {
+    return this.context.getActiveAccount() ?? this.context.getAllAccounts()[0];
   }
 
   public get isAuthenticated(): boolean {
@@ -129,7 +129,7 @@ export class MsalService {
   public acquireTokenResilient(resource: string): Observable<string> {
     const request: SilentRequest = {
       scopes: [`${resource}/.default`],
-      account: this.userInfo ?? undefined,
+      account: this.userInfo,
     };
 
     return from(this.context.acquireTokenSilent(request).then(result => result.accessToken)).pipe(retry(3));
