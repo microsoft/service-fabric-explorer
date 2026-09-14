@@ -99,7 +99,9 @@
           }
         </div>
         <div class="view-container" (click)="smallScreenSize ? resize(0): null" (focusin)="smallScreenSize ? resize(0): null">
-
+          @if (msalService.authError) {
+            <app-warning [description]="msalService.authError"></app-warning>
+          }
           <router-outlet id="view-container"></router-outlet>
         </div>
       </main>

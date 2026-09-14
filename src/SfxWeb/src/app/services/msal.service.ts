@@ -22,6 +22,7 @@ export class MsalService {
   private context!: PublicClientApplication;
   public config!: AadMetadata;
   public aadEnabled = false;
+  public authError: string | null = null;
   private scopes: string[] = [];
 
   load(): Observable<PublicClientApplication | undefined> {
@@ -67,15 +68,40 @@ export class MsalService {
   // Completes a redirect sign-in when returning from AAD. Must run before the router boots
   // (HashLocationStrategy) so the "#code=..." response is consumed before it's read as a route.
   async handleWindowCallback(): Promise<void> {
-    const response = await this.context.handleRedirectPromise();
-    if (response) {
-      this.context.setActiveAccount(response.account);
-    } else if (!this.context.getActiveAccount()) {
-      const cached = this.context.getAllAccounts()[0];
-      if (cached) {
-        this.context.setActiveAccount(cached);
+    try {
+      const response = await this.context.handleRedirectPromise();
+      if (response) {
+        this.context.setActiveAccount(response.account);
+      } else if (!this.context.getActiveAccount()) {
+        const cached = this.context.getAllAccounts()[0];
+        if (cached) {
+          this.context.setActiveAccount(cached);
+        }
       }
+    } catch (e) {
+      this.authError = this.describeAuthError(e);
+      console.error(e);
     }
+  }
+
+  // The /token call returns AADSTS9002326 when the reply URL is registered as a "Web" redirect
+  // instead of "Single-page application".
+  private describeAuthError(e: unknown): string {
+    const err = e as { errorCode?: string; errorMessage?: string; subError?: string; message?: string };
+    const text = `${err.errorCode ?? ''} ${err.errorMessage ?? ''} ${err.subError ?? ''} ${err.message ?? ''}`.toLowerCase();
+    const redirectUri = window.location.origin + window.location.pathname;
+
+    const spaRedirectIssue = /9002326|cross-origin token redemption|single-page application/.test(text);
+
+    if (spaRedirectIssue) {
+      return `Sign-in could not complete. This cluster's Microsoft Entra app registration has the `
+        + `Service Fabric Explorer reply URL "${redirectUri}" registered under the "Web" platform, but `
+        + `browser sign-in requires it under "Single-page application". In the Azure portal, open the app `
+        + `registration (client id ${this.config.raw.metadata.cluster}) -> Authentication, add "${redirectUri}" `
+        + `as a Single-page application redirect URI, then reload.`;
+    }
+
+    return `Sign-in failed${err.errorCode ? ` (${err.errorCode})` : ''}. Reload to try again.`;
   }
 
   logout(): void {
