@@ -1,7 +1,7 @@
 import { HttpRequest, HttpInterceptor, HttpHandler, HttpEvent, HTTP_INTERCEPTORS, HttpResponse, HttpErrorResponse } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { AdalService } from './services/adal.service';
+import { MsalService } from './services/msal.service';
 import { finalize, map, mergeMap } from 'rxjs/operators';
 import { DataService } from './services/data.service';
 import { Constants } from './Common/Constants';
@@ -13,12 +13,12 @@ The will intercept and allow the modification of every http request going in and
 */
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
-  private adalService = inject(AdalService);
+  private msalService = inject(MsalService);
 
   intercept(req: HttpRequest<any>, next: HttpHandler):
     Observable<HttpEvent<any>> {
-    if (this.adalService.aadEnabled){
-        return this.adalService.acquireTokenResilient(this.adalService.config.raw.metadata.cluster)
+    if (this.msalService.aadEnabled){
+        return this.msalService.acquireTokenResilient(this.msalService.config.raw.metadata.cluster)
         .pipe(mergeMap((token) => {
             if (token) {
             req = req.clone({
