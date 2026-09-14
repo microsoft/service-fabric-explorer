@@ -4,6 +4,7 @@ import { RestClientService } from './rest-client.service';
 import { IResponseMessageHandler } from '../Common/ResponseMessageHandlers';
 import { AadMetadata } from '../Models/DataModels/Aad';
 import { Observable, of } from 'rxjs';
+import { ServerError } from '@azure/msal-browser';
 
 describe('MsalService', () => {
   const restClientMock: Partial<RestClientService> = {};
@@ -89,10 +90,24 @@ describe('MsalService', () => {
 
     await service.load().toPromise();
 
-    vi.spyOn(service.authContext, 'handleRedirectPromise').mockRejectedValue({
-      errorCode: 'invalid_request',
-      errorMessage: "AADSTS9002326: Cross-origin token redemption is permitted only for the 'Single-Page Application' client-type."
-    });
+    // Actual AAD /token response for a "Web"-registered reply UR. MSAL wraps this into a ServerError whose errorNo is error_codes[0].
+    const aadResponse = {
+      error: 'invalid_request',
+      error_description:
+        "AADSTS9002326: Cross-origin token redemption is permitted only for the 'Single-Page Application' "
+        + "client-type. Request origin: 'http://localhost:3000'. Trace ID: c1b3e6c9-24ff-436d-96aa-c00e6fa11000 "
+        + 'Correlation ID: 01a09ec2-79b3-73a7-a16b-d3708e3f4e83 Timestamp: 2026-09-14 07:12:18Z',
+      error_codes: [9002326],
+      correlation_id: '01a09ec2-79b3-73a7-a16b-d3708e3f4e83',
+    };
+    const serverError = new ServerError(
+      aadResponse.error,
+      aadResponse.correlation_id,
+      aadResponse.error_description,
+      undefined,
+      aadResponse.error_codes[0] as unknown as string,
+    );
+    vi.spyOn(service.authContext, 'handleRedirectPromise').mockRejectedValue(serverError);
 
     await service.handleWindowCallback();
 

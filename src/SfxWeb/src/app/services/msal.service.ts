@@ -10,6 +10,8 @@ import {
   SilentRequest,
   RedirectRequest,
   BrowserCacheLocation,
+  AuthError,
+  ServerError,
 } from '@azure/msal-browser';
 import { StringUtils } from '../Utils/StringUtils';
 
@@ -89,16 +91,12 @@ export class MsalService {
     }
   }
 
-  // The /token call returns AADSTS9002326 when the reply URL is registered as a "Web" redirect
-  // instead of "Single-page application".
+  // AADSTS9002326 is returned by the /token call when the reply URL is registered under "Web"
+  // instead of "Single-page application"; MSAL surfaces it as a ServerError with errorNo 9002326.
   private describeAuthError(e: unknown): string {
-    const err = e as { errorCode?: string; errorMessage?: string; subError?: string; message?: string };
-    const text = `${err.errorCode ?? ''} ${err.errorMessage ?? ''} ${err.subError ?? ''} ${err.message ?? ''}`.toLowerCase();
     const redirectUri = window.location.origin + window.location.pathname;
 
-    const spaRedirectIssue = /9002326|cross-origin token redemption|single-page application/.test(text);
-
-    if (spaRedirectIssue) {
+    if (e instanceof ServerError && String(e.errorNo) === '9002326') {
       return `Sign-in could not complete. This cluster's Microsoft Entra app registration has the `
         + `Service Fabric Explorer reply URL "${redirectUri}" registered under the "Web" platform, but `
         + `browser sign-in requires it under "Single-page application". In the Azure portal, open the app `
@@ -106,7 +104,8 @@ export class MsalService {
         + `as a Single-page application redirect URI, then reload.`;
     }
 
-    return `Sign-in failed${err.errorCode ? ` (${err.errorCode})` : ''}. Reload to try again.`;
+    const errorCode = e instanceof AuthError ? e.errorCode : undefined;
+    return `Sign-in failed${errorCode ? ` (${errorCode})` : ''}. Reload to try again.`;
   }
 
   logout(): void {
