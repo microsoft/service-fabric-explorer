@@ -82,7 +82,7 @@
     "stop-only": "^3.1.2",
     "typescript": "~6.0.3",
     "typescript-eslint": "^8.64.0",
-    "vitest": "^4.1.10"
+    "vitest": "^4.1.11"
   },
   "nyc": {
     "extends": "@istanbuljs/nyc-config-typescript",
