@@ -114,7 +114,7 @@ describe('Http interceptors', () => {
     it('standalone interceptor does not fire', () => {
       standaloneService.setConfiguration(null!);
 
-      spyOn(standaloneService, 'getIntegrationCaller');
+      vi.spyOn(standaloneService, 'getIntegrationCaller');
 
       httpClient.get('/test').subscribe();
 
@@ -122,10 +122,10 @@ describe('Http interceptors', () => {
 
   });
 
-  it('standalone interceptor does fire', (done: DoneFn) => {
+  it('standalone interceptor does fire', () => new Promise<void>((done) => {
     standaloneService.setConfiguration({passObjectAsString : true, handleAsCallBack : true, windowPath: "path"});
 
-    spyOn(standaloneService, 'getIntegrationCaller').and.returnValue(
+    vi.spyOn(standaloneService, 'getIntegrationCaller').mockReturnValue(
       (integrationData: any) => {
         integrationData.Callback(JSON.stringify({
           "statusMessage": "OK",
@@ -145,5 +145,5 @@ describe('Http interceptors', () => {
       done();
     });
 
-  });
+  }));
 });

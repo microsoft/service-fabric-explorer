@@ -54,6 +54,5 @@ Thumbs.db
 coverage.json
 /reports
 /coverage-results
-/coverage-karma
 /coverage
 /cypress-coverage

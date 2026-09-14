@@ -1,6 +1,6 @@
 import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { ServiceApplicationsBaseControllerDirective } from '../SystemApplicationBase';
-import { ListSettings, ListColumnSettingForLink, ListColumnSetting, ListColumnSettingWithFilter, ListColumnSettingForBadge } from 'src/app/Models/ListSettings';
+import { ListColumnSettingForLink, ListColumnSetting, ListColumnSettingWithFilter, ListColumnSettingForBadge } from 'src/app/Models/ListSettings';
 import { DataService } from 'src/app/services/data.service';
 import { SettingsService } from 'src/app/services/settings.service';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
@@ -18,8 +18,6 @@ export class EssentialsComponent extends ServiceApplicationsBaseControllerDirect
   protected data: DataService = inject(DataService);
   private settings = inject(SettingsService);
 
-
-  listSettings!: ListSettings;
   essentialItems: IEssentialListItem[] = [];
 
   setup() {

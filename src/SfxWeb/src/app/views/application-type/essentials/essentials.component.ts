@@ -3,7 +3,6 @@ import { DataService } from 'src/app/services/data.service';
 import { SettingsService } from 'src/app/services/settings.service';
 import { Observable } from 'rxjs';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
-import { ApplicationType, ApplicationTypeGroup } from 'src/app/Models/DataModels/ApplicationType';
 import { ListSettings, ListColumnSetting, ListColumnSettingWithFilter, ListColumnSettingForBadge, ListColumnSettingForLink, ListColumnSettingForArmManaged } from 'src/app/Models/ListSettings';
 import { ApplicationTypeBaseControllerDirective } from '../ApplicationTypeBase';
 import { map } from 'rxjs/operators';
@@ -19,7 +18,6 @@ export class EssentialsComponent extends ApplicationTypeBaseControllerDirective 
   protected data: DataService = inject(DataService);
   private settings = inject(SettingsService);
 
-  appTypeGroup!: ApplicationTypeGroup;
   appsListSettings!: ListSettings;
 
   setup() {

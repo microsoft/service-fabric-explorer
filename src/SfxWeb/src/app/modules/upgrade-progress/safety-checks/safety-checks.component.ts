@@ -63,12 +63,11 @@ export class SafetyChecksComponent implements OnChanges, OnInit, OnDestroy {
     this.setSafetyChecks();
   }
 
-  async getPartitionInfo(id: string, check: IRawSafetyCheckDescription) {
-
-    await this.partitionCache.getPartitionInfo(id, check);
-
-    this.setSafetyChecks();
-    this.cdr.detectChanges();
+  getPartitionInfo(id: string, check: IRawSafetyCheckDescription) {
+    this.sub.add(this.partitionCache.getPartitionInfo(id, check).subscribe(() => {
+      this.setSafetyChecks();
+      this.cdr.detectChanges();
+    }));
   }
 
   safetyCheck(index: number, safetyCheck: IRawSafetyCheckDescription) {

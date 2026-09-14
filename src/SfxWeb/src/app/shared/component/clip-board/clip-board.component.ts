@@ -1,6 +1,6 @@
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { Clipboard } from '@angular/cdk/clipboard';
-import { Component, Input, ChangeDetectionStrategy, ViewChild, ElementRef, OnChanges, inject } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy, ViewChild, ElementRef, OnChanges, OnDestroy, inject } from '@angular/core';
 import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
@@ -10,9 +10,10 @@ import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: false
 })
-export class ClipBoardComponent implements OnChanges {
+export class ClipBoardComponent implements OnChanges, OnDestroy {
   private liveAnnouncer = inject(LiveAnnouncer);
   private clipboard = inject(Clipboard);
+  private tooltipTimer?: ReturnType<typeof setTimeout>;
 
 
   @Input() text = '';
@@ -24,11 +25,14 @@ export class ClipBoardComponent implements OnChanges {
   public ariaLabel = '';
               
   copy() {
-    
     this.clipboard.copy(this.text)
 
     this.tooltip.close();
-    setTimeout(() => {
+    if (this.tooltipTimer) {
+      clearTimeout(this.tooltipTimer);
+    }
+    this.tooltipTimer = setTimeout(() => {
+      this.tooltipTimer = undefined;
       this.tooltip.ngbTooltip = 'copied!';
       this.tooltip.autoClose = false;
       this.tooltip.triggers = 'manual';
@@ -44,6 +48,12 @@ export class ClipBoardComponent implements OnChanges {
   ngOnChanges() {
     if (this.text) {
       this.ariaLabel = this.text.toString().split(' ').join('-');
+    }
+  }
+
+  ngOnDestroy() {
+    if (this.tooltipTimer) {
+      clearTimeout(this.tooltipTimer);
     }
   }
 }

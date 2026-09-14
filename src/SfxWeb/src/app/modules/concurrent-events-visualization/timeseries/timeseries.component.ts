@@ -127,9 +127,7 @@ export class TimeseriesComponent implements AfterViewInit, OnChanges, OnDestroy,
     },
     yAxis: {
       gridLineColor: '#fff',
-      title: {
-        text: null
-      }
+      title: {}
     },
     tooltip: {
       positioner: function (labelWidth) {

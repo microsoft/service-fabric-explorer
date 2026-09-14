@@ -8,6 +8,6 @@ private telemetry = inject(TelemetryService);
 
     handleError(error: any) {
         console.error(error);
-        this.telemetry.appInsights.trackException(error);
+        this.telemetry.appInsights.trackException({ exception: error });
     }
 }

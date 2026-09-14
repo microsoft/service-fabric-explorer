@@ -24,8 +24,7 @@ export class EventTypesUtil {
         'ReplicatorFaulted',
         'SecondaryReplicationQueueFull',
         'SecondaryReplicationQueueWarning'],
-        // `as any`: es2018 lib lacks String.replaceAll — dropped in part 3 (pr/3-build-vitest) when es2018 is removed
-        item => (item.split('-')[0] as any).replaceAll('*', '') );
+        item => item.split('-')[0].replaceAll('*', '') );
     private ErrorEventTypes = Utils.keyByFromFunction( [
         '*HealthReportCreated-HealthState:Error',
         '*NewHealthReport-HealthState:Error',
@@ -33,11 +32,11 @@ export class EventTypesUtil {
         'NodeOpenFailed',
         'NodeAborted',
         'TStoreError' ],
-        item => (item.split('-')[0] as any).replaceAll('*', '') );
+        item => item.split('-')[0].replaceAll('*', '') );
     private ResolvedEventTypes = Utils.keyByFromFunction( [
         '*HealthReportCreated-HealthState:Ok',
         '*NewHealthReport-HealthState:Ok' ],
-        item => (item.split('-')[0] as any).replaceAll('*', '') );
+        item => item.split('-')[0].replaceAll('*', '') );
 
     private warningEventsRegExp = EventTypesUtil.constructRegExp(
         Object.keys(this.WarningEventTypes).map(e => this.WarningEventTypes[e]));

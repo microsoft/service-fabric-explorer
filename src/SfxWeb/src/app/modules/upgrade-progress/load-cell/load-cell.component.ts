@@ -18,7 +18,7 @@ export class LoadCellComponent {
   listSetting!: ListColumnSetting;
 
   load() {
-    this.cacheService.getPartitionInfo(this.item.SafetyCheck.PartitionId, this.item);
+    this.cacheService.getPartitionInfo(this.item.SafetyCheck.PartitionId, this.item).subscribe();
   }
 
 }

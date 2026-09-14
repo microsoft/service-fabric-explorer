@@ -347,14 +347,14 @@ export class TreeNodeGroupViewModel implements ITreeNode {
                     this.node.listSettings.count = this.children.length;
                 }
 
-                this.currentGetChildrenPromise!.next();
+                this.currentGetChildrenPromise!.next(null);
                 this.currentGetChildrenPromise!.complete();
                 this.currentGetChildrenPromise = null;
                 this.loadingChildren = false;
 
             },
             () => {
-                this.currentGetChildrenPromise!.next();
+                this.currentGetChildrenPromise!.next(null);
                 this.currentGetChildrenPromise!.complete();
                 this.currentGetChildrenPromise = null;
                 this.loadingChildren = false;

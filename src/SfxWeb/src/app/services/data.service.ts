@@ -13,7 +13,7 @@ import { ClusterUpgradeProgress, ClusterLoadInformation, ClusterManifest, Cluste
 import { ImageStore } from '../Models/DataModels/ImageStore';
 import { Constants } from '../Common/Constants';
 import { IResponseMessageHandler, ResponseMessageHandlers } from '../Common/ResponseMessageHandlers';
-import { Observable, throwError, of } from 'rxjs';
+import { Observable, throwError, of, firstValueFrom } from 'rxjs';
 import { RestClientService } from './rest-client.service';
 import { map, mergeMap, finalize } from 'rxjs/operators';
 import { IDataModel } from '../Models/DataModels/Base';
@@ -109,7 +109,7 @@ export class DataService {
 
   public async versionCheck(minVersion: string): Promise<boolean> {
     const splitVersion = minVersion.split(".");
-    const upgradeInfo = await this.getClusterUpgradeProgress().toPromise();
+    const upgradeInfo = await firstValueFrom(this.getClusterUpgradeProgress());
     const splitClusterVersion = upgradeInfo.raw.CodeVersion.split(".");
 
     let higherVersion = true;
