@@ -1,0 +1,39 @@
+// Plain label/value row -- avoids the global .middle-text{max-width:800px} rule
+// (essential-item.component) which right-aligns values far from their label
+// once the container is wider than the ~300px tiles that class was built for.
+// No flex/space-between here either, so the value always sits right after the
+// label regardless of how wide the container ends up being.
+.info-row {
+    padding: 4px 0;
+}
+
+.info-label {
+    color: #c9c9c9;
+    font-weight: 500;
+    font-size: 14px;
+
+    &::after {
+        content: ': ';
+    }
+}
+
+.lsn-bar {
+    margin: 5px 0 10px;
+
+    .lsn-bar-track {
+        height: 5px;
+        background-color: grey;
+    }
+
+    .lsn-bar-fill {
+        height: 5px;
+        background-color: var(--accent-darkblue);
+    }
+
+    .lsn-bar-labels {
+        display: flex;
+        justify-content: space-between;
+        font-size: 12px;
+        margin-top: 2px;
+    }
+}

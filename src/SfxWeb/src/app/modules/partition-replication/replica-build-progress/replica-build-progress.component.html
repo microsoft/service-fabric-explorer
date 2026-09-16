@@ -1,0 +1,53 @@
+@if (buildStatus) {
+  <div data-cy="build-progress" style="display: flex; gap: 10px;">
+    <div style="flex: 0 0 160px;">
+      <h3 class="underline-title">Build Progress</h3>
+      <app-phase-diagram [items]="phases" [currentIndex]="currentIndex" [vertical]="true"></app-phase-diagram>
+    </div>
+
+    <div style="flex: 1; min-width: 0;" class="flex-column">
+      <h3 class="underline-title">Build Overview</h3>
+      @for (item of overviewItems; track item) {
+        <div class="info-row">
+          <span class="info-label">{{item.descriptionName}}</span>
+          <span class="info-value">{{item.displayText}}</span>
+        </div>
+      }
+
+      @if (hasEseDetail) {
+        <h3 class="underline-title">ESE Copy Detail</h3>
+        @for (item of eseItems; track item) {
+          <div class="info-row">
+            <span class="info-label">{{item.descriptionName}}</span>
+            <span class="info-value">{{item.displayText}}</span>
+          </div>
+        }
+      }
+
+      @if (buildStatus.InbuildPhase === 'Copy' && copyPhaseProgress) {
+        <h3 class="underline-title">Copy Phase Details</h3>
+        <div class="lsn-bar" data-cy="copy-phase-bar">
+          <div class="lsn-bar-track">
+            <div class="lsn-bar-fill" [style.width.%]="copyPhaseProgress.percent"></div>
+          </div>
+          <div class="lsn-bar-labels">
+            <span>{{copyPhaseProgress.leftLabel}}</span>
+            <span>{{copyPhaseProgress.rightLabel}}</span>
+          </div>
+        </div>
+      }
+      @if (buildStatus.InbuildPhase === 'CopyCatchup' && catchupPhaseProgress) {
+        <h3 class="underline-title">CopyCatchup Details</h3>
+        <div class="lsn-bar" data-cy="catchup-phase-bar">
+          <div class="lsn-bar-track">
+            <div class="lsn-bar-fill" [style.width.%]="catchupPhaseProgress.percent"></div>
+          </div>
+          <div class="lsn-bar-labels">
+            <span>{{catchupPhaseProgress.leftLabel}}</span>
+            <span>{{catchupPhaseProgress.rightLabel}}</span>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+}

@@ -1,0 +1,23 @@
+@if (inBuildItems.length > 0) {
+  <div class="detail-pane essen-pane" data-cy="replicas-in-build">
+    <app-collapse-container [sectionName]="'Replicas in Build (' + inBuildItems.length + ')'">
+      <div collapse-header>
+        <h2>Replicas in Build ({{inBuildItems.length}})</h2>
+      </div>
+      <div collapse-body>
+        @for (item of inBuildItems; track item.replicator.ReplicaId) {
+          <div class="in-build-pane">
+            <app-collapse-container collapsed="true" [sectionName]="paneTitle(item)">
+              <div collapse-header class="center-text">
+                {{paneTitle(item)}}
+              </div>
+              <div collapse-body>
+                <app-replica-build-progress [replicator]="item.replicator"></app-replica-build-progress>
+              </div>
+            </app-collapse-container>
+          </div>
+        }
+      </div>
+    </app-collapse-container>
+  </div>
+}

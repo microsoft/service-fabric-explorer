@@ -5,6 +5,10 @@
   flex-direction: column;">
     <div class="underline" style="min-height: 0px;overflow: auto;">
 
+      @if (replicator.IsInBuild) {
+        <app-replica-build-progress class="underline" [replicator]="replicator"></app-replica-build-progress>
+      }
+
       <app-collapse-container [collapsed]="!copy" sectionName="Copy" (collapsedChange)="handleCollapseChange($event)">
         <div collapse-header class="center-text">
           Copy

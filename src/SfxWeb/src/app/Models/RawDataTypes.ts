@@ -697,6 +697,38 @@ export class IRawRemoteReplicatorStatus {
         LastReceivedCopySequenceNumber!: string;
         LastAppliedCopySequenceNumber!: string;
         RemoteReplicatorAcknowledgementStatus!: IRemoteReplicatorAcknowledgementStatus;
+        RemoteInbuildReplicaStatus?: IRawRemoteInbuildReplicaStatus;
+    }
+
+export class IRawRemoteInbuildReplicaStatus {
+        InbuildPhase!: string;
+        CopyContextPhase!: string;
+        LastCopySequenceNumber!: string;
+        LastCopyCatchupSequenceNumber!: string;
+        CopyContextPhaseStartTimeUtc!: string;
+        CopyStatePhaseStartTimeUtc!: string;
+        CopyPhaseStartTimeUtc!: string;
+        CopyCatchupPhaseStartTimeUtc!: string;
+        CopyDetails?: IRawInbuildReplicaCopyDetail;
+    }
+
+export interface IRawInbuildReplicaCopyDetail {
+        Kind: string;
+        ProviderCopyDetail?: IRawKeyValueStoreProviderCopyDetail;
+    }
+
+export interface IRawKeyValueStoreProviderCopyDetail {
+        Kind: string;
+        PrimaryEpoch?: IRawConfigurationEpoch;
+        PrimaryLastOperationSequenceNumber?: string;
+        IsCopyContextValid?: boolean;
+        SecondaryEpoch?: IRawConfigurationEpoch;
+        SecondaryLastOperationSequenceNumber?: string;
+        StoreFormatVersion?: string;
+        CopyType?: string;
+        CopyTypeReason?: string;
+        CopyMode?: string;
+        CopyModeReason?: string;
     }
 
 export interface IRemoteReplicatorAcknowledgementStatus {

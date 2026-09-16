@@ -139,6 +139,123 @@ context('partition', () => {
         })
         })
 
+        it('shows replicas in build', () => {
+          addRoute("load", "partition-page/replica-detail-inbuild.json", apiUrl(`/Nodes/_nt_1/$/GetPartitions/${partitionId}/$/GetReplicas/${primaryReplica}/$/GetDetail?*`));
+
+          cy.visit(urlFormatter(appName, serviceName, partitionId));
+          cy.wait(waitRequest);
+
+          cy.get('[data-cy=replicas-in-build]').within(() => {
+            cy.contains('Replicas in Build (1)');
+            cy.contains('132431356665040624').click();
+            cy.contains('Build Overview');
+            cy.contains('Current Phase');
+            cy.contains('Copy Phase Details');
+            cy.contains('Start LSN: 0');
+            cy.contains('Target LSN: 100000');
+            cy.contains('ESE Copy Detail');
+            cy.contains('Full');
+          })
+
+          // capture:'fullPage' only stitches window scroll -- .main-content has its
+          // own overflow:auto, so scroll it to bottom first or the lower half of the
+          // pane (Copy Phase Details) is cut out of the screenshot.
+          cy.get('.main-content').scrollTo('bottom');
+          cy.screenshot('replicas-in-build', { capture: 'fullPage' });
+        })
+
+        // Stepper state per phase (see inbuildPhaseOrder in replica-build-progress.component.ts):
+        // phases behind the current one are "done", the current one is "in-progress", the rest "pending".
+        it('shows CopyContext sub-phase progress', () => {
+          addRoute("load", "partition-page/replica-detail-inbuild-copycontext.json", apiUrl(`/Nodes/_nt_1/$/GetPartitions/${partitionId}/$/GetReplicas/${primaryReplica}/$/GetDetail?*`));
+
+          cy.visit(urlFormatter(appName, serviceName, partitionId));
+          cy.wait(waitRequest);
+
+          cy.get('[data-cy=replicas-in-build]').within(() => {
+            cy.contains('132431356665040624').click();
+            cy.get('[data-cy=build-progress]').within(() => {
+              cy.get('[data-cy=in-progressphase]').should('have.length', 1);
+              cy.get('[data-cy=donephase]').should('have.length', 0);
+              cy.get('[data-cy=pendingphase]').should('have.length', 4);
+              cy.contains('Current Phase');
+              cy.contains('Copy Context (EstablishConnection)');
+              // Copy/CopyCatchup progress bars only render once those phases are reached
+              cy.get('[data-cy=copy-phase-bar]').should('not.exist');
+              cy.get('[data-cy=catchup-phase-bar]').should('not.exist');
+            });
+            cy.contains('ESE Copy Detail').should('not.exist');
+          })
+        })
+
+        it('shows CopyState sub-phase progress', () => {
+          addRoute("load", "partition-page/replica-detail-inbuild-copystate.json", apiUrl(`/Nodes/_nt_1/$/GetPartitions/${partitionId}/$/GetReplicas/${primaryReplica}/$/GetDetail?*`));
+
+          cy.visit(urlFormatter(appName, serviceName, partitionId));
+          cy.wait(waitRequest);
+
+          cy.get('[data-cy=replicas-in-build]').within(() => {
+            cy.contains('132431356665040624').click();
+            cy.get('[data-cy=build-progress]').within(() => {
+              cy.get('[data-cy=in-progressphase]').should('have.length', 1);
+              cy.get('[data-cy=donephase]').should('have.length', 1);
+              cy.get('[data-cy=pendingphase]').should('have.length', 3);
+              cy.contains('Current Phase');
+              cy.contains('CopyState');
+              cy.get('[data-cy=copy-phase-bar]').should('not.exist');
+              cy.get('[data-cy=catchup-phase-bar]').should('not.exist');
+            });
+            cy.contains('ESE Copy Detail').should('not.exist');
+          })
+        })
+
+        it('shows CopyCatchup sub-phase progress', () => {
+          addRoute("load", "partition-page/replica-detail-inbuild-copycatchup.json", apiUrl(`/Nodes/_nt_1/$/GetPartitions/${partitionId}/$/GetReplicas/${primaryReplica}/$/GetDetail?*`));
+
+          cy.visit(urlFormatter(appName, serviceName, partitionId));
+          cy.wait(waitRequest);
+
+          cy.get('[data-cy=replicas-in-build]').within(() => {
+            cy.contains('132431356665040624').click();
+            cy.get('[data-cy=build-progress]').within(() => {
+              cy.get('[data-cy=in-progressphase]').should('have.length', 1);
+              cy.get('[data-cy=donephase]').should('have.length', 3);
+              cy.get('[data-cy=pendingphase]').should('have.length', 1);
+              cy.contains('Current Phase');
+              cy.contains('CopyCatchup');
+              // Copy already finished by this phase -- only the CopyCatchup bar renders
+              cy.get('[data-cy=copy-phase-bar]').should('not.exist');
+              cy.get('[data-cy=catchup-phase-bar]').should('exist');
+              cy.contains('Start LSN: 100000');
+              cy.contains('Target LSN: 150000');
+            });
+            cy.contains('ESE Copy Detail');
+          })
+        })
+
+        it('shows CopyComplete sub-phase progress', () => {
+          addRoute("load", "partition-page/replica-detail-inbuild-copycomplete.json", apiUrl(`/Nodes/_nt_1/$/GetPartitions/${partitionId}/$/GetReplicas/${primaryReplica}/$/GetDetail?*`));
+
+          cy.visit(urlFormatter(appName, serviceName, partitionId));
+          cy.wait(waitRequest);
+
+          cy.get('[data-cy=replicas-in-build]').within(() => {
+            cy.contains('132431356665040624').click();
+            cy.get('[data-cy=build-progress]').within(() => {
+              // Terminal phase: the last step reports in-progress rather than done
+              // (currentIndex equals the array length -- see getPhaseReference).
+              cy.get('[data-cy=in-progressphase]').should('have.length', 1);
+              cy.get('[data-cy=donephase]').should('have.length', 4);
+              cy.get('[data-cy=pendingphase]').should('have.length', 0);
+              cy.contains('Current Phase');
+              cy.contains('CopyComplete');
+              cy.get('[data-cy=copy-phase-bar]').should('not.exist');
+              cy.get('[data-cy=catchup-phase-bar]').should('not.exist');
+            });
+            cy.contains('ESE Copy Detail');
+          })
+        })
+
         describe("backups", () => {
           it('view backup', () => {
             cy.get('[data-cy=navtabs]').within(() => {
