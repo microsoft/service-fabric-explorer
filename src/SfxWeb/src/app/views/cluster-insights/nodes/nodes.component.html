@@ -22,19 +22,19 @@
       <li [ngbNavItem]="1">
         <a ngbNavLink class="nav-link">Seed Nodes ({{ seedNodes.length }})</a>
         <ng-template ngbNavContent>
-          <app-detail-list [list]="seedNodes" [listSettings]="listSettings"></app-detail-list>
+          <app-detail-list [list]="seedNodes" [listSettings]="listSettings" data-cy="seedNodesList"></app-detail-list>
         </ng-template>
       </li>
       <li [ngbNavItem]="2">
         <a ngbNavLink class="nav-link">Non-Seed Nodes ({{ nonSeedNodes.length }})</a>
         <ng-template ngbNavContent>
-          <app-detail-list [list]="nonSeedNodes" [listSettings]="listSettings"></app-detail-list>
+          <app-detail-list [list]="nonSeedNodes" [listSettings]="listSettings" data-cy="nonSeedNodesList"></app-detail-list>
         </ng-template>
       </li>
       <li [ngbNavItem]="3">
         <a ngbNavLink class="nav-link">All Nodes ({{ nodes.length }})</a>
         <ng-template ngbNavContent>
-          <app-detail-list [list]="nodes" [listSettings]="listSettings"></app-detail-list>
+          <app-detail-list [list]="nodes" [listSettings]="listSettings" data-cy="allNodesList"></app-detail-list>
         </ng-template>
       </li>
     </ul>

@@ -72,7 +72,11 @@
             </app-warning>
           }
 
-          <app-detail-list [list]="failoverManagerState.replicaData" [listSettings]="failoverManagerState.listSettings"></app-detail-list>
+          <app-detail-list
+            [list]="failoverManagerState.replicaData"
+            [listSettings]="failoverManagerState.listSettings"
+            data-cy="failoverManagerReplicaList">
+          </app-detail-list>
         </ng-template>
       </li>
       <li [ngbNavItem]="ServiceName.ClusterManager">
@@ -145,7 +149,11 @@
             </app-warning>
           }
 
-          <app-detail-list [list]="clusterManagerState.replicaData" [listSettings]="clusterManagerState.listSettings"></app-detail-list>
+          <app-detail-list
+            [list]="clusterManagerState.replicaData"
+            [listSettings]="clusterManagerState.listSettings"
+            data-cy="clusterManagerReplicaList">
+          </app-detail-list>
         </ng-template>
       </li>
     </ul>
