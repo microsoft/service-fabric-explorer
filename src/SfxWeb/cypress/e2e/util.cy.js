@@ -64,17 +64,49 @@ export const addRoute = (fixtureName, fixtureFileName, route, requestType = 'GET
     cy.intercept(requestType, route, {fixture: fixtureFileName}).as(fixtureRequestFormatter(fixtureName))
 }
 
-export const getNodeThrottlingEvents = (nodeNames) => {
+const nodeThrottlingIdentities = {
+  '_nt_0': {
+    nodeId: '86fa6852ad467a903afbbc67edc16b66',
+    instanceId: '132428526792306088',
+    previousInstanceId: '132428526792306087',
+    nodeUpAt: '2020-08-25T18:11:38.834Z'
+  },
+  '_nt_1': {
+    nodeId: '6aec61e77cb87effc9ccc772eac3d6d1',
+    instanceId: '132428534015364530',
+    previousInstanceId: '132428534015364529',
+    nodeUpAt: '2020-08-25T18:23:31.697Z'
+  }
+};
+
+export const getNodeThrottlingEvents = (nodeNames, currentlyThrottlingNodeNames = []) => {
   const rangeEnd = Date.now() - (5 * 60 * 1000);
   return nodeNames.flatMap((nodeName, index) => {
     const startedAt = new Date(rangeEnd - ((index + 1) * 60 * 60 * 1000)).toISOString();
     const endedAt = new Date(rangeEnd - (index * 30 * 60 * 1000)).toISOString();
     const idPrefix = String(index + 1).padStart(11, '0');
+    const identity = nodeThrottlingIdentities[nodeName];
+
+    const startedEvent = {
+      NodeId: identity?.nodeId ?? String(index + 1).padStart(32, '0'),
+      NodeInstance: identity?.instanceId ?? String(index + 1),
+      ErrorInfo: 'test counters',
+      NodeName: nodeName,
+      Kind: 'NodeMessageThrottlingStarted',
+      EventInstanceId: `00000000-0000-0000-0000-${idPrefix}1`,
+      TimeStamp: startedAt,
+      Category: 'StateTransition',
+      HasCorrelatedEvents: false
+    };
+
+    if (currentlyThrottlingNodeNames.includes(nodeName)) {
+      return [startedEvent];
+    }
 
     return [
       {
-        NodeId: `${index + 1}`,
-        NodeInstance: index + 1,
+        NodeId: identity?.nodeId ?? String(index + 1).padStart(32, '0'),
+        NodeInstance: identity?.instanceId ?? String(index + 1),
         ErrorInfo: 'test counters',
         NodeName: nodeName,
         Kind: 'NodeMessageThrottlingEnded',
@@ -83,19 +115,23 @@ export const getNodeThrottlingEvents = (nodeNames) => {
         Category: 'StateTransition',
         HasCorrelatedEvents: false
       },
-      {
-        NodeId: `${index + 1}`,
-        NodeInstance: index + 1,
-        ErrorInfo: 'test counters',
-        NodeName: nodeName,
-        Kind: 'NodeMessageThrottlingStarted',
-        EventInstanceId: `00000000-0000-0000-0000-${idPrefix}1`,
-        TimeStamp: startedAt,
-        Category: 'StateTransition',
-        HasCorrelatedEvents: false
-      }
+      startedEvent
     ];
   });
+}
+
+export const getStaleNodeThrottlingStartedEvent = (nodeName) => {
+  const identity = nodeThrottlingIdentities[nodeName];
+  if (!identity) {
+    throw new Error(`No scripted node identity for ${nodeName}`);
+  }
+
+  const startedEvent = getNodeThrottlingEvents([nodeName], [nodeName])[0];
+  return {
+    ...startedEvent,
+    NodeInstance: identity.previousInstanceId,
+    TimeStamp: new Date(Date.parse(identity.nodeUpAt) - 1000).toISOString()
+  };
 }
 
 export const addDefaultFixtures = (prefix = "") => {

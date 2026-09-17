@@ -350,17 +350,51 @@ const NodeOpenFailed = "NodeOpenFailed";
 const NodeMessageThrottlingStarted = 'NodeMessageThrottlingStarted';
 const NodeMessageThrottlingEnded = 'NodeMessageThrottlingEnded';
 
+export interface INodeThrottlingIdentity {
+  nodeId: string;
+  instanceId: string;
+  nodeUpAt: string;
+}
+
 export class NodeThrottlingTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
   static readonly NodesThrottlingLabel = 'Node Throttling';
   static readonly eventKinds = [NodeMessageThrottlingStarted, NodeMessageThrottlingEnded];
 
-  static isCurrentlyThrottling(events: NodeEvent[]): boolean {
-    const latestEvent = events
-      .filter(event => NodeThrottlingTimelineGenerator.eventKinds.includes(event.kind))
-      .reduce<NodeEvent | null>((latest, event) =>
-        !latest || Date.parse(event.timeStamp) > Date.parse(latest.timeStamp) ? event : latest, null);
+  static isCurrentlyThrottling(
+    events: NodeEvent[],
+    currentNodeIdentities?: ReadonlyMap<string, INodeThrottlingIdentity>): boolean {
+    const latestEventByNode = new Map<string, NodeEvent>();
 
-    return latestEvent?.kind === NodeMessageThrottlingStarted;
+    events
+      .filter(event => NodeThrottlingTimelineGenerator.eventKinds.includes(event.kind))
+      .filter(event => !currentNodeIdentities ||
+        NodeThrottlingTimelineGenerator.isFromCurrentNodeIncarnation(event, currentNodeIdentities.get(event.nodeName)))
+      .forEach(event => {
+        const latestEvent = latestEventByNode.get(event.nodeName);
+        if (!latestEvent || Date.parse(event.timeStamp) > Date.parse(latestEvent.timeStamp)) {
+          latestEventByNode.set(event.nodeName, event);
+        }
+      });
+
+    return Array.from(latestEventByNode.values())
+      .some(event => event.kind === NodeMessageThrottlingStarted);
+  }
+
+  private static isFromCurrentNodeIncarnation(event: NodeEvent, currentNode?: INodeThrottlingIdentity): boolean {
+    if (!currentNode || typeof event.raw.NodeId !== 'string' ||
+        event.raw.NodeId.toLowerCase() !== currentNode.nodeId.toLowerCase()) {
+      return false;
+    }
+
+    const eventInstanceId = event.raw.NodeInstance;
+    if (typeof eventInstanceId === 'string' ||
+        (typeof eventInstanceId === 'number' && Number.isSafeInteger(eventInstanceId))) {
+      return String(eventInstanceId) === currentNode.instanceId;
+    }
+
+    const eventTime = Date.parse(event.timeStamp);
+    const nodeUpAt = Date.parse(currentNode.nodeUpAt);
+    return Number.isFinite(eventTime) && Number.isFinite(nodeUpAt) && eventTime >= nodeUpAt;
   }
 
   private generateThrottlingEvent(event: NodeEvent, eventIndex: number, start: string, end: string): ITimelineItem {

@@ -1,11 +1,14 @@
 /// <reference types="cypress" />
 
-import { apiUrl, addDefaultFixtures, checkTableSize, FIXTURE_REF_NODES, FIXTURE_REF_MANIFEST, checkCommand, getNodeThrottlingEvents } from './util.cy';
+import { apiUrl, addDefaultFixtures, checkTableSize, FIXTURE_REF_NODES, FIXTURE_REF_MANIFEST, checkCommand,
+         getNodeThrottlingEvents, getStaleNodeThrottlingStartedEvent } from './util.cy';
 
 context('nodes list page', () => {
     beforeEach(() => {
         addDefaultFixtures();
+        cy.intercept('GET', apiUrl(`/EventsStore/Nodes/Events?*`), []).as('getNodesThrottlingState');
         cy.visit('/#/nodes')
+        cy.wait('@getNodesThrottlingState');
     })
 
     describe("essentials", () => {
@@ -19,6 +22,31 @@ context('nodes list page', () => {
             cy.get('[data-cy=nodesList]').within(() => {
                 checkTableSize(5);
             })
+
+            cy.get('[data-cy=nodes-throttling-warning]').should('not.exist');
+        })
+
+        it('shows a warning while one or more nodes are throttling', () => {
+            const scriptedEvents = getNodeThrottlingEvents(['_nt_0', '_nt_1'], ['_nt_0']);
+            cy.intercept('GET', apiUrl(`/EventsStore/Nodes/Events?*`), scriptedEvents).as('getScriptedNodesThrottlingState');
+
+            cy.reload();
+
+            cy.wait('@getScriptedNodesThrottlingState');
+            cy.get('[data-cy=nodes-throttling-warning]').within(() => {
+                cy.get('.warning-icon');
+                cy.contains('One or more nodes are throttling');
+            });
+        })
+
+        it('ignores throttling from a previous node incarnation', () => {
+            cy.intercept('GET', apiUrl(`/EventsStore/Nodes/Events?*`), [getStaleNodeThrottlingStartedEvent('_nt_0')])
+              .as('getStaleNodesThrottlingState');
+
+            cy.reload();
+
+            cy.wait('@getStaleNodesThrottlingState');
+            cy.get('[data-cy=nodes-throttling-warning]').should('not.exist');
         })
 
     })

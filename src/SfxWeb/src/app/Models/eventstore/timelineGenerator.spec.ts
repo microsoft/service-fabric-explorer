@@ -13,11 +13,19 @@ describe('TimelineGenerators', () => {
     describe('Node throttling generator', () => {
       const generator = new NodeThrottlingTimelineGenerator();
 
-      const createEvent = (kind: string, nodeName: string, eventInstanceId: string, timeStamp: string) => {
+      const createEvent = (
+        kind: string,
+        nodeName: string,
+        eventInstanceId: string,
+        timeStamp: string,
+        nodeId?: string,
+        nodeInstance?: string | number) => {
         const event = new NodeEvent();
         event.fillFromJSON({
           Kind: kind,
           NodeName: nodeName,
+          NodeId: nodeId,
+          NodeInstance: nodeInstance,
           EventInstanceId: eventInstanceId,
           TimeStamp: timeStamp,
           Category: 'StateTransition',
@@ -89,6 +97,64 @@ describe('TimelineGenerators', () => {
         expect(NodeThrottlingTimelineGenerator.isCurrentlyThrottling([started])).toBeTrue();
         expect(NodeThrottlingTimelineGenerator.isCurrentlyThrottling([started, ended])).toBeFalse();
         expect(NodeThrottlingTimelineGenerator.isCurrentlyThrottling([ended, started])).toBeFalse();
+      });
+
+      it('detects when any node is currently throttling', () => {
+        const node0Started = createEvent('NodeMessageThrottlingStarted', 'node0', 'node0-started', '2020-05-01T02:00:00Z');
+        const node1Started = createEvent('NodeMessageThrottlingStarted', 'node1', 'node1-started', '2020-05-01T03:00:00Z');
+        const node1Ended = createEvent('NodeMessageThrottlingEnded', 'node1', 'node1-ended', '2020-05-01T04:00:00Z');
+        const node0Ended = createEvent('NodeMessageThrottlingEnded', 'node0', 'node0-ended', '2020-05-01T05:00:00Z');
+
+        expect(NodeThrottlingTimelineGenerator.isCurrentlyThrottling([node0Started, node1Started, node1Ended])).toBeTrue();
+        expect(NodeThrottlingTimelineGenerator.isCurrentlyThrottling([node0Started, node1Started, node1Ended, node0Ended])).toBeFalse();
+      });
+
+      it('ignores a throttling state from a previous node incarnation', () => {
+        const nodeId = '86fa6852ad467a903afbbc67edc16b66';
+        const staleStarted = createEvent(
+          'NodeMessageThrottlingStarted',
+          'node0',
+          'stale-started',
+          '2020-05-01T01:00:00Z',
+          nodeId,
+          '132327707667996469');
+        const currentNodes = new Map([
+          ['node0', {
+            nodeId,
+            instanceId: '132327707667996470',
+            nodeUpAt: '2020-05-01T02:00:00Z'
+          }]
+        ]);
+
+        expect(NodeThrottlingTimelineGenerator.isCurrentlyThrottling([staleStarted], currentNodes)).toBeFalse();
+      });
+
+      it('uses node start time when EventStore cannot represent the instance id safely', () => {
+        const nodeId = '86fa6852ad467a903afbbc67edc16b66';
+        const staleStarted = createEvent(
+          'NodeMessageThrottlingStarted',
+          'node0',
+          'stale-started',
+          '2020-05-01T01:00:00Z',
+          nodeId,
+          132327707667996469);
+        const currentStarted = createEvent(
+          'NodeMessageThrottlingStarted',
+          'node0',
+          'current-started',
+          '2020-05-01T03:00:00Z',
+          nodeId,
+          132327707667996470);
+        const currentNodes = new Map([
+          ['node0', {
+            nodeId,
+            instanceId: '132327707667996470',
+            nodeUpAt: '2020-05-01T02:00:00Z'
+          }]
+        ]);
+
+        expect(NodeThrottlingTimelineGenerator.isCurrentlyThrottling([staleStarted], currentNodes)).toBeFalse();
+        expect(NodeThrottlingTimelineGenerator.isCurrentlyThrottling([currentStarted], currentNodes)).toBeTrue();
       });
     });
 

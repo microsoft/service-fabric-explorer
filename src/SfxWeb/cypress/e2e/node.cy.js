@@ -1,7 +1,7 @@
 /// <reference types="cypress" />
 
 import { apiUrl, addDefaultFixtures, checkTableSize, FIXTURE_REF_NODES, nodes_route, FIXTURE_NODES, addRoute, checkCommand,
-         getNodeThrottlingEvents, xssPrefix, watchForAlert, xssEncoded, FIXTURE_REF_MANIFEST } from './util.cy';
+         getNodeThrottlingEvents, getStaleNodeThrottlingStartedEvent, xssPrefix, watchForAlert, xssEncoded, FIXTURE_REF_MANIFEST } from './util.cy';
 
 const nodeName = "_nt_0"
 const nodeInfoRef = "@getnodeInfo"
@@ -91,6 +91,16 @@ context('node page', () => {
         cy.visit(`/#/node/${nodeName}`);
 
         cy.wait('@getNodeThrottlingState');
+        cy.get('[data-cy=node-throttling-warning]').should('not.exist');
+      })
+
+      it('ignores throttling from a previous node incarnation', () => {
+        cy.intercept('GET', apiUrl(`/EventsStore/Nodes/${nodeName}/$/Events?*`), [getStaleNodeThrottlingStartedEvent(nodeName)])
+          .as('getStaleNodeThrottlingState');
+
+        cy.visit(`/#/node/${nodeName}`);
+
+        cy.wait('@getStaleNodeThrottlingState');
         cy.get('[data-cy=node-throttling-warning]').should('not.exist');
       })
 

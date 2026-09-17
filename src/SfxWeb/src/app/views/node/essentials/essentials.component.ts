@@ -114,7 +114,16 @@ export class EssentialsComponent extends NodeBaseControllerDirective {
         this.deployedApps = this.node.deployedApps;
       })),
       this.nodeThrottlingEventData.eventsList.refresh(ResponseMessageHandlers.silentResponseMessageHandler).pipe(map(success => {
-        this.isNodeThrottling = success && NodeThrottlingTimelineGenerator.isCurrentlyThrottling(this.nodeThrottlingEventData.getEvents!());
+        const currentNodeIdentities = new Map([
+          [this.node.name, {
+            nodeId: this.node.raw.Id.Id,
+            instanceId: this.node.raw.InstanceId,
+            nodeUpAt: this.node.raw.NodeUpAt
+          }]
+        ]);
+        this.isNodeThrottling = success && NodeThrottlingTimelineGenerator.isCurrentlyThrottling(
+          this.nodeThrottlingEventData.getEvents!(),
+          currentNodeIdentities);
       })),
       this.data.clusterManifest.ensureInitialized().pipe(mergeMap(() => {
         this.placementProperties = this.data.clusterManifest.getNodeProperties(this.node.raw.Type)!;
