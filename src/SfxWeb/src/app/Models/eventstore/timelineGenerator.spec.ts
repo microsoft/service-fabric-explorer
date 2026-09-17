@@ -43,15 +43,13 @@ describe('TimelineGenerators', () => {
         const item = events.items.get()[0];
 
         expect(events.items.length).toBe(1);
-        expect(item).toEqual(jasmine.objectContaining({
-          content: 'Node node0 throttling',
-          start: started.timeStamp,
-          end: ended.timeStamp,
-          kind: started.kind,
-          group: NodeThrottlingTimelineGenerator.NodesThrottlingLabel,
-          type: 'range',
-          className: 'orange'
-        }));
+        expect(item.content).toBe('Node node0 throttling');
+        expect(item.start).toBe(started.timeStamp);
+        expect(item.end).toBe(ended.timeStamp);
+        expect(item.kind).toBe(started.kind);
+        expect(item.group).toBe(NodeThrottlingTimelineGenerator.NodesThrottlingLabel);
+        expect(item.type).toBe('range');
+        expect(item.className).toBe('orange');
       });
 
       it('extends an ongoing throttling interval to the selected range end', () => {
@@ -74,7 +72,7 @@ describe('TimelineGenerators', () => {
         expect(events.items.length).toBe(1);
         expect(item.start).toBe(startDate.toISOString());
         expect(item.end).toBe(ended.timeStamp);
-        expect(events.potentiallyMissingEvents).toBeTrue();
+        expect(events.potentiallyMissingEvents).toBe(true);
       });
 
       it('aggregates throttling intervals for multiple nodes', () => {
@@ -94,9 +92,9 @@ describe('TimelineGenerators', () => {
         const started = createEvent('NodeMessageThrottlingStarted', 'node0', 'started', '2020-05-01T02:00:00Z');
         const ended = createEvent('NodeMessageThrottlingEnded', 'node0', 'ended', '2020-05-01T03:00:00Z');
 
-        expect(NodeThrottlingTimelineGenerator.isCurrentlyThrottling([started])).toBeTrue();
-        expect(NodeThrottlingTimelineGenerator.isCurrentlyThrottling([started, ended])).toBeFalse();
-        expect(NodeThrottlingTimelineGenerator.isCurrentlyThrottling([ended, started])).toBeFalse();
+        expect(NodeThrottlingTimelineGenerator.isCurrentlyThrottling([started])).toBe(true);
+        expect(NodeThrottlingTimelineGenerator.isCurrentlyThrottling([started, ended])).toBe(false);
+        expect(NodeThrottlingTimelineGenerator.isCurrentlyThrottling([ended, started])).toBe(false);
       });
 
       it('detects when any node is currently throttling', () => {
@@ -105,8 +103,8 @@ describe('TimelineGenerators', () => {
         const node1Ended = createEvent('NodeMessageThrottlingEnded', 'node1', 'node1-ended', '2020-05-01T04:00:00Z');
         const node0Ended = createEvent('NodeMessageThrottlingEnded', 'node0', 'node0-ended', '2020-05-01T05:00:00Z');
 
-        expect(NodeThrottlingTimelineGenerator.isCurrentlyThrottling([node0Started, node1Started, node1Ended])).toBeTrue();
-        expect(NodeThrottlingTimelineGenerator.isCurrentlyThrottling([node0Started, node1Started, node1Ended, node0Ended])).toBeFalse();
+        expect(NodeThrottlingTimelineGenerator.isCurrentlyThrottling([node0Started, node1Started, node1Ended])).toBe(true);
+        expect(NodeThrottlingTimelineGenerator.isCurrentlyThrottling([node0Started, node1Started, node1Ended, node0Ended])).toBe(false);
       });
 
       it('ignores a throttling state from a previous node incarnation', () => {
@@ -126,7 +124,7 @@ describe('TimelineGenerators', () => {
           }]
         ]);
 
-        expect(NodeThrottlingTimelineGenerator.isCurrentlyThrottling([staleStarted], currentNodes)).toBeFalse();
+        expect(NodeThrottlingTimelineGenerator.isCurrentlyThrottling([staleStarted], currentNodes)).toBe(false);
       });
 
       it('uses node start time when EventStore cannot represent the instance id safely', () => {
@@ -153,8 +151,8 @@ describe('TimelineGenerators', () => {
           }]
         ]);
 
-        expect(NodeThrottlingTimelineGenerator.isCurrentlyThrottling([staleStarted], currentNodes)).toBeFalse();
-        expect(NodeThrottlingTimelineGenerator.isCurrentlyThrottling([currentStarted], currentNodes)).toBeTrue();
+        expect(NodeThrottlingTimelineGenerator.isCurrentlyThrottling([staleStarted], currentNodes)).toBe(false);
+        expect(NodeThrottlingTimelineGenerator.isCurrentlyThrottling([currentStarted], currentNodes)).toBe(true);
       });
     });
 
