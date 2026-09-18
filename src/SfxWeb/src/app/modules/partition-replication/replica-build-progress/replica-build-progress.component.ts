@@ -146,7 +146,6 @@ export class ReplicaBuildProgressComponent implements OnChanges {
     this.phases = [
       {
         name: 'Copy Context',
-        tooltip: this.buildStatus.InbuildPhase === 'CopyContext' ? `Sub-phase: ${this.buildStatus.CopyContextPhase}` : undefined,
         textRight: this.phaseDuration(this.buildStatus.CopyContextPhaseStartTimeUtc, this.buildStatus.CopyStatePhaseStartTimeUtc),
       },
       { name: 'Copy State', textRight: this.phaseDuration(this.buildStatus.CopyStatePhaseStartTimeUtc, this.buildStatus.CopyPhaseStartTimeUtc) },
@@ -155,8 +154,8 @@ export class ReplicaBuildProgressComponent implements OnChanges {
       { name: 'Copy Complete' },
     ];
 
-    // Greyed once the build has moved past CopyContext (index 1) -- the sub-stepper then
-    // just shows its final done state instead of tracking the active phase.
+    // Whether the build is still in (or hasn't yet passed) CopyContext -- once past, the
+    // sub-stepper just shows its final done state instead of tracking the active sub-phase.
     this.isCopyContextActive = this.currentIndex <= 1;
     this.copyContextSubIndex = this.isCopyContextActive
       ? (this.buildStatus.CopyContextPhase === 'GetCopyContext' ? 2 : 1)

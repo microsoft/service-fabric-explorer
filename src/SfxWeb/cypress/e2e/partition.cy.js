@@ -147,10 +147,26 @@ context('partition', () => {
 
           cy.get('[data-cy=replicas-in-build]').within(() => {
             cy.contains('Inbuild Replica Status');
-            cy.contains('132431356665040624');
-            cy.contains('Build Progress');
+            // Info icon links to the docs page, and sits at the far right of the section header.
+            cy.get('a[href="https://aka.ms/UnderstandingServiceFabricInbuildReplicaStatus"]').should('exist');
+
+            cy.get('[data-cy=132431356665040624]').within(() => {
+              // Replica ID and the 5-phase build stepper share the pane's header row.
+              cy.contains('132431356665040624');
+              cy.get('[data-cy=build-phase-stepper]').within(() => {
+                cy.get('[data-cy=in-progressphase]').should('have.length', 1);
+                cy.get('[data-cy=donephase]').should('have.length', 2);
+                cy.get('[data-cy=pendingphase]').should('have.length', 2);
+                // Tooltip/info icon was removed from the Copy Context phase item.
+                cy.get('.mif-info').should('not.exist');
+              });
+            });
+
             cy.contains('Overview');
-            cy.get('[data-cy=copy-context-substepper]').should('have.class', 'section-greyed');
+            cy.contains('Copy Progress');
+            // This fixture's build is already past CopyContext (InbuildPhase: Copy) -- per the
+            // fixed grey rule, it stays visible (not dimmed) once started, even after moving on.
+            cy.get('[data-cy=copy-context-substepper]').should('not.have.class', 'section-greyed');
             cy.get('[data-cy=context-details]').should('not.have.class', 'section-greyed');
             cy.contains('Copy Context Valid');
             cy.contains('Hop2Legacy');
@@ -242,14 +258,17 @@ context('partition', () => {
           cy.wait(waitRequest);
 
           cy.get('[data-cy=replicas-in-build]').within(() => {
-            cy.contains('132431356665040624');
-            cy.get('[data-cy=build-progress]').within(() => {
-              cy.get('[data-cy=in-progressphase]').should('have.length', 1);
-              cy.get('[data-cy=donephase]').should('have.length', 0);
-              cy.get('[data-cy=pendingphase]').should('have.length', 4);
+            cy.get('[data-cy=132431356665040624]').within(() => {
+              cy.contains('132431356665040624');
+              cy.get('[data-cy=build-phase-stepper]').within(() => {
+                cy.get('[data-cy=in-progressphase]').should('have.length', 1);
+                cy.get('[data-cy=donephase]').should('have.length', 0);
+                cy.get('[data-cy=pendingphase]').should('have.length', 4);
+              });
             });
             cy.contains('Establish Connection');
             cy.contains('Get Copy Context');
+            // Build hasn't reached CopyContext's terminal state yet -- not greyed while active.
             cy.get('[data-cy=copy-context-substepper]').should('not.have.class', 'section-greyed');
             cy.get('[data-cy=build-progress]').within(() => {
               // No ESE detail or LSN progress this early -- sections stay in place, greyed out.
@@ -273,11 +292,15 @@ context('partition', () => {
           cy.wait(waitRequest);
 
           cy.get('[data-cy=replicas-in-build]').within(() => {
-            cy.contains('132431356665040624');
+            cy.get('[data-cy=132431356665040624]').within(() => {
+              cy.contains('132431356665040624');
+              cy.get('[data-cy=build-phase-stepper]').within(() => {
+                cy.get('[data-cy=in-progressphase]').should('have.length', 1);
+                cy.get('[data-cy=donephase]').should('have.length', 1);
+                cy.get('[data-cy=pendingphase]').should('have.length', 3);
+              });
+            });
             cy.get('[data-cy=build-progress]').within(() => {
-              cy.get('[data-cy=in-progressphase]').should('have.length', 1);
-              cy.get('[data-cy=donephase]').should('have.length', 1);
-              cy.get('[data-cy=pendingphase]').should('have.length', 3);
               cy.get('[data-cy=context-details]').should('have.class', 'section-greyed');
               cy.get('[data-cy=copy-details]').should('have.class', 'section-greyed');
               cy.get('[data-cy=copy-catchup-bar]').within(() => {
@@ -285,7 +308,9 @@ context('partition', () => {
                 cy.get('.lsn-bar-track').eq(1).find('.lsn-bar-fill').should('not.exist');
               });
             });
-            cy.get('[data-cy=copy-context-substepper]').should('have.class', 'section-greyed');
+            // Build has moved past CopyContext (now in CopyState) -- per the fixed grey rule,
+            // it stays visible/not-dimmed rather than greying out once passed.
+            cy.get('[data-cy=copy-context-substepper]').should('not.have.class', 'section-greyed');
           })
 
           cy.get('[data-cy=build-progress]').scrollIntoView({ offset: { top: -100 } });
@@ -299,11 +324,15 @@ context('partition', () => {
           cy.wait(waitRequest);
 
           cy.get('[data-cy=replicas-in-build]').within(() => {
-            cy.contains('132431356665040624');
+            cy.get('[data-cy=132431356665040624]').within(() => {
+              cy.contains('132431356665040624');
+              cy.get('[data-cy=build-phase-stepper]').within(() => {
+                cy.get('[data-cy=in-progressphase]').should('have.length', 1);
+                cy.get('[data-cy=donephase]').should('have.length', 3);
+                cy.get('[data-cy=pendingphase]').should('have.length', 1);
+              });
+            });
             cy.get('[data-cy=build-progress]').within(() => {
-              cy.get('[data-cy=in-progressphase]').should('have.length', 1);
-              cy.get('[data-cy=donephase]').should('have.length', 3);
-              cy.get('[data-cy=pendingphase]').should('have.length', 1);
               // Both zones and the ESE detail are ungreyed/filled by this phase.
               cy.get('[data-cy=context-details]').should('not.have.class', 'section-greyed');
               cy.get('[data-cy=copy-details]').should('not.have.class', 'section-greyed');
@@ -316,7 +345,8 @@ context('partition', () => {
               cy.contains('Copy LSN: 100000');
               cy.contains('Copy Catchup LSN: 150000');
             });
-            cy.get('[data-cy=copy-context-substepper]').should('have.class', 'section-greyed');
+            // Build has moved well past CopyContext (now in CopyCatchup) -- still not greyed.
+            cy.get('[data-cy=copy-context-substepper]').should('not.have.class', 'section-greyed');
           })
 
           cy.get('[data-cy=build-progress]').scrollIntoView({ offset: { top: -100 } });

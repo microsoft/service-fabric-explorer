@@ -1,17 +1,12 @@
 @if (buildStatus) {
-  <div data-cy="build-progress" class="build-progress-row">
-    <div class="build-progress-column">
-      <h3 class="underline-title">Build Progress</h3>
-      <app-phase-diagram [items]="phases" [currentIndex]="currentIndex" [vertical]="true" [fillHeight]="true"></app-phase-diagram>
+  <div data-cy="build-progress" class="body-row">
+    <div class="context-phase-column" [class.section-greyed]="currentIndex < 1" data-cy="copy-context-substepper">
+      <h3 class="underline-title">Copy Context Phase</h3>
+      <app-phase-diagram [items]="copyContextSubPhases" [currentIndex]="copyContextSubIndex" [vertical]="true"></app-phase-diagram>
     </div>
 
     <div class="flex-column overview-column">
       <h3 class="underline-title">Overview</h3>
-
-      <div class="current-phase-stepper" [class.section-greyed]="!isCopyContextActive" data-cy="copy-context-substepper">
-        <span class="info-label">Copy Context Phase</span>
-        <app-phase-diagram [items]="copyContextSubPhases" [currentIndex]="copyContextSubIndex"></app-phase-diagram>
-      </div>
 
       @if (isEseBackedKvs) {
         <div class="two-col-grid" data-cy="context-details" [class.section-greyed]="!hasEseDetail">
@@ -35,7 +30,7 @@
       </div>
 
       <div class="lsn-bar-section">
-        <h3 class="underline-title">LSN Progress</h3>
+        <h3 class="underline-title">Copy Progress</h3>
         <div class="lsn-bar-current" [class.section-greyed]="!hasCurrentLsn" data-cy="current-lsn">{{currentLsnLabel}}</div>
         <div class="lsn-bar" data-cy="copy-catchup-bar">
           <div class="lsn-bar-zones">
@@ -60,3 +55,4 @@
     </div>
   </div>
 }
+
