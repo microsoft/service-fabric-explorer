@@ -1,21 +1,21 @@
 @if (inBuildItems.length > 0) {
-  <div class="detail-pane essen-pane" data-cy="replicas-in-build">
-    <app-collapse-container [sectionName]="'Replicas in Build (' + inBuildItems.length + ')'">
+  <div class="detail-pane essen-pane" [class.pane-collapsed]="outerCollapsed" data-cy="replicas-in-build">
+    <app-collapse-container sectionName="Inbuild Replica Status" [(collapsed)]="outerCollapsed">
       <div collapse-header>
-        <h2>Replicas in Build ({{inBuildItems.length}})</h2>
+        <h2>Inbuild Replica Status
+          <a href="https://aka.ms/UnderstandingServiceFabricInbuildReplicaStatus" target="_blank" (click)="$event.stopPropagation()"><span tabindex="-1" class="mif-info"></span></a>
+        </h2>
       </div>
-      <div collapse-body>
+      <div collapse-body class="in-build-list">
         @for (item of inBuildItems; track item.replicator.ReplicaId) {
-          <div class="in-build-pane">
-            <app-collapse-container collapsed="true" [sectionName]="paneTitle(item)">
-              <div collapse-header class="center-text">
-                {{paneTitle(item)}}
-              </div>
-              <div collapse-body>
-                <app-replica-build-progress [replicator]="item.replicator"></app-replica-build-progress>
-              </div>
-            </app-collapse-container>
-          </div>
+          <app-collapse-container [sectionName]="paneTitle(item)" class="in-build-pane" [attr.data-cy]="item.replicator.ReplicaId">
+            <div collapse-header>
+              <div class="pane-title">{{paneTitle(item)}}</div>
+            </div>
+            <div collapse-body>
+              <app-replica-build-progress [replicator]="item.replicator" [isEseBackedKvs]="isEseBackedKvs"></app-replica-build-progress>
+            </div>
+          </app-collapse-container>
         }
       </div>
     </app-collapse-container>

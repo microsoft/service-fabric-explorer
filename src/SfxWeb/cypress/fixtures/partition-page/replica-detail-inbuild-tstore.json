@@ -21,66 +21,39 @@
     },
     "RemoteReplicators": [
       {
-        "ReplicaId": "132422367823912071",
-        "LastAcknowledgementProcessedTimeUtc": "2021-10-22T18:25:34.203Z",
-        "LastReceivedReplicationSequenceNumber": "519513853",
-        "LastAppliedReplicationSequenceNumber": "519513853",
-        "IsInBuild": false,
-        "LastReceivedCopySequenceNumber": "0",
-        "LastAppliedCopySequenceNumber": "0",
-        "RemoteReplicatorAcknowledgementStatus": {
-          "ReplicationStreamAcknowledgementDetail": {
-            "AverageReceiveDuration": "123",
-            "AverageApplyDuration": "456",
-            "NotReceivedCount": "789",
-            "ReceivedAndNotAppliedCount": "321"
-          },
-          "CopyStreamAcknowledgementDetail": {
-            "AverageReceiveDuration": "423",
-            "AverageApplyDuration": "645",
-            "NotReceivedCount": "879",
-            "ReceivedAndNotAppliedCount": "432"
-          }
-        }
-      },
-      {
-        "ReplicaId": "132431356665040624",
+        "ReplicaId": "400000000000000001",
         "LastAcknowledgementProcessedTimeUtc": "2021-10-22T18:25:34.203Z",
         "LastReceivedReplicationSequenceNumber": "0",
         "LastAppliedReplicationSequenceNumber": "0",
         "IsInBuild": true,
-        "LastReceivedCopySequenceNumber": "0",
-        "LastAppliedCopySequenceNumber": "0",
+        "LastReceivedCopySequenceNumber": "32000",
+        "LastAppliedCopySequenceNumber": "30000",
         "RemoteReplicatorAcknowledgementStatus": {
-          "ReplicationStreamAcknowledgementDetail": {
-            "AverageReceiveDuration": "0",
-            "AverageApplyDuration": "0",
-            "NotReceivedCount": "0",
-            "ReceivedAndNotAppliedCount": "0"
-          },
-          "CopyStreamAcknowledgementDetail": {
-            "AverageReceiveDuration": "0",
-            "AverageApplyDuration": "0",
-            "NotReceivedCount": "0",
-            "ReceivedAndNotAppliedCount": "0"
-          }
+          "ReplicationStreamAcknowledgementDetail": { "AverageReceiveDuration": "0", "AverageApplyDuration": "0", "NotReceivedCount": "0", "ReceivedAndNotAppliedCount": "0" },
+          "CopyStreamAcknowledgementDetail": { "AverageReceiveDuration": "4", "AverageApplyDuration": "5", "NotReceivedCount": "0", "ReceivedAndNotAppliedCount": "0" }
         },
         "RemoteInbuildReplicaStatus": {
-          "InbuildPhase": "CopyState",
+          "InbuildPhase": "Copy",
           "CopyContextPhase": "GetCopyContext",
-          "LastCopySequenceNumber": "0",
+          "LastCopySequenceNumber": "80000",
           "LastCopyCatchupSequenceNumber": "0",
           "CopyContextPhaseStartTimeUtc": "2026-09-15T10:00:00.000Z",
           "CopyStatePhaseStartTimeUtc": "2026-09-15T10:00:05.000Z",
-          "CopyPhaseStartTimeUtc": "0001-01-01T00:00:00.000Z",
-          "CopyCatchupPhaseStartTimeUtc": "0001-01-01T00:00:00.000Z"
+          "CopyPhaseStartTimeUtc": "2026-09-15T10:00:12.000Z",
+          "CopyCatchupPhaseStartTimeUtc": "0001-01-01T00:00:00.000Z",
+          "CopyDetails": {
+            "Kind": "KeyValueStore",
+            "ProviderCopyDetail": {
+              "Kind": "TStore"
+            }
+          }
         }
       }
     ]
   },
   "ReplicaStatus": {
     "Kind": "KeyValueStore",
-    "ProviderKind": "ESE",
+    "ProviderKind": "TStore",
     "DatabaseRowCountEstimate": "28365",
     "DatabaseLogicalSizeEstimate": "13361152",
     "StatusDetails": ""

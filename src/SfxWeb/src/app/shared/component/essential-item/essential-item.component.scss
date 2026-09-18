@@ -1,3 +1,14 @@
+// The value text and its trailing icon (copy/info) are siblings with no gap by default,
+// which makes long values butt right up against the icon glyph -- add breathing room.
+.essential-list-item {
+    gap: 5px;
+}
+
+// Matches the copy icon's .link color so both icons read as the same accent, not plain text.
+.mif-info {
+    color: var(--accent-lightblue);
+}
+
 .allow-wrap {
   .tile-item {
     height: initial;

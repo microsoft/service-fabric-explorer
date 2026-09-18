@@ -78,6 +78,13 @@
       }
     ]
   },
+  "ReplicaStatus": {
+    "Kind": "KeyValueStore",
+    "ProviderKind": "ESE",
+    "DatabaseRowCountEstimate": "28365",
+    "DatabaseLogicalSizeEstimate": "13361152",
+    "StatusDetails": ""
+  },
   "DeployedServiceReplica": {
     "ServiceKind": "Stateful",
     "ServiceName": "fabric:/VisualObjects/VisualObjects.ActorService",

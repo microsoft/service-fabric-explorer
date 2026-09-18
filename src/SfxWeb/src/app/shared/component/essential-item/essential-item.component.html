@@ -21,4 +21,7 @@
   @if (item.copyTextValue) {
     <app-clip-board [text]="item.copyTextValue" [name]="item.descriptionName"></app-clip-board>
   }
+  @if (item.infoText) {
+    <span class="mif-info" [ngbTooltip]="item.infoText" tooltipClass="styled-tooltip" container="body" tabindex="0"></span>
+  }
 </div>

@@ -663,6 +663,7 @@ export interface IRawDeployedStatelessServiceInstanceInfo extends IRawSharedRepl
 
 export interface IRawDeployedReplicaStatus {
         Kind: string;
+        ProviderKind?: string;
         DatabaseRowCountEstimate: string;
         DatabaseLogicalSizeEstimate: string;
         StatusDetails: string;
@@ -724,11 +725,11 @@ export interface IRawKeyValueStoreProviderCopyDetail {
         IsCopyContextValid?: boolean;
         SecondaryEpoch?: IRawConfigurationEpoch;
         SecondaryLastOperationSequenceNumber?: string;
-        StoreFormatVersion?: string;
-        CopyType?: string;
-        CopyTypeReason?: string;
-        CopyMode?: string;
-        CopyModeReason?: string;
+        StoreFormatVersion?: number;
+        CopyType?: number;
+        CopyTypeReason?: number;
+        CopyMode?: number;
+        CopyModeReason?: number;
     }
 
 export interface IRemoteReplicatorAcknowledgementStatus {

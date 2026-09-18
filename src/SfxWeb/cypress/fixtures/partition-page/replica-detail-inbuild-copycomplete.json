@@ -83,16 +83,23 @@
               "IsCopyContextValid": true,
               "SecondaryEpoch": { "DataLossVersion": 1, "ConfigurationVersion": 5 },
               "SecondaryLastOperationSequenceNumber": "150000",
-              "StoreFormatVersion": "V2",
-              "CopyType": "Full",
-              "CopyTypeReason": "New",
-              "CopyMode": "Full",
-              "CopyModeReason": "New"
+              "StoreFormatVersion": 2,
+              "CopyType": 1,
+              "CopyTypeReason": 4,
+              "CopyMode": 1,
+              "CopyModeReason": 0
             }
           }
         }
       }
     ]
+  },
+  "ReplicaStatus": {
+    "Kind": "KeyValueStore",
+    "ProviderKind": "ESE",
+    "DatabaseRowCountEstimate": "28365",
+    "DatabaseLogicalSizeEstimate": "13361152",
+    "StatusDetails": ""
   },
   "DeployedServiceReplica": {
     "ServiceKind": "Stateful",

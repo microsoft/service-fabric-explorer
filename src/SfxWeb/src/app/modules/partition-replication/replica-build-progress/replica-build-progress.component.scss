@@ -1,26 +1,86 @@
-// Plain label/value row -- avoids the global .middle-text{max-width:800px} rule
-// (essential-item.component) which right-aligns values far from their label
-// once the container is wider than the ~300px tiles that class was built for.
-// No flex/space-between here either, so the value always sits right after the
-// label regardless of how wide the container ends up being.
-.info-row {
-    padding: 4px 0;
+// A section whose phase hasn't been reached yet -- content stays in place (no reflow as
+// the build advances) but is dimmed until its data becomes available.
+.section-greyed {
+    opacity: 0.4;
 }
 
+// align-items: stretch (flex default) makes the Build Progress column match the Overview
+// column's full height (now including the Progress bar section) rather than the reverse.
+.build-progress-row {
+    display: flex;
+    gap: 10px;
+}
+
+.build-progress-column {
+    display: flex;
+    flex-direction: column;
+    flex: 0 0 160px;
+
+    // Fills the stretched column height (see .build-progress-row) instead of clumping at
+    // the top -- fillHeight spaces the 5 phase items evenly across it.
+    app-phase-diagram {
+        flex: 1;
+    }
+}
+
+// Back inside .overview-column -- no width of its own, just spacing from the grid above it.
+.lsn-bar-section {
+    margin-top: 10px;
+}
+
+// Same flex-grow-next-to-a-fixed-sibling shape as .deactivation-info (node-deactivation-info
+// component) -- capped so the two-col-grids don't stretch edge-to-edge on wide screens.
+.overview-column {
+    flex: 1;
+    min-width: 0;
+    max-width: 700px;
+}
+
+// Matches the single-row height/vertical-centering of the app-essential-item rows it replaced.
+// Label and stepper are grouped together on the left (like a label immediately followed by
+// its value) rather than stretched across the row -- centering/right-aligning left the short
+// stepper looking disconnected from its own label in a wide row.
+.current-phase-stepper {
+    min-height: 35px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+// Label for the stepper row, matching the app-essential-item left-text look.
 .info-label {
     color: #c9c9c9;
     font-weight: 500;
     font-size: 14px;
+    white-space: nowrap;
+}
 
-    &::after {
-        content: ': ';
-    }
+// Renders the row-major flat item lists (contextItems/copyTypeItems) as left/right
+// pairs -- two app-essential-item children per grid row, in source order.
+.two-col-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 24px;
+}
+
+.lsn-bar-current {
+    color: #c9c9c9;
+    font-size: 12px;
 }
 
 .lsn-bar {
+    width: 100%;
     margin: 5px 0 10px;
 
+    // Fixed 50/50 split regardless of each zone's actual LSN range -- Copy (left) and
+    // Catchup (right), with a thin gap as the visual divider between them.
+    .lsn-bar-zones {
+        display: flex;
+        gap: 3px;
+    }
+
     .lsn-bar-track {
+        flex: 1;
         height: 5px;
         background-color: grey;
     }

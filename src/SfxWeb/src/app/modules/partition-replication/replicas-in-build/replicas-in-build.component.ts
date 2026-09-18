@@ -20,6 +20,12 @@ export class ReplicasInBuildComponent implements OnChanges, OnDestroy {
 
   primaryReplica: ReplicaOnPartition | undefined;
   inBuildItems: IInBuildReplicaItem[] = [];
+  outerCollapsed = false;
+  // Partition-level, not per-replica -- a service is either ESE-backed KVS or not, uniformly
+  // across every replica, known well before any of them finish copying. KVS can also be
+  // TStore-backed (FABRIC_KEY_VALUE_STORE_PROVIDER_KIND_TSTORE); that provider's copy detail
+  // struct isn't implemented server-side, so it never populates the ESE-shaped fields either.
+  isEseBackedKvs = false;
 
   sub = new Subscription();
 
@@ -29,9 +35,13 @@ export class ReplicasInBuildComponent implements OnChanges, OnDestroy {
     if (this.primaryReplica) {
       this.sub.add(this.primaryReplica.detail.refresh().subscribe(() => {
         const remoteReplicators = this.primaryReplica?.detail.raw.ReplicatorStatus?.RemoteReplicators || [];
+        const replicaStatus = this.primaryReplica?.detail.raw.ReplicaStatus;
+        this.isEseBackedKvs = replicaStatus?.Kind === 'KeyValueStore' && replicaStatus?.ProviderKind === 'ESE';
 
         this.inBuildItems = remoteReplicators
-          .filter(replicator => replicator.IsInBuild)
+          // IsInBuild lags CopyComplete by one refresh -- exclude it so a replica that
+          // has already finished building doesn't linger in this list.
+          .filter(replicator => replicator.IsInBuild && replicator.RemoteInbuildReplicaStatus?.InbuildPhase !== 'CopyComplete')
           .map(replicator => ({
             replicator,
             replica: this.replicas.find(replica => replica.id === replicator.ReplicaId)
@@ -41,7 +51,7 @@ export class ReplicasInBuildComponent implements OnChanges, OnDestroy {
   }
 
   paneTitle(item: IInBuildReplicaItem): string {
-    return `Replica ${item.replicator.ReplicaId}`;
+    return item.replicator.ReplicaId;
   }
 
   ngOnDestroy(): void {

@@ -5,7 +5,7 @@
   flex-direction: column;">
     <div class="underline" style="min-height: 0px;overflow: auto;">
 
-      @if (replicator.IsInBuild) {
+      @if (replicator.IsInBuild && replicator.RemoteInbuildReplicaStatus?.InbuildPhase !== 'CopyComplete') {
         <app-replica-build-progress class="underline" [replicator]="replicator"></app-replica-build-progress>
       }
 
