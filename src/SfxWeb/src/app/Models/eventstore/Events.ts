@@ -88,6 +88,10 @@ export class FabricEvent extends FabricEventBase {
 export class ClusterEvent extends FabricEventBase {
 }
 
+export const NodeMessageThrottlingStarted = 'NodeMessageThrottlingStarted';
+export const NodeMessageThrottlingEnded = 'NodeMessageThrottlingEnded';
+export const NodeMessageThrottlingEventKinds = [NodeMessageThrottlingStarted, NodeMessageThrottlingEnded];
+
 export class NodeEvent extends FabricEventBase {
     public nodeName!: string;
 

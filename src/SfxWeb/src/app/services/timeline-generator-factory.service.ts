@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ClusterTimelineGenerator, NodeTimelineGenerator, NodeThrottlingTimelineGenerator, ApplicationTimelineGenerator, PartitionTimelineGenerator, RepairTaskTimelineGenerator, TimeLineGeneratorBase, ReplicaTimelineGenerator } from '../Models/eventstore/timelineGenerators';
+import { ClusterTimelineGenerator, NodeTimelineGenerator, ApplicationTimelineGenerator, PartitionTimelineGenerator, RepairTaskTimelineGenerator, TimeLineGeneratorBase, ReplicaTimelineGenerator } from '../Models/eventstore/timelineGenerators';
 import { EventType } from '../modules/event-store/event-store/event-store.component';
 
 @Injectable({
@@ -9,7 +9,6 @@ export class TimelineGeneratorFactoryService {
 
   private clusterGenerator?: ClusterTimelineGenerator;
   private nodeGenerator?: NodeTimelineGenerator;
-  private nodeThrottlingGenerator?: NodeThrottlingTimelineGenerator;
   private appGenerator?: ApplicationTimelineGenerator;
   private partitionGenerator?: PartitionTimelineGenerator;
   private repairGenerator?: RepairTaskTimelineGenerator;
@@ -28,12 +27,6 @@ export class TimelineGeneratorFactoryService {
           this.nodeGenerator = new NodeTimelineGenerator();
         }
         return this.nodeGenerator;
-
-      case "NodeThrottling":
-        if (!this.nodeThrottlingGenerator) {
-          this.nodeThrottlingGenerator = new NodeThrottlingTimelineGenerator();
-        }
-        return this.nodeThrottlingGenerator;
 
       case "Application":
         if (!this.appGenerator) {

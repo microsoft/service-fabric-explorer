@@ -19,7 +19,6 @@ export interface IQuickDates {
 export type EventType =
   "Cluster" |
   "Node" |
-  "NodeThrottling" |
   'Application' |
   "Partition" |
   "RepairTask" |

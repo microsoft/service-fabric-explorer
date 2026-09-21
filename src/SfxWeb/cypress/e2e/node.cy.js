@@ -1,7 +1,8 @@
 /// <reference types="cypress" />
 
 import { apiUrl, addDefaultFixtures, checkTableSize, FIXTURE_REF_NODES, nodes_route, FIXTURE_NODES, addRoute, checkCommand,
-         getNodeThrottlingEvents, getStaleNodeThrottlingStartedEvent, xssPrefix, watchForAlert, xssEncoded, FIXTURE_REF_MANIFEST } from './util.cy';
+         getNodeThrottlingEvents, getStaleNodeThrottlingStartedEvent, xssPrefix, watchForAlert, xssEncoded, FIXTURE_REF_MANIFEST,
+         manifest_route } from './util.cy';
 
 const nodeName = "_nt_0"
 const nodeInfoRef = "@getnodeInfo"
@@ -79,6 +80,7 @@ context('node page', () => {
         cy.visit(`/#/node/${nodeName}`);
 
         cy.wait('@getNodeThrottlingState');
+  cy.get('@getNodeThrottlingState.all').should('have.length', 1);
         cy.get('[data-cy=node-throttling-warning]').within(() => {
           cy.get('.warning-icon');
           cy.contains('Node is Throttling');
@@ -102,6 +104,24 @@ context('node page', () => {
 
         cy.wait('@getStaleNodeThrottlingState');
         cy.get('[data-cy=node-throttling-warning]').should('not.exist');
+      })
+
+      it('does not request throttling events when EventStore is disabled', () => {
+        let eventRequests = 0;
+        cy.fixture('clusterManifest.json').then(manifest => {
+          manifest.Manifest = manifest.Manifest.replace('EventStoreService', 'DisabledEventStoreService');
+          cy.intercept('GET', manifest_route, manifest).as('getManifestWithoutEventStore');
+        });
+        cy.intercept('GET', apiUrl(`/EventsStore/Nodes/${nodeName}/$/Events?*`), request => {
+          eventRequests++;
+          request.reply([]);
+        });
+
+        cy.visit(`/#/node/${nodeName}`);
+
+        cy.wait(['@getManifestWithoutEventStore', nodeInfoRef]);
+        cy.get('[data-cy=essential-info]');
+        cy.then(() => expect(eventRequests).to.equal(0));
       })
 
       it('down node', () => {

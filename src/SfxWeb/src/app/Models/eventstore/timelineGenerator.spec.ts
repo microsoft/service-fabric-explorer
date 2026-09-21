@@ -1,4 +1,4 @@
-import { NodeTimelineGenerator, NodeThrottlingTimelineGenerator, EventStoreUtils, ApplicationTimelineGenerator, ITimelineData } from './timelineGenerators';
+import { NodeTimelineGenerator, EventStoreUtils, ApplicationTimelineGenerator, ITimelineData } from './timelineGenerators';
 import { ApplicationEvent, NodeEvent } from './Events';
 
 
@@ -10,8 +10,8 @@ describe('TimelineGenerators', () => {
     const id = '---29dd383d-fdd4-4499-8e69-b7b40de04bd2';
     const id2 = "---29dd383d-fdd4-4499-8e69-b7b40de04bd3";
     const groupId = 'Node Down';
-    describe('Node throttling generator', () => {
-      const generator = new NodeThrottlingTimelineGenerator();
+    describe('Node throttling timeline', () => {
+      const generator = new NodeTimelineGenerator();
 
       const createEvent = (
         kind: string,
@@ -47,7 +47,7 @@ describe('TimelineGenerators', () => {
         expect(item.start).toBe(started.timeStamp);
         expect(item.end).toBe(ended.timeStamp);
         expect(item.kind).toBe(started.kind);
-        expect(item.group).toBe(NodeThrottlingTimelineGenerator.NodesThrottlingLabel);
+        expect(item.group).toBe(NodeTimelineGenerator.NodesThrottlingLabel);
         expect(item.type).toBe('range');
         expect(item.className).toBe('orange');
       });
@@ -88,71 +88,18 @@ describe('TimelineGenerators', () => {
         expect(labels).toEqual(['Node node0 throttling', 'Node node1 throttling']);
       });
 
-      it('uses the latest transition to determine the current throttling state', () => {
-        const started = createEvent('NodeMessageThrottlingStarted', 'node0', 'started', '2020-05-01T02:00:00Z');
-        const ended = createEvent('NodeMessageThrottlingEnded', 'node0', 'ended', '2020-05-01T03:00:00Z');
-
-        expect(NodeThrottlingTimelineGenerator.isCurrentlyThrottling([started])).toBe(true);
-        expect(NodeThrottlingTimelineGenerator.isCurrentlyThrottling([started, ended])).toBe(false);
-        expect(NodeThrottlingTimelineGenerator.isCurrentlyThrottling([ended, started])).toBe(false);
-      });
-
-      it('detects when any node is currently throttling', () => {
-        const node0Started = createEvent('NodeMessageThrottlingStarted', 'node0', 'node0-started', '2020-05-01T02:00:00Z');
-        const node1Started = createEvent('NodeMessageThrottlingStarted', 'node1', 'node1-started', '2020-05-01T03:00:00Z');
-        const node1Ended = createEvent('NodeMessageThrottlingEnded', 'node1', 'node1-ended', '2020-05-01T04:00:00Z');
-        const node0Ended = createEvent('NodeMessageThrottlingEnded', 'node0', 'node0-ended', '2020-05-01T05:00:00Z');
-
-        expect(NodeThrottlingTimelineGenerator.isCurrentlyThrottling([node0Started, node1Started, node1Ended])).toBe(true);
-        expect(NodeThrottlingTimelineGenerator.isCurrentlyThrottling([node0Started, node1Started, node1Ended, node0Ended])).toBe(false);
-      });
-
-      it('ignores a throttling state from a previous node incarnation', () => {
-        const nodeId = '86fa6852ad467a903afbbc67edc16b66';
+      it('ends a stale throttling interval when a new node instance starts', () => {
         const staleStarted = createEvent(
-          'NodeMessageThrottlingStarted',
-          'node0',
-          'stale-started',
-          '2020-05-01T01:00:00Z',
-          nodeId,
-          '132327707667996469');
-        const currentNodes = new Map([
-          ['node0', {
-            nodeId,
-            instanceId: '132327707667996470',
-            nodeUpAt: '2020-05-01T02:00:00Z'
-          }]
-        ]);
+          'NodeMessageThrottlingStarted', 'node0', 'stale-started', '2020-05-01T01:00:00Z', undefined, '1');
+        const restarted = createEvent(
+          'NodeUp', 'node0', 'restarted', '2020-05-01T02:00:00Z', undefined, '1');
+        restarted.eventProperties.LastNodeDownAt = NodeTimelineGenerator.FileTimeEpochSentinel;
 
-        expect(NodeThrottlingTimelineGenerator.isCurrentlyThrottling([staleStarted], currentNodes)).toBe(false);
-      });
+        const events = generator.consume([restarted, staleStarted], startDate, endDate) as Required<ITimelineData>;
+        const item = events.items.get().find(event => event.group === NodeTimelineGenerator.NodesThrottlingLabel)!;
 
-      it('uses node start time when EventStore cannot represent the instance id safely', () => {
-        const nodeId = '86fa6852ad467a903afbbc67edc16b66';
-        const staleStarted = createEvent(
-          'NodeMessageThrottlingStarted',
-          'node0',
-          'stale-started',
-          '2020-05-01T01:00:00Z',
-          nodeId,
-          132327707667996469);
-        const currentStarted = createEvent(
-          'NodeMessageThrottlingStarted',
-          'node0',
-          'current-started',
-          '2020-05-01T03:00:00Z',
-          nodeId,
-          132327707667996470);
-        const currentNodes = new Map([
-          ['node0', {
-            nodeId,
-            instanceId: '132327707667996470',
-            nodeUpAt: '2020-05-01T02:00:00Z'
-          }]
-        ]);
-
-        expect(NodeThrottlingTimelineGenerator.isCurrentlyThrottling([staleStarted], currentNodes)).toBe(false);
-        expect(NodeThrottlingTimelineGenerator.isCurrentlyThrottling([currentStarted], currentNodes)).toBe(true);
+        expect(item.start).toBe(staleStarted.timeStamp);
+        expect(item.end).toBe(restarted.timeStamp);
       });
     });
 
@@ -309,7 +256,7 @@ describe('TimelineGenerators', () => {
 
             expect(events.items.length).toBe(2);
             expect(events.groups.get(NodeTimelineGenerator.NodesDownLabel)).toBeTruthy();
-            expect(events.groups.get(NodeThrottlingTimelineGenerator.NodesThrottlingLabel)).toBeTruthy();
+            expect(events.groups.get(NodeTimelineGenerator.NodesThrottlingLabel)).toBeTruthy();
         });
 
         it('node goes down, up, and down (2 total events)', () => {

@@ -1,18 +1,17 @@
 /// <reference types="cypress" />
 
 import { apiUrl, addDefaultFixtures, checkTableSize, FIXTURE_REF_NODES, FIXTURE_REF_MANIFEST, checkCommand,
-         getNodeThrottlingEvents, getStaleNodeThrottlingStartedEvent } from './util.cy';
+         getNodeThrottlingEvents, getStaleNodeThrottlingStartedEvent, manifest_route } from './util.cy';
 
 context('nodes list page', () => {
     beforeEach(() => {
         addDefaultFixtures();
         cy.intercept('GET', apiUrl(`/EventsStore/Nodes/Events?*`), []).as('getNodesThrottlingState');
-        cy.visit('/#/nodes')
-        cy.wait('@getNodesThrottlingState');
     })
 
     describe("essentials", () => {
         it('load essentials', () => {
+            cy.visit('/#/nodes');
             cy.wait(FIXTURE_REF_NODES);
 
             cy.get('[data-cy=header]').within(() => {
@@ -30,9 +29,10 @@ context('nodes list page', () => {
             const scriptedEvents = getNodeThrottlingEvents(['_nt_0', '_nt_1'], ['_nt_0']);
             cy.intercept('GET', apiUrl(`/EventsStore/Nodes/Events?*`), scriptedEvents).as('getScriptedNodesThrottlingState');
 
-            cy.reload();
+            cy.visit('/#/nodes');
 
             cy.wait('@getScriptedNodesThrottlingState');
+            cy.get('@getScriptedNodesThrottlingState.all').should('have.length', 1);
             cy.get('[data-cy=nodes-throttling-warning]').within(() => {
                 cy.get('.warning-icon');
                 cy.contains('One or more nodes are throttling');
@@ -43,10 +43,28 @@ context('nodes list page', () => {
             cy.intercept('GET', apiUrl(`/EventsStore/Nodes/Events?*`), [getStaleNodeThrottlingStartedEvent('_nt_0')])
               .as('getStaleNodesThrottlingState');
 
-            cy.reload();
+                        cy.visit('/#/nodes');
 
             cy.wait('@getStaleNodesThrottlingState');
             cy.get('[data-cy=nodes-throttling-warning]').should('not.exist');
+        })
+
+        it('does not request throttling events when EventStore is disabled', () => {
+            let eventRequests = 0;
+            cy.fixture('clusterManifest.json').then(manifest => {
+                manifest.Manifest = manifest.Manifest.replace('EventStoreService', 'DisabledEventStoreService');
+                cy.intercept('GET', manifest_route, manifest).as('getManifestWithoutEventStore');
+            });
+            cy.intercept('GET', apiUrl(`/EventsStore/Nodes/Events?*`), request => {
+                eventRequests++;
+                request.reply([]);
+            });
+
+            cy.visit('/#/nodes');
+
+            cy.wait(['@getManifestWithoutEventStore', FIXTURE_REF_NODES]);
+            cy.get('[data-cy=nodesList]');
+            cy.then(() => expect(eventRequests).to.equal(0));
         })
 
     })
@@ -61,7 +79,14 @@ context('nodes list page', () => {
                 Category: 'StateTransition',
                 HasCorrelatedEvents: false
             };
-            cy.intercept('GET', apiUrl(`/EventsStore/Nodes/Events?*`), [...getNodeThrottlingEvents(['_nt_0', '_nt_1']), nodeDownEvent]).as('getevents');
+            cy.intercept('GET', apiUrl(`/EventsStore/Nodes/Events?*`), request => {
+                request.reply([...getNodeThrottlingEvents(['_nt_0', '_nt_1']), nodeDownEvent]);
+                if (!request.query.eventsTypesFilter) {
+                    request.alias = 'getevents';
+                }
+            });
+
+            cy.visit('/#/nodes');
 
             cy.wait([FIXTURE_REF_NODES, FIXTURE_REF_MANIFEST]);
 
@@ -82,6 +107,7 @@ context('nodes list page', () => {
 
     describe("commands", () => {
         it('view commands', () => {
+            cy.visit('/#/nodes');
             cy.wait(FIXTURE_REF_NODES);
 
             checkCommand(1);

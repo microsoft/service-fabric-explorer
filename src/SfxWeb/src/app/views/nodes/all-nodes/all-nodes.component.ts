@@ -3,12 +3,11 @@ import { DataService } from 'src/app/services/data.service';
 import { SettingsService } from 'src/app/services/settings.service';
 import { ListSettings, ListColumnSettingForLink, ListColumnSetting, ListColumnSettingWithFilter, ListColumnSettingForBadge } from 'src/app/Models/ListSettings';
 import { IResponseMessageHandler, ResponseMessageHandlers } from 'src/app/Common/ResponseMessageHandlers';
-import { Observable, forkJoin } from 'rxjs';
+import { Observable } from 'rxjs';
 import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 import { NodeCollection } from 'src/app/Models/DataModels/collections/NodeCollection';
 import { map } from 'rxjs/operators';
 import { DashboardViewModel, IDashboardViewModel } from 'src/app/ViewModels/DashboardViewModels';
-import { NodeThrottlingTimelineGenerator } from 'src/app/Models/eventstore/timelineGenerators';
 
 @Component({
     selector: 'app-all-nodes',
@@ -27,12 +26,23 @@ export class AllNodesComponent extends BaseControllerDirective {
   tiles: IDashboardViewModel[] = [];
   isAnyNodeThrottling = false;
 
-  private nodeThrottlingEventData!: ReturnType<DataService['getNodeThrottlingEventData']>;
+  private nodeThrottlingEvents?: ReturnType<DataService['getNodeThrottlingEventList']>;
+  private hasRefreshed = false;
 
   setup() {
     this.nodes = this.data.nodes;
     this.isAnyNodeThrottling = false;
-    this.nodeThrottlingEventData = this.data.getNodeThrottlingEventData();
+    this.subscriptions.add(this.data.getClusterManifest().subscribe(manifest => {
+      if (manifest.isEventStoreEnabled) {
+        this.nodeThrottlingEvents = this.data.getNodeThrottlingEventList(undefined, manifest.eventStoreTimeRange);
+        if (this.hasRefreshed) {
+          this.refreshNodeThrottlingState();
+        }
+      } else {
+        this.nodeThrottlingEvents = undefined;
+        this.isAnyNodeThrottling = false;
+      }
+    }));
     this.listSettings = this.settings.getNewOrExistingListSettings('nodes', ['name'], [
       new ListColumnSettingForLink('name', 'Name', item => item.viewPath),
       new ListColumnSetting('raw.IpAddressOrFQDN', 'Address'),
@@ -48,34 +58,30 @@ export class AllNodesComponent extends BaseControllerDirective {
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
-    return forkJoin([
-      this.nodes.refresh(messageHandler).pipe(map(() => {
-        this.tiles = [];
+    return this.nodes.refresh(messageHandler).pipe(map(() => {
+      this.tiles = [];
 
-        this.nodes.getNodeStateCounts(false, false).forEach(type => {
-          this.tiles.push(
-            DashboardViewModel.fromHealthStateCount(type.nodeType, type.nodeType, false, {
-              ErrorCount: type.errorCount,
-              WarningCount: type.warningCount,
-              OkCount: type.okCount
-            })
-          );
-        });
-      })),
-      this.nodeThrottlingEventData.eventsList.refresh(ResponseMessageHandlers.silentResponseMessageHandler)
-    ]).pipe(map(([, eventsLoaded]) => {
-      const currentNodeIdentities = new Map(this.nodes.collection.map(node => [
-        node.name,
-        {
-          nodeId: node.raw.Id.Id,
-          instanceId: node.raw.InstanceId,
-          nodeUpAt: node.raw.NodeUpAt
-        }
-      ]));
-      this.isAnyNodeThrottling = eventsLoaded &&
-        NodeThrottlingTimelineGenerator.isCurrentlyThrottling(
-          this.nodeThrottlingEventData.getEvents!(),
-          currentNodeIdentities);
+      this.nodes.getNodeStateCounts(false, false).forEach(type => {
+        this.tiles.push(
+          DashboardViewModel.fromHealthStateCount(type.nodeType, type.nodeType, false, {
+            ErrorCount: type.errorCount,
+            WarningCount: type.warningCount,
+            OkCount: type.okCount
+          })
+        );
+      });
+      this.hasRefreshed = true;
+      this.refreshNodeThrottlingState();
     }));
+  }
+
+  private refreshNodeThrottlingState(): void {
+    const refresh = this.nodeThrottlingEvents?.refresh(ResponseMessageHandlers.silentResponseMessageHandler).subscribe(success => {
+      this.isAnyNodeThrottling = success && this.nodes.isCurrentlyThrottling(
+        this.nodeThrottlingEvents!.collection.map(event => event.raw));
+    });
+    if (refresh) {
+      this.subscriptions.add(refresh);
+    }
   }
 }

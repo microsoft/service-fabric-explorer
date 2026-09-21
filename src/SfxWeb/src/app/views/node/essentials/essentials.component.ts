@@ -11,7 +11,6 @@ import { IEssentialListItem } from 'src/app/modules/charts/essential-health-tile
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { INodeTypeInfo } from 'src/app/Models/DataModels/Cluster';
 import { RepairTask } from 'src/app/Models/DataModels/repairTask';
-import { NodeThrottlingTimelineGenerator } from 'src/app/Models/eventstore/timelineGenerators';
 
 @Component({
     selector: 'app-essentials',
@@ -37,7 +36,8 @@ export class EssentialsComponent extends NodeBaseControllerDirective {
   placementProperties!: INodeTypeInfo;
   isNodeThrottling = false;
 
-  private nodeThrottlingEventData!: ReturnType<DataService['getNodeThrottlingEventData']>;
+  private nodeThrottlingEvents?: ReturnType<DataService['getNodeThrottlingEventList']>;
+  private hasRefreshed = false;
 
   setup() {
     this.repairJobSettings = this.settings.getNewOrExistingPendingRepairTaskListSettings();
@@ -53,10 +53,22 @@ export class EssentialsComponent extends NodeBaseControllerDirective {
     this.ringInfo = [];
     this.repairJobs = [];
     this.isNodeThrottling = false;
-    this.nodeThrottlingEventData = this.data.getNodeThrottlingEventData(this.nodeName);
+    this.subscriptions.add(this.data.getClusterManifest().subscribe(manifest => {
+      if (manifest.isEventStoreEnabled) {
+        this.nodeThrottlingEvents = this.data.getNodeThrottlingEventList(this.nodeName, manifest.eventStoreTimeRange);
+        if (this.hasRefreshed) {
+          this.refreshNodeThrottlingState();
+        }
+      } else {
+        this.nodeThrottlingEvents = undefined;
+        this.isNodeThrottling = false;
+      }
+    }));
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
+    this.hasRefreshed = true;
+    this.refreshNodeThrottlingState();
 
     let duration = '';
     const up = this.node.raw.NodeDownTimeInSeconds === '0';
@@ -113,18 +125,6 @@ export class EssentialsComponent extends NodeBaseControllerDirective {
       this.node.deployedApps.refresh(messageHandler).pipe(map(() => {
         this.deployedApps = this.node.deployedApps;
       })),
-      this.nodeThrottlingEventData.eventsList.refresh(ResponseMessageHandlers.silentResponseMessageHandler).pipe(map(success => {
-        const currentNodeIdentities = new Map([
-          [this.node.name, {
-            nodeId: this.node.raw.Id.Id,
-            instanceId: this.node.raw.InstanceId,
-            nodeUpAt: this.node.raw.NodeUpAt
-          }]
-        ]);
-        this.isNodeThrottling = success && NodeThrottlingTimelineGenerator.isCurrentlyThrottling(
-          this.nodeThrottlingEventData.getEvents!(),
-          currentNodeIdentities);
-      })),
       this.data.clusterManifest.ensureInitialized().pipe(mergeMap(() => {
         this.placementProperties = this.data.clusterManifest.getNodeProperties(this.node.raw.Type)!;
         if (this.data.clusterManifest.isRepairManagerEnabled) {
@@ -137,5 +137,16 @@ export class EssentialsComponent extends NodeBaseControllerDirective {
       }))
 
     ]);
+  }
+
+  private refreshNodeThrottlingState(): void {
+    const refresh = this.nodeThrottlingEvents?.refresh(ResponseMessageHandlers.silentResponseMessageHandler).subscribe(success => {
+      this.isNodeThrottling = success && this.data.nodes.isCurrentlyThrottling(
+        this.nodeThrottlingEvents!.collection.map(event => event.raw),
+        this.nodeName);
+    });
+    if (refresh) {
+      this.subscriptions.add(refresh);
+    }
   }
 }
