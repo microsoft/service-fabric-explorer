@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { RestClientService } from './rest-client.service';
-import { Observable, from, of } from 'rxjs';
-import { retry, map, switchMap } from 'rxjs/operators';
+import { Observable, defer, from, of, throwError } from 'rxjs';
+import { retry, map, switchMap, catchError } from 'rxjs/operators';
 import { AadMetadata } from '../Models/DataModels/Aad';
 import {
   PublicClientApplication,
@@ -12,6 +12,7 @@ import {
   BrowserCacheLocation,
   AuthError,
   ServerError,
+  InteractionRequiredAuthError,
 } from '@azure/msal-browser';
 import { StringUtils } from '../Utils/StringUtils';
 
@@ -26,6 +27,7 @@ export class MsalService {
   public aadEnabled = false;
   public authErrorCode: string | null = null;
   private scopes: string[] = [];
+  private redirectInProgress = false;
 
   load(): Observable<PublicClientApplication | undefined> {
     if (this.context) {
@@ -114,14 +116,38 @@ export class MsalService {
     return !!this.userInfo;
   }
 
-  // Silent-only token acquisition; MSAL renews from the cached refresh token. Interactive
-  // re-auth is not triggered here so concurrent requests can't each fire a full-page redirect.
+  // Silent-first token acquisition. Transient failures are retried, but when
+  // interaction is required (expired/revoked session) we skip the pointless retries and fall
+  // back to a single guarded interactive redirect so concurrent requests can't each fire one.
   public acquireTokenResilient(resource: string): Observable<string> {
     const request: SilentRequest = {
       scopes: [`${resource}/.default`],
       account: this.userInfo,
     };
 
-    return from(this.context.acquireTokenSilent(request).then(result => result.accessToken)).pipe(retry(3));
+    return defer(() => this.context.acquireTokenSilent(request)).pipe(
+      map(result => result.accessToken),
+      retry({
+        count: 3,
+        delay: (error) => (error instanceof InteractionRequiredAuthError ? throwError(() => error) : of(error)),
+      }),
+      catchError((error) => {
+        if (error instanceof InteractionRequiredAuthError) {
+          this.reauthenticate(request);
+        }
+        return throwError(() => error);
+      }),
+    );
+  }
+
+  // Interactive fallback when silent acquisition can't recover. Guarded so multiple in-flight
+  // requests failing at once don't each start a full-page redirect.
+  private reauthenticate(request: SilentRequest): void {
+    if (this.redirectInProgress) {
+      return;
+    }
+    this.redirectInProgress = true;
+    this.context.acquireTokenRedirect({ scopes: request.scopes, account: request.account })
+      .catch(() => { this.redirectInProgress = false; });
   }
 }
