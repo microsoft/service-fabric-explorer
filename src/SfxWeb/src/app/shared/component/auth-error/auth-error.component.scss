@@ -1,0 +1,31 @@
+.auth-error {
+  max-width: 760px;
+  margin: 40px auto;
+  padding: 0 20px;
+  font-size: var(--font-size-large);
+  line-height: 1.5;
+
+  h2 {
+    font-size: 22pt;
+    margin-bottom: 16px;
+  }
+
+  h3 {
+    font-size: 16pt;
+    margin: 24px 0 12px;
+    color: var(--font-accent-color);
+  }
+
+  p {
+    margin-bottom: 14px;
+  }
+
+  ol {
+    margin: 0 0 16px;
+    padding-left: 24px;
+  }
+
+  li {
+    margin-bottom: 8px;
+  }
+}
