@@ -18,8 +18,7 @@
     "lint:fix": "npx ng lint --fix",
     "test:coverage": "npx nyc report --reporter=lcov --reporter=text-summary",
     "replaceEnv": "node replaceEnvVars.js",
-    "stop-only": "stop-only --folder cypress/e2e",
-    "postinstall": "patch-package"
+    "stop-only": "stop-only --folder cypress/e2e"
   },
   "private": true,
   "dependencies": {
@@ -43,7 +42,6 @@
     "luxon": "^3.2.1",
     "moment": "^2.30.1",
     "nouislider": "^15.4.0",
-    "patch-package": "^8.0.0",
     "rxjs": "^7.8.2",
     "tslib": "^2.0.0",
     "uuid": "^11.1.1",
