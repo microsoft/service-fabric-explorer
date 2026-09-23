@@ -33,7 +33,7 @@ import { IDataModelCollection } from '../Models/DataModels/collections/Collectio
 import { DeployedApplicationCollection } from '../Models/DataModels/collections/DeployedApplicationCollection';
 import { MatDialog } from '@angular/material/dialog';
 import { RepairTaskCollection } from '../Models/DataModels/collections/RepairTaskCollection';
-import { ApplicationEvent, ClusterEvent, FabricEventBase, NodeEvent, PartitionEvent, ReplicaEvent, ServiceEvent } from '../Models/eventstore/Events';
+import { ApplicationEvent, ClusterEvent, FabricEventBase, NodeEvent, NodeMessageThrottlingEventKinds, PartitionEvent, ReplicaEvent, ServiceEvent } from '../Models/eventstore/Events';
 import { EventType, IEventStoreData } from '../modules/event-store/event-store/event-store.component';
 import { SettingsService } from './settings.service';
 import { RepairTask } from '../Models/DataModels/repairTask';
@@ -42,6 +42,7 @@ import groupBy from 'lodash/groupBy';
 import { StandaloneIntegrationService } from './standalone-integration.service';
 import { InfrastructureCollection } from '../Models/DataModels/collections/infrastructureCollection';
 import { InfrastructureDocumentCollection } from '../Models/DataModels/collections/InfrastructureDocCollection';
+import { TimeUtils } from '../Utils/TimeUtils';
 
 @Injectable({
   providedIn: 'root'
@@ -379,6 +380,16 @@ export class DataService {
 
         this.addFabricEventData<NodeEventList, NodeEvent>(d);
         return d;
+    }
+
+    public getNodeThrottlingEventList(nodeName: string | undefined, eventStoreTimeRange: number): NodeEventList {
+        const list = new NodeEventList(
+            this,
+            nodeName,
+            TimeUtils.AddDays(new Date(), -eventStoreTimeRange),
+            new Date(8640000000000000));
+        list.setEventFilter(NodeMessageThrottlingEventKinds);
+        return list;
     }
 
     public getApplicationEventData(applicationId?: string): IEventStoreData<ApplicationEventList, ApplicationEvent> {

@@ -1,6 +1,7 @@
 
 
-import { FabricEventBase, ClusterEvent, NodeEvent, ApplicationEvent, FabricEvent, PartitionEvent, ReplicaEvent } from './Events';
+import { FabricEventBase, ClusterEvent, NodeEvent, ApplicationEvent, FabricEvent, PartitionEvent, ReplicaEvent,
+         NodeMessageThrottlingStarted, NodeMessageThrottlingEnded, NodeMessageThrottlingEventKinds } from './Events';
 import { DataGroup, DataItem, IdType } from 'vis-timeline/peer';
 import { DataSet } from 'vis-data';
 import padStart from 'lodash/padStart';
@@ -347,6 +348,7 @@ const NodeDeactivateCompleted = 'NodeDeactivateCompleted';
 const NodeRemovedFromCluster = 'NodeRemovedFromCluster';
 const NodeAddedToCluster = 'NodeAddedToCluster';
 const NodeOpenFailed = "NodeOpenFailed";
+
 export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
   static readonly NodesDownLabel = 'Node Down';
   static readonly NodesRemoved = 'Node Removed';
@@ -354,6 +356,7 @@ export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
   static readonly NodesFailedToOpenLabel = 'Nodes Failed to Open';
   static readonly NodesAddedToClusterLabel = 'Nodes Added to cluster';
   static readonly NodesRemovedFromClusterLabel = 'Nodes removed from cluster';
+  static readonly NodesThrottlingLabel = 'Node Throttling';
   //FILETIME epoch sentinel emitted for LastNodeDownAt when a node has never been down
   static readonly FileTimeEpochSentinel = '1601-01-01T00:00:00Z';
   static readonly transitions = [NodeUp, NodeDown, NodeDeactivateCompleted, NodeRemovedFromCluster, NodeAddedToCluster, NodeOpenFailed];
@@ -424,6 +427,57 @@ export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
     };
     return item;
   };
+
+  generateThrottlingEvent(event: NodeEvent, eventIndex: number, start: string, end: string): ITimelineItem {
+    const label = `Node ${event.nodeName} throttling`;
+    return {
+      id: `${eventIndex}---${event.eventInstanceId}`,
+      content: label,
+      start,
+      end,
+      kind: event.kind,
+      group: NodeTimelineGenerator.NodesThrottlingLabel,
+      type: 'range',
+      title: EventStoreUtils.tooltipFormat(event.eventProperties, start, end, label),
+      className: 'orange',
+      subgroup: 'stack'
+    };
+  }
+
+  generateThrottlingEvents(events: NodeEvent[], items: DataSet<ITimelineItem>, startOfRange: Date, endOfRange: Date): boolean {
+    const sortedEvents = [...events].sort((left, right) => Date.parse(left.timeStamp) - Date.parse(right.timeStamp));
+    let startedEvent: NodeEvent | null = null;
+    let potentiallyMissingEvents = false;
+
+    for (const event of sortedEvents) {
+      const nodeInstanceChanged = event.raw.NodeInstance !== undefined && startedEvent?.raw.NodeInstance !== undefined &&
+        String(event.raw.NodeInstance) !== String(startedEvent.raw.NodeInstance);
+      if (startedEvent && (event.kind === NodeUp || nodeInstanceChanged)) {
+        items.add(this.generateThrottlingEvent(startedEvent, events.indexOf(startedEvent), startedEvent.timeStamp, event.timeStamp));
+        startedEvent = null;
+      }
+
+      if (!NodeMessageThrottlingEventKinds.includes(event.kind)) {
+        continue;
+      }
+
+      if (event.kind === NodeMessageThrottlingStarted) {
+        startedEvent ??= event;
+      } else if (startedEvent) {
+        items.add(this.generateThrottlingEvent(startedEvent, events.indexOf(startedEvent), startedEvent.timeStamp, event.timeStamp));
+        startedEvent = null;
+      } else {
+        items.add(this.generateThrottlingEvent(event, events.indexOf(event), startOfRange.toISOString(), event.timeStamp));
+        potentiallyMissingEvents = true;
+      }
+    }
+
+    if (startedEvent) {
+      items.add(this.generateThrottlingEvent(startedEvent, events.indexOf(startedEvent), startedEvent.timeStamp, endOfRange.toISOString()));
+    }
+
+    return potentiallyMissingEvents;
+  }
 
     consume(events: NodeEvent[], startOfRange: Date, endOfRange: Date): ITimelineData {
         events = events.sort((a,b) => Date.parse(b.timeStamp) - Date.parse(a.timeStamp))
@@ -579,10 +633,22 @@ export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
           })
         }
 
+        let potentiallyMissingEvents = false;
+        Object.values(nodeEventMap).forEach(nodeEvents => {
+          potentiallyMissingEvents = this.generateThrottlingEvents(nodeEvents, items, startOfRange, endOfRange) || potentiallyMissingEvents;
+        });
+        if (items.get({filter: item => item.group === NodeTimelineGenerator.NodesThrottlingLabel}).length > 0) {
+          groups.add({
+            id: NodeTimelineGenerator.NodesThrottlingLabel,
+            content: NodeTimelineGenerator.NodesThrottlingLabel,
+            subgroupStack: {stack: true}
+          });
+        }
+
         return {
             groups,
             items,
-            potentiallyMissingEvents: false
+            potentiallyMissingEvents
         };
     }
 }

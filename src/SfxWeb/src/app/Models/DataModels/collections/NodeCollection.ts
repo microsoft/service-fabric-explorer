@@ -11,6 +11,7 @@ import { HealthStateConstants, NodeStatusConstants, StatusWarningLevel, BannerWa
 import { DataModelCollectionBase } from './CollectionBase';
 import { IDataModel } from '../Base';
 import { RoutesService } from 'src/app/services/routes.service';
+import { NodeEvent, NodeMessageThrottlingEventKinds, NodeMessageThrottlingStarted } from '../../eventstore/Events';
 
 const upgradeDomainNameComparer = new Intl.Collator(undefined, { numeric: true });
 
@@ -134,6 +135,28 @@ export class NodeCollection extends DataModelCollectionBase<Node> {
         const nodeTypes = Object.keys(counts).map(key => counts[key]).sort((a: INodesStatusDetails, b: INodesStatusDetails) => a.nodeType.localeCompare(b.nodeType));
 
         return resultList.concat(nodeTypes);
+    }
+
+    public isCurrentlyThrottling(events: NodeEvent[], nodeName?: string): boolean {
+        const latestEventByNode = new Map<string, NodeEvent>();
+
+        events
+            .filter(event => NodeMessageThrottlingEventKinds.includes(event.kind))
+            .filter(event => !nodeName || event.nodeName === nodeName)
+            .forEach(event => {
+                const node = this.collection.find(item => item.name === event.nodeName);
+                if (!node?.isEventFromCurrentInstance(event)) {
+                    return;
+                }
+
+                const latestEvent = latestEventByNode.get(event.nodeName);
+                if (!latestEvent || Date.parse(event.timeStamp) > Date.parse(latestEvent.timeStamp)) {
+                    latestEventByNode.set(event.nodeName, event);
+                }
+            });
+
+        return Array.from(latestEventByNode.values())
+            .some(event => event.kind === NodeMessageThrottlingStarted);
     }
 
     protected get indexPropery(): keyof IDataModel<any> {
