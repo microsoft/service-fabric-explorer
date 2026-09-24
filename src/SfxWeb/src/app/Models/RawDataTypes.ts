@@ -663,6 +663,7 @@ export interface IRawDeployedStatelessServiceInstanceInfo extends IRawSharedRepl
 
 export interface IRawDeployedReplicaStatus {
         Kind: string;
+        ProviderKind?: string;
         DatabaseRowCountEstimate: string;
         DatabaseLogicalSizeEstimate: string;
         StatusDetails: string;
@@ -697,6 +698,38 @@ export class IRawRemoteReplicatorStatus {
         LastReceivedCopySequenceNumber!: string;
         LastAppliedCopySequenceNumber!: string;
         RemoteReplicatorAcknowledgementStatus!: IRemoteReplicatorAcknowledgementStatus;
+        RemoteInbuildReplicaStatus?: IRawRemoteInbuildReplicaStatus;
+    }
+
+export class IRawRemoteInbuildReplicaStatus {
+        InbuildPhase!: string;
+        CopyContextPhase!: string;
+        LastCopySequenceNumber!: string;
+        LastCopyCatchupSequenceNumber!: string;
+        CopyContextPhaseStartTimeUtc!: string;
+        CopyStatePhaseStartTimeUtc!: string;
+        CopyPhaseStartTimeUtc!: string;
+        CopyCatchupPhaseStartTimeUtc!: string;
+        CopyDetails?: IRawInbuildReplicaCopyDetail;
+    }
+
+export interface IRawInbuildReplicaCopyDetail {
+        Kind: string;
+        ProviderCopyDetail?: IRawKeyValueStoreProviderCopyDetail;
+    }
+
+export interface IRawKeyValueStoreProviderCopyDetail {
+        Kind: string;
+        PrimaryEpoch?: IRawConfigurationEpoch;
+        PrimaryLastOperationSequenceNumber?: string;
+        IsCopyContextValid?: boolean;
+        SecondaryEpoch?: IRawConfigurationEpoch;
+        SecondaryLastOperationSequenceNumber?: string;
+        StoreFormatVersion?: number;
+        CopyType?: number;
+        CopyTypeReason?: number;
+        CopyMode?: number;
+        CopyModeReason?: number;
     }
 
 export interface IRemoteReplicatorAcknowledgementStatus {

@@ -1,0 +1,76 @@
+// A section whose phase hasn't been reached yet -- content stays in place (no reflow as
+// the build advances) but is dimmed until its data becomes available.
+.section-greyed {
+    opacity: 0.4;
+}
+
+// Copy Context Phase sits to the left of the rest of the overview info, as its own column
+// (same shape as the old Build Progress/Overview split, just for the sub-stepper now that
+// the main build stepper lives in the pane header).
+.body-row {
+    display: flex;
+    gap: 24px;
+}
+
+.context-phase-column {
+    display: flex;
+    flex-direction: column;
+    flex: 0 0 160px;
+}
+
+.overview-column {
+    flex: 1;
+    min-width: 624px;
+}
+
+// Back inside .overview-column -- no width of its own, just spacing from the grid above it.
+.lsn-bar-section {
+    margin-top: 10px;
+}
+
+// Renders the row-major flat item lists (contextItems/copyTypeItems/copySequenceItems) as
+// left/right pairs -- two app-essential-item children per grid row, in source order.
+// minmax floor keeps each column from being squeezed below a readable width for long
+// values (e.g. FileStreamFullCopyNotSupportedBySecondary) -- the grid scrolls/overflows
+// instead of wrapping/clipping once the tile is narrower than 2 * min-width.
+.two-col-grid {
+    display: grid;
+    grid-template-columns: minmax(300px, 1fr) minmax(300px, 1fr);
+    column-gap: 24px;
+    margin-top: 10px;
+}
+
+.lsn-bar-current {
+    color: #c9c9c9;
+    font-size: 12px;
+}
+
+.lsn-bar {
+    width: 100%;
+    margin: 5px 0 10px;
+
+    // Fixed 50/50 split regardless of each zone's actual LSN range -- Copy (left) and
+    // Catchup (right), with a thin gap as the visual divider between them.
+    .lsn-bar-zones {
+        display: flex;
+        gap: 3px;
+    }
+
+    .lsn-bar-track {
+        flex: 1;
+        height: 5px;
+        background-color: grey;
+    }
+
+    .lsn-bar-fill {
+        height: 5px;
+        background-color: var(--accent-darkblue);
+    }
+
+    .lsn-bar-labels {
+        display: flex;
+        justify-content: space-between;
+        font-size: 12px;
+        margin-top: 2px;
+    }
+}

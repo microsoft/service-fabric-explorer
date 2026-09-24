@@ -139,6 +139,231 @@ context('partition', () => {
         })
         })
 
+        it('shows replicas in build', () => {
+          addRoute("load", "partition-page/replica-detail-inbuild.json", apiUrl(`/Nodes/_nt_1/$/GetPartitions/${partitionId}/$/GetReplicas/${primaryReplica}/$/GetDetail?*`));
+
+          cy.visit(urlFormatter(appName, serviceName, partitionId));
+          cy.wait(waitRequest);
+
+          cy.get('[data-cy=replicas-in-build]').within(() => {
+            cy.contains('Inbuild Replica Status');
+            // Info icon links to the docs page, and sits at the far right of the section header.
+            cy.get('a[href="https://aka.ms/UnderstandingServiceFabricInbuildReplicaStatus"]').should('exist');
+
+            cy.get('[data-cy=132431356665040624]').within(() => {
+              // Replica ID and the 5-phase build stepper share the pane's header row.
+              cy.contains('132431356665040624');
+              cy.get('[data-cy=build-phase-stepper]').within(() => {
+                cy.get('[data-cy=in-progressphase]').should('have.length', 1);
+                cy.get('[data-cy=donephase]').should('have.length', 2);
+                cy.get('[data-cy=pendingphase]').should('have.length', 2);
+                // Tooltip/info icon was removed from the Copy Context phase item.
+                cy.get('.mif-info').should('not.exist');
+              });
+            });
+
+            cy.contains('Overview');
+            cy.contains('Copy Progress');
+            // This fixture's build is already past CopyContext (InbuildPhase: Copy) -- per the
+            // fixed grey rule, it stays visible (not dimmed) once started, even after moving on.
+            cy.get('[data-cy=copy-context-substepper]').should('not.have.class', 'section-greyed');
+            cy.get('[data-cy=context-details]').should('not.have.class', 'section-greyed');
+            cy.contains('Copy Context Valid');
+            cy.contains('Hop2Legacy');
+            cy.get('[data-cy=copy-details]').should('not.have.class', 'section-greyed');
+            cy.contains('Full');
+            cy.contains('Copy Sequence Number');
+            cy.contains('Copy Catchup Sequence Number');
+            cy.contains('100000');
+            cy.get('[data-cy=copy-catchup-bar]').within(() => {
+              cy.get('.lsn-bar-track').eq(0).find('.lsn-bar-fill').should('exist');
+              cy.get('.lsn-bar-track').eq(0).should('not.have.class', 'section-greyed');
+              // CopyCatchup hasn't been reached yet by this fixture -- no fill, and greyed out
+              cy.get('.lsn-bar-track').eq(1).find('.lsn-bar-fill').should('not.exist');
+              cy.get('.lsn-bar-track').eq(1).should('have.class', 'section-greyed');
+            });
+          })
+
+          // .main-content has its own overflow:auto, so scroll the section itself into
+          // view -- scrollTo('bottom') would jump past it to whatever renders below.
+          cy.get('[data-cy=build-progress]').scrollIntoView({ offset: { top: -100 } });
+          cy.screenshot('replicas-in-build', { capture: 'fullPage' });
+        })
+
+        it('shows 4 replicas in build side by side, across different build phases', () => {
+          addRoute("load", "partition-page/replica-detail-inbuild-multi.json", apiUrl(`/Nodes/_nt_1/$/GetPartitions/${partitionId}/$/GetReplicas/${primaryReplica}/$/GetDetail?*`));
+
+          cy.visit(urlFormatter(appName, serviceName, partitionId));
+          cy.wait(waitRequest);
+
+          cy.get('[data-cy=replicas-in-build]').within(() => {
+            cy.contains('Inbuild Replica Status');
+            cy.get('.in-build-pane').should('have.length', 4);
+          })
+
+          cy.get('[data-cy=build-progress]').scrollIntoView({ offset: { top: -100 } });
+          cy.screenshot('replicas-in-build-multi', { capture: 'fullPage' });
+        })
+
+        it('hides ESE-specific sections entirely for a non-KVS (RC) partition', () => {
+          addRoute("load", "partition-page/replica-detail-inbuild-rc.json", apiUrl(`/Nodes/_nt_1/$/GetPartitions/${partitionId}/$/GetReplicas/${primaryReplica}/$/GetDetail?*`));
+
+          cy.visit(urlFormatter(appName, serviceName, partitionId));
+          cy.wait(waitRequest);
+
+          cy.get('[data-cy=replicas-in-build]').within(() => {
+            // Partition-level ReplicaStatus.Kind isn't "KeyValueStore" -- these fields will
+            // never populate no matter how far the build progresses, so hide them outright
+            // instead of showing placeholders that can never fill in.
+            cy.get('[data-cy=context-details]').should('not.exist');
+            cy.get('[data-cy=copy-details]').should('not.exist');
+            cy.contains('Copy Sequence Number');
+            cy.get('[data-cy=copy-catchup-bar]').within(() => {
+              cy.get('.lsn-bar-track').eq(0).find('.lsn-bar-fill').should('exist');
+            });
+          })
+
+          cy.get('[data-cy=build-progress]').scrollIntoView({ offset: { top: -100 } });
+          cy.screenshot('replicas-in-build-rc', { capture: 'fullPage' });
+        })
+
+        it('hides ESE-specific sections entirely for a TStore-backed KVS partition', () => {
+          addRoute("load", "partition-page/replica-detail-inbuild-tstore.json", apiUrl(`/Nodes/_nt_1/$/GetPartitions/${partitionId}/$/GetReplicas/${primaryReplica}/$/GetDetail?*`));
+
+          cy.visit(urlFormatter(appName, serviceName, partitionId));
+          cy.wait(waitRequest);
+
+          cy.get('[data-cy=replicas-in-build]').within(() => {
+            // ReplicaStatus.Kind is "KeyValueStore" but ProviderKind is "TStore" -- the ESE-shaped
+            // detail struct is never populated for this provider (not implemented server-side),
+            // so these fields should stay hidden just like the non-KVS (RC) case.
+            cy.get('[data-cy=context-details]').should('not.exist');
+            cy.get('[data-cy=copy-details]').should('not.exist');
+            cy.contains('Copy Sequence Number');
+            cy.get('[data-cy=copy-catchup-bar]').within(() => {
+              cy.get('.lsn-bar-track').eq(0).find('.lsn-bar-fill').should('exist');
+            });
+          })
+
+          cy.get('[data-cy=build-progress]').scrollIntoView({ offset: { top: -100 } });
+          cy.screenshot('replicas-in-build-tstore', { capture: 'fullPage' });
+        })
+
+        // Stepper state per phase (see inbuildPhaseOrder in replica-build-progress.component.ts):
+        // phases behind the current one are "done", the current one is "in-progress", the rest "pending".
+        it('shows CopyContext sub-phase progress', () => {
+          addRoute("load", "partition-page/replica-detail-inbuild-copycontext.json", apiUrl(`/Nodes/_nt_1/$/GetPartitions/${partitionId}/$/GetReplicas/${primaryReplica}/$/GetDetail?*`));
+
+          cy.visit(urlFormatter(appName, serviceName, partitionId));
+          cy.wait(waitRequest);
+
+          cy.get('[data-cy=replicas-in-build]').within(() => {
+            cy.get('[data-cy=132431356665040624]').within(() => {
+              cy.contains('132431356665040624');
+              cy.get('[data-cy=build-phase-stepper]').within(() => {
+                cy.get('[data-cy=in-progressphase]').should('have.length', 1);
+                cy.get('[data-cy=donephase]').should('have.length', 0);
+                cy.get('[data-cy=pendingphase]').should('have.length', 4);
+              });
+            });
+            cy.contains('Establish Connection');
+            cy.contains('Get Copy Context');
+            // Build hasn't reached CopyContext's terminal state yet -- not greyed while active.
+            cy.get('[data-cy=copy-context-substepper]').should('not.have.class', 'section-greyed');
+            cy.get('[data-cy=build-progress]').within(() => {
+              // No ESE detail or LSN progress this early -- sections stay in place, greyed out.
+              cy.get('[data-cy=context-details]').should('have.class', 'section-greyed');
+              cy.get('[data-cy=copy-details]').should('have.class', 'section-greyed');
+              cy.get('[data-cy=copy-catchup-bar]').within(() => {
+                cy.get('.lsn-bar-track').eq(0).find('.lsn-bar-fill').should('not.exist');
+                cy.get('.lsn-bar-track').eq(1).find('.lsn-bar-fill').should('not.exist');
+              });
+            });
+          })
+
+          cy.get('[data-cy=build-progress]').scrollIntoView({ offset: { top: -100 } });
+          cy.screenshot('sub-phase-copycontext', { capture: 'fullPage' });
+        })
+
+        it('shows CopyState sub-phase progress', () => {
+          addRoute("load", "partition-page/replica-detail-inbuild-copystate.json", apiUrl(`/Nodes/_nt_1/$/GetPartitions/${partitionId}/$/GetReplicas/${primaryReplica}/$/GetDetail?*`));
+
+          cy.visit(urlFormatter(appName, serviceName, partitionId));
+          cy.wait(waitRequest);
+
+          cy.get('[data-cy=replicas-in-build]').within(() => {
+            cy.get('[data-cy=132431356665040624]').within(() => {
+              cy.contains('132431356665040624');
+              cy.get('[data-cy=build-phase-stepper]').within(() => {
+                cy.get('[data-cy=in-progressphase]').should('have.length', 1);
+                cy.get('[data-cy=donephase]').should('have.length', 1);
+                cy.get('[data-cy=pendingphase]').should('have.length', 3);
+              });
+            });
+            cy.get('[data-cy=build-progress]').within(() => {
+              cy.get('[data-cy=context-details]').should('have.class', 'section-greyed');
+              cy.get('[data-cy=copy-details]').should('have.class', 'section-greyed');
+              cy.get('[data-cy=copy-catchup-bar]').within(() => {
+                cy.get('.lsn-bar-track').eq(0).find('.lsn-bar-fill').should('not.exist');
+                cy.get('.lsn-bar-track').eq(1).find('.lsn-bar-fill').should('not.exist');
+              });
+            });
+            // Build has moved past CopyContext (now in CopyState) -- per the fixed grey rule,
+            // it stays visible/not-dimmed rather than greying out once passed.
+            cy.get('[data-cy=copy-context-substepper]').should('not.have.class', 'section-greyed');
+          })
+
+          cy.get('[data-cy=build-progress]').scrollIntoView({ offset: { top: -100 } });
+          cy.screenshot('sub-phase-copystate', { capture: 'fullPage' });
+        })
+
+        it('shows CopyCatchup sub-phase progress', () => {
+          addRoute("load", "partition-page/replica-detail-inbuild-copycatchup.json", apiUrl(`/Nodes/_nt_1/$/GetPartitions/${partitionId}/$/GetReplicas/${primaryReplica}/$/GetDetail?*`));
+
+          cy.visit(urlFormatter(appName, serviceName, partitionId));
+          cy.wait(waitRequest);
+
+          cy.get('[data-cy=replicas-in-build]').within(() => {
+            cy.get('[data-cy=132431356665040624]').within(() => {
+              cy.contains('132431356665040624');
+              cy.get('[data-cy=build-phase-stepper]').within(() => {
+                cy.get('[data-cy=in-progressphase]').should('have.length', 1);
+                cy.get('[data-cy=donephase]').should('have.length', 3);
+                cy.get('[data-cy=pendingphase]').should('have.length', 1);
+              });
+            });
+            cy.get('[data-cy=build-progress]').within(() => {
+              // Both zones and the ESE detail are ungreyed/filled by this phase.
+              cy.get('[data-cy=context-details]').should('not.have.class', 'section-greyed');
+              cy.get('[data-cy=copy-details]').should('not.have.class', 'section-greyed');
+              cy.get('[data-cy=copy-catchup-bar]').within(() => {
+                cy.get('.lsn-bar-track').eq(0).find('.lsn-bar-fill').should('exist');
+                cy.get('.lsn-bar-track').eq(0).should('not.have.class', 'section-greyed');
+                cy.get('.lsn-bar-track').eq(1).find('.lsn-bar-fill').should('exist');
+                cy.get('.lsn-bar-track').eq(1).should('not.have.class', 'section-greyed');
+              });
+              cy.contains('Copy LSN: 100000');
+              cy.contains('Copy Catchup LSN: 150000');
+            });
+            // Build has moved well past CopyContext (now in CopyCatchup) -- still not greyed.
+            cy.get('[data-cy=copy-context-substepper]').should('not.have.class', 'section-greyed');
+          })
+
+          cy.get('[data-cy=build-progress]').scrollIntoView({ offset: { top: -100 } });
+          cy.screenshot('sub-phase-copycatchup', { capture: 'fullPage' });
+        })
+
+        // IsInBuild lags CopyComplete by one refresh, so replicas-in-build.component.ts
+        // excludes it -- the whole in-build section disappears once a build finishes.
+        it('hides the in-build section once a replica reaches CopyComplete', () => {
+          addRoute("load", "partition-page/replica-detail-inbuild-copycomplete.json", apiUrl(`/Nodes/_nt_1/$/GetPartitions/${partitionId}/$/GetReplicas/${primaryReplica}/$/GetDetail?*`));
+
+          cy.visit(urlFormatter(appName, serviceName, partitionId));
+          cy.wait(waitRequest);
+
+          cy.get('[data-cy=replicas-in-build]').should('not.exist');
+        })
+
         describe("backups", () => {
           it('view backup', () => {
             cy.get('[data-cy=navtabs]').within(() => {

@@ -1,0 +1,55 @@
+// A plain div (not h4) -- same technique "Deactivation Nodes Info" uses for its nested
+// per-node titles -- sidesteps the .detail-pane h4/h2 normalization rule entirely rather
+// than fighting it, one step down the shared type scale from "Inbuild Replica Status".
+.pane-title {
+    font-size: var(--font-size-medium);
+    white-space: nowrap;
+}
+
+// Info icon at the far right of the row, same placement as other fields' info icons
+// (e.g. app-essential-item), instead of butting up against the heading text.
+.status-header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+// Replica ID + build phase stepper on the same row, so the stepper reads as "this replica's
+// progress" at a glance without opening the pane.
+.pane-header-row {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+.pane-header-stepper {
+    flex: 1;
+    min-width: 0;
+}
+
+// Side-by-side instead of stacked -- wraps onto additional rows once panes no longer fit.
+.in-build-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+// Full width (was fit-content) -- room for the header stepper next to the Replica ID, and
+// the 2-column detail grids below, without squeezing into a content-sized box. Matches how
+// Replicator Status's app-replica-tile groups each tile -- same dark .essen-pane background
+// as the rest of the page (not a lighter fill), with a colored left-border accent for
+// grouping instead. Blue (not a health color, unlike replica-tile's banner) since every
+// listed replica is inherently "in progress" by being here.
+.in-build-pane {
+    background-color: var(--primary-background-color);
+    border-left: 8px solid var(--accent-darkblue);
+    border-radius: var(--primary-border-radius);
+    padding: 5px 10px;
+    width: 100%;
+}
+
+// The outer pane dims to the same badge-unknown grey as a closed/inactive indicator once
+// collapsed (no inner content visible) -- distinct from the inner panes' own coloring above.
+.pane-collapsed {
+    background-color: var(--badge-unknown) !important;
+}

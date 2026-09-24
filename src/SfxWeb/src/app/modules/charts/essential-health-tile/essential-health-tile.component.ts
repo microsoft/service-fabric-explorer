@@ -8,6 +8,7 @@ export interface IEssentialListItem {
   selectorName?: string;
   displaySelector?: boolean;
   allowWrap?: boolean;
+  infoText?: string;
 }
 
 interface IEssentialListItemInternal extends IEssentialListItem {
