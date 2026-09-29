@@ -4,7 +4,7 @@ import { httpInterceptorProviders } from './http-interceptor';
 import { HttpClient, provideHttpClient, withInterceptorsFromDi, withXhr } from '@angular/common/http';
 import { DataService } from './services/data.service';
 import { environment } from 'src/environments/environment';
-import { AdalService } from './services/adal.service';
+import { MsalService } from './services/msal.service';
 import { of } from 'rxjs';
 import { AadMetadata } from './Models/DataModels/Aad';
 import { StandaloneIntegrationService } from './services/standalone-integration.service';
@@ -14,7 +14,7 @@ describe('Http interceptors', () => {
     let httpMock: HttpTestingController;
     let standaloneService: StandaloneIntegrationService;
     const dataService: Partial<DataService> = { readOnlyHeader: null, clusterNameMetadata: 'old-name' };
-    const adalService: Partial<AdalService> = {
+    const msalService: Partial<MsalService> = {
         aadEnabled: false,
         acquireTokenResilient: (resource) => of('aad-token'),
         config: new AadMetadata({
@@ -35,7 +35,7 @@ describe('Http interceptors', () => {
     imports: [],
     providers: [httpInterceptorProviders, StandaloneIntegrationService,
         { provide: DataService, useValue: dataService },
-        { provide: AdalService, useValue: adalService }, provideHttpClient(withXhr(), withInterceptorsFromDi()), provideHttpClientTesting()]
+        { provide: MsalService, useValue: msalService }, provideHttpClient(withXhr(), withInterceptorsFromDi()), provideHttpClientTesting()]
 });
 
         httpMock = TestBed.inject(HttpTestingController);
@@ -94,7 +94,7 @@ describe('Http interceptors', () => {
     });
 
     it('aad auth not enabled', async () => {
-        adalService.aadEnabled = false;
+        msalService.aadEnabled = false;
 
         httpClient.get('/test').subscribe();
 
@@ -103,7 +103,7 @@ describe('Http interceptors', () => {
     });
 
     it('aad auth enabled', async () => {
-        adalService.aadEnabled = true;
+        msalService.aadEnabled = true;
 
         httpClient.get('/test').subscribe();
 

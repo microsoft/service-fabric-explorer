@@ -9,7 +9,7 @@ import { SharedModule } from './shared/shared.module';
 import { MatDialogModule } from '@angular/material/dialog';
 import { NgbDropdownModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { initApp } from './app-initializers';
-import { AdalService } from './services/adal.service';
+import { MsalService } from './services/msal.service';
 import { httpInterceptorProviders } from './http-interceptor';
 import { HashLocationStrategy, LocationStrategy } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -36,11 +36,11 @@ import { ActionDialogModule } from './modules/action-dialog/action-dialog.module
         DebuggingModule,
         ActionDialogModule], providers: [
         { provide: LocationStrategy, useClass: HashLocationStrategy },
-        AdalService,
+        MsalService,
         DataService,
         StandaloneIntegrationService,
         provideAppInitializer(() => {
-        const initializerFn = (initApp)(inject(AdalService), inject(StandaloneIntegrationService));
+        const initializerFn = (initApp)(inject(MsalService), inject(StandaloneIntegrationService));
         return initializerFn();
       }),
         httpInterceptorProviders,

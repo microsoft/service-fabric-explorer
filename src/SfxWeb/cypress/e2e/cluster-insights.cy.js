@@ -79,10 +79,8 @@ context('cluster-insights', () => {
       cy.wait(['@systemReplicaOnNodes', '@deployedAppsOnNode']);
 
       cy.get('app-nodes').within(() => {
-        cy.get('app-expanded-details').scrollIntoView().should('be.visible');
-
         // Fixture has 0 Primary, 4 ActiveSecondary, 1 deployed app
-        cy.get('app-expanded-details').within(() => {
+        cy.get('[data-cy=allNodesList] [data-cy=expandedDetails]').scrollIntoView().should('be.visible').within(() => {
           cy.contains('System Services Primary Replicas Count').parent().should('contain', '0');
           cy.contains('System Services Active Secondary Replicas Count').parent().should('contain', '4');
           cy.contains('User Applications Count').parent().should('contain', '1');
@@ -144,8 +142,8 @@ context('cluster-insights', () => {
           cy.get('button.row-expander').click();
         });
         
-        cy.get('app-expanded-details').scrollIntoView().should('be.visible');
-        cy.get('app-expanded-details').contains('th', 'Reconfiguration Type').should('exist');
+        cy.get('[data-cy=failoverManagerReplicaList] [data-cy=expandedDetails]').scrollIntoView().should('be.visible');
+        cy.get('[data-cy=failoverManagerReplicaList] [data-cy=expandedDetails]').contains('th', 'Reconfiguration Type').should('exist');
       });
     });
   });

@@ -1,7 +1,7 @@
 import { Component, OnInit, HostListener, ViewChild, ElementRef, inject, ChangeDetectionStrategy } from '@angular/core';
 import { TreeService } from './services/tree.service';
 import { RefreshService } from './services/refresh.service';
-import { AdalService } from './services/adal.service';
+import { MsalService } from './services/msal.service';
 import { StorageService } from './services/storage.service';
 import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
 import { DataService } from './services/data.service';
@@ -23,7 +23,7 @@ import { FocusService } from './services/focus.service';
 export class AppComponent implements OnInit{
   treeService = inject(TreeService);
   refreshService = inject(RefreshService);
-  adalService = inject(AdalService);
+  msalService = inject(MsalService);
   private storageService = inject(StorageService);
   breakpointObserver = inject(BreakpointObserver);
   dataService = inject(DataService);

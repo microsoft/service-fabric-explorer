@@ -42,7 +42,6 @@
               "lodash",
               "highcharts",
               "dayjs",
-              "adal-angular",
               "moment"
             ],
             "extractLicenses": false,
