@@ -34,18 +34,19 @@
     gap: 10px;
 }
 
-// Full width (was fit-content) -- room for the header stepper next to the Replica ID, and
-// the 2-column detail grids below, without squeezing into a content-sized box. Matches how
-// Replicator Status's app-replica-tile groups each tile -- same dark .essen-pane background
-// as the rest of the page (not a lighter fill), with a colored left-border accent for
-// grouping instead. Blue (not a health color, unlike replica-tile's banner) since every
+// Flexible (was fit-content, then a fixed 100%) -- a fractional basis lets multiple panes sit
+// side by side on wide screens (per .in-build-list's wrap) instead of each always claiming the
+// full row, while still giving room for the header stepper and the 2-column detail grids below.
+// Matches how Replicator Status's app-replica-tile groups each tile -- same dark .essen-pane
+// background as the rest of the page (not a lighter fill), with a colored left-border accent
+// for grouping instead. Blue (not a health color, unlike replica-tile's banner) since every
 // listed replica is inherently "in progress" by being here.
 .in-build-pane {
     background-color: var(--primary-background-color);
     border-left: 8px solid var(--accent-darkblue);
     border-radius: var(--primary-border-radius);
     padding: 5px 10px;
-    width: 100%;
+    flex: 1 1 600px;
 }
 
 // The outer pane dims to the same badge-unknown grey as a closed/inactive indicator once

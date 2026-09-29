@@ -2,10 +2,15 @@ import { Component, Input, OnChanges, OnDestroy, ChangeDetectionStrategy } from 
 import { Subscription } from 'rxjs';
 import { ReplicaOnPartition } from 'src/app/Models/DataModels/Replica';
 import { IRawRemoteReplicatorStatus } from 'src/app/Models/RawDataTypes';
+import { IProgressStatus } from 'src/app/shared/component/phase-diagram/phase-diagram.component';
 
 export interface IInBuildReplicaItem {
   replicator: IRawRemoteReplicatorStatus;
   replica: ReplicaOnPartition | undefined;
+  // Parent-owned mirror of the child app-replica-build-progress's phases/currentIndex, fed via
+  // (phasesChange) -- lets the header stepper bind here instead of reading the child's instance.
+  phases: IProgressStatus[];
+  currentIndex: number;
 }
 
 @Component({
@@ -32,26 +37,43 @@ export class ReplicasInBuildComponent implements OnChanges, OnDestroy {
   ngOnChanges(): void {
     this.primaryReplica = this.replicas?.find(replica => replica.raw.ReplicaRole === 'Primary');
 
-    if (this.primaryReplica) {
-      this.sub.add(this.primaryReplica.detail.refresh().subscribe(() => {
-        const remoteReplicators = this.primaryReplica?.detail.raw.ReplicatorStatus?.RemoteReplicators || [];
-        const replicaStatus = this.primaryReplica?.detail.raw.ReplicaStatus;
-        this.isEseBackedKvs = replicaStatus?.Kind === 'KeyValueStore' && replicaStatus?.ProviderKind === 'ESE';
-
-        this.inBuildItems = remoteReplicators
-          // IsInBuild lags CopyComplete by one refresh -- exclude it so a replica that
-          // has already finished building doesn't linger in this list.
-          .filter(replicator => replicator.IsInBuild && replicator.RemoteInbuildReplicaStatus?.InbuildPhase !== 'CopyComplete')
-          .map(replicator => ({
-            replicator,
-            replica: this.replicas.find(replica => replica.id === replicator.ReplicaId)
-          }));
-      }));
+    if (!this.primaryReplica) {
+      // No primary right now -- drop the stale list and subscription rather than leaving the
+      // panel showing the last primary's data (and the old subscription able to repopulate it).
+      this.sub.unsubscribe();
+      this.sub = new Subscription();
+      this.inBuildItems = [];
+      this.isEseBackedKvs = false;
+      return;
     }
+
+    this.sub.add(this.primaryReplica.detail.refresh().subscribe(() => {
+      const remoteReplicators = this.primaryReplica?.detail.raw.ReplicatorStatus?.RemoteReplicators || [];
+      const replicaStatus = this.primaryReplica?.detail.raw.ReplicaStatus;
+      this.isEseBackedKvs = replicaStatus?.Kind === 'KeyValueStore' && replicaStatus?.ProviderKind === 'ESE';
+
+      this.inBuildItems = remoteReplicators
+        // IsInBuild lags CopyComplete by one refresh -- exclude it so a replica that
+        // has already finished building doesn't linger in this list.
+        .filter(replicator => replicator.IsInBuild && replicator.RemoteInbuildReplicaStatus?.InbuildPhase !== 'CopyComplete')
+        .map(replicator => ({
+          replicator,
+          replica: this.replicas.find(replica => replica.id === replicator.ReplicaId),
+          phases: [],
+          currentIndex: 0,
+        }));
+    }));
   }
 
   paneTitle(item: IInBuildReplicaItem): string {
     return item.replicator.ReplicaId;
+  }
+
+  // Fed by app-replica-build-progress's (phasesChange) -- keeps the header stepper's data
+  // parent-owned instead of read off the child's instance via template reference.
+  onProgressChange(item: IInBuildReplicaItem, event: { phases: IProgressStatus[]; currentIndex: number }): void {
+    item.phases = event.phases;
+    item.currentIndex = event.currentIndex;
   }
 
   ngOnDestroy(): void {

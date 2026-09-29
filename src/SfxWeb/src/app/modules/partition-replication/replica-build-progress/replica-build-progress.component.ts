@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnChanges, ChangeDetectionStrategy } from '@angular/core';
 import { IRawRemoteReplicatorStatus, IRawRemoteInbuildReplicaStatus, IRawConfigurationEpoch, IRawKeyValueStoreProviderCopyDetail } from 'src/app/Models/RawDataTypes';
 import { IEssentialListItem } from '../../charts/essential-health-tile/essential-health-tile.component';
 import { IProgressStatus } from 'src/app/shared/component/phase-diagram/phase-diagram.component';
@@ -98,6 +98,10 @@ export class ReplicaBuildProgressComponent implements OnChanges {
   // RC partitions nor TStore-backed KVS partitions ever populate these fields, no matter how
   // far the build progresses.
   @Input() isEseBackedKvs = false;
+  // Lets a parent bind the header's own stepper to this replica's phases/currentIndex instead
+  // of reading them off this component's instance (avoids a same-pass read of a sibling's
+  // derived state, which renders stale and trips ExpressionChangedAfterItHasBeenChecked).
+  @Output() phasesChange = new EventEmitter<{ phases: IProgressStatus[]; currentIndex: number }>();
 
   buildStatus: IRawRemoteInbuildReplicaStatus | undefined;
   phases: IProgressStatus[] = [];
@@ -136,6 +140,25 @@ export class ReplicaBuildProgressComponent implements OnChanges {
   ngOnChanges(): void {
     this.buildStatus = this.replicator?.RemoteInbuildReplicaStatus;
     if (!this.buildStatus) {
+      // Clear every derived field -- otherwise a replica that loses RemoteInbuildReplicaStatus
+      // between refreshes keeps showing whatever the previous refresh last computed.
+      this.phases = [];
+      this.currentIndex = 0;
+      this.copyContextSubIndex = 0;
+      this.isCopyContextActive = false;
+      this.copySequenceItems = [];
+      this.copyPhaseProgress = undefined;
+      this.catchupPhaseProgress = undefined;
+      this.hasCopyProgress = false;
+      this.hasCatchupProgress = false;
+      this.lsnBoundaryLabel = '';
+      this.lsnTargetLabel = '';
+      this.currentLsnLabel = '';
+      this.hasCurrentLsn = false;
+      this.contextItems = [];
+      this.copyTypeItems = [];
+      this.hasEseDetail = false;
+      this.phasesChange.emit({ phases: this.phases, currentIndex: this.currentIndex });
       return;
     }
 
@@ -202,6 +225,8 @@ export class ReplicaBuildProgressComponent implements OnChanges {
     this.copyTypeItems = providerDetail && this.hasEseDetail
       ? this.buildCopyTypeItems(providerDetail)
       : this.placeholderItems({ 'Copy Type': copyTypeInfoText, 'Copy Type Reason': '', 'Copy Mode': copyModeInfoText, 'Copy Mode Reason': '' });
+
+    this.phasesChange.emit({ phases: this.phases, currentIndex: this.currentIndex });
   }
 
   // Row-major 2-column grids need "no divider" on both cells of the final row, not just the
