@@ -6,7 +6,6 @@ import { IProgressStatus } from 'src/app/shared/component/phase-diagram/phase-di
 
 export interface IInBuildReplicaItem {
   replicator: IRawRemoteReplicatorStatus;
-  replica: ReplicaOnPartition | undefined;
   // Parent-owned mirror of the child app-replica-build-progress's phases/currentIndex, fed via
   // (phasesChange) -- lets the header stepper bind here instead of reading the child's instance.
   phases: IProgressStatus[];
@@ -25,7 +24,7 @@ export class ReplicasInBuildComponent implements OnChanges, OnDestroy {
 
   primaryReplica: ReplicaOnPartition | undefined;
   inBuildItems: IInBuildReplicaItem[] = [];
-  outerCollapsed = false;
+  outerCollapsed = true;
   // Partition-level, not per-replica -- a service is either ESE-backed KVS or not, uniformly
   // across every replica, known well before any of them finish copying. KVS can also be
   // TStore-backed (FABRIC_KEY_VALUE_STORE_PROVIDER_KIND_TSTORE); that provider's copy detail
@@ -58,7 +57,6 @@ export class ReplicasInBuildComponent implements OnChanges, OnDestroy {
         .filter(replicator => replicator.IsInBuild && replicator.RemoteInbuildReplicaStatus?.InbuildPhase !== 'CopyComplete')
         .map(replicator => ({
           replicator,
-          replica: this.replicas.find(replica => replica.id === replicator.ReplicaId),
           phases: [],
           currentIndex: 0,
         }));

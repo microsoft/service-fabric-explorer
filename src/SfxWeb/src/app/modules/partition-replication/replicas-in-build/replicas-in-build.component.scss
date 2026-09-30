@@ -46,7 +46,9 @@
     border-left: 8px solid var(--accent-darkblue);
     border-radius: var(--primary-border-radius);
     padding: 5px 10px;
-    flex: 1 1 600px;
+    // No grow -- an orphaned pane alone on the last wrapped row would otherwise stretch to
+    // fill the entire row width instead of matching the other panes' size.
+    flex: 0 1 600px;
 }
 
 // The outer pane dims to the same badge-unknown grey as a closed/inactive indicator once

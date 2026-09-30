@@ -187,7 +187,6 @@ context('partition', () => {
           // .main-content has its own overflow:auto, so scroll the section itself into
           // view -- scrollTo('bottom') would jump past it to whatever renders below.
           cy.get('[data-cy=build-progress]').scrollIntoView({ offset: { top: -100 } });
-          cy.screenshot('replicas-in-build', { capture: 'fullPage' });
         })
 
         it('shows 4 replicas in build side by side, across different build phases', () => {
@@ -201,8 +200,8 @@ context('partition', () => {
             cy.get('.in-build-pane').should('have.length', 4);
           })
 
-          cy.get('[data-cy=build-progress]').scrollIntoView({ offset: { top: -100 } });
-          cy.screenshot('replicas-in-build-multi', { capture: 'fullPage' });
+          // 4 in-build panes each render their own [data-cy=build-progress] -- scope to one.
+          cy.get('[data-cy=build-progress]').first().scrollIntoView({ offset: { top: -100 } });
         })
 
         it('hides ESE-specific sections entirely for a non-KVS (RC) partition', () => {
@@ -224,7 +223,6 @@ context('partition', () => {
           })
 
           cy.get('[data-cy=build-progress]').scrollIntoView({ offset: { top: -100 } });
-          cy.screenshot('replicas-in-build-rc', { capture: 'fullPage' });
         })
 
         it('hides ESE-specific sections entirely for a TStore-backed KVS partition', () => {
@@ -246,7 +244,6 @@ context('partition', () => {
           })
 
           cy.get('[data-cy=build-progress]').scrollIntoView({ offset: { top: -100 } });
-          cy.screenshot('replicas-in-build-tstore', { capture: 'fullPage' });
         })
 
         // Stepper state per phase (see inbuildPhaseOrder in replica-build-progress.component.ts):
@@ -282,7 +279,6 @@ context('partition', () => {
           })
 
           cy.get('[data-cy=build-progress]').scrollIntoView({ offset: { top: -100 } });
-          cy.screenshot('sub-phase-copycontext', { capture: 'fullPage' });
         })
 
         it('shows CopyState sub-phase progress', () => {
@@ -314,7 +310,6 @@ context('partition', () => {
           })
 
           cy.get('[data-cy=build-progress]').scrollIntoView({ offset: { top: -100 } });
-          cy.screenshot('sub-phase-copystate', { capture: 'fullPage' });
         })
 
         it('shows CopyCatchup sub-phase progress', () => {
@@ -350,7 +345,6 @@ context('partition', () => {
           })
 
           cy.get('[data-cy=build-progress]').scrollIntoView({ offset: { top: -100 } });
-          cy.screenshot('sub-phase-copycatchup', { capture: 'fullPage' });
         })
 
         // IsInBuild lags CopyComplete by one refresh, so replicas-in-build.component.ts
