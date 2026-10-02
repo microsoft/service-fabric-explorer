@@ -11,7 +11,7 @@ import { HealthStateConstants, NodeStatusConstants, StatusWarningLevel, BannerWa
 import { DataModelCollectionBase } from './CollectionBase';
 import { IDataModel } from '../Base';
 import { RoutesService } from 'src/app/services/routes.service';
-import { NodeEvent, NodeMessageThrottlingEventKinds, NodeMessageThrottlingStarted } from '../../eventstore/Events';
+import { INodeEvent, NodeMessageThrottlingEventKinds, NodeMessageThrottlingStarted } from '../../eventstore/NodeEventTypes';
 
 const upgradeDomainNameComparer = new Intl.Collator(undefined, { numeric: true });
 
@@ -137,8 +137,8 @@ export class NodeCollection extends DataModelCollectionBase<Node> {
         return resultList.concat(nodeTypes);
     }
 
-    public isCurrentlyThrottling(events: NodeEvent[], nodeName?: string): boolean {
-        const latestEventByNode = new Map<string, NodeEvent>();
+    public isCurrentlyThrottling(events: INodeEvent[], nodeName?: string): boolean {
+        const latestEventByNode = new Map<string, INodeEvent>();
 
         events
             .filter(event => NodeMessageThrottlingEventKinds.includes(event.kind))

@@ -1,5 +1,5 @@
 import { of } from 'rxjs';
-import { NodeMessageThrottlingEventKinds } from '../Models/eventstore/Events';
+import { NodeMessageThrottlingEventKinds } from '../Models/eventstore/NodeEventTypes';
 import { DataService } from './data.service';
 
 describe('DataService', () => {

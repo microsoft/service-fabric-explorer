@@ -1,7 +1,7 @@
 
 
-import { FabricEventBase, ClusterEvent, NodeEvent, ApplicationEvent, FabricEvent, PartitionEvent, ReplicaEvent,
-         NodeMessageThrottlingStarted, NodeMessageThrottlingEnded, NodeMessageThrottlingEventKinds } from './Events';
+import { FabricEventBase, ClusterEvent, NodeEvent, ApplicationEvent, FabricEvent, PartitionEvent, ReplicaEvent } from './Events';
+import { NodeMessageThrottlingStarted, NodeMessageThrottlingEnded, NodeMessageThrottlingEventKinds } from './NodeEventTypes';
 import { DataGroup, DataItem, IdType } from 'vis-timeline/peer';
 import { DataSet } from 'vis-data';
 import padStart from 'lodash/padStart';

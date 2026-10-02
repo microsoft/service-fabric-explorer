@@ -485,8 +485,8 @@ export class ClusterEventList extends EventListBase<ClusterEvent> {
 export class NodeEventList extends EventListBase<NodeEvent> {
     private nodeName?: string;
 
-    public constructor(data: DataService, nodeName?: string, startDate?: Date, endDate?: Date) {
-        super(data, startDate, endDate);
+    public constructor(data: DataService, nodeName?: string) {
+        super(data);
         this.nodeName = nodeName;
         if (!this.nodeName) {
             // Show NodeName as the second column.

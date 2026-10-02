@@ -12,7 +12,7 @@ import { DeployedApplicationCollection } from './collections/DeployedApplication
 import { ActionWithConfirmationDialog, Action } from '../Action';
 import { NodeStatusConstants } from 'src/app/Common/Constants';
 import { RoutesService } from 'src/app/services/routes.service';
-import type { NodeEvent } from '../eventstore/Events';
+import type { INodeEvent } from '../eventstore/NodeEventTypes';
 
 // -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -82,7 +82,7 @@ export class Node extends DataModelBase<IRawNode> {
         return this.raw.NodeDeactivationInfo.NodeDeactivationStatus !== 'None';
     }
 
-    public isEventFromCurrentInstance(event: NodeEvent): boolean {
+    public isEventFromCurrentInstance(event: INodeEvent): boolean {
         if (typeof event.raw.NodeId !== 'string' ||
             event.raw.NodeId.toLowerCase() !== this.raw.Id.Id.toLowerCase()) {
             return false;

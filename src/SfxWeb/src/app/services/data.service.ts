@@ -33,7 +33,8 @@ import { IDataModelCollection } from '../Models/DataModels/collections/Collectio
 import { DeployedApplicationCollection } from '../Models/DataModels/collections/DeployedApplicationCollection';
 import { MatDialog } from '@angular/material/dialog';
 import { RepairTaskCollection } from '../Models/DataModels/collections/RepairTaskCollection';
-import { ApplicationEvent, ClusterEvent, FabricEventBase, NodeEvent, NodeMessageThrottlingEventKinds, PartitionEvent, ReplicaEvent, ServiceEvent } from '../Models/eventstore/Events';
+import { ApplicationEvent, ClusterEvent, FabricEventBase, NodeEvent, PartitionEvent, ReplicaEvent, ServiceEvent } from '../Models/eventstore/Events';
+import { NodeMessageThrottlingEventKinds } from '../Models/eventstore/NodeEventTypes';
 import { EventType, IEventStoreData } from '../modules/event-store/event-store/event-store.component';
 import { SettingsService } from './settings.service';
 import { RepairTask } from '../Models/DataModels/repairTask';
@@ -383,9 +384,8 @@ export class DataService {
     }
 
     public getNodeThrottlingEventList(nodeName: string | undefined, eventStoreTimeRange: number): NodeEventList {
-        const list = new NodeEventList(
-            this,
-            nodeName,
+        const list = new NodeEventList(this, nodeName);
+        list.setDateWindow(
             TimeUtils.AddDays(new Date(), -eventStoreTimeRange),
             new Date(8640000000000000));
         list.setEventFilter(NodeMessageThrottlingEventKinds);
