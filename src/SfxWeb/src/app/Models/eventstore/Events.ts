@@ -1,6 +1,7 @@
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { DataModelBase } from '../DataModels/Base';
-import { DataService } from 'src/app/services/data.service';
+import type { DataService } from 'src/app/services/data.service';
+import type { INodeEvent } from './NodeEventTypes';
 
 // -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -88,7 +89,7 @@ export class FabricEvent extends FabricEventBase {
 export class ClusterEvent extends FabricEventBase {
 }
 
-export class NodeEvent extends FabricEventBase {
+export class NodeEvent extends FabricEventBase implements INodeEvent {
     public nodeName!: string;
 
     protected extractField(name: string, value: any): boolean {

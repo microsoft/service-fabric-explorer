@@ -2,7 +2,7 @@ import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/cor
 import { DataService } from 'src/app/services/data.service';
 import { SettingsService } from 'src/app/services/settings.service';
 import { ListSettings, ListColumnSettingForLink, ListColumnSetting, ListColumnSettingWithFilter, ListColumnSettingForBadge } from 'src/app/Models/ListSettings';
-import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
+import { IResponseMessageHandler, ResponseMessageHandlers } from 'src/app/Common/ResponseMessageHandlers';
 import { Observable } from 'rxjs';
 import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 import { NodeCollection } from 'src/app/Models/DataModels/collections/NodeCollection';
@@ -24,9 +24,25 @@ export class AllNodesComponent extends BaseControllerDirective {
   nodes!: NodeCollection;
   listSettings!: ListSettings;
   tiles: IDashboardViewModel[] = [];
+  isAnyNodeThrottling = false;
+
+  private nodeThrottlingEvents?: ReturnType<DataService['getNodeThrottlingEventList']>;
+  private hasRefreshed = false;
 
   setup() {
     this.nodes = this.data.nodes;
+    this.isAnyNodeThrottling = false;
+    this.subscriptions.add(this.data.getClusterManifest().subscribe(manifest => {
+      if (manifest.isEventStoreEnabled) {
+        this.nodeThrottlingEvents = this.data.getNodeThrottlingEventList(undefined, manifest.eventStoreTimeRange);
+        if (this.hasRefreshed) {
+          this.refreshNodeThrottlingState();
+        }
+      } else {
+        this.nodeThrottlingEvents = undefined;
+        this.isAnyNodeThrottling = false;
+      }
+    }));
     this.listSettings = this.settings.getNewOrExistingListSettings('nodes', ['name'], [
       new ListColumnSettingForLink('name', 'Name', item => item.viewPath),
       new ListColumnSetting('raw.IpAddressOrFQDN', 'Address'),
@@ -54,6 +70,18 @@ export class AllNodesComponent extends BaseControllerDirective {
           })
         );
       });
+      this.hasRefreshed = true;
+      this.refreshNodeThrottlingState();
     }));
+  }
+
+  private refreshNodeThrottlingState(): void {
+    const refresh = this.nodeThrottlingEvents?.refresh(ResponseMessageHandlers.silentResponseMessageHandler).subscribe(success => {
+      this.isAnyNodeThrottling = success && this.nodes.isCurrentlyThrottling(
+        this.nodeThrottlingEvents!.collection.map(event => event.raw));
+    });
+    if (refresh) {
+      this.subscriptions.add(refresh);
+    }
   }
 }

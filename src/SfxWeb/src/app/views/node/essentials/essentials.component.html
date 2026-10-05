@@ -1,5 +1,10 @@
 @if (node) {
   <div>
+    @if (isNodeThrottling) {
+      <div data-cy="node-throttling-warning">
+        <app-warning description="Node is Throttling"></app-warning>
+      </div>
+    }
     <div class="tile-container" data-cy="tiles">
       <app-essential-health-tile [healthState]="node.healthState" class="long" [listItems]="essentialItems" data-cy="essential-info">
         <ng-template appEssentialTemplate id="status">
