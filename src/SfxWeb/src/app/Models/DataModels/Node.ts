@@ -13,6 +13,7 @@ import { ActionWithConfirmationDialog, Action } from '../Action';
 import { NodeStatusConstants } from 'src/app/Common/Constants';
 import { RoutesService } from 'src/app/services/routes.service';
 import type { INodeEvent } from '../eventstore/NodeEventTypes';
+import { IFabricProcessResourceUsageSample } from '../eventstore/FabricProcessResourceUsage';
 
 // -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -20,6 +21,8 @@ import type { INodeEvent } from '../eventstore/NodeEventTypes';
 // -----------------------------------------------------------------------------
 
 export class Node extends DataModelBase<IRawNode> {
+    public resourceUsage?: IFabricProcessResourceUsageSample;
+
     public decorators: IDecorators = {
         decorators: {
             NodeUpTimeInSeconds: {
@@ -56,6 +59,22 @@ export class Node extends DataModelBase<IRawNode> {
 
     public get nodeUpTime(): string {
         return TimeUtils.getDurationFromSeconds(this.raw.NodeUpTimeInSeconds);
+    }
+
+    public get resourceCpuPercent(): number | undefined {
+        return this.resourceUsage?.cpuPercent;
+    }
+
+    public get resourceCpuDisplay(): string {
+        return this.resourceCpuPercent === undefined ? '-' : `${this.resourceCpuPercent.toFixed(2)}%`;
+    }
+
+    public get resourceMemoryPercent(): number | undefined {
+        return this.resourceUsage?.memoryPercent;
+    }
+
+    public get resourceMemoryDisplay(): string {
+        return this.resourceMemoryPercent === undefined ? '-' : `${this.resourceMemoryPercent.toFixed(1)}%`;
     }
 
     public get id(): string {
@@ -337,5 +356,4 @@ export class NodeHealth extends HealthBase<IRawNodeHealth> {
         return this.data.restClient.getNodeHealth(this.parent.name, this.eventsHealthStateFilter, messageHandler);
     }
 }
-
 
