@@ -9,5 +9,11 @@
   }
 </div>
 <div class="detail-pane essen-pane">
+  @if (resourceUsagePartial) {
+    <app-health-badge
+      text="The 500-event limit was reached. Resource usage coverage may be incomplete, and some nodes may not have current values."
+      badgeClass="badge-warning">
+    </app-health-badge>
+  }
   <app-detail-list [listSettings]="listSettings" [list]="nodes.collection" data-cy="nodesList"></app-detail-list>
 </div>

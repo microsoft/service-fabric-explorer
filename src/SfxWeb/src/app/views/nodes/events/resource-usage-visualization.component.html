@@ -1,0 +1,37 @@
+<div class="cluster-resource-usage" data-cy="cluster-resource-usage-chart">
+  @if (clusterTooLarge) {
+    <div class="cluster-size-warning" data-cy="cluster-resource-size-warning" role="status">
+      Fabric resource usage graphs are not shown for clusters with more than 50 nodes because the 500-event limit can make results incomplete. This cluster has {{clusterNodeCount}} nodes.
+    </div>
+  }
+  <div [hidden]="clusterTooLarge">
+    <div class="chart-summary" aria-live="polite">
+      @if (loading) {
+        <span>Loading Fabric resource usage...</span>
+      } @else if (failed) {
+        <app-health-badge text="Fabric resource usage failed to load." badgeClass="badge-warning"></app-health-badge>
+      } @else if (sampleCount === 0) {
+        <span>No Fabric process resource usage events were found in this time range.</span>
+      } @else {
+        <span>{{sampleCount}} samples across {{observedNodeCount}} nodes</span>
+        @if (partial) {
+          <app-health-badge
+            text="The 500-event limit was reached. Coverage and top-node rankings may be incomplete."
+            badgeClass="badge-warning">
+          </app-health-badge>
+        }
+      }
+    </div>
+
+    <div class="chart-grid">
+      <section data-cy="cluster-resource-cpu-chart">
+        <h3>Fabric CPU Usage: Top 10 Nodes by Peak</h3>
+        <div #cpuChartContainer class="chart-container" aria-label="Fabric CPU usage for the top observed nodes"></div>
+      </section>
+      <section data-cy="cluster-resource-memory-chart">
+        <h3>Fabric Memory Usage: Top 10 Nodes by Peak</h3>
+        <div #memoryChartContainer class="chart-container" aria-label="Fabric memory usage for the top observed nodes"></div>
+      </section>
+    </div>
+  </div>
+</div>
