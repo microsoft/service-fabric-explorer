@@ -46,12 +46,15 @@
   flex-direction: column;
   align-items: stretch;
 
-  .progress {
-    flex: 1;
-  }
-
   .arrow {
     align-self: center;
     transform: rotate(90deg);
   }
+}
+
+// Opt-in (see fillHeight input) -- stretches to the host's full height and spaces phase
+// items evenly across it, instead of clumping at the top with empty space below.
+.fill-height {
+  height: 100%;
+  justify-content: space-between;
 }
