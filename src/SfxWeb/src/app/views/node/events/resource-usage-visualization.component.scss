@@ -1,0 +1,16 @@
+.resource-usage-chart {
+  min-height: 350px;
+}
+
+.chart-summary {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+  min-height: 30px;
+  padding: 0 10px;
+}
+
+.chart-container {
+  height: 320px;
+  width: 100%;
+}

@@ -2,12 +2,50 @@
 
 import { apiUrl, addDefaultFixtures, checkTableSize, FIXTURE_REF_NODES, nodes_route, FIXTURE_NODES, addRoute, checkCommand,
          getNodeThrottlingEvents, getStaleNodeThrottlingStartedEvent, xssPrefix, watchForAlert, xssEncoded, FIXTURE_REF_MANIFEST,
-         manifest_route } from './util.cy';
+         manifest_route, refresh } from './util.cy';
 
 const nodeName = "_nt_0"
 const nodeInfoRef = "@getnodeInfo"
 
 const seedNodeQuoromRef = '[data-cy=seedNodeQuorom]';
+
+const getResourceUsageEvents = (node) => {
+  const now = Date.now();
+  return [
+    {
+      Kind: 'FabricProcessResourceUsage',
+      NodeName: node,
+      CpuUsagePercent: 1.25,
+      MemoryRssBytes: 268435456,
+      MemoryTotalBytes: 8589934592,
+      SampleDurationMs: 120000,
+      TimeStamp: new Date(now - 120000).toISOString(),
+      EventInstanceId: '00000000-0000-0000-0000-000000000001'
+    },
+    {
+      Kind: 'FabricProcessResourceUsage',
+      NodeName: node,
+      CpuUsagePercent: 2.5,
+      MemoryRssBytes: 536870912,
+      MemoryTotalBytes: 8589934592,
+      SampleDurationMs: 120000,
+      TimeStamp: new Date(now - 60000).toISOString(),
+      EventInstanceId: '00000000-0000-0000-0000-000000000002'
+    }
+  ];
+}
+
+const addResourceUsageRoute = (node) => {
+  cy.intercept('GET', apiUrl(`/EventsStore/Nodes/${node}/$/Events?*`), request => {
+    if (request.query.eventsTypesFilter === 'FabricProcessResourceUsage') {
+      request.alias = 'getResourceUsage';
+      request.reply(getResourceUsageEvents(node));
+    } else {
+      request.alias = 'getNodeEvents';
+      request.reply([]);
+    }
+  });
+}
 
 const setup = (node, prefix = "") => {
   addRoute(FIXTURE_NODES, prefix +"node-page/Ok-nodes-list.json", nodes_route);
@@ -15,7 +53,12 @@ const setup = (node, prefix = "") => {
   addRoute("nodehealthInfo", prefix + "node-page/health.json", apiUrl(`/Nodes/${node}/$/GetHealth?*`));
   addRoute("apps", prefix + "node-page/apps.json", apiUrl(`/Nodes/${node}/$/GetApplications?*`));
   addRoute("nodeLoad", prefix + "node-load/get-node-load-information.json", apiUrl(`/Nodes/${node}/$/GetLoadInformation?*`));
-  cy.intercept('GET', apiUrl(`/EventsStore/Nodes/${node}/$/Events?*`), []).as('getNodeEvents');
+  cy.intercept(
+    'GET',
+    apiUrl('/EventsStore/Nodes/Events?*eventsTypesFilter=FabricProcessResourceUsage*'),
+    []
+  ).as('getResourceUsageCapability');
+  addResourceUsageRoute(node);
 }
 
 context('node page', () => {
@@ -58,6 +101,17 @@ context('node page', () => {
           cy.contains('nt')
         })
 
+        cy.wait('@getResourceUsage');
+        cy.get('[data-cy=resource-usage]').within(() => {
+          cy.contains('Fabric.exe Resource Usage');
+          cy.contains('CPU Usage');
+          cy.contains('2.50%');
+          cy.contains('Memory Usage');
+          cy.contains('536.9 MB (6.3%)');
+          cy.contains('Usage as of:');
+          cy.contains('UTC');
+        })
+
         cy.get('[data-cy=appsList]').within(() => {
           checkTableSize(1);
         })
@@ -75,7 +129,14 @@ context('node page', () => {
 
       it('shows a warning while the node is throttling', () => {
         const startedEvent = getNodeThrottlingEvents([nodeName]).find(event => event.Kind === 'NodeMessageThrottlingStarted');
-        cy.intercept('GET', apiUrl(`/EventsStore/Nodes/${nodeName}/$/Events?*`), [startedEvent]).as('getNodeThrottlingState');
+        cy.intercept('GET', apiUrl(`/EventsStore/Nodes/${nodeName}/$/Events?*`), request => {
+          if (request.query.eventsTypesFilter === 'FabricProcessResourceUsage') {
+            request.reply(getResourceUsageEvents(nodeName));
+          } else {
+            request.alias = 'getNodeThrottlingState';
+            request.reply([startedEvent]);
+          }
+        });
 
         cy.visit(`/#/node/${nodeName}`);
 
@@ -122,6 +183,70 @@ context('node page', () => {
         cy.wait(['@getManifestWithoutEventStore', nodeInfoRef]);
         cy.get('[data-cy=essential-info]');
         cy.then(() => expect(eventRequests).to.equal(0));
+      })
+
+      it('hides resource usage when emission has no recent events', () => {
+        cy.intercept('GET', apiUrl(`/EventsStore/Nodes/${nodeName}/$/Events?*`), []).as('getResourceUsage');
+
+        cy.visit(`/#/node/${nodeName}`);
+
+        cy.wait('@getResourceUsage');
+        cy.get('[data-cy=essential-info]');
+        cy.get('[data-cy=resource-usage]').should('not.exist');
+      })
+
+      it('ignores stale and malformed resource usage events', () => {
+        cy.intercept('GET', apiUrl(`/EventsStore/Nodes/${nodeName}/$/Events?*`), [
+          {
+            Kind: 'FabricProcessResourceUsage',
+            NodeName: nodeName,
+            CpuUsagePercent: 'invalid',
+            MemoryRssBytes: 536870912,
+            MemoryTotalBytes: 8589934592,
+            SampleDurationMs: 120000,
+            TimeStamp: new Date().toISOString(),
+            EventInstanceId: '00000000-0000-0000-0000-000000000003'
+          },
+          {
+            Kind: 'FabricProcessResourceUsage',
+            NodeName: nodeName,
+            CpuUsagePercent: 2.5,
+            MemoryRssBytes: 536870912,
+            MemoryTotalBytes: 8589934592,
+            SampleDurationMs: 120000,
+            TimeStamp: new Date(Date.now() - 16 * 60 * 1000).toISOString(),
+            EventInstanceId: '00000000-0000-0000-0000-000000000004'
+          }
+        ]).as('getResourceUsage');
+
+        cy.visit(`/#/node/${nodeName}`);
+
+        cy.wait('@getResourceUsage');
+        cy.get('[data-cy=essential-info]');
+        cy.get('[data-cy=resource-usage]').should('not.exist');
+      })
+
+      it('keeps essentials usable when EventStore is unavailable', () => {
+        cy.intercept('GET', apiUrl(`/EventsStore/Nodes/${nodeName}/$/Events?*`), {statusCode: 503}).as('getResourceUsage');
+
+        cy.visit(`/#/node/${nodeName}`);
+
+        cy.wait('@getResourceUsage');
+        cy.get('[data-cy=essential-info]');
+        cy.get('[data-cy=resource-usage]').should('not.exist');
+      })
+
+      it('clears resource usage when EventStore becomes unavailable', () => {
+        cy.visit(`/#/node/${nodeName}`);
+
+        cy.wait('@getResourceUsage');
+        cy.get('[data-cy=resource-usage]').should('contain', '2.50%');
+
+        cy.intercept('GET', apiUrl(`/EventsStore/Nodes/${nodeName}/$/Events?*`), {statusCode: 503}).as('getResourceUsageFailure');
+        refresh();
+
+        cy.wait('@getResourceUsageFailure');
+        cy.get('[data-cy=resource-usage]').should('not.exist');
       })
 
       it('down node', () => {
@@ -246,6 +371,62 @@ context('node page', () => {
         cy.contains('NodeDown');
         cy.contains('NodeMessageThrottlingStarted');
         cy.contains('NodeMessageThrottlingEnded');
+        cy.get('[data-cy=resource-usage-chart]').within(() => {
+          cy.contains('No Fabric.exe resource usage events were found in this time range.');
+        });
+      })
+
+      it('displays Fabric.exe resource usage for the selected time range', () => {
+        cy.intercept(
+          'GET',
+          apiUrl(`/EventsStore/Nodes/${nodeName}/$/Events?*eventsTypesFilter=FabricProcessResourceUsage*`),
+          getResourceUsageEvents(nodeName)
+        ).as('getResourceUsageTimeline');
+
+        cy.visit(`/#/node/${nodeName}`);
+
+        cy.wait(nodeInfoRef);
+        cy.wait('@getResourceUsageTimeline');
+        cy.get('[data-cy=navtabs]').within(() => {
+          cy.contains('events').click();
+        });
+
+        cy.wait('@getResourceUsageTimeline').its('request.url')
+          .should('include', 'eventsTypesFilter=FabricProcessResourceUsage');
+        cy.get('[data-cy=resource-usage-chart]').within(() => {
+          cy.contains('2 samples');
+          cy.get('.highcharts-series-0 .highcharts-graph').should('exist');
+          cy.get('.highcharts-series-1 .highcharts-graph').should('exist');
+        });
+      })
+
+      it('omits resource usage when the runtime rejects the event kind', () => {
+        let resourceUsageRequests = 0;
+        cy.intercept(
+          'GET',
+          apiUrl('/EventsStore/Nodes/Events?*eventsTypesFilter=FabricProcessResourceUsage*'),
+          {
+            statusCode: 400,
+            body: { Error: { Code: 'E_INVALIDARG' } }
+          }
+        ).as('getUnsupportedResourceUsageCapability');
+        cy.intercept(
+          'GET',
+          apiUrl(`/EventsStore/Nodes/${nodeName}/$/Events?*eventsTypesFilter=FabricProcessResourceUsage*`),
+          request => {
+            resourceUsageRequests++;
+            request.reply([]);
+          }
+        );
+
+        cy.visit(`/#/node/${nodeName}`);
+
+        cy.wait('@getUnsupportedResourceUsageCapability');
+        cy.get('[data-cy=navtabs]').within(() => {
+          cy.contains('events').click();
+        });
+        cy.get('[data-cy=resource-usage-chart]').should('not.exist');
+        cy.then(() => expect(resourceUsageRequests).to.equal(0));
       })
 
     })

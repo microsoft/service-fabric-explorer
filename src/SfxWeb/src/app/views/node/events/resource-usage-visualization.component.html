@@ -1,0 +1,17 @@
+<div class="resource-usage-chart" data-cy="resource-usage-chart">
+  <div class="chart-summary" aria-live="polite">
+    @if (loading) {
+      <span>Loading resource usage...</span>
+    } @else if (failed) {
+      <app-health-badge text="Resource usage failed to load." badgeClass="badge-warning"></app-health-badge>
+    } @else if (sampleCount === 0) {
+      <span>No Fabric.exe resource usage events were found in this time range.</span>
+    } @else {
+      <span>{{sampleCount}} samples</span>
+      @if (truncated) {
+        <app-health-badge text="The 500-event limit was reached; this graph may be incomplete." badgeClass="badge-warning"></app-health-badge>
+      }
+    }
+  </div>
+  <div #chartContainer class="chart-container" aria-label="Fabric.exe CPU and memory utilization over the selected time range"></div>
+</div>
