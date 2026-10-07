@@ -47,6 +47,7 @@ export class ClusterResourceUsageVisualizationComponent implements Visualization
   private cpuChart?: Chart;
   private memoryChart?: Chart;
   private loadSubscription?: Subscription;
+  private loadKey?: string;
   private isDestroyed = false;
   private startDate = new Date();
   private endDate = new Date();
@@ -64,6 +65,12 @@ export class ClusterResourceUsageVisualizationComponent implements Visualization
       return;
     }
 
+    const loadKey = `${data.startDate.getTime()}\0${data.endDate.getTime()}`;
+    if (this.loadKey === loadKey && this.loadSubscription && !this.loadSubscription.closed) {
+      return;
+    }
+
+    this.loadKey = loadKey;
     this.startDate = data.startDate;
     this.endDate = data.endDate;
     this.loadSubscription?.unsubscribe();
@@ -124,6 +131,7 @@ export class ClusterResourceUsageVisualizationComponent implements Visualization
   ngOnDestroy(): void {
     this.isDestroyed = true;
     this.loadSubscription?.unsubscribe();
+    this.loadKey = undefined;
     this.cpuChart?.destroy();
     this.memoryChart?.destroy();
     this.cpuChart = undefined;

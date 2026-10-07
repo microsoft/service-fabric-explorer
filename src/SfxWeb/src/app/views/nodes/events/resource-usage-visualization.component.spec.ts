@@ -105,4 +105,24 @@ describe('ClusterResourceUsageVisualizationComponent', () => {
     expect(component.nodeCountUnavailable).toBe(true);
     fixture.destroy();
   });
+
+  it('reuses an identical in-flight date-window request', () => {
+    const request = new Subject<never[]>();
+    getNodeEvents.mockReturnValue(request);
+    const fixture = TestBed.createComponent(ClusterResourceUsageVisualizationComponent);
+    const component = fixture.componentInstance;
+    const update = {
+      listEventStoreData: [],
+      startDate: new Date(0),
+      endDate: new Date(1)
+    };
+
+    component.update(update);
+    component.update(update);
+
+    expect(getNodes).toHaveBeenCalledOnce();
+    expect(getNodeEvents).toHaveBeenCalledOnce();
+    expect(request.observers).toHaveLength(1);
+    fixture.destroy();
+  });
 });

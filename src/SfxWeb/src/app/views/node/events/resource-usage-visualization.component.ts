@@ -26,6 +26,7 @@ export class ResourceUsageVisualizationComponent implements VisualizationCompone
 
   private chart?: Chart;
   private loadSubscription?: Subscription;
+  private loadKey?: string;
   private isDestroyed = false;
   private samples: IFabricProcessResourceUsageSample[] = [];
   private startDate = new Date();
@@ -61,10 +62,18 @@ export class ResourceUsageVisualizationComponent implements VisualizationCompone
 
     const nodeData = data.listEventStoreData.find(item => item.type === 'Node');
     if (!nodeData) {
+      this.loadSubscription?.unsubscribe();
+      this.loadKey = undefined;
       this.clear(false);
       return;
     }
 
+    const loadKey = `${nodeData.displayName}\0${data.startDate.getTime()}\0${data.endDate.getTime()}`;
+    if (this.loadKey === loadKey && this.loadSubscription && !this.loadSubscription.closed) {
+      return;
+    }
+
+    this.loadKey = loadKey;
     this.startDate = data.startDate;
     this.endDate = data.endDate;
     this.samples = [];
@@ -101,6 +110,7 @@ export class ResourceUsageVisualizationComponent implements VisualizationCompone
   ngOnDestroy(): void {
     this.isDestroyed = true;
     this.loadSubscription?.unsubscribe();
+    this.loadKey = undefined;
     this.chart?.destroy();
     this.chart = undefined;
   }
