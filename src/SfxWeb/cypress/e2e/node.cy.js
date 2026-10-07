@@ -15,6 +15,8 @@ const getResourceUsageEvents = (node) => {
     {
       Kind: 'FabricProcessResourceUsage',
       NodeName: node,
+      NodeId: '86fa6852ad467a903afbbc67edc16b66',
+      NodeInstance: '132428526792306088',
       CpuUsagePercent: 1.25,
       MemoryRssBytes: 268435456,
       MemoryTotalBytes: 8589934592,
@@ -25,6 +27,8 @@ const getResourceUsageEvents = (node) => {
     {
       Kind: 'FabricProcessResourceUsage',
       NodeName: node,
+      NodeId: '86fa6852ad467a903afbbc67edc16b66',
+      NodeInstance: '132428526792306088',
       CpuUsagePercent: 2.5,
       MemoryRssBytes: 536870912,
       MemoryTotalBytes: 8589934592,

@@ -9,6 +9,8 @@ const getNodeResourceUsageEvents = () => {
         {
             Kind: 'FabricProcessResourceUsage',
             NodeName: '_nt_0',
+            NodeId: '86fa6852ad467a903afbbc67edc16b66',
+            NodeInstance: '132428526792306088',
             CpuUsagePercent: 1.25,
             MemoryRssBytes: 268435456,
             MemoryTotalBytes: 8589934592,
@@ -19,6 +21,8 @@ const getNodeResourceUsageEvents = () => {
         {
             Kind: 'FabricProcessResourceUsage',
             NodeName: '_nt_0',
+            NodeId: '86fa6852ad467a903afbbc67edc16b66',
+            NodeInstance: '132428526792306088',
             CpuUsagePercent: 4.5,
             MemoryRssBytes: 536870912,
             MemoryTotalBytes: 8589934592,
@@ -29,6 +33,8 @@ const getNodeResourceUsageEvents = () => {
         {
             Kind: 'FabricProcessResourceUsage',
             NodeName: '_nt_1',
+            NodeId: '6aec61e77cb87effc9ccc772eac3d6d1',
+            NodeInstance: '132428534015364530',
             CpuUsagePercent: 3,
             MemoryRssBytes: 1073741824,
             MemoryTotalBytes: 8589934592,
@@ -135,10 +141,12 @@ context('nodes list page', () => {
         })
 
         it('clears resource usage when EventStore becomes unavailable', () => {
+            cy.clock(Date.now(), ['Date']);
             cy.wait([FIXTURE_REF_NODES, '@getNodeResourceUsage']);
             cy.get('[data-cy=nodesList]').should('contain', '4.50%').and('contain', '6.3%');
 
             cy.intercept('GET', apiUrl('/EventsStore/Nodes/Events?*eventsTypesFilter=FabricProcessResourceUsage*'), {statusCode: 503}).as('getNodeResourceUsageFailure');
+            cy.tick(5 * 60 * 1000);
             refresh();
 
             cy.wait('@getNodeResourceUsageFailure');
