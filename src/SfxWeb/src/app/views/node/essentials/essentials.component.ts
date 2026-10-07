@@ -205,6 +205,7 @@ export class EssentialsComponent extends NodeBaseControllerDirective {
         }
 
         const latestSample = events
+          .filter(event => this.node.isEventFromCurrentInstance(event))
           .map(event => parseFabricProcessResourceUsageEvent(event, requestedNodeName))
           .filter((sample): sample is IFabricProcessResourceUsageSample => sample !== undefined
             && isFabricProcessResourceUsageSampleCurrent(sample, endTime))

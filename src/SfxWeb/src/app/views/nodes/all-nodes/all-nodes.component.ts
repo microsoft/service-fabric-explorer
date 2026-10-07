@@ -122,7 +122,10 @@ export class AllNodesComponent extends BaseControllerDirective {
     ).subscribe({
       next: events => {
         this.resourceUsagePartial = events.length >= FABRIC_PROCESS_RESOURCE_USAGE_EVENT_LIMIT;
-        const latestByNode = getLatestFabricProcessResourceUsageByNode(events, startDate, endDate);
+        const nodesByName = new Map(this.nodes.collection.map(node => [node.name, node]));
+        const currentInstanceEvents = events.filter(event =>
+          nodesByName.get(event.nodeName)?.isEventFromCurrentInstance(event) === true);
+        const latestByNode = getLatestFabricProcessResourceUsageByNode(currentInstanceEvents, startDate, endDate);
         this.nodes.collection.forEach(node => {
           const sample = latestByNode.get(node.name);
           node.resourceUsage = sample && isFabricProcessResourceUsageSampleCurrent(sample, endDate) ? sample : undefined;

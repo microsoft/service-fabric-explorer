@@ -69,6 +69,17 @@ describe('parseFabricProcessResourceUsageEvent', () => {
     expect(parseFabricProcessResourceUsageEvent(createEvent({ Kind: 'NodeUp' }), '_nt_0')).toBeUndefined();
   });
 
+  it.each([
+    null,
+    1,
+    [],
+    {},
+    '',
+    '   '
+  ])('rejects malformed node name %j', nodeName => {
+    expect(parseFabricProcessResourceUsageEvent(createEvent({ NodeName: nodeName }))).toBeUndefined();
+  });
+
   it('selects the newest valid sample per node within the requested range', () => {
     const startDate = new Date('2026-09-04T20:00:00Z');
     const endDate = new Date('2026-09-04T21:00:00Z');
@@ -142,5 +153,18 @@ describe('parseFabricProcessResourceUsageEvent', () => {
     ]);
     expect(getTopFabricProcessResourceUsageNodeSeries(series, 'cpuPercent', 2).map(item => item.nodeName)).toEqual(['_nt_1', '_nt_2']);
     expect(getTopFabricProcessResourceUsageNodeSeries(series, 'memoryPercent', 2).map(item => item.nodeName)).toEqual(['_nt_2', '_nt_0']);
+  });
+
+  it('ignores malformed node names and orders equal peaks by node name', () => {
+    const startDate = new Date('2026-09-04T20:00:00Z');
+    const endDate = new Date('2026-09-04T21:00:00Z');
+    const series = getFabricProcessResourceUsageSeriesByNode([
+      createEvent({ NodeName: { invalid: true }, CpuUsagePercent: 90 }),
+      createEvent({ NodeName: '_nt_b', CpuUsagePercent: 50 }),
+      createEvent({ NodeName: '_nt_a', CpuUsagePercent: 50 })
+    ], startDate, endDate);
+
+    expect(getTopFabricProcessResourceUsageNodeSeries(series, 'cpuPercent', 3).map(item => item.nodeName))
+      .toEqual(['_nt_a', '_nt_b']);
   });
 });

@@ -49,6 +49,8 @@ export function parseFabricProcessResourceUsageEvent(
   const timestamp = event.time;
 
   if (event.kind !== FABRIC_PROCESS_RESOURCE_USAGE_EVENT_KIND
+    || typeof event.nodeName !== 'string'
+    || event.nodeName.trim().length === 0
     || (expectedNodeName !== undefined && event.nodeName !== expectedNodeName)
     || !(timestamp instanceof Date)
     || !Number.isFinite(timestamp.getTime())
@@ -83,7 +85,7 @@ export function getLatestFabricProcessResourceUsageByNode(
   const latestByNode = new Map<string, IFabricProcessResourceUsageSample>();
 
   events.forEach(event => {
-    if (!event.nodeName) {
+    if (typeof event.nodeName !== 'string' || event.nodeName.trim().length === 0) {
       return;
     }
 
@@ -109,7 +111,7 @@ export function getFabricProcessResourceUsageSeriesByNode(
   const samplesByNode = new Map<string, IFabricProcessResourceUsageSample[]>();
 
   events.forEach(event => {
-    if (!event.nodeName) {
+    if (typeof event.nodeName !== 'string' || event.nodeName.trim().length === 0) {
       return;
     }
 

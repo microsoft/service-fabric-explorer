@@ -1,8 +1,10 @@
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject } from 'rxjs';
+import { Node } from 'src/app/Models/DataModels/Node';
+import { NodeCollection } from 'src/app/Models/DataModels/collections/NodeCollection';
 import { NodeEvent } from 'src/app/Models/eventstore/Events';
-import { IFabricProcessResourceUsageSample } from 'src/app/Models/eventstore/FabricProcessResourceUsage';
+import { IRawNode } from 'src/app/Models/RawDataTypes';
 import { MessageService } from 'src/app/services/message.service';
 import { RefreshService } from 'src/app/services/refresh.service';
 import { SettingsService } from 'src/app/services/settings.service';
@@ -12,14 +14,18 @@ import { AllNodesComponent } from './all-nodes.component';
 
 describe('AllNodesComponent', () => {
   const getNodeEvents = vi.fn();
-  const node: { name: string; resourceUsage?: IFabricProcessResourceUsageSample } = {
-    name: '_nt_0'
-  };
-  const nodes = { collection: [node] };
+  let node: Node;
+  let nodes: NodeCollection;
 
   beforeEach(() => {
     getNodeEvents.mockReset();
-    node.resourceUsage = undefined;
+    const dataService = {
+      actionsEnabled: () => false,
+      restClient: { getNodeEvents }
+    } as unknown as DataService;
+    node = new Node(dataService, createRawNode());
+    nodes = new NodeCollection(dataService);
+    nodes.collection = [node];
     TestBed.configureTestingModule({
       declarations: [AllNodesComponent],
       providers: [
@@ -52,7 +58,7 @@ describe('AllNodesComponent', () => {
 
     const fixture = TestBed.createComponent(AllNodesComponent);
     const component = fixture.componentInstance;
-    component.nodes = nodes as AllNodesComponent['nodes'];
+    component.nodes = nodes;
 
     component['refreshResourceUsage']();
     component['refreshResourceUsage']();
@@ -66,18 +72,68 @@ describe('AllNodesComponent', () => {
 
     fixture.destroy();
   });
+
+  it('ignores a newer sample from a previous node instance', () => {
+    const request = new Subject<NodeEvent[]>();
+    getNodeEvents.mockReturnValue(request);
+
+    const fixture = TestBed.createComponent(AllNodesComponent);
+    const component = fixture.componentInstance;
+    component.nodes = nodes;
+
+    component['refreshResourceUsage']();
+    request.next([
+      createResourceUsageEvent(90, '1', 500),
+      createResourceUsageEvent(20, '2', 1000)
+    ]);
+
+    expect(node.resourceUsage?.cpuPercent).toBe(20);
+
+    fixture.destroy();
+  });
 });
 
-function createResourceUsageEvent(cpuUsagePercent: number): NodeEvent {
+function createRawNode(): IRawNode {
+  return {
+    Name: '_nt_0',
+    IpAddressOrFQDN: 'localhost',
+    Type: 'nt',
+    CodeVersion: '',
+    ConfigVersion: '',
+    NodeStatus: 'Up',
+    NodeUpTimeInSeconds: '60',
+    HealthState: 'Ok',
+    IsSeedNode: false,
+    UpgradeDomain: '0',
+    FaultDomain: 'fd:/0',
+    Id: { Id: 'node-id-0' },
+    InstanceId: '2',
+    NodeDeactivationInfo: {
+      NodeDeactivationIntent: 'Invalid',
+      NodeDeactivationStatus: 'None',
+      NodeDeactivationTask: [],
+      PendingSafetyChecks: []
+    },
+    IsStopped: false,
+    NodeDownTimeInSeconds: '0',
+    NodeUpAt: new Date(Date.now() - 60_000).toISOString(),
+    NodeDownAt: '',
+    NodeTags: []
+  };
+}
+
+function createResourceUsageEvent(cpuUsagePercent: number, nodeInstance = '2', ageMs = 1000): NodeEvent {
   const event = new NodeEvent();
   event.fillFromJSON({
     Kind: 'FabricProcessResourceUsage',
     NodeName: '_nt_0',
+    NodeId: 'node-id-0',
+    NodeInstance: nodeInstance,
     CpuUsagePercent: cpuUsagePercent,
     MemoryRssBytes: 100,
     MemoryTotalBytes: 1000,
     SampleDurationMs: 300000,
-    TimeStamp: new Date(Date.now() - 1000).toISOString(),
+    TimeStamp: new Date(Date.now() - ageMs).toISOString(),
     EventInstanceId: '00000000-0000-0000-0000-000000000001'
   });
   return event;
