@@ -31,6 +31,8 @@ interface IResourceUsage {
     standalone: false
 })
 export class EssentialsComponent extends NodeBaseControllerDirective {
+  private static readonly resourceUsageRefreshIntervalMs = 5 * 60 * 1000;
+
   protected data: DataService = inject(DataService);
   private settings = inject(SettingsService);
   private resourceUsageCapability = inject(FabricProcessResourceUsageCapabilityService);
@@ -51,11 +53,13 @@ export class EssentialsComponent extends NodeBaseControllerDirective {
 
   private nodeThrottlingEvents?: ReturnType<DataService['getNodeThrottlingEventList']>;
   private resourceUsageSubscription?: Subscription;
+  private resourceUsageRequestedAt?: number;
   private hasRefreshed = false;
 
   setup() {
     this.hasRefreshed = false;
     this.cancelResourceUsage();
+    this.resourceUsageRequestedAt = undefined;
     this.repairJobSettings = this.settings.getNewOrExistingPendingRepairTaskListSettings();
 
     this.listSettings = this.settings.getNewOrExistingListSettings('apps', ['name'], [
@@ -86,6 +90,7 @@ export class EssentialsComponent extends NodeBaseControllerDirective {
         this.refreshResourceUsage();
       } else if (!isSupported) {
         this.cancelResourceUsage();
+        this.resourceUsageRequestedAt = undefined;
         this.resourceUsage = undefined;
       }
     }));
@@ -176,13 +181,21 @@ export class EssentialsComponent extends NodeBaseControllerDirective {
   }
 
   private refreshResourceUsage(): void {
-    this.cancelResourceUsage();
-
     if (!this.resourceUsageCapability.isSupported) {
+      this.cancelResourceUsage();
+      this.resourceUsageRequestedAt = undefined;
       this.resourceUsage = undefined;
       return;
     }
 
+    const now = Date.now();
+    if ((this.resourceUsageSubscription && !this.resourceUsageSubscription.closed)
+      || (this.resourceUsageRequestedAt !== undefined
+        && now - this.resourceUsageRequestedAt < EssentialsComponent.resourceUsageRefreshIntervalMs)) {
+      return;
+    }
+
+    this.resourceUsageRequestedAt = now;
     this.resourceUsageSubscription = this.loadResourceUsage().subscribe();
     this.subscriptions.add(this.resourceUsageSubscription);
   }

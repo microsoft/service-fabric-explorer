@@ -268,7 +268,11 @@ context('node page', () => {
         waitForResourceUsage();
         cy.get('[data-cy=resource-usage]').should('contain', '2.50%');
 
+        cy.then(() => {
+          cy.clock(Date.now(), ['Date']);
+        });
         addResourceUsageRoute(nodeName, { statusCode: 503 }, 'getResourceUsageFailure');
+        cy.tick(5 * 60 * 1000);
         refresh();
 
         waitForResourceUsage('getResourceUsageFailure');

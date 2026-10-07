@@ -1,6 +1,6 @@
-import { TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Router } from '@angular/router';
-import { firstValueFrom, of } from 'rxjs';
+import { firstValueFrom, of, Subject, throwError } from 'rxjs';
 import { Node } from 'src/app/Models/DataModels/Node';
 import { NodeEvent } from 'src/app/Models/eventstore/Events';
 import { IRawNode } from 'src/app/Models/RawDataTypes';
@@ -17,12 +17,64 @@ describe('EssentialsComponent resource usage', () => {
       createResourceUsageEvent(90, '1', 500),
       createResourceUsageEvent(20, '2', 1000)
     ]));
-    const dataService = {
-      actionsEnabled: () => false,
-      restClient: { getNodeEvents }
-    } as unknown as DataService;
+    const { component, fixture } = createComponent(getNodeEvents);
 
-    TestBed.configureTestingModule({
+    await firstValueFrom(component['loadResourceUsage']());
+
+    expect(component.resourceUsage?.cpuPercent).toBe(20);
+    fixture.destroy();
+  });
+
+  it('reuses an in-flight resource request', () => {
+    const request = new Subject<NodeEvent[]>();
+    const getNodeEvents = vi.fn(() => request);
+    const { component, fixture } = createComponent(getNodeEvents);
+
+    component['refreshResourceUsage']();
+    component['refreshResourceUsage']();
+
+    expect(getNodeEvents).toHaveBeenCalledOnce();
+    expect(request.observers).toHaveLength(1);
+    request.next([createResourceUsageEvent(20, '2', 1000)]);
+    expect(component.resourceUsage?.cpuPercent).toBe(20);
+    fixture.destroy();
+  });
+
+  it('limits resource requests to once every five minutes after failures', () => {
+    let now = Date.now();
+    const nowSpy = vi.spyOn(Date, 'now').mockImplementation(() => now);
+    const getNodeEvents = vi.fn()
+      .mockReturnValueOnce(throwError(() => new Error('EventStore unavailable')))
+      .mockReturnValueOnce(of([createResourceUsageEvent(20, '2', 1000)]));
+
+    try {
+      const { component, fixture } = createComponent(getNodeEvents);
+
+      component['refreshResourceUsage']();
+      component['refreshResourceUsage']();
+      expect(getNodeEvents).toHaveBeenCalledOnce();
+
+      now += 5 * 60 * 1000;
+      component['refreshResourceUsage']();
+      expect(getNodeEvents).toHaveBeenCalledTimes(2);
+      expect(component.resourceUsage?.cpuPercent).toBe(20);
+      fixture.destroy();
+    } finally {
+      nowSpy.mockRestore();
+    }
+  });
+});
+
+function createComponent(getNodeEvents: ReturnType<typeof vi.fn>): {
+  component: EssentialsComponent;
+  fixture: ComponentFixture<EssentialsComponent>;
+} {
+  const dataService = {
+    actionsEnabled: () => false,
+    restClient: { getNodeEvents }
+  } as unknown as DataService;
+
+  TestBed.configureTestingModule({
       declarations: [EssentialsComponent],
       providers: [
         { provide: ActivatedRoute, useValue: {} },
@@ -38,17 +90,13 @@ describe('EssentialsComponent resource usage', () => {
       ]
     }).overrideComponent(EssentialsComponent, { set: { template: '' } });
 
-    const fixture = TestBed.createComponent(EssentialsComponent);
-    const component = fixture.componentInstance;
-    component.nodeName = '_nt_0';
-    component.node = new Node(dataService, createRawNode());
+  const fixture = TestBed.createComponent(EssentialsComponent);
+  const component = fixture.componentInstance;
+  component.nodeName = '_nt_0';
+  component.node = new Node(dataService, createRawNode());
 
-    await firstValueFrom(component['loadResourceUsage']());
-
-    expect(component.resourceUsage?.cpuPercent).toBe(20);
-    fixture.destroy();
-  });
-});
+  return { component, fixture };
+}
 
 function createRawNode(): IRawNode {
   return {
