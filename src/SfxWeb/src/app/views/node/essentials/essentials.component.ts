@@ -85,15 +85,7 @@ export class EssentialsComponent extends NodeBaseControllerDirective {
         this.isNodeThrottling = false;
       }
     }));
-    this.subscriptions.add(this.resourceUsageCapability.ensureSupported().subscribe(isSupported => {
-      if (isSupported && this.hasRefreshed) {
-        this.refreshResourceUsage();
-      } else if (!isSupported) {
-        this.cancelResourceUsage();
-        this.resourceUsageRequestedAt = undefined;
-        this.resourceUsage = undefined;
-      }
-    }));
+    this.detectResourceUsageCapability();
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
@@ -185,6 +177,9 @@ export class EssentialsComponent extends NodeBaseControllerDirective {
       this.cancelResourceUsage();
       this.resourceUsageRequestedAt = undefined;
       this.resourceUsage = undefined;
+      if (this.resourceUsageCapability.canRetry) {
+        this.detectResourceUsageCapability();
+      }
       return;
     }
 
@@ -198,6 +193,21 @@ export class EssentialsComponent extends NodeBaseControllerDirective {
     this.resourceUsageRequestedAt = now;
     this.resourceUsageSubscription = this.loadResourceUsage().subscribe();
     this.subscriptions.add(this.resourceUsageSubscription);
+  }
+
+  private detectResourceUsageCapability(): void {
+    this.subscriptions.add(this.resourceUsageCapability.ensureSupported().subscribe({
+      next: isSupported => {
+        if (isSupported && this.hasRefreshed) {
+          this.refreshResourceUsage();
+        } else if (!isSupported) {
+          this.cancelResourceUsage();
+          this.resourceUsageRequestedAt = undefined;
+          this.resourceUsage = undefined;
+        }
+      },
+      error: error => console.error('Failed to detect Fabric process resource usage support.', error)
+    }));
   }
 
   private loadResourceUsage(): Observable<any> {

@@ -43,10 +43,13 @@ export class EventsComponent extends NodeBaseControllerDirective {
       enableRepairTasks: true
     };
 
-    this.subscriptions.add(this.resourceUsageCapability.ensureSupported().subscribe(isSupported => {
-      if (isSupported) {
-        this.vizRefs = [timelineVisualization, resourceUsageVisualization, rcaVisualization];
-      }
+    this.subscriptions.add(this.resourceUsageCapability.ensureSupported().subscribe({
+      next: isSupported => {
+        if (isSupported) {
+          this.vizRefs = [timelineVisualization, resourceUsageVisualization, rcaVisualization];
+        }
+      },
+      error: error => console.error('Failed to detect Fabric process resource usage support.', error)
     }));
   }
 

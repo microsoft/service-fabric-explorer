@@ -11,12 +11,21 @@ import { DataService } from './data.service';
 })
 export class FabricProcessResourceUsageCapabilityService {
   private static readonly probeWindowMs = 60 * 1000;
+  private static readonly transientRetryCooldownMs = 60 * 1000;
 
   private readonly data = inject(DataService);
   private probe?: Observable<boolean>;
   private definitiveResult?: boolean;
+  private transientFailureAt?: number;
 
   isSupported = false;
+
+  get canRetry(): boolean {
+    return this.definitiveResult === undefined
+      && this.probe === undefined
+      && (this.transientFailureAt === undefined
+        || Date.now() - this.transientFailureAt >= FabricProcessResourceUsageCapabilityService.transientRetryCooldownMs);
+  }
 
   ensureSupported(): Observable<boolean> {
     if (this.definitiveResult !== undefined) {
@@ -28,9 +37,15 @@ export class FabricProcessResourceUsageCapabilityService {
     }
 
     this.probe = this.probeOnce().pipe(
-      tap(isSupported => {
-        this.definitiveResult = isSupported;
-        this.isSupported = isSupported;
+      tap({
+        next: isSupported => {
+          this.transientFailureAt = undefined;
+          this.definitiveResult = isSupported;
+          this.isSupported = isSupported;
+        },
+        error: () => {
+          this.transientFailureAt = Date.now();
+        }
       }),
       finalize(() => {
         this.probe = undefined;

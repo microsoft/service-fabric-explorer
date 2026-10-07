@@ -4,6 +4,7 @@ import { of, Subject, throwError } from 'rxjs';
 import { Node } from 'src/app/Models/DataModels/Node';
 import { NodeCollection } from 'src/app/Models/DataModels/collections/NodeCollection';
 import { NodeEvent } from 'src/app/Models/eventstore/Events';
+import { ListSettings } from 'src/app/Models/ListSettings';
 import { IRawNode } from 'src/app/Models/RawDataTypes';
 import { MessageService } from 'src/app/services/message.service';
 import { RefreshService } from 'src/app/services/refresh.service';
@@ -16,6 +17,11 @@ describe('AllNodesComponent', () => {
   const getNodeEvents = vi.fn();
   let node: Node;
   let nodes: NodeCollection;
+  let capability: {
+    isSupported: boolean;
+    canRetry: boolean;
+    ensureSupported: ReturnType<typeof vi.fn>;
+  };
 
   beforeEach(() => {
     getNodeEvents.mockReset();
@@ -26,6 +32,11 @@ describe('AllNodesComponent', () => {
     node = new Node(dataService, createRawNode());
     nodes = new NodeCollection(dataService);
     nodes.collection = [node];
+    capability = {
+      isSupported: true,
+      canRetry: false,
+      ensureSupported: vi.fn(() => of(true))
+    };
     TestBed.configureTestingModule({
       declarations: [AllNodesComponent],
       providers: [
@@ -43,7 +54,7 @@ describe('AllNodesComponent', () => {
         },
         {
           provide: FabricProcessResourceUsageCapabilityService,
-          useValue: { isSupported: true }
+          useValue: capability
         }
       ]
     }).overrideComponent(AllNodesComponent, { set: { template: '' } });
@@ -136,6 +147,29 @@ describe('AllNodesComponent', () => {
 
     expect(node.resourceUsage?.cpuPercent).toBe(20);
 
+    fixture.destroy();
+  });
+
+  it('retries capability detection from a later refresh when due', () => {
+    getNodeEvents.mockReturnValue(of([createResourceUsageEvent(20)]));
+    capability.isSupported = false;
+    capability.canRetry = true;
+    capability.ensureSupported.mockImplementation(() => {
+      capability.isSupported = true;
+      capability.canRetry = false;
+      return of(true);
+    });
+    const fixture = TestBed.createComponent(AllNodesComponent);
+    const component = fixture.componentInstance;
+    component.nodes = nodes;
+    component.listSettings = new ListSettings(15, ['name'], 'nodes', []);
+    component['hasRefreshed'] = true;
+
+    component['refreshResourceUsage']();
+
+    expect(capability.ensureSupported).toHaveBeenCalledOnce();
+    expect(getNodeEvents).toHaveBeenCalledOnce();
+    expect(node.resourceUsage?.cpuPercent).toBe(20);
     fixture.destroy();
   });
 });

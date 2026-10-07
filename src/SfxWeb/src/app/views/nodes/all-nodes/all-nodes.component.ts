@@ -67,16 +67,7 @@ export class AllNodesComponent extends BaseControllerDirective {
         this.isAnyNodeThrottling = false;
       }
     }));
-    this.subscriptions.add(this.resourceUsageCapability.ensureSupported().subscribe(isSupported => {
-      this.setResourceUsageColumns(isSupported);
-      if (isSupported && this.hasRefreshed) {
-        this.refreshResourceUsage();
-      } else if (!isSupported) {
-        this.cancelResourceUsage();
-        this.resourceUsageRequestedAt = undefined;
-        this.clearResourceUsage();
-      }
-    }));
+    this.detectResourceUsageCapability();
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
@@ -113,6 +104,9 @@ export class AllNodesComponent extends BaseControllerDirective {
       this.cancelResourceUsage();
       this.resourceUsageRequestedAt = undefined;
       this.clearResourceUsage();
+      if (this.resourceUsageCapability.canRetry) {
+        this.detectResourceUsageCapability();
+      }
       return;
     }
 
@@ -148,6 +142,22 @@ export class AllNodesComponent extends BaseControllerDirective {
       error: () => this.clearResourceUsage()
     });
     this.subscriptions.add(this.resourceUsageSubscription);
+  }
+
+  private detectResourceUsageCapability(): void {
+    this.subscriptions.add(this.resourceUsageCapability.ensureSupported().subscribe({
+      next: isSupported => {
+        this.setResourceUsageColumns(isSupported);
+        if (isSupported && this.hasRefreshed) {
+          this.refreshResourceUsage();
+        } else if (!isSupported) {
+          this.cancelResourceUsage();
+          this.resourceUsageRequestedAt = undefined;
+          this.clearResourceUsage();
+        }
+      },
+      error: error => console.error('Failed to detect Fabric process resource usage support.', error)
+    }));
   }
 
   private setResourceUsageColumns(enabled: boolean): void {

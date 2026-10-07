@@ -62,17 +62,30 @@ describe('FabricProcessResourceUsageCapabilityService', () => {
   });
 
   it('retries a transient EventStore failure on the next request', async () => {
+    let now = Date.now();
+    const nowSpy = vi.spyOn(Date, 'now').mockImplementation(() => now);
     const getNodeEvents = vi.fn()
       .mockReturnValueOnce(throwError(() => new HttpErrorResponse({ status: 503 })))
       .mockReturnValueOnce(of([]));
     const service = createService(true, getNodeEvents);
 
-    await expect(firstValueFrom(service.ensureSupported())).rejects.toMatchObject({ status: 503 });
-    await expect(firstValueFrom(service.ensureSupported())).resolves.toBe(true);
-    expect(getNodeEvents).toHaveBeenCalledTimes(2);
+    try {
+      await expect(firstValueFrom(service.ensureSupported())).rejects.toMatchObject({ status: 503 });
+      expect(service.canRetry).toBe(false);
+
+      now += 60 * 1000;
+      expect(service.canRetry).toBe(true);
+      await expect(firstValueFrom(service.ensureSupported())).resolves.toBe(true);
+      expect(service.canRetry).toBe(false);
+      expect(getNodeEvents).toHaveBeenCalledTimes(2);
+    } finally {
+      nowSpy.mockRestore();
+    }
   });
 
   it('retries a transient manifest failure on the next request', async () => {
+    let now = Date.now();
+    const nowSpy = vi.spyOn(Date, 'now').mockImplementation(() => now);
     const getClusterManifest = vi.fn()
       .mockReturnValueOnce(throwError(() => new Error('manifest unavailable')))
       .mockReturnValueOnce(of({ isEventStoreEnabled: true }));
@@ -91,10 +104,18 @@ describe('FabricProcessResourceUsageCapabilityService', () => {
     });
     const service = TestBed.inject(FabricProcessResourceUsageCapabilityService);
 
-    await expect(firstValueFrom(service.ensureSupported())).rejects.toThrow('manifest unavailable');
-    await expect(firstValueFrom(service.ensureSupported())).resolves.toBe(true);
-    expect(getClusterManifest).toHaveBeenCalledTimes(2);
-    expect(getNodeEvents).toHaveBeenCalledOnce();
+    try {
+      await expect(firstValueFrom(service.ensureSupported())).rejects.toThrow('manifest unavailable');
+      expect(service.canRetry).toBe(false);
+
+      now += 60 * 1000;
+      expect(service.canRetry).toBe(true);
+      await expect(firstValueFrom(service.ensureSupported())).resolves.toBe(true);
+      expect(getClusterManifest).toHaveBeenCalledTimes(2);
+      expect(getNodeEvents).toHaveBeenCalledOnce();
+    } finally {
+      nowSpy.mockRestore();
+    }
   });
 
   it('reuses the cached probe result', async () => {

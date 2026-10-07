@@ -63,9 +63,43 @@ describe('EssentialsComponent resource usage', () => {
       nowSpy.mockRestore();
     }
   });
+
+  it('retries capability detection from a later refresh when due', () => {
+    const getNodeEvents = vi.fn(() => of([createResourceUsageEvent(20, '2', 1000)]));
+    const capability = {
+      isSupported: false,
+      canRetry: true,
+      ensureSupported: vi.fn()
+    };
+    capability.ensureSupported.mockImplementation(() => {
+      capability.isSupported = true;
+      capability.canRetry = false;
+      return of(true);
+    });
+    const { component, fixture } = createComponent(getNodeEvents, capability);
+    component['hasRefreshed'] = true;
+
+    component['refreshResourceUsage']();
+
+    expect(capability.ensureSupported).toHaveBeenCalledOnce();
+    expect(getNodeEvents).toHaveBeenCalledOnce();
+    expect(component.resourceUsage?.cpuPercent).toBe(20);
+    fixture.destroy();
+  });
 });
 
-function createComponent(getNodeEvents: ReturnType<typeof vi.fn>): {
+function createComponent(
+  getNodeEvents: ReturnType<typeof vi.fn>,
+  capability: {
+    isSupported: boolean;
+    canRetry: boolean;
+    ensureSupported: ReturnType<typeof vi.fn>;
+  } = {
+    isSupported: true,
+    canRetry: false,
+    ensureSupported: vi.fn(() => of(true))
+  }
+): {
   component: EssentialsComponent;
   fixture: ComponentFixture<EssentialsComponent>;
 } {
@@ -85,7 +119,7 @@ function createComponent(getNodeEvents: ReturnType<typeof vi.fn>): {
         { provide: DataService, useValue: dataService },
         {
           provide: FabricProcessResourceUsageCapabilityService,
-          useValue: { isSupported: true }
+          useValue: capability
         }
       ]
     }).overrideComponent(EssentialsComponent, { set: { template: '' } });
