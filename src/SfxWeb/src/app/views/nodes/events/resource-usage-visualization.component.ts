@@ -1,5 +1,6 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, OnDestroy, ViewChild, inject } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { EMPTY, Subscription } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 import { Chart, PointOptionsObject, SeriesLineOptions, chart } from 'highcharts';
 import { ResponseMessageHandlers } from 'src/app/Common/ResponseMessageHandlers';
 import {
@@ -41,10 +42,12 @@ export class ClusterResourceUsageVisualizationComponent implements Visualization
   observedNodeCount = 0;
   clusterNodeCount = 0;
   clusterTooLarge = false;
+  nodeCountUnavailable = false;
 
   private cpuChart?: Chart;
   private memoryChart?: Chart;
   private loadSubscription?: Subscription;
+  private isDestroyed = false;
   private startDate = new Date();
   private endDate = new Date();
   private cpuSeries: IFabricProcessResourceUsageNodeSeries[] = [];
@@ -57,25 +60,44 @@ export class ClusterResourceUsageVisualizationComponent implements Visualization
   }
 
   update(data: VisUpdateData): void {
-    this.startDate = data.startDate;
-    this.endDate = data.endDate;
-    this.clusterNodeCount = this.data.nodes.collection.length;
-    this.clusterTooLarge = this.clusterNodeCount > ClusterResourceUsageVisualizationComponent.maxClusterNodeCount;
-    this.clear(false);
-    this.loadSubscription?.unsubscribe();
-
-    if (this.clusterTooLarge) {
+    if (this.isDestroyed) {
       return;
     }
 
+    this.startDate = data.startDate;
+    this.endDate = data.endDate;
+    this.loadSubscription?.unsubscribe();
+    this.nodeCountUnavailable = false;
+    this.clusterTooLarge = false;
+    this.clear(false);
     this.loading = true;
 
-    this.loadSubscription = this.data.restClient.getNodeEvents(
-      this.startDate,
-      this.endDate,
-      undefined,
-      ['FabricProcessResourceUsage'],
+    this.loadSubscription = this.data.getNodes(
+      false,
       ResponseMessageHandlers.silentResponseMessageHandler
+    ).pipe(
+      switchMap(nodes => {
+        if (!nodes.isInitialized || !nodes.lastRefreshWasSuccessful) {
+          this.nodeCountUnavailable = true;
+          this.loading = false;
+          return EMPTY;
+        }
+
+        this.clusterNodeCount = nodes.collection.length;
+        this.clusterTooLarge = this.clusterNodeCount > ClusterResourceUsageVisualizationComponent.maxClusterNodeCount;
+        if (this.clusterTooLarge) {
+          this.loading = false;
+          return EMPTY;
+        }
+
+        return this.data.restClient.getNodeEvents(
+          this.startDate,
+          this.endDate,
+          undefined,
+          ['FabricProcessResourceUsage'],
+          ResponseMessageHandlers.silentResponseMessageHandler
+        );
+      })
     ).subscribe({
       next: events => {
         const nodeSeries = getFabricProcessResourceUsageSeriesByNode(events, this.startDate, this.endDate);
@@ -100,9 +122,12 @@ export class ClusterResourceUsageVisualizationComponent implements Visualization
   }
 
   ngOnDestroy(): void {
+    this.isDestroyed = true;
     this.loadSubscription?.unsubscribe();
     this.cpuChart?.destroy();
     this.memoryChart?.destroy();
+    this.cpuChart = undefined;
+    this.memoryChart = undefined;
   }
 
   private clear(failed: boolean): void {

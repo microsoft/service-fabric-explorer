@@ -1,4 +1,5 @@
-import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { DataService } from 'src/app/services/data.service';
 import { IEventStoreData } from 'src/app/modules/event-store/event-store/event-store.component';
 import { SettingsService } from 'src/app/services/settings.service';
@@ -23,10 +24,11 @@ const rcaVisualization: VisReference = { name: 'RCA Summary', component: RcaVisu
     changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
-export class EventsComponent implements OnInit {
+export class EventsComponent implements OnInit, OnDestroy {
   data = inject(DataService);
   settings = inject(SettingsService);
   private resourceUsageCapability = inject(FabricProcessResourceUsageCapabilityService);
+  private capabilitySubscription?: Subscription;
 
 
   listEventStoreData!: IEventStoreData<any, any> [];
@@ -43,11 +45,15 @@ export class EventsComponent implements OnInit {
       enableRepairTasks: true
     };
 
-    this.resourceUsageCapability.ensureSupported().subscribe(isSupported => {
+    this.capabilitySubscription = this.resourceUsageCapability.ensureSupported().subscribe(isSupported => {
       if (isSupported) {
         this.vizRefs = [timelineVisualization, resourceUsageVisualization, rcaVisualization];
       }
     });
+  }
+
+  ngOnDestroy(): void {
+    this.capabilitySubscription?.unsubscribe();
   }
 
 }

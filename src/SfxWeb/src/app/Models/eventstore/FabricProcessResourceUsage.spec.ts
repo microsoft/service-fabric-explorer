@@ -40,6 +40,30 @@ describe('parseFabricProcessResourceUsageEvent', () => {
     expect(parseFabricProcessResourceUsageEvent(createEvent({ TimeStamp: 'not-a-date' }))).toBeUndefined();
   });
 
+  it.each([
+    'CpuUsagePercent',
+    'MemoryRssBytes',
+    'MemoryTotalBytes',
+    'SampleDurationMs'
+  ])('rejects non-numeric representations for %s', propertyName => {
+    [
+      null,
+      true,
+      false,
+      '',
+      ' ',
+      '25',
+      [],
+      [25],
+      {},
+      Number.NaN,
+      Number.POSITIVE_INFINITY,
+      Number.NEGATIVE_INFINITY
+    ].forEach(value => {
+      expect(parseFabricProcessResourceUsageEvent(createEvent({ [propertyName]: value }))).toBeUndefined();
+    });
+  });
+
   it('rejects events for a different node or kind', () => {
     expect(parseFabricProcessResourceUsageEvent(createEvent({ NodeName: '_nt_1' }), '_nt_0')).toBeUndefined();
     expect(parseFabricProcessResourceUsageEvent(createEvent({ Kind: 'NodeUp' }), '_nt_0')).toBeUndefined();

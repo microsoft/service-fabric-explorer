@@ -35,17 +35,26 @@ const getResourceUsageEvents = (node) => {
   ];
 }
 
-const addResourceUsageRoute = (node) => {
+const addResourceUsageRoute = (
+  node,
+  response = getResourceUsageEvents(node),
+  alias = 'getResourceUsage'
+) => {
   cy.intercept('GET', apiUrl(`/EventsStore/Nodes/${node}/$/Events?*`), request => {
     if (request.query.eventsTypesFilter === 'FabricProcessResourceUsage') {
-      request.alias = 'getResourceUsage';
-      request.reply(getResourceUsageEvents(node));
+      request.alias = alias;
+      request.reply(response);
     } else {
       request.alias = 'getNodeEvents';
       request.reply([]);
     }
   });
 }
+
+const waitForResourceUsage = (alias = 'getResourceUsage') =>
+  cy.wait(`@${alias}`)
+    .its('request.query.eventsTypesFilter')
+    .should('equal', 'FabricProcessResourceUsage');
 
 const setup = (node, prefix = "") => {
   addRoute(FIXTURE_NODES, prefix +"node-page/Ok-nodes-list.json", nodes_route);
@@ -101,7 +110,7 @@ context('node page', () => {
           cy.contains('nt')
         })
 
-        cy.wait('@getResourceUsage');
+        waitForResourceUsage();
         cy.get('[data-cy=resource-usage]').within(() => {
           cy.contains('Fabric.exe Resource Usage');
           cy.contains('CPU Usage');
@@ -186,17 +195,17 @@ context('node page', () => {
       })
 
       it('hides resource usage when emission has no recent events', () => {
-        cy.intercept('GET', apiUrl(`/EventsStore/Nodes/${nodeName}/$/Events?*`), []).as('getResourceUsage');
+        addResourceUsageRoute(nodeName, []);
 
         cy.visit(`/#/node/${nodeName}`);
 
-        cy.wait('@getResourceUsage');
+        waitForResourceUsage();
         cy.get('[data-cy=essential-info]');
         cy.get('[data-cy=resource-usage]').should('not.exist');
       })
 
       it('ignores stale and malformed resource usage events', () => {
-        cy.intercept('GET', apiUrl(`/EventsStore/Nodes/${nodeName}/$/Events?*`), [
+        addResourceUsageRoute(nodeName, [
           {
             Kind: 'FabricProcessResourceUsage',
             NodeName: nodeName,
@@ -217,21 +226,21 @@ context('node page', () => {
             TimeStamp: new Date(Date.now() - 16 * 60 * 1000).toISOString(),
             EventInstanceId: '00000000-0000-0000-0000-000000000004'
           }
-        ]).as('getResourceUsage');
+        ]);
 
         cy.visit(`/#/node/${nodeName}`);
 
-        cy.wait('@getResourceUsage');
+        waitForResourceUsage();
         cy.get('[data-cy=essential-info]');
         cy.get('[data-cy=resource-usage]').should('not.exist');
       })
 
       it('keeps essentials usable when EventStore is unavailable', () => {
-        cy.intercept('GET', apiUrl(`/EventsStore/Nodes/${nodeName}/$/Events?*`), {statusCode: 503}).as('getResourceUsage');
+        addResourceUsageRoute(nodeName, { statusCode: 503 });
 
         cy.visit(`/#/node/${nodeName}`);
 
-        cy.wait('@getResourceUsage');
+        waitForResourceUsage();
         cy.get('[data-cy=essential-info]');
         cy.get('[data-cy=resource-usage]').should('not.exist');
       })
@@ -239,13 +248,13 @@ context('node page', () => {
       it('clears resource usage when EventStore becomes unavailable', () => {
         cy.visit(`/#/node/${nodeName}`);
 
-        cy.wait('@getResourceUsage');
+        waitForResourceUsage();
         cy.get('[data-cy=resource-usage]').should('contain', '2.50%');
 
-        cy.intercept('GET', apiUrl(`/EventsStore/Nodes/${nodeName}/$/Events?*`), {statusCode: 503}).as('getResourceUsageFailure');
+        addResourceUsageRoute(nodeName, { statusCode: 503 }, 'getResourceUsageFailure');
         refresh();
 
-        cy.wait('@getResourceUsageFailure');
+        waitForResourceUsage('getResourceUsageFailure');
         cy.get('[data-cy=resource-usage]').should('not.exist');
       })
 

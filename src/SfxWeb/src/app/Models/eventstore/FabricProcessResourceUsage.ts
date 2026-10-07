@@ -21,6 +21,10 @@ export interface IFabricProcessResourceUsageNodeSeries {
 
 export type FabricProcessResourceUsageMetric = 'cpuPercent' | 'memoryPercent';
 
+function isFiniteNumber(value: unknown): value is number {
+  return typeof value === 'number' && Number.isFinite(value);
+}
+
 export function isFabricProcessResourceUsageSampleCurrent(
   sample: IFabricProcessResourceUsageSample,
   referenceTime: Date
@@ -38,25 +42,25 @@ export function parseFabricProcessResourceUsageEvent(
   event: NodeEvent,
   expectedNodeName?: string
 ): IFabricProcessResourceUsageSample | undefined {
-  const cpuPercent = Number(event.raw.CpuUsagePercent);
-  const memoryRssBytes = Number(event.raw.MemoryRssBytes);
-  const memoryTotalBytes = Number(event.raw.MemoryTotalBytes);
-  const sampleDurationMs = Number(event.raw.SampleDurationMs);
+  const cpuPercent = event.raw.CpuUsagePercent;
+  const memoryRssBytes = event.raw.MemoryRssBytes;
+  const memoryTotalBytes = event.raw.MemoryTotalBytes;
+  const sampleDurationMs = event.raw.SampleDurationMs;
   const timestamp = event.time;
 
   if (event.kind !== FABRIC_PROCESS_RESOURCE_USAGE_EVENT_KIND
     || (expectedNodeName !== undefined && event.nodeName !== expectedNodeName)
     || !(timestamp instanceof Date)
     || !Number.isFinite(timestamp.getTime())
-    || !Number.isFinite(cpuPercent)
+    || !isFiniteNumber(cpuPercent)
     || cpuPercent < 0
     || cpuPercent > 100
-    || !Number.isFinite(memoryRssBytes)
+    || !isFiniteNumber(memoryRssBytes)
     || memoryRssBytes < 0
-    || !Number.isFinite(memoryTotalBytes)
+    || !isFiniteNumber(memoryTotalBytes)
     || memoryTotalBytes <= 0
     || memoryRssBytes > memoryTotalBytes
-    || !Number.isFinite(sampleDurationMs)
+    || !isFiniteNumber(sampleDurationMs)
     || sampleDurationMs <= 0) {
     return undefined;
   }

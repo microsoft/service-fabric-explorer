@@ -110,10 +110,6 @@ export class AllNodesComponent extends BaseControllerDirective {
       return;
     }
 
-    if (this.resourceUsageSubscription && !this.resourceUsageSubscription.closed) {
-      return;
-    }
-
     this.cancelResourceUsage();
     const endDate = new Date();
     const startDate = new Date(endDate.getTime() - FABRIC_PROCESS_RESOURCE_USAGE_LOOKBACK_MS);

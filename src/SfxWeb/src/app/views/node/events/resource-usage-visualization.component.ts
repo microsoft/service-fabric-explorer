@@ -26,6 +26,7 @@ export class ResourceUsageVisualizationComponent implements VisualizationCompone
 
   private chart?: Chart;
   private loadSubscription?: Subscription;
+  private isDestroyed = false;
   private samples: IFabricProcessResourceUsageSample[] = [];
   private startDate = new Date();
   private endDate = new Date();
@@ -54,6 +55,10 @@ export class ResourceUsageVisualizationComponent implements VisualizationCompone
   }
 
   update(data: VisUpdateData): void {
+    if (this.isDestroyed) {
+      return;
+    }
+
     const nodeData = data.listEventStoreData.find(item => item.type === 'Node');
     if (!nodeData) {
       this.clear(false);
@@ -94,8 +99,10 @@ export class ResourceUsageVisualizationComponent implements VisualizationCompone
   }
 
   ngOnDestroy(): void {
+    this.isDestroyed = true;
     this.loadSubscription?.unsubscribe();
     this.chart?.destroy();
+    this.chart = undefined;
   }
 
   private clear(failed: boolean): void {

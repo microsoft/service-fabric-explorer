@@ -1,10 +1,14 @@
 <div class="cluster-resource-usage" data-cy="cluster-resource-usage-chart">
-  @if (clusterTooLarge) {
+  @if (nodeCountUnavailable) {
+    <div class="cluster-size-warning" role="status">
+      Fabric resource usage graphs are not shown because the current node count could not be loaded.
+    </div>
+  } @else if (clusterTooLarge) {
     <div class="cluster-size-warning" data-cy="cluster-resource-size-warning" role="status">
       Fabric resource usage graphs are not shown for clusters with more than 50 nodes because the 500-event limit can make results incomplete. This cluster has {{clusterNodeCount}} nodes.
     </div>
   }
-  <div [hidden]="clusterTooLarge">
+  <div [hidden]="nodeCountUnavailable || clusterTooLarge">
     <div class="chart-summary" aria-live="polite">
       @if (loading) {
         <span>Loading Fabric resource usage...</span>
