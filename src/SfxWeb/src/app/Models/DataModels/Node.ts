@@ -21,7 +21,19 @@ import { IFabricProcessResourceUsageSample } from '../eventstore/FabricProcessRe
 // -----------------------------------------------------------------------------
 
 export class Node extends DataModelBase<IRawNode> {
-    public resourceUsage?: IFabricProcessResourceUsageSample;
+    private iResourceUsage?: IFabricProcessResourceUsageSample;
+    private resourceUsageNodeId?: string;
+    private resourceUsageNodeInstance?: string;
+
+    public get resourceUsage(): IFabricProcessResourceUsageSample | undefined {
+        return this.iResourceUsage;
+    }
+
+    public set resourceUsage(value: IFabricProcessResourceUsageSample | undefined) {
+        this.iResourceUsage = value;
+        this.resourceUsageNodeId = value ? this.raw.Id.Id.toLowerCase() : undefined;
+        this.resourceUsageNodeInstance = value ? this.raw.InstanceId : undefined;
+    }
 
     public decorators: IDecorators = {
         decorators: {
@@ -116,6 +128,14 @@ export class Node extends DataModelBase<IRawNode> {
         const eventTime = Date.parse(event.timeStamp);
         const nodeUpAt = Date.parse(this.raw.NodeUpAt);
         return Number.isFinite(eventTime) && Number.isFinite(nodeUpAt) && eventTime >= nodeUpAt;
+    }
+
+    protected updateInternal(): void {
+        if (this.resourceUsage
+            && (this.resourceUsageNodeId !== this.raw.Id.Id.toLowerCase()
+                || this.resourceUsageNodeInstance !== this.raw.InstanceId)) {
+            this.resourceUsage = undefined;
+        }
     }
 
     public get hasDeactivatingDescription(): boolean {
@@ -356,4 +376,3 @@ export class NodeHealth extends HealthBase<IRawNodeHealth> {
         return this.data.restClient.getNodeHealth(this.parent.name, this.eventsHealthStateFilter, messageHandler);
     }
 }
-
