@@ -19,6 +19,8 @@ import { FabricProcessResourceUsageCapabilityService } from 'src/app/services/fa
     standalone: false
 })
 export class AllNodesComponent extends BaseControllerDirective {
+  private static readonly resourceUsageRefreshIntervalMs = 5 * 60 * 1000;
+
   private data = inject(DataService);
   private settings = inject(SettingsService);
   private resourceUsageCapability = inject(FabricProcessResourceUsageCapabilityService);
@@ -32,11 +34,13 @@ export class AllNodesComponent extends BaseControllerDirective {
 
   private nodeThrottlingEvents?: ReturnType<DataService['getNodeThrottlingEventList']>;
   private resourceUsageSubscription?: Subscription;
+  private resourceUsageRequestedAt?: number;
   private hasRefreshed = false;
 
   setup() {
     this.hasRefreshed = false;
     this.cancelResourceUsage();
+    this.resourceUsageRequestedAt = undefined;
     this.nodes = this.data.nodes;
     this.isAnyNodeThrottling = false;
     this.resourceUsagePartial = false;
@@ -69,6 +73,7 @@ export class AllNodesComponent extends BaseControllerDirective {
         this.refreshResourceUsage();
       } else if (!isSupported) {
         this.cancelResourceUsage();
+        this.resourceUsageRequestedAt = undefined;
         this.clearResourceUsage();
       }
     }));
@@ -106,11 +111,19 @@ export class AllNodesComponent extends BaseControllerDirective {
   private refreshResourceUsage(): void {
     if (!this.resourceUsageCapability.isSupported) {
       this.cancelResourceUsage();
+      this.resourceUsageRequestedAt = undefined;
       this.clearResourceUsage();
       return;
     }
 
-    this.cancelResourceUsage();
+    const now = Date.now();
+    if ((this.resourceUsageSubscription && !this.resourceUsageSubscription.closed)
+      || (this.resourceUsageRequestedAt !== undefined
+        && now - this.resourceUsageRequestedAt < AllNodesComponent.resourceUsageRefreshIntervalMs)) {
+      return;
+    }
+
+    this.resourceUsageRequestedAt = now;
     const endDate = new Date();
     const startDate = new Date(endDate.getTime() - FABRIC_PROCESS_RESOURCE_USAGE_LOOKBACK_MS);
     this.resourceUsageSubscription = this.data.restClient.getNodeEvents(

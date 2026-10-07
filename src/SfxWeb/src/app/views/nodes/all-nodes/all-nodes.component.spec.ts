@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subject } from 'rxjs';
+import { of, Subject, throwError } from 'rxjs';
 import { Node } from 'src/app/Models/DataModels/Node';
 import { NodeCollection } from 'src/app/Models/DataModels/collections/NodeCollection';
 import { NodeEvent } from 'src/app/Models/eventstore/Events';
@@ -49,12 +49,9 @@ describe('AllNodesComponent', () => {
     }).overrideComponent(AllNodesComponent, { set: { template: '' } });
   });
 
-  it('cancels an older resource request when a newer refresh starts', () => {
-    const firstRequest = new Subject<NodeEvent[]>();
-    const secondRequest = new Subject<NodeEvent[]>();
-    getNodeEvents
-      .mockReturnValueOnce(firstRequest)
-      .mockReturnValueOnce(secondRequest);
+  it('reuses an in-flight resource request when a newer refresh starts', () => {
+    const request = new Subject<NodeEvent[]>();
+    getNodeEvents.mockReturnValue(request);
 
     const fixture = TestBed.createComponent(AllNodesComponent);
     const component = fixture.componentInstance;
@@ -63,14 +60,64 @@ describe('AllNodesComponent', () => {
     component['refreshResourceUsage']();
     component['refreshResourceUsage']();
 
-    expect(firstRequest.observers).toHaveLength(0);
-    firstRequest.next([createResourceUsageEvent(1)]);
-    expect(node.resourceUsage).toBeUndefined();
-
-    secondRequest.next([createResourceUsageEvent(2)]);
+    expect(getNodeEvents).toHaveBeenCalledOnce();
+    expect(request.observers).toHaveLength(1);
+    request.next([createResourceUsageEvent(2)]);
     expect(node.resourceUsage?.cpuPercent).toBe(2);
 
     fixture.destroy();
+  });
+
+  it('limits completed resource requests to once every five minutes', () => {
+    let now = Date.now();
+    const nowSpy = vi.spyOn(Date, 'now').mockImplementation(() => now);
+    getNodeEvents.mockReturnValue(of([createResourceUsageEvent(2)]));
+
+    try {
+      const fixture = TestBed.createComponent(AllNodesComponent);
+      const component = fixture.componentInstance;
+      component.nodes = nodes;
+
+      component['refreshResourceUsage']();
+      now += 5 * 60 * 1000 - 1;
+      component['refreshResourceUsage']();
+      expect(getNodeEvents).toHaveBeenCalledOnce();
+
+      now += 1;
+      component['refreshResourceUsage']();
+      expect(getNodeEvents).toHaveBeenCalledTimes(2);
+
+      fixture.destroy();
+    } finally {
+      nowSpy.mockRestore();
+    }
+  });
+
+  it('applies the five-minute interval after a failed resource request', () => {
+    let now = Date.now();
+    const nowSpy = vi.spyOn(Date, 'now').mockImplementation(() => now);
+    getNodeEvents
+      .mockReturnValueOnce(throwError(() => new Error('EventStore unavailable')))
+      .mockReturnValueOnce(of([createResourceUsageEvent(2)]));
+
+    try {
+      const fixture = TestBed.createComponent(AllNodesComponent);
+      const component = fixture.componentInstance;
+      component.nodes = nodes;
+
+      component['refreshResourceUsage']();
+      component['refreshResourceUsage']();
+      expect(getNodeEvents).toHaveBeenCalledOnce();
+
+      now += 5 * 60 * 1000;
+      component['refreshResourceUsage']();
+      expect(getNodeEvents).toHaveBeenCalledTimes(2);
+      expect(node.resourceUsage?.cpuPercent).toBe(2);
+
+      fixture.destroy();
+    } finally {
+      nowSpy.mockRestore();
+    }
   });
 
   it('ignores a newer sample from a previous node instance', () => {
