@@ -9,6 +9,7 @@ import { TimelineComponent } from 'src/app/modules/event-store/timeline/timeline
 import { RcaVisualizationComponent } from 'src/app/modules/event-store/rca-visualization/rca-visualization.component';
 import { ClusterResourceUsageVisualizationComponent } from './resource-usage-visualization.component';
 import { FabricProcessResourceUsageCapabilityService } from 'src/app/services/fabric-process-resource-usage-capability.service';
+import { RefreshService } from 'src/app/services/refresh.service';
 
 const timelineVisualization: VisReference = { name: 'Timeline', component: TimelineComponent };
 const resourceUsageVisualization: VisReference = {
@@ -28,7 +29,9 @@ export class EventsComponent implements OnInit, OnDestroy {
   data = inject(DataService);
   settings = inject(SettingsService);
   private resourceUsageCapability = inject(FabricProcessResourceUsageCapabilityService);
+  private refreshService = inject(RefreshService);
   private capabilitySubscription?: Subscription;
+  private refreshSubscription?: Subscription;
 
 
   listEventStoreData!: IEventStoreData<any, any> [];
@@ -45,6 +48,15 @@ export class EventsComponent implements OnInit, OnDestroy {
       enableRepairTasks: true
     };
 
+    this.detectResourceUsageCapability();
+    this.refreshSubscription = this.refreshService.refreshSubject.subscribe(() => {
+      if (this.resourceUsageCapability.canRetry) {
+        this.detectResourceUsageCapability();
+      }
+    });
+  }
+
+  private detectResourceUsageCapability(): void {
     this.capabilitySubscription = this.resourceUsageCapability.ensureSupported().subscribe({
       next: isSupported => {
         if (isSupported) {
@@ -57,6 +69,7 @@ export class EventsComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.capabilitySubscription?.unsubscribe();
+    this.refreshSubscription?.unsubscribe();
   }
 
 }

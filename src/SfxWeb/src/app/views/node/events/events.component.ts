@@ -8,6 +8,7 @@ import { TimelineComponent } from 'src/app/modules/event-store/timeline/timeline
 import { RcaVisualizationComponent } from 'src/app/modules/event-store/rca-visualization/rca-visualization.component';
 import { ResourceUsageVisualizationComponent } from './resource-usage-visualization.component';
 import { FabricProcessResourceUsageCapabilityService } from 'src/app/services/fabric-process-resource-usage-capability.service';
+import { Observable, of } from 'rxjs';
 
 const timelineVisualization: VisReference = { name: 'Timeline', component: TimelineComponent };
 const resourceUsageVisualization: VisReference = {
@@ -43,6 +44,17 @@ export class EventsComponent extends NodeBaseControllerDirective {
       enableRepairTasks: true
     };
 
+    this.detectResourceUsageCapability();
+  }
+
+  refresh(): Observable<null> {
+    if (this.resourceUsageCapability.canRetry) {
+      this.detectResourceUsageCapability();
+    }
+    return of(null);
+  }
+
+  private detectResourceUsageCapability(): void {
     this.subscriptions.add(this.resourceUsageCapability.ensureSupported().subscribe({
       next: isSupported => {
         if (isSupported) {
@@ -52,5 +64,4 @@ export class EventsComponent extends NodeBaseControllerDirective {
       error: error => console.error('Failed to detect Fabric process resource usage support.', error)
     }));
   }
-
 }
