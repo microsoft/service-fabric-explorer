@@ -158,7 +158,14 @@ context('node page', () => {
       })
 
       it('hides the warning after throttling ends', () => {
-        cy.intercept('GET', apiUrl(`/EventsStore/Nodes/${nodeName}/$/Events?*`), getNodeThrottlingEvents([nodeName])).as('getNodeThrottlingState');
+        cy.intercept('GET', apiUrl(`/EventsStore/Nodes/${nodeName}/$/Events?*`), request => {
+          if (request.query.eventsTypesFilter === 'FabricProcessResourceUsage') {
+            request.reply(getResourceUsageEvents(nodeName));
+          } else {
+            request.alias = 'getNodeThrottlingState';
+            request.reply(getNodeThrottlingEvents([nodeName]));
+          }
+        });
 
         cy.visit(`/#/node/${nodeName}`);
 
@@ -167,8 +174,14 @@ context('node page', () => {
       })
 
       it('ignores throttling from a previous node incarnation', () => {
-        cy.intercept('GET', apiUrl(`/EventsStore/Nodes/${nodeName}/$/Events?*`), [getStaleNodeThrottlingStartedEvent(nodeName)])
-          .as('getStaleNodeThrottlingState');
+        cy.intercept('GET', apiUrl(`/EventsStore/Nodes/${nodeName}/$/Events?*`), request => {
+          if (request.query.eventsTypesFilter === 'FabricProcessResourceUsage') {
+            request.reply(getResourceUsageEvents(nodeName));
+          } else {
+            request.alias = 'getStaleNodeThrottlingState';
+            request.reply([getStaleNodeThrottlingStartedEvent(nodeName)]);
+          }
+        });
 
         cy.visit(`/#/node/${nodeName}`);
 
@@ -475,7 +488,14 @@ context('node page', () => {
       addDefaultFixtures();
 
       const unsafeNodeName = '<img src="1">';
-      cy.intercept('GET', apiUrl(`/EventsStore/Nodes/**/$/Events?**`), getNodeThrottlingEvents([unsafeNodeName])).as('getevents');
+      cy.intercept('GET', apiUrl(`/EventsStore/Nodes/**/$/Events?**`), request => {
+        if (request.query.eventsTypesFilter === 'FabricProcessResourceUsage') {
+          request.reply(getResourceUsageEvents(unsafeNodeName));
+        } else {
+          request.alias = 'getevents';
+          request.reply(getNodeThrottlingEvents([unsafeNodeName]));
+        }
+      });
 
       watchForAlert(() => {
         cy.visit(`/#/node/${xssEncoded}/events`);

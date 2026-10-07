@@ -101,10 +101,16 @@ context('nodes list page', () => {
         })
 
         it('ignores throttling from a previous node incarnation', () => {
-            cy.intercept('GET', apiUrl(`/EventsStore/Nodes/Events?*`), [getStaleNodeThrottlingStartedEvent('_nt_0')])
-              .as('getStaleNodesThrottlingState');
+            cy.intercept('GET', apiUrl(`/EventsStore/Nodes/Events?*`), request => {
+                if (request.query.eventsTypesFilter === 'FabricProcessResourceUsage') {
+                    request.reply(getNodeResourceUsageEvents());
+                } else {
+                    request.alias = 'getStaleNodesThrottlingState';
+                    request.reply([getStaleNodeThrottlingStartedEvent('_nt_0')]);
+                }
+            });
 
-                        cy.visit('/#/nodes');
+            cy.visit('/#/nodes');
 
             cy.wait('@getStaleNodesThrottlingState');
             cy.get('[data-cy=nodes-throttling-warning]').should('not.exist');
