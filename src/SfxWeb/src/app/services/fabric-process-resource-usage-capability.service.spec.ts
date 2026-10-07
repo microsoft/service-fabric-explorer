@@ -1,8 +1,11 @@
-import { HttpErrorResponse } from '@angular/common/http';
+import { HttpErrorResponse, provideHttpClient } from '@angular/common/http';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { firstValueFrom, of, throwError } from 'rxjs';
 import { DataService } from './data.service';
 import { FabricProcessResourceUsageCapabilityService } from './fabric-process-resource-usage-capability.service';
+import { MessageService } from './message.service';
+import { RestClientService } from './rest-client.service';
 
 describe('FabricProcessResourceUsageCapabilityService', () => {
   function createService(
@@ -58,26 +61,18 @@ describe('FabricProcessResourceUsageCapabilityService', () => {
     expect(getNodeEvents).toHaveBeenCalledTimes(1);
   });
 
-  it('automatically retries after a transient EventStore failure', async () => {
-    vi.useFakeTimers();
+  it('retries a transient EventStore failure on the next request', async () => {
     const getNodeEvents = vi.fn()
       .mockReturnValueOnce(throwError(() => new HttpErrorResponse({ status: 503 })))
       .mockReturnValueOnce(of([]));
     const service = createService(true, getNodeEvents);
 
-    try {
-      const result = firstValueFrom(service.ensureSupported());
-      await vi.advanceTimersByTimeAsync(30 * 1000);
-
-      await expect(result).resolves.toBe(true);
-      expect(getNodeEvents).toHaveBeenCalledTimes(2);
-    } finally {
-      vi.useRealTimers();
-    }
+    await expect(firstValueFrom(service.ensureSupported())).rejects.toMatchObject({ status: 503 });
+    await expect(firstValueFrom(service.ensureSupported())).resolves.toBe(true);
+    expect(getNodeEvents).toHaveBeenCalledTimes(2);
   });
 
-  it('automatically retries after a transient manifest failure', async () => {
-    vi.useFakeTimers();
+  it('retries a transient manifest failure on the next request', async () => {
     const getClusterManifest = vi.fn()
       .mockReturnValueOnce(throwError(() => new Error('manifest unavailable')))
       .mockReturnValueOnce(of({ isEventStoreEnabled: true }));
@@ -96,36 +91,10 @@ describe('FabricProcessResourceUsageCapabilityService', () => {
     });
     const service = TestBed.inject(FabricProcessResourceUsageCapabilityService);
 
-    try {
-      const result = firstValueFrom(service.ensureSupported());
-      await vi.advanceTimersByTimeAsync(30 * 1000);
-
-      await expect(result).resolves.toBe(true);
-      expect(getClusterManifest).toHaveBeenCalledTimes(2);
-      expect(getNodeEvents).toHaveBeenCalledOnce();
-    } finally {
-      vi.useRealTimers();
-    }
-  });
-
-  it('stops transient retries when the last subscriber unsubscribes', async () => {
-    vi.useFakeTimers();
-    const getNodeEvents = vi.fn()
-      .mockReturnValueOnce(throwError(() => new HttpErrorResponse({ status: 503 })))
-      .mockReturnValueOnce(of([]));
-    const service = createService(true, getNodeEvents);
-
-    try {
-      const subscription = service.ensureSupported().subscribe();
-      subscription.unsubscribe();
-      await vi.advanceTimersByTimeAsync(30 * 1000);
-
-      expect(getNodeEvents).toHaveBeenCalledOnce();
-      await expect(firstValueFrom(service.ensureSupported())).resolves.toBe(true);
-      expect(getNodeEvents).toHaveBeenCalledTimes(2);
-    } finally {
-      vi.useRealTimers();
-    }
+    await expect(firstValueFrom(service.ensureSupported())).rejects.toThrow('manifest unavailable');
+    await expect(firstValueFrom(service.ensureSupported())).resolves.toBe(true);
+    expect(getClusterManifest).toHaveBeenCalledTimes(2);
+    expect(getNodeEvents).toHaveBeenCalledOnce();
   });
 
   it('reuses the cached probe result', async () => {
@@ -136,5 +105,46 @@ describe('FabricProcessResourceUsageCapabilityService', () => {
     await firstValueFrom(service.ensureSupported());
 
     expect(getNodeEvents).toHaveBeenCalledTimes(1);
+  });
+
+  it('suppresses the unsupported-event notification through RestClient while recording the failure', async () => {
+    const showMessage = vi.fn();
+    const dataService = {
+      getClusterManifest: () => of({ isEventStoreEnabled: true }),
+      restClient: undefined as unknown as RestClientService
+    };
+    TestBed.configureTestingModule({
+      providers: [
+        FabricProcessResourceUsageCapabilityService,
+        RestClientService,
+        { provide: DataService, useValue: dataService },
+        { provide: MessageService, useValue: { showMessage } },
+        provideHttpClient(),
+        provideHttpClientTesting()
+      ]
+    });
+    const restClient = TestBed.inject(RestClientService);
+    dataService.restClient = restClient;
+    const http = TestBed.inject(HttpTestingController);
+    const service = TestBed.inject(FabricProcessResourceUsageCapabilityService);
+
+    const result = firstValueFrom(service.ensureSupported());
+    const request = http.expectOne(({ urlWithParams }) =>
+      urlWithParams.includes('EventsStore/Nodes/Events')
+      && urlWithParams.includes('eventsTypesFilter=FabricProcessResourceUsage'));
+    request.flush({
+      Error: {
+        Code: 'E_INVALIDARG',
+        Message: 'EventType FabricProcessResourceUsage Not Supported for Entity Node'
+      }
+    }, { status: 400, statusText: 'Bad Request' });
+
+    await expect(result).resolves.toBe(false);
+    expect(showMessage).not.toHaveBeenCalled();
+    expect(restClient.networkDebugger.overall.requests[0]).toMatchObject({
+      statusCode: 400
+    });
+    expect(restClient.networkDebugger.overall.requests[0].errorMessage).not.toBe('');
+    http.verify();
   });
 });

@@ -7,6 +7,7 @@ import { Observable } from 'rxjs';
 // -----------------------------------------------------------------------------
 
 export interface IResponseMessageHandler {
+    readonly suppressErrorNotification?: boolean;
     getSuccessMessage(apiDesc: string, response: HttpResponse<any>): string;
     getErrorMessage(apiDesc: string, response: HttpErrorResponse): string;
 }
@@ -66,6 +67,8 @@ export class DeleteResponseMessageHandler extends GetResponseMessageHandler {
 }
 
 export class SilentResponseMessageHandler implements IResponseMessageHandler {
+    public readonly suppressErrorNotification = true;
+
     public getSuccessMessage(apiDesc: string, response: HttpResponse<any>): string {
         return null!;
     }
@@ -113,4 +116,3 @@ export class EventsStoreResponseMessageHandler implements IResponseMessageHandle
         return handler.getErrorMessage(apiDesc, response);
     }
 }
-
