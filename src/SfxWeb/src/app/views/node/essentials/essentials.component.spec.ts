@@ -86,6 +86,20 @@ describe('EssentialsComponent resource usage', () => {
     expect(component.resourceUsage?.cpuPercent).toBe(20);
     fixture.destroy();
   });
+
+  it('clears expired usage during the query cooldown', async () => {
+    const getNodeEvents = vi.fn(() => of([createResourceUsageEvent(20, '2', 1000)]));
+    const { component, fixture } = createComponent(getNodeEvents);
+    await firstValueFrom(component['loadResourceUsage']());
+    component.resourceUsage!.timestamp = new Date(Date.now() - 16 * 60 * 1000);
+    component['resourceUsageRequestedAt'] = Date.now();
+
+    component['refreshResourceUsage']();
+
+    expect(component.resourceUsage).toBeUndefined();
+    expect(getNodeEvents).toHaveBeenCalledOnce();
+    fixture.destroy();
+  });
 });
 
 function createComponent(

@@ -14,13 +14,10 @@ import { RepairTask } from 'src/app/Models/DataModels/repairTask';
 import { FABRIC_PROCESS_RESOURCE_USAGE_EVENT_KIND, FABRIC_PROCESS_RESOURCE_USAGE_LOOKBACK_MS, formatFabricProcessResourceBytes, IFabricProcessResourceUsageSample, isFabricProcessResourceUsageSampleCurrent, parseFabricProcessResourceUsageEvent } from 'src/app/Models/eventstore/FabricProcessResourceUsage';
 import { FabricProcessResourceUsageCapabilityService } from 'src/app/services/fabric-process-resource-usage-capability.service';
 
-interface IResourceUsage {
-  cpuPercent: number;
+interface IResourceUsage extends IFabricProcessResourceUsageSample {
   cpuDisplay: string;
-  memoryPercent: number;
   memoryDisplay: string;
   sampledAt: string;
-  timestamp: Date;
 }
 
 @Component({
@@ -173,6 +170,11 @@ export class EssentialsComponent extends NodeBaseControllerDirective {
   }
 
   private refreshResourceUsage(): void {
+    const referenceTime = new Date();
+    if (this.resourceUsage && !isFabricProcessResourceUsageSampleCurrent(this.resourceUsage, referenceTime)) {
+      this.resourceUsage = undefined;
+    }
+
     if (!this.resourceUsageCapability.isSupported) {
       this.cancelResourceUsage();
       this.resourceUsageRequestedAt = undefined;
@@ -243,7 +245,10 @@ export class EssentialsComponent extends NodeBaseControllerDirective {
           cpuPercent: latestSample.cpuPercent,
           cpuDisplay: `${latestSample.cpuPercent.toFixed(2)}%`,
           memoryPercent: latestSample.memoryPercent,
+          memoryRssBytes: latestSample.memoryRssBytes,
+          memoryTotalBytes: latestSample.memoryTotalBytes,
           memoryDisplay: `${formatFabricProcessResourceBytes(latestSample.memoryRssBytes)} (${latestSample.memoryPercent.toFixed(1)}%)`,
+          sampleDurationMs: latestSample.sampleDurationMs,
           sampledAt: this.formatTimestamp(latestSample.timestamp),
           timestamp: latestSample.timestamp
         };

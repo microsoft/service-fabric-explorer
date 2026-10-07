@@ -100,6 +100,18 @@ export class AllNodesComponent extends BaseControllerDirective {
   }
 
   private refreshResourceUsage(): void {
+    const referenceTime = new Date();
+    let clearedExpiredUsage = false;
+    this.nodes.collection.forEach(node => {
+      if (node.resourceUsage && !isFabricProcessResourceUsageSampleCurrent(node.resourceUsage, referenceTime)) {
+        node.resourceUsage = undefined;
+        clearedExpiredUsage = true;
+      }
+    });
+    if (clearedExpiredUsage) {
+      this.nodes.collection = [...this.nodes.collection];
+    }
+
     if (!this.resourceUsageCapability.isSupported) {
       this.cancelResourceUsage();
       this.resourceUsageRequestedAt = undefined;
@@ -118,7 +130,7 @@ export class AllNodesComponent extends BaseControllerDirective {
     }
 
     this.resourceUsageRequestedAt = now;
-    const endDate = new Date();
+    const endDate = referenceTime;
     const startDate = new Date(endDate.getTime() - FABRIC_PROCESS_RESOURCE_USAGE_LOOKBACK_MS);
     this.resourceUsageSubscription = this.data.restClient.getNodeEvents(
       startDate,

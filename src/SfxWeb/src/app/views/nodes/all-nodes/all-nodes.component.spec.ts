@@ -172,6 +172,27 @@ describe('AllNodesComponent', () => {
     expect(node.resourceUsage?.cpuPercent).toBe(20);
     fixture.destroy();
   });
+
+  it('clears expired usage during the query cooldown', () => {
+    node.resourceUsage = {
+      cpuPercent: 20,
+      memoryPercent: 10,
+      memoryRssBytes: 100,
+      memoryTotalBytes: 1000,
+      sampleDurationMs: 300000,
+      timestamp: new Date(Date.now() - 16 * 60 * 1000)
+    };
+    const fixture = TestBed.createComponent(AllNodesComponent);
+    const component = fixture.componentInstance;
+    component.nodes = nodes;
+    component['resourceUsageRequestedAt'] = Date.now();
+
+    component['refreshResourceUsage']();
+
+    expect(node.resourceUsage).toBeUndefined();
+    expect(getNodeEvents).not.toHaveBeenCalled();
+    fixture.destroy();
+  });
 });
 
 function createRawNode(): IRawNode {
