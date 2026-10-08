@@ -125,4 +125,42 @@ describe('ClusterResourceUsageVisualizationComponent', () => {
     expect(request.observers).toHaveLength(1);
     fixture.destroy();
   });
+
+  it('uses the selected range when it is no longer than 90 minutes', () => {
+    const fixture = TestBed.createComponent(ClusterResourceUsageVisualizationComponent);
+    const component = fixture.componentInstance;
+    const startDate = new Date('2026-10-08T10:00:00Z');
+    const endDate = new Date('2026-10-08T11:00:00Z');
+
+    component.update({ listEventStoreData: [], startDate, endDate });
+
+    expect(getNodeEvents).toHaveBeenCalledWith(
+      startDate,
+      endDate,
+      undefined,
+      ['FabricProcessResourceUsage'],
+      expect.anything()
+    );
+    expect(component.rangeLimited).toBe(false);
+    fixture.destroy();
+  });
+
+  it('limits a longer selected range to its final 90 minutes', () => {
+    const fixture = TestBed.createComponent(ClusterResourceUsageVisualizationComponent);
+    const component = fixture.componentInstance;
+    const startDate = new Date('2026-10-08T08:00:00Z');
+    const endDate = new Date('2026-10-08T12:00:00Z');
+
+    component.update({ listEventStoreData: [], startDate, endDate });
+
+    expect(getNodeEvents).toHaveBeenCalledWith(
+      new Date('2026-10-08T10:30:00Z'),
+      endDate,
+      undefined,
+      ['FabricProcessResourceUsage'],
+      expect.anything()
+    );
+    expect(component.rangeLimited).toBe(true);
+    fixture.destroy();
+  });
 });

@@ -5,10 +5,15 @@
     </div>
   } @else if (clusterTooLarge) {
     <div class="cluster-size-warning" data-cy="cluster-resource-size-warning" role="status">
-      Fabric resource usage graphs are not shown for clusters with more than 50 nodes because the 500-event limit can make results incomplete. This cluster has {{clusterNodeCount}} nodes.
+      Fabric resource usage graphs are not shown for clusters with more than 50 nodes to limit EventStore load. This cluster has {{clusterNodeCount}} nodes.
     </div>
   }
   <div [hidden]="nodeCountUnavailable || clusterTooLarge">
+    @if (rangeLimited) {
+      <div class="cluster-size-warning" data-cy="cluster-resource-range-notice" role="status">
+        Showing Fabric resource usage for the final 90 minutes of the selected time range to limit EventStore load.
+      </div>
+    }
     <div class="chart-summary" aria-live="polite">
       @if (loading) {
         <span>Loading Fabric resource usage...</span>
@@ -18,12 +23,6 @@
         <span>No Fabric process resource usage events were found in this time range.</span>
       } @else {
         <span>{{sampleCount}} samples across {{observedNodeCount}} nodes</span>
-        @if (partial) {
-          <app-health-badge
-            text="The 500-event limit was reached. Coverage and top-node rankings may be incomplete."
-            badgeClass="badge-warning">
-          </app-health-badge>
-        }
       }
     </div>
 

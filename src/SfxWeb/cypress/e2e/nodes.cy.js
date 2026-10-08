@@ -214,33 +214,24 @@ context('nodes list page', () => {
             });
         })
 
-        it('labels rankings as partial when EventStore reaches its limit', () => {
-            const now = Date.now();
-            const limitedEvents = Array.from({ length: 500 }, (_, index) => ({
-                Kind: 'FabricProcessResourceUsage',
-                NodeName: `_nt_${index % 5}`,
-                CpuUsagePercent: index % 100,
-                MemoryRssBytes: 536870912,
-                MemoryTotalBytes: 8589934592,
-                SampleDurationMs: 300000,
-                TimeStamp: new Date(now - index * 1000).toISOString(),
-                EventInstanceId: `00000000-0000-0000-0000-${index.toString().padStart(12, '0')}`
-            }));
+        it('limits cluster resource usage requests to 90 minutes', () => {
             addRoute("events", "empty-list.json", apiUrl(`/EventsStore/Nodes/Events?*`));
             cy.intercept(
                 'GET',
                 apiUrl('/EventsStore/Nodes/Events?*eventsTypesFilter=FabricProcessResourceUsage*'),
-                limitedEvents
-            ).as('getLimitedClusterResourceUsage');
+                []
+            ).as('getBoundedClusterResourceUsage');
 
             cy.wait([FIXTURE_REF_NODES, FIXTURE_REF_MANIFEST]);
             cy.get('[data-cy=navtabs]').within(() => {
                 cy.contains('events').click();
             });
 
-            cy.wait('@getLimitedClusterResourceUsage');
-            cy.get('[data-cy=cluster-resource-usage-chart]').within(() => {
-                cy.contains('The 500-event limit was reached. Coverage and top-node rankings may be incomplete.');
+            cy.wait('@getBoundedClusterResourceUsage').then(interception => {
+                const requestUrl = new URL(interception.request.url);
+                const startTime = Date.parse(requestUrl.searchParams.get('starttimeutc'));
+                const endTime = Date.parse(requestUrl.searchParams.get('endtimeutc'));
+                expect(endTime - startTime).to.be.at.most(90 * 60 * 1000);
             });
         })
 
@@ -262,7 +253,7 @@ context('nodes list page', () => {
             });
 
             cy.get('[data-cy=cluster-resource-size-warning]').within(() => {
-                cy.contains('Fabric resource usage graphs are not shown for clusters with more than 50 nodes because the 500-event limit can make results incomplete. This cluster has 51 nodes.');
+                cy.contains('Fabric resource usage graphs are not shown for clusters with more than 50 nodes to limit EventStore load. This cluster has 51 nodes.');
                 cy.contains('Learn more').should('not.exist');
             });
             cy.get('[data-cy=cluster-resource-cpu-chart]').should('not.be.visible');

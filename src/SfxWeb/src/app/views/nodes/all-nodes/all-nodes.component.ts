@@ -8,7 +8,7 @@ import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 import { NodeCollection } from 'src/app/Models/DataModels/collections/NodeCollection';
 import { map } from 'rxjs/operators';
 import { DashboardViewModel, IDashboardViewModel } from 'src/app/ViewModels/DashboardViewModels';
-import { FABRIC_PROCESS_RESOURCE_USAGE_EVENT_KIND, FABRIC_PROCESS_RESOURCE_USAGE_EVENT_LIMIT, FABRIC_PROCESS_RESOURCE_USAGE_LOOKBACK_MS, getLatestFabricProcessResourceUsageByNode, isFabricProcessResourceUsageSampleCurrent } from 'src/app/Models/eventstore/FabricProcessResourceUsage';
+import { FABRIC_PROCESS_RESOURCE_USAGE_EVENT_KIND, FABRIC_PROCESS_RESOURCE_USAGE_LOOKBACK_MS, getLatestFabricProcessResourceUsageByNode, isFabricProcessResourceUsageSampleCurrent } from 'src/app/Models/eventstore/FabricProcessResourceUsage';
 import { FabricProcessResourceUsageCapabilityService } from 'src/app/services/fabric-process-resource-usage-capability.service';
 
 @Component({
@@ -30,7 +30,6 @@ export class AllNodesComponent extends BaseControllerDirective {
   listSettings!: ListSettings;
   tiles: IDashboardViewModel[] = [];
   isAnyNodeThrottling = false;
-  resourceUsagePartial = false;
 
   private nodeThrottlingEvents?: ReturnType<DataService['getNodeThrottlingEventList']>;
   private resourceUsageSubscription?: Subscription;
@@ -43,7 +42,6 @@ export class AllNodesComponent extends BaseControllerDirective {
     this.resourceUsageRequestedAt = undefined;
     this.nodes = this.data.nodes;
     this.isAnyNodeThrottling = false;
-    this.resourceUsagePartial = false;
     this.listSettings = this.settings.getNewOrExistingListSettings('nodes', ['name'], [
       new ListColumnSettingForLink('name', 'Name', item => item.viewPath),
       new ListColumnSetting('raw.IpAddressOrFQDN', 'Address'),
@@ -140,7 +138,6 @@ export class AllNodesComponent extends BaseControllerDirective {
       ResponseMessageHandlers.silentResponseMessageHandler
     ).subscribe({
       next: events => {
-        this.resourceUsagePartial = events.length >= FABRIC_PROCESS_RESOURCE_USAGE_EVENT_LIMIT;
         const nodesByName = new Map(this.nodes.collection.map(node => [node.name, node]));
         const currentInstanceEvents = events.filter(event =>
           nodesByName.get(event.nodeName)?.isEventFromCurrentInstance(event) === true);
@@ -196,7 +193,6 @@ export class AllNodesComponent extends BaseControllerDirective {
   }
 
   private clearResourceUsage(): void {
-    this.resourceUsagePartial = false;
     this.nodes.collection.forEach(node => node.resourceUsage = undefined);
     this.nodes.collection = [...this.nodes.collection];
   }

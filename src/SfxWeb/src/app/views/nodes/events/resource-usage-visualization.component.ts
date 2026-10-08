@@ -5,7 +5,7 @@ import { Chart, PointOptionsObject, SeriesLineOptions, chart } from 'highcharts'
 import { ResponseMessageHandlers } from 'src/app/Common/ResponseMessageHandlers';
 import {
   FabricProcessResourceUsageMetric,
-  FABRIC_PROCESS_RESOURCE_USAGE_EVENT_LIMIT,
+  FABRIC_PROCESS_RESOURCE_USAGE_LOOKBACK_MS,
   IFabricProcessResourceUsageNodeSeries,
   formatFabricProcessResourceBytes,
   getFabricProcessResourceUsageSeriesByNode,
@@ -37,7 +37,7 @@ export class ClusterResourceUsageVisualizationComponent implements Visualization
 
   loading = false;
   failed = false;
-  partial = false;
+  rangeLimited = false;
   sampleCount = 0;
   observedNodeCount = 0;
   clusterNodeCount = 0;
@@ -71,8 +71,10 @@ export class ClusterResourceUsageVisualizationComponent implements Visualization
     }
 
     this.loadKey = loadKey;
-    this.startDate = data.startDate;
     this.endDate = data.endDate;
+    const earliestStartDate = new Date(this.endDate.getTime() - FABRIC_PROCESS_RESOURCE_USAGE_LOOKBACK_MS);
+    this.startDate = data.startDate > earliestStartDate ? data.startDate : earliestStartDate;
+    this.rangeLimited = this.startDate.getTime() > data.startDate.getTime();
     this.loadSubscription?.unsubscribe();
     this.nodeCountUnavailable = false;
     this.clusterTooLarge = false;
@@ -120,7 +122,6 @@ export class ClusterResourceUsageVisualizationComponent implements Visualization
         );
         this.sampleCount = nodeSeries.reduce((count, item) => count + item.samples.length, 0);
         this.observedNodeCount = nodeSeries.length;
-        this.partial = events.length >= FABRIC_PROCESS_RESOURCE_USAGE_EVENT_LIMIT;
         this.loading = false;
         this.renderCharts();
       },
@@ -145,7 +146,6 @@ export class ClusterResourceUsageVisualizationComponent implements Visualization
     this.observedNodeCount = 0;
     this.loading = false;
     this.failed = failed;
-    this.partial = false;
     this.renderCharts();
   }
 

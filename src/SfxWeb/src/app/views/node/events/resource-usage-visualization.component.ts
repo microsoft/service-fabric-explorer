@@ -2,7 +2,7 @@ import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, OnDestro
 import { Subscription } from 'rxjs';
 import { Chart, PointOptionsObject, chart } from 'highcharts';
 import { ResponseMessageHandlers } from 'src/app/Common/ResponseMessageHandlers';
-import { FABRIC_PROCESS_RESOURCE_USAGE_EVENT_LIMIT, formatFabricProcessResourceBytes, IFabricProcessResourceUsageSample, parseFabricProcessResourceUsageEvent } from 'src/app/Models/eventstore/FabricProcessResourceUsage';
+import { formatFabricProcessResourceBytes, IFabricProcessResourceUsageSample, parseFabricProcessResourceUsageEvent } from 'src/app/Models/eventstore/FabricProcessResourceUsage';
 import { DataService } from 'src/app/services/data.service';
 import { VisualizationComponent, VisUpdateData } from 'src/app/modules/event-store/visualizationComponents';
 import { createFabricProcessResourceUsageChartOptions } from 'src/app/modules/event-store/fabric-process-resource-usage-chart';
@@ -21,7 +21,6 @@ export class ResourceUsageVisualizationComponent implements VisualizationCompone
 
   loading = false;
   failed = false;
-  truncated = false;
   sampleCount = 0;
 
   private chart?: Chart;
@@ -80,7 +79,6 @@ export class ResourceUsageVisualizationComponent implements VisualizationCompone
     this.sampleCount = 0;
     this.loading = true;
     this.failed = false;
-    this.truncated = false;
     this.renderChart();
     this.loadSubscription?.unsubscribe();
 
@@ -99,7 +97,6 @@ export class ResourceUsageVisualizationComponent implements VisualizationCompone
             && sample.timestamp <= this.endDate)
           .sort((left, right) => left.timestamp.getTime() - right.timestamp.getTime());
         this.sampleCount = this.samples.length;
-        this.truncated = events.length >= FABRIC_PROCESS_RESOURCE_USAGE_EVENT_LIMIT;
         this.loading = false;
         this.renderChart();
       },
@@ -120,7 +117,6 @@ export class ResourceUsageVisualizationComponent implements VisualizationCompone
     this.sampleCount = 0;
     this.loading = false;
     this.failed = failed;
-    this.truncated = false;
     this.renderChart();
   }
 

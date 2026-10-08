@@ -3,7 +3,6 @@ import { NodeEvent } from './Events';
 export const FABRIC_PROCESS_RESOURCE_USAGE_EVENT_KIND = 'FabricProcessResourceUsage';
 export const FABRIC_PROCESS_RESOURCE_USAGE_MIN_FRESHNESS_MS = 15 * 60 * 1000;
 export const FABRIC_PROCESS_RESOURCE_USAGE_LOOKBACK_MS = 90 * 60 * 1000;
-export const FABRIC_PROCESS_RESOURCE_USAGE_EVENT_LIMIT = 500;
 
 export interface IFabricProcessResourceUsageSample {
   cpuPercent: number;
