@@ -2,7 +2,20 @@ import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/cor
 import { DataService } from 'src/app/services/data.service';
 import { NodeBaseControllerDirective } from '../NodeBase';
 import { IEventStoreData } from 'src/app/modules/event-store/event-store/event-store.component';
+import { VisReference } from 'src/app/modules/event-store/event-store/event-store.component';
 import { IOptionConfig } from 'src/app/modules/event-store/option-picker/option-picker.component';
+import { TimelineComponent } from 'src/app/modules/event-store/timeline/timeline.component';
+import { RcaVisualizationComponent } from 'src/app/modules/event-store/rca-visualization/rca-visualization.component';
+import { ResourceUsageVisualizationComponent } from './resource-usage-visualization.component';
+import { FabricProcessResourceUsageCapabilityService } from 'src/app/services/fabric-process-resource-usage-capability.service';
+import { Observable, of } from 'rxjs';
+
+const timelineVisualization: VisReference = { name: 'Timeline', component: TimelineComponent };
+const resourceUsageVisualization: VisReference = {
+  name: 'Fabric.exe Resource Usage',
+  component: ResourceUsageVisualizationComponent
+};
+const rcaVisualization: VisReference = { name: 'RCA Summary', component: RcaVisualizationComponent };
 
 @Component({
     selector: 'app-node-events',
@@ -13,12 +26,15 @@ import { IOptionConfig } from 'src/app/modules/event-store/option-picker/option-
 })
 export class EventsComponent extends NodeBaseControllerDirective {
   protected data: DataService = inject(DataService);
+  private resourceUsageCapability = inject(FabricProcessResourceUsageCapabilityService);
 
 
   listEventStoreData!: IEventStoreData<any, any> [];
   optionsConfig!: IOptionConfig;
+  vizRefs: VisReference[] = [timelineVisualization, rcaVisualization];
 
   setup() {
+    this.vizRefs = [timelineVisualization, rcaVisualization];
     this.listEventStoreData = [
       this.data.getNodeEventData(this.nodeName)
     ];
@@ -27,6 +43,25 @@ export class EventsComponent extends NodeBaseControllerDirective {
       enableCluster: true,
       enableRepairTasks: true
     };
+
+    this.detectResourceUsageCapability();
   }
 
+  refresh(): Observable<null> {
+    if (this.resourceUsageCapability.canRetry) {
+      this.detectResourceUsageCapability();
+    }
+    return of(null);
+  }
+
+  private detectResourceUsageCapability(): void {
+    this.subscriptions.add(this.resourceUsageCapability.ensureSupported().subscribe({
+      next: isSupported => {
+        if (isSupported) {
+          this.vizRefs = [timelineVisualization, resourceUsageVisualization, rcaVisualization];
+        }
+      },
+      error: error => console.error('Failed to detect Fabric process resource usage support.', error)
+    }));
+  }
 }
