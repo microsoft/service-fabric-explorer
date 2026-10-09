@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-8 -5 34 25">
+  <defs>
+    <filter id="brim-shadow" x="-50%" y="-100%" width="200%" height="300%">
+      <feDropShadow dx="0" dy="1" stdDeviation="1" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+  <path d="M0 14V12.6A15.3 12.6 0 0 1 15.3 0A1.7 1.4 0 0 1 17 1.4V14Z" fill="#c62828"/>
+  <circle cx="17" cy="0" r="3" fill="#fff"/>
+  <rect x="-4" y="9" width="25" height="6" rx="3" fill="#fff" filter="url(#brim-shadow)"/>
+</svg>

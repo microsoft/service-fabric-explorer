@@ -51,6 +51,30 @@ export class AppComponent implements OnInit{
   hideSFXText = false;
   shrinkAllHeaderItem = false;
 
+  get holidayDecoration(): string | null {
+    const today = new Date();
+    const month = today.getMonth();
+    const date = today.getDate();
+
+    // Months are zero-based and dates are one-based
+    // New Year's Day - Show decoration on January 1
+    if (month === 0 && date === 1) {
+      return 'new-year-firework';
+    }
+
+    // Valentine's Day - Show decoration on February 14
+    if (month === 1 && date === 14) {
+      return 'valentines-heart';
+    }
+
+    // Christmas - Show decoration from December 19 to December 25
+    if (month === 11 && date >= 19 && date <= 25) {
+      return 'christmas-hat';
+    }
+
+    return null;
+  }
+
   ngOnInit() {
     console.log(`SFX VERSION : ${environment.version}`);
 

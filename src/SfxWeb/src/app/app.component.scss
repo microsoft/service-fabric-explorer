@@ -15,6 +15,44 @@ $right-panel-min-width: 200px !default;
 
     .navbar-brand-icon {
         display: inline-block;
+        position: relative;
+        z-index: 1;
+    }
+
+    .service-fabric-logo {
+        display: inline-block;
+        position: relative;
+        line-height: 0;
+    }
+
+    .holiday-decoration {
+        position: absolute;
+    }
+
+    .christmas-hat {
+        width: 34px;
+        height: 25px;
+        left: 7px;
+        top: -14px;
+        transform: rotate(30deg);
+        transform-origin: 8px 19px;
+        z-index: 2;
+    }
+
+    .valentines-heart {
+        width: 32px;
+        height: 32px;
+        left: 0;
+        top: 0;
+        z-index: 2;
+    }
+
+    .new-year-firework {
+        width: 48px;
+        height: 38px;
+        left: 0;
+        top: -5px;
+        z-index: 0;
     }
 
     &.navbar-brand-small {
