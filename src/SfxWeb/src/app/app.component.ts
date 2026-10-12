@@ -50,6 +50,7 @@ export class AppComponent implements OnInit{
   shortenAzure = false;
   hideSFXText = false;
   shrinkAllHeaderItem = false;
+  holidayDecoration: string | null = null;
 
   ngOnInit() {
     console.log(`SFX VERSION : ${environment.version}`);
@@ -57,6 +58,7 @@ export class AppComponent implements OnInit{
     this.treeService.init();
     this.treeService.refresh().subscribe();
     this.refreshService.init();
+    this.setHolidayDecoration();
 
     this.treeWidth = this.storageService.getValueString('treeWidth', '450px');
     this.settingsService.treeWidth.next(this.treeWidth);
@@ -69,6 +71,24 @@ export class AppComponent implements OnInit{
       config.duration = 30000;
       this.snackBar.openFromComponent(TelemetrySnackBarComponent, config);
       this.storageService.setValue(TelemetryService.localStoragePromptedTelemetryKey, true);
+    }
+  }
+
+  private setHolidayDecoration(): void {
+    const today = new Date();
+    const month = today.getMonth();
+    const date = today.getDate();
+
+    // Months are zero-based and dates are one-based
+    // New Year's Day - Show decoration from January 1 to January 3
+    if (month === 0 && date >= 1 && date <= 3) {
+      this.holidayDecoration = 'new-year-firework';
+    // Valentine's Day - Show decoration on February 14
+    } else if (month === 1 && date === 14) {
+      this.holidayDecoration = 'valentines-heart';
+    // Christmas - Show decoration from December 19 to December 25
+    } else if (month === 11 && date >= 19 && date <= 25) {
+      this.holidayDecoration = 'christmas-hat';
     }
   }
 

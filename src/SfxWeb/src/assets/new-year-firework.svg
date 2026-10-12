@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -6 48 38">
+  <defs>
+    <symbol id="firework" viewBox="0 0 24 24">
+  <g fill="none" stroke-linecap="round">
+    <g stroke="#f4c95d" stroke-width="1.1">
+      <line x1="12" y1="12" x2="12" y2="1"/>
+      <line x1="12" y1="12" x2="17.5" y2="2.47"/>
+      <line x1="12" y1="12" x2="21.53" y2="6.5"/>
+      <line x1="12" y1="12" x2="23" y2="12"/>
+      <line x1="12" y1="12" x2="21.53" y2="17.5"/>
+      <line x1="12" y1="12" x2="17.5" y2="21.53"/>
+      <line x1="12" y1="12" x2="12" y2="23"/>
+      <line x1="12" y1="12" x2="6.5" y2="21.53"/>
+      <line x1="12" y1="12" x2="2.47" y2="17.5"/>
+      <line x1="12" y1="12" x2="1" y2="12"/>
+      <line x1="12" y1="12" x2="2.47" y2="6.5"/>
+      <line x1="12" y1="12" x2="6.5" y2="2.47"/>
+    </g>
+    <g stroke="#e85d75" stroke-width="0.7">
+      <line x1="12" y1="12" x2="12" y2="5"/>
+      <line x1="12" y1="12" x2="15.5" y2="5.94"/>
+      <line x1="12" y1="12" x2="18.06" y2="8.5"/>
+      <line x1="12" y1="12" x2="19" y2="12"/>
+      <line x1="12" y1="12" x2="18.06" y2="15.5"/>
+      <line x1="12" y1="12" x2="15.5" y2="18.06"/>
+      <line x1="12" y1="12" x2="12" y2="19"/>
+      <line x1="12" y1="12" x2="8.5" y2="18.06"/>
+      <line x1="12" y1="12" x2="5.94" y2="15.5"/>
+      <line x1="12" y1="12" x2="5" y2="12"/>
+      <line x1="12" y1="12" x2="5.94" y2="8.5"/>
+      <line x1="12" y1="12" x2="8.5" y2="5.94"/>
+    </g>
+  </g>
+  <circle cx="12" cy="12" r="2.2" fill="#fff2b2" stroke="#f4c95d" stroke-width="0.7"/>
+  <g stroke="#262626" stroke-width="0.35">
+    <circle cx="12" cy="1" r="1" fill="#f4c95d"/>
+    <circle cx="17.5" cy="2.47" r="0.8" fill="#e85d75"/>
+    <circle cx="21.53" cy="6.5" r="1" fill="#f4c95d"/>
+    <circle cx="23" cy="12" r="0.8" fill="#e85d75"/>
+    <circle cx="21.53" cy="17.5" r="1" fill="#f4c95d"/>
+    <circle cx="17.5" cy="21.53" r="0.8" fill="#e85d75"/>
+    <circle cx="12" cy="23" r="1" fill="#f4c95d"/>
+    <circle cx="6.5" cy="21.53" r="0.8" fill="#e85d75"/>
+    <circle cx="2.47" cy="17.5" r="1" fill="#f4c95d"/>
+    <circle cx="1" cy="12" r="0.8" fill="#e85d75"/>
+    <circle cx="2.47" cy="6.5" r="1" fill="#f4c95d"/>
+    <circle cx="6.5" cy="2.47" r="0.8" fill="#e85d75"/>
+  </g>
+    </symbol>
+  </defs>
+  <use href="#firework" x="1" y="-5" width="11" height="11"/>
+  <use href="#firework" x="18" y="2" width="14" height="14"/>
+  <use href="#firework" x="28" y="-6" width="20" height="20"/>
+</svg>
