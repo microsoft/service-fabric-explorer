@@ -27,6 +27,7 @@ $right-panel-min-width: 200px !default;
 
     .holiday-decoration {
         position: absolute;
+        pointer-events: none;
     }
 
     .christmas-hat {

@@ -14,7 +14,7 @@
         </span>
       </div>
     </a>
-    <a [class]="'navbar-brand' + (shrinkAllHeaderItem ? ' navbar-brand-small' : '')" [routerLink]="['/']" >
+    <a [class]="'navbar-brand' + (shrinkAllHeaderItem ? ' navbar-brand-small' : '')" [routerLink]="['/']" aria-label="Service Fabric Explorer" >
       <span class="service-fabric-logo">
         <img style="width: 32px" [src]="assetBase + 'assets/favicon.svg'" title="Service Fabric Explorer" class="navbar-brand-icon"/>
         @if (holidayDecoration) {
