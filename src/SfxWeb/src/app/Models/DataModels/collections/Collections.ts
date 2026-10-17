@@ -2,7 +2,7 @@ import { IClusterHealthChunk, IDeployedServicePackageHealthStateChunk } from '..
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Observable, of, throwError } from 'rxjs';
 import { ValueResolver, ITextAndBadge } from 'src/app/Utils/ValueResolver';
-import { IRawDeployedServicePackage } from '../../RawDataTypes';
+import { IRawDeployedServicePackage, IRawBackupPolicy, IRawPartitionBackup, IRawApplicationBackupConfigurationInfo, IRawServiceBackupConfigurationInfo, IRawPartition, IRawReplicaOnPartition, IRawService } from '../../RawDataTypes';
 import { IdGenerator } from 'src/app/Utils/IdGenerator';
 import { DataService } from 'src/app/services/data.service';
 import { HealthStateConstants } from 'src/app/Common/Constants';
@@ -22,7 +22,7 @@ import { FabricEventBase, FabricEventInstanceModel, ClusterEvent, NodeEvent, App
 import { ListSettings, ListColumnSetting, ListColumnSettingWithFilter, ListColumnSettingWithEventStoreFullDescription, ListColumnSettingWithEventStoreRowDisplay } from '../../ListSettings';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { PartitionBackup, PartitionBackupInfo } from '../PartitionBackupInfo';
-import { DataModelCollectionBase, IDataModelCollection } from './CollectionBase';
+import { DataModelCollectionBase, IDataModelCollection, SimpleCollection, SimpleCollectionWithParent } from './CollectionBase';
 import groupBy from 'lodash/groupBy';
 import { RoutesService } from 'src/app/services/routes.service';
 // -----------------------------------------------------------------------------
@@ -30,11 +30,13 @@ import { RoutesService } from 'src/app/services/routes.service';
 // Licensed under the MIT License. See License file under the project root for license information.
 // -----------------------------------------------------------------------------
 
-export class BackupPolicyCollection extends DataModelCollectionBase<BackupPolicy> {
-    protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): Observable<any> {
-        return this.data.restClient.getBackupPolicies(messageHandler).pipe(map(items => {
-            return items.map(raw => new BackupPolicy(this.data, raw));
-        }));
+/**
+ * BackupPolicyCollection using generic SimpleCollection pattern.
+ * Fetches backup policies from REST API and maps to BackupPolicy model instances.
+ */
+export class BackupPolicyCollection extends SimpleCollection<BackupPolicy, IRawBackupPolicy> {
+    constructor(data: DataService) {
+        super(data, BackupPolicy, (dataService, messageHandler) => dataService.restClient.getBackupPolicies(messageHandler));
     }
 }
 
@@ -136,29 +138,25 @@ export class ApplicationTypeGroupCollection extends DataModelCollectionBase<Appl
 
 }
 
-export class ApplicationBackupConfigurationInfoCollection extends DataModelCollectionBase<ApplicationBackupConfigurationInfo> {
-    public constructor(data: DataService, public parent: Application) {
-        super(data, parent);
-    }
-
-    protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): Observable<any> {
-        return this.data.restClient.getApplicationBackupConfigurationInfoCollection(this.parent.id, messageHandler)
-        .pipe(map(items => {
-            return items.map(raw => new ApplicationBackupConfigurationInfo(this.data, raw, this.parent));
-        }));
+/**
+ * ApplicationBackupConfigurationInfoCollection using generic SimpleCollectionWithParent pattern.
+ * Fetches application backup configuration info from REST API and maps to model instances.
+ */
+export class ApplicationBackupConfigurationInfoCollection extends SimpleCollectionWithParent<ApplicationBackupConfigurationInfo, IRawApplicationBackupConfigurationInfo, Application> {
+    constructor(data: DataService, parent: Application) {
+        super(data, parent, ApplicationBackupConfigurationInfo,
+            (dataService, parentApp, messageHandler) => dataService.restClient.getApplicationBackupConfigurationInfoCollection(parentApp.id, messageHandler));
     }
 }
 
-export class ServiceBackupConfigurationInfoCollection extends DataModelCollectionBase<ServiceBackupConfigurationInfo> {
-    public constructor(data: DataService, public parent: Service) {
-        super(data, parent);
-    }
-
-    protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): Observable<any> {
-        return this.data.restClient.getServiceBackupConfigurationInfoCollection(this.parent.id, messageHandler)
-            .pipe(map(items => {
-                return items.map(raw => new ServiceBackupConfigurationInfo(this.data, raw, this.parent));
-            }));
+/**
+ * ServiceBackupConfigurationInfoCollection using generic SimpleCollectionWithParent pattern.
+ * Fetches service backup configuration info from REST API and maps to model instances.
+ */
+export class ServiceBackupConfigurationInfoCollection extends SimpleCollectionWithParent<ServiceBackupConfigurationInfo, IRawServiceBackupConfigurationInfo, Service> {
+    constructor(data: DataService, parent: Service) {
+        super(data, parent, ServiceBackupConfigurationInfo,
+            (dataService, parentService, messageHandler) => dataService.restClient.getServiceBackupConfigurationInfoCollection(parentService.id, messageHandler));
     }
 }
 
@@ -179,16 +177,14 @@ export class PartitionBackupCollection extends DataModelCollectionBase<Partition
     }
 }
 
-export class SinglePartitionBackupCollection extends DataModelCollectionBase<PartitionBackup> {
-    public constructor(data: DataService, public parent: PartitionBackupInfo) {
-        super(data, parent);
-    }
-
-    public retrieveNewCollection(messageHandler?: IResponseMessageHandler): Observable<any> {
-        return this.data.restClient.getLatestPartitionBackup(this.parent.parent.id, messageHandler)
-            .pipe(map(items => {
-                return items.map(raw => new PartitionBackup(this.data, raw, this.parent));
-            }));
+/**
+ * SinglePartitionBackupCollection using generic SimpleCollectionWithParent pattern.
+ * Fetches the latest partition backup from REST API and maps to model instances.
+ */
+export class SinglePartitionBackupCollection extends SimpleCollectionWithParent<PartitionBackup, IRawPartitionBackup, PartitionBackupInfo> {
+    constructor(data: DataService, parent: PartitionBackupInfo) {
+        super(data, parent, PartitionBackup,
+            (dataService, parentInfo, messageHandler) => dataService.restClient.getLatestPartitionBackup(parentInfo.parent.id, messageHandler));
     }
 }
 
@@ -215,9 +211,14 @@ export class ServiceTypeCollection extends DataModelCollectionBase<ServiceType> 
     }
 }
 
-export class PartitionCollection extends DataModelCollectionBase<Partition> {
-    public constructor(data: DataService, public parent: Service) {
-        super(data, parent);
+/**
+ * PartitionCollection using generic SimpleCollectionWithParent pattern.
+ * Extends with mergeClusterHealthStateChunk for health state management.
+ */
+export class PartitionCollection extends SimpleCollectionWithParent<Partition, IRawPartition, Service> {
+    constructor(data: DataService, parent: Service) {
+        super(data, parent, Partition,
+            (dataService, parentService, messageHandler) => dataService.restClient.getPartitions(parentService.parent.id, parentService.id, messageHandler));
     }
 
     public mergeClusterHealthStateChunk(clusterHealthChunk: IClusterHealthChunk): Observable<any> {
@@ -230,18 +231,17 @@ export class PartitionCollection extends DataModelCollectionBase<Partition> {
         }
         return of(true);
     }
-
-    protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): Observable<any> {
-        return this.data.restClient.getPartitions(this.parent.parent.id, this.parent.id, messageHandler)
-            .pipe(map(items => {
-                return items.map(raw => new Partition(this.data, raw, this.parent));
-            }));
-    }
 }
 
-export class ReplicaOnPartitionCollection extends DataModelCollectionBase<ReplicaOnPartition> {
-    public constructor(data: DataService, public parent: Partition) {
-        super(data, parent);
+/**
+ * ReplicaOnPartitionCollection using generic SimpleCollectionWithParent pattern.
+ * Extends with additional getters for service type information.
+ */
+export class ReplicaOnPartitionCollection extends SimpleCollectionWithParent<ReplicaOnPartition, IRawReplicaOnPartition, Partition> {
+    constructor(data: DataService, parent: Partition) {
+        super(data, parent, ReplicaOnPartition,
+            (dataService, parentPartition, messageHandler) => dataService.restClient.getReplicasOnPartition(
+                parentPartition.parent.parent.id, parentPartition.parent.id, parentPartition.id, messageHandler));
     }
 
     public get isStatefulService(): boolean {
@@ -250,13 +250,6 @@ export class ReplicaOnPartitionCollection extends DataModelCollectionBase<Replic
 
     public get isStatelessService(): boolean {
         return this.parent.isStatelessService;
-    }
-
-    protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): Observable<any> {
-        return this.data.restClient.getReplicasOnPartition(this.parent.parent.parent.id, this.parent.parent.id, this.parent.id, messageHandler)
-            .pipe(map(items => {
-                return items.map(raw => new ReplicaOnPartition(this.data, raw, this.parent));
-            }));
     }
 }
 
