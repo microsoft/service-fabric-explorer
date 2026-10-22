@@ -14,8 +14,13 @@
         </span>
       </div>
     </a>
-    <a [class]="'navbar-brand' + (shrinkAllHeaderItem ? ' navbar-brand-small' : '')" [routerLink]="['/']" >
-      <img style="width: 32px" [src]="assetBase + 'assets/favicon.svg'" title="Service Fabric Explorer" class="navbar-brand-icon"/>
+    <a [class]="'navbar-brand' + (shrinkAllHeaderItem ? ' navbar-brand-small' : '')" [routerLink]="['/']" aria-label="Service Fabric Explorer" >
+      <span class="service-fabric-logo">
+        <img style="width: 32px" [src]="assetBase + 'assets/favicon.svg'" title="Service Fabric Explorer" class="navbar-brand-icon"/>
+        @if (holidayDecoration) {
+          <img [src]="assetBase + 'assets/' + holidayDecoration + '.svg'" [class]="'holiday-decoration ' + holidayDecoration" alt=""/>
+        }
+      </span>
       @if (!hideSFXText) {
         <span style="vertical-align: middle; margin-left: 14px;">
           Service Fabric Explorer

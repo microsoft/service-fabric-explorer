@@ -1,3 +1,8 @@
+@if (isAnyNodeThrottling) {
+  <div data-cy="nodes-throttling-warning">
+    <app-warning description="One or more nodes are throttling"></app-warning>
+  </div>
+}
 <div class="tile-container">
   @for (tile of tiles; track tile) {
     <app-dashboard-tile [data]="tile"></app-dashboard-tile>

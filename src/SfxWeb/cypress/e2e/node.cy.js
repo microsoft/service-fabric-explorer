@@ -1,7 +1,8 @@
 /// <reference types="cypress" />
 
 import { apiUrl, addDefaultFixtures, checkTableSize, FIXTURE_REF_NODES, nodes_route, FIXTURE_NODES, addRoute, checkCommand,
-         OPTION_PICKER, CLUSTER_TAB_NAME, SELECT_EVENT_TYPES, xssPrefix,  watchForAlert, xssEncoded, FIXTURE_REF_MANIFEST } from './util.cy';
+         getNodeThrottlingEvents, getStaleNodeThrottlingStartedEvent, xssPrefix, watchForAlert, xssEncoded, FIXTURE_REF_MANIFEST,
+         manifest_route } from './util.cy';
 
 const nodeName = "_nt_0"
 const nodeInfoRef = "@getnodeInfo"
@@ -14,6 +15,7 @@ const setup = (node, prefix = "") => {
   addRoute("nodehealthInfo", prefix + "node-page/health.json", apiUrl(`/Nodes/${node}/$/GetHealth?*`));
   addRoute("apps", prefix + "node-page/apps.json", apiUrl(`/Nodes/${node}/$/GetApplications?*`));
   addRoute("nodeLoad", prefix + "node-load/get-node-load-information.json", apiUrl(`/Nodes/${node}/$/GetLoadInformation?*`));
+  cy.intercept('GET', apiUrl(`/EventsStore/Nodes/${node}/$/Events?*`), []).as('getNodeEvents');
 }
 
 context('node page', () => {
@@ -67,6 +69,59 @@ context('node page', () => {
           cy.contains("NodeTypeName : nt")
         })
 
+        cy.get('[data-cy=node-throttling-warning]').should('not.exist');
+
+      })
+
+      it('shows a warning while the node is throttling', () => {
+        const startedEvent = getNodeThrottlingEvents([nodeName]).find(event => event.Kind === 'NodeMessageThrottlingStarted');
+        cy.intercept('GET', apiUrl(`/EventsStore/Nodes/${nodeName}/$/Events?*`), [startedEvent]).as('getNodeThrottlingState');
+
+        cy.visit(`/#/node/${nodeName}`);
+
+        cy.wait('@getNodeThrottlingState');
+  cy.get('@getNodeThrottlingState.all').should('have.length', 1);
+        cy.get('[data-cy=node-throttling-warning]').within(() => {
+          cy.get('.warning-icon');
+          cy.contains('Node is Throttling');
+        });
+      })
+
+      it('hides the warning after throttling ends', () => {
+        cy.intercept('GET', apiUrl(`/EventsStore/Nodes/${nodeName}/$/Events?*`), getNodeThrottlingEvents([nodeName])).as('getNodeThrottlingState');
+
+        cy.visit(`/#/node/${nodeName}`);
+
+        cy.wait('@getNodeThrottlingState');
+        cy.get('[data-cy=node-throttling-warning]').should('not.exist');
+      })
+
+      it('ignores throttling from a previous node incarnation', () => {
+        cy.intercept('GET', apiUrl(`/EventsStore/Nodes/${nodeName}/$/Events?*`), [getStaleNodeThrottlingStartedEvent(nodeName)])
+          .as('getStaleNodeThrottlingState');
+
+        cy.visit(`/#/node/${nodeName}`);
+
+        cy.wait('@getStaleNodeThrottlingState');
+        cy.get('[data-cy=node-throttling-warning]').should('not.exist');
+      })
+
+      it('does not request throttling events when EventStore is disabled', () => {
+        let eventRequests = 0;
+        cy.fixture('clusterManifest.json').then(manifest => {
+          manifest.Manifest = manifest.Manifest.replace('EventStoreService', 'DisabledEventStoreService');
+          cy.intercept('GET', manifest_route, manifest).as('getManifestWithoutEventStore');
+        });
+        cy.intercept('GET', apiUrl(`/EventsStore/Nodes/${nodeName}/$/Events?*`), request => {
+          eventRequests++;
+          request.reply([]);
+        });
+
+        cy.visit(`/#/node/${nodeName}`);
+
+        cy.wait(['@getManifestWithoutEventStore', nodeInfoRef]);
+        cy.get('[data-cy=essential-info]');
+        cy.then(() => expect(eventRequests).to.equal(0));
       })
 
       it('down node', () => {
@@ -160,7 +215,20 @@ context('node page', () => {
 
     describe("events", () => {
       it('view events', () => {
-        addRoute("events", "empty-list.json", apiUrl(`/EventsStore/Nodes/${nodeName}/$/Events?*`));
+        const nodeDownEvent = {
+          NodeName: nodeName,
+          Kind: 'NodeDown',
+          EventInstanceId: '00000000-0000-0000-0000-000000000003',
+          TimeStamp: new Date().toISOString(),
+          Category: 'StateTransition',
+          HasCorrelatedEvents: false
+        };
+        cy.intercept('GET', apiUrl(`/EventsStore/Nodes/${nodeName}/$/Events?*`), request => {
+          request.reply([...getNodeThrottlingEvents([nodeName]), nodeDownEvent]);
+          if (!request.query.eventsTypesFilter) {
+            request.alias = 'getevents';
+          }
+        });
 
         cy.visit(`/#/node/${nodeName}`);
 
@@ -170,8 +238,14 @@ context('node page', () => {
           cy.contains('events').click();
         });
 
-        cy.wait("@getevents");
+        cy.wait("@getevents").then(interception => {
+          expect(interception.request.url).not.to.include('eventsTypesFilter');
+        });
         cy.url().should('include', 'events');
+        cy.contains(`${nodeName} (3)`);
+        cy.contains('NodeDown');
+        cy.contains('NodeMessageThrottlingStarted');
+        cy.contains('NodeMessageThrottlingEnded');
       })
 
     })
@@ -210,18 +284,15 @@ context('node page', () => {
     it('url', () => {
       addDefaultFixtures();
 
-      addRoute('events', 'cluster-page/eventstore/cluster-events.json', apiUrl(`/EventsStore/Cluster/Events?*`))
-      addRoute("events", "empty-list.json", apiUrl(`/EventsStore/Nodes/**/$/Events?**`));
+      const unsafeNodeName = '<img src="1">';
+      cy.intercept('GET', apiUrl(`/EventsStore/Nodes/**/$/Events?**`), getNodeThrottlingEvents([unsafeNodeName])).as('getevents');
 
-      cy.visit(`/#/node/${xssEncoded}/events`);
+      watchForAlert(() => {
+        cy.visit(`/#/node/${xssEncoded}/events`);
+      });
 
-      cy.get(SELECT_EVENT_TYPES).click()
-      cy.get(OPTION_PICKER).within(() => {
-        cy.contains(CLUSTER_TAB_NAME)
-        cy.get('[type=checkbox]').eq(0).check({ force: true })
-      })
-
-      cy.contains(`<img src="1">`)
+      cy.wait('@getevents');
+      cy.contains(unsafeNodeName);
     })
   })
 

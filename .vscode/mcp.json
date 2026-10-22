@@ -4,24 +4,24 @@
 			"type": "http",
 			"url": "https://api.githubcopilot.com/mcp/"
 		},
-		"io.github.ChromeDevTools/chrome-devtools-mcp": {
+		"chrome-devtools": {
+			"command": "npx",
+			"args": [
+				"-y",
+				"chrome-devtools-mcp@latest"
+			]
+		},
+		"playwright": {
 			"type": "stdio",
 			"command": "npx",
 			"args": [
-				"--registry",
-				"https://registry.npmjs.org",
-				"chrome-devtools-mcp@0.21.0"
-			],
-			"gallery": "https://api.mcp.github.com",
-			"version": "0.21.0"
+				"-y",
+				"@playwright/mcp@latest"
+			]
 		},
-		"playwright": {
-		"type": "stdio",
-		"command": "npx",
-		"args": [
-			"-y",
-			"@playwright/mcp@latest"
-		]
+		"ask-sf": {
+			"type": "http",
+			"url": "https://ask-sf.trafficmanager.net/mcp"
 		},
 	},
 	"inputs": []

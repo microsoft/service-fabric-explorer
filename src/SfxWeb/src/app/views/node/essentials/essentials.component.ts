@@ -2,7 +2,7 @@ import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { map, mergeMap } from 'rxjs/operators';
 import { Observable, forkJoin, of } from 'rxjs';
 import { DataService } from 'src/app/services/data.service';
-import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
+import { IResponseMessageHandler, ResponseMessageHandlers } from 'src/app/Common/ResponseMessageHandlers';
 import { ListSettings, ListColumnSetting, ListColumnSettingForLink, ListColumnSettingForBadge, ListColumnSettingWithFilter } from 'src/app/Models/ListSettings';
 import { SettingsService } from 'src/app/services/settings.service';
 import { DeployedApplicationCollection } from 'src/app/Models/DataModels/collections/DeployedApplicationCollection';
@@ -34,6 +34,10 @@ export class EssentialsComponent extends NodeBaseControllerDirective {
   repairJobSettings!: ListSettings;
 
   placementProperties!: INodeTypeInfo;
+  isNodeThrottling = false;
+
+  private nodeThrottlingEvents?: ReturnType<DataService['getNodeThrottlingEventList']>;
+  private hasRefreshed = false;
 
   setup() {
     this.repairJobSettings = this.settings.getNewOrExistingPendingRepairTaskListSettings();
@@ -48,9 +52,23 @@ export class EssentialsComponent extends NodeBaseControllerDirective {
     this.essentialItems = [];
     this.ringInfo = [];
     this.repairJobs = [];
+    this.isNodeThrottling = false;
+    this.subscriptions.add(this.data.getClusterManifest().subscribe(manifest => {
+      if (manifest.isEventStoreEnabled) {
+        this.nodeThrottlingEvents = this.data.getNodeThrottlingEventList(this.nodeName, manifest.eventStoreTimeRange);
+        if (this.hasRefreshed) {
+          this.refreshNodeThrottlingState();
+        }
+      } else {
+        this.nodeThrottlingEvents = undefined;
+        this.isNodeThrottling = false;
+      }
+    }));
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
+    this.hasRefreshed = true;
+    this.refreshNodeThrottlingState();
 
     let duration = '';
     const up = this.node.raw.NodeDownTimeInSeconds === '0';
@@ -119,5 +137,16 @@ export class EssentialsComponent extends NodeBaseControllerDirective {
       }))
 
     ]);
+  }
+
+  private refreshNodeThrottlingState(): void {
+    const refresh = this.nodeThrottlingEvents?.refresh(ResponseMessageHandlers.silentResponseMessageHandler).subscribe(success => {
+      this.isNodeThrottling = success && this.data.nodes.isCurrentlyThrottling(
+        this.nodeThrottlingEvents!.collection.map(event => event.raw),
+        this.nodeName);
+    });
+    if (refresh) {
+      this.subscriptions.add(refresh);
+    }
   }
 }
