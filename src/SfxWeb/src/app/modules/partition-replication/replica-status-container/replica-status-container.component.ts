@@ -1,8 +1,7 @@
-import { Component, OnInit, Input, OnChanges, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
-import { IRawReplicatorStatus, IRawRemoteReplicatorStatus } from 'src/app/Models/RawDataTypes';
+import { Component, Input, OnChanges, ChangeDetectionStrategy } from '@angular/core';
+import { IRawRemoteReplicatorStatus } from 'src/app/Models/RawDataTypes';
 import { ReplicaOnPartition } from 'src/app/Models/DataModels/Replica';
 import { Utils } from 'src/app/Utils/Utils';
-import { Subscription } from 'rxjs';
 import { IEssentialListItem } from '../../charts/essential-health-tile/essential-health-tile.component';
 
 export interface ITimedReplication extends IRawRemoteReplicatorStatus {
@@ -22,98 +21,84 @@ const reduceReplicators = (data: Record<string, IRawRemoteReplicatorStatus>, rep
     changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
-export class ReplicaStatusContainerComponent implements OnChanges, OnDestroy {
+export class ReplicaStatusContainerComponent implements OnChanges {
 
   @Input() replicas!: ReplicaOnPartition[];
+  // Refreshed by the parent (app-essentials) and shared with app-replicas-in-build, instead
+  // of independently finding the primary and calling primaryReplica.detail.refresh() here.
+  @Input() primaryReplica: ReplicaOnPartition | undefined;
   sortedReplicas: ReplicaOnPartition[] = [];
 
   replicaDict = {};
   expandedDict = {};
   cachedData: Record<string, ITimedReplication[]> = {};
 
-  primaryReplica!: ReplicaOnPartition;
-
   overviewItems: IEssentialListItem[] = [];
   replicationStatus: IEssentialListItem[] = [];
-
-  sub: Subscription = new Subscription();
 
   constructor() { }
 
   ngOnChanges(): void {
-    // grab the primary on each reset
-    this.replicas.forEach(replica => {
-      if (replica.raw.ReplicaRole === 'Primary') {
-        this.primaryReplica = replica;
+    if (!this.primaryReplica) {
+      return;
+    }
+
+    const queueSize = Utils.getFriendlyFileSize(+this.primaryReplica.detail.raw.ReplicatorStatus.ReplicationQueueStatus.QueueMemorySize);
+
+    const replicatorData = this.primaryReplica.detail.raw.ReplicatorStatus;
+
+    this.replicaDict = replicatorData.RemoteReplicators.reduce(reduceReplicators, {});
+
+    replicatorData.RemoteReplicators.forEach(replicator => {
+      const cacheData = { ...replicator, date: new Date() };
+
+      // only retain last 20 timestamps
+      if (!this.cachedData[replicator.ReplicaId]) {
+        this.cachedData[replicator.ReplicaId] = [];
       }
+
+      if (this.cachedData[replicator.ReplicaId].length > 20) {
+        this.cachedData[replicator.ReplicaId].shift();
+      }
+
+      this.cachedData[replicator.ReplicaId].push(cacheData);
     });
 
-    // wrap check given primary starts as null
-    if (this.primaryReplica) {
-      this.sub.add(this.primaryReplica.detail.refresh().subscribe(() => {
+    this.sortedReplicas = this.replicas.sort((a, b) => a.replicaRoleSortPriority - b.replicaRoleSortPriority);
 
-        const queueSize = Utils.getFriendlyFileSize(+this.primaryReplica.detail.raw.ReplicatorStatus.ReplicationQueueStatus.QueueMemorySize);
+    // ref for shorter lines below
+    const ref = this.primaryReplica.detail.replicatorStatus.raw.ReplicationQueueStatus;
 
-        const replicatorData = this.primaryReplica.detail.raw.ReplicatorStatus;
+    this.overviewItems = [
+      {
+        descriptionName: 'Queue Utilization Percentage',
+        copyTextValue: ref.QueueUtilizationPercentage,
+        displayText: ref.QueueUtilizationPercentage + '%',
+      },
+      {
+        descriptionName: 'Queue Memory Size',
+        copyTextValue: queueSize,
+        displayText: queueSize,
+      },
+    ];
 
-        this.replicaDict = replicatorData.RemoteReplicators.reduce(reduceReplicators, {});
-
-        replicatorData.RemoteReplicators.forEach(replicator => {
-          const cacheData = { ...replicator, date: new Date() };
-
-          // only retain last 20 timestamps
-          if (!this.cachedData[replicator.ReplicaId]) {
-            this.cachedData[replicator.ReplicaId] = [];
-          }
-
-          if (this.cachedData[replicator.ReplicaId].length > 20) {
-            this.cachedData[replicator.ReplicaId].shift();
-          }
-
-          this.cachedData[replicator.ReplicaId].push(cacheData);
-        });
-
-        this.sortedReplicas = this.replicas.sort((a, b) => a.replicaRoleSortPriority - b.replicaRoleSortPriority);
-
-        // ref for shorter lines below
-        const ref = this.primaryReplica.detail.replicatorStatus.raw.ReplicationQueueStatus;
-
-        this.overviewItems = [
-          {
-            descriptionName: 'Queue Utilization Percentage',
-            copyTextValue: ref.QueueUtilizationPercentage,
-            displayText: ref.QueueUtilizationPercentage + '%',
-          },
-          {
-            descriptionName: 'Queue Memory Size',
-            copyTextValue: queueSize,
-            displayText: queueSize,
-          },
-        ];
-
-        this.replicationStatus = [
-          {
-            descriptionName: 'Last Sequence Number(LSN) ',
-            copyTextValue: ref.LastSequenceNumber,
-            displayText: ref.LastSequenceNumber,
-          },
-          {
-            descriptionName: 'Completed Sequence Number',
-            copyTextValue: ref.CompletedSequenceNumber,
-            displayText: ref.CompletedSequenceNumber,
-          },
-          {
-            descriptionName: 'Committed Sequence Number',
-            copyTextValue: ref.CommittedSequenceNumber,
-            displayText: ref.CommittedSequenceNumber,
-          },
-        ];
-      }));
-    }
-  }
-
-  ngOnDestroy() {
-    this.sub.unsubscribe();
+    this.replicationStatus = [
+      {
+        descriptionName: 'Last Sequence Number(LSN) ',
+        copyTextValue: ref.LastSequenceNumber,
+        displayText: ref.LastSequenceNumber,
+      },
+      {
+        descriptionName: 'Completed Sequence Number',
+        copyTextValue: ref.CompletedSequenceNumber,
+        displayText: ref.CompletedSequenceNumber,
+      },
+      {
+        descriptionName: 'Committed Sequence Number',
+        copyTextValue: ref.CommittedSequenceNumber,
+        displayText: ref.CommittedSequenceNumber,
+      },
+    ];
   }
 
   trackByFn(index: number, replicaStatus: IRawRemoteReplicatorStatus) {

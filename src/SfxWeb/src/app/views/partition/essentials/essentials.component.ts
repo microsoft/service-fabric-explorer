@@ -3,13 +3,14 @@ import { ListSettings, ListColumnSettingForLink, ListColumnSetting, ListColumnSe
 import { DataService } from 'src/app/services/data.service';
 import { SettingsService } from 'src/app/services/settings.service';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
-import { Observable, forkJoin } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { Observable, forkJoin, of } from 'rxjs';
+import { tap, mergeMap } from 'rxjs/operators';
 import { PartitionBaseControllerDirective } from '../PartitionBase';
 import { NodeStatusConstants, PartitionStatusConstants } from 'src/app/Common/Constants';
 import { getDownReplicaMitigationHint } from 'src/app/Utils/PartitionQuorumUtils';
 import { Node } from 'src/app/Models/DataModels/Node';
 import { IEssentialListItem } from 'src/app/modules/charts/essential-health-tile/essential-health-tile.component';
+import { ReplicaOnPartition } from 'src/app/Models/DataModels/Replica';
 
 
 @Component({
@@ -29,6 +30,12 @@ export class EssentialsComponent extends PartitionBaseControllerDirective {
   replicaViewModels: any[] = [];
 
   essentialItems: IEssentialListItem[] = [];
+
+  // Refreshed once here and shared with app-replicas-in-build/app-replica-status-container,
+  // instead of each independently finding the primary and calling detail.refresh().
+  primaryReplica: ReplicaOnPartition | undefined;
+  hasInBuildReplicas = false;
+  inBuildOuterCollapsed = true;
 
   setup() {
     this.setEssentialData();
@@ -100,6 +107,29 @@ export class EssentialsComponent extends PartitionBaseControllerDirective {
             this.partition.quorumReplicas.has(replicaView.id) && replicaView.raw.ReplicaStatus !== 'Ready'
               ? 'highlighted-row' : '';
         }
+      }),
+      mergeMap(() => {
+        const replica = this.partition.isStatefulService
+          ? this.partition.replicas.collection.find(r => r.raw.ReplicaRole === 'Primary')
+          : undefined;
+
+        if (!replica) {
+          this.primaryReplica = undefined;
+          this.hasInBuildReplicas = false;
+          return of(null);
+        }
+
+        return replica.detail.refresh(messageHandler).pipe(
+          tap(() => {
+            // Fresh reference every refresh (same Object.create pattern as replicaViewModels
+            // above) -- CollectionUtils.updateDataModelCollection reuses the same underlying
+            // ReplicaOnPartition instance across refreshes, so without this the children's
+            // ngOnChanges would never re-fire on subsequent refreshes.
+            this.primaryReplica = Object.create(replica);
+            const remoteReplicators = replica.detail.raw.ReplicatorStatus?.RemoteReplicators || [];
+            this.hasInBuildReplicas = remoteReplicators.some(r => r.IsInBuild && r.RemoteInbuildReplicaStatus?.InbuildPhase !== 'CopyComplete');
+          })
+        );
       })
     );
   }

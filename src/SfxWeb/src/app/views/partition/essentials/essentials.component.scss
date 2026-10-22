@@ -9,6 +9,28 @@
     }
 }
 
+// Info icon at the far right of the row, same placement as other fields' info icons
+// (e.g. app-essential-item), instead of butting up against the heading text.
+.status-header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+// Side-by-side instead of stacked -- wraps onto additional rows once panes no longer fit.
+.in-build-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+// The outer pane dims to the same badge-unknown grey as a closed/inactive indicator once
+// collapsed (no inner content visible) -- distinct from the inner panes' own coloring
+// (replicas-in-build.component.scss's .in-build-pane).
+.pane-collapsed {
+    background-color: var(--badge-unknown) !important;
+}
+
 .title-wrapper {
   font-size: 18pt;
   line-height: 0.9;
