@@ -26,6 +26,12 @@ const setup = (partition, replica, prefix="") => {
 
 }
 
+// Inbuild Replica Status starts collapsed (essentials.component.ts: inBuildOuterCollapsed = true) --
+// these tests need the section expanded before asserting on its (collapse-body) content.
+const expandInBuildSection = () => {
+  cy.get('[data-cy=replicas-in-build]').find('h2').click();
+}
+
 const setupSelfReconfiguring = (partition, prefix="") => {
   addRoute("partitions", prefix + "partition-page/selfreconfiguring-partitions.json", apiUrl(`${routeFormatter(appName, selfReconfiguringServiceName)}?*`));
   addRoute("partitionInfo", prefix + "partition-page/selfreconfiguring-partition-info.json", apiUrl(`${routeFormatter(appName, selfReconfiguringServiceName)}/${selfreconfiguringPartitionId}?*`));
@@ -144,6 +150,7 @@ context('partition', () => {
 
           cy.visit(urlFormatter(appName, serviceName, partitionId));
           cy.wait(waitRequest);
+          expandInBuildSection();
 
           cy.get('[data-cy=replicas-in-build]').within(() => {
             cy.contains('Inbuild Replica Status');
@@ -194,6 +201,7 @@ context('partition', () => {
 
           cy.visit(urlFormatter(appName, serviceName, partitionId));
           cy.wait(waitRequest);
+          expandInBuildSection();
 
           cy.get('[data-cy=replicas-in-build]').within(() => {
             cy.contains('Inbuild Replica Status');
@@ -209,6 +217,7 @@ context('partition', () => {
 
           cy.visit(urlFormatter(appName, serviceName, partitionId));
           cy.wait(waitRequest);
+          expandInBuildSection();
 
           cy.get('[data-cy=replicas-in-build]').within(() => {
             // Partition-level ReplicaStatus.Kind isn't "KeyValueStore" -- these fields will
@@ -230,6 +239,7 @@ context('partition', () => {
 
           cy.visit(urlFormatter(appName, serviceName, partitionId));
           cy.wait(waitRequest);
+          expandInBuildSection();
 
           cy.get('[data-cy=replicas-in-build]').within(() => {
             // ReplicaStatus.Kind is "KeyValueStore" but ProviderKind is "TStore" -- the ESE-shaped
@@ -253,6 +263,7 @@ context('partition', () => {
 
           cy.visit(urlFormatter(appName, serviceName, partitionId));
           cy.wait(waitRequest);
+          expandInBuildSection();
 
           cy.get('[data-cy=replicas-in-build]').within(() => {
             cy.get('[data-cy=132431356665040624]').within(() => {
@@ -286,6 +297,7 @@ context('partition', () => {
 
           cy.visit(urlFormatter(appName, serviceName, partitionId));
           cy.wait(waitRequest);
+          expandInBuildSection();
 
           cy.get('[data-cy=replicas-in-build]').within(() => {
             cy.get('[data-cy=132431356665040624]').within(() => {
@@ -317,6 +329,7 @@ context('partition', () => {
 
           cy.visit(urlFormatter(appName, serviceName, partitionId));
           cy.wait(waitRequest);
+          expandInBuildSection();
 
           cy.get('[data-cy=replicas-in-build]').within(() => {
             cy.get('[data-cy=132431356665040624]').within(() => {
