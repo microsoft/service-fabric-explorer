@@ -2,11 +2,13 @@ import { Component, Input, OnChanges, ChangeDetectionStrategy } from '@angular/c
 import { ReplicaOnPartition } from 'src/app/Models/DataModels/Replica';
 import { IRawRemoteReplicatorStatus } from 'src/app/Models/RawDataTypes';
 import { IProgressStatus } from 'src/app/shared/component/phase-diagram/phase-diagram.component';
+import { computeBuildPhases } from '../replica-build-progress/build-phase.util';
 
 export interface IInBuildReplicaItem {
   replicator: IRawRemoteReplicatorStatus;
-  // Parent-owned mirror of the child app-replica-build-progress's phases/currentIndex, fed via
-  // (phasesChange) -- lets the header stepper bind here instead of reading the child's instance.
+  // Computed up front from the same replicator data the child app-replica-build-progress
+  // renders from, instead of reading the child's own derived phases/currentIndex -- doing the
+  // latter trips NG0100 since the header renders before that later sibling computes them.
   phases: IProgressStatus[];
   currentIndex: number;
 }
@@ -39,21 +41,13 @@ export class ReplicasInBuildComponent implements OnChanges {
       // IsInBuild lags CopyComplete by one refresh -- exclude it so a replica that
       // has already finished building doesn't linger in this list.
       .filter(replicator => replicator.IsInBuild && replicator.RemoteInbuildReplicaStatus?.InbuildPhase !== 'CopyComplete')
-      .map(replicator => ({
-        replicator,
-        phases: [],
-        currentIndex: 0,
-      }));
+      .map(replicator => {
+        const { phases, currentIndex } = computeBuildPhases(replicator.RemoteInbuildReplicaStatus);
+        return { replicator, phases, currentIndex };
+      });
   }
 
   paneTitle(item: IInBuildReplicaItem): string {
     return item.replicator.ReplicaId;
-  }
-
-  // Fed by app-replica-build-progress's (phasesChange) -- keeps the header stepper's data
-  // parent-owned instead of read off the child's instance via template reference.
-  onProgressChange(item: IInBuildReplicaItem, event: { phases: IProgressStatus[]; currentIndex: number }): void {
-    item.phases = event.phases;
-    item.currentIndex = event.currentIndex;
   }
 }

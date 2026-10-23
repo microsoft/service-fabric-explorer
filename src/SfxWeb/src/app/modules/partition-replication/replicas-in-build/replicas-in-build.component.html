@@ -5,7 +5,7 @@
       <app-phase-diagram data-cy="build-phase-stepper" class="pane-header-stepper" [items]="item.phases" [currentIndex]="item.currentIndex"></app-phase-diagram>
     </div>
     <div collapse-body>
-      <app-replica-build-progress [replicator]="item.replicator" [isEseBackedKvs]="isEseBackedKvs" (phasesChange)="onProgressChange(item, $event)"></app-replica-build-progress>
+      <app-replica-build-progress [replicator]="item.replicator" [isEseBackedKvs]="isEseBackedKvs"></app-replica-build-progress>
     </div>
   </app-collapse-container>
 }

@@ -1,19 +1,9 @@
-import { Component, Input, Output, EventEmitter, OnChanges, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Input, OnChanges, ChangeDetectionStrategy } from '@angular/core';
 import { IRawRemoteReplicatorStatus, IRawRemoteInbuildReplicaStatus, IRawConfigurationEpoch, IRawKeyValueStoreProviderCopyDetail } from 'src/app/Models/RawDataTypes';
 import { IEssentialListItem } from '../../charts/essential-health-tile/essential-health-tile.component';
 import { IProgressStatus } from 'src/app/shared/component/phase-diagram/phase-diagram.component';
-import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { contextFieldInfo, copyTypeInfoText, copyModeInfoText, copyTypeReasonInfoText, copyModeReasonInfoText } from './replica-copy-info.constants';
-
-// Position of each InbuildPhase enum value in the build pipeline -- also used to decide which
-// Overview sections are still greyed out (not yet reached).
-const inbuildPhaseOrder: Record<string, number> = {
-  CopyContext: 1,
-  CopyState: 2,
-  Copy: 3,
-  CopyCatchup: 4,
-  CopyComplete: 5
-};
+import { computeBuildPhases } from './build-phase.util';
 
 // Shown in place of a value the current phase hasn't produced yet.
 const PLACEHOLDER = '\u2014';
@@ -65,10 +55,6 @@ export class ReplicaBuildProgressComponent implements OnChanges {
   // RC partitions nor TStore-backed KVS partitions ever populate these fields, no matter how
   // far the build progresses.
   @Input() isEseBackedKvs = false;
-  // Lets a parent bind the header's own stepper to this replica's phases/currentIndex instead
-  // of reading them off this component's instance (avoids a same-pass read of a sibling's
-  // derived state, which renders stale and trips ExpressionChangedAfterItHasBeenChecked).
-  @Output() phasesChange = new EventEmitter<{ phases: IProgressStatus[]; currentIndex: number }>();
 
   buildStatus: IRawRemoteInbuildReplicaStatus | undefined;
   phases: IProgressStatus[] = [];
@@ -125,24 +111,10 @@ export class ReplicaBuildProgressComponent implements OnChanges {
       this.contextItems = [];
       this.copyTypeItems = [];
       this.hasEseDetail = false;
-      this.phasesChange.emit({ phases: this.phases, currentIndex: this.currentIndex });
       return;
     }
 
-    this.currentIndex = inbuildPhaseOrder[this.buildStatus.InbuildPhase] || 0;
-
-    // Phase progression, with each phase's duration shown alongside it (same pattern as the
-    // repair jobs stepper) -- no duration on Copy Complete itself, it's the terminal phase.
-    this.phases = [
-      {
-        name: 'Copy Context',
-        textRight: this.phaseDuration(this.buildStatus.CopyContextPhaseStartTimeUtc, this.buildStatus.CopyStatePhaseStartTimeUtc),
-      },
-      { name: 'Copy State', textRight: this.phaseDuration(this.buildStatus.CopyStatePhaseStartTimeUtc, this.buildStatus.CopyPhaseStartTimeUtc) },
-      { name: 'Copy', textRight: this.phaseDuration(this.buildStatus.CopyPhaseStartTimeUtc, this.buildStatus.CopyCatchupPhaseStartTimeUtc) },
-      { name: 'Copy Catchup', textRight: this.phaseDuration(this.buildStatus.CopyCatchupPhaseStartTimeUtc, undefined) },
-      { name: 'Copy Complete' },
-    ];
+    ({ phases: this.phases, currentIndex: this.currentIndex } = computeBuildPhases(this.buildStatus));
 
     // Whether the build is still in (or hasn't yet passed) CopyContext -- once past, the
     // sub-stepper just shows its final done state instead of tracking the active sub-phase.
@@ -192,36 +164,12 @@ export class ReplicaBuildProgressComponent implements OnChanges {
     this.copyTypeItems = providerDetail && this.hasEseDetail
       ? this.buildCopyTypeItems(providerDetail)
       : this.placeholderItems({ 'Copy Type': copyTypeInfoText, 'Copy Type Reason': '', 'Copy Mode': copyModeInfoText, 'Copy Mode Reason': '' });
-
-    this.phasesChange.emit({ phases: this.phases, currentIndex: this.currentIndex });
   }
 
   // Row-major 2-column grids need "no divider" on both cells of the final row, not just the
   // single last array element -- otherwise the left column's last row keeps a stray divider.
   isFinalRow(index: number, length: number): boolean {
     return index >= length - 2;
-  }
-
-  // Duration of a phase = time between its start and the next phase's start, or "now" if the
-  // next phase (or the phase itself) hasn't started yet. "0001-01-01..." is SF's zero-DateTime
-  // sentinel for "not yet reached".
-  private phaseDuration(startTimestamp: string, nextStartTimestamp: string | undefined): string {
-    const start = this.parseValidTime(startTimestamp);
-    if (start === undefined) {
-      return '';
-    }
-
-    const end = this.parseValidTime(nextStartTimestamp) ?? Date.now();
-    const seconds = Math.max(0, (end - start) / 1000);
-    return TimeUtils.getDurationFromSeconds(seconds.toString());
-  }
-
-  private parseValidTime(timestamp: string | undefined): number | undefined {
-    if (!timestamp) {
-      return undefined;
-    }
-    const time = new Date(timestamp).getTime();
-    return (!isFinite(time) || time <= 0) ? undefined : time;
   }
 
   private placeholderItems(fieldInfo: Record<string, string>): IEssentialListItem[] {
