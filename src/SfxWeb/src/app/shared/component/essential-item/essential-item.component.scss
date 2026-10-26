@@ -1,3 +1,10 @@
+// Matches the copy icon's .link color so both icons read as the same accent, not plain text.
+.mif-info {
+    color: var(--accent-lightblue);
+    // Matches .copy-text's spacing (clip-board.component.scss) instead of a global list-item gap.
+    margin: 0px 5px;
+}
+
 .allow-wrap {
   .tile-item {
     height: initial;

@@ -43,6 +43,19 @@
       </app-collapse-container>
     </div>
     @if (partition.isStatefulService) {
+      @if (hasInBuildReplicas) {
+        <div class="detail-pane essen-pane" [class.pane-collapsed]="inBuildOuterCollapsed" data-cy="replicas-in-build">
+          <app-collapse-container sectionName="Inbuild Replica Status" [(collapsed)]="inBuildOuterCollapsed">
+            <div collapse-header class="status-header-row">
+              <h2>Inbuild Replica Status</h2>
+              <a href="https://aka.ms/UnderstandingServiceFabricInbuildReplicaStatus" target="_blank" aria-label="Learn about Inbuild Replica Status" (click)="$event.stopPropagation()"><span tabindex="-1" class="mif-info"></span></a>
+            </div>
+            <div collapse-body class="in-build-list">
+              <app-replicas-in-build [primaryReplica]="primaryReplica"></app-replicas-in-build>
+            </div>
+          </app-collapse-container>
+        </div>
+      }
       <div class="replicator-section">
         <app-collapse-container sectionName="Replicator Status" data-cy="replicator">
           <div collapse-header>
@@ -50,7 +63,7 @@
           </div>
           <div collapse-body>
             <div>
-              <app-replica-status-container [replicas]="partition.replicas.collection"></app-replica-status-container>
+              <app-replica-status-container [replicas]="partition.replicas.collection" [primaryReplica]="primaryReplica"></app-replica-status-container>
             </div>
           </div>
         </app-collapse-container>

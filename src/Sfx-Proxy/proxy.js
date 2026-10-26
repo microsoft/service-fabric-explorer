@@ -127,7 +127,7 @@ app.use(express.json())
 app.get('/', function(req, res) {
     res.sendFile(path.join(__dirname + 'wwwroot/index.html'));
 });
-app.all('/*', async (req, res) => {
+app.all('/*splat', async (req, res) => {
     let resp = null;
 
     if(stripEventSToreRequests) {
