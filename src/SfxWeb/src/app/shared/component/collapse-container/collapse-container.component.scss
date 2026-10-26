@@ -22,9 +22,4 @@ button {
   background-color: transparent;
   border: 0px;
   color: white;
-  outline: none;
-
-  &:focus-visible {
-    outline: 1px solid white;
-  }
 }
