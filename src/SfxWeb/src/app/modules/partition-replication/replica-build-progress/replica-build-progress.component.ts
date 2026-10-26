@@ -243,9 +243,9 @@ export class ReplicaBuildProgressComponent implements OnChanges {
 
     return [
       { descriptionName: 'Copy Type', displayText: copyType, infoText: copyTypeInfoText },
-      { descriptionName: 'Copy Type Reason', displayText: copyTypeReason, infoText: copyTypeReasonInfoText[copyTypeReason] },
+      { descriptionName: 'Copy Type Reason', displayText: copyTypeReason, infoText: copyTypeReasonInfoText[copyTypeReason], allowWrap: true },
       { descriptionName: 'Copy Mode', displayText: copyMode, infoText: copyModeInfoText },
-      { descriptionName: 'Copy Mode Reason', displayText: copyModeReason, infoText: copyModeReasonInfoText[copyModeReason] },
+      { descriptionName: 'Copy Mode Reason', displayText: copyModeReason, infoText: copyModeReasonInfoText[copyModeReason], allowWrap: true },
     ];
   }
 

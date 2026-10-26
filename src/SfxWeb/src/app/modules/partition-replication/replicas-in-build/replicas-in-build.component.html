@@ -2,7 +2,7 @@
   <app-collapse-container [sectionName]="paneTitle(item)" class="in-build-pane" [attr.data-cy]="item.replicator.ReplicaId">
     <div collapse-header class="pane-header-row">
       <div class="pane-title">{{paneTitle(item)}}</div>
-      <app-phase-diagram data-cy="build-phase-stepper" class="pane-header-stepper" [items]="item.phases" [currentIndex]="item.currentIndex"></app-phase-diagram>
+      <app-phase-diagram data-cy="build-phase-stepper" class="pane-header-stepper" [items]="item.phases" [currentIndex]="item.currentIndex" [wrap]="true"></app-phase-diagram>
     </div>
     <div collapse-body>
       <app-replica-build-progress [replicator]="item.replicator" [isEseBackedKvs]="isEseBackedKvs"></app-replica-build-progress>

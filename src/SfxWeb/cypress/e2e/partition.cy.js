@@ -371,6 +371,24 @@ context('partition', () => {
           cy.get('[data-cy=replicas-in-build]').should('not.exist');
         })
 
+        it('hides the in-build section when the primary detail refresh fails', () => {
+          let fail = false;
+          cy.fixture('partition-page/replica-detail-inbuild.json').then(body => {
+            cy.intercept(apiUrl(`/Nodes/_nt_1/$/GetPartitions/${partitionId}/$/GetReplicas/${primaryReplica}/$/GetDetail?*`),
+              req => fail ? req.reply({ statusCode: 500, body: {} }) : req.reply(body)).as('detail');
+          });
+
+          cy.visit(urlFormatter(appName, serviceName, partitionId));
+          cy.wait('@detail');
+          cy.get('[data-cy=replicas-in-build]').should('exist');
+
+          cy.then(() => { fail = true; });
+          refresh();
+          cy.wait('@detail').its('response.statusCode').should('eq', 500);
+
+          cy.get('[data-cy=replicas-in-build]').should('not.exist');
+        })
+
         describe("backups", () => {
           it('view backup', () => {
             cy.get('[data-cy=navtabs]').within(() => {

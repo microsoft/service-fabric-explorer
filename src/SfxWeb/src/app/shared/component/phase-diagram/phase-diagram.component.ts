@@ -15,6 +15,7 @@ export class PhaseDiagramComponent implements OnChanges {
   @Input() vertical = false;
   @Input() failed: boolean = false; //treat in progress phases as failed
   @Input() fillHeight = false; // stretch to fill the host's height, spacing items evenly (vertical only)
+  @Input() wrap = false; // let phases wrap onto additional rows when the host is too narrow (horizontal only)
   public progress: IProgressStatusWithIndex[] = [];
   public wrapperClass = '';
 
@@ -47,7 +48,7 @@ export class PhaseDiagramComponent implements OnChanges {
       };
     });
 
-    this.wrapperClass = (this.vertical ? 'vertical' : '') + (this.fillHeight ? ' fill-height' : '');
+    this.wrapperClass = (this.vertical ? 'vertical' : '') + (this.fillHeight ? ' fill-height' : '') + (this.wrap ? ' wrap' : '');
   }
 
   getPhaseReference(index: number, currentPhase: number) {

@@ -38,7 +38,8 @@
     border-left: 8px solid var(--accent-darkblue);
     border-radius: var(--primary-border-radius);
     padding: 5px 10px;
-    // No grow -- an orphaned pane alone on the last wrapped row would otherwise stretch to
-    // fill the entire row width instead of matching the other panes' size.
-    flex: 0 1 600px;
+    // 840px fits Copy Context Phase (160px) + gap + two 300px grid columns side by side;
+    // min-width: 0 lets the pane itself shrink/wrap its content instead of overflowing.
+    flex: 0 1 840px;
+    min-width: 0;
 }

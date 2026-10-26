@@ -58,3 +58,10 @@
   height: 100%;
   justify-content: space-between;
 }
+
+// Opt-in (see wrap input) -- lets phases wrap onto additional rows instead of overflowing
+// once there isn't room for all of them beside other header content (horizontal only).
+.wrap {
+  flex-wrap: wrap;
+  row-gap: 5px;
+}
