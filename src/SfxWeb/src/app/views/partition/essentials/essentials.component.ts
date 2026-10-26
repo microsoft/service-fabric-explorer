@@ -4,7 +4,7 @@ import { DataService } from 'src/app/services/data.service';
 import { SettingsService } from 'src/app/services/settings.service';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Observable, forkJoin, of } from 'rxjs';
-import { tap, mergeMap, catchError } from 'rxjs/operators';
+import { tap, mergeMap } from 'rxjs/operators';
 import { PartitionBaseControllerDirective } from '../PartitionBase';
 import { NodeStatusConstants, PartitionStatusConstants } from 'src/app/Common/Constants';
 import { getDownReplicaMitigationHint } from 'src/app/Utils/PartitionQuorumUtils';
@@ -128,14 +128,6 @@ export class EssentialsComponent extends PartitionBaseControllerDirective {
             this.primaryReplica = Object.create(replica);
             const remoteReplicators = replica.detail.raw.ReplicatorStatus?.RemoteReplicators || [];
             this.hasInBuildReplicas = remoteReplicators.some(r => r.IsInBuild && r.RemoteInbuildReplicaStatus?.InbuildPhase !== 'CopyComplete');
-          }),
-          // RestClient rethrows after reporting the failure via messageHandler -- without this,
-          // a failed refresh (e.g. the primary times out or moves mid-build) leaves primaryReplica
-          // and hasInBuildReplicas on their last successful snapshot with nothing to mark it stale.
-          catchError(() => {
-            this.primaryReplica = undefined;
-            this.hasInBuildReplicas = false;
-            return of(null);
           })
         );
       })
