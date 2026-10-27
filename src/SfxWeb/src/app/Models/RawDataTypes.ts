@@ -332,6 +332,23 @@ export interface IRawClusterLoadInformation {
         LoadMetricInformation: IRawLoadMetricInformation[];
     }
 
+export enum CapacityReleaseLevel {
+        None = 'None',
+        Minor = 'Minor',
+        Major = 'Major'
+    }
+
+export interface IRawCapacityReleaseLevel {
+        Level: CapacityReleaseLevel;
+    }
+
+export interface IRawCapacityReleaseEstimate {
+        Level: CapacityReleaseLevel;
+        MetricName: string;
+        UsedCapacity: string;
+        TotalCapacity: string;
+    }
+
 export interface IRawLoadMetricInformation {
         Name: string;
         IsBalancedBefore: boolean;

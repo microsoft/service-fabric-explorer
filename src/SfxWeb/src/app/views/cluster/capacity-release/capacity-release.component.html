@@ -1,0 +1,99 @@
+<div class="action-modal capacity-release">
+  <div class="modal-header">
+    <h1 class="modal-title">Capacity Release</h1>
+  </div>
+
+  <div class="modal-body">
+    @if (loading) {
+      <p>Loading capacity release information...</p>
+    }
+
+    <p>
+      Current capacity release level:
+      <b>{{currentLevel ?? 'Unavailable'}}</b>
+    </p>
+    @if (levelError) {
+      <p class="error-message" role="alert">{{levelError}}</p>
+    }
+
+    <div class="level-actions" aria-label="Set capacity release level">
+      <span>Set capacity release level:</span>
+      @for (level of levels; track level) {
+        <button type="button"
+          class="simple-button"
+          [disabled]="loading || updating || currentLevel === level"
+          (click)="requestLevel(level)">
+          {{level}}
+        </button>
+      }
+    </div>
+
+    @if (pendingLevel) {
+      <section class="confirmation" role="alert">
+        <h2>Confirm capacity release level change</h2>
+        <p>Current capacity release level: <b>{{currentLevel ?? 'Unavailable'}}</b></p>
+        <p>Requested capacity release level: <b>{{pendingLevel}}</b></p>
+        @if (warning(pendingLevel)) {
+          <p class="warning-message">{{warning(pendingLevel)}}</p>
+        }
+        <div class="confirmation-actions">
+          <button type="button" class="solid-button" [disabled]="updating" (click)="confirmLevelChange()">
+            {{updating ? 'Applying...' : 'Apply'}}
+          </button>
+          <button type="button" class="flat-button" [disabled]="updating" (click)="cancelLevelChange()">Cancel</button>
+        </div>
+      </section>
+    }
+
+    @if (successMessage) {
+      <p class="success-message" role="status">{{successMessage}}</p>
+    }
+    @if (updateError) {
+      <p class="error-message" role="alert">{{updateError}}</p>
+    }
+
+    <h2>Capacity Release Estimation</h2>
+    @if (estimationError) {
+      <p class="error-message" role="alert">{{estimationError}}</p>
+    } @else if (!loading) {
+      @if (rows.length > 0) {
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Metric</th>
+                <th scope="col">Total capacity</th>
+                <th scope="col">None</th>
+                <th scope="col">Minor</th>
+                <th scope="col">Major</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (row of rows; track row.metric) {
+                <tr>
+                  <td>{{row.metric}}</td>
+                  <td>{{formatCapacity(row.totalCapacity)}}</td>
+                  <td [ngClass]="capacityClass(row.totalCapacity, row.none)">
+                    {{formatCapacity(row.none)}}
+                  </td>
+                  <td [ngClass]="capacityClass(row.totalCapacity, row.minor)">
+                    {{formatCapacity(row.minor)}}
+                  </td>
+                  <td [ngClass]="capacityClass(row.totalCapacity, row.major)">
+                    {{formatCapacity(row.major)}}
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      } @else {
+        <p>No capacity release estimates were returned.</p>
+      }
+    }
+  </div>
+
+  <div class="modal-footer">
+    <button type="button" class="flat-button" [disabled]="updating" (click)="close()">Close</button>
+  </div>
+</div>
