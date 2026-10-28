@@ -36,12 +36,14 @@ import { ConcurrentEventsVisualizationModule } from 'src/app/modules/concurrent-
 import { NamingViewerPageComponent } from './naming-viewer-page/naming-viewer-page.component';
 import { OrchestrationViewComponent } from './orchestration-view/orchestration-view.component';
 import { TimePickerModule } from "src/app/modules/time-picker/time-picker.module";
+import { CapacityReleaseComponent } from './capacity-release/capacity-release.component';
 
 @NgModule({
   declarations: [EssentialsComponent, DetailsComponent, BaseComponent, MetricsComponent, ClustermapComponent,
                  ImagestoreComponent, ManifestComponent, EventsComponent, ActionCreateBackupPolicyComponent,
                  StatusWarningsComponent, BackupsComponent, RepairTasksComponent, MetricTileComponent,
-                 InfrastructureViewComponent, CommandsComponent, NamingViewerPageComponent, OrchestrationViewComponent],
+                 InfrastructureViewComponent, CommandsComponent, NamingViewerPageComponent, OrchestrationViewComponent,
+                 CapacityReleaseComponent],
   imports: [
     CommonModule,
     ClusterRoutingModule,

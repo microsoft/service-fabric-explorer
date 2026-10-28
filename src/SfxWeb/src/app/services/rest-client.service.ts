@@ -13,7 +13,8 @@ import { IRawCollection, IRawClusterManifest, IRawClusterHealth, IRawClusterUpgr
          IRawServiceHealth, IRawApplicationUpgradeProgress, IRawCreateComposeDeploymentDescription, IRawPartition, IRawPartitionHealth, IRawPartitionLoadInformation,
          IRawReplicaOnPartition, IRawReplicaHealth, IRawImageStoreContent, IRawStoreFolderSize, IRawClusterVersion, IRawList, IRawAadMetadata, IRawStorage, IRawRepairTask,
          IRawServiceNameInfo, IRawApplicationNameInfo, IRawBackupEntity, IRawInfrastructureJob, IRawInfraRepairTask, IRawRoleInstanceImpact,
-         IRawInfrastructureDocument, IRawFailoverManagerManagerInformation} from '../Models/RawDataTypes';
+         IRawInfrastructureDocument, IRawFailoverManagerManagerInformation, CapacityReleaseLevel, IRawCapacityReleaseLevel,
+         IRawCapacityReleaseEstimate} from '../Models/RawDataTypes';
 import { mergeMap, map, catchError, finalize, skip } from 'rxjs/operators';
 import { Application } from '../Models/DataModels/Application';
 import { Service } from '../Models/DataModels/Service';
@@ -40,6 +41,7 @@ export class RestClientService {
   private static apiVersion80 = '8.0';
   private static apiVersion82 = '8.2';
   private static apiVersion114 = '11.4';
+  private static apiVersion120 = '12.0';
 
   private cacheAllowanceToken: number = Date.now().valueOf();
 
@@ -72,6 +74,23 @@ export class RestClientService {
 
   public getClusterLoadInformation(messageHandler?: IResponseMessageHandler): Observable<IRawClusterLoadInformation> {
       return this.get(this.getApiUrl('$/GetLoadInformation'), 'Get cluster load information', messageHandler);
+  }
+
+  public getCapacityReleaseLevel(messageHandler?: IResponseMessageHandler): Observable<IRawCapacityReleaseLevel> {
+      return this.get(this.getApiUrl('$/GetCapacityReleaseLevel', RestClientService.apiVersion120), 'Get capacity release level', messageHandler);
+  }
+
+  public getCapacityReleaseEstimate(messageHandler?: IResponseMessageHandler): Observable<IRawCapacityReleaseEstimate[]> {
+      return this.getFullCollection<IRawCapacityReleaseEstimate>(
+          '$/GetCapacityReleaseEstimate',
+          'Get capacity release estimate',
+          RestClientService.apiVersion120,
+          messageHandler);
+  }
+
+  public setCapacityReleaseLevel(level: CapacityReleaseLevel, messageHandler?: IResponseMessageHandler): Observable<{}> {
+      const url = `$/SetCapacityReleaseLevel?Level=${encodeURIComponent(level)}`;
+      return this.post(this.getApiUrl(url, RestClientService.apiVersion120), 'Set capacity release level', null, messageHandler);
   }
 
   public getClusterHealthChunk(healthDescriptor: IClusterHealthChunkQueryDescription, messageHandler?: IResponseMessageHandler): Observable<{}> {
@@ -953,4 +972,3 @@ export class RestClientService {
      }));
     }
 }
-
