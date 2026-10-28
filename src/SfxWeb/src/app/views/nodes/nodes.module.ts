@@ -11,10 +11,11 @@ import { EventStoreModule } from 'src/app/modules/event-store/event-store.module
 import { ChartsModule } from 'src/app/modules/charts/charts.module';
 import { CommandsComponent } from './commands/commands.component';
 import { PowershellCommandsModule } from 'src/app/modules/powershell-commands/powershell-commands.module';
+import { ClusterResourceUsageVisualizationComponent } from './events/resource-usage-visualization.component';
 
 
 @NgModule({
-  declarations: [BaseComponent, AllNodesComponent, EventsComponent, CommandsComponent],
+  declarations: [BaseComponent, AllNodesComponent, EventsComponent, CommandsComponent, ClusterResourceUsageVisualizationComponent],
   imports: [
     CommonModule,
     NodesRoutingModule,
