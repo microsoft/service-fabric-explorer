@@ -68,10 +68,24 @@
         background-color: var(--accent-darkblue);
     }
 
+    .lsn-bar-indeterminate {
+        width: 100%;
+        background: repeating-linear-gradient(45deg, var(--accent-darkblue) 0 5px, transparent 5px 10px);
+    }
+
+    .lsn-bar-active {
+        outline: 1px solid var(--accent-darkblue);
+        outline-offset: 2px;
+    }
+
     .lsn-bar-labels {
         display: flex;
         justify-content: space-between;
         font-size: 12px;
         margin-top: 2px;
+    }
+
+    .lsn-bar-description {
+        font-size: 12px;
     }
 }

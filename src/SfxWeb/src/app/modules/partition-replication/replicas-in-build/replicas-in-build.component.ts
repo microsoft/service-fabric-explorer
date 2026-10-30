@@ -24,6 +24,8 @@ export class ReplicasInBuildComponent implements OnChanges {
   // Refreshed by the parent (app-essentials) and shared with app-replica-status-container,
   // instead of each independently finding the primary and calling detail.refresh().
   @Input() primaryReplica: ReplicaOnPartition | undefined;
+  @Input() targetCopyOperationSize: number | undefined;
+  @Input() isDefaultCopyOperationSize = false;
 
   inBuildItems: IInBuildReplicaItem[] = [];
   // Partition-level, not per-replica -- a service is either ESE-backed KVS or not, uniformly
@@ -31,11 +33,13 @@ export class ReplicasInBuildComponent implements OnChanges {
   // TStore-backed (FABRIC_KEY_VALUE_STORE_PROVIDER_KIND_TSTORE); that provider's copy detail
   // struct isn't implemented server-side, so it never populates the ESE-shaped fields either.
   isEseBackedKvs = false;
+  primaryDatabaseLogicalSizeEstimate: string | undefined;
 
   ngOnChanges(): void {
     const remoteReplicators = this.primaryReplica?.detail.raw.ReplicatorStatus?.RemoteReplicators || [];
     const replicaStatus = this.primaryReplica?.detail.raw.ReplicaStatus;
     this.isEseBackedKvs = replicaStatus?.Kind === 'KeyValueStore' && replicaStatus?.ProviderKind === 'ESE';
+    this.primaryDatabaseLogicalSizeEstimate = this.isEseBackedKvs ? replicaStatus?.DatabaseLogicalSizeEstimate : undefined;
 
     this.inBuildItems = remoteReplicators
       // IsInBuild lags CopyComplete by one refresh -- exclude it so a replica that
