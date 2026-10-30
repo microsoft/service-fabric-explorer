@@ -31,8 +31,9 @@
 
       <div class="lsn-bar-section">
         <h3 class="underline-title">Copy Progress</h3>
-        <div class="lsn-bar-current" [class.section-greyed]="!hasCurrentLsn" data-cy="current-lsn"
-          [title]="currentIndex === 3 ? 'Applied copy-stream sequence number (CSN); not a replication LSN.' : 'Applied replication LSN; advances only when replication operations are applied.'">{{currentLsnLabel}}</div>
+        <div class="lsn-bar-current" [class.section-greyed]="!hasCurrentLsn" data-cy="current-lsn">{{currentLsnLabel}}<span
+          class="mif-info ms-1" role="img" tabindex="0" [attr.aria-label]="currentSequenceInfo"
+          [ngbTooltip]="currentSequenceInfo" tooltipClass="styled-tooltip" container="body" data-cy="current-sequence-info"></span></div>
         <div class="lsn-bar" data-cy="copy-catchup-bar">
           <div class="lsn-bar-zones">
             <div class="lsn-bar-track" [class.section-greyed]="!hasCopyProgress">

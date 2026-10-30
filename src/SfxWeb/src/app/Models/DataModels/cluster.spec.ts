@@ -2,7 +2,7 @@ import { DataModelBase } from './Base';
 import { DataService } from 'src/app/services/data.service';
 import { ClusterManifest, ClusterUpgradeProgress } from './Cluster';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
-import { of, Observable } from 'rxjs';
+import { of, Observable, firstValueFrom } from 'rxjs';
 import { IRawClusterManifest, IRawClusterUpgradeProgress } from '../RawDataTypes';
 import { RestClientService } from 'src/app/services/rest-client.service';
 
@@ -25,6 +25,68 @@ describe('Cluster', () => {
         beforeEach((() => {
             clusterManifest = new ClusterManifest(mockDataService);
         }));
+
+        const copySizeManifest = (settings: string): IRawClusterManifest => ({
+            Manifest: `<ClusterManifest Name="test" xmlns="http://schemas.microsoft.com/2011/01/fabric">
+                <NodeTypes></NodeTypes>
+                <FabricSettings>${settings}</FabricSettings>
+            </ClusterManifest>`
+        });
+
+        it('loads the configured copy-operation size once through the manifest cache', async () => {
+            const getManifest = vi.fn(() => of(copySizeManifest(`
+                <Section Name="Unrelated"><Parameter Name="TargetCopyOperationSize" Value="1" /></Section>
+                <Section Name="ReplicatedStore"><Parameter Name="TargetCopyOperationSize" Value="4194304" /></Section>
+            `)));
+            restClientMock.getClusterManifest = getManifest;
+            mockDataService.clusterManifest = clusterManifest;
+            const getClusterManifest = DataService.prototype.getClusterManifest.bind(mockDataService);
+
+            await firstValueFrom(getClusterManifest());
+            await firstValueFrom(getClusterManifest());
+
+            expect(getManifest).toHaveBeenCalledTimes(1);
+            expect(clusterManifest.targetCopyOperationSize).toBe(4194304);
+            expect(clusterManifest.isDefaultCopyOperationSize).toBe(false);
+        });
+
+        it.each([
+            '',
+            '<Section Name="ReplicatedStore"><Parameter Name="OtherSetting" Value="1" /></Section>',
+            '<Section Name="Unrelated"><Parameter Name="TargetCopyOperationSize" Value="4194304" /></Section>'
+        ])('uses the native default only when the setting is absent: %s', async settings => {
+            await firstValueFrom(clusterManifest.update(copySizeManifest(settings)));
+
+            expect(clusterManifest.targetCopyOperationSize).toBe(2097152);
+            expect(clusterManifest.isDefaultCopyOperationSize).toBe(true);
+        });
+
+        it.each(['', '0', '-1', '1.5', 'unavailable', 'Infinity', '0x200000', '2147483648'])(
+            'reports invalid copy-operation size %s instead of using the default', async value => {
+                const error = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+                try {
+                    await firstValueFrom(clusterManifest.update(copySizeManifest(`
+                        <Section Name="ReplicatedStore"><Parameter Name="TargetCopyOperationSize" Value="${value}" /></Section>
+                    `)));
+
+                    expect(clusterManifest.targetCopyOperationSize).toBeUndefined();
+                    expect(clusterManifest.isDefaultCopyOperationSize).toBe(false);
+                    expect(error).toHaveBeenCalledWith(
+                        'Invalid ReplicatedStore/TargetCopyOperationSize in cluster manifest:', value);
+                } finally {
+                    error.mockRestore();
+                }
+            });
+
+        it('resets to the default when an explicit manifest refresh removes the override', async () => {
+            await firstValueFrom(clusterManifest.update(copySizeManifest(`
+                <Section Name="ReplicatedStore"><Parameter Name="TargetCopyOperationSize" Value="4194304" /></Section>
+            `)));
+            await firstValueFrom(clusterManifest.update(copySizeManifest('')));
+
+            expect(clusterManifest.targetCopyOperationSize).toBe(2097152);
+            expect(clusterManifest.isDefaultCopyOperationSize).toBe(true);
+        });
 
         it('validate no services', async () => {
             restClientMock.getClusterManifest = (messageHandler?: IResponseMessageHandler): Observable<IRawClusterManifest> =>

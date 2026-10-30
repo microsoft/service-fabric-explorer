@@ -24,6 +24,8 @@ export class ReplicasInBuildComponent implements OnChanges {
   // Refreshed by the parent (app-essentials) and shared with app-replica-status-container,
   // instead of each independently finding the primary and calling detail.refresh().
   @Input() primaryReplica: ReplicaOnPartition | undefined;
+  @Input() targetCopyOperationSize: number | undefined;
+  @Input() isDefaultCopyOperationSize = false;
 
   inBuildItems: IInBuildReplicaItem[] = [];
   // Partition-level, not per-replica -- a service is either ESE-backed KVS or not, uniformly

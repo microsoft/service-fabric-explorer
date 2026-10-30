@@ -6,7 +6,9 @@
     </div>
     <div collapse-body>
       <app-replica-build-progress [replicator]="item.replicator" [isEseBackedKvs]="isEseBackedKvs"
-        [primaryDatabaseLogicalSizeEstimate]="primaryDatabaseLogicalSizeEstimate"></app-replica-build-progress>
+        [primaryDatabaseLogicalSizeEstimate]="primaryDatabaseLogicalSizeEstimate"
+        [targetCopyOperationSize]="targetCopyOperationSize"
+        [isDefaultCopyOperationSize]="isDefaultCopyOperationSize"></app-replica-build-progress>
     </div>
   </app-collapse-container>
 }

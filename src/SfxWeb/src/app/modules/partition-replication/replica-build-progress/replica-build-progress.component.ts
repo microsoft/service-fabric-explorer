@@ -8,9 +8,6 @@ import { computeBuildPhases } from './build-phase.util';
 // Shown in place of a value the current phase hasn't produced yet.
 const PLACEHOLDER = '\u2014';
 
-// Demo heuristic: the native default is a target, not a fixed copy-operation size.
-const ESTIMATED_COPY_OPERATION_BYTES = 2 * 1024 * 1024;
-
 // FABRIC_KEY_VALUE_STORE_REPLICA_COPY_TYPE / _MODE / _REASON (FabricTypes.h) -- the REST API
 // serializes these ESE copy-detail fields as their raw numeric enum value, with no string mapping.
 const copyTypeMap: Record<number, string> = { 0: 'Unknown', 1: 'Full', 2: 'Partial' };
@@ -59,11 +56,15 @@ export class ReplicaBuildProgressComponent implements OnChanges {
   // far the build progresses.
   @Input() isEseBackedKvs = false;
   @Input() primaryDatabaseLogicalSizeEstimate: string | undefined;
+  @Input() targetCopyOperationSize: number | undefined;
+  @Input() isDefaultCopyOperationSize = false;
 
   estimatedCopyPercent: number | undefined;
-  readonly estimatedCopyInfo = 'Assumes 2 MiB per copy operation and primary logical size at first observation; not measured bytes.';
+  estimatedCopyInfo = '';
   private copyEstimateBuildKey: string | undefined;
   private copyEstimateDatabaseBytes: number | undefined;
+  private copyEstimateOperationBytes: number | undefined;
+  private copyEstimateUsesDefault = false;
 
   buildStatus: IRawRemoteInbuildReplicaStatus | undefined;
   phases: IProgressStatus[] = [];
@@ -90,6 +91,7 @@ export class ReplicaBuildProgressComponent implements OnChanges {
   // Live cursor for whichever of Copy/CopyCatchup is currently running -- undefined outside
   // those two phases (nothing moving yet, or the bar is already fully filled).
   currentLsnLabel = '';
+  currentSequenceInfo = '';
   hasCurrentLsn = false;
 
   // Row-major flat lists so a CSS grid with two columns lays them out as left/right pairs.
@@ -117,13 +119,17 @@ export class ReplicaBuildProgressComponent implements OnChanges {
       this.lsnBoundaryLabel = '';
       this.lsnTargetLabel = '';
       this.currentLsnLabel = '';
+      this.currentSequenceInfo = '';
       this.hasCurrentLsn = false;
       this.contextItems = [];
       this.copyTypeItems = [];
       this.hasEseDetail = false;
       this.estimatedCopyPercent = undefined;
+      this.estimatedCopyInfo = '';
       this.copyEstimateBuildKey = undefined;
       this.copyEstimateDatabaseBytes = undefined;
+      this.copyEstimateOperationBytes = undefined;
+      this.copyEstimateUsesDefault = false;
       return;
     }
 
@@ -139,24 +145,38 @@ export class ReplicaBuildProgressComponent implements OnChanges {
     const providerDetail = this.buildStatus.CopyDetails?.ProviderCopyDetail;
     this.hasEseDetail = providerDetail?.Kind === 'ESE';
 
-    // Capture the first valid size observed during Copy, not a moving denominator.
+    // Freeze both estimate inputs together on the first valid observation during Copy.
     const estimateBuildKey = `${this.replicator.ReplicaId}:${this.buildStatus.CopyContextPhaseStartTimeUtc}:${this.buildStatus.LastCopySequenceNumber}`;
     if (estimateBuildKey !== this.copyEstimateBuildKey) {
       this.copyEstimateBuildKey = estimateBuildKey;
       this.copyEstimateDatabaseBytes = undefined;
+      this.copyEstimateOperationBytes = undefined;
+      this.copyEstimateUsesDefault = false;
     }
     this.estimatedCopyPercent = undefined;
+    this.estimatedCopyInfo = '';
+    const operationBytes = this.targetCopyOperationSize;
+    const hasValidOperationSize = operationBytes !== undefined && Number.isSafeInteger(operationBytes) &&
+      operationBytes > 0 && operationBytes <= 2147483647;
     if (this.currentIndex === 3 && this.isEseBackedKvs && this.hasEseDetail &&
         providerDetail?.CopyType === 1 && providerDetail.CopyMode === 2) {
       const databaseBytes = Number(this.primaryDatabaseLogicalSizeEstimate);
-      if (this.copyEstimateDatabaseBytes === undefined && Number.isSafeInteger(databaseBytes) && databaseBytes > 0) {
+      if (this.copyEstimateDatabaseBytes === undefined && Number.isSafeInteger(databaseBytes) && databaseBytes > 0 &&
+          hasValidOperationSize) {
         this.copyEstimateDatabaseBytes = databaseBytes;
+        this.copyEstimateOperationBytes = operationBytes;
+        this.copyEstimateUsesDefault = this.isDefaultCopyOperationSize;
       }
       const appliedCopyOperations = Number(this.replicator.LastAppliedCopySequenceNumber);
-      if (this.copyEstimateDatabaseBytes !== undefined && this.replicator.LastAppliedCopySequenceNumber?.trim() &&
+      if (this.copyEstimateDatabaseBytes !== undefined && this.copyEstimateOperationBytes !== undefined &&
+          this.replicator.LastAppliedCopySequenceNumber?.trim() &&
           Number.isSafeInteger(appliedCopyOperations) && appliedCopyOperations >= 0) {
         this.estimatedCopyPercent = Math.min(99,
-          appliedCopyOperations * ESTIMATED_COPY_OPERATION_BYTES / this.copyEstimateDatabaseBytes * 100);
+          appliedCopyOperations * this.copyEstimateOperationBytes / this.copyEstimateDatabaseBytes * 100);
+        const source = this.copyEstimateUsesDefault
+          ? 'native default; setting absent from cluster manifest'
+          : 'cluster manifest ReplicatedStore/TargetCopyOperationSize';
+        this.estimatedCopyInfo = `Uses ${this.copyEstimateOperationBytes} bytes per copy operation (${source}) and primary logical size at first observation. Actual operation sizes vary and the runtime may reduce the target to fit replication message limits; not measured bytes.`;
       }
     }
 
@@ -171,7 +191,10 @@ export class ReplicaBuildProgressComponent implements OnChanges {
     this.progressDescription = this.currentIndex === 3
       ? this.estimatedCopyPercent !== undefined
         ? `Estimated Copy Progress: ${Math.floor(this.estimatedCopyPercent)}%`
-        : 'Copy stream in progress; percentage unavailable.'
+        : this.isEseBackedKvs && providerDetail?.CopyType === 1 && providerDetail.CopyMode === 2 &&
+            !hasValidOperationSize
+          ? 'Copy stream in progress; percentage unavailable: TargetCopyOperationSize is unavailable or invalid.'
+          : 'Copy stream in progress; percentage unavailable.'
       : this.currentIndex === 4
         ? !catchupProgress
           ? 'Waiting for catchup progress data.'
@@ -191,6 +214,11 @@ export class ReplicaBuildProgressComponent implements OnChanges {
       : this.replicator.LastAppliedReplicationSequenceNumber;
     const currentSequenceLabel = this.currentIndex === 3 ? 'Current CSN' : 'Current LSN';
     this.currentLsnLabel = `${currentSequenceLabel}: ${this.hasCurrentLsn ? currentCursor : PLACEHOLDER}`;
+    this.currentSequenceInfo = this.currentIndex === 3
+      ? 'Applied copy-stream sequence number (CSN); not a replication LSN.'
+      : this.currentIndex === 4
+        ? 'Applied replication LSN; advances only when replication operations are applied.'
+        : 'Not available until Copy starts. Shows the applied copy-stream sequence number (CSN) during Copy, then the applied replication LSN during CopyCatchup.';
 
     this.copySequenceItems = [
       {

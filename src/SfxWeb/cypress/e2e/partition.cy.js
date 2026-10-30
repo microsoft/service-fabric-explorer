@@ -216,10 +216,19 @@ context('partition', () => {
                 .and('have.attr', 'style', 'width: 0%;');
               cy.get('[data-cy=copy-progress-description]').should('have.text', 'Estimated Copy Progress: 0%');
               cy.get('[data-cy=current-lsn]').should('have.text', 'Current CSN: 0')
-                .and('have.attr', 'title', 'Applied copy-stream sequence number (CSN); not a replication LSN.');
+                .and('not.have.attr', 'title');
+              cy.get('[data-cy=current-sequence-info]').should('have.attr', 'aria-label',
+                'Applied copy-stream sequence number (CSN); not a replication LSN.')
+                .and('have.attr', 'tabindex', '0');
             });
+            cy.get('[data-cy=current-sequence-info]').focus();
+            cy.get('[role=tooltip]').should('be.visible')
+              .and('have.text', 'Applied copy-stream sequence number (CSN); not a replication LSN.');
+            cy.get('[data-cy=current-sequence-info]').blur();
+            cy.get('[role=tooltip]').should('not.exist');
             cy.get('[data-cy=copy-estimate-info]').focus();
-            cy.get('[role=tooltip]').should('be.visible').and('contain.text', 'Assumes 2 MiB')
+            cy.get('[role=tooltip]').should('be.visible').and('contain.text', '2097152 bytes per copy operation')
+              .and('contain.text', 'native default; setting absent from cluster manifest')
               .and('contain.text', 'not measured bytes');
             cy.get('[data-cy=copy-estimate-info]').blur();
 
@@ -241,7 +250,7 @@ context('partition', () => {
                 cy.get('.lsn-bar-track').eq(0).find('.lsn-bar-fill').should('have.attr', 'style', `width: ${width}%;`);
                 cy.get('[data-cy=copy-progress-description]').should('have.text', `Estimated Copy Progress: ${width}%`);
                 cy.get('[data-cy=copy-estimate-info]').should('have.attr', 'aria-label')
-                  .and('contain', 'Assumes 2 MiB').and('contain', 'not measured bytes');
+                  .and('contain', '2097152 bytes per copy operation').and('contain', 'not measured bytes');
                 cy.get('[data-cy=current-lsn]').should('have.text', `Current CSN: ${cursor}`);
               });
             });
@@ -270,10 +279,68 @@ context('partition', () => {
               cy.get('.lsn-bar-track').eq(1).find('.lsn-bar-fill').should('have.attr', 'style', 'width: 40%;');
               cy.get('[data-cy=copy-progress-description]').should('have.text', 'Applying replication operations.');
               cy.get('[data-cy=current-lsn]').should('have.text', 'Current LSN: 120000');
+              cy.get('[data-cy=current-sequence-info]').should('have.attr', 'aria-label',
+                'Applied replication LSN; advances only when replication operations are applied.');
               cy.get('[data-cy=copy-estimate-info]').should('not.exist');
             });
           });
         })
+
+        const manifestCopyCases = [
+          { name: 'configured target', value: '4194304', percentage: 50 },
+          { name: 'invalid target', value: '0', percentage: undefined }
+        ];
+        manifestCopyCases.forEach(({ name, value, percentage }) => {
+          it(`uses the cluster manifest ${name} without fetching it on each refresh`, () => {
+            cy.fixture('manifestRepairManagerDisabled.json').then(manifest => {
+              const document = new DOMParser().parseFromString(manifest.Manifest, 'text/xml');
+              const settings = document.getElementsByTagName('FabricSettings')[0];
+              const section = document.createElementNS(settings.namespaceURI, 'Section');
+              section.setAttribute('Name', 'ReplicatedStore');
+              const parameter = document.createElementNS(settings.namespaceURI, 'Parameter');
+              parameter.setAttribute('Name', 'TargetCopyOperationSize');
+              parameter.setAttribute('Value', value);
+              section.appendChild(parameter);
+              settings.appendChild(section);
+              manifest.Manifest = new XMLSerializer().serializeToString(document);
+              cy.intercept('GET', apiUrl('/$/GetClusterManifest*'), { body: manifest }).as('copySizeManifest');
+            });
+            cy.fixture('partition-page/replica-detail-inbuild.json').then(detail => {
+              const replicator = detail.ReplicatorStatus.RemoteReplicators.find(r => r.IsInBuild);
+              replicator.RemoteInbuildReplicaStatus.CopyDetails.ProviderCopyDetail.CopyMode = 2;
+              replicator.LastAppliedCopySequenceNumber = '640';
+              detail.ReplicaStatus.DatabaseLogicalSizeEstimate = String(5 * 1024 ** 3);
+              cy.intercept('GET', apiUrl(`/Nodes/_nt_1/$/GetPartitions/${partitionId}/$/GetReplicas/${primaryReplica}/$/GetDetail?*`),
+                { body: detail }).as('configuredCopyDetail');
+            });
+            cy.visit(urlFormatter(appName, serviceName, partitionId));
+            cy.wait(['@copySizeManifest', '@configuredCopyDetail']);
+            expandInBuildSection();
+
+            const checkProgress = () => {
+              if (percentage === undefined) {
+                cy.get('[data-cy=copy-progress-description]').should('contain.text', 'TargetCopyOperationSize is unavailable or invalid');
+                cy.get('[data-cy=build-progress] .lsn-bar-track').eq(0).find('.lsn-bar-fill')
+                  .should('have.class', 'lsn-bar-indeterminate');
+                cy.get('[data-cy=copy-estimate-info]').should('not.exist');
+              } else {
+                cy.get('[data-cy=copy-progress-description]').should('have.text', `Estimated Copy Progress: ${percentage}%`);
+                cy.get('[data-cy=build-progress] .lsn-bar-track').eq(0).find('.lsn-bar-fill')
+                  .should('have.attr', 'style', `width: ${percentage}%;`);
+                cy.get('[data-cy=copy-estimate-info]').should('have.attr', 'aria-label')
+                  .and('contain', `${value} bytes per copy operation (cluster manifest ReplicatedStore/TargetCopyOperationSize)`);
+              }
+            };
+            checkProgress();
+            cy.get('@copySizeManifest.all').then(requests => {
+              const initialRequests = requests.length;
+              refresh();
+              cy.wait('@configuredCopyDetail');
+              checkProgress();
+              cy.get('@copySizeManifest.all').should('have.length', initialRequests);
+            });
+          });
+        });
 
         const indeterminateCopyCases = [
           { name: 'partial logical copy', type: 2, size: String(5 * 1024 ** 3), cursor: '640' },
@@ -419,6 +486,9 @@ context('partition', () => {
               });
             });
             cy.get('[data-cy=build-progress]').within(() => {
+              cy.get('[data-cy=current-sequence-info]').should('have.attr', 'aria-label',
+                'Not available until Copy starts. Shows the applied copy-stream sequence number (CSN) during Copy, then the applied replication LSN during CopyCatchup.')
+                .and('have.attr', 'tabindex', '0');
               cy.get('[data-cy=context-details]').should('have.class', 'section-greyed');
               cy.get('[data-cy=copy-details]').should('have.class', 'section-greyed');
               cy.get('[data-cy=copy-catchup-bar]').within(() => {

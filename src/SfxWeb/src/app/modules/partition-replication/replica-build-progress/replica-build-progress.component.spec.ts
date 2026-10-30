@@ -15,12 +15,15 @@ describe('ReplicaBuildProgressComponent', () => {
   let buildStatus: IRawRemoteInbuildReplicaStatus;
   let providerDetail: IRawKeyValueStoreProviderCopyDetail;
   let databaseSize: string;
+  let operationSize: number | undefined;
 
   const copyFill = () => fixture.debugElement.query(By.css('.lsn-bar-track .lsn-bar-fill'));
   const currentSequence = () => fixture.debugElement.query(By.css('[data-cy=current-lsn]'));
+  const currentSequenceInfo = () => fixture.debugElement.query(By.css('[data-cy=current-sequence-info]'));
   const description = () => fixture.debugElement.query(By.css('[data-cy=copy-progress-description]'));
   const render = () => {
     fixture.componentRef.setInput('primaryDatabaseLogicalSizeEstimate', databaseSize);
+    fixture.componentRef.setInput('targetCopyOperationSize', operationSize);
     fixture.componentRef.setInput('replicator', { ...replicator });
     fixture.detectChanges();
   };
@@ -69,6 +72,7 @@ describe('ReplicaBuildProgressComponent', () => {
       RemoteInbuildReplicaStatus: buildStatus
     };
     databaseSize = String(5 * 1024 ** 3);
+    operationSize = 2 * 1024 * 1024;
     fixture.componentRef.setInput('isEseBackedKvs', true);
   });
 
@@ -76,7 +80,9 @@ describe('ReplicaBuildProgressComponent', () => {
     render();
 
     expect(currentSequence().nativeElement.textContent).toBe('Current CSN: 640');
-    expect(currentSequence().attributes.title).toBe('Applied copy-stream sequence number (CSN); not a replication LSN.');
+    expect(currentSequenceInfo().attributes['aria-label']).toBe('Applied copy-stream sequence number (CSN); not a replication LSN.');
+    expect(currentSequenceInfo().attributes.tabindex).toBe('0');
+    expect(currentSequence().attributes.title).toBeUndefined();
     expect(copyFill().styles.width).toBe('25%');
     expect(description().nativeElement.textContent).toBe('Estimated Copy Progress: 25%');
   });
@@ -88,7 +94,7 @@ describe('ReplicaBuildProgressComponent', () => {
     render();
 
     expect(currentSequence().nativeElement.textContent).toBe('Current LSN: 120000');
-    expect(currentSequence().attributes.title).toBe('Applied replication LSN; advances only when replication operations are applied.');
+    expect(currentSequenceInfo().attributes['aria-label']).toBe('Applied replication LSN; advances only when replication operations are applied.');
     expect(copyFill().styles.width).toBe('100%');
     expect(fixture.debugElement.queryAll(By.css('.lsn-bar-track .lsn-bar-fill'))[1].styles.width).toBe('40%');
     expect(fixture.debugElement.query(By.css('[data-cy=copy-estimate-info]'))).toBeNull();
@@ -100,6 +106,18 @@ describe('ReplicaBuildProgressComponent', () => {
     expect(currentSequence().nativeElement.textContent).toBe('Current LSN: 125000');
     expect(copyFill().styles.width).toBe('100%');
     expect(fixture.debugElement.queryAll(By.css('.lsn-bar-track .lsn-bar-fill'))[1].styles.width).toBe('50%');
+  });
+
+  it.each(['CopyContext', 'CopyState'])('explains that the current sequence is unavailable during %s', phase => {
+    buildStatus.InbuildPhase = phase;
+    render();
+
+    expect(currentSequence().nativeElement.textContent).toBe('Current LSN: \u2014');
+    expect(component.hasCurrentLsn).toBe(false);
+    expect(currentSequenceInfo().attributes['aria-label']).toBe(
+      'Not available until Copy starts. Shows the applied copy-stream sequence number (CSN) during Copy, then the applied replication LSN during CopyCatchup.');
+    expect(currentSequenceInfo().attributes.tabindex).toBe('0');
+    expect(currentSequence().attributes.title).toBeUndefined();
   });
 
   it.each([
@@ -145,18 +163,62 @@ describe('ReplicaBuildProgressComponent', () => {
     expect(copyFill().classes['lsn-bar-indeterminate']).not.toBe(true);
   });
 
-  it('freezes the database size within a build and resets it for the next build', () => {
+  it('uses the configured operation size and discloses its source', () => {
+    operationSize = 4 * 1024 * 1024;
+    render();
+
+    expect(copyFill().styles.width).toBe('50%');
+    expect(description().nativeElement.textContent).toBe('Estimated Copy Progress: 50%');
+    expect(fixture.debugElement.query(By.css('[data-cy=copy-estimate-info]')).attributes['aria-label'])
+      .toContain('4194304 bytes per copy operation (cluster manifest ReplicatedStore/TargetCopyOperationSize)');
+    expect(component.estimatedCopyInfo).toContain('runtime may reduce the target');
+  });
+
+  it('discloses when the native default is used', () => {
+    fixture.componentRef.setInput('isDefaultCopyOperationSize', true);
+    render();
+
+    expect(component.estimatedCopyInfo).toContain('2097152 bytes per copy operation (native default; setting absent from cluster manifest)');
+  });
+
+  it.each([undefined, 0, -1, 1.5, NaN, Infinity, 2147483648])('does not estimate for invalid operation size %s', size => {
+    operationSize = size;
+    render();
+
+    expect(component.estimatedCopyPercent).toBeUndefined();
+    expect(copyFill().classes['lsn-bar-indeterminate']).toBe(true);
+    expect(description().nativeElement.textContent).toContain('TargetCopyOperationSize is unavailable or invalid');
+    expect(fixture.debugElement.query(By.css('[data-cy=copy-estimate-info]'))).toBeNull();
+  });
+
+  it('waits for a valid operation size without freezing the database size prematurely', () => {
+    operationSize = undefined;
+    render();
+
+    operationSize = 4 * 1024 * 1024;
+    databaseSize = String(10 * 1024 ** 3);
+    render();
+
+    expect(copyFill().styles.width).toBe('25%');
+  });
+
+  it('freezes database and operation sizes within a build and resets them for the next build', () => {
+    fixture.componentRef.setInput('isDefaultCopyOperationSize', true);
     render();
     expect(component.estimatedCopyPercent).toBe(25);
 
     databaseSize = String(10 * 1024 ** 3);
+    operationSize = 1024 * 1024;
+    fixture.componentRef.setInput('isDefaultCopyOperationSize', false);
     replicator.LastAppliedCopySequenceNumber = '1280';
     render();
     expect(copyFill().styles.width).toBe('50%');
+    expect(component.estimatedCopyInfo).toContain('2097152 bytes per copy operation (native default');
 
     buildStatus.CopyContextPhaseStartTimeUtc = '2026-09-15T11:00:00.000Z';
     render();
-    expect(copyFill().styles.width).toBe('25%');
+    expect(copyFill().styles.width).toBe('12.5%');
+    expect(component.estimatedCopyInfo).toContain('1048576 bytes per copy operation (cluster manifest');
   });
 
   it('clears stale cursors and progress when build status disappears', () => {
@@ -166,6 +228,7 @@ describe('ReplicaBuildProgressComponent', () => {
 
     expect(fixture.debugElement.query(By.css('[data-cy=build-progress]'))).toBeNull();
     expect(component.currentLsnLabel).toBe('');
+    expect(component.currentSequenceInfo).toBe('');
     expect(component.hasCurrentLsn).toBe(false);
     expect(component.estimatedCopyPercent).toBeUndefined();
     expect(component.copyPhaseProgress).toBeUndefined();
