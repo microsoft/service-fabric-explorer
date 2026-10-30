@@ -8,6 +8,9 @@ import { computeBuildPhases } from './build-phase.util';
 // Shown in place of a value the current phase hasn't produced yet.
 const PLACEHOLDER = '\u2014';
 
+// Demo heuristic: the native default is a target, not a fixed copy-operation size.
+const ESTIMATED_COPY_OPERATION_BYTES = 2 * 1024 * 1024;
+
 // FABRIC_KEY_VALUE_STORE_REPLICA_COPY_TYPE / _MODE / _REASON (FabricTypes.h) -- the REST API
 // serializes these ESE copy-detail fields as their raw numeric enum value, with no string mapping.
 const copyTypeMap: Record<number, string> = { 0: 'Unknown', 1: 'Full', 2: 'Partial' };
@@ -55,6 +58,12 @@ export class ReplicaBuildProgressComponent implements OnChanges {
   // RC partitions nor TStore-backed KVS partitions ever populate these fields, no matter how
   // far the build progresses.
   @Input() isEseBackedKvs = false;
+  @Input() primaryDatabaseLogicalSizeEstimate: string | undefined;
+
+  estimatedCopyPercent: number | undefined;
+  readonly estimatedCopyInfo = 'Assumes 2 MiB per copy operation and primary logical size at first observation; not measured bytes.';
+  private copyEstimateBuildKey: string | undefined;
+  private copyEstimateDatabaseBytes: number | undefined;
 
   buildStatus: IRawRemoteInbuildReplicaStatus | undefined;
   phases: IProgressStatus[] = [];
@@ -71,9 +80,9 @@ export class ReplicaBuildProgressComponent implements OnChanges {
   catchupPhaseProgress: ILsnProgressBar | undefined;
   hasCopyProgress = false;
   hasCatchupProgress = false;
+  progressDescription = '';
 
-  // Shared tick labels for the combined bar -- Copy's target (Target 1) and Catchup's start
-  // are the same LSN (RemoteSession.cpp:406, :516); Catchup's target is Target 2.
+  // The boundary and catchup target are replication LSNs, not copy-stream sequence numbers.
   lsnStartLabel = '0';
   lsnBoundaryLabel = '';
   lsnTargetLabel = '';
@@ -104,6 +113,7 @@ export class ReplicaBuildProgressComponent implements OnChanges {
       this.catchupPhaseProgress = undefined;
       this.hasCopyProgress = false;
       this.hasCatchupProgress = false;
+      this.progressDescription = '';
       this.lsnBoundaryLabel = '';
       this.lsnTargetLabel = '';
       this.currentLsnLabel = '';
@@ -111,6 +121,9 @@ export class ReplicaBuildProgressComponent implements OnChanges {
       this.contextItems = [];
       this.copyTypeItems = [];
       this.hasEseDetail = false;
+      this.estimatedCopyPercent = undefined;
+      this.copyEstimateBuildKey = undefined;
+      this.copyEstimateDatabaseBytes = undefined;
       return;
     }
 
@@ -123,17 +136,51 @@ export class ReplicaBuildProgressComponent implements OnChanges {
       ? (this.buildStatus.CopyContextPhase === 'GetCopyContext' ? 2 : 1)
       : 3; // past both sub-phases -- both render as done
 
-    // Copy's target (LastCopySequenceNumber) is the primary's LSN frozen at build start;
-    // CopyCatchup's target (LastCopyCatchupSequenceNumber) is frozen where Copy ends and is
-    // effectively the target for the whole build (RemoteSession.cpp:406, :516).
-    const copyProgress = this.lsnProgress('0', this.buildStatus.LastCopySequenceNumber, this.replicator.LastAppliedCopySequenceNumber);
-    this.hasCopyProgress = !!copyProgress;
-    this.copyPhaseProgress = copyProgress ?? { percent: 0 };
+    const providerDetail = this.buildStatus.CopyDetails?.ProviderCopyDetail;
+    this.hasEseDetail = providerDetail?.Kind === 'ESE';
+
+    // Capture the first valid size observed during Copy, not a moving denominator.
+    const estimateBuildKey = `${this.replicator.ReplicaId}:${this.buildStatus.CopyContextPhaseStartTimeUtc}:${this.buildStatus.LastCopySequenceNumber}`;
+    if (estimateBuildKey !== this.copyEstimateBuildKey) {
+      this.copyEstimateBuildKey = estimateBuildKey;
+      this.copyEstimateDatabaseBytes = undefined;
+    }
+    this.estimatedCopyPercent = undefined;
+    if (this.currentIndex === 3 && this.isEseBackedKvs && this.hasEseDetail &&
+        providerDetail?.CopyType === 1 && providerDetail.CopyMode === 2) {
+      const databaseBytes = Number(this.primaryDatabaseLogicalSizeEstimate);
+      if (this.copyEstimateDatabaseBytes === undefined && Number.isSafeInteger(databaseBytes) && databaseBytes > 0) {
+        this.copyEstimateDatabaseBytes = databaseBytes;
+      }
+      const appliedCopyOperations = Number(this.replicator.LastAppliedCopySequenceNumber);
+      if (this.copyEstimateDatabaseBytes !== undefined && this.replicator.LastAppliedCopySequenceNumber?.trim() &&
+          Number.isSafeInteger(appliedCopyOperations) && appliedCopyOperations >= 0) {
+        this.estimatedCopyPercent = Math.min(99,
+          appliedCopyOperations * ESTIMATED_COPY_OPERATION_BYTES / this.copyEstimateDatabaseBytes * 100);
+      }
+    }
+
+    const copyTarget = Number(this.buildStatus.LastCopySequenceNumber);
+    this.hasCopyProgress = this.currentIndex >= 3 && isFinite(copyTarget) && copyTarget >= 0;
+    this.copyPhaseProgress = { percent: this.currentIndex >= 4 ? 100 : this.estimatedCopyPercent ?? 0 };
 
     const catchupProgress = this.lsnProgress(
       this.buildStatus.LastCopySequenceNumber, this.buildStatus.LastCopyCatchupSequenceNumber, this.replicator.LastAppliedReplicationSequenceNumber);
-    this.hasCatchupProgress = !!catchupProgress;
+    this.hasCatchupProgress = this.currentIndex >= 4 && !!catchupProgress;
     this.catchupPhaseProgress = catchupProgress ?? { percent: 0 };
+    this.progressDescription = this.currentIndex === 3
+      ? this.estimatedCopyPercent !== undefined
+        ? `Estimated Copy Progress: ${Math.floor(this.estimatedCopyPercent)}%`
+        : 'Copy stream in progress; percentage unavailable.'
+      : this.currentIndex === 4
+        ? !catchupProgress
+          ? 'Waiting for catchup progress data.'
+          : catchupProgress.percent === 0
+            ? 'Waiting for applied replication progress; copy acknowledgments may still be pending.'
+            : catchupProgress.percent === 100
+              ? 'Replication catchup target reached; waiting for build completion.'
+              : 'Applying replication operations.'
+        : '';
 
     this.lsnBoundaryLabel = `Copy LSN: ${this.buildStatus.LastCopySequenceNumber}`;
     this.lsnTargetLabel = `Copy Catchup LSN: ${this.buildStatus.LastCopyCatchupSequenceNumber}`;
@@ -142,23 +189,21 @@ export class ReplicaBuildProgressComponent implements OnChanges {
     const currentCursor = this.currentIndex === 3
       ? this.replicator.LastAppliedCopySequenceNumber
       : this.replicator.LastAppliedReplicationSequenceNumber;
-    this.currentLsnLabel = `Current LSN: ${this.hasCurrentLsn ? currentCursor : PLACEHOLDER}`;
+    const currentSequenceLabel = this.currentIndex === 3 ? 'Current CSN' : 'Current LSN';
+    this.currentLsnLabel = `${currentSequenceLabel}: ${this.hasCurrentLsn ? currentCursor : PLACEHOLDER}`;
 
     this.copySequenceItems = [
       {
         descriptionName: 'Copy Sequence Number',
         displayText: this.buildStatus.LastCopySequenceNumber,
-        infoText: 'Target LSN the copy must reach to be on par with the primary as of when Copy started.',
+        infoText: 'Replication LSN captured at build start. It is the catchup starting boundary, not the total number of copy-stream operations.',
       },
       {
         descriptionName: 'Copy Catchup Sequence Number',
         displayText: this.buildStatus.LastCopyCatchupSequenceNumber,
-        infoText: 'Target replication LSN frozen when Copy completed; catchup must reach it to finish the build.',
+        infoText: 'Target replication LSN frozen when copy enumeration ended. Catchup waits for outstanding copy and replication acknowledgments.',
       },
     ];
-
-    const providerDetail = this.buildStatus.CopyDetails?.ProviderCopyDetail;
-    this.hasEseDetail = providerDetail?.Kind === 'ESE';
 
     this.contextItems = providerDetail && this.hasEseDetail ? this.buildContextItems(providerDetail) : this.placeholderItems(contextFieldInfo);
     this.copyTypeItems = providerDetail && this.hasEseDetail
@@ -191,11 +236,13 @@ export class ReplicaBuildProgressComponent implements OnChanges {
     const target = Number(targetStr);
     const cursor = Number(cursorStr);
 
-    if (!isFinite(start) || !isFinite(target) || !isFinite(cursor) || target <= start) {
+    if (!isFinite(start) || !isFinite(target) || !isFinite(cursor) || start < 0 || target < start || cursor < 0) {
       return undefined;
     }
 
-    const percent = Math.min(100, Math.max(0, ((cursor - start) / (target - start)) * 100));
+    const percent = target === start
+      ? (cursor >= target ? 100 : 0)
+      : Math.min(100, Math.max(0, ((cursor - start) / (target - start)) * 100));
     return { percent };
   }
 

@@ -184,6 +184,7 @@ context('partition', () => {
             cy.contains('100000');
             cy.get('[data-cy=copy-catchup-bar]').within(() => {
               cy.get('.lsn-bar-track').eq(0).find('.lsn-bar-fill').should('exist');
+              cy.get('.lsn-bar-track').eq(0).find('.lsn-bar-fill').should('have.class', 'lsn-bar-indeterminate');
               cy.get('.lsn-bar-track').eq(0).should('not.have.class', 'section-greyed');
               // CopyCatchup hasn't been reached yet by this fixture -- no fill, and greyed out
               cy.get('.lsn-bar-track').eq(1).find('.lsn-bar-fill').should('not.exist');
@@ -195,6 +196,115 @@ context('partition', () => {
           // view -- scrollTo('bottom') would jump past it to whatever renders below.
           cy.get('[data-cy=build-progress]').scrollIntoView({ offset: { top: -100 } });
         })
+
+        it('estimates full logical Copy, freezes size per build, resets on rebuild and completes at Catchup', () => {
+          cy.fixture('partition-page/replica-detail-inbuild.json').then(detail => {
+            const replicator = detail.ReplicatorStatus.RemoteReplicators.find(r => r.IsInBuild);
+            const status = replicator.RemoteInbuildReplicaStatus;
+            status.CopyDetails.ProviderCopyDetail.CopyMode = 2;
+            detail.ReplicaStatus.DatabaseLogicalSizeEstimate = String(5 * 1024 ** 3);
+            replicator.LastAppliedCopySequenceNumber = '0';
+            const route = apiUrl(`/Nodes/_nt_1/$/GetPartitions/${partitionId}/$/GetReplicas/${primaryReplica}/$/GetDetail?*`);
+            cy.intercept('GET', route, { body: detail }).as('logicalCopyDetail');
+            cy.visit(urlFormatter(appName, serviceName, partitionId));
+            cy.wait('@logicalCopyDetail');
+            expandInBuildSection();
+
+            cy.get('[data-cy=build-progress]').within(() => {
+              cy.get('.lsn-bar-track').eq(0).find('.lsn-bar-fill')
+                .should('not.have.class', 'lsn-bar-indeterminate')
+                .and('have.attr', 'style', 'width: 0%;');
+              cy.get('[data-cy=copy-progress-description]').should('have.text', 'Estimated Copy Progress: 0%');
+              cy.get('[data-cy=current-lsn]').should('have.text', 'Current CSN: 0')
+                .and('have.attr', 'title', 'Applied copy-stream sequence number (CSN); not a replication LSN.');
+            });
+            cy.get('[data-cy=copy-estimate-info]').focus();
+            cy.get('[role=tooltip]').should('be.visible').and('contain.text', 'Assumes 2 MiB')
+              .and('contain.text', 'not measured bytes');
+            cy.get('[data-cy=copy-estimate-info]').blur();
+
+            const copyRefreshSteps = [
+              { cursor: '640', size: 5, width: 25 },
+              { cursor: '1280', size: 10, width: 50 },
+              { cursor: '2560', size: 10, width: 99 },
+              { cursor: '3000', size: 10, width: 99 },
+            ];
+            copyRefreshSteps.forEach(({ cursor, size, width }) => {
+              cy.then(() => {
+                replicator.LastAppliedCopySequenceNumber = cursor;
+                detail.ReplicaStatus.DatabaseLogicalSizeEstimate = String(size * 1024 ** 3);
+                cy.intercept('GET', route, { body: detail }).as('logicalCopyRefresh');
+              });
+              refresh();
+              cy.wait('@logicalCopyRefresh');
+              cy.get('[data-cy=build-progress]').within(() => {
+                cy.get('.lsn-bar-track').eq(0).find('.lsn-bar-fill').should('have.attr', 'style', `width: ${width}%;`);
+                cy.get('[data-cy=copy-progress-description]').should('have.text', `Estimated Copy Progress: ${width}%`);
+                cy.get('[data-cy=copy-estimate-info]').should('have.attr', 'aria-label')
+                  .and('contain', 'Assumes 2 MiB').and('contain', 'not measured bytes');
+                cy.get('[data-cy=current-lsn]').should('have.text', `Current CSN: ${cursor}`);
+              });
+            });
+
+            cy.then(() => {
+              status.CopyContextPhaseStartTimeUtc = '2026-09-15T11:00:00.000Z';
+              replicator.LastAppliedCopySequenceNumber = '640';
+              cy.intercept('GET', route, { body: detail }).as('newLogicalBuild');
+            });
+            refresh();
+            cy.wait('@newLogicalBuild');
+            cy.get('[data-cy=build-progress] .lsn-bar-track').eq(0).find('.lsn-bar-fill')
+              .should('have.attr', 'style', 'width: 12.5%;');
+
+            cy.then(() => {
+              status.InbuildPhase = 'CopyCatchup';
+              status.CopyCatchupPhaseStartTimeUtc = '2026-09-15T11:01:00.000Z';
+              status.LastCopyCatchupSequenceNumber = '150000';
+              replicator.LastAppliedReplicationSequenceNumber = '120000';
+              cy.intercept('GET', route, { body: detail }).as('logicalCatchup');
+            });
+            refresh();
+            cy.wait('@logicalCatchup');
+            cy.get('[data-cy=build-progress]').within(() => {
+              cy.get('.lsn-bar-track').eq(0).find('.lsn-bar-fill').should('have.attr', 'style', 'width: 100%;');
+              cy.get('.lsn-bar-track').eq(1).find('.lsn-bar-fill').should('have.attr', 'style', 'width: 40%;');
+              cy.get('[data-cy=copy-progress-description]').should('have.text', 'Applying replication operations.');
+              cy.get('[data-cy=current-lsn]').should('have.text', 'Current LSN: 120000');
+              cy.get('[data-cy=copy-estimate-info]').should('not.exist');
+            });
+          });
+        })
+
+        const indeterminateCopyCases = [
+          { name: 'partial logical copy', type: 2, size: String(5 * 1024 ** 3), cursor: '640' },
+          { name: 'unknown copy type', type: 0, size: String(5 * 1024 ** 3), cursor: '640' },
+          { name: 'missing primary size', type: 1, size: undefined, cursor: '640' },
+          { name: 'zero primary size', type: 1, size: '0', cursor: '640' },
+          { name: 'invalid primary size', type: 1, size: 'unavailable', cursor: '640' },
+          { name: 'invalid copy cursor', type: 1, size: String(5 * 1024 ** 3), cursor: '-1' },
+          { name: 'missing copy cursor', type: 1, size: String(5 * 1024 ** 3), cursor: undefined },
+        ];
+        indeterminateCopyCases.forEach(({ name, type, size, cursor }) => {
+          it(`keeps Copy indeterminate for ${name}`, () => {
+            cy.fixture('partition-page/replica-detail-inbuild.json').then(detail => {
+              const replicator = detail.ReplicatorStatus.RemoteReplicators.find(r => r.IsInBuild);
+              replicator.RemoteInbuildReplicaStatus.CopyDetails.ProviderCopyDetail.CopyMode = 2;
+              replicator.RemoteInbuildReplicaStatus.CopyDetails.ProviderCopyDetail.CopyType = type;
+              replicator.LastAppliedCopySequenceNumber = cursor;
+              detail.ReplicaStatus.DatabaseLogicalSizeEstimate = size;
+              cy.intercept('GET', apiUrl(`/Nodes/_nt_1/$/GetPartitions/${partitionId}/$/GetReplicas/${primaryReplica}/$/GetDetail?*`),
+                { body: detail }).as('indeterminateCopy');
+              cy.visit(urlFormatter(appName, serviceName, partitionId));
+              cy.wait('@indeterminateCopy');
+              expandInBuildSection();
+              cy.get('[data-cy=build-progress]').within(() => {
+                cy.get('.lsn-bar-track').eq(0).find('.lsn-bar-fill').should('have.class', 'lsn-bar-indeterminate');
+                cy.get('[data-cy=copy-progress-description]').should('have.text', 'Copy stream in progress; percentage unavailable.');
+                cy.get('[data-cy=current-lsn]').should('contain.text', 'Current CSN:');
+              });
+            });
+          });
+        });
 
         it('shows 4 replicas in build side by side, across different build phases', () => {
           addRoute("load", "partition-page/replica-detail-inbuild-multi.json", apiUrl(`/Nodes/_nt_1/$/GetPartitions/${partitionId}/$/GetReplicas/${primaryReplica}/$/GetDetail?*`));
@@ -352,12 +462,69 @@ context('partition', () => {
               });
               cy.contains('Copy LSN: 100000');
               cy.contains('Copy Catchup LSN: 150000');
+              cy.get('[data-cy=current-lsn]').should('have.text', 'Current LSN: 120000');
+              cy.get('.lsn-bar-track').eq(0).find('.lsn-bar-fill').should('have.attr', 'style', 'width: 100%;');
+              cy.get('.lsn-bar-track').eq(1).should('have.class', 'lsn-bar-active')
+                .find('.lsn-bar-fill').should('have.attr', 'style', 'width: 40%;');
             });
             // Build has moved well past CopyContext (now in CopyCatchup) -- still not greyed.
             cy.get('[data-cy=copy-context-substepper]').should('not.have.class', 'section-greyed');
           })
 
           cy.get('[data-cy=build-progress]').scrollIntoView({ offset: { top: -100 } });
+        })
+
+        it('updates Current LSN and catchup fill on refresh without regressing the completed Copy segment', () => {
+          cy.fixture('partition-page/replica-detail-inbuild-copycatchup.json').then(detail => {
+            const replicator = detail.ReplicatorStatus.RemoteReplicators.find(r => r.IsInBuild);
+            replicator.LastAppliedCopySequenceNumber = '2624';
+            replicator.LastAppliedReplicationSequenceNumber = '10482';
+            replicator.RemoteInbuildReplicaStatus.LastCopySequenceNumber = '10482';
+            replicator.RemoteInbuildReplicaStatus.LastCopyCatchupSequenceNumber = '11332';
+            const route = apiUrl(`/Nodes/_nt_1/$/GetPartitions/${partitionId}/$/GetReplicas/${primaryReplica}/$/GetDetail?*`);
+            cy.intercept('GET', route, { body: detail }).as('copyCatchupDetail');
+            cy.visit(urlFormatter(appName, serviceName, partitionId));
+            cy.wait('@copyCatchupDetail');
+            expandInBuildSection();
+
+            cy.get('[data-cy=build-progress]').within(() => {
+              cy.get('[data-cy=current-lsn]').should('have.text', 'Current LSN: 10482');
+              cy.get('.lsn-bar-track').eq(0).find('.lsn-bar-fill').should('have.attr', 'style', 'width: 100%;');
+              cy.get('.lsn-bar-track').eq(1).should('have.class', 'lsn-bar-active')
+                .find('.lsn-bar-fill').should('have.attr', 'style', 'width: 0%;');
+              cy.get('[data-cy=copy-progress-description]').should('contain.text', 'Waiting for applied replication progress');
+            });
+
+            cy.then(() => {
+              replicator.LastAppliedReplicationSequenceNumber = '10907';
+              cy.intercept('GET', route, { body: detail }).as('advancedCatchupDetail');
+            });
+            refresh();
+            cy.wait('@advancedCatchupDetail');
+            cy.get('[data-cy=build-progress]').within(() => {
+              cy.get('[data-cy=current-lsn]').should('have.text', 'Current LSN: 10907');
+              cy.get('.lsn-bar-track').eq(0).find('.lsn-bar-fill').should('have.attr', 'style', 'width: 100%;');
+              cy.get('.lsn-bar-track').eq(1).find('.lsn-bar-fill').should('have.attr', 'style', 'width: 50%;');
+              cy.get('[data-cy=copy-progress-description]').should('have.text', 'Applying replication operations.');
+            });
+          });
+        })
+
+        it('shows a satisfied zero-length catchup range instead of greying it out', () => {
+          cy.fixture('partition-page/replica-detail-inbuild-copycatchup.json').then(detail => {
+            const replicator = detail.ReplicatorStatus.RemoteReplicators.find(r => r.IsInBuild);
+            replicator.RemoteInbuildReplicaStatus.LastCopyCatchupSequenceNumber = '100000';
+            replicator.LastAppliedReplicationSequenceNumber = '100000';
+            cy.intercept('GET', apiUrl(`/Nodes/_nt_1/$/GetPartitions/${partitionId}/$/GetReplicas/${primaryReplica}/$/GetDetail?*`), { body: detail });
+            cy.visit(urlFormatter(appName, serviceName, partitionId));
+            cy.wait(waitRequest);
+            expandInBuildSection();
+            cy.get('[data-cy=build-progress]').within(() => {
+              cy.get('.lsn-bar-track').eq(1).should('not.have.class', 'section-greyed')
+                .find('.lsn-bar-fill').should('have.attr', 'style', 'width: 100%;');
+              cy.get('[data-cy=copy-progress-description]').should('contain.text', 'Replication catchup target reached');
+            });
+          });
         })
 
         // IsInBuild lags CopyComplete by one refresh, so replicas-in-build.component.ts

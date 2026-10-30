@@ -5,8 +5,8 @@
       <app-phase-diagram data-cy="build-phase-stepper" class="pane-header-stepper" [items]="item.phases" [currentIndex]="item.currentIndex" [wrap]="true"></app-phase-diagram>
     </div>
     <div collapse-body>
-      <app-replica-build-progress [replicator]="item.replicator" [isEseBackedKvs]="isEseBackedKvs"></app-replica-build-progress>
+      <app-replica-build-progress [replicator]="item.replicator" [isEseBackedKvs]="isEseBackedKvs"
+        [primaryDatabaseLogicalSizeEstimate]="primaryDatabaseLogicalSizeEstimate"></app-replica-build-progress>
     </div>
   </app-collapse-container>
 }
-
