@@ -51,7 +51,9 @@
               <a href="https://aka.ms/UnderstandingServiceFabricInbuildReplicaStatus" target="_blank" aria-label="Learn about Inbuild Replica Status" (click)="$event.stopPropagation()"><span tabindex="-1" class="mif-info"></span></a>
             </div>
             <div collapse-body class="in-build-list">
-              <app-replicas-in-build [primaryReplica]="primaryReplica"></app-replicas-in-build>
+              <app-replicas-in-build [primaryReplica]="primaryReplica"
+                [targetCopyOperationSize]="data.clusterManifest.targetCopyOperationSize"
+                [isDefaultCopyOperationSize]="data.clusterManifest.isDefaultCopyOperationSize"></app-replicas-in-build>
             </div>
           </app-collapse-container>
         </div>

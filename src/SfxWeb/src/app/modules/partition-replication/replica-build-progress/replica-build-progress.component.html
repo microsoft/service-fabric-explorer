@@ -31,20 +31,33 @@
 
       <div class="lsn-bar-section">
         <h3 class="underline-title">Copy Progress</h3>
-        <div class="lsn-bar-current" [class.section-greyed]="!hasCurrentLsn" data-cy="current-lsn">{{currentLsnLabel}}</div>
+        <div class="lsn-bar-current" [class.section-greyed]="!hasCurrentLsn" data-cy="current-lsn">{{currentLsnLabel}}<span
+          class="mif-info ms-1" role="img" tabindex="0" [attr.aria-label]="currentSequenceInfo"
+          [ngbTooltip]="currentSequenceInfo" tooltipClass="styled-tooltip" container="body" data-cy="current-sequence-info"></span></div>
         <div class="lsn-bar" data-cy="copy-catchup-bar">
           <div class="lsn-bar-zones">
             <div class="lsn-bar-track" [class.section-greyed]="!hasCopyProgress">
-              @if (hasCopyProgress) {
+              @if (hasCopyProgress && currentIndex === 3 && estimatedCopyPercent === undefined) {
+                <div class="lsn-bar-fill lsn-bar-indeterminate" title="Copy stream in progress; percentage unavailable."></div>
+              } @else if (hasCopyProgress) {
                 <div class="lsn-bar-fill" [style.width.%]="copyPhaseProgress?.percent"></div>
               }
             </div>
-            <div class="lsn-bar-track" [class.section-greyed]="!hasCatchupProgress">
+            <div class="lsn-bar-track" [class.section-greyed]="!hasCatchupProgress" [class.lsn-bar-active]="currentIndex === 4">
               @if (hasCatchupProgress) {
                 <div class="lsn-bar-fill" [style.width.%]="catchupPhaseProgress?.percent"></div>
               }
             </div>
           </div>
+          @if (progressDescription) {
+            <div class="lsn-bar-description">
+              <span data-cy="copy-progress-description">{{progressDescription}}</span>
+              @if (estimatedCopyPercent !== undefined) {
+                <span class="mif-info ms-1" role="img" [attr.aria-label]="estimatedCopyInfo" [ngbTooltip]="estimatedCopyInfo"
+                  tooltipClass="styled-tooltip" container="body" tabindex="0" data-cy="copy-estimate-info"></span>
+              }
+            </div>
+          }
           <div class="lsn-bar-labels">
             <span>{{lsnStartLabel}}</span>
             <span [class.section-greyed]="!hasCopyProgress">{{lsnBoundaryLabel}}</span>
@@ -55,4 +68,3 @@
     </div>
   </div>
 }
-

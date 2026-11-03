@@ -140,6 +140,8 @@ export class ClusterManifest extends DataModelBase<IRawClusterManifest> {
     public isEventStoreEnabled = false;
     public eventStoreTimeRange = 30;
     public nodeTypeProperties!: INodeTypeInfo[];
+    public targetCopyOperationSize: number | undefined;
+    public isDefaultCopyOperationSize = false;
 
     public constructor(data: DataService) {
         super(data);
@@ -218,11 +220,28 @@ export class ClusterManifest extends DataModelBase<IRawClusterManifest> {
 
         const FabricSettings = manifest.getElementsByTagName('FabricSettings')[0];
         const management = FabricSettings.getElementsByTagName('Section');
+        this.targetCopyOperationSize = 2 * 1024 * 1024;
+        this.isDefaultCopyOperationSize = true;
 
         for (let i = 0; i < management.length; i ++) {
             const item = management.item(i);
             if (item!.getAttribute('Name') === 'Management'){
                 this.getImageStoreConnectionString(item!);
+            }else if (item!.getAttribute('Name') === 'ReplicatedStore'){
+                const params = item!.getElementsByTagName('Parameter');
+                for (let j = 0; j < params.length; j++) {
+                    if (params.item(j)!.getAttribute('Name') === 'TargetCopyOperationSize') {
+                        const value = params.item(j)!.getAttribute('Value')?.trim() ?? '';
+                        const bytes = Number(value);
+                        this.isDefaultCopyOperationSize = false;
+                        if (/^\d+$/.test(value) && Number.isSafeInteger(bytes) && bytes > 0 && bytes <= 2147483647) {
+                            this.targetCopyOperationSize = bytes;
+                        } else {
+                            this.targetCopyOperationSize = undefined;
+                            console.error('Invalid ReplicatedStore/TargetCopyOperationSize in cluster manifest:', value);
+                        }
+                    }
+                }
             }else if (item!.getAttribute('Name') === 'BackupRestoreService'){
                 this.isBackupRestoreEnabled = true;
             }else if (item!.getAttribute('Name') === 'UpgradeService'){
