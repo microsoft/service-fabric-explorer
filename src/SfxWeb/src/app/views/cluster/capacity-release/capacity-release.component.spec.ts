@@ -1,18 +1,19 @@
 import { CommonModule } from '@angular/common';
 import { LOCALE_ID } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { MatDialogRef } from '@angular/material/dialog';
-import { of } from 'rxjs';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Subject, of } from 'rxjs';
 import {
   CapacityReleaseLevel,
   IRawCapacityReleaseEstimate
 } from 'src/app/Models/RawDataTypes';
 import { RestClientService } from 'src/app/services/rest-client.service';
+import { MessageService } from 'src/app/services/message.service';
+import { RefreshService } from 'src/app/services/refresh.service';
 import {
   CapacityReleaseComponent,
   createCapacityReleaseRows,
-  getCapacityClass,
-  getCapacityReleaseWarning
+  getCapacityClass
 } from './capacity-release.component';
 
 describe('CapacityReleaseComponent helpers', () => {
@@ -60,22 +61,15 @@ describe('CapacityReleaseComponent helpers', () => {
     expect(() => createCapacityReleaseRows([estimate])).toThrow(`Invalid ${field}`);
   });
 
-  it('returns the SFE confirmation warnings', () => {
-    expect(getCapacityReleaseWarning(CapacityReleaseLevel.None)).toBe('');
-    expect(getCapacityReleaseWarning(CapacityReleaseLevel.Minor))
-      .toBe('Setting capacity release to Minor may introduce an unavailability risk for DropToZero services.');
-    expect(getCapacityReleaseWarning(CapacityReleaseLevel.Major))
-      .toBe('Setting capacity release to Major always causes data loss for DropToMin services and creates a high risk of unavailability for DropToMin services.');
-  });
 });
 
 describe('CapacityReleaseComponent', () => {
   let fixture: ComponentFixture<CapacityReleaseComponent>;
   let component: CapacityReleaseComponent;
+  let refreshSubject: Subject<number>;
   let restClient: {
     getCapacityReleaseLevel: ReturnType<typeof vi.fn>;
     getCapacityReleaseEstimate: ReturnType<typeof vi.fn>;
-    setCapacityReleaseLevel: ReturnType<typeof vi.fn>;
   };
 
   beforeEach(async () => {
@@ -83,9 +77,9 @@ describe('CapacityReleaseComponent', () => {
       getCapacityReleaseLevel: vi.fn(() => of({ Level: CapacityReleaseLevel.Minor })),
       getCapacityReleaseEstimate: vi.fn(() => of([
         { Level: CapacityReleaseLevel.Minor, MetricName: 'CPU', UsedCapacity: '75', TotalCapacity: '100' }
-      ])),
-      setCapacityReleaseLevel: vi.fn(() => of({}))
+      ]))
     };
+    refreshSubject = new Subject<number>();
 
     await TestBed.configureTestingModule({
       declarations: [CapacityReleaseComponent],
@@ -93,7 +87,10 @@ describe('CapacityReleaseComponent', () => {
       providers: [
         { provide: LOCALE_ID, useValue: 'en-US' },
         { provide: RestClientService, useValue: restClient },
-        { provide: MatDialogRef, useValue: { close: vi.fn() } }
+        { provide: ActivatedRoute, useValue: { params: of({}), snapshot: {} } },
+        { provide: Router, useValue: {} },
+        { provide: RefreshService, useValue: { refreshSubject } },
+        { provide: MessageService, useValue: {} }
       ]
     }).compileComponents();
 
@@ -102,11 +99,34 @@ describe('CapacityReleaseComponent', () => {
     fixture.detectChanges();
   });
 
-  it('loads the current level and estimation matrix', () => {
+  it('loads and refreshes the current level and matrix while the view is open', () => {
     expect(component.currentLevel).toBe(CapacityReleaseLevel.Minor);
     expect(component.rows).toEqual([
       { metric: 'CPU', totalCapacity: 100n, none: null, minor: 75n, major: null }
     ]);
+
+    restClient.getCapacityReleaseLevel.mockReturnValue(of({ Level: CapacityReleaseLevel.Major }));
+    restClient.getCapacityReleaseEstimate.mockReturnValue(of([
+      { Level: CapacityReleaseLevel.Major, MetricName: 'CPU', UsedCapacity: '60', TotalCapacity: '100' }
+    ]));
+    refreshSubject.next(0);
+    fixture.changeDetectorRef.markForCheck();
+    fixture.detectChanges();
+
+    expect(component.currentLevel).toBe(CapacityReleaseLevel.Major);
+    expect(component.rows).toEqual([
+      { metric: 'CPU', totalCapacity: 100n, none: null, minor: null, major: 60n }
+    ]);
+    const element: HTMLElement = fixture.nativeElement;
+    expect(element.querySelector('b')?.textContent).toBe('Major');
+    expect(element.querySelector('tbody td:last-child')?.textContent?.trim()).toBe('60');
+    expect(restClient.getCapacityReleaseLevel).toHaveBeenCalledTimes(2);
+    expect(restClient.getCapacityReleaseEstimate).toHaveBeenCalledTimes(2);
+
+    fixture.destroy();
+    refreshSubject.next(1);
+    expect(restClient.getCapacityReleaseLevel).toHaveBeenCalledTimes(2);
+    expect(restClient.getCapacityReleaseEstimate).toHaveBeenCalledTimes(2);
   });
 
   it('renders large int64 capacities without rounding', () => {
@@ -118,7 +138,7 @@ describe('CapacityReleaseComponent', () => {
         TotalCapacity: '9223372036854775806'
       }
     ]));
-    component.refresh();
+    refreshSubject.next(0);
     fixture.changeDetectorRef.markForCheck();
     fixture.detectChanges();
 
@@ -135,23 +155,24 @@ describe('CapacityReleaseComponent', () => {
     restClient.getCapacityReleaseEstimate.mockReturnValue(of([
       { Level: CapacityReleaseLevel.Minor, MetricName: 'CPU', UsedCapacity: 'invalid', TotalCapacity: '100' }
     ]));
-    component.refresh();
+    refreshSubject.next(0);
     fixture.changeDetectorRef.markForCheck();
     fixture.detectChanges();
 
     expect(component.rows).toEqual([]);
+    expect(component.currentLevel).toBe(CapacityReleaseLevel.Minor);
     expect(component.estimationError).toContain('Invalid UsedCapacity');
     const element: HTMLElement = fixture.nativeElement;
     expect(element.querySelector('.error-message')?.textContent).toContain('Invalid UsedCapacity');
   });
 
-  it('sets the selected level and refreshes the data', () => {
-    component.requestLevel(CapacityReleaseLevel.Major);
-    component.confirmLevelChange();
+  it('renders inline without dialog framing or action buttons', () => {
+    const element: HTMLElement = fixture.nativeElement;
 
-    expect(restClient.setCapacityReleaseLevel).toHaveBeenCalledWith(CapacityReleaseLevel.Major);
-    expect(restClient.getCapacityReleaseLevel).toHaveBeenCalledTimes(2);
-    expect(component.successMessage).toBe('Capacity release level set to Major.');
-    expect(component.pendingLevel).toBeNull();
+    expect(element.querySelector('button, .action-modal, .modal-header, .modal-footer')).toBeNull();
+    expect(element.textContent).toContain('Current capacity release level:');
+    expect(element.textContent).toContain('Capacity Release Estimation');
+    expect(restClient.getCapacityReleaseLevel).toHaveBeenCalledOnce();
+    expect(restClient.getCapacityReleaseEstimate).toHaveBeenCalledOnce();
   });
 });

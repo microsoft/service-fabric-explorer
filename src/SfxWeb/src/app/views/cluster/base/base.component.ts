@@ -5,9 +5,6 @@ import { IdGenerator } from 'src/app/Utils/IdGenerator';
 import { DataService } from 'src/app/services/data.service';
 import { Constants } from 'src/app/Common/Constants';
 import { IBaseView } from '../../BaseView';
-import { ActionCollection } from 'src/app/Models/ActionCollection';
-import { IsolatedAction } from 'src/app/Models/Action';
-import { CapacityReleaseComponent } from '../capacity-release/capacity-release.component';
 
 @Component({
     selector: 'app-base',
@@ -23,7 +20,6 @@ export class BaseComponent implements OnInit, IBaseView {
 
 
   SFXClusterName = '';
-  actions = new ActionCollection(this.dataService.telemetry);
 
   tabs: ITab[] = [{
     name: 'essentials',
@@ -56,16 +52,6 @@ export class BaseComponent implements OnInit, IBaseView {
   ];
 
   ngOnInit() {
-    this.actions.add(new IsolatedAction(
-      this.dataService.dialog,
-      'capacityRelease',
-      'Capacity release...',
-      'Opening capacity release...',
-      null,
-      CapacityReleaseComponent,
-      () => this.dataService.actionsEnabled()
-    ));
-
     this.tree.selectTreeNode([
       IdGenerator.cluster()
     ], true);

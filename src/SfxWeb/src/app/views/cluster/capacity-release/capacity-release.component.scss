@@ -1,25 +1,3 @@
-.capacity-release {
-  min-width: 700px;
-  max-width: 900px;
-}
-
-.modal-body {
-  padding: 15px;
-}
-
-.level-actions,
-.confirmation-actions {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.confirmation {
-  margin: 15px 0;
-  padding: 15px;
-  border: 1px solid #d83b01;
-}
-
 .table-container {
   overflow-x: auto;
 }
@@ -51,19 +29,7 @@ td:first-child {
   color: #000;
 }
 
-.warning-message,
 .error-message {
   color: #a4262c;
   font-weight: 600;
-}
-
-.success-message {
-  color: #107c10;
-  font-weight: 600;
-}
-
-@media (max-width: 800px) {
-  .capacity-release {
-    min-width: auto;
-  }
 }

@@ -13,7 +13,7 @@ import { IRawCollection, IRawClusterManifest, IRawClusterHealth, IRawClusterUpgr
          IRawServiceHealth, IRawApplicationUpgradeProgress, IRawCreateComposeDeploymentDescription, IRawPartition, IRawPartitionHealth, IRawPartitionLoadInformation,
          IRawReplicaOnPartition, IRawReplicaHealth, IRawImageStoreContent, IRawStoreFolderSize, IRawClusterVersion, IRawList, IRawAadMetadata, IRawStorage, IRawRepairTask,
          IRawServiceNameInfo, IRawApplicationNameInfo, IRawBackupEntity, IRawInfrastructureJob, IRawInfraRepairTask, IRawRoleInstanceImpact,
-         IRawInfrastructureDocument, IRawFailoverManagerManagerInformation, CapacityReleaseLevel, IRawCapacityReleaseLevel,
+         IRawInfrastructureDocument, IRawFailoverManagerManagerInformation, IRawCapacityReleaseLevel,
          IRawCapacityReleaseEstimate} from '../Models/RawDataTypes';
 import { mergeMap, map, catchError, finalize, skip } from 'rxjs/operators';
 import { Application } from '../Models/DataModels/Application';
@@ -86,11 +86,6 @@ export class RestClientService {
           'Get capacity release estimate',
           RestClientService.apiVersion120,
           messageHandler);
-  }
-
-  public setCapacityReleaseLevel(level: CapacityReleaseLevel, messageHandler?: IResponseMessageHandler): Observable<{}> {
-      const url = `$/SetCapacityReleaseLevel?Level=${encodeURIComponent(level)}`;
-      return this.post(this.getApiUrl(url, RestClientService.apiVersion120), 'Set capacity release level', null, messageHandler);
   }
 
   public getClusterHealthChunk(healthDescriptor: IClusterHealthChunkQueryDescription, messageHandler?: IResponseMessageHandler): Observable<{}> {

@@ -23,6 +23,7 @@ describe('RestClientService capacity release', () => {
   });
 
   afterEach(() => {
+    http.expectNone(request => request.method !== 'GET');
     http.verify();
   });
 
@@ -37,16 +38,6 @@ describe('RestClientService capacity release', () => {
     request.flush({ Level: CapacityReleaseLevel.Minor });
   });
 
-  it('sets the requested capacity release level', () => {
-    service.setCapacityReleaseLevel(CapacityReleaseLevel.Major).subscribe();
-
-    const request = http.expectOne(candidate =>
-      candidate.url.includes('/$/SetCapacityReleaseLevel?Level=Major&api-version=12.0'));
-    expect(request.request.method).toBe('POST');
-    expect(request.request.body).toBeNull();
-    request.flush({});
-  });
-
   it('loads every capacity release estimation page', () => {
     let resultCount = 0;
     service.getCapacityReleaseEstimate().subscribe(result => {
@@ -58,6 +49,7 @@ describe('RestClientService capacity release', () => {
     const firstRequest = http.expectOne(candidate =>
       candidate.url.includes('/$/GetCapacityReleaseEstimate?api-version=12.0') &&
       !candidate.url.includes('ContinuationToken='));
+    expect(firstRequest.request.method).toBe('GET');
     firstRequest.flush({
       Items: [
         { Level: CapacityReleaseLevel.None, MetricName: 'CPU', UsedCapacity: '90', TotalCapacity: '100' }
@@ -68,6 +60,7 @@ describe('RestClientService capacity release', () => {
     const secondRequest = http.expectOne(candidate =>
       candidate.url.includes('/$/GetCapacityReleaseEstimate?api-version=12.0') &&
       candidate.url.includes('ContinuationToken=page-2'));
+    expect(secondRequest.request.method).toBe('GET');
     secondRequest.flush({
       Items: [
         { Level: CapacityReleaseLevel.Minor, MetricName: 'CPU', UsedCapacity: '75', TotalCapacity: '100' }
