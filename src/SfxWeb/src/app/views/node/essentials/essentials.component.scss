@@ -11,3 +11,59 @@
     line-height: 1.2;
   }
 }
+
+.resource-usage-gauges {
+  display: flex;
+  justify-content: space-evenly;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.resource-gauge-group {
+  min-width: 82px;
+  text-align: center;
+}
+
+.resource-gauge {
+  --usage-percent: 0;
+  align-items: center;
+  background: conic-gradient(var(--accent-darkblue) calc(var(--usage-percent) * 1%), var(--accent-underline) 0);
+  border-radius: 50%;
+  display: flex;
+  height: 72px;
+  justify-content: center;
+  margin: 0 auto 5px;
+  position: relative;
+  width: 72px;
+
+  &::after {
+    background: var(--primary-background-color);
+    border-radius: 50%;
+    content: '';
+    height: 54px;
+    position: absolute;
+    width: 54px;
+  }
+
+  span {
+    font-size: var(--font-size-large);
+    font-weight: 500;
+    position: relative;
+    z-index: 1;
+  }
+}
+
+.resource-gauge-label {
+  font-weight: 500;
+}
+
+.resource-gauge-detail,
+.resource-usage-time {
+  font-size: var(--font-size-small);
+  opacity: 0.75;
+}
+
+.resource-usage-time {
+  margin-top: 10px;
+  text-align: center;
+}

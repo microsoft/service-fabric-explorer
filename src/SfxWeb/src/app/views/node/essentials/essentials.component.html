@@ -39,6 +39,31 @@
           Count of total stateful replicas on the node
         </app-dashboard-text-tile>
       }
+      @if (resourceUsage) {
+        <app-dashboard-text-scale-tile title="Fabric.exe Resource Usage" data-cy="resource-usage">
+          <div class="resource-usage-gauges">
+            <div class="resource-gauge-group">
+              <div class="resource-gauge" [style.--usage-percent]="resourceUsage.cpuPercent"
+                role="img" [attr.aria-label]="'CPU Usage ' + resourceUsage.cpuDisplay">
+                <span>{{resourceUsage.cpuDisplay}}</span>
+              </div>
+              <div class="resource-gauge-label">CPU Usage</div>
+            </div>
+            <div class="resource-gauge-group">
+              <div class="resource-gauge" [style.--usage-percent]="resourceUsage.memoryPercent"
+                role="img" [attr.aria-label]="'Memory Usage ' + resourceUsage.memoryDisplay">
+                <span>{{resourceUsage.memoryPercent.toFixed(1)}}%</span>
+              </div>
+              <div class="resource-gauge-label">Memory Usage</div>
+              <div class="resource-gauge-detail">{{resourceUsage.memoryDisplay}}</div>
+            </div>
+          </div>
+          <div class="resource-usage-time">
+            <div>Usage as of:</div>
+            <div>{{resourceUsage.sampledAt}}</div>
+          </div>
+        </app-dashboard-text-scale-tile>
+      }
     </div>
     @if (node && node.isDeactivating) {
       <div class="detail-pane essen-pane" data-cy="deactivated">

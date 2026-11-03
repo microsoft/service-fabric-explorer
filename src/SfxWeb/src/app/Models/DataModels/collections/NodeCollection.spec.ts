@@ -103,4 +103,41 @@ describe('NodeCollection', () => {
         expect(nodes.isCurrentlyThrottling([staleStarted])).toBe(false);
         expect(nodes.isCurrentlyThrottling([currentStarted])).toBe(true);
     });
+
+    it('clears cached resource usage when the node identity changes', async () => {
+        let rawNodes = [
+            createNode('node0', '0', '86fa6852ad467a903afbbc67edc16b66', '1', '2020-05-01T02:00:00Z')
+        ];
+        const data = {
+            actionsEnabled: () => false,
+            restClient: {
+                getNodes: () => of(rawNodes)
+            }
+        } as DataService;
+        const nodes = new NodeCollection(data);
+        await nodes.ensureInitialized().toPromise();
+        const node = nodes.collection[0];
+        node.resourceUsage = {
+            cpuPercent: 25,
+            memoryPercent: 25,
+            memoryRssBytes: 2_000,
+            memoryTotalBytes: 8_000,
+            sampleDurationMs: 300_000,
+            timestamp: new Date('2020-05-01T03:00:00Z')
+        };
+
+        rawNodes = [
+            createNode('node0', '0', '86fa6852ad467a903afbbc67edc16b66', '1', '2020-05-01T02:00:00Z')
+        ];
+        await nodes.refresh().toPromise();
+        expect(nodes.collection[0]).toBe(node);
+        expect(node.resourceUsage?.cpuPercent).toBe(25);
+
+        rawNodes = [
+            createNode('node0', '0', '86fa6852ad467a903afbbc67edc16b66', '2', '2020-05-01T04:00:00Z')
+        ];
+        await nodes.refresh().toPromise();
+        expect(nodes.collection[0]).toBe(node);
+        expect(node.resourceUsage).toBeUndefined();
+    });
 });
