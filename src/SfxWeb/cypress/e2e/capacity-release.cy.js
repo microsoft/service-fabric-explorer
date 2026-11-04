@@ -40,9 +40,9 @@ context('Cluster capacity release details', () => {
           Items: [
             { Level: 'Minor', MetricName: 'CPU', UsedCapacity: '100', TotalCapacity: '100' },
             { Level: 'Major', MetricName: 'CPU', UsedCapacity: '70', TotalCapacity: '100' },
-            { Level: 'Minor', MetricName: 'Memory', UsedCapacity: '900', TotalCapacity: '1024' }
-          ],
-          ContinuationToken: ''
+            { Level: 'Minor', MetricName: 'Memory', UsedCapacity: '1024', TotalCapacity: '1024' },
+            { Level: 'Major', MetricName: 'Memory', UsedCapacity: '900', TotalCapacity: '1024' }
+          ]
         });
       } else {
         request.reply({
@@ -82,7 +82,7 @@ context('Cluster capacity release details', () => {
       });
       cy.contains('tbody tr', 'Memory').find('td').then(cells => {
         expect([...cells].map(cell => cell.textContent.trim()))
-          .to.deep.equal(['Memory', '1,024', '1,100', '900', '']);
+          .to.deep.equal(['Memory', '1,024', '1,100', '1,024', '900']);
       });
       cy.get('app-capacity-release button, input, select, .action-modal').should('not.exist');
       cy.get('[role=alert]').should('not.exist');

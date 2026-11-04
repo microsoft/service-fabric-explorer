@@ -44,6 +44,8 @@ describe('RestClientService capacity release', () => {
       resultCount = result.length;
       expect(result[0].UsedCapacity).toBe('90');
       expect(result[1].UsedCapacity).toBe('75');
+      expect(result[2].Level).toBe(CapacityReleaseLevel.Major);
+      expect(result[2].UsedCapacity).toBe('60');
     });
 
     const firstRequest = http.expectOne(candidate =>
@@ -63,11 +65,11 @@ describe('RestClientService capacity release', () => {
     expect(secondRequest.request.method).toBe('GET');
     secondRequest.flush({
       Items: [
-        { Level: CapacityReleaseLevel.Minor, MetricName: 'CPU', UsedCapacity: '75', TotalCapacity: '100' }
-      ],
-      ContinuationToken: ''
+        { Level: CapacityReleaseLevel.Minor, MetricName: 'CPU', UsedCapacity: '75', TotalCapacity: '100' },
+        { Level: CapacityReleaseLevel.Major, MetricName: 'CPU', UsedCapacity: '60', TotalCapacity: '100' }
+      ]
     });
 
-    expect(resultCount).toBe(2);
+    expect(resultCount).toBe(3);
   });
 });
