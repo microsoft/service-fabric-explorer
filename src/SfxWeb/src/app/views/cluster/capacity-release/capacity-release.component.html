@@ -1,0 +1,51 @@
+@if (loading) {
+  <p>Loading capacity release information...</p>
+}
+
+<p>
+  Current capacity release level:
+  <b>{{currentLevel ?? 'Unavailable'}}</b>
+</p>
+@if (levelError) {
+  <p class="error-message" role="alert">{{levelError}}</p>
+}
+
+<h3>Capacity Release Estimation</h3>
+@if (estimationError) {
+  <p class="error-message" role="alert">{{estimationError}}</p>
+} @else if (!loading) {
+  @if (rows.length > 0) {
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">Metric</th>
+            <th scope="col">Total capacity</th>
+            <th scope="col">None</th>
+            <th scope="col">Minor</th>
+            <th scope="col">Major</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of rows; track row.metric) {
+            <tr>
+              <td>{{row.metric}}</td>
+              <td>{{formatCapacity(row.totalCapacity)}}</td>
+              <td [ngClass]="capacityClass(row.totalCapacity, row.none)">
+                {{formatCapacity(row.none)}}
+              </td>
+              <td [ngClass]="capacityClass(row.totalCapacity, row.minor)">
+                {{formatCapacity(row.minor)}}
+              </td>
+              <td [ngClass]="capacityClass(row.totalCapacity, row.major)">
+                {{formatCapacity(row.major)}}
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  } @else {
+    <p>No capacity release estimates were returned.</p>
+  }
+}

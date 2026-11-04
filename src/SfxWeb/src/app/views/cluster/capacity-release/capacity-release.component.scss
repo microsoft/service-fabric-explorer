@@ -1,0 +1,35 @@
+.table-container {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: 8px;
+  border: 1px solid #808080;
+  text-align: right;
+}
+
+th:first-child,
+td:first-child {
+  text-align: left;
+}
+
+.within-capacity {
+  background-color: hsl(120, 100%, 80%);
+  color: #000;
+}
+
+.over-capacity {
+  background-color: hsl(0, 100%, 80%);
+  color: #000;
+}
+
+.error-message {
+  color: #a4262c;
+  font-weight: 600;
+}
