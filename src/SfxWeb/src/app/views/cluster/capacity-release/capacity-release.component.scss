@@ -1,35 +1,19 @@
-.table-container {
-  overflow-x: auto;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-th,
-td {
-  padding: 8px;
-  border: 1px solid #808080;
+th:not(:first-child),
+td:not(:first-child) {
   text-align: right;
 }
 
-th:first-child,
-td:first-child {
-  text-align: left;
-}
-
-.within-capacity {
-  background-color: hsl(120, 100%, 80%);
+td.within-capacity {
+  background-color: var(--badge-ok);
   color: #000;
 }
 
-.over-capacity {
-  background-color: hsl(0, 100%, 80%);
+td.over-capacity {
+  background-color: var(--badge-error);
   color: #000;
 }
 
-.error-message {
-  color: #a4262c;
-  font-weight: 600;
+.capacity-status {
+  display: block;
+  font-size: var(--font-size-small);
 }

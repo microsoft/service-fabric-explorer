@@ -1,12 +1,14 @@
 import { ChangeDetectionStrategy, Component, LOCALE_ID, inject } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import { Observable, forkJoin, of } from 'rxjs';
-import { catchError, finalize, map } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import {
   CapacityReleaseLevel,
   IRawCapacityReleaseEstimate
 } from 'src/app/Models/RawDataTypes';
 import { RestClientService } from 'src/app/services/rest-client.service';
+import { MessageSeverity } from 'src/app/services/message.service';
 import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 
 export interface CapacityReleaseEstimationRow {
@@ -86,35 +88,32 @@ export class CapacityReleaseComponent extends BaseControllerDirective {
 
   currentLevel: CapacityReleaseLevel | null = null;
   rows: CapacityReleaseEstimationRow[] = [];
-  loading = false;
-  levelError = '';
-  estimationError = '';
+  estimationAvailable = false;
+
+  get hasData(): boolean {
+    return this.currentLevel !== null || this.estimationAvailable;
+  }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<void> {
-    this.loading = true;
-    this.levelError = '';
-    this.estimationError = '';
-
     return forkJoin({
-      level: this.restClient.getCapacityReleaseLevel(messageHandler).pipe(catchError(() => {
-        this.levelError = 'The current capacity release level is unavailable.';
-        return of(null);
-      })),
+      level: this.restClient.getCapacityReleaseLevel(messageHandler).pipe(catchError(() => of(null))),
       estimates: this.restClient.getCapacityReleaseEstimate(messageHandler).pipe(
         map(createCapacityReleaseRows),
         catchError((error: unknown) => {
-          this.estimationError = 'Capacity release estimation is currently unavailable.';
-          if (error instanceof Error) {
-            this.estimationError += ` ${error.message}`;
+          if (!(error instanceof HttpErrorResponse)) {
+            this.messageService.showMessage(
+              error instanceof Error ? error.message : String(error),
+              MessageSeverity.Err,
+              'Capacity release estimation');
           }
           return of(null);
         }))
     }).pipe(
       map(({ level, estimates }) => {
         this.currentLevel = level?.Level ?? null;
+        this.estimationAvailable = estimates !== null;
         this.rows = estimates ?? [];
-      }),
-      finalize(() => this.loading = false));
+      }));
   }
 
   formatCapacity(value: bigint | null): string {
@@ -125,4 +124,14 @@ export class CapacityReleaseComponent extends BaseControllerDirective {
     return getCapacityClass(totalCapacity, usedCapacity);
   }
 
+  capacityStatus(totalCapacity: bigint, usedCapacity: bigint | null): string {
+    switch (this.capacityClass(totalCapacity, usedCapacity)) {
+      case 'within-capacity':
+        return 'Within capacity';
+      case 'over-capacity':
+        return 'Over capacity';
+      default:
+        return '';
+    }
+  }
 }

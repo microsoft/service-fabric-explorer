@@ -91,15 +91,6 @@ openssl pkcs12 -in C:/some_cert.pfx -out C:/some_ca.pem -nodes
 ```
 
 
-## Capacity-release view
-
-Select **Cluster > Details > Capacity Release** to view the current capacity-release
-level and the per-metric estimation matrix. This view is read-only, including when SFX
-is in read-only mode; it does not change the cluster's release level.
-The information refreshes with the normal SFX manual and automatic refresh.
-The queries require a runtime supporting the capacity-release REST APIs at version 12.0.
-Unavailable queries are shown as errors rather than sample estimates.
-
 ## Testing
 
 ### Run unit tests
