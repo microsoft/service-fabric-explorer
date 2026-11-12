@@ -144,6 +144,7 @@ context('Cluster capacity release details', () => {
         }
       }
     },
+    { name: 'HTTP 400 responses from an older runtime', response: { statusCode: 400, body: '' } },
     { name: 'empty HTTP 200 responses', response: { statusCode: 200, body: '' } },
     { name: 'bodyless HTTP 501 responses', response: { statusCode: 501, body: '' } }
   ].forEach(({ name, response: unavailable }) => {

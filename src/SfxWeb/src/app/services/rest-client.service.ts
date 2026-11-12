@@ -125,7 +125,7 @@ export class RestClientService {
           }
           return response;
       }), catchError((error: HttpErrorResponse) => {
-          const unavailable = error.status === 404 || error.status === 501 ||
+          const unavailable = error.status === 400 || error.status === 404 || error.status === 501 ||
               error.error?.Error?.Code === 'FABRIC_E_OPERATION_NOT_SUPPORTED' ||
               error.error?.Error?.Code === 'InvalidCapacityReleaseResponse';
           const handler = unavailable && (error.error === null || error.error === undefined)

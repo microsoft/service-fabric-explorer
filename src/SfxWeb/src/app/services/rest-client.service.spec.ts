@@ -80,6 +80,7 @@ describe('RestClientService capacity release', () => {
   });
 
   it.each([
+    { status: 400, code: 'E_INVALIDARG' },
     { status: 404, code: 'NotFound' },
     { status: 501, code: 'NotImplemented' },
     { status: 500, code: 'FABRIC_E_OPERATION_NOT_SUPPORTED' }
@@ -104,7 +105,7 @@ describe('RestClientService capacity release', () => {
       request.statusCode === status && request.errorMessage.length > 0)).toBe(true);
   });
 
-  it.each([404, 501])('handles bodyless HTTP %s responses with the real refresh message handler', status => {
+  it.each([400, 404, 501])('handles bodyless HTTP %s responses with the real refresh message handler', status => {
     const messageHandler = TestBed.runInInjectionContext(() => new MessageService());
     const errorHandler = vi.fn();
     const queries: Observable<unknown>[] = [
@@ -166,6 +167,7 @@ describe('RestClientService capacity release', () => {
       body: { Error: { Code: 'FABRIC_E_OPERATION_NOT_SUPPORTED', Message: 'Capacity release is unavailable.' } }
     },
     { status: 200, body: null },
+    { status: 400, body: null },
     { status: 501, body: null }
   ])('handles an unavailable later page (HTTP $status) without popups or a partial result', ({ status, body }) => {
     const errorHandler = vi.fn();
@@ -239,16 +241,16 @@ describe('RestClientService capacity release', () => {
       '501 : Get cluster load information');
   });
 
-  it('does not suppress missing-API notifications for other SFX requests', () => {
+  it.each([400, 404])('does not suppress HTTP %s notifications for other SFX requests', status => {
     const errorHandler = vi.fn();
     service.getClusterLoadInformation().subscribe({ error: errorHandler });
     http.expectOne(candidate => candidate.url.includes('/$/GetLoadInformation?'))
-      .flush({}, { status: 404, statusText: 'Not Found' });
+      .flush({}, { status, statusText: 'Request Failed' });
 
     expect(errorHandler).toHaveBeenCalledOnce();
     expect(TestBed.inject(MessageService).showMessage).toHaveBeenCalledWith(
       expect.any(String),
       MessageSeverity.Err,
-      '404 : Get cluster load information');
+      `${status} : Get cluster load information`);
   });
 });
