@@ -13,7 +13,8 @@ import { IRawCollection, IRawClusterManifest, IRawClusterHealth, IRawClusterUpgr
          IRawServiceHealth, IRawApplicationUpgradeProgress, IRawCreateComposeDeploymentDescription, IRawPartition, IRawPartitionHealth, IRawPartitionLoadInformation,
          IRawReplicaOnPartition, IRawReplicaHealth, IRawImageStoreContent, IRawStoreFolderSize, IRawClusterVersion, IRawList, IRawAadMetadata, IRawStorage, IRawRepairTask,
          IRawServiceNameInfo, IRawApplicationNameInfo, IRawBackupEntity, IRawInfrastructureJob, IRawInfraRepairTask, IRawRoleInstanceImpact,
-         IRawInfrastructureDocument, IRawFailoverManagerManagerInformation} from '../Models/RawDataTypes';
+         IRawInfrastructureDocument, IRawFailoverManagerManagerInformation, IRawCapacityReleaseLevel,
+         IRawCapacityReleaseEstimate, CapacityReleaseLevel} from '../Models/RawDataTypes';
 import { mergeMap, map, catchError, finalize, skip } from 'rxjs/operators';
 import { Application } from '../Models/DataModels/Application';
 import { Service } from '../Models/DataModels/Service';
@@ -40,6 +41,7 @@ export class RestClientService {
   private static apiVersion80 = '8.0';
   private static apiVersion82 = '8.2';
   private static apiVersion114 = '11.4';
+  private static apiVersion120 = '12.0';
 
   private cacheAllowanceToken: number = Date.now().valueOf();
 
@@ -72,6 +74,74 @@ export class RestClientService {
 
   public getClusterLoadInformation(messageHandler?: IResponseMessageHandler): Observable<IRawClusterLoadInformation> {
       return this.get(this.getApiUrl('$/GetLoadInformation'), 'Get cluster load information', messageHandler);
+  }
+
+  public getCapacityReleaseLevel(messageHandler?: IResponseMessageHandler): Observable<IRawCapacityReleaseLevel> {
+      return this.getCapacityReleaseResponse<IRawCapacityReleaseLevel>(
+          this.getApiUrl('$/GetCapacityReleaseLevel', RestClientService.apiVersion120),
+          'Get capacity release level',
+          response => !!response && [CapacityReleaseLevel.None, CapacityReleaseLevel.Minor, CapacityReleaseLevel.Major].includes(response.Level),
+          messageHandler);
+  }
+
+  public getCapacityReleaseEstimate(messageHandler?: IResponseMessageHandler): Observable<IRawCapacityReleaseEstimate[]> {
+      return this.getCapacityReleaseEstimatePages(messageHandler);
+  }
+
+  private getCapacityReleaseEstimatePages(messageHandler?: IResponseMessageHandler,
+      continuationToken?: string): Observable<IRawCapacityReleaseEstimate[]> {
+      return this.getCapacityReleaseResponse<IRawCollection<IRawCapacityReleaseEstimate>>(
+          this.getApiUrl('$/GetCapacityReleaseEstimate', RestClientService.apiVersion120, continuationToken, false),
+          'Get capacity release estimate',
+          response => !!response && Array.isArray(response.Items) &&
+              (response.ContinuationToken === undefined || typeof response.ContinuationToken === 'string'),
+          messageHandler).pipe(mergeMap(response => response.ContinuationToken
+              ? this.getCapacityReleaseEstimatePages(messageHandler, response.ContinuationToken).pipe(
+                  map(items => response.Items.concat(items)))
+              : of(response.Items)));
+  }
+
+  private getCapacityReleaseResponse<T>(url: string, apiDesc: string, validateResponse: (response: T) => boolean,
+      messageHandler?: IResponseMessageHandler): Observable<T> {
+      const data: IRequest = {
+          startTime: new Date().toISOString(),
+          apiDesc,
+          errorMessage: '',
+          duration: 0,
+          data: null,
+          statusCode: 200
+      };
+      return this.httpClient.get<T>(this.getBaseUrl() + url).pipe(map(response => {
+          if (!validateResponse(response)) {
+              throw new HttpErrorResponse({
+                  status: 200,
+                  error: {
+                      Error: {
+                          Code: 'InvalidCapacityReleaseResponse',
+                          Message: `${apiDesc} did not return a usable response body.`
+                      }
+                  }
+              });
+          }
+          return response;
+      }), catchError((error: HttpErrorResponse) => {
+          const unavailable = error.status === 400 || error.status === 404 || error.status === 501 ||
+              error.error?.Error?.Code === 'FABRIC_E_OPERATION_NOT_SUPPORTED' ||
+              error.error?.Error?.Code === 'InvalidCapacityReleaseResponse';
+          const handler = unavailable && (error.error === null || error.error === undefined)
+              ? ResponseMessageHandlers.getResponseMessageHandler
+              : messageHandler ?? ResponseMessageHandlers.getResponseMessageHandler;
+          data.errorMessage = handler.getErrorMessage(apiDesc, error) ||
+              (error.error instanceof Error ? error.error.message : error.message);
+          data.statusCode = error.status;
+          if (!unavailable) {
+              this.message.showMessage(data.errorMessage, MessageSeverity.Err, `${error.status} : ${apiDesc}`);
+          }
+          return throwError(() => error);
+      }), finalize(() => {
+          data.duration = new Date().getTime() - new Date(data.startTime).getTime();
+          this.networkDebugger.addRequest(data);
+      }));
   }
 
   public getClusterHealthChunk(healthDescriptor: IClusterHealthChunkQueryDescription, messageHandler?: IResponseMessageHandler): Observable<{}> {
@@ -953,4 +1023,3 @@ export class RestClientService {
      }));
     }
 }
-

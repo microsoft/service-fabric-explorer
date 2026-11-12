@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-import { addDefaultFixtures, apiUrl, FIXTURE_REF_MANIFEST, addRoute, checkCommand, xssEncoded, windowAlertText, watchForAlert, plaintextXSS2 } from './util.cy';
+import { addDefaultFixtures, apiUrl, FIXTURE_REF_MANIFEST, addRoute, checkCommand, refresh, xssEncoded, windowAlertText, watchForAlert, plaintextXSS2 } from './util.cy';
 
 const appName = "VisualObjectsApplicationType";
 const serviceName = "VisualObjects.ActorService";
@@ -134,16 +134,27 @@ context('service', () => {
         cy.get(".action-modal").should('not.exist');
       })
 
-      it('view details', () => {
+      it('view details - capacity release action', () => {
         cy.wait(waitRequest);
         cy.wait('@getdescription');
 
+        cy.fixture('service-page/service-description.json').then(description => {
+          cy.intercept('GET', apiUrl(`${routeFormatter(appName, serviceName)}/$/GetDescription?*`), {
+            body: { ...description, CapacityReleaseAction: 'DropToMin' }
+          }).as('capacityReleaseActionDescription');
+        });
+
         cy.get('[data-cy=navtabs]').within(() => {
           cy.contains('details').click();
-        })
+        });
+        refresh();
+        cy.wait('@capacityReleaseActionDescription');
 
         cy.get('[data-cy=serviceDescription]').within(() => {
           cy.contains("Auxiliary Replica Count").should('not.exist');
+          cy.contains('tr', 'Capacity Release Action').find('td')
+            .should('have.text', 'DropToMin');
+          cy.get('button, input, select').should('not.exist');
         })
 
         cy.url().should('include', '/details')

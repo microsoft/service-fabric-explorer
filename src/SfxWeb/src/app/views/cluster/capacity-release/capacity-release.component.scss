@@ -1,0 +1,19 @@
+th:not(:first-child),
+td:not(:first-child) {
+  text-align: right;
+}
+
+td.within-capacity {
+  background-color: var(--badge-ok);
+  color: #000;
+}
+
+td.over-capacity {
+  background-color: var(--badge-error);
+  color: #000;
+}
+
+.capacity-status {
+  display: block;
+  font-size: var(--font-size-small);
+}

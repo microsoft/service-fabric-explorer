@@ -1,0 +1,59 @@
+@if (hasData) {
+  <div class="detail-pane essen-pane" data-cy="capacityReleaseDetails">
+    <app-collapse-container sectionName="Capacity Release">
+      <h2 collapse-header>Capacity Release</h2>
+      <div collapse-body>
+        @if (currentLevel !== null) {
+          <p>Current capacity release level: <b>{{currentLevel}}</b></p>
+        }
+
+        @if (estimationAvailable) {
+          <h3 id="capacityReleaseEstimationTitle">Capacity Release Estimation</h3>
+          @if (rows.length > 0) {
+            <div class="table-responsive">
+              <table class="default-table detail-table detail-list" aria-labelledby="capacityReleaseEstimationTitle">
+                <thead>
+                  <tr>
+                    <th scope="col">Metric</th>
+                    <th scope="col">Total capacity</th>
+                    <th scope="col">None</th>
+                    <th scope="col">Minor</th>
+                    <th scope="col">Major</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (row of rows; track row.metric) {
+                    <tr>
+                      <td>{{row.metric}}</td>
+                      <td>{{formatCapacity(row.totalCapacity)}}</td>
+                      <td [ngClass]="capacityClass(row.totalCapacity, row.none)">
+                        <span class="capacity-value">{{formatCapacity(row.none)}}</span>
+                        @if (row.none !== null) {
+                          <span class="capacity-status">{{capacityStatus(row.totalCapacity, row.none)}}</span>
+                        }
+                      </td>
+                      <td [ngClass]="capacityClass(row.totalCapacity, row.minor)">
+                        <span class="capacity-value">{{formatCapacity(row.minor)}}</span>
+                        @if (row.minor !== null) {
+                          <span class="capacity-status">{{capacityStatus(row.totalCapacity, row.minor)}}</span>
+                        }
+                      </td>
+                      <td [ngClass]="capacityClass(row.totalCapacity, row.major)">
+                        <span class="capacity-value">{{formatCapacity(row.major)}}</span>
+                        @if (row.major !== null) {
+                          <span class="capacity-status">{{capacityStatus(row.totalCapacity, row.major)}}</span>
+                        }
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          } @else {
+            <p>No capacity release estimates were returned.</p>
+          }
+        }
+      </div>
+    </app-collapse-container>
+  </div>
+}
