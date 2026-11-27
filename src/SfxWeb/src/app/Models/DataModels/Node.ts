@@ -13,6 +13,7 @@ import { ActionWithConfirmationDialog, Action } from '../Action';
 import { NodeStatusConstants } from 'src/app/Common/Constants';
 import { RoutesService } from 'src/app/services/routes.service';
 import type { INodeEvent } from '../eventstore/NodeEventTypes';
+import { IFabricProcessResourceUsageSample } from '../eventstore/FabricProcessResourceUsage';
 
 // -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -20,6 +21,20 @@ import type { INodeEvent } from '../eventstore/NodeEventTypes';
 // -----------------------------------------------------------------------------
 
 export class Node extends DataModelBase<IRawNode> {
+    private iResourceUsage?: IFabricProcessResourceUsageSample;
+    private resourceUsageNodeId?: string;
+    private resourceUsageNodeInstance?: string;
+
+    public get resourceUsage(): IFabricProcessResourceUsageSample | undefined {
+        return this.iResourceUsage;
+    }
+
+    public set resourceUsage(value: IFabricProcessResourceUsageSample | undefined) {
+        this.iResourceUsage = value;
+        this.resourceUsageNodeId = value ? this.raw.Id.Id.toLowerCase() : undefined;
+        this.resourceUsageNodeInstance = value ? this.raw.InstanceId : undefined;
+    }
+
     public decorators: IDecorators = {
         decorators: {
             NodeUpTimeInSeconds: {
@@ -56,6 +71,22 @@ export class Node extends DataModelBase<IRawNode> {
 
     public get nodeUpTime(): string {
         return TimeUtils.getDurationFromSeconds(this.raw.NodeUpTimeInSeconds);
+    }
+
+    public get resourceCpuPercent(): number | undefined {
+        return this.resourceUsage?.cpuPercent;
+    }
+
+    public get resourceCpuDisplay(): string {
+        return this.resourceCpuPercent === undefined ? '-' : `${this.resourceCpuPercent.toFixed(2)}%`;
+    }
+
+    public get resourceMemoryPercent(): number | undefined {
+        return this.resourceUsage?.memoryPercent;
+    }
+
+    public get resourceMemoryDisplay(): string {
+        return this.resourceMemoryPercent === undefined ? '-' : `${this.resourceMemoryPercent.toFixed(1)}%`;
     }
 
     public get id(): string {
@@ -97,6 +128,14 @@ export class Node extends DataModelBase<IRawNode> {
         const eventTime = Date.parse(event.timeStamp);
         const nodeUpAt = Date.parse(this.raw.NodeUpAt);
         return Number.isFinite(eventTime) && Number.isFinite(nodeUpAt) && eventTime >= nodeUpAt;
+    }
+
+    protected updateInternal(): void {
+        if (this.resourceUsage
+            && (this.resourceUsageNodeId !== this.raw.Id.Id.toLowerCase()
+                || this.resourceUsageNodeInstance !== this.raw.InstanceId)) {
+            this.resourceUsage = undefined;
+        }
     }
 
     public get hasDeactivatingDescription(): boolean {
@@ -337,5 +376,3 @@ export class NodeHealth extends HealthBase<IRawNodeHealth> {
         return this.data.restClient.getNodeHealth(this.parent.name, this.eventsHealthStateFilter, messageHandler);
     }
 }
-
-

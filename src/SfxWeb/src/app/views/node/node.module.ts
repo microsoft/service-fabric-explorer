@@ -16,9 +16,10 @@ import { HealthStateModule } from 'src/app/modules/health-state/health-state.mod
 import { RepairTasksModule } from 'src/app/modules/repair-tasks/repair-tasks.module';
 import { CommandsComponent } from './commands/commands.component';
 import { PowershellCommandsModule } from 'src/app/modules/powershell-commands/powershell-commands.module';
+import { ResourceUsageVisualizationComponent } from './events/resource-usage-visualization.component';
 
 @NgModule({
-  declarations: [BaseComponent, EssentialsComponent, DetailsComponent, EventsComponent, CommandsComponent],
+  declarations: [BaseComponent, EssentialsComponent, DetailsComponent, EventsComponent, CommandsComponent, ResourceUsageVisualizationComponent],
   imports: [
     CommonModule,
     NodeRoutingModule,

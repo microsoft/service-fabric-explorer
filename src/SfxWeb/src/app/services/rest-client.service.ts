@@ -1009,7 +1009,9 @@ export class RestClientService {
             displayMessage = err.message;
         }
 
-        this.message.showMessage(displayMessage, MessageSeverity.Err, header);
+        if (!messageHandler!.suppressErrorNotification) {
+            this.message.showMessage(displayMessage, MessageSeverity.Err, header);
+        }
         data.errorMessage = displayMessage;
         data.statusCode = err.status;
         // ...optionally return a default fallback value so app can continue (pick one)

@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnInit, AfterViewInit, ViewChildren, QueryList, Type, inject, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, OnDestroy, AfterViewInit, ViewChildren, QueryList, Type, inject, ChangeDetectionStrategy } from '@angular/core';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { IOnDateChange } from '../../time-picker/double-slider/double-slider.component';
 import { Subject, Subscription, forkJoin } from 'rxjs';
@@ -46,7 +46,7 @@ export interface VisReference {
     changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
-export class EventStoreComponent implements OnChanges, OnInit, AfterViewInit {
+export class EventStoreComponent implements OnChanges, OnInit, OnDestroy, AfterViewInit {
   dataService = inject(DataService);
 
 
@@ -67,8 +67,10 @@ export class EventStoreComponent implements OnChanges, OnInit, AfterViewInit {
   public dateMin!: Date;
 
   private visualizations: VisualizationComponent[] = [];
+  private visualizationByDirective = new Map<VisualizationDirective, VisualizationComponent>();
   private visualizationsReady = false;
   private viewInitialized = false;
+  private vizDirsSubscription?: Subscription;
 
   ngOnInit() {
     this.dataService.clusterManifest.ensureInitialized().subscribe(() => {
@@ -78,6 +80,14 @@ export class EventStoreComponent implements OnChanges, OnInit, AfterViewInit {
 
   ngAfterViewInit() {
     this.viewInitialized = true;
+    this.vizDirsSubscription = this.vizDirs.changes.subscribe(() => {
+      this.setVisualizations();
+      this.updateVisualizations();
+    });
+  }
+
+  ngOnDestroy() {
+    this.vizDirsSubscription?.unsubscribe();
   }
 
   ngOnChanges(): void {
@@ -85,12 +95,15 @@ export class EventStoreComponent implements OnChanges, OnInit, AfterViewInit {
   }
 
   private setVisualizations(): void {
-
-    if (this.vizDirs.length < this.visualizations.length) { //if some visualizations have been removed, clear the array
-      this.visualizations.splice(this.vizDirs.length);
+    const directives = this.vizDirs.toArray();
+    const activeDirectives = new Set(directives);
+    for (const directive of this.visualizationByDirective.keys()) {
+      if (!activeDirectives.has(directive)) {
+        this.visualizationByDirective.delete(directive);
+      }
     }
 
-    this.vizDirs.forEach((dir, i) => {
+    directives.forEach((dir, i) => {
 
       if (dir.name !== this.vizRefs[i].name) { //check and update each visualization directive template
         dir.name = this.vizRefs[i].name;
@@ -107,10 +120,13 @@ export class EventStoreComponent implements OnChanges, OnInit, AfterViewInit {
           instance.updateColumn.subscribe((update) => this.updateColumn(update));
         }
 
-        this.visualizations.splice(i, 1, instance);
-
+        this.visualizationByDirective.set(dir, instance);
       }
     })
+
+    this.visualizations = directives
+      .map(directive => this.visualizationByDirective.get(directive))
+      .filter((visualization): visualization is VisualizationComponent => visualization !== undefined);
   }
 
   /* date determines the data */
@@ -182,9 +198,15 @@ export class EventStoreComponent implements OnChanges, OnInit, AfterViewInit {
 
       forkJoin(timelineEventSubs).subscribe((refreshList) => {
         this.failedRefresh = refreshList.some(e => !e);
-        this.visualizations.forEach(visualization => {
-          visualization.update({listEventStoreData: this.listEventStoreData, startDate: this.startDate, endDate: this.endDate});
-        })
+        this.updateVisualizations();
+      });
+    }
+  }
+
+  private updateVisualizations(): void {
+    if (this.visualizationsReady) {
+      this.visualizations.forEach(visualization => {
+        visualization.update({listEventStoreData: this.listEventStoreData, startDate: this.startDate, endDate: this.endDate});
       });
     }
   }

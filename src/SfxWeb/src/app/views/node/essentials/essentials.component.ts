@@ -1,6 +1,6 @@
 import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
-import { map, mergeMap } from 'rxjs/operators';
-import { Observable, forkJoin, of } from 'rxjs';
+import { catchError, map, mergeMap } from 'rxjs/operators';
+import { Observable, forkJoin, of, Subscription } from 'rxjs';
 import { DataService } from 'src/app/services/data.service';
 import { IResponseMessageHandler, ResponseMessageHandlers } from 'src/app/Common/ResponseMessageHandlers';
 import { ListSettings, ListColumnSetting, ListColumnSettingForLink, ListColumnSettingForBadge, ListColumnSettingWithFilter } from 'src/app/Models/ListSettings';
@@ -11,6 +11,14 @@ import { IEssentialListItem } from 'src/app/modules/charts/essential-health-tile
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { INodeTypeInfo } from 'src/app/Models/DataModels/Cluster';
 import { RepairTask } from 'src/app/Models/DataModels/repairTask';
+import { FABRIC_PROCESS_RESOURCE_USAGE_EVENT_KIND, FABRIC_PROCESS_RESOURCE_USAGE_LOOKBACK_MS, formatFabricProcessResourceBytes, IFabricProcessResourceUsageSample, isFabricProcessResourceUsageSampleCurrent, parseFabricProcessResourceUsageEvent } from 'src/app/Models/eventstore/FabricProcessResourceUsage';
+import { FabricProcessResourceUsageCapabilityService } from 'src/app/services/fabric-process-resource-usage-capability.service';
+
+interface IResourceUsage extends IFabricProcessResourceUsageSample {
+  cpuDisplay: string;
+  memoryDisplay: string;
+  sampledAt: string;
+}
 
 @Component({
     selector: 'app-essentials',
@@ -20,8 +28,11 @@ import { RepairTask } from 'src/app/Models/DataModels/repairTask';
     standalone: false
 })
 export class EssentialsComponent extends NodeBaseControllerDirective {
+  private static readonly resourceUsageRefreshIntervalMs = 5 * 60 * 1000;
+
   protected data: DataService = inject(DataService);
   private settings = inject(SettingsService);
+  private resourceUsageCapability = inject(FabricProcessResourceUsageCapabilityService);
 
 
   deployedApps!: DeployedApplicationCollection;
@@ -29,6 +40,7 @@ export class EssentialsComponent extends NodeBaseControllerDirective {
 
   essentialItems: IEssentialListItem[] = [];
   ringInfo: IEssentialListItem[] = [];
+  resourceUsage?: IResourceUsage;
 
   repairJobs: RepairTask[] = [];
   repairJobSettings!: ListSettings;
@@ -37,9 +49,14 @@ export class EssentialsComponent extends NodeBaseControllerDirective {
   isNodeThrottling = false;
 
   private nodeThrottlingEvents?: ReturnType<DataService['getNodeThrottlingEventList']>;
+  private resourceUsageSubscription?: Subscription;
+  private resourceUsageRequestedAt?: number;
   private hasRefreshed = false;
 
   setup() {
+    this.hasRefreshed = false;
+    this.cancelResourceUsage();
+    this.resourceUsageRequestedAt = undefined;
     this.repairJobSettings = this.settings.getNewOrExistingPendingRepairTaskListSettings();
 
     this.listSettings = this.settings.getNewOrExistingListSettings('apps', ['name'], [
@@ -51,6 +68,7 @@ export class EssentialsComponent extends NodeBaseControllerDirective {
 
     this.essentialItems = [];
     this.ringInfo = [];
+    this.resourceUsage = undefined;
     this.repairJobs = [];
     this.isNodeThrottling = false;
     this.subscriptions.add(this.data.getClusterManifest().subscribe(manifest => {
@@ -64,11 +82,13 @@ export class EssentialsComponent extends NodeBaseControllerDirective {
         this.isNodeThrottling = false;
       }
     }));
+    this.detectResourceUsageCapability();
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
     this.hasRefreshed = true;
     this.refreshNodeThrottlingState();
+    this.refreshResourceUsage();
 
     let duration = '';
     const up = this.node.raw.NodeDownTimeInSeconds === '0';
@@ -135,7 +155,6 @@ export class EssentialsComponent extends NodeBaseControllerDirective {
           return of(null);
         }
       }))
-
     ]);
   }
 
@@ -148,5 +167,107 @@ export class EssentialsComponent extends NodeBaseControllerDirective {
     if (refresh) {
       this.subscriptions.add(refresh);
     }
+  }
+
+  private refreshResourceUsage(): void {
+    const referenceTime = new Date();
+    if (this.resourceUsage && !isFabricProcessResourceUsageSampleCurrent(this.resourceUsage, referenceTime)) {
+      this.resourceUsage = undefined;
+    }
+
+    if (!this.resourceUsageCapability.isSupported) {
+      this.cancelResourceUsage();
+      this.resourceUsageRequestedAt = undefined;
+      this.resourceUsage = undefined;
+      if (this.resourceUsageCapability.canRetry) {
+        this.detectResourceUsageCapability();
+      }
+      return;
+    }
+
+    const now = Date.now();
+    if ((this.resourceUsageSubscription && !this.resourceUsageSubscription.closed)
+      || (this.resourceUsageRequestedAt !== undefined
+        && now - this.resourceUsageRequestedAt < EssentialsComponent.resourceUsageRefreshIntervalMs)) {
+      return;
+    }
+
+    this.resourceUsageRequestedAt = now;
+    this.resourceUsageSubscription = this.loadResourceUsage().subscribe();
+    this.subscriptions.add(this.resourceUsageSubscription);
+  }
+
+  private detectResourceUsageCapability(): void {
+    this.subscriptions.add(this.resourceUsageCapability.ensureSupported().subscribe({
+      next: isSupported => {
+        if (isSupported && this.hasRefreshed) {
+          this.refreshResourceUsage();
+        } else if (!isSupported) {
+          this.cancelResourceUsage();
+          this.resourceUsageRequestedAt = undefined;
+          this.resourceUsage = undefined;
+        }
+      },
+      error: error => console.error('Failed to detect Fabric process resource usage support.', error)
+    }));
+  }
+
+  private loadResourceUsage(): Observable<any> {
+    const requestedNodeName = this.nodeName;
+    const endTime = new Date();
+    const startTime = new Date(endTime.getTime() - FABRIC_PROCESS_RESOURCE_USAGE_LOOKBACK_MS);
+
+    return this.data.restClient.getNodeEvents(
+      startTime,
+      endTime,
+      requestedNodeName,
+      [FABRIC_PROCESS_RESOURCE_USAGE_EVENT_KIND],
+      ResponseMessageHandlers.silentResponseMessageHandler
+    ).pipe(
+      map(events => {
+        if (this.nodeName !== requestedNodeName) {
+          return;
+        }
+
+        const latestSample = events
+          .filter(event => this.node.isEventFromCurrentInstance(event))
+          .map(event => parseFabricProcessResourceUsageEvent(event, requestedNodeName))
+          .filter((sample): sample is IFabricProcessResourceUsageSample => sample !== undefined
+            && isFabricProcessResourceUsageSampleCurrent(sample, endTime))
+          .sort((left, right) => right.timestamp.getTime() - left.timestamp.getTime())[0];
+
+        if (!latestSample) {
+          this.resourceUsage = undefined;
+          return;
+        }
+
+        this.resourceUsage = {
+          cpuPercent: latestSample.cpuPercent,
+          cpuDisplay: `${latestSample.cpuPercent.toFixed(2)}%`,
+          memoryPercent: latestSample.memoryPercent,
+          memoryRssBytes: latestSample.memoryRssBytes,
+          memoryTotalBytes: latestSample.memoryTotalBytes,
+          memoryDisplay: `${formatFabricProcessResourceBytes(latestSample.memoryRssBytes)} (${latestSample.memoryPercent.toFixed(1)}%)`,
+          sampleDurationMs: latestSample.sampleDurationMs,
+          sampledAt: this.formatTimestamp(latestSample.timestamp),
+          timestamp: latestSample.timestamp
+        };
+      }),
+      catchError(() => {
+        if (this.nodeName === requestedNodeName) {
+          this.resourceUsage = undefined;
+        }
+        return of(null);
+      })
+    );
+  }
+
+  private cancelResourceUsage(): void {
+    this.resourceUsageSubscription?.unsubscribe();
+    this.resourceUsageSubscription = undefined;
+  }
+
+  private formatTimestamp(timestamp: Date): string {
+    return timestamp.toISOString().replace('T', ' ').replace(/\.\d{3}Z$/, ' UTC');
   }
 }
